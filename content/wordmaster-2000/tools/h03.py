@@ -47,7 +47,7 @@ O = {
 "PHR-341": {"mw": "Hurry up fastly!", "mc": "Hurry up!"},
 "ADJ-471": {"mw": "I have new a phone.", "mc": "I have a new phone."},
 "ADJ-475": {"mw": "The price is very less.", "mc": "The price is very low."},
-"ADJ-476": {"col": "that's right, the right answer, turn right, right now", "syn": "correct, true", "ant": "wrong, left",
+"ADJ-476": {"hm": "सही / ठीक है ना?", "col": "that's right, the right answer, turn right, right now", "syn": "correct, true", "ant": "wrong, left",
             "mt": "RIGHT = correct. At the end of a sentence, 'right?' asks 'isn't it?'", "fam": "rightly, all right",
             "gp": "be + right / the right + noun / clause + right?", "pos": "Adjective / Discourse Expression", "ex1": "You are right.",
             "meaning": "correct; also 'right?' at the end of a sentence to check that someone agrees"},

@@ -81,3 +81,26 @@ NOT_ADDED = [
     "broad", "identical", "weaken", "worsen", "declare", "inside out",
     "bald", "overweight", "upcoming", "don't have to",
 ]
+
+# Batch 6 curation. "give up on" goes because Batch 6 adds the core phrasal verb "give up".
+REMOVED_B6 = {
+    "PHR-029": "repeat of 'give up' (added in Batch 6)",
+}
+# Planned for Batch 6 but dropped as repeats of words already in the list, or as less useful than
+# the core words added in their place (give up, get on, would like, look like, pay attention …).
+NOT_ADDED_B6 = {
+    "be able to": "repeat of 'able' (Batch 5 covers 'be able to')",
+    "hurry": "repeat of 'hurry up' and 'rush'",
+    "little": "repeat of 'a little'",
+    "the same as": "covered by 'same'",
+    "different from": "covered by 'different'",
+    "firstly": "repeat of 'first of all'",
+    "right away": "repeat of 'right now' and 'at once'",
+    "up to date": "repeat of 'up-to-date'",
+    "live on": "less useful",
+    "not as...as": "covered by 'as...as'",
+    "undoubtedly": "less useful", "straightforward": "less useful", "doubtful": "less useful",
+    "alike": "less useful", "assist": "less useful", "permit": "less useful", "enable": "less useful",
+    "envy": "less useful", "advance": "less useful", "former": "less useful",
+    "specifically": "less useful", "partly": "less useful",
+}

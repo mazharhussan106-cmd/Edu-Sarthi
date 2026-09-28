@@ -157,8 +157,17 @@ for title, colour, hs in SECTIONS:
                                 "Premium Flashcard Master Specification.", "Claude")
     col += len(hs)
 
+from fixes import FIX
+
+
+def fixed(row):
+    for header, value in FIX.get(row[1], {}).items():
+        row[HEADERS.index(header)] = value
+    return row
+
+
 for i, w in enumerate(words, start=1):
-    for j, v in enumerate(row_for(START + i - 1, w), start=1):
+    for j, v in enumerate(fixed(row_for(START + i - 1, w)), start=1):
         c = ws.cell(i + 2, j, v)
         c.font = arial(sz=10)
         c.alignment = Alignment(wrap_text=True, vertical="top")

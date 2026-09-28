@@ -28,7 +28,7 @@ INT-013 | excuse me | ik-SKYOOZ mee | एक्सक्यूज़ मी | 5 
 
 # Where the HTML list's own mistake line is unclear, these replace it (mw = wrong, mc = right).
 O = {
-"ADV-202": {"col": "well done, very well, as well, sleep well", "syn": "properly, nicely, skilfully", "ant": "badly",
+"ADV-202": {"hm": "अच्छी तरह / अच्छा… (बात शुरू करने के लिए)", "col": "well done, very well, as well, sleep well", "syn": "properly, nicely, skilfully", "ant": "badly",
             "mt": "Good is for things (a good singer); well is for actions (she sings well).", "fam": "good, better, best",
             "gp": "verb + well / be + well (= healthy)", "pos": "Adverb / Interjection", "ex1": "She sings well.",
             "meaning": "in a good way; also used to pause before you answer",

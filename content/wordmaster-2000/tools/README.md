@@ -4,7 +4,7 @@ Builds the 56-column WordMaster workbooks from the Speak Sarthi seed plus the
 hand-written fields in this folder.
 
 - `authored.py` — words 1–50 (dict form)
-- `b051.py` … `b501.py` — words 51–550, one tuple per word (action is None for non-verbs):
+- `b051.py` … `b951.py` — words 51–1000, one tuple per word (action is None for non-verbs):
   `(id, word forms, why it's wrong, memory trick, usage tip, write-your-own,
   (before, during, after), confusing word, difference[, new mistake, new correction])`
 - `build.py` — reads the seed, merges the above, writes the workbook
@@ -17,3 +17,13 @@ SEED_DIR=/tmp/ss/app/src/main/assets/seed \
 
 To add a batch: write `bNNN.py` in the same tuple form, add it to the import
 list at the top of `build.py`, and run with the new range.
+
+Words past 1,000 come from the 910-word workbook (`WM910` env var), skipping any
+word the app already has (spelling variants and "run out"/"run out of" count as
+the same). Those rows keep their 54 columns; `x1001.py` supplies the 2 new ones.
+
+```bash
+SEED_DIR=/tmp/ss/app/src/main/assets/seed \
+WM910="10000000 new/WordMaster1000_Words_1001-plus.xlsx" \
+  python3 content/wordmaster-2000/tools/build.py out.xlsx 551 1050
+```

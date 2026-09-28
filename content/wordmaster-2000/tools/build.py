@@ -7,7 +7,10 @@ from openpyxl.utils import get_column_letter
 sys.path.insert(0, sys.path[0])
 from authored import A
 import b051, b101, b151, b201, b251, b301, b351, b401, b451, b501
-for mod in (b051, b101, b151, b201, b251, b301, b351, b401, b451, b501):
+import b551, b601, b651, b701, b751, b801, b851, b901, b951
+from x1001 import X
+for mod in (b051, b101, b151, b201, b251, b301, b351, b401, b451, b501,
+            b551, b601, b651, b701, b751, b801, b851, b901, b951):
     for t in mod.R:
         d = dict(forms=t[1], why=t[2], trick=t[3], usage=t[4], own=t[5], action=t[6], cw=t[7], diff=t[8])
         if len(t) > 9:
@@ -20,7 +23,24 @@ OUT = sys.argv[1]
 START, END = int(sys.argv[2]), int(sys.argv[3])  # 1-based, inclusive
 N = END - START + 1
 
-words = sorted(json.load(open(SEED + "words.json")), key=lambda x: x["orderIndex"])[START - 1:END]
+seed_words = sorted(json.load(open(SEED + "words.json")), key=lambda x: x["orderIndex"])
+words = seed_words[START - 1:END]
+
+
+def norm(s):
+    # "apologise"/"apologize" and "run out"/"run out of" are the same headword for de-duplication.
+    s = re.sub(r"is(e|ed|ing)$", r"iz\1", s.strip().lower())
+    return re.sub(r" (of|on|to|with)$", "", s)
+
+
+if END > len(seed_words):
+    # Past the app's 1,000: take the 910-word workbook (54 columns), skipping words the app already has.
+    from openpyxl import load_workbook
+    rows = list(load_workbook(os.environ["WM910"], read_only=True)["Words 1001+"].iter_rows(values_only=True))[2:]
+    have = {norm(w["word"]) for w in seed_words}
+    extra = [r for r in rows if r[2] and norm(str(r[2])) not in have]
+    first = max(START, len(seed_words) + 1) - len(seed_words) - 1
+    words += [{"wordId": r[1], "_row54": r} for r in extra[first:END - len(seed_words)]]
 quiz = {q["wordId"]: q for q in json.load(open(SEED + "quiz_items.json"))}
 prac, chunks = defaultdict(list), defaultdict(list)
 for p in sorted(json.load(open(SEED + "practice_items.json")), key=lambda x: x["orderIndex"]):
@@ -54,7 +74,16 @@ def strip_paren(s):
     return re.sub(r"\s*\([^()]*\)\s*$", "", s).strip()
 
 
+def row_for_54(i, w):
+    r = list(w["_row54"])
+    spelling, action = X[w["wordId"]]
+    act = f"Before: {action[0]} → During: {action[1]} → After: {action[2]}" if action else ""
+    return [i] + r[1:20] + [act] + r[20:26] + [spelling] + r[26:54]
+
+
 def row_for(i, w):
+    if "_row54" in w:
+        return row_for_54(i, w)
     wid, a, q = w["wordId"], A[w["wordId"]], quiz[w["wordId"]]
     ex = [p["text"] for p in prac[wid] if p["type"] == "EXAMPLE"]
     one = lambda t: next((p["text"] for p in prac[wid] if p["type"] == t), "")
@@ -139,7 +168,11 @@ notes = [
     (f"WordMaster 2000 — Batch: words {START}–{END}", True),
     (f"What this is: words {START}–{END} of the planned 2,000 non-noun words, in the 56-column format "
      "(the 54-column WordMaster reference + 2 new columns). Same format as the 50-word sample.", False),
-    (f"Contents: {N} words from the Speak Sarthi app, in the app's own order.", False),
+    (f"Contents: {sum(1 for w in words if '_row54' not in w)} words from the Speak Sarthi app, in the app's own order"
+     + (f", then {sum(1 for w in words if '_row54' in w)} from the 910-word workbook (words 1001+), skipping any "
+        "the app already has — including spelling variants like apologise/apologize and near-duplicates like "
+        "run out / run out of. Those rows keep their original 54 columns; only the 2 new columns were added."
+        if any('_row54' in w for w in words) else "."), False),
     ("", False),
     ("The 2 new columns (orange headers, marked ★NEW):", True),
     ("• Action Sequence (Before → During → After) — in section 2. Filled for verbs and phrasal verbs; "
@@ -176,7 +209,7 @@ for j, h in enumerate(hdr, start=1):
     c = cs.cell(1, j, h)
     c.font, c.fill = arial(sz=10, b=True, color="FFFFFF"), PatternFill("solid", fgColor="3F2A8C")
     cs.column_dimensions[get_column_letter(j)].width = 14 if j < 3 else 44
-fixed = [w for w in words if "mw" in A[w["wordId"]]]
+fixed = [w for w in words if "mw" in A.get(w["wordId"], {})]
 for r, w in enumerate(fixed, start=2):
     a = A[w["wordId"]]
     for j, v in enumerate([w["wordId"], w["word"], w["commonMistakeWrong"], w["commonMistakeCorrect"], a["mw"], a["mc"]], start=1):

@@ -6,8 +6,8 @@ from openpyxl.comments import Comment
 from openpyxl.utils import get_column_letter
 sys.path.insert(0, sys.path[0])
 from authored import A
-import b051, b101, b151, b201, b251
-for mod in (b051, b101, b151, b201, b251):
+import b051, b101, b151, b201, b251, b301, b351, b401, b451, b501
+for mod in (b051, b101, b151, b201, b251, b301, b351, b401, b451, b501):
     for t in mod.R:
         d = dict(forms=t[1], why=t[2], trick=t[3], usage=t[4], own=t[5], action=t[6], cw=t[7], diff=t[8])
         if len(t) > 9:
@@ -70,7 +70,7 @@ def row_for(i, w):
         # 2
         w["hindiMeaning"], f'{w["simpleMeaning"]} {w["plainExplanation"]}', ex[0], ex[1], ex[2],
         ", ".join(ch("COLLOCATION")), ", ".join(ch("PHRASAL")) or "—", ", ".join(w["typicalContexts"]),
-        f"Before: {a['action'][0]} → During: {a['action'][1]} → After: {a['action'][2]}",
+        (f"Before: {a['action'][0]} → During: {a['action'][1]} → After: {a['action'][2]}" if a["action"] else ""),
         # 3
         (ch("PATTERN") or [""])[0], a["forms"], a.get("mw", w["commonMistakeWrong"]), a.get("mc") or strip_paren(w["commonMistakeCorrect"]),
         a["why"], w["pronunciationTip"], w["spellingTip"],

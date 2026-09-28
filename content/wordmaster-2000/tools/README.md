@@ -4,7 +4,7 @@ Builds the 56-column WordMaster workbooks from the Speak Sarthi seed plus the
 hand-written fields in this folder.
 
 - `authored.py` — words 1–50 (dict form)
-- `b051.py` … `b251.py` — words 51–300, one tuple per word:
+- `b051.py` … `b501.py` — words 51–550, one tuple per word (action is None for non-verbs):
   `(id, word forms, why it's wrong, memory trick, usage tip, write-your-own,
   (before, during, after), confusing word, difference[, new mistake, new correction])`
 - `build.py` — reads the seed, merges the above, writes the workbook

@@ -1,0 +1,386 @@
+<title>Edusarthi Screen Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: app ke apne tokens (globals.css) — phone frames ek row me, har phone ke saath numbered "yahan badlo" callouts. */
+:root{
+  --ink:#1a1420; --ink-muted:#6b6470; --mist:#a89bb0;
+  --paper:#faf7f9; --paper-dim:#f0e9ed; --surface:#ffffff;
+  --accent:#dc2087; --accent-dark:#b81a70; --on-accent:#fff;
+  --success:#2f9e64; --warn:#b7791f; --error:#d6455a;
+  --border:rgba(26,20,32,.1); --border-strong:rgba(26,20,32,.2);
+  --player-bg:#1a1420; --player-text:#cfc6d4;
+  --frame:#2a2135; --canvas:#f4eef2;
+  --f-display:"Sora",system-ui,sans-serif; --f-body:"Inter",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#ece7f0; --ink-muted:#928a99; --mist:#7d7288;
+  --paper:#120e17; --paper-dim:#1c1723; --surface:#1c1723;
+  --accent:#ff5fae; --accent-dark:#ff8bc4; --on-accent:#120e17;
+  --success:#4cc98a; --warn:#e0a84a; --error:#ff6b7f;
+  --border:rgba(236,231,240,.12); --border-strong:rgba(236,231,240,.24);
+  --player-bg:#251e2e; --player-text:#c8c0ce; --frame:#3a3045; --canvas:#17121d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ink:#ece7f0; --ink-muted:#928a99; --mist:#7d7288;
+  --paper:#120e17; --paper-dim:#1c1723; --surface:#1c1723;
+  --accent:#ff5fae; --accent-dark:#ff8bc4; --on-accent:#120e17;
+  --success:#4cc98a; --warn:#e0a84a; --error:#ff6b7f;
+  --border:rgba(236,231,240,.12); --border-strong:rgba(236,231,240,.24);
+  --player-bg:#251e2e; --player-text:#c8c0ce; --frame:#3a3045; --canvas:#17121d; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--canvas);color:var(--ink);font:15px/1.55 var(--f-body);padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h1{font-size:clamp(26px,4vw,38px)}
+h2{font-size:22px}
+h3{font-size:16px}
+p{margin:0}
+.lede{color:var(--ink-muted);max-width:68ch;margin-top:8px}
+.eyebrow{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+section>header{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:14px;font-size:13px;color:var(--ink-muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.d-ok{background:var(--success)}.d-wip{background:var(--warn)}.d-no{background:var(--error)}
+
+/* flow */
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px}
+.step{flex:1 1 150px;min-width:0;padding:10px 12px;border-radius:10px;background:var(--paper-dim)}
+.step b{display:block;font:600 12px var(--f-mono);color:var(--accent)}
+.step span{font-size:13px}
+.arrow{align-self:center;color:var(--mist);font-family:var(--f-mono)}
+.step.missing{background:transparent;border:1.5px dashed var(--error)}
+.step.missing b{color:var(--error)}
+
+/* screen block */
+.screens{display:flex;flex-direction:column;gap:36px}
+.screen{display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:760px){.screen{grid-template-columns:minmax(0,1fr)}.phone{margin:0 auto}}
+.meta{display:flex;flex-direction:column;gap:10px;min-width:0}
+.route{font:13px var(--f-mono);color:var(--ink-muted)}
+.who{display:inline-block;font:600 11px var(--f-mono);padding:2px 8px;border-radius:99px;border:1px solid var(--border-strong);margin-right:6px}
+.status{font-size:13px}
+.contains{margin:0;padding-left:18px;font-size:14px;color:var(--ink-muted)}
+.contains li{margin:2px 0}
+.changes{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.changes li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px}
+.changes .n{width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:600 12px var(--f-mono);display:grid;place-items:center}
+.changes li.p0{border-left:3px solid var(--error)}
+.changes li.p1{border-left:3px solid var(--warn)}
+.changes .file{display:block;font:12px var(--f-mono);color:var(--ink-muted);margin-top:3px;overflow-wrap:anywhere}
+.tag{font:600 10px var(--f-mono);padding:1px 6px;border-radius:4px;margin-right:6px;vertical-align:1px}
+.tag.p0{background:color-mix(in srgb,var(--error) 15%,transparent);color:var(--error)}
+.tag.p1{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.tag.p2{background:var(--paper-dim);color:var(--ink-muted)}
+
+/* phone */
+.phone{width:300px;max-width:100%;border:10px solid var(--frame);border-radius:34px;background:var(--paper);overflow:hidden;box-shadow:0 12px 30px rgba(26,20,32,.15);position:relative}
+.phone .notch{height:22px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font:600 10px var(--f-mono);color:var(--ink-muted)}
+.app-hd{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--paper)}
+.logo{font:700 14px var(--f-display)}.logo i{font-style:normal;color:var(--accent)}
+.burger{width:18px;height:12px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);position:relative}
+.burger:after{content:"";position:absolute;left:0;right:0;top:3px;border-top:2px solid var(--ink)}
+.scr{padding:12px;display:flex;flex-direction:column;gap:9px;font-size:11.5px;line-height:1.4}
+.scr.tall{max-height:none}
+.t-h{font:700 16px var(--f-display)}
+.t-sub{color:var(--ink-muted);font-size:10.5px}
+.back{color:var(--ink-muted);font-size:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:6px;position:relative}
+.card-t{font:600 11.5px var(--f-display)}
+.btn{display:inline-block;background:var(--accent);color:var(--on-accent);font:600 10.5px var(--f-body);padding:6px 10px;border-radius:8px;text-align:center}
+.btn.o{background:transparent;color:var(--ink);border:1px solid var(--border-strong)}
+.btn.full{display:block}
+.row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.badge{font:600 9px var(--f-mono);padding:2px 6px;border-radius:99px;background:var(--paper-dim);color:var(--ink-muted);white-space:nowrap}
+.badge.acc{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.badge.ok{background:color-mix(in srgb,var(--success) 15%,transparent);color:var(--success)}
+.badge.err{background:color-mix(in srgb,var(--error) 15%,transparent);color:var(--error)}
+.player{background:var(--player-bg);color:var(--player-text);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.wave{height:22px;background:repeating-linear-gradient(90deg,var(--accent) 0 2px,transparent 2px 5px);opacity:.8;border-radius:3px}
+.pctl{display:flex;justify-content:space-between;font:10px var(--f-mono)}
+.slider{display:flex;flex-direction:column;gap:3px}
+.track{height:5px;border-radius:99px;background:var(--paper-dim);position:relative}
+.track i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--accent)}
+.track b{position:absolute;top:-4px;width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);transform:translateX(-50%)}
+.note{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:6px;align-items:start;padding:5px 0;border-top:1px solid var(--border)}
+.note .ts{font:600 10px var(--f-mono);color:var(--accent)}
+.field{border:1px solid var(--border-strong);border-radius:7px;padding:6px 8px;color:var(--mist);background:var(--surface);font-size:10.5px}
+.field.area{height:40px}
+.pin{position:absolute;right:-8px;top:-8px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:600 11px var(--f-mono);display:grid;place-items:center;box-shadow:0 0 0 3px var(--paper);z-index:2}
+.pin.l{right:auto;left:-8px}
+.ghost-new{border:1.5px dashed var(--accent);border-radius:10px;padding:8px 10px;color:var(--accent);font-size:10.5px;position:relative;background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.ghost-new b{font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;display:block;margin-bottom:2px}
+.rec{width:54px;height:54px;border-radius:50%;background:var(--accent);margin:4px auto;box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 18%,transparent)}
+.seg{display:flex;border:1px solid var(--border-strong);border-radius:8px;overflow:hidden;font-size:10px}
+.seg span{flex:1;text-align:center;padding:5px}
+.seg .on{background:var(--accent);color:var(--on-accent)}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;text-align:center}
+.stats b{display:block;font:700 13px var(--f-mono)}
+.stats small{font-size:7.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted)}
+.bottom-note{font-size:9.5px;color:var(--ink-muted)}
+
+/* mini grid for other screens */
+.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.mcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.mcard ul{margin:0;padding-left:16px;font-size:13.5px;color:var(--ink-muted)}
+.mcard .fix{font-size:13px;border-top:1px solid var(--border);padding-top:8px}
+
+/* priority table */
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+tr:last-child td{border-bottom:0}
+td code{overflow-wrap:anywhere}
+.src{font-size:13px;color:var(--ink-muted)}
+</style>
+
+<div class="wrap">
+
+<section>
+  <p class="eyebrow">Edusarthi · phone view plan · audit par focus</p>
+  <h1>Kaunsa screen, usme kya, aur kahan badalna hai</h1>
+  <p class="lede">Ye map branch <code>claude/festive-thompson-k5upud</code> ke asli code se bana hai (Next.js app, <code>app/(student)</code> aur <code>app/(teacher)</code>). Har phone jaisa abhi code me hai waisa dikhata hai. Gulaabi dotted box = naya cheez jo add karni hai. Numbered pin = right side wali change list.</p>
+  <div class="legend">
+    <span><i class="dot d-ok"></i>Chal ke test hua</span>
+    <span><i class="dot d-wip"></i>Code likha hai, kabhi chala nahi</span>
+    <span><i class="dot d-no"></i>Bana hi nahi</span>
+  </div>
+</section>
+
+<section>
+  <header><p class="eyebrow">Audit loop</p><h2>Ek audit ka safar</h2>
+  <p class="lede">Poora app isi loop ke liye hai. Abhi tak ye loop ek baar bhi end-to-end nahi chala hai — recorder, upload, claim, rubric, email sab untested hai.</p></header>
+  <div class="flow">
+    <div class="step"><b>Student</b><span>Exercise chuno → record / upload</span></div><span class="arrow">→</span>
+    <div class="step"><b>PENDING</b><span>Queue me, oldest first</span></div><span class="arrow">→</span>
+    <div class="step"><b>IN_REVIEW</b><span>Teacher ne page khola = claim</span></div><span class="arrow">→</span>
+    <div class="step"><b>Rubric</b><span>5 score + notes + summary</span></div><span class="arrow">→</span>
+    <div class="step"><b>REVIEWED</b><span>Student audit padhe, time pe tap karke sune</span></div>
+    <div class="step missing"><b>RETURNED ✕</b><span>"Wapas bhejo" — enum hai, button/API nahi</span></div>
+  </div>
+</section>
+
+<section>
+  <header><p class="eyebrow">Audit screens · priority 1</p><h2>Audit ke 4 main screens</h2></header>
+  <div class="screens">
+
+  <!-- 1. Practice / submit -->
+  <article class="screen">
+    <div class="phone" aria-label="Practice screen mockup">
+      <div class="notch"><span>9:41</span><span>4G ▮▮▮</span></div>
+      <div class="app-hd"><span class="logo">edu<i>sarthi</i></span><span class="burger"></span></div>
+      <div class="scr">
+        <span class="back">← Everyday Conversations</span>
+        <span class="t-h">Introduce yourself</span>
+        <div class="card"><span class="card-t">What to do</span><span class="t-sub">Speak for 60–90 seconds about who you are and what you do.</span></div>
+        <div class="seg"><span class="on">Record</span><span>Upload file</span></div>
+        <div class="card" style="align-items:center"><div class="rec"></div><span class="mono">00:00 / 03:00</span></div>
+        <div class="ghost-new"><span class="pin">1</span><b>NEW</b>Upload 62% ▓▓▓▓▓░░░ · "network slow hai, ruko"</div>
+        <span class="btn full">Send to a teacher</span>
+        <div class="card"><span class="card-t">Your earlier attempts</span>
+          <div class="row"><span>12 Sep</span><span class="badge ok">Audit ready</span></div>
+          <div class="row"><span>20 Sep</span><span class="badge">Waiting</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="meta">
+      <div><span class="who">STUDENT</span><span class="route">/practice/[id]</span></div>
+      <h3>Practice — record ya upload</h3>
+      <p class="status"><i class="dot d-wip"></i>Recorder aur upload dono kabhi chalaye nahi gaye</p>
+      <ul class="contains">
+        <li>Exercise ka prompt + "kaise record karein" tip (audio / video / photo ke hisaab se)</li>
+        <li>Record ya Upload toggle → preview → "Send to a teacher"</li>
+        <li>Pichhle attempts status badge ke saath</li>
+      </ul>
+      <ol class="changes">
+        <li class="p0"><span class="n">1</span><div><span class="tag p0">P0</span>Upload progress bar do. Abhi <code>fetch</code> se PUT hota hai, progress nahi milta — sasta phone + patchy data pe student ko lagega app atak gaya. <code>XMLHttpRequest</code> use karo.<span class="file">components/media/SubmitPanel.tsx</span></div></li>
+        <li class="p0"><span class="n">+</span><div><span class="tag p0">P0</span>Submission row banane se pehle storage me file hai ya nahi check karo (HEAD). Warna teacher ko khaali file milegi aur wo item hamesha IN_REVIEW me atak jayega.<span class="file">app/api/submissions/route.ts · lib/storage.ts</span></div></li>
+        <li class="p1"><span class="n">+</span><div><span class="tag p1">P1</span>Real phone pe test: Android Chrome + iPhone Safari par record karke bhejo. Safari codec logic <code>lib/media.ts</code> me likha hai par chala nahi.<span class="file">components/media/Recorder.tsx</span></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 2. Queue -->
+  <article class="screen">
+    <div class="phone" aria-label="Teacher queue mockup">
+      <div class="notch"><span>9:41</span><span>4G ▮▮▮</span></div>
+      <div class="app-hd"><span class="logo">edu<i>sarthi</i></span><span class="burger"></span></div>
+      <div class="scr">
+        <span class="t-h">Review queue</span>
+        <span class="t-sub">3 waiting, oldest first.</span>
+        <span class="card-t">Open with you</span>
+        <div class="card"><div class="row"><div><span class="card-t">Ordering at a café</span><br><span class="t-sub">Priya · submitted 5h ago</span></div><span class="btn">Continue</span></div>
+          <div class="ghost-new"><span class="pin">2</span><b>NEW</b>"Release" — queue me wapas daalo</div></div>
+        <span class="card-t">Waiting</span>
+        <div class="card"><div class="row"><div><span class="card-t">Introduce yourself</span><br><span class="t-sub">Rahul · 2d ago · 74s</span></div><span class="badge">audio</span></div><span class="btn o">Review</span></div>
+        <div class="card"><div class="row"><div><span class="card-t">Describe your city</span><br><span class="t-sub">Aman · 1d ago · 58s</span></div><span class="badge">video</span></div><span class="btn o">Review</span></div>
+        <div class="card"><div class="row"><div><span class="card-t">Letter to a friend</span><br><span class="t-sub">Sana · 3h ago</span></div><span class="badge">image</span></div><span class="btn o">Review</span></div>
+      </div>
+    </div>
+    <div class="meta">
+      <div><span class="who">TEACHER</span><span class="route">/queue</span></div>
+      <h3>Review queue</h3>
+      <p class="status"><i class="dot d-wip"></i>Kabhi khola nahi gaya (role flip karke test karna baaki)</p>
+      <ul class="contains">
+        <li>"Open with you" — jo is teacher ne claim kiye, pehle</li>
+        <li>"Waiting" — PENDING, sabse purana upar, max 50</li>
+        <li>Har card: exercise, student naam, kitni der se, length, media type</li>
+      </ul>
+      <ol class="changes">
+        <li class="p0"><span class="n">2</span><div><span class="tag p0">P0</span>Release-claim action. Review page kholte hi claim ho jaata hai, to galti se khola hua item lock ho jaata hai aur koi aur teacher le nahi sakta. Card aur review page dono pe "Queue me wapas" button chahiye.<span class="file">app/(teacher)/queue/page.tsx · app/api/feedback/route.ts</span></div></li>
+        <li class="p2"><span class="n">+</span><div><span class="tag p2">P2</span>Phone pe card me button neeche full-width rakho, row me naam truncate ho raha hai. 50 se zyada hone par "load more".</div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 3. Review / Rubric -->
+  <article class="screen">
+    <div class="phone" aria-label="Teacher rubric form mockup">
+      <div class="notch"><span>9:41</span><span>4G ▮▮▮</span></div>
+      <div class="app-hd"><span class="logo">edu<i>sarthi</i></span><span class="burger"></span></div>
+      <div class="scr">
+        <span class="t-h">Introduce yourself</span>
+        <span class="t-sub">Rahul · 26/9/2026</span>
+        <div class="card"><span class="card-t">What they were asked</span><span class="t-sub">Speak for 60–90 seconds about who you are…</span></div>
+        <div class="card"><span class="pin">3</span><span class="card-t">Submission</span>
+          <div class="player"><div class="wave"></div><div class="pctl"><span>▶ 0:42</span><span>1:14</span></div></div></div>
+        <div class="card"><span class="pin">4</span><span class="card-t">Scores</span>
+          <div class="slider"><div class="row"><span>Pronunciation</span><span class="mono">5</span></div><div class="track"><i style="width:50%"></i><b style="left:50%"></b></div></div>
+          <div class="slider"><div class="row"><span>Grammar</span><span class="mono">5</span></div><div class="track"><i style="width:50%"></i><b style="left:50%"></b></div></div>
+          <div class="slider"><div class="row"><span>Fluency</span><span class="mono">5</span></div><div class="track"><i style="width:50%"></i><b style="left:50%"></b></div></div>
+          <div class="slider"><div class="row"><span>Vocabulary · Confidence</span><span class="mono">5 · 5</span></div><div class="track"><i style="width:50%"></i><b style="left:50%"></b></div></div>
+        </div>
+        <div class="card"><span class="card-t">Timestamped notes</span>
+          <div class="note"><span class="ts">0:12</span><span>"I am working in" → "I work in"</span><span class="badge err">major</span></div>
+          <div class="row" style="gap:6px"><div class="field" style="width:60px">At 42.3</div><span class="btn o">Use current time</span></div>
+          <div class="field area">What did you hear at this moment?</div>
+          <div class="row"><span class="seg" style="flex:0 0 110px"><span class="on">Minor</span><span>Major</span></span><span class="btn">Add note</span></div>
+        </div>
+        <div class="card"><span class="card-t">Summary</span><div class="field area">What went well…</div><span class="t-sub">0 characters — at least 40 needed.</span></div>
+        <div class="ghost-new"><span class="pin">5</span><b>NEW</b>"Draft saved 10s ago" · Send back to student · Confirm step</div>
+        <span class="btn full">Send audit to student</span>
+        <span class="bottom-note">This cannot be edited after sending.</span>
+      </div>
+    </div>
+    <div class="meta">
+      <div><span class="who">TEACHER</span><span class="route">/review/[id]</span></div>
+      <h3>Audit form — sabse important screen</h3>
+      <p class="status"><i class="dot d-wip"></i>Kabhi submit nahi hua. Ye poora form untested hai.</p>
+      <ul class="contains">
+        <li>Exercise ka sawaal · player (audio/video) ya photo</li>
+        <li>5 sliders 0–10 (default 5)</li>
+        <li>Notes: time (seconds me) + text + minor/major, kam se kam 1 zaroori (photo pe nahi)</li>
+        <li>Summary kam se kam 40 akshar → "Send audit to student"</li>
+      </ul>
+      <ol class="changes">
+        <li class="p0"><span class="n">3</span><div><span class="tag p0">P0</span>Phone pe player upar scroll ho jaata hai, jab teacher neeche note likh raha hota hai. Player ko <b>sticky mini-player</b> banao, aur usi pe "+ Note at 0:42" button — abhi time yaad rakh ke neeche "Use current time" dabana padta hai.<span class="file">components/review/RubricForm.tsx</span></div></li>
+        <li class="p0"><span class="n">5</span><div><span class="tag p0">P0</span>Draft autosave jodo. <code>lib/draftStorage.ts</code> pehle se likha hua hai par <b>kahin import nahi hai</b>. Phone pe call aayi ya app switch hua to poora audit gaya. Bas RubricForm me wire karna hai.<span class="file">components/review/RubricForm.tsx ← lib/draftStorage.ts</span></div></li>
+        <li class="p1"><span class="n">4</span><div><span class="tag p1">P1</span>Sliders 5 pe shuru hote hain, to teacher bina chhue bhi 5/5/5/5/5 bhej sakta hai. Har score ko "touched" hona zaroori karo, ya 0–10 ke tap-chips do (thumb ke liye slider se aasaan).</div></li>
+        <li class="p1"><span class="n">5</span><div><span class="tag p1">P1</span>"Send" ke baad edit nahi ho sakta, par koi confirm step nahi. Send se pehle ek chhota summary sheet dikhao (scores + notes count).</div></li>
+        <li class="p1"><span class="n">5</span><div><span class="tag p1">P1</span>"Send back to student" (RETURNED) — reason field ke saath. Schema change chahiye (<code>Submission</code> pe reason), isliye pehle approval.<span class="file">prisma/schema.prisma · app/api/feedback/route.ts</span></div></li>
+        <li class="p2"><span class="n">+</span><div><span class="tag p2">P2</span>Photo submission pe notes band hain. Handwriting ke liye "line 3" jaisa text note allow karo, warna photo audit sirf summary reh jaata hai.</div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 4. Student audit -->
+  <article class="screen">
+    <div class="phone" aria-label="Student audit view mockup">
+      <div class="notch"><span>9:41</span><span>4G ▮▮▮</span></div>
+      <div class="app-hd"><span class="logo">edu<i>sarthi</i></span><span class="burger"></span></div>
+      <div class="scr">
+        <span class="back">← All audits</span>
+        <span class="t-h">Introduce yourself</span>
+        <span class="t-sub">Submitted 26/9/2026 · reviewed 27/9/2026</span>
+        <div class="ghost-new"><span class="pin">6</span><b>NEW</b>Overall 6.4 / 10 · pichhli baar se +0.8</div>
+        <div class="card"><span class="card-t">Scores</span>
+          <div class="slider"><div class="row"><span>Pronunciation</span><span class="mono">7/10</span></div><div class="track"><i style="width:70%"></i></div></div>
+          <div class="slider"><div class="row"><span>Grammar</span><span class="mono">5/10</span></div><div class="track"><i style="width:50%"></i></div></div>
+          <div class="slider"><div class="row"><span>Fluency</span><span class="mono">6/10</span></div><div class="track"><i style="width:60%"></i></div></div>
+          <div class="slider"><div class="row"><span>Vocabulary</span><span class="mono">7/10</span></div><div class="track"><i style="width:70%"></i></div></div>
+          <div class="slider"><div class="row"><span>Confidence</span><span class="mono">7/10</span></div><div class="track"><i style="width:70%"></i></div></div>
+        </div>
+        <div class="card"><span class="card-t">What your teacher said</span><span class="t-sub">Clear voice and good pace. Work on present simple for routines…</span></div>
+        <div class="card"><span class="pin">7</span><span class="card-t">Your submission</span><div class="player"><div class="wave"></div><div class="pctl"><span>▶ 0:00</span><span>1:14</span></div></div></div>
+        <div class="card"><span class="card-t">Notes</span><span class="t-sub">Press a time to hear that moment again.</span>
+          <div class="note"><span class="ts">0:12</span><span>"I am working in" → "I work in"</span><span class="badge err">major</span></div>
+          <div class="note"><span class="ts">0:48</span><span>"th" in "three" came out as "t"</span><span class="badge">minor</span></div>
+        </div>
+        <div class="ghost-new"><span class="pin">8</span><b>NEW</b>Isi exercise ko dobara try karo →</div>
+      </div>
+    </div>
+    <div class="meta">
+      <div><span class="who">STUDENT</span><span class="route">/feedback/[id]</span></div>
+      <h3>Audit padhna</h3>
+      <p class="status"><i class="dot d-wip"></i>Koi REVIEWED submission hai hi nahi, to ye page kabhi data ke saath nahi khula. Autoplay setting bhi yahin test hogi.</p>
+      <ul class="contains">
+        <li>5 score bars · teacher ka summary</li>
+        <li>Player + notes; note ka time dabao to recording wahan se chale</li>
+        <li>File gum ho jaaye to bhi audit dikhta hai (sahi decision)</li>
+      </ul>
+      <ol class="changes">
+        <li class="p1"><span class="n">6</span><div><span class="tag p1">P1</span>Sabse upar ek overall number aur pichhle audit se farq. Dashboard pe ye average pehle se calculate hota hai (<code>ScoreTrend</code>), wahi reuse karo.<span class="file">app/(student)/feedback/[id]/page.tsx</span></div></li>
+        <li class="p0"><span class="n">7</span><div><span class="tag p0">P0</span>Phone pe notes player ke neeche hain. Note ka time dabane pe audio chalta hai par player screen se bahar hota hai — student ko pata hi nahi chalta. Tap pe player ko <code>scrollIntoView</code> karo ya sticky rakho.<span class="file">components/review/AuditPlayback.tsx</span></div></li>
+        <li class="p1"><span class="n">8</span><div><span class="tag p1">P1</span>Neeche "Try this exercise again" button (<code>/practice/[exerciseId]</code>). Abhi audit padhne ke baad agla kadam koi nahi hai.</div></li>
+        <li class="p2"><span class="n">+</span><div><span class="tag p2">P2</span>Notes ko Summary se pehle rakho — student ke liye "kahan galti hui" sabse kaam ki cheez hai.</div></li>
+      </ol>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+<section>
+  <header><p class="eyebrow">Baaki screens</p><h2>Supporting pages</h2>
+  <p class="lede">Ye audit ke aas-paas ke pages hain. Inme kaam kam hai; zyada tar sirf test karna baaki hai.</p></header>
+  <div class="mini">
+    <div class="mcard"><div><span class="who">STUDENT</span><span class="route">/dashboard</span></div><h3><i class="dot d-ok"></i>Dashboard</h3>
+      <ul><li>"With a teacher" — PENDING / IN_REVIEW / RETURNED list</li><li>Average score trend chart</li><li>Latest audit ke 5 score</li><li>What to work on · Audits received count</li></ul>
+      <p class="fix"><span class="tag p1">P1</span>Header ka stats row (streak, audits) <code>(student)/layout.tsx</code> me abhi bhi "No stats yet" hai — context doc kehta hai wired hai, code nahi. Ek decide karo.</p></div>
+    <div class="mcard"><div><span class="who">STUDENT</span><span class="route">/modules</span></div><h3><i class="dot d-ok"></i>Modules</h3>
+      <ul><li>Module cards: title, description, level</li><li>Badge: kitne exercise done / total</li></ul>
+      <p class="fix"><span class="tag p2">P2</span>Theek hai. Phone pe level ko card ke upar chip banao.</p></div>
+    <div class="mcard"><div><span class="who">STUDENT</span><span class="route">/modules/[id]</span></div><h3><i class="dot d-wip"></i>Module detail</h3>
+      <ul><li>Exercise list + status badge</li><li>Start / Submit again / View audit</li><li>Enroll button</li></ul>
+      <p class="fix"><span class="tag p2">P2</span>Enroll button kabhi click nahi hua — test karo.</p></div>
+    <div class="mcard"><div><span class="who">STUDENT</span><span class="route">/feedback</span></div><h3><i class="dot d-ok"></i>Your audits</h3>
+      <ul><li>Sab REVIEWED audits, har card pe average score</li></ul>
+      <p class="fix"><span class="tag p2">P2</span>RETURNED wale bhi yahan dikhne chahiye jab wo feature bane.</p></div>
+    <div class="mcard"><div><span class="who">TEACHER</span><span class="route">/students</span></div><h3><i class="dot d-wip"></i>Students</h3>
+      <ul><li>Har student: naam, email, audits, avg, last submit</li><li>"N waiting" ya "Clear" badge</li></ul>
+      <p class="fix"><span class="tag p2">P2</span>Kabhi khola nahi. Phone pe 3 number columns tight hain — 2 line me todo.</p></div>
+    <div class="mcard"><div><span class="who">SHARED</span><span class="route">/settings · /profile</span></div><h3><i class="dot d-wip"></i>Settings, Profile</h3>
+      <ul><li>Theme (6 themes)</li><li>Email me when an audit arrives</li><li>Start playing when I open an audit</li><li>Larger text</li></ul>
+      <p class="fix"><span class="tag p2">P2</span>Teeno toggles ab code me padhe jaate hain, par visual check baaki.</p></div>
+    <div class="mcard"><div><span class="who">AUTH</span><span class="route">/login · /register · /verify</span></div><h3><i class="dot d-ok"></i>Login flow</h3>
+      <ul><li>Register → code (dev me terminal pe) → verify → dashboard</li><li>Forgot / reset password</li></ul>
+      <p class="fix"><span class="tag p1">P1</span>Password reset ke baad purane JWT valid rehte hain (<code>passwordChangedAt</code> nahi). SendGrid abhi set nahi.</p></div>
+    <div class="mcard"><div><span class="who">PUBLIC</span><span class="route">/ · /about · /support · /legal</span></div><h3><i class="dot d-ok"></i>Landing + legal</h3>
+      <ul><li>Hero, "How it works", Create account</li><li>Fake testimonials nahi (sahi)</li></ul>
+      <p class="fix"><span class="tag p1">P1</span>Privacy / Terms draft hain — launch se pehle lawyer.</p></div>
+  </div>
+</section>
+
+<section>
+  <header><p class="eyebrow">Kaam ka order</p><h2>Audit ke liye kya pehle karna hai</h2>
+  <p class="lede">Pehle ek poora round trip chalao (student submit → teacher audit → student padhe). Wo ek test recorder, upload, claim, rubric, seek, autoplay aur email sab ek saath check kar deta hai. Uske baad ye list.</p></header>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>Kya</th><th>Kyun (phone pe)</th><th>File</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag p0">P0</span></td><td>End-to-end round trip test</td><td>Audit loop kabhi chala nahi</td><td class="src">README · project-context §9</td></tr>
+      <tr><td><span class="tag p0">P0</span></td><td>Rubric draft autosave wire karo</td><td>Call / app switch pe audit gayab</td><td><code>components/review/RubricForm.tsx</code></td></tr>
+      <tr><td><span class="tag p0">P0</span></td><td>Sticky player + "note at current time"</td><td>Player scroll ho ke chhup jaata hai</td><td><code>RubricForm.tsx · AuditPlayback.tsx</code></td></tr>
+      <tr><td><span class="tag p0">P0</span></td><td>Release claim</td><td>Galti se khola item lock</td><td><code>app/api/feedback/route.ts</code></td></tr>
+      <tr><td><span class="tag p0">P0</span></td><td>Upload progress + storage HEAD check</td><td>Slow data pe atka hua lagta hai; khaali file</td><td><code>SubmitPanel.tsx · api/submissions</code></td></tr>
+      <tr><td><span class="tag p1">P1</span></td><td>Score "touched" rule + confirm before send</td><td>Bina dekhe 5/5/5 audit</td><td><code>RubricForm.tsx</code></td></tr>
+      <tr><td><span class="tag p1">P1</span></td><td>RETURNED "send back" + reason</td><td>Kharab recording ka koi rasta nahi</td><td><code>prisma/schema.prisma</code> (approval pehle)</td></tr>
+      <tr><td><span class="tag p1">P1</span></td><td>Audit page: overall score + "try again"</td><td>Padhne ke baad agla kadam nahi</td><td><code>app/(student)/feedback/[id]/page.tsx</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</div>

@@ -1,0 +1,36 @@
+Copyright (c) 2026 [YOUR FULL LEGAL NAME]
+
+All rights reserved.
+
+Speak Sarthi — proprietary software.
+
+This source code and all accompanying content (including the vocabulary
+dataset, prompts, illustrations, copy and documentation) are the
+confidential and proprietary property of the copyright holder.
+
+No permission is granted to any person to copy, modify, merge, publish,
+distribute, sublicense, sell, or create derivative works from this
+software or any part of it, nor to publish an application built from it
+to any application store or distribution channel, without the prior
+written permission of the copyright holder.
+
+Viewing this repository, where access has been granted, does not grant
+any licence to its contents.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES
+OR OTHER LIABILITY ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------
+Third-party components remain under their own licences. This project
+depends on, but does not redistribute the source of, AndroidX / Jetpack
+Compose, Room, Hilt, OkHttp, kotlinx.serialization, Coil, Play Billing
+and the Google Identity libraries. Their licences (predominantly
+Apache-2.0) apply to those components.
+--------------------------------------------------------------------
+
+NOTE TO THE OWNER: replace [YOUR FULL LEGAL NAME] above with the same
+name you will publish under on Google Play. Delete this note afterwards.

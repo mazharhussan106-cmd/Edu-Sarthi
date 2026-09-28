@@ -1,0 +1,71 @@
+# ============================================================
+# Speak Sarthi — .gitattributes
+#
+# The eol rules below are NOT cosmetic. Two real gradlew bugs were
+# found in this project during the pre-deploy audit; a third way to
+# break the same file is to let Git rewrite its line endings. A
+# gradlew checked out with CRLF fails on Linux and macOS with
+# "bad interpreter: /bin/sh^M". Pinning it to LF removes that class
+# of bug for every future clone, on every machine.
+# ============================================================
+
+# Let Git normalise text files it is confident about.
+* text=auto eol=lf
+
+# Shell entry points must be LF, always, on every platform.
+gradlew         text eol=lf
+*.sh            text eol=lf
+
+# Windows batch files must be CRLF or cmd.exe mis-parses them.
+gradlew.bat     text eol=crlf
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# Source and config: normalise.
+*.kt            text
+*.kts           text
+*.java          text
+*.ts            text
+*.tsx           text
+*.js            text
+*.json          text
+*.xml           text
+*.pro           text
+*.md            text
+*.py            text
+*.sql           text
+*.toml          text
+*.yml           text
+*.yaml          text
+*.properties    text
+*.csv           text
+*.txt           text
+
+# Binary: never touch these. The wrapper jar in particular was
+# hand-rebuilt from Gradle 8.14.3 — any byte rewrite corrupts it.
+*.jar           binary
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.webp          binary
+*.gif           binary
+*.ico           binary
+*.ttf           binary
+*.otf           binary
+*.woff          binary
+*.woff2         binary
+*.zip           binary
+*.apk           binary
+*.aab           binary
+*.keystore      binary
+*.jks           binary
+*.mp3           binary
+*.wav           binary
+*.ogg           binary
+*.m4a           binary
+*.pdf           binary
+
+# GitHub language stats: don't let generated content skew the repo.
+app/schemas/**      linguist-generated=true
+content/seed/**     linguist-generated=true
+tools/prompts_1000.csv linguist-generated=true

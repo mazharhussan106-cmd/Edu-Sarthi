@@ -27,3 +27,23 @@ SEED_DIR=/tmp/ss/app/src/main/assets/seed \
 WM910="10000000 new/WordMaster1000_Words_1001-plus.xlsx" \
   python3 content/wordmaster-2000/tools/build.py out.xlsx 551 1050
 ```
+
+## Batch 5 — core words (1551–1807)
+
+The first 1,550 skipped many of the most-used words (am/is/are, have, get, say, the/a/an …).
+`build5.py` adds them and writes a "Removed" sheet for the 68 repeats and rare words listed
+in `removed.py` (applied in the final merged file).
+
+- `h01.py` … `h04.py` — words from the HTML list (`vocabulary_database.json`), 35 fields a line;
+  the rest of the 56 columns come from the JSON. `O` dicts replace an unclear JSON field.
+- `n01.py` … `n06.py` — words written in full, 52 fields a line (field list at the top of `n01.py`).
+- `plan6.json` — what Batch 6 still has to add (261 words).
+
+```bash
+cd content/wordmaster-2000
+VOCAB_JSON="10000000 new/vocabulary_database.json" \
+  python3 tools/build5.py WordMaster2000_Batch5_Core_Words_1551-1807.xlsx WordMaster2000_{Sample,Batch1,Batch2,Batch3,Batch4}_*.xlsx
+```
+
+`build5.py` refuses to write the file if a row has a blank cell, a word or ID that is already in
+the kept 1,482, or a verb with no action sequence.

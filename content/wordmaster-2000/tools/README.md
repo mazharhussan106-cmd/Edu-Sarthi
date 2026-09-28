@@ -70,3 +70,18 @@ python3 tools/final.py WordMaster2000_FINAL.xlsx WordMaster2000_{Sample,Batch1,B
 
 The batch builders stop if a row has a blank cell, a word or ID that is already in the list, a verb
 with no action sequence, or a Find & Fix line that repeats the Common Mistake.
+
+## Extra (2001–2227) and coverage
+
+The main 2,000 left gaps in the most common spoken words (need, live, yeah, going to, and all nouns).
+`build7.py` builds the Extra list from `e01.py` (non-noun gaps), `f01.py` … `f08.py` (the nouns in the
+top 1,000) and five rows moved back from the Removed list (`RESTORED_TO_EXTRA` in `removed.py`).
+
+`coverage.py` measures how much of spoken English the list covers, using the OpenSubtitles 2018
+frequency list (`en_50k.txt` from github.com/hermitdave/FrequencyWords). `final.py` adds the Extra
+sheet, and the coverage summary when `FREQ_LIST` points to that file.
+
+```bash
+python3 tools/build7.py WordMaster2000_Extra_Words_2001-2227.xlsx WordMaster2000_{Sample,Batch1,Batch2,Batch3,Batch4,Batch5,Batch6}_*.xlsx
+FREQ_LIST=en_50k.txt python3 tools/final.py WordMaster2000_FINAL.xlsx WordMaster2000_{Sample,Batch1,Batch2,Batch3,Batch4,Batch5,Batch6,Extra}_*.xlsx
+```

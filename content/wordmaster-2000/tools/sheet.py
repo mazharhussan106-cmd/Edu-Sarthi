@@ -93,8 +93,9 @@ def old_words(paths):
     return old
 
 
-def check(rows, old, removed, strict_mistakes=True):
-    kept = {w.lower() for i, w in old.items() if i not in removed}
+def check(rows, old, removed, strict_mistakes=True, same_word_ok=()):
+    # same_word_ok: headwords allowed twice because they are different words (mean = unkind / mean = signify).
+    kept = {w.lower() for i, w in old.items() if i not in removed} - set(same_word_ok)
     ids, words = [r[1] for r in rows], [r[2].lower() for r in rows]
     assert len(set(ids)) == len(ids) and not set(ids) & set(old), "duplicate word ID"
     assert len(set(words)) == len(words), "duplicate word in batch"
@@ -111,11 +112,34 @@ def check(rows, old, removed, strict_mistakes=True):
             assert str(r[49]).split(" → ")[0].strip() != str(r[23]).strip(), (r[1], "find & fix repeats the mistake")
 
 
-def write_book(out, rows, headers, sheets, notes, start):
+def write_book(out, rows, headers, sheets, notes, start, extra=()):
     wb = Workbook()
     rm = wb.active
     rm.title = "Read Me"
-    ws = wb.create_sheet(f"Words {start}–{start + len(rows) - 1}")
+    words_sheet(wb, f"Words {start}–{start + len(rows) - 1}", rows, headers)
+    if extra:
+        words_sheet(wb, f"Extra {extra[0][0]}–{extra[-1][0]}", extra, headers)
+    for title, hdr, data, widths in sheets:
+        s = wb.create_sheet(title)
+        for j, h in enumerate(hdr, start=1):
+            c = s.cell(1, j, h)
+            c.font, c.fill = arial(sz=10, b=True, color="FFFFFF"), PatternFill("solid", fgColor="3F2A8C")
+            s.column_dimensions[get_column_letter(j)].width = widths[j - 1]
+        for i, r in enumerate(data, start=2):
+            for j, v in enumerate(r, start=1):
+                c = s.cell(i, j, v)
+                c.font, c.alignment = arial(sz=10), Alignment(wrap_text=True, vertical="top")
+        s.freeze_panes = "A2"
+
+    rm.column_dimensions["A"].width = 120
+    for r, (t, bold) in enumerate(notes, start=1):
+        c = rm.cell(r, 1, t)
+        c.font, c.alignment = arial(sz=12 if r == 1 else 10, b=bold), Alignment(wrap_text=True, vertical="top")
+    wb.save(out)
+
+
+def words_sheet(wb, title, rows, headers):
+    ws = wb.create_sheet(title)
     col = 1
     for title, colour, n in SECTIONS:
         fill = PatternFill("solid", fgColor=colour)
@@ -144,24 +168,6 @@ def write_book(out, rows, headers, sheets, notes, start):
         ws.column_dimensions[get_column_letter(j)].width = 34 if j in (14, 21, 25, 26, 38, 42) else 22
     ws.freeze_panes = "D3"
     ws.auto_filter.ref = f"A2:{get_column_letter(56)}{len(rows) + 2}"
-
-    for title, hdr, data, widths in sheets:
-        s = wb.create_sheet(title)
-        for j, h in enumerate(hdr, start=1):
-            c = s.cell(1, j, h)
-            c.font, c.fill = arial(sz=10, b=True, color="FFFFFF"), PatternFill("solid", fgColor="3F2A8C")
-            s.column_dimensions[get_column_letter(j)].width = widths[j - 1]
-        for i, r in enumerate(data, start=2):
-            for j, v in enumerate(r, start=1):
-                c = s.cell(i, j, v)
-                c.font, c.alignment = arial(sz=10), Alignment(wrap_text=True, vertical="top")
-        s.freeze_panes = "A2"
-
-    rm.column_dimensions["A"].width = 120
-    for r, (t, bold) in enumerate(notes, start=1):
-        c = rm.cell(r, 1, t)
-        c.font, c.alignment = arial(sz=12 if r == 1 else 10, b=bold), Alignment(wrap_text=True, vertical="top")
-    wb.save(out)
 
 
 def headers_from(path):

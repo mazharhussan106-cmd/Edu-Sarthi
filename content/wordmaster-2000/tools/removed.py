@@ -104,3 +104,7 @@ NOT_ADDED_B6 = {
     "envy": "less useful", "advance": "less useful", "former": "less useful",
     "specifically": "less useful", "partly": "less useful",
 }
+
+# Removed from the main 2,000 as repeats of someone/everyone/no one/anyone/until, but among the most
+# common words in spoken English, so they come back in the Extra list (after word 2,000).
+RESTORED_TO_EXTRA = ["PRN-045", "PRN-047", "PRN-048", "PRN-046", "PRP-037"]

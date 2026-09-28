@@ -20,7 +20,7 @@ list at the top of `build.py`, and run with the new range.
 
 Words past 1,000 come from the 910-word workbook (`WM910` env var), skipping any
 word the app already has (spelling variants and "run out"/"run out of" count as
-the same). Those rows keep their 54 columns; `x1001.py` supplies the 2 new ones.
+the same, as do apologise/apologize, practise/practice, afterwards/afterward and whether/whether…or). Those rows keep their 54 columns; `x1001.py`, `y1051.py` and `y1301.py` supply the 2 new ones.
 
 ```bash
 SEED_DIR=/tmp/ss/app/src/main/assets/seed \

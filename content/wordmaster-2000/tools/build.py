@@ -9,6 +9,12 @@ from authored import A
 import b051, b101, b151, b201, b251, b301, b351, b401, b451, b501
 import b551, b601, b651, b701, b751, b801, b851, b901, b951
 from x1001 import X
+import y1051, y1301
+for _mod in (y1051, y1301):
+    # "ID | spelling tip | before ; during ; after" — the action part only for verbs.
+    for _line in _mod.TEXT.strip().splitlines():
+        _id, _tip, _act = [p.strip() for p in (_line + " |").split("|")[:3]]
+        X[_id] = (_tip, tuple(a.strip() for a in _act.split(";")) if _act else None)
 for mod in (b051, b101, b151, b201, b251, b301, b351, b401, b451, b501,
             b551, b601, b651, b701, b751, b801, b851, b901, b951):
     for t in mod.R:
@@ -28,8 +34,12 @@ words = seed_words[START - 1:END]
 
 
 def norm(s):
-    # "apologise"/"apologize" and "run out"/"run out of" are the same headword for de-duplication.
-    s = re.sub(r"is(e|ed|ing)$", r"iz\1", s.strip().lower())
+    # Treat spelling variants and near-duplicates as one headword: apologise/apologize,
+    # practise/practice, afterwards/afterward, run out of/run out, whether/whether...or.
+    s = s.strip().lower().split("...")[0].strip()
+    s = {"practise": "practice"}.get(s, s)
+    s = re.sub(r"is(e|ed|ing)$", r"iz\1", s)
+    s = re.sub(r"wards$", "ward", s)
     return re.sub(r" (of|on|to|with)$", "", s)
 
 

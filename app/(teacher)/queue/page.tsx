@@ -51,6 +51,7 @@ const ROW_SELECT = {
   durationSec: true,
   student: { select: { publicId: true } },
   exercise: { select: { title: true, module: { select: { level: true } } } },
+  word: { select: { text: true } },
 } as const;
 
 export default async function QueuePage({
@@ -174,7 +175,9 @@ export default async function QueuePage({
                     <td className="px-4 py-3 font-mono text-xs text-ink">
                       {displayId(s.student.publicId)}
                     </td>
-                    <td className="max-w-64 truncate px-4 py-3 text-ink">{s.exercise.title}</td>
+                    <td className="max-w-64 truncate px-4 py-3 text-ink">
+                      {s.word ? `Word: ${s.word.text}` : s.exercise.title}
+                    </td>
                     <td className="px-4 py-3">
                       <Badge variant="accent">L{s.exercise.module.level}</Badge>
                     </td>

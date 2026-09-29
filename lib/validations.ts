@@ -190,6 +190,8 @@ export const submissionSchema = z.object({
     .nullable(),
   /// Set when this replaces a submission a teacher sent back.
   retryOfId: z.string().min(1).optional(),
+  /// Set when recorded from a flashcard.
+  wordId: z.string().min(1).optional(),
 });
 
 // --- Account ---------------------------------------------------------------

@@ -51,6 +51,13 @@ export default async function DossierPage({
     where: { publicId, role: "STUDENT" },
     select: {
       publicId: true,
+      // Words the student marked "Doubt — ask teacher" on a flashcard.
+      cardStates: {
+        where: { doubt: true },
+        orderBy: { lastReviewedAt: "desc" },
+        take: 20,
+        select: { note: true, word: { select: { text: true, code: true } } },
+      },
       createdAt: true,
       submissions: {
         orderBy: { createdAt: "asc" },
@@ -209,6 +216,21 @@ export default async function DossierPage({
           </div>
         </>
       )}
+
+      {student.cardStates.length > 0 ? (
+        <Card className="mt-4">
+          <CardTitle>Flashcard doubts</CardTitle>
+          <p className="mt-1 text-xs text-ink-muted">Words this student asked a teacher to explain.</p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {student.cardStates.map((c) => (
+              <li key={c.word.code} className="rounded-lg bg-paper-dim px-2.5 py-1.5 text-sm text-ink" title={c.note ?? undefined}>
+                {c.word.text}
+                {c.note ? <span className="block max-w-56 truncate text-xs text-ink-muted">“{c.note}”</span> : null}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
 
       <Card className="mt-4">
         <CardTitle>History</CardTitle>

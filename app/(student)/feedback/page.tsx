@@ -48,6 +48,7 @@ export default async function AuditsPage({
       status: true,
       createdAt: true,
       exercise: { select: { title: true, prompt: true } },
+      word: { select: { text: true } },
       retry: { select: { id: true } },
       feedback: {
         select: {
@@ -124,7 +125,7 @@ export default async function AuditsPage({
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-display text-sm font-bold text-ink">
-                          {s.exercise.title}
+                          {s.word ? `Word: ${s.word.text}` : s.exercise.title}
                         </p>
                         <p className="mt-0.5 line-clamp-1 text-xs text-ink-muted">
                           {s.exercise.prompt}

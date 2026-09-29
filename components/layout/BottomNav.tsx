@@ -1,5 +1,5 @@
-// Owns the student app's bottom navigation bar on phones: Home, Learn, My
-// Audits, Profile. Hidden from md upward, where the header carries the links.
+// Owns the student app's bottom navigation bar on phones: Dashboard,
+// Flashcard, Audited, Class, Profile. Hidden from md upward, where the header carries the links.
 //
 // It deliberately hides itself on focused screens — recording, reading one
 // audit, re-recording — so a thumb reaching for Stop never lands on "Home".
@@ -8,15 +8,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ClipboardCheck, House, UserRound } from "lucide-react";
+import { ClipboardCheck, House, Layers, UserRound, Video } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { STUDENT_LINKS } from "@/lib/studentNav";
 
 const ICONS = {
   "/dashboard": House,
-  "/modules": BookOpen,
+  "/flashcards": Layers,
   "/feedback": ClipboardCheck,
+  "/class": Video,
   "/profile": UserRound,
 } as const;
 
@@ -33,13 +34,15 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-nav-bg backdrop-blur md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-5">
         {STUDENT_LINKS.map((link) => {
           const Icon = ICONS[link.href as keyof typeof ICONS];
           const active =
             pathname === link.href || pathname.startsWith(`${link.href}/`) ||
             // Settings is reached from Profile, so Profile stays lit there.
-            (link.href === "/profile" && pathname.startsWith("/settings"));
+            (link.href === "/profile" && pathname.startsWith("/settings")) ||
+            // Speaking modules are reached from Class, so Class stays lit there.
+            (link.href === "/class" && (pathname.startsWith("/modules") || pathname.startsWith("/practice")));
           return (
             <li key={link.href}>
               <Link

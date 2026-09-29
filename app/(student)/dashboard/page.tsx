@@ -21,6 +21,7 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { ScoreTrend, type TrendPoint } from "@/components/dashboard/ScoreTrend";
 import { DAILY_GOAL, sentToday, streakDays } from "@/lib/progress";
 import { TodayStrip } from "@/components/student/TodayStrip";
+import { deckCounts } from "@/lib/flashcards";
 
 // Anything reflecting user state must not be cached, or one student's view is
 // served to everyone until it expires.
@@ -91,7 +92,7 @@ export default async function DashboardPage() {
         },
       },
     }),
-    prisma.module.count(),
+    prisma.module.count({ where: { isSystem: false } }),
     // Dates only, for the streak. A year is longer than any streak worth
     // showing, and bounds the query for a student who has sent thousands.
     prisma.submission.findMany({
@@ -107,11 +108,13 @@ export default async function DashboardPage() {
     }),
     // The first exercise, in curriculum order, this student has never tried.
     prisma.exercise.findFirst({
-      where: { submissions: { none: { studentId } } },
+      where: { submissions: { none: { studentId } }, module: { isSystem: false } },
       orderBy: [{ module: { level: "asc" } }, { title: "asc" }],
       select: { id: true, title: true, module: { select: { level: true } } },
     }),
   ]);
+
+  const cards = await deckCounts(studentId!, "WORD");
 
   const dates = recent.map((r) => r.createdAt);
   const streak = streakDays(dates);
@@ -124,6 +127,14 @@ export default async function DashboardPage() {
         href: `/feedback/${toRedo.id}`,
         cta: "Open it",
       }
+    : cards.due > 0 || cards.newLeft > 0
+      ? {
+          eyebrow: "Flashcards",
+          title: cards.due > 0 ? `Review ${cards.due} word${cards.due === 1 ? "" : "s"}` : `Learn ${cards.newLeft} new words`,
+          body: cards.due > 0 ? "These are due today. Reviewing on time is what makes them stick." : "Today's new words are waiting.",
+          href: "/flashcards",
+          cta: "Open flashcards",
+        }
     : nextExercise
       ? {
           eyebrow: `Next up · Level ${nextExercise.module.level}`,

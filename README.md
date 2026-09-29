@@ -94,6 +94,21 @@ with:
 npx tsx prisma/backfill-public-ids.ts
 ```
 
+## Flashcards
+
+2,227 WordMaster words live in `content/wordmaster-2000/words.json`. Load or
+update them (safe to re-run; students' progress is kept):
+
+```powershell
+npx tsx prisma/import-words.ts
+```
+
+If the Excel changes, regenerate the JSON first:
+
+```powershell
+python content/wordmaster-2000/tools/export_json.py
+```
+
 ## Admin
 
 The first admin is made by hand, once: set `role` to `ADMIN` on your own row in

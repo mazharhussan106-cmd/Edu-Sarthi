@@ -15,6 +15,7 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { SubmitPanel } from "@/components/media/SubmitPanel";
 import { MAX_UPLOAD_BYTES } from "@/lib/storage";
 import { STATUS_BADGE } from "@/lib/audits";
+import { detailsOf } from "@/lib/wordCard";
 
 export const revalidate = 0;
 
@@ -29,10 +30,17 @@ const HOW_TO: Record<string, string> = {
 
 export default async function PracticePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ word?: string }>;
 }) {
-  const { id } = await params;
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
+  // Arriving from a flashcard's "Record yourself": the recording is about
+  // this word, and the teacher sees which one.
+  const word = sp.word
+    ? await prisma.word.findUnique({ where: { code: sp.word }, select: { id: true, code: true, text: true, details: true } })
+    : null;
   const session = await auth();
   const studentId = session?.user?.id;
 
@@ -46,12 +54,12 @@ export default async function PracticePage({
         expects: true,
         minSeconds: true,
         maxSeconds: true,
-        module: { select: { id: true, title: true } },
+        module: { select: { id: true, title: true, isSystem: true } },
       },
     }),
     // Scoped by studentId in the WHERE clause, not fetched and compared.
     prisma.submission.findMany({
-      where: { studentId, exerciseId: id },
+      where: { studentId, exerciseId: id, ...(word ? { wordId: word.id } : {}) },
       orderBy: { createdAt: "desc" },
       take: 5,
       select: { id: true, status: true, createdAt: true },
@@ -63,15 +71,20 @@ export default async function PracticePage({
   return (
     <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
       <Link
-        href={`/modules/${exercise.module.id}`}
+        href={word ? `/flashcards?card=${word.code}` : `/modules/${exercise.module.id}`}
         className="text-xs text-ink-muted hover:text-accent"
       >
-        ← {exercise.module.title}
+        ← {word ? `Flashcard: ${word.text}` : exercise.module.title}
       </Link>
 
       <h1 className="mt-3 font-display text-2xl font-bold text-ink">
-        {exercise.title}
+        {word ? `Say “${word.text}”` : exercise.title}
       </h1>
+      {word ? (
+        <p className="mt-1 text-sm text-ink-muted">
+          {detailsOf(word.details).hindi_meaning} · {detailsOf(word.details).ipa}
+        </p>
+      ) : null}
 
       <Card className="mt-6">
         <CardTitle>What to do</CardTitle>
@@ -94,6 +107,7 @@ export default async function PracticePage({
           expects={exercise.expects}
           maxSeconds={exercise.maxSeconds}
           maxBytes={MAX_UPLOAD_BYTES}
+          wordId={word?.id}
         />
       </div>
 

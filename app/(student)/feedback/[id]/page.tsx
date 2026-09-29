@@ -45,6 +45,8 @@ export default async function SubmissionPage({
       returnReason: true,
       returnNote: true,
       retry: { select: { id: true } },
+      wordId: true,
+      word: { select: { text: true } },
       exercise: {
         select: { id: true, title: true, prompt: true, expects: true, maxSeconds: true },
       },
@@ -80,7 +82,9 @@ export default async function SubmissionPage({
       </Link>
 
       <div className="mt-3 flex items-start justify-between gap-3">
-        <h1 className="font-display text-2xl font-bold text-ink">{submission.exercise.title}</h1>
+        <h1 className="font-display text-2xl font-bold text-ink">
+          {submission.word ? `Word: ${submission.word.text}` : submission.exercise.title}
+        </h1>
         <Badge variant={badge.variant} className="mt-1 shrink-0">
           {badge.text}
         </Badge>
@@ -107,6 +111,7 @@ export default async function SubmissionPage({
           mediaUrl={mediaUrl}
           mediaKind={submission.mediaKind}
           replacementId={submission.retry?.id ?? null}
+          wordId={submission.wordId}
           maxBytes={MAX_UPLOAD_BYTES}
         />
       ) : (

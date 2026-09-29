@@ -40,6 +40,7 @@ export default async function LearnPage({
   const [modules, levels, submissions] = await Promise.all([
     prisma.module.findMany({
       where: {
+        isSystem: false,
         ...(level ? { level } : {}),
         ...(q
           ? {
@@ -60,7 +61,7 @@ export default async function LearnPage({
         exercises: { select: { id: true } },
       },
     }),
-    prisma.module.findMany({ distinct: ["level"], orderBy: { level: "asc" }, select: { level: true } }),
+    prisma.module.findMany({ where: { isSystem: false }, distinct: ["level"], orderBy: { level: "asc" }, select: { level: true } }),
     // Every exercise this student has submitted against, in one query. The
     // alternative is a count per module, which is a query per card.
     prisma.submission.findMany({

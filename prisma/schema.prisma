@@ -92,6 +92,7 @@ model User {
   verificationCodes   VerificationCode[]
   passwordResetTokens PasswordResetToken[]
   adminActions        AdminLog[]
+  cardStates          CardState[]
 
   createdAt DateTime @default(now())
 }
@@ -116,6 +117,10 @@ model Submission {
   /// insert fails on the submissionId unique constraint — after the typing.
   claimedById String?
   claimedAt   DateTime?
+
+  /// Set when the recording was made from a flashcard ("Record yourself").
+  wordId       String?
+  word         Word?         @relation(fields: [wordId], references: [id], onDelete: SetNull)
 
   /// Set only when status is RETURNED.
   returnReason ReturnReason?
@@ -182,6 +187,9 @@ model Feedback {
 
 model Module {
   id          String     @id @default(cuid())
+  /// System modules hold exercises the app creates for itself (flashcard
+  /// speaking practice). They are hidden from Learn and from "next up".
+  isSystem    Boolean    @default(false)
   level       Int
   title       String
   description String
@@ -324,4 +332,76 @@ model AdminLog {
   actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([createdAt])
+}
+
+enum CardKind {
+  WORD
+  CHUNK
+  GRAMMAR
+}
+
+/// One flashcard: a word (and later a chunk or grammar pattern). The columns
+/// here are the ones the app filters or sorts on; every other field from the
+/// 56-column WordMaster sheet lives in `details`, keyed as in words.json, so a
+/// new column in the sheet needs no migration.
+model Word {
+  id         String   @id @default(cuid())
+  kind       CardKind @default(WORD)
+  /// The sheet's own ID, e.g. "VRB-006". Stable across re-imports.
+  code       String   @unique
+  serial     Int
+  text       String
+  partOfSpeech String?
+  category   String?
+  cefr       String?
+  importance Int?
+  details    Json
+
+  /// Empty until media is supplied; the card shows a placeholder.
+  imageUrl   String?
+  audioUrl   String?
+  videoUrl   String?
+
+  states      CardState[]
+  submissions Submission[]
+
+  @@index([kind, serial])
+  @@index([text])
+}
+
+enum Recall {
+  HARD
+  MEDIUM
+  EASY
+}
+
+/// One student's progress on one card: known or not, how well, when it is
+/// next due, and their remarks. Created the first time they mark the card.
+model CardState {
+  id        String   @id @default(cuid())
+  userId    String
+  wordId    String
+
+  known     Boolean  @default(false)
+  recall    Recall?
+  /// Index into the review ladder (1, 3, 7, 15, 30, 60 days).
+  stage     Int      @default(0)
+  dueAt     DateTime
+  reviews   Int      @default(0)
+  lastReviewedAt DateTime?
+  /// When the student first saw and marked this card; counts today's new cards.
+  createdAt DateTime @default(now())
+
+  // Remarks
+  confident  Boolean @default(false)
+  important  Boolean @default(false)
+  favourite  Boolean @default(false)
+  doubt      Boolean @default(false)
+  note       String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@index([userId, dueAt])
 }

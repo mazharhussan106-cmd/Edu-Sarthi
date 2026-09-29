@@ -65,6 +65,7 @@ export function SubmitPanel({
   maxSeconds,
   maxBytes,
   retryOfId,
+  wordId,
   submitLabel = "Send to a teacher",
 }: {
   exerciseId: string;
@@ -73,6 +74,8 @@ export function SubmitPanel({
   maxBytes: number;
   /// Set on the send-back screen: the new recording replaces this attempt.
   retryOfId?: string;
+  /// Set when recording from a flashcard: the word the recording is about.
+  wordId?: string;
   submitLabel?: string;
 }) {
   const router = useRouter();
@@ -144,6 +147,7 @@ export function SubmitPanel({
           contentType: file.type,
           durationSec,
           ...(retryOfId ? { retryOfId } : {}),
+          ...(wordId ? { wordId } : {}),
         }),
       });
 

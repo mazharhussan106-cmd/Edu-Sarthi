@@ -38,7 +38,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const { exerciseId, key, contentType, durationSec, retryOfId } = parsed.data;
+  const { exerciseId, key, contentType, durationSec, retryOfId, wordId } = parsed.data;
+
+  if (wordId && !(await prisma.word.findUnique({ where: { id: wordId }, select: { id: true } }))) {
+    return NextResponse.json({ error: "That flashcard no longer exists. Go back and open it again." }, { status: 400 });
+  }
 
   // The one check that matters. buildKey() writes `${userId}/uuid-name`, so
   // anything else is a key this user was never given.
@@ -119,6 +123,7 @@ export async function POST(req: Request) {
       studentId: userId,
       exerciseId,
       retryOfId: retryOfId ?? null,
+      wordId: wordId ?? null,
       mediaUrl: key,
       mediaKind: kind,
       durationSec: kind === "IMAGE" ? null : durationSec,

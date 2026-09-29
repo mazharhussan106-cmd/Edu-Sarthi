@@ -23,6 +23,7 @@ export function SendBackView({
   mediaKind,
   replacementId,
   maxBytes,
+  wordId = null,
 }: {
   submissionId: string;
   exercise: { id: string; expects: MediaKind; maxSeconds: number | null };
@@ -32,6 +33,8 @@ export function SendBackView({
   mediaKind: MediaKind;
   replacementId: string | null;
   maxBytes: number;
+  /// Kept on the replacement, so a re-recorded flashcard stays tied to its word.
+  wordId?: string | null;
 }) {
   return (
     <>
@@ -90,6 +93,7 @@ export function SendBackView({
                 maxSeconds={exercise.maxSeconds}
                 maxBytes={maxBytes}
                 retryOfId={submissionId}
+                wordId={wordId ?? undefined}
                 submitLabel="Submit replacement"
               />
             </div>

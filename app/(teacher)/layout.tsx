@@ -4,26 +4,24 @@
 
 import { cookies } from "next/headers";
 
+import { ensureActiveUser } from "@/lib/activeUser";
 import { Footer } from "@/components/layout/Footer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
-import type { NavLink } from "@/components/layout/NavLinks";
+import { auth } from "@/lib/auth";
+import { staffNav } from "@/lib/staffNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
-
-const TEACHER_LINKS: readonly NavLink[] = [
-  { href: "/queue", label: "Queue" },
-  { href: "/students", label: "Students" },
-  { href: "/workload", label: "Workload" },
-];
 
 export default async function TeacherLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const cookieStore = await cookies();
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
+  const [cookieStore, session] = await Promise.all([cookies(), auth()]);
   const theme = themeFromCookie(cookieStore.get(THEME_COOKIE)?.value);
+  const nav = staffNav(session?.user?.role);
 
   return (
     <div className="flex min-h-screen flex-col">
-      <StickyHeader links={TEACHER_LINKS} theme={theme} homeHref="/queue" />
+      <StickyHeader links={nav.links} theme={theme} homeHref={nav.home} />
       <div className="flex-1">{children}</div>
       <Footer />
     </div>

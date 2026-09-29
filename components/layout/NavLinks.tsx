@@ -15,6 +15,9 @@ import { cn } from "@/lib/utils";
 export interface NavLink {
   href: string;
   label: string;
+  /// Only lit on this exact path. For a section root like /admin whose
+  /// siblings (/admin/users) would otherwise light it too.
+  exact?: boolean;
 }
 
 export function NavLinks({
@@ -33,7 +36,7 @@ export function NavLinks({
         // check handles "/" which would otherwise match everything.
         const active =
           pathname === link.href ||
-          (link.href !== "/" && pathname.startsWith(`${link.href}/`));
+          (!link.exact && link.href !== "/" && pathname.startsWith(`${link.href}/`));
 
         return (
           <Link

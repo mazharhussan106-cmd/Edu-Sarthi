@@ -25,6 +25,15 @@ export async function POST(req: Request) {
   if (!teacherId || (session.user.role !== "TEACHER" && session.user.role !== "ADMIN")) {
     return NextResponse.json({ error: "You do not have access to this." }, { status: 403 });
   }
+  // The JWT's role is from sign-in time. Re-read it, so a teacher an admin
+  // has demoted or suspended cannot keep claiming and auditing on an old token.
+  const current = await prisma.user.findUnique({
+    where: { id: teacherId },
+    select: { role: true, suspendedAt: true },
+  });
+  if (!current || current.suspendedAt || (current.role !== "TEACHER" && current.role !== "ADMIN")) {
+    return NextResponse.json({ error: "You do not have access to this." }, { status: 403 });
+  }
 
   let body: unknown;
   try {

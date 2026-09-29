@@ -94,6 +94,18 @@ with:
 npx tsx prisma/backfill-public-ids.ts
 ```
 
+## Admin
+
+The first admin is made by hand, once: set `role` to `ADMIN` on your own row in
+the `User` table, then sign out and back in. After that, admins change roles
+from **Admin → Users**, and every change is written to the admin log
+(**Admin → Compliance**).
+
+Admin pages: Overview, Dispatch (reassign, force-unlock, QA flags), Content
+(modules, exercises, CSV import), Users (roles, suspension), Compliance
+(retention purge, student data requests, admin log). Billing and credits are
+not built; they arrive with payments.
+
 ## Layout
 
 ```

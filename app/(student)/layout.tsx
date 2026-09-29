@@ -7,6 +7,8 @@
 
 import { cookies } from "next/headers";
 
+import { ensureActiveUser } from "@/lib/activeUser";
+
 import { Footer } from "@/components/layout/Footer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
@@ -16,6 +18,7 @@ import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 export default async function StudentLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  await ensureActiveUser();
   const cookieStore = await cookies();
   const theme = themeFromCookie(cookieStore.get(THEME_COOKIE)?.value);
 

@@ -33,7 +33,7 @@ function LinkSignIn() {
     }
     const session = await getSession();
     const role = session?.user?.role;
-    router.push(role === "TEACHER" || role === "ADMIN" ? "/queue" : "/dashboard");
+    router.push(role === "ADMIN" ? "/admin" : role === "TEACHER" ? "/queue" : "/dashboard");
     router.refresh();
   }
 

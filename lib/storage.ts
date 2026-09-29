@@ -125,6 +125,8 @@ export async function createUploadTarget(
 /// Returns null rather than throwing: a broken link on one submission should
 /// not take down a page listing twenty of them.
 export async function resolveMediaUrl(key: string): Promise<string | null> {
+  // Empty once the retention policy has deleted the file (mediaPurgedAt).
+  if (!key) return null;
   // The seeded demo submission stores "/sample.mp3", a file in /public. Left
   // as-is so the review flow can be tested before anything is uploaded.
   if (key.startsWith("/") || key.startsWith("http")) return key;

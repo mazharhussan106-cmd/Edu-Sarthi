@@ -71,6 +71,10 @@ model User {
   phoneVerified DateTime?
   passwordHash  String?
   role          Role      @default(STUDENT)
+  /// Set by an admin. A suspended account cannot sign in, and any session it
+  /// already has is turned away at the next page load.
+  suspendedAt   DateTime?
+  suspendReason String?
   isGuest       Boolean   @default(false)
   theme         Theme     @default(LIGHT)
   preferences   Json?
@@ -87,6 +91,7 @@ model User {
   sessions            Session[]
   verificationCodes   VerificationCode[]
   passwordResetTokens PasswordResetToken[]
+  adminActions        AdminLog[]
 
   createdAt DateTime @default(now())
 }
@@ -120,6 +125,10 @@ model Submission {
   retryOfId    String?       @unique
   retryOf      Submission?   @relation("Retry", fields: [retryOfId], references: [id], onDelete: SetNull)
   retry        Submission?   @relation("Retry")
+
+  /// When the recording was deleted under the retention policy. The row and
+  /// its audit stay; only the audio or video is gone.
+  mediaPurgedAt DateTime?
 
   student   User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
   // No cascade: deleting an exercise students have already submitted against
@@ -157,6 +166,10 @@ model Feedback {
   /// Json because the shape is a list the UI renders whole — it is never
   /// filtered, averaged or queried, which is what columns would buy.
   notes   Json?
+
+  /// Flagged by an admin for a quality check of the audit itself.
+  qaFlaggedAt DateTime?
+  qaNote      String?
 
   submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
   // No cascade: an audit outlives the teacher's account.
@@ -291,4 +304,24 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+/// One row per admin action: role changes, suspensions, reassignments,
+/// content edits, purges. Kept so every change to someone else's account or
+/// work has a name and a reason attached.
+model AdminLog {
+  id         String   @id @default(cuid())
+  /// Null for actions the system took on its own (scheduled purges) or on a
+  /// student's behalf (self-service export and deletion).
+  actorId    String?
+  action     String
+  targetType String
+  targetId   String?
+  detail     Json?
+  createdAt  DateTime @default(now())
+
+  // SetNull: the log entry outlives the account that made it.
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
 }

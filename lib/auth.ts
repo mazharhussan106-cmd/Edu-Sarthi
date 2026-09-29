@@ -30,14 +30,22 @@ class TooManyAttempts extends CredentialsSignin {
 class BadEmailCode extends CredentialsSignin {
   code = "email-code";
 }
+class Suspended extends CredentialsSignin {
+  code = "suspended";
+}
 
+// Every provider ends here, so this is the one place a suspended account is
+// refused — after the credential check, so the message reveals nothing to
+// someone who does not already know the password or own the inbox.
 function sessionUser(user: {
   id: string;
   name: string | null;
   email: string | null;
   role: "STUDENT" | "TEACHER" | "ADMIN";
   emailVerified: Date | null;
+  suspendedAt: Date | null;
 }) {
+  if (user.suspendedAt) throw new Suspended();
   return {
     id: user.id,
     name: user.name,

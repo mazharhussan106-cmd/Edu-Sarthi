@@ -25,6 +25,7 @@ const PUBLIC_PREFIXES = [
   "/about",
   "/support",
   "/legal",
+  "/suspended",
 ];
 
 function isPublic(path: string): boolean {
@@ -35,7 +36,8 @@ function isPublic(path: string): boolean {
 /// Single source of truth for "where does this role belong". Used on sign-in,
 /// after verification, and whenever a role hits a path it may not see.
 function homeFor(role: string | undefined): string {
-  return role === "TEACHER" || role === "ADMIN" ? "/queue" : "/dashboard";
+  if (role === "ADMIN") return "/admin";
+  return role === "TEACHER" ? "/queue" : "/dashboard";
 }
 
 export default auth((req) => {
@@ -81,6 +83,12 @@ export default auth((req) => {
 
   if (isTeacherArea && user.role === "STUDENT") {
     return redirect("/dashboard");
+  }
+
+  // Admin pages are admin-only. The API routes behind them re-check the role
+  // against the database, since a JWT can outlive a demotion.
+  if (pathname.startsWith("/admin") && user.role !== "ADMIN") {
+    return redirect(homeFor(user.role));
   }
 
   return NextResponse.next();

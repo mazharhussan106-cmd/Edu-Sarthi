@@ -8,23 +8,19 @@
 
 import { cookies } from "next/headers";
 
+import { ensureActiveUser } from "@/lib/activeUser";
 import { auth } from "@/lib/auth";
 import { Footer } from "@/components/layout/Footer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
-import type { NavLink } from "@/components/layout/NavLinks";
+import { staffNav } from "@/lib/staffNav";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { STUDENT_LINKS } from "@/lib/studentNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 
-const TEACHER_LINKS: readonly NavLink[] = [
-  { href: "/queue", label: "Queue" },
-  { href: "/students", label: "Students" },
-  { href: "/workload", label: "Workload" },
-];
-
 export default async function SharedLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  await ensureActiveUser();
   const [cookieStore, session] = await Promise.all([cookies(), auth()]);
   const theme = themeFromCookie(cookieStore.get(THEME_COOKIE)?.value);
 
@@ -34,9 +30,9 @@ export default async function SharedLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <StickyHeader
-        links={isTeacher ? TEACHER_LINKS : STUDENT_LINKS}
+        links={isTeacher ? staffNav(session?.user?.role).links : STUDENT_LINKS}
         theme={theme}
-        homeHref={isTeacher ? "/queue" : "/dashboard"}
+        homeHref={isTeacher ? staffNav(session?.user?.role).home : "/dashboard"}
       />
       <div className="flex-1">{children}</div>
       <div className={isTeacher ? undefined : "pb-16 md:pb-0"}>

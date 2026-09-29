@@ -76,7 +76,7 @@ export default function VerifyPage() {
     await update({ emailVerified: data.emailVerified });
 
     const role = data.role;
-    router.push(role === "TEACHER" || role === "ADMIN" ? "/queue" : "/dashboard");
+    router.push(role === "ADMIN" ? "/admin" : role === "TEACHER" ? "/queue" : "/dashboard");
     router.refresh();
   }
 

@@ -50,7 +50,7 @@ export default function LoginPage() {
     const session = await getSession();
     const role = session?.user?.role;
     if (!session?.user?.emailVerified) router.push("/verify");
-    else router.push(role === "TEACHER" || role === "ADMIN" ? "/queue" : "/dashboard");
+    else router.push(role === "ADMIN" ? "/admin" : role === "TEACHER" ? "/queue" : "/dashboard");
     router.refresh();
   }
 
@@ -105,7 +105,9 @@ export default function LoginPage() {
       setError(
         result.code === "throttled"
           ? "Too many attempts. Wait a few minutes and try again."
-          : "That code is not right or has expired. Check the email, or send a new one.",
+          : result.code === "suspended"
+            ? "This account is suspended. Email support@edusarthi.com for help."
+            : "That code is not right or has expired. Check the email, or send a new one.",
       );
       setBusy(false);
       return;
@@ -132,7 +134,9 @@ export default function LoginPage() {
       setError(
         result.code === "throttled"
           ? "Too many attempts. Wait a few minutes and try again."
-          : "Email or password is not correct.",
+          : result.code === "suspended"
+            ? "This account is suspended. Email support@edusarthi.com for help."
+            : "Email or password is not correct.",
       );
       setBusy(false);
       return;

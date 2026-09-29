@@ -21,6 +21,9 @@ export type AuditDraft = {
   confidence: number;
   notes: Array<{ at: number; note: string; severity: "minor" | "major" }>;
   summary: string;
+  /// Which scores the teacher has actually set. Optional so drafts saved
+  /// before this field existed still load (as "none touched").
+  touched?: string[];
 };
 
 function key(submissionId: string): string {

@@ -76,7 +76,8 @@ export default auth((req) => {
   const isTeacherArea =
     pathname.startsWith("/queue") ||
     pathname.startsWith("/review") ||
-    pathname.startsWith("/students");
+    pathname.startsWith("/students") ||
+    pathname.startsWith("/workload");
 
   if (isTeacherArea && user.role === "STUDENT") {
     return redirect("/dashboard");

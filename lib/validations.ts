@@ -93,6 +93,12 @@ export const claimSchema = z.object({
   submissionId: z.string().min(1),
 });
 
+/// Give a claimed submission back to the queue, or restart its 30 minutes.
+export const holdSchema = z.object({
+  action: z.enum(["release", "extend"]),
+  submissionId: z.string().min(1),
+});
+
 const score = z
   .number()
   .int("Scores are whole numbers")

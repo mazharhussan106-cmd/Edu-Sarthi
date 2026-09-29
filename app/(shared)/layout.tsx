@@ -19,6 +19,7 @@ import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 const TEACHER_LINKS: readonly NavLink[] = [
   { href: "/queue", label: "Queue" },
   { href: "/students", label: "Students" },
+  { href: "/workload", label: "Workload" },
 ];
 
 export default async function SharedLayout({

@@ -1,39 +1,48 @@
-// Owns the review screen: it claims the submission, then renders the player
+// Owns the audit workstation page (spec T-03): the header with the student's
+// anonymized ID, the claim countdown, Release and Send back, then the prompt
 // and the rubric form.
 //
-// Claiming happens on the server here rather than on a button press, because
-// opening the page IS the intent to review — a separate claim button is a step
-// a teacher forgets, and two people then type the same audit.
+// It does NOT claim on open. Claiming is a deliberate button press (here or in
+// the queue), so a teacher who only peeks at a submission never locks it away
+// from everyone else for half an hour.
 
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { displayId } from "@/lib/publicId";
 import { resolveMediaUrl } from "@/lib/storage";
+import { CLAIM_MINUTES, claimExpiresAt, releaseExpiredClaims } from "@/lib/claims";
+import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
+import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/ClaimControls";
 import { RubricForm } from "@/components/review/RubricForm";
 import { SendBackForm } from "@/components/review/SendBackForm";
 
 export const revalidate = 0;
 
-export default async function ReviewPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+function Notice({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <main className="mx-auto max-w-4xl px-6 py-10">
+      <Card>
+        <CardTitle>{title}</CardTitle>
+        <div className="mt-2 text-sm text-ink-muted">{children}</div>
+        <Link href="/queue" className="mt-4 inline-block text-sm font-medium text-accent hover:underline">
+          Back to the queue
+        </Link>
+      </Card>
+    </main>
+  );
+}
+
+export default async function ReviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
   const teacherId = session?.user?.id;
-
   if (!teacherId) redirect("/login");
 
-  // Same conditional-update race guard as the API route: only one caller can
-  // match `status: PENDING`.
-  await prisma.submission.updateMany({
-    where: { id, status: "PENDING" },
-    data: { status: "IN_REVIEW", claimedById: teacherId, claimedAt: new Date() },
-  });
+  await releaseExpiredClaims();
 
   const submission = await prisma.submission.findUnique({
     where: { id },
@@ -44,68 +53,98 @@ export default async function ReviewPage({
       mediaKind: true,
       durationSec: true,
       claimedById: true,
+      claimedAt: true,
       createdAt: true,
+      retryOfId: true,
       student: { select: { publicId: true } },
-      exercise: { select: { title: true, prompt: true } },
+      exercise: { select: { title: true, prompt: true, module: { select: { level: true } } } },
     },
   });
-
   if (!submission) notFound();
 
-  // Claimed by someone else, or already finished. Both mean this teacher
-  // should not be typing an audit that cannot be saved.
-  if (submission.claimedById !== teacherId || submission.status !== "IN_REVIEW") {
+  const studentId = displayId(submission.student.publicId);
+
+  if (submission.status === "PENDING") {
     return (
-      <main className="mx-auto max-w-4xl px-6 py-10">
-        <Card>
-          <CardTitle>Not available</CardTitle>
-          <p className="mt-2 text-sm text-ink-muted">
-            {submission.status === "REVIEWED"
-              ? "This submission has already been reviewed."
-              : submission.status === "RETURNED"
-              ? "This submission was sent back to the student."
-              : "Another teacher is reviewing this one."}{" "}
-            Go back to the queue and pick a different submission.
-          </p>
-        </Card>
-      </main>
+      <Notice title={submission.exercise.title}>
+        <p>
+          {studentId} · waiting since {submission.createdAt.toLocaleString("en-IN")}. Claim it to
+          start — it is held for you for {CLAIM_MINUTES} minutes.
+        </p>
+        <div className="mt-4 flex justify-start">
+          <ClaimButton submissionId={submission.id} label="Claim and start" />
+        </div>
+      </Notice>
     );
   }
 
-  // mediaUrl is a private storage key, not a URL. Signed here on the server so
-  // the key itself never reaches the browser, and the link expires.
+  // Claimed by someone else, or already finished: this teacher must not type
+  // an audit that cannot be saved.
+  if (submission.claimedById !== teacherId || submission.status !== "IN_REVIEW") {
+    return (
+      <Notice title="Not available">
+        {submission.status === "REVIEWED"
+          ? "This submission has already been audited."
+          : submission.status === "RETURNED"
+            ? "This submission was sent back to the student."
+            : "Another teacher is reviewing this one. Pick a different submission."}
+      </Notice>
+    );
+  }
+
+  // A private storage key, signed here so the key never reaches the browser.
   const mediaUrl = await resolveMediaUrl(submission.mediaUrl);
 
-  // Refusing to render the form is deliberate. A teacher who cannot hear the
-  // recording must not be able to submit scores for it.
+  // A teacher who cannot hear the recording must not be able to score it.
+  // Release is offered so the item does not sit locked until the timer ends.
   if (!mediaUrl) {
     return (
-      <main className="mx-auto max-w-4xl px-6 py-10">
-        <Card>
-          <CardTitle>This file could not be opened</CardTitle>
-          <p className="mt-2 text-sm text-ink-muted">
-            The recording is missing from storage, so it cannot be reviewed.
-            Leave it and pick another from the queue — this one needs looking
-            at separately.
-          </p>
-        </Card>
-      </main>
+      <Notice title="This file could not be opened">
+        <p>The recording is missing from storage, so it cannot be reviewed.</p>
+        <div className="mt-4">
+          <ReleaseButton submissionId={submission.id} redirectTo="/queue" />
+        </div>
+      </Notice>
     );
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="font-display text-2xl font-bold text-ink">
-        {submission.exercise.title}
-      </h1>
-      <p className="mt-1 text-sm text-ink-muted">
-        {displayId(submission.student.publicId)} ·{" "}
-        {submission.createdAt.toLocaleDateString("en-IN")}
-      </p>
+    <main className="mx-auto max-w-6xl px-6 py-8">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-xs text-ink-muted">
+            <Link href="/queue" className="hover:text-accent">
+              ← Queue
+            </Link>
+          </p>
+          <h1 className="mt-1 font-display text-2xl font-bold text-ink">{submission.exercise.title}</h1>
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink-muted">
+            <Link
+              href={`/students/${submission.student.publicId ?? ""}`}
+              className="font-mono text-ink hover:text-accent hover:underline"
+            >
+              {studentId}
+            </Link>
+            <Badge variant="accent">Level {submission.exercise.module.level}</Badge>
+            {submission.retryOfId ? <Badge>Re-recorded after send-back</Badge> : null}
+            <span>· sent {submission.createdAt.toLocaleString("en-IN")}</span>
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {submission.claimedAt ? (
+            <ClaimTimer
+              expiresAt={claimExpiresAt(submission.claimedAt).toISOString()}
+              submissionId={submission.id}
+              minutes={CLAIM_MINUTES}
+            />
+          ) : null}
+          <ReleaseButton submissionId={submission.id} redirectTo="/queue" />
+        </div>
+      </div>
 
-      <Card className="mt-6">
-        <CardTitle>What they were asked</CardTitle>
-        <p className="mt-2 text-sm text-ink-muted">{submission.exercise.prompt}</p>
+      <Card className="mt-5 p-4">
+        <CardTitle className="text-sm">What they were asked</CardTitle>
+        <p className="mt-1 text-sm text-ink-muted">{submission.exercise.prompt}</p>
       </Card>
 
       <SendBackForm submissionId={submission.id} />

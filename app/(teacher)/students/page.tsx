@@ -72,6 +72,7 @@ export default async function StudentsPage() {
       return {
         id: s.id,
         name: displayId(s.publicId),
+        publicId: s.publicId,
         total: s.submissions.length,
         audited: audited.length,
         waiting: s.submissions.filter(
@@ -114,7 +115,13 @@ export default async function StudentsPage() {
           {rows.map((r) => (
             <Card key={r.id} className="flex flex-wrap items-center gap-4">
               <div className="min-w-0 flex-1">
-                <CardTitle className="font-mono">{r.name}</CardTitle>
+                {r.publicId ? (
+                  <Link href={`/students/${r.publicId}`} className="hover:text-accent">
+                    <CardTitle className="font-mono hover:underline">{r.name}</CardTitle>
+                  </Link>
+                ) : (
+                  <CardTitle className="font-mono">{r.name}</CardTitle>
+                )}
               </div>
 
               <div className="flex shrink-0 items-center gap-6">

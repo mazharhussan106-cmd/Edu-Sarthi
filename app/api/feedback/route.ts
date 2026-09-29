@@ -1,5 +1,5 @@
-// Owns three teacher actions on a submission: claiming it for review,
-// sending it back to the student with a reason, and submitting the audit.
+// Owns every teacher action on a submission: claiming it, releasing or
+// extending the claim, sending it back with a reason, and submitting the audit.
 //
 // Both live here because both are writes against the same row by the same role,
 // and splitting them would mean duplicating the claim check in two files.
@@ -12,7 +12,8 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { claimSchema, feedbackSchema, returnSchema } from "@/lib/validations";
+import { claimSchema, feedbackSchema, holdSchema, returnSchema } from "@/lib/validations";
+import { releaseExpiredClaims } from "@/lib/claims";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -40,6 +41,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Could not open that submission." }, { status: 400 });
     }
 
+    // A claim that ran out is fair game again before anyone checks PENDING.
+    await releaseExpiredClaims();
+
     // Conditional update, not read-then-write. Two teachers pressing Review at
     // the same moment both pass a read check; only one can match
     // `status: PENDING` in the WHERE clause, and the loser gets count 0.
@@ -65,6 +69,29 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true });
+  }
+
+  if (action === "release" || action === "extend") {
+    const parsed = holdSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Could not update that claim." }, { status: 400 });
+    }
+
+    // Scoped to this teacher's own live claim, in the WHERE clause.
+    const updated = await prisma.submission.updateMany({
+      where: { id: parsed.data.submissionId, claimedById: teacherId, status: "IN_REVIEW" },
+      data:
+        parsed.data.action === "release"
+          ? { status: "PENDING", claimedById: null, claimedAt: null }
+          : { claimedAt: new Date() },
+    });
+    if (updated.count === 0) {
+      return NextResponse.json(
+        { error: "This submission is no longer yours. Go back to the queue." },
+        { status: 409 },
+      );
+    }
+    return NextResponse.json({ ok: true, claimedAt: new Date().toISOString() });
   }
 
   if (action === "return") {

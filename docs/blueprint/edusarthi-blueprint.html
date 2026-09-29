@@ -1,0 +1,571 @@
+<title>EduSarthi Blueprint Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: har screen ek row — left me mockup (phone ya desktop window), right me spec card. Palette: saffron + green on warm stone — koi purple / pink / blue nahi. */
+:root{
+  --ink:#1c1a17; --muted:#6b645a; --mist:#a39a8c;
+  --bg:#efebe4; --paper:#faf8f4; --dim:#ebe6dd; --surface:#ffffff;
+  --accent:#b8520f; --on-accent:#ffffff; --acc-soft:rgba(184,82,15,.12);
+  --green:#1f6b45; --green-soft:rgba(31,107,69,.1);
+  --ok:#2e8a55; --wip:#9a7400; --no:#c23b2b; --no-soft:rgba(194,59,43,.1); --wip-soft:rgba(154,116,0,.13);
+  --border:rgba(28,26,23,.11); --border-strong:rgba(28,26,23,.22);
+  --player:#26231f; --player-text:#e6dfd3; --frame:#2b2823; --side:#f3efe8;
+  --f-display:"Sora",system-ui,sans-serif; --f-body:"Inter",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#efe9df; --muted:#a79f92; --mist:#7d7569;
+  --bg:#121110; --paper:#1a1816; --dim:#262320; --surface:#201e1b;
+  --accent:#f08a3c; --on-accent:#1a1410; --acc-soft:rgba(240,138,60,.14);
+  --green:#5cc68d; --green-soft:rgba(92,198,141,.12);
+  --ok:#5cc68d; --wip:#e0b340; --no:#ef6b5a; --no-soft:rgba(239,107,90,.13); --wip-soft:rgba(224,179,64,.14);
+  --border:rgba(239,233,223,.12); --border-strong:rgba(239,233,223,.24);
+  --player:#2c2925; --player-text:#e6dfd3; --frame:#3a3631; --side:#1d1b18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ink:#efe9df; --muted:#a79f92; --mist:#7d7569;
+  --bg:#121110; --paper:#1a1816; --dim:#262320; --surface:#201e1b;
+  --accent:#f08a3c; --on-accent:#1a1410; --acc-soft:rgba(240,138,60,.14);
+  --green:#5cc68d; --green-soft:rgba(92,198,141,.12);
+  --ok:#5cc68d; --wip:#e0b340; --no:#ef6b5a; --no-soft:rgba(239,107,90,.13); --wip-soft:rgba(224,179,64,.14);
+  --border:rgba(239,233,223,.12); --border-strong:rgba(239,233,223,.24);
+  --player:#2c2925; --player-text:#e6dfd3; --frame:#3a3631; --side:#1d1b18; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h1{font-size:clamp(26px,4vw,38px)} h2{font-size:23px} h3{font-size:17px}
+p{margin:0}
+.lede{color:var(--muted);max-width:74ch;margin-top:8px}
+.eyebrow{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.85em}
+.sec-hd{display:flex;flex-direction:column;gap:4px;margin-bottom:18px}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-size:13px;color:var(--muted)}
+.st{display:inline-flex;align-items:center;gap:6px;font:600 11px var(--f-mono);white-space:nowrap}
+.st i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;color:#fff;flex:none}
+.st.ok i{background:var(--ok)} .st.wip i{background:var(--wip)} .st.no i{background:var(--no)}
+.st.ok{color:var(--ok)} .st.wip{color:var(--wip)} .st.no{color:var(--no)}
+.pr{font:600 10px var(--f-mono);padding:2px 7px;border-radius:4px;white-space:nowrap}
+.pr.P0{background:var(--no-soft);color:var(--no)} .pr.P1{background:var(--wip-soft);color:var(--wip)} .pr.P2{background:var(--dim);color:var(--muted)}
+
+/* overview */
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.plat h3{font-size:15px;margin-bottom:4px}
+.plat .kind{font:600 11px var(--f-mono);color:var(--accent);letter-spacing:.06em}
+.plat ul{margin:6px 0 0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.flow .s{flex:1 1 150px;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px}
+.flow .s b{display:block;font:600 11px var(--f-mono);color:var(--accent)}
+.flow .ar{align-self:center;color:var(--mist);font-family:var(--f-mono)}
+.shell{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.shell .box h3{font-size:14px;margin-bottom:4px}
+.shell .box p{font-size:13px;color:var(--muted)}
+.states{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.state{border-radius:10px;padding:10px 12px;font-size:12.5px;border:1px solid var(--border);background:var(--surface)}
+.state b{display:block;font:600 11px var(--f-mono);letter-spacing:.06em;margin-bottom:4px}
+.shim{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--dim),var(--paper),var(--dim));margin-top:5px}
+
+/* index table */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:13.5px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font:600 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td.id{font:600 12px var(--f-mono);color:var(--accent);white-space:nowrap}
+td code{overflow-wrap:anywhere}
+
+/* screen rows */
+.screens{display:flex;flex-direction:column;gap:30px}
+.screen{display:grid;grid-template-columns:280px minmax(0,1fr);gap:26px;align-items:start;padding-bottom:30px;border-bottom:1px solid var(--border)}
+.screen.desk{grid-template-columns:minmax(0,560px) minmax(0,1fr)}
+@media (max-width:900px){.screen,.screen.desk{grid-template-columns:minmax(0,1fr)}}
+.spec{display:flex;flex-direction:column;gap:10px;min-width:0}
+.spec .top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.sid{font:700 13px var(--f-mono);color:var(--on-accent);background:var(--accent);padding:3px 8px;border-radius:6px}
+.who{font:600 11px var(--f-mono);padding:2px 8px;border-radius:99px;border:1px solid var(--border-strong);color:var(--muted)}
+.kv{display:grid;grid-template-columns:118px minmax(0,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;font-size:13.5px}
+.kv dt,.kv dd{margin:0;padding:8px 12px;border-bottom:1px solid var(--border)}
+.kv dt{font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper)}
+.kv dd ul{margin:0;padding-left:16px}
+.kv dt:nth-last-of-type(1),.kv dd:last-of-type{border-bottom:0}
+@media (max-width:520px){.kv{grid-template-columns:minmax(0,1fr)}.kv dt{border-bottom:0;padding-bottom:0}}
+.edge{border-left:3px solid var(--wip)}
+.now{border-radius:12px;padding:10px 12px;font-size:13.5px;border:1px solid var(--border);background:var(--surface)}
+.now b{font:600 10.5px var(--f-mono);letter-spacing:.08em;display:block;margin-bottom:3px}
+.now.ok{border-left:3px solid var(--ok)} .now.wip{border-left:3px solid var(--wip)} .now.no{border-left:3px solid var(--no)}
+.now.ok b{color:var(--ok)} .now.wip b{color:var(--wip)} .now.no b{color:var(--no)}
+
+/* phone */
+.phone{width:280px;max-width:100%;margin:0 auto;border:9px solid var(--frame);border-radius:32px;background:var(--paper);overflow:hidden;box-shadow:0 10px 26px rgba(28,26,23,.15);display:flex;flex-direction:column}
+.notch{height:20px;display:flex;justify-content:space-between;align-items:center;padding:0 14px;font:600 9px var(--f-mono);color:var(--muted)}
+.tb{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 11px;border-bottom:1px solid var(--border);font-size:10.5px;min-height:34px}
+.tb .t{font:700 12.5px var(--f-display)}
+.ic{width:22px;height:22px;border-radius:50%;background:var(--dim);display:grid;place-items:center;font-size:10px;flex:none;position:relative}
+.ic .dotn{position:absolute;top:1px;right:1px;width:6px;height:6px;border-radius:50%;background:var(--no)}
+.pill{font:600 9px var(--f-mono);padding:3px 7px;border-radius:99px;background:var(--acc-soft);color:var(--accent);white-space:nowrap}
+.pill.g{background:var(--green-soft);color:var(--green)}
+.scr{padding:10px 11px;display:flex;flex-direction:column;gap:7px;font-size:10.5px;line-height:1.4;min-height:430px;flex:1}
+.bn{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);background:var(--surface);font-size:8.5px;text-align:center;color:var(--muted)}
+.bn span{padding:6px 2px 8px}
+.bn span:before{content:"";display:block;width:14px;height:14px;border-radius:4px;background:var(--dim);margin:0 auto 2px}
+.bn .on{color:var(--accent);font-weight:600}.bn .on:before{background:var(--accent)}
+.h{font:700 15px var(--f-display);line-height:1.2}
+.hero{font:700 18px var(--f-display);line-height:1.15}
+.sub{color:var(--muted);font-size:9.8px}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:7px 9px;display:flex;flex-direction:column;gap:5px}
+.ct{font:600 10.5px var(--f-display)}
+.b{display:inline-block;background:var(--accent);color:var(--on-accent);font:600 10px var(--f-body);padding:6px 9px;border-radius:7px;text-align:center}
+.b.o{background:transparent;color:var(--ink);border:1px solid var(--border-strong)}
+.b.g{background:var(--green);color:#fff}
+.b.full{display:block}
+.r{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bd{font:600 8.5px var(--f-mono);padding:2px 6px;border-radius:99px;background:var(--dim);color:var(--muted);white-space:nowrap}
+.bd.acc{background:var(--acc-soft);color:var(--accent)} .bd.ok{background:var(--green-soft);color:var(--ok)} .bd.no{background:var(--no-soft);color:var(--no)} .bd.wip{background:var(--wip-soft);color:var(--wip)}
+.in{border:1px solid var(--border-strong);border-radius:6px;padding:6px 8px;color:var(--mist);background:var(--surface);font-size:10px}
+.lb{font-size:9.5px;font-weight:600;margin-bottom:-3px}
+.pl{background:var(--player);color:var(--player-text);border-radius:7px;padding:7px;display:flex;flex-direction:column;gap:5px}
+.wv{height:18px;background:repeating-linear-gradient(90deg,var(--accent) 0 2px,transparent 2px 5px);border-radius:3px;opacity:.85}
+.pc{display:flex;justify-content:space-between;font:9px var(--f-mono)}
+.tr{height:5px;border-radius:99px;background:var(--dim);position:relative}
+.tr i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--accent)}
+.tr.g i{background:var(--green)}
+.nt{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:5px;padding:4px 0;border-top:1px solid var(--border)}
+.nt .t{font:600 9.5px var(--f-mono);color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-size:9px;padding:3px 7px;border-radius:99px;border:1px solid var(--border-strong)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.sw{width:26px;height:14px;border-radius:99px;background:var(--dim);position:relative;flex:none}
+.sw.on{background:var(--green)}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff}
+.sw.on:after{left:14px}
+.rec{width:48px;height:48px;border-radius:50%;background:var(--accent);margin:2px auto;box-shadow:0 0 0 6px var(--acc-soft)}
+.opt{border:1px solid var(--border-strong);border-radius:8px;padding:7px 9px;background:var(--surface)}
+.opt.sel{border-color:var(--accent);background:var(--acc-soft)}
+.fc{border:1px solid var(--border-strong);border-radius:12px;background:var(--surface);padding:12px;text-align:center;display:flex;flex-direction:column;gap:4px}
+.fc .w{font:700 22px var(--f-display)}
+.srs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center;font-size:9px;font-weight:600}
+.srs span{padding:6px 2px;border-radius:7px;background:var(--dim)}
+.srs span small{display:block;font:400 8px var(--f-mono);color:var(--muted)}
+.tok{display:flex;flex-wrap:wrap;gap:4px}
+.tok span{font-size:9.5px;padding:4px 7px;border-radius:6px;background:var(--surface);border:1px solid var(--border-strong)}
+.tray{min-height:34px;border:1.5px dashed var(--border-strong);border-radius:8px;padding:5px;display:flex;flex-wrap:wrap;gap:4px}
+.tray span{font-size:9.5px;padding:4px 7px;border-radius:6px;background:var(--acc-soft);color:var(--accent)}
+.dial{width:78px;height:78px;border-radius:50%;margin:0 auto;display:grid;place-items:center;background:conic-gradient(var(--green) 0 78%,var(--dim) 78% 100%)}
+.dial b{width:60px;height:60px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font:700 18px var(--f-mono)}
+.words{font-size:11px;line-height:1.7}
+.words .g{color:var(--ok);font-weight:600} .words .y{color:var(--wip);font-weight:600} .words .x{color:var(--no);font-weight:600;text-decoration:underline}
+.ring{width:40px;height:40px;border-radius:50%;background:conic-gradient(var(--green) 0 65%,var(--dim) 65% 100%);display:grid;place-items:center;flex:none}
+.ring b{width:30px;height:30px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font:600 9px var(--f-mono)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;text-align:center}
+.tiles b{display:block;font:700 13px var(--f-mono)}
+.tiles small{font-size:7.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.chart{height:44px;border-bottom:1px solid var(--border);border-left:1px solid var(--border);position:relative}
+.chart svg{position:absolute;inset:0;width:100%;height:100%}
+.sheet{margin:0 -11px -10px;border-top:1px solid var(--border-strong);border-radius:14px 14px 0 0;background:var(--surface);padding:9px 11px;display:flex;flex-direction:column;gap:6px;box-shadow:0 -6px 16px rgba(28,26,23,.08)}
+.grab{width:30px;height:4px;border-radius:2px;background:var(--border-strong);margin:0 auto}
+.faq{border-top:1px solid var(--border);padding-top:5px;display:flex;justify-content:space-between;gap:6px}
+.code6{display:flex;gap:4px;justify-content:center}
+.code6 span{width:24px;height:30px;border:1px solid var(--border-strong);border-radius:6px;display:grid;place-items:center;font:600 12px var(--f-mono);background:var(--surface)}
+.warn{border-radius:8px;padding:6px 8px;font-size:9.5px;background:var(--wip-soft);color:var(--wip)}
+.err{border-radius:8px;padding:6px 8px;font-size:9.5px;background:var(--no-soft);color:var(--no)}
+
+/* desktop window */
+.win{border:1px solid var(--border-strong);border-radius:12px;overflow:hidden;background:var(--paper);box-shadow:0 10px 26px rgba(28,26,23,.13);font-size:10.5px;line-height:1.4}
+.wbar{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--frame);color:#d9d2c6;font:10px var(--f-mono)}
+.wbar i{width:8px;height:8px;border-radius:50%;background:#6b645a;display:block}
+.wbar .url{margin-left:8px;flex:1;background:rgba(255,255,255,.08);border-radius:5px;padding:3px 8px}
+.wbody{display:grid;grid-template-columns:104px minmax(0,1fr);min-height:330px}
+.side{background:var(--side);border-right:1px solid var(--border);padding:10px 8px;display:flex;flex-direction:column;gap:3px;font-size:9.5px}
+.side .lg{font:700 12px var(--f-display);margin-bottom:6px}.side .lg i{font-style:normal;color:var(--accent)}
+.side span{padding:5px 7px;border-radius:6px;color:var(--muted)}
+.side .on{background:var(--acc-soft);color:var(--accent);font-weight:600}
+.main{padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.mtop{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}
+.cols{display:grid;gap:8px}
+.k{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px}
+.k b{display:block;font:700 17px var(--f-mono)}
+.k small{font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.k.red{background:var(--no-soft);border-color:transparent}
+.mt{width:100%;border-collapse:collapse;font-size:9.5px;min-width:0}
+.mt th,.mt td{padding:5px 6px;border-bottom:1px solid var(--border);text-align:left;font-family:var(--f-body)}
+.mt th{font:600 8px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:transparent}
+.bars{display:flex;align-items:flex-end;gap:5px;height:56px;border-bottom:1px solid var(--border)}
+.bars i{flex:1;background:var(--green);border-radius:3px 3px 0 0;opacity:.85}
+.abar{display:flex;justify-content:space-between;align-items:center;gap:6px;border-top:1px solid var(--border);padding-top:7px}
+</style>
+
+<div class="wrap">
+
+<section>
+  <p class="eyebrow">EduSarthi · UI/UX Master Reference Blueprint · image board</p>
+  <h1>EduSarthi ka poora app plan, screen by screen</h1>
+  <p class="lede">Aapki spec file (<code>EduSarthi_Complete_Interface_Specification.docx</code>) ke har screen ka mockup. Student screens phone me hain, Teacher aur Admin desktop window me. Har screen ke saath spec ki poori detail hai: top bar, main content, controls, bottom bar, back button, edge case aur component file. Aakhri box batata hai ki aaj ke code me wo screen bani hai ya nahi.</p>
+  <div class="legend">
+    <span class="st ok"><i>✓</i>Code me bana hai</span>
+    <span class="st wip"><i>!</i>Aadha bana hai</span>
+    <span class="st no"><i>✕</i>Code me nahi hai</span>
+    <span><span class="pr P0">P0</span> sabse zaroori · <span class="pr P1">P1</span> · <span class="pr P2">P2</span></span>
+  </div>
+</section>
+
+<section>
+  <div class="sec-hd"><p class="eyebrow">1 · Architecture</p><h2>Teen interface, teen platform</h2></div>
+  <div class="three">
+    <div class="box plat"><span class="kind">STUDENT · MOBILE APP</span><h3>Kotlin Android / iOS</h3><ul><li>Touch-first, chhote learning sessions</li><li>Offline storage, card swipe</li><li>Low-latency audio record / play</li><li>Upload progress (XMLHttpRequest), storage HEAD check</li><li>Sticky audio player</li></ul></div>
+    <div class="box plat"><span class="kind">TEACHER · DESKTOP WEB</span><h3>Widescreen workstation</h3><ul><li>Review queue, race-guard auto-lock</li><li>Sticky waveform player</li><li>Timestamp notes (Minor / Major)</li><li>5 rubric slider, draft autosave</li><li>Structured send-back</li></ul></div>
+    <div class="box plat"><span class="kind">ADMIN · DESKTOP WEB</span><h3>Operations dashboard</h3><ul><li>Live dispatch queue monitoring</li><li>System analytics, KPI</li><li>Content CMS (WordMaster, Chunks, Frames)</li><li>User / role management</li><li>Billing, DPDP compliance</li></ul></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-hd"><p class="eyebrow">Audit round-trip loop</p><h2>Sabse zaroori loop</h2></div>
+  <div class="flow">
+    <div class="s"><b>S-08 Bolo Studio</b>Student record karta hai → AI check (1 credit)</div><span class="ar">→</span>
+    <div class="s"><b>S-09 AI Evaluation</b>"Submit to Human Teacher"</div><span class="ar">→</span>
+    <div class="s"><b>T-02 Queue</b>Teacher claim karta hai · 30 min lock</div><span class="ar">→</span>
+    <div class="s"><b>T-03 Workstation</b>Rubric + notes + summary → Submit ya Send Back</div><span class="ar">→</span>
+    <div class="s"><b>S-11 / S-12</b>Student audit padhta hai, ya re-record karta hai (free)</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-hd"><p class="eyebrow">Universal shell</p><h2>Har screen me common hissa</h2></div>
+  <div class="shell">
+    <div class="box"><h3>Top App Bar</h3><p>Screen ka title, action icons, credit/payout balance, status indicator.</p></div>
+    <div class="box"><h3>Back navigation</h3><p>Platform ka standard back. Unsaved kaam ho to warning.</p></div>
+    <div class="box"><h3>Bottom nav (mobile)</h3><p>Home · Learn · Audits · Profile — top-level screens ke beech switch.</p></div>
+    <div class="box"><h3>Sheets &amp; drawers</h3><p>Mobile pe neeche se sheet, web pe right side panel: filter, settings, reject reason.</p></div>
+    <div class="box"><h3>Contextual bars</h3><p>Floating bar: batch action, audio progress, active filter, lock timer countdown.</p></div>
+  </div>
+  <div class="states" style="margin-top:12px">
+    <div class="state"><b style="color:var(--muted)">LOADING</b>Skeleton, shimmer, spinner<div class="shim"></div><div class="shim" style="width:70%"></div></div>
+    <div class="state"><b style="color:var(--green)">EMPTY</b>Illustration + saaf CTA button</div>
+    <div class="state" style="border-left:3px solid var(--no)"><b style="color:var(--no)">ERROR</b>Chhoti galti inline; badi galti pe modal + recovery ka rasta</div>
+    <div class="state" style="border-left:3px solid var(--wip)"><b style="color:var(--wip)">OFFLINE</b>Banner: cached mode; AI evaluation aur sync band</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-hd"><p class="eyebrow">Index</p><h2>28 screens ek table me</h2></div>
+  <div class="tbl"><table id="idx"><thead><tr><th>ID</th><th>Priority</th><th>Kiske liye</th><th>Screen</th><th>Top buttons</th><th>Back</th><th>Component</th><th>Code me</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section><div class="sec-hd"><p class="eyebrow">2 · Student · mobile app</p><h2>Student screens (S-00 se S-13)</h2></div><div class="screens" data-g="S"></div></section>
+<section><div class="sec-hd"><p class="eyebrow">3 · Teacher · desktop web</p><h2>Teacher screens (T-01 se T-05)</h2></div><div class="screens" data-g="T"></div></section>
+<section><div class="sec-hd"><p class="eyebrow">4 · Admin · desktop web</p><h2>Admin screens (A-01 se A-06)</h2></div><div class="screens" data-g="A"></div></section>
+
+<section>
+  <div class="sec-hd"><p class="eyebrow">Spec me dhyan dene wali baatein</p><h2>Build se pehle ye clear karo</h2></div>
+  <div class="shell">
+    <div class="box"><h3>Platform badal raha hai</h3><p>Spec kehti hai student app native Kotlin/iOS hoga. Aaj ka code Next.js website hai. Ya to student side naya banega, ya pehle PWA/web me chalega — decide karo.</p></div>
+    <div class="box"><h3>Phone OTP aur SendGrid</h3><p>Spec me +91 phone OTP "SendGrid" se hai. SendGrid email bhejta hai, SMS nahi. Phone OTP ke liye MSG91 / Twilio jaisa SMS provider chahiye.</p></div>
+    <div class="box"><h3>Teacher: mobile ya desktop?</h3><p>Section 1 kehta hai teacher "strictly desktop". Section 3 ka title "Mobile + Web Portal" hai aur T-02/T-03 me mobile bar bhi hai. Ek chuno.</p></div>
+    <div class="box"><h3>Naam ya anonymized ID?</h3><p>T-02 aur T-04 me student ka anonymized ID hai. Aaj ka queue aur students page student ka naam aur email dikhata hai.</p></div>
+    <div class="box"><h3>Credits aur paisa</h3><p>Wallet, IAP, Razorpay, teacher payout — kuch bhi code me nahi. Isme Play Billing aur tax/KYC dono lagenge; ye sabse bada naya hissa hai.</p></div>
+    <div class="box"><h3>Content taiyar hai</h3><p>WordMaster 2000 (56 column), 220 Chunks aur 100 Hindi-English frames repo me Excel me hain. Flashcard (S-06) aur exercise (S-07) inhi se bharenge.</p></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+const PH=(tb,body,nav)=>`<div class="phone"><div class="notch"><span>9:41</span><span>4G ▮▮▮</span></div><div class="tb">${tb}</div><div class="scr">${body}</div>${nav?`<div class="bn">${['Home','Learn','Audits','Profile'].map(x=>`<span class="${x===nav?'on':''}">${x}</span>`).join('')}</div>`:''}</div>`;
+const WIN=(url,nav,body,items)=>`<div class="win"><div class="wbar"><i></i><i></i><i></i><span class="url">edusarthi.com${url}</span></div><div class="wbody"><div class="side"><span class="lg">edu<i>sarthi</i></span>${items.map(x=>`<span class="${x===nav?'on':''}">${x}</span>`).join('')}</div><div class="main">${body}</div></div></div>`;
+const TNAV=['Queue','Workstation','Students','Earnings','Settings'];
+const ANAV=['Mission Control','Dispatch','Content CMS','Users','Billing','Compliance'];
+const bar=(l,v,g)=>`<div><div class="r"><span>${l}</span><span style="font-family:var(--f-mono)">${v}</span></div><div class="tr ${g?'g':''}"><i style="width:${parseFloat(v)*10}%"></i></div></div>`;
+const back='<span class="ic">‹</span>';
+
+const S=[
+/* ===================== STUDENT ===================== */
+{g:'S',id:'S-00',p:'P0',who:'Student',name:'Public Landing & FAQ',top:'WhatsApp Support, Login',backb:'Disabled',comp:'LandingPage.tsx',
+ mock:PH(`<span class="t">edu<span style="color:var(--accent)">sarthi</span></span><span class="r" style="gap:5px"><span class="pill g">WhatsApp</span><span class="b" style="padding:4px 8px">Login</span></span>`,
+ `<span class="hero">Someone actually listens to your English.</span><span class="sub">Record karo, teacher sunke 5 score aur timestamp notes bhejta hai.</span>
+ <div class="c"><span class="ct">4 steps</span><div class="r"><span class="bd acc">1 Exercise</span><span class="bd acc">2 Record</span><span class="bd acc">3 Teacher</span><span class="bd acc">4 Audit</span></div></div>
+ <div class="faq"><span>Feedback teacher deta hai ya software?</span><span>+</span></div><div class="faq"><span>Meri recording kaun sun sakta hai?</span><span>+</span></div><div class="faq"><span>Audit kitne time me aata hai?</span><span>+</span></div>
+ <div class="c"><span class="ct">DPDP Terms</span><span class="sub">Aapka data, aapke adhikar</span></div>
+ <span class="b g full">Chat on WhatsApp</span>
+ <div class="sub" style="border-top:1px solid var(--border);padding-top:6px">About · Support · Privacy · Terms</div>`),
+ rows:{Top:'Brand, WhatsApp Support, Login',Main:['4-step workflow','Support FAQ accordion','DPDP terms section'],Controls:['FAQ accordion','Direct WhatsApp CTA'],Bottom:'Footer links, WhatsApp CTA'},
+ edge:'—',now:['wip','Landing, About, Support, Privacy, Terms bane hain. WhatsApp button aur DPDP section nahi.']},
+
+{g:'S',id:'S-AUTH',p:'P0',who:'Student',name:'Login & OTP Auth',top:'Help link',backb:'Pichhli screen',comp:'lib/auth.ts, prisma/schema.prisma',
+ mock:PH(`${back}<span class="t">Login</span><span class="sub">Help</span>`,
+ `<span class="h">Apna number daalo</span>
+ <span class="lb">Mobile number</span><div class="in r" style="justify-content:flex-start;gap:6px"><b style="color:var(--ink)">+91</b><span>98xxx xxxxx</span></div>
+ <span class="b full">Send OTP</span>
+ <span class="lb" style="margin-top:6px">6-digit OTP</span>
+ <div class="code6"><span>4</span><span>8</span><span>2</span><span>1</span><span></span><span></span></div>
+ <span class="b full">Verify OTP</span>
+ <span class="sub" style="text-align:center">OTP nahi aaya? 0:42 me dobara bhejo</span>
+ <span class="sub" style="text-align:center;color:var(--accent)">Password reset</span>
+ <div class="warn">Password reset hote hi sab device se logout (passwordChangedAt)</div>`),
+ rows:{Top:'Help link',Main:['+91 phone input (zaroori)','6-digit OTP verification'],Controls:['Verify OTP','Password reset CTA'],Bottom:'—'},
+ edge:'Password reset par saare active sessions band — prisma/schema.prisma me passwordChangedAt update.',
+ now:['wip','Email + password login aur email code verify bana hai. Phone OTP aur passwordChangedAt nahi.']},
+
+{g:'S',id:'S-01',p:'P1',who:'Student',name:'Welcome, Splash & Permissions',top:'Language toggle',backb:'Disabled',comp:'WelcomeView.tsx',
+ mock:PH(`<span></span><span class="t">EduSarthi</span><span class="pill">EN / हि</span>`,
+ `<div style="text-align:center;padding:8px 0"><div class="ring" style="width:54px;height:54px;margin:0 auto;background:var(--acc-soft)"><b style="width:40px;height:40px;font-size:15px;color:var(--accent)">ES</b></div><span class="h" style="display:block;margin-top:6px">Roz 10 minute, English bolna seekho</span></div>
+ <div class="c"><div class="r"><span class="ct">Microphone</span><span class="sw on"></span></div><span class="sub">Aapki awaaz record karne ke liye</span></div>
+ <div class="c"><div class="r"><span class="ct">Local storage</span><span class="sw on"></span></div><span class="sub">Lessons aur audio offline rakhne ke liye</span></div>
+ <div class="c"><div class="r"><span class="ct">Notifications</span><span class="sw"></span></div><span class="sub">Review aane par aur streak reminder</span></div>
+ <div class="warn">Notification band hai: streak reminder nahi aayega. <u>Settings kholo</u></div>
+ <span class="b full">Grant Permissions</span>`),
+ rows:{Top:'Back nahi; language toggle',Main:['Brand + value line','Permission cards: Mic, Storage, Notifications'],Controls:['Grant Permissions CTA','Har permission ka toggle + wajah'],Bottom:'Hidden'},
+ edge:'Permission mana karne par inline warning card: kaunsa feature nahi chalega + Android App Settings kholne ka button.',now:['no','Code me nahi hai (native app screen).']},
+
+{g:'S',id:'S-02',p:'P1',who:'Student',name:'Diagnostic Placement Test',top:'Exit Diagnostic',backb:'Exit warning modal',comp:'PlacementTest.tsx',
+ mock:PH(`<span class="ic">✕</span><div style="flex:1;margin:0 8px"><div class="tr g"><i style="width:42%"></i></div></div><span class="sub">5/12</span>`,
+ `<span class="bd acc" style="align-self:flex-start">Listening</span>
+ <span class="h">Suniye aur sahi jawab chuniye</span>
+ <div class="pl"><div class="wv"></div><div class="pc"><span>▶ Play</span><span>0:06</span></div></div>
+ <div class="opt">A. He goes to office by bus.</div>
+ <div class="opt sel">B. He went to office by bus.</div>
+ <div class="opt">C. He will go by bus.</div>
+ <div class="opt">D. He is going by bus.</div>
+ <div class="r" style="margin-top:auto"><span class="b o">Skip</span><span class="b">Next Question</span></div>`),
+ rows:{Top:'Exit (confirm modal ke saath), progress bar (12 adaptive sawaal)',Main:['Adaptive cards: grammar, vocabulary, listening','Hamesha dikhne wala Skip'],Controls:['Single-choice options','Audio play/pause','Next Question CTA'],Bottom:'Hidden'},
+ edge:'Network gaya to current sawaal local save. Aakhri sawaal ke baad CEFR level: A1, A2 ya B1.',now:['no','Code me nahi hai.']},
+
+{g:'S',id:'S-03',p:'P2',who:'Student',name:'Learner Path Selector',top:'None',backb:'Placement summary',comp:'PathSelector.tsx',
+ mock:PH(`${back}<span class="t">Apna raasta chuno</span><span></span>`,
+ `<div class="c"><span class="bd ok" style="align-self:flex-start">Result: A2</span><span class="sub">Test ke hisaab se Path B suggest hai. Aap badal sakte ho.</span></div>
+ <div class="opt"><div class="r"><span class="ct">Path A · Absolute Beginner</span><span>▾</span></div><span class="sub">Core vocabulary, phonetic matching, chhote sentence</span></div>
+ <div class="opt sel"><div class="r"><span class="ct">Path B · Grammar aata hai, bolne me jhijhak</span><span>▴</span></div><span class="sub">Sentence frames, fluency, speech studio, chunks</span>
+ <div class="sub" style="border-top:1px solid var(--border);padding-top:4px">Week 1: 20 frames · Week 2: 40 chunks · roz 2 Bolo sessions</div></div>
+ <span class="b full" style="margin-top:auto">Confirm Path Selection</span>`),
+ rows:{Top:'Back → placement summary',Main:['Path A: Absolute Beginner','Path B: Grammar-aware, hesitant speaker'],Controls:['Path cards + curriculum preview toggle','Confirm Path Selection CTA'],Bottom:'Hidden'},
+ edge:'Baad me path badalne par warning modal: progress dobara calibrate hoga.',now:['no','Code me nahi. Repo me "Chunks_220_Two_Learner_Paths.xlsx" isi ka content hai.']},
+
+{g:'S',id:'S-04',p:'P0',who:'Student',name:'Home Dashboard',top:'Profile, Notifications, Wallet',backb:'App minimize',comp:'Dashboard.tsx',
+ mock:PH(`<span class="ic">R</span><span class="r" style="gap:5px"><span class="pill">🔥 12</span><span class="pill g">₹ 40 credits</span><span class="ic">🔔<i class="dotn"></i></span></span>`,
+ `<div class="c" style="background:var(--acc-soft);border-color:transparent"><span class="ct">Aage kya karein</span><span>Complete 15 due flashcards</span><span class="b" style="align-self:flex-start">Start</span></div>
+ <div class="r" style="gap:6px"><div class="c" style="flex:1"><span class="sub">Due reviews</span><b style="font:700 16px var(--f-mono)">15</b></div><div class="c" style="flex:1;flex-direction:row;align-items:center;gap:6px"><div class="ring"><b>65%</b></div><span class="sub">Daily goal</span></div></div>
+ <div class="c"><span class="ct">Score trend</span><div class="chart"><svg viewBox="0 0 100 44" preserveAspectRatio="none"><polyline points="0,34 25,30 50,31 75,20 100,13" fill="none" stroke="var(--accent)" stroke-width="2"/></svg></div></div>
+ <div class="c"><div class="r"><span class="ct">Daily Conversations</span><span class="bd acc">A2</span></div><div class="r"><span class="ct">Office English</span><span class="bd acc">B1</span></div></div>`,'Home'),
+ rows:{Top:'Profile, notification bell (unread badge), stats row, wallet credit chip',Main:['Streak counter','Due SRS reviews','Daily goal progress','Score trend chart','Modules + CEFR chip (A1–B2)','Quick-start card'],Controls:['Quick-start CTA','Goal badlo link','Section cards'],Bottom:'Visible · Home active'},
+ edge:'Kuch due nahi to quick-start card bonus practice ya naya vocabulary module suggest kare.',now:['wip','/dashboard bana hai: pending list, score trend, latest audit. Streak, SRS, goal, wallet, bottom nav nahi.']},
+
+{g:'S',id:'S-05',p:'P0',who:'Student',name:'Learn (Seekho) Hub',top:'Search, category chips',backb:'Home',comp:'LearnHub.tsx',
+ mock:PH(`<div class="in" style="flex:1">🔍 Search lessons</div>`,
+ `<div class="chips"><span class="chip on">All</span><span class="chip">Words</span><span class="chip">220 Chunks</span><span class="chip">100 Frames</span></div>
+ <div class="c"><div class="r"><span class="ct">WordMaster · Daily words</span><span class="bd ok">Completed</span></div></div>
+ <div class="c"><div class="r"><span class="ct">Chunks · Office talk</span><span class="bd acc">In progress</span></div><div class="tr g"><i style="width:40%"></i></div></div>
+ <div class="c"><div class="r"><span class="ct">Frames · "Mujhe ___ chahiye"</span><span class="bd acc">In progress</span></div></div>
+ <div class="c"><div class="r"><span class="ct">Chunks · Travel</span><span class="bd">🔒 Locked</span></div></div>
+ <div class="c"><div class="r"><span class="ct">Frames · Past tense</span><span class="bd">🔒 Locked</span></div></div>`,'Learn'),
+ rows:{Top:'Search bar (turant filter), category chips',Main:['Core learning paths','220 Chunks module','100 Hindi-English sentence frames','Lesson list: Locked / In Progress / Completed'],Controls:['Category tabs','Search + clear','Lesson rows'],Bottom:'Visible · Learn active'},
+ edge:'Search me kuch na mile to empty illustration + "Clear Search Filter" button.',now:['wip','/modules aur /modules/[id] bane hain (3 demo module). Search, chunks, frames, lock nahi.']},
+
+{g:'S',id:'S-06',p:'P0',who:'Student',name:'Master Interactive Flashcard',top:'Card settings',backb:'Learn Hub',comp:'FlashcardMaster.tsx',
+ mock:PH(`${back}<span class="t">Card 4/20</span><span class="ic">⚙</span>`,
+ `<div class="fc"><span class="sub">FRONT</span><span class="w">confident</span><span style="font-family:var(--f-mono)">/ˈkɒn.fɪ.dənt/</span><span><b style="color:var(--accent)">CON</b>·fi·dent</span><span class="b o" style="align-self:center">🔊 Play</span></div>
+ <div class="fc" style="text-align:left"><span class="sub">BACK (tap to flip)</span><span class="ct">आत्मविश्वासी</span>
+ <span class="sub">1. She gave a confident answer.</span>
+ <div class="r"><span class="bd">Before</span><span class="bd">During</span><span class="bd">After</span></div>
+ <span>❌ I am confident on it · ✅ I am confident <b>about</b> it</span>
+ <span class="sub">Trick: "con-FIDE-nt" — khud pe bharosa · Origin: Latin confidere</span></div>
+ <div class="srs"><span>Again<small>1m</small></span><span>Hard<small>6m</small></span><span>Good<small>1d</small></span><span style="background:var(--green-soft);color:var(--green)">Easy<small>4d</small></span></div>`),
+ rows:{Top:'Back, "Card 4/20" counter, card settings',Main:['Front: word, IPA, audio, syllable stress','Back: Hindi meaning, 3 example, Before→During→After, ❌/✅ common mistake + kyun, memory trick, etymology'],Controls:['Tap to flip','Audio replay','SM-2 buttons: Again / Hard / Good / Easy'],Bottom:'Hidden (card ke liye jagah)'},
+ edge:'Audio download fail ho to Android Text-to-Speech + offline alert.',now:['no','Code me nahi. Content taiyar: WordMaster 2000 (56 column) + Premium Flashcard spec.']},
+
+{g:'S',id:'S-07',p:'P1',who:'Student',name:'Chunks & Sentence Frame Exercise',top:'Reset tray',backb:'Module list (save confirm)',comp:'SentenceExercise.tsx',
+ mock:PH(`${back}<div style="flex:1;margin:0 8px"><div class="tr g"><i style="width:60%"></i></div></div><span class="sub">6/10</span>`,
+ `<span class="sub">Hindi me:</span><span class="h">मुझे कल ऑफिस जल्दी जाना है।</span>
+ <span class="sub">Aapka sentence:</span>
+ <div class="tray"><span>I</span><span>have to</span><span>go to office</span></div>
+ <div class="tok"><span>early</span><span>tomorrow</span><span>will</span><span>went</span><span>the</span></div>
+ <div class="warn">Hint: time words (tomorrow) aam taur pe end me aate hain. Baaki sahi hai.</div>
+ <div class="r" style="margin-top:auto"><span class="b o">Reset</span><span class="b">Check Answer</span></div>`),
+ rows:{Top:'Back (progress save confirm), completion bar',Main:['Hindi source sentence','Sentence banane ka area'],Controls:['Word/phrase chips: drag ya tap','Reset tray','Check Answer CTA'],Bottom:'Hidden'},
+ edge:'Galat order par inline hint drawer; sahi hisse clear nahi hote.',now:['no','Code me nahi. Content: Hindi_English_Frames_100.xlsx, Chunks_220.']},
+
+{g:'S',id:'S-08',p:'P0',who:'Student',name:'Speak (Bolo) Practice Studio',top:'Wallet credit pill',backb:'Studio se exit',comp:'SubmitPanel.tsx, lib/media.ts, lib/storage.ts',
+ mock:PH(`<span class="ic">✕</span><span class="t">Bolo Studio</span><span class="pill g">3 credits</span>`,
+ `<div class="c"><span class="ct">Bolo:</span><span>"Could you please send me the report by Friday?"</span><div class="pl"><div class="pc"><span>▶ Reference audio</span><span>0:04</span></div></div></div>
+ <div class="c" style="align-items:center"><div class="wv" style="width:100%;height:26px"></div><div class="rec"></div><span style="font-family:var(--f-mono)">● 00:05</span></div>
+ <div class="pl"><div class="pc"><span>▶ Aapki recording</span><span>0:05</span></div></div>
+ <div class="c"><div class="r"><span class="sub">Uploading…</span><span class="sub">62%</span></div><div class="tr g"><i style="width:62%"></i></div><span class="sub">✓ Storage HEAD check baad me</span></div>
+ <span class="b full">AI Evaluation · 1 credit</span>
+ <div class="sheet"><div class="grab"></div><span class="ct">Credits khatam</span><div class="r"><span class="b o">10 · ₹49</span><span class="b o">30 · ₹129</span><span class="b">100 · ₹399</span></div></div>`),
+ rows:{Top:'Exit, credit balance pill',Main:['Sentence prompt + reference audio','Upload progress bar (XHR) + HEAD check','Live waveform (volume)','Record controls (SubmitPanel)'],Controls:['Record / Stop','Playback bar','1-Credit AI Evaluation'],Bottom:'Hidden'},
+ edge:'Credit kam ho to evaluation band + credit pack kharidne ki bottom sheet. Awaaz bahut dheemi ho to low-volume warning.',now:['wip','/practice/[id] me record/upload + "Send to a teacher" hai. Progress bar, HEAD check, credits, AI nahi. Recorder kabhi test nahi hua.']},
+
+{g:'S',id:'S-09',p:'P0',who:'Student',name:'Instant AI Speech Evaluation',top:'Close, Share',backb:'Speak Studio',comp:'AIEvaluationView.tsx',
+ mock:PH(`<span class="ic">✕</span><span class="t">AI Result</span><span class="ic">↗</span>`,
+ `<div class="dial"><b>78</b></div><span class="sub" style="text-align:center">Pronunciation score · Azure Speech</span>
+ <div class="c">${bar('Fluency','8.2',1)}${bar('Accuracy','7.4',1)}${bar('Completeness','9.0',1)}</div>
+ <div class="c words"><span class="g">Could</span> <span class="g">you</span> <span class="y">please</span> <span class="g">send</span> <span class="g">me</span> <span class="g">the</span> <span class="x">report</span> <span class="g">by</span> <span class="y">Friday</span></div>
+ <div class="c"><span class="ct">"report" · phoneme</span><span class="sub">/rɪ/ ✓ · /pɔː/ ✗ "pot" jaisa bola · /t/ ✓</span></div>
+ <div class="r"><span class="b o">Practice Again</span><span class="b">Submit to Teacher</span></div>`),
+ rows:{Top:'Close, share',Main:['Overall pronunciation dial','Fluency, Accuracy, Completeness bars','Transcript: hara / peela / laal words','Phoneme diagnostics'],Controls:['Word tap → phoneme popover','Recording replay','Practice Again','Submit to Human Teacher for Audit'],Bottom:'Hidden'},
+ edge:'AI timeout par "Retry Analysis" — dobara credit nahi katega.',now:['no','Code me nahi. Azure Speech ka kaam Speak Sarthi (Android) me tha, is web app me nahi.']},
+
+{g:'S',id:'S-10',p:'P0',who:'Student',name:'Audits & Submissions Central',top:'Filter menu',backb:'Home',comp:'AuditsCentral.tsx',
+ mock:PH(`<span class="t">My Audits</span><span class="ic">⚲</span>`,
+ `<div class="chips"><span class="chip on">All</span><span class="chip">In Review</span><span class="chip">Action Needed</span><span class="chip">Completed</span></div>
+ <div class="c"><div class="r"><span class="ct">Could you please send…</span><span class="bd ok">Completed</span></div><span class="sub">27 Sep · 10:42</span></div>
+ <div class="c"><div class="r"><span class="ct">Introduce yourself</span><span class="bd acc">In Review</span></div><span class="sub">28 Sep · 18:10</span></div>
+ <div class="c"><div class="r"><span class="ct">Order at a café</span><span class="bd no">Sent Back</span></div><span class="sub">28 Sep · 09:03</span></div>
+ <div class="c"><div class="r"><span class="ct">Describe your city</span><span class="bd">Pending</span></div><span class="sub">29 Sep · 08:30</span></div>`,'Audits'),
+ rows:{Top:'Title, filter (All / In Review / Action Needed / Completed)',Main:['Submissions ki list, naya upar','Har row: time, prompt, status badge','Pending · In Review · Sent Back · Completed'],Controls:['Filter chips','Row → detail'],Bottom:'Visible · Audits active'},
+ edge:'Khaali list par button: Bolo Studio kholo.',now:['wip','/feedback sirf Completed (REVIEWED) dikhata hai. Filter aur baaki status nahi.']},
+
+{g:'S',id:'S-11',p:'P0',who:'Student',name:'Completed Teacher Audit Viewer',top:'Share feedback',backb:'Audits Central',comp:'AuditPlayback.tsx',
+ mock:PH(`${back}<span class="t">Audit</span><span class="ic">↗</span>`,
+ `<div class="pl"><div class="pc"><span>▶ Aapki awaaz</span><span>0:12 / 1:14</span></div><div class="wv"></div><div class="pc"><span>▶ Teacher voiceover</span><span class="r" style="gap:4px"><span class="bd">1x</span><span class="bd">1.25x</span><span class="bd">1.5x</span></span></div></div>
+ <div class="c">${bar('Pronunciation','7')}${bar('Grammar','5')}${bar('Fluency','6')}${bar('Vocabulary','7')}${bar('Confidence','7')}</div>
+ <div class="c"><div class="nt"><span class="t">0:12</span><span>"I am working" → "I work"</span><span class="bd no">major</span></div><div class="nt"><span class="t">0:48</span><span>"th" "t" ban gaya</span><span class="bd">minor</span></div></div>
+ <div class="c"><span class="ct">Teacher summary</span><span class="sub">Awaaz saaf hai. Present simple par kaam karo…</span></div>
+ <span class="b full">Try Again / Re-record</span>`),
+ rows:{Top:'Back, share feedback summary',Main:['Sticky player: student audio + teacher voiceover','5 score (0–10)','Timestamp notes → player us second par','Teacher ka summary'],Controls:['Timestamp chips','Speed 1x / 1.25x / 1.5x','Try Again / Re-record CTA'],Bottom:'Hidden'},
+ edge:'Exercise delete ho gaya ho to bhi purana audit dikhe, "Legacy Content" tag ke saath.',now:['wip','/feedback/[id] me 5 score, summary, player, seekable notes hain. Voiceover, speed, sticky player, re-record nahi.']},
+
+{g:'S',id:'S-12',p:'P1',who:'Student',name:'Send-Back / Re-recording',top:'Cancel',backb:'Audits Central',comp:'SendBackView.tsx',
+ mock:PH(`<span class="sub">Cancel</span><span class="t">Wapas bheja gaya</span><span></span>`,
+ `<div class="err"><b>Reason:</b> Background Noise Too High</div>
+ <div class="c"><span class="ct">Dobara record karne se pehle</span><span class="sub">• Pankha / TV band karo<br>• Phone munh se 1 haath door<br>• Band kamra, parde wala</span></div>
+ <div class="pl"><div class="pc"><span>▶ Pehli recording</span><span>0:08</span></div><div class="wv"></div></div>
+ <div class="c" style="align-items:center"><div class="rec"></div><span class="sub">Immediate Re-record</span></div>
+ <span class="bd ok" style="align-self:center">Is baar koi credit nahi katega</span>
+ <span class="b full">Submit Replacement Audio</span>`),
+ rows:{Top:'Cancel / back',Main:['Teacher ka reason (Noise, Inaudible, Galat prompt)','Noise kam karne ke tips','Pehli recording ka preview'],Controls:['One-tap Immediate Re-record','Submit Replacement Audio CTA'],Bottom:'Hidden'},
+ edge:'Sent Back item ki re-recording par credit charge nahi.',now:['no','Code me nahi. RETURNED status schema me hai, par reason field, button aur screen nahi.']},
+
+{g:'S',id:'S-13',p:'P1',who:'Student',name:'Settings & Wallet',top:'Logout icon',backb:'Pichhli screen',comp:'SettingsWallet.tsx',
+ mock:PH(`<span class="t">Settings</span><span class="ic">⎋</span>`,
+ `<div class="c"><div class="r"><span class="ct">Wallet</span><b style="font:700 14px var(--f-mono)">3 credits</b></div><div class="r"><span class="b o">10 · ₹49</span><span class="b o">30 · ₹129</span><span class="b">100 · ₹399</span></div><span class="sub">Ledger: −1 AI eval · +30 purchase</span></div>
+ <div class="c"><span class="ct">Theme (6)</span><div class="chips"><span class="chip on">Light</span><span class="chip">Dark</span><span class="chip">+4</span></div></div>
+ <div class="c"><div class="r"><span>Email notifications</span><span class="sw on"></span></div><div class="r"><span>Autoplay audio</span><span class="sw"></span></div><div class="r"><span>Larger text</span><span class="sw"></span></div><div class="r"><span>Daily reminder · 7:30 PM</span><span class="sw on"></span></div></div>
+ <div class="c"><div class="r"><span class="ct">Mic test</span><span class="b o">Start</span></div><div class="tr g"><i style="width:55%"></i></div></div>
+ <div class="c"><span class="sub">24 sent · 18 reviewed · +91 ✓ verified</span><div class="r"><span class="b o">Export data</span><span class="b o" style="color:var(--no)">Delete account</span></div></div>`,'Profile'),
+ rows:{Top:'Settings title, logout icon',Main:['6 theme','3 toggle: email, autoplay, larger text','Stats: sent vs reviewed, +91 verified','Wallet: balance, ledger, IAP packs','Mic level meter + test','Push toggles, reminder time, dark/light','DPDP: account delete, data export'],Controls:['Credit buy','Mic test start/stop','Toggles','Time picker','Export / delete (confirm modal)'],Bottom:'Visible · Profile active'},
+ edge:'IAP fail ho to "transaction check" button jo Google Play billing history dekhe.',now:['wip','/settings me theme + 3 toggle aur /profile me stats hain. Wallet, mic test, reminder, DPDP delete/export nahi.']},
+
+/* ===================== TEACHER ===================== */
+{g:'T',id:'T-01',p:'P0',who:'Teacher',name:'Authentication & Verification Gate',top:'Support contact',backb:'Disabled',comp:'TeacherAuth.tsx',desk:1,
+ mock:`<div class="win"><div class="wbar"><i></i><i></i><i></i><span class="url">edusarthi.com/teacher/login</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px;min-height:300px">
+ <div class="k" style="display:flex;flex-direction:column;gap:6px"><span class="ct" style="font-size:13px">Teacher Sign in</span><span class="lb">Email</span><div class="in">teacher@school.in</div><span class="lb">Password</span><div class="in">••••••••</div><span class="lb">MFA code</span><div class="code6" style="justify-content:flex-start"><span>3</span><span>9</span><span>1</span><span></span><span></span><span></span></div><span class="b">Sign In</span><span class="sub" style="color:var(--accent)">Request Access Reset</span></div>
+ <div style="display:flex;flex-direction:column;gap:6px"><span class="ct">Application status</span><div class="k"><span class="bd wip">Pending Verification</span><span class="sub" style="display:block;margin-top:4px">Documents check ho rahe hain.</span></div><div class="k"><span class="bd ok">Approved</span></div><div class="k"><span class="bd no">Suspended</span><span class="sub" style="display:block;margin-top:4px">Operations Support se baat karein.</span></div><span class="sub" style="margin-top:auto">🔒 Security badges · System status · Support</span></div></div></div>`,
+ rows:{Top:'Saada header + support link',Main:['Login card + MFA','Pending / Approved / Suspended status screen'],Controls:['Credential fields','Sign In CTA','Request Access Reset link'],Bottom:'Security badges + system status link'},
+ edge:'Unverified ya deactivated teacher yahin block, error modal: Operations Support se sampark.',now:['wip','Teacher usi login se aata hai (role DB me hand se). MFA aur status gate nahi.']},
+
+{g:'T',id:'T-02',p:'P0',who:'Teacher',name:'Review Queue Console',top:'Online/Offline, Refresh',backb:'Overview',comp:'ReviewQueue.tsx',desk:1,
+ mock:WIN('/queue','Queue',`<div class="mtop"><span class="ct" style="font-size:13px">Review Queue</span><span class="r" style="gap:6px"><span class="pill g">● Online</span><span class="pill">1 claimed</span><span class="b o" style="padding:3px 7px">↻</span></span></div>
+ <div class="chips"><span class="chip on">Urgent &lt;4h SLA · 3</span><span class="chip">All Pending · 18</span><span class="chip">Claimed by Me · 1</span></div>
+ <table class="mt"><thead><tr><th>Student</th><th>Level</th><th>Submitted</th><th>In queue</th><th>Media</th><th></th></tr></thead><tbody>
+ <tr><td>STU-4821</td><td><span class="bd acc">A2</span></td><td>08:12</td><td style="color:var(--no)">21h 10m</td><td>Audio</td><td><span class="b" style="padding:3px 7px">Claim</span></td></tr>
+ <tr><td>STU-1177</td><td><span class="bd acc">B1</span></td><td>09:40</td><td style="color:var(--wip)">20h 02m</td><td>Video</td><td><span class="b" style="padding:3px 7px">Claim</span></td></tr>
+ <tr><td>STU-3090</td><td><span class="bd acc">A1</span></td><td>11:05</td><td>18h 30m</td><td>Audio</td><td><span class="b" style="padding:3px 7px">Claim</span></td></tr>
+ <tr style="background:var(--green-soft)"><td>STU-2254</td><td><span class="bd acc">A2</span></td><td>12:30</td><td>🔒 28:40 left</td><td>Audio</td><td><span class="b o" style="padding:3px 7px">Release</span></td></tr></tbody></table>
+ <div class="warn">Lock time khatam: STU-5512 wapas public queue me chala gaya.</div>`,TNAV),
+ rows:{Top:'Online/Offline toggle, claimed count banner, refresh',Main:['Tabs: Urgent (<4h SLA), All Pending, Claimed by Me','Card: anonymized ID, level badge, time, queue duration, media tag'],Controls:['Claim Submission','Race-guard auto-lock: 30 min','Manual Release-Claim'],Bottom:'Mobile: Queue · History · Earnings. Web: header bar'},
+ edge:'Timer khatam → item khud queue me wapas + non-blocking timeout alert.',now:['wip','/queue me "Open with you" + Waiting (oldest first) hai. Tabs, SLA, 30-min timer, Release, online toggle nahi. Naam dikhata hai, ID nahi.']},
+
+{g:'T',id:'T-03',p:'P0',who:'Teacher',name:'Complete Teacher Audit Workstation',top:'Claim timer, Release, Send Back',backb:'Exit alert (unsaved)',comp:'RubricForm.tsx, draftStorage.ts',desk:1,
+ mock:WIN('/review/SUB-8812','Workstation',`<div class="mtop"><span class="ct" style="font-size:12px">SUB-8812 · STU-2254 · "Introduce yourself"</span><span class="r" style="gap:5px"><span class="pill">⏱ 24:10</span><span class="b o" style="padding:3px 7px">Release</span><span class="b o" style="padding:3px 7px;color:var(--no)">Send Back</span></span></div>
+ <div class="pl"><div class="wv" style="height:24px"></div><div class="pc"><span>▶ 0:42 / 1:14</span><span class="b" style="padding:3px 7px">+ Add Note at Current Time</span></div></div>
+ <div class="cols" style="grid-template-columns:1fr 1fr">
+ <div class="k" style="display:flex;flex-direction:column;gap:5px"><span class="ct">Rubric (sab 5 touch karo)</span>${bar('Pronunciation','7')}${bar('Grammar','5')}${bar('Fluency','6')}<div><div class="r"><span style="color:var(--no)">Vocabulary · not set</span><span>–</span></div><div class="tr" style="outline:1px solid var(--no)"></div></div><div><div class="r"><span style="color:var(--no)">Confidence · not set</span><span>–</span></div><div class="tr" style="outline:1px solid var(--no)"></div></div></div>
+ <div class="k" style="display:flex;flex-direction:column;gap:4px"><span class="ct">Notes</span><div class="nt"><span class="t">0:12</span><span>"I am working" → "I work"</span><span class="bd no">Major</span></div><div class="nt"><span class="t">0:42</span><span>"th" sound</span><span class="bd">Minor</span></div><span class="ct" style="margin-top:4px">Summary</span><div class="in" style="height:36px">Clear voice…</div><span class="sub" style="color:var(--no)">18/40 characters</span></div></div>
+ <div class="abar"><span class="sub">✓ Draft saved 8s ago (draftStorage.ts)</span><span class="b" style="opacity:.5">Submit Complete Audit</span></div>`,TNAV),
+ rows:{Top:'Submission ID, 30-min timer, Release, Send Back drawer',Main:['Sticky waveform player + scrubbing','5 slider 0–10 — sab touch zaroori','Notes + Minor/Major tag','Summary min 40 akshar'],Controls:['+ Add Note at Current Time','Draft auto-save indicator','Submit Complete Audit','Send Back modal: Noise / Inaudible / Wrong prompt / Incomplete'],Bottom:'Mobile: sticky tray (Send Back, Submit). Web: bottom action bar'},
+ edge:'40 se kam akshar ya untouched slider → laal highlight, submit band. Timer khatam → item queue me wapas.',now:['wip','/review/[id] me player, 5 slider, notes, summary, submit hai. draftStorage.ts likha hai par juda nahi. Timer, Release, Send Back, touched rule nahi.']},
+
+{g:'T',id:'T-04',p:'P1',who:'Teacher',name:'Student Dossier & Progress',top:'Anonymized ID badge',backb:'Workstation',comp:'StudentDossier.tsx',desk:1,
+ mock:WIN('/students/STU-2254','Students',`<div class="mtop"><span class="ct" style="font-size:13px">STU-2254</span><span class="r" style="gap:5px"><span class="bd">Start A1</span>→<span class="bd acc">Now A2</span></span></div>
+ <div class="cols" style="grid-template-columns:1.4fr 1fr">
+ <div class="k"><div class="r"><span class="ct">Score trend · 5 metrics</span><span class="chips"><span class="chip">1M</span><span class="chip on">3M</span><span class="chip">All</span></span></div><div class="chart" style="height:70px;margin-top:6px"><svg viewBox="0 0 100 70" preserveAspectRatio="none"><polyline points="0,55 33,48 66,40 100,30" fill="none" stroke="var(--accent)" stroke-width="2"/><polyline points="0,60 33,58 66,50 100,46" fill="none" stroke="var(--green)" stroke-width="2"/><polyline points="0,45 33,44 66,38 100,34" fill="none" stroke="var(--wip)" stroke-width="2"/></svg></div></div>
+ <div class="k" style="border-left:3px solid var(--wip)"><span class="ct">Recurring issues</span><span class="sub" style="display:block;margin-top:4px">• Present simple vs continuous (4 audits)<br>• "th" → "t" (3 audits)<br>• Article "the" chhoot jaata hai</span></div></div>
+ <table class="mt"><thead><tr><th>Date</th><th>Exercise</th><th>Avg</th><th></th></tr></thead><tbody><tr><td>27 Sep</td><td>Introduce yourself</td><td>6.4</td><td>▸</td></tr><tr><td>20 Sep</td><td>Reading a notice</td><td>5.6</td><td>▸</td></tr><tr><td>12 Sep</td><td>Café order</td><td>5.1</td><td>▸</td></tr></tbody></table>`,TNAV),
+ rows:{Top:'Back, anonymized ID badge',Main:['Start CEFR vs abhi ka level','Purane audits + audio','5-metric trend graph','Recurring issues card'],Controls:['Audit expand','Graph range: 1M / 3M / All'],Bottom:'Portal footer'},
+ edge:'Pehli submission: "Initial Student Submission - No Historical Trend Data Available".',now:['wip','/students roster hai (count, avg, waiting). Per-student dossier page, trend, recurring issues nahi.']},
+
+{g:'T',id:'T-05',p:'P1',who:'Teacher',name:'Earnings, Payouts & Workload',top:'Date range',backb:'Queue',comp:'TeacherEarnings.tsx',desk:1,
+ mock:WIN('/earnings','Earnings',`<div class="mtop"><span class="ct" style="font-size:13px">Earnings &amp; workload</span><span class="in" style="padding:3px 8px">Last 7 days ▾</span></div>
+ <div class="cols" style="grid-template-columns:repeat(3,1fr)"><div class="k"><small>Unpaid balance</small><b>₹2,340</b></div><div class="k"><small>Total earned</small><b>₹18,900</b></div><div class="k"><small>SLA &lt;24h</small><b style="color:var(--ok)">94%</b></div></div>
+ <div class="k"><span class="ct">Audits per day</span><div class="bars" style="margin-top:6px"><i style="height:40%"></i><i style="height:70%"></i><i style="height:55%"></i><i style="height:90%"></i><i style="height:65%"></i><i style="height:30%"></i><i style="height:50%"></i></div></div>
+ <div class="cols" style="grid-template-columns:1fr 1fr"><div class="k"><span class="ct">Next payout</span><span class="sub" style="display:block">Mon, 6 Oct</span><span class="b" style="margin-top:5px;opacity:.5">Request Early Payout</span></div><div class="k"><span class="ct">Bank details</span><span class="sub" style="display:block">HDFC ••• 4410 · <span style="color:var(--wip)">PAN pending</span></span><span class="b o" style="margin-top:5px">Edit</span></div></div>
+ <div class="warn">Bank verification pending — payout request band hai.</div>`,TNAV),
+ rows:{Top:'Section title, date range',Main:['Weekly audit volume bar graph','SLA turnaround % (<24h)','Payout: unpaid, total, next date','Bank details + tax status'],Controls:['Request Early Payout','Bank edit','Date filter'],Bottom:'Portal footer'},
+ edge:'Bank verification pending ho to payout button band + inline info.',now:['no','Code me nahi. Payments ka koi hissa nahi hai.']},
+
+/* ===================== ADMIN ===================== */
+{g:'A',id:'A-01',p:'P0',who:'Admin',name:'Operations & KPI Mission Control',top:'Environment picker, Refresh',backb:'Root view',comp:'MissionControl.tsx',desk:1,
+ mock:WIN('/admin','Mission Control',`<div class="mtop"><span class="ct" style="font-size:13px">Mission Control</span><span class="r" style="gap:5px"><span class="in" style="padding:3px 8px">Production ▾</span><span class="ic">🔔<i class="dotn"></i></span><span class="b o" style="padding:3px 7px">↻</span></span></div>
+ <div class="cols" style="grid-template-columns:repeat(4,1fr)"><div class="k red"><small>Queue depth</small><b style="color:var(--no)">112</b></div><div class="k"><small>&gt;24h SLA</small><b style="color:var(--wip)">9</b></div><div class="k"><small>Active teachers</small><b>6</b></div><div class="k"><small>DAU / WAU</small><b>420 / 1.9k</b></div></div>
+ <div class="k"><div class="r"><span class="ct">Azure API cost vs credit revenue</span><span class="b o" style="padding:3px 7px">Export ▾</span></div><div class="chart" style="height:70px;margin-top:6px"><svg viewBox="0 0 100 70" preserveAspectRatio="none"><polyline points="0,50 25,44 50,40 75,30 100,22" fill="none" stroke="var(--green)" stroke-width="2"/><polyline points="0,58 25,55 50,52 75,48 100,45" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 2"/></svg></div><span class="sub">— revenue · - - Azure cost</span></div>
+ <div class="abar"><span class="sub">● Uptime 99.97% · API ok · Storage ok</span></div>`,ANAV),
+ rows:{Top:'Environment picker, alert bell, refresh',Main:['Live queue depth','SLA warning (>24h)','Active teacher count','Azure cost vs credit revenue graph','Student DAU / WAU'],Controls:['Graph zoom','Export CSV/JSON','Alert threshold settings'],Bottom:'Uptime status bar'},
+ edge:'Queue >100 ho to card halka laal + (on ho to) lagataar warning sound.',now:['no','Code me nahi. ADMIN role enum hai, koi admin page nahi.']},
+
+{g:'A',id:'A-02',p:'P0',who:'Admin',name:'Queue & SLA Dispatch Manager',top:'Queue view filters',backb:'Mission Control',comp:'DispatchManager.tsx',desk:1,
+ mock:WIN('/admin/dispatch','Dispatch',`<div class="mtop"><div class="chips"><span class="chip on">Live Stream</span><span class="chip">Blocked</span><span class="chip">Exceeded SLA</span></div><div class="in" style="padding:3px 8px">🔍 Student / teacher</div></div>
+ <table class="mt"><thead><tr><th>ID</th><th>Time</th><th>Student</th><th>Teacher</th><th>Lock</th><th>In queue</th><th>Actions</th></tr></thead><tbody>
+ <tr><td>SUB-8812</td><td>12:30</td><td>STU-2254</td><td>Asha K. ▾</td><td>🔒 24m</td><td>2h</td><td><span class="bd">QA flag</span></td></tr>
+ <tr style="background:var(--no-soft)"><td>SUB-8790</td><td>09:02</td><td>STU-1177</td><td>Ravi M. ▾</td><td style="color:var(--no)">expired</td><td>26h</td><td><span class="b" style="padding:2px 6px">Force unlock</span></td></tr>
+ <tr><td>SUB-8801</td><td>10:15</td><td>STU-3090</td><td>— ▾</td><td>open</td><td>4h</td><td><span class="b o" style="padding:2px 6px">Reassign</span></td></tr></tbody></table>
+ <div class="abar"><span class="sub">1–25 of 118</span><span class="r" style="gap:5px"><span class="in" style="padding:2px 6px">25 / page ▾</span><span class="b o" style="padding:2px 7px">‹</span><span class="b o" style="padding:2px 7px">›</span></span></div>`,ANAV),
+ rows:{Top:'View: Live Stream / Blocked / Exceeded SLA; global search',Main:['Table: ID, time, student, teacher, lock, queue time, actions'],Controls:['Reassign stuck audit (dropdown)','Force-unlock expired claim','QA sampling flag'],Bottom:'Pagination + per-page'},
+ edge:'Jo audit abhi submit ho raha ho usko force-unlock karne par confirm alert — double assign se bachao.',now:['no','Code me nahi.']},
+
+{g:'A',id:'A-03',p:'P0',who:'Admin',name:'Curriculum & Content CMS',top:'Module tabs, Create item',backb:'Mission Control',comp:'ContentCMS.tsx',desk:1,
+ mock:WIN('/admin/content','Content CMS',`<div class="mtop"><div class="chips"><span class="chip on">WordMaster</span><span class="chip">Chunks</span><span class="chip">Sentence Frames</span></div><span class="r" style="gap:5px"><span class="b o" style="padding:3px 7px">⤒ Import Excel/CSV</span><span class="b" style="padding:3px 7px">+ New Word</span></span></div>
+ <div style="overflow:hidden"><table class="mt"><thead><tr><th>☐</th><th>Word</th><th>CEFR</th><th>IPA</th><th>Hindi</th><th>Audio</th><th>+50 cols →</th></tr></thead><tbody>
+ <tr><td>☑</td><td>confident</td><td>B1</td><td>/ˈkɒn.fɪ.dənt/</td><td style="outline:1.5px solid var(--accent)">आत्मविश्वासी</td><td>▶</td><td>…</td></tr>
+ <tr><td>☑</td><td>borrow</td><td>A2</td><td>/ˈbɒr.əʊ/</td><td>उधार लेना</td><td>▶</td><td>…</td></tr>
+ <tr><td>☐</td><td>schedule</td><td>A2</td><td>/ˈʃed.juːl/</td><td>समय-सारणी</td><td style="color:var(--no)">missing</td><td>…</td></tr></tbody></table></div>
+ <div class="err">Import error: row 214, column "IPA" khaali hai · row 530, "CEFR" = "C3" galat</div>
+ <div class="abar"><span class="sub">2 selected</span><span class="r" style="gap:5px"><span class="b" style="padding:3px 7px">Bulk Publish</span><span class="b o" style="padding:3px 7px">Archive</span><span class="b o" style="padding:3px 7px">Export</span></span></div>`,ANAV),
+ rows:{Top:'Tabs: WordMaster / Chunks / Frames, Create New',Main:['WordMaster 2,000 table, 56 column (word, CEFR, IPA, audio, Hindi, examples, action sequence, mistakes, mnemonic…)'],Controls:['Inline cell edit','Excel/CSV importer + schema preview','Chunk/Frame drag-drop editor'],Bottom:'Bulk bar: Publish, Archive, Export'},
+ edge:'Import me schema error → modal me exact row aur column, database me daalne se pehle.',now:['no','Code me nahi. Data repo me Excel me hai (content/wordmaster-2000). Seed sirf 3 module daalta hai.']},
+
+{g:'A',id:'A-04',p:'P0',who:'Admin',name:'User, Role & Permissions Directory',top:'User type filter',backb:'Mission Control',comp:'UserDirectory.tsx',desk:1,
+ mock:WIN('/admin/users','Users',`<div class="mtop"><div class="chips"><span class="chip on">All</span><span class="chip">Students</span><span class="chip">Teachers</span><span class="chip">Ops</span><span class="chip">Admins</span></div><div class="in" style="padding:3px 8px">🔍 Search</div></div>
+ <table class="mt"><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Credits</th><th>Usage</th><th></th></tr></thead><tbody>
+ <tr><td>Rahul S.</td><td>Student ▾</td><td><span class="bd ok">Active</span></td><td>3</td><td>24 subs</td><td>⋯</td></tr>
+ <tr><td>Asha K.</td><td>Teacher ▾</td><td><span class="bd ok">Active</span></td><td>—</td><td>312 audits</td><td>⋯</td></tr>
+ <tr><td>Vikas P.</td><td>Student ▾</td><td><span class="bd no">Suspended</span></td><td>0</td><td>2 subs</td><td>⋯</td></tr></tbody></table>
+ <div class="cols" style="grid-template-columns:1fr 1fr"><div class="k"><span class="ct">Credit adjust · Rahul S.</span><div class="r" style="margin-top:4px"><span class="in" style="padding:3px 8px">+10</span><span class="in" style="flex:1;padding:3px 8px">Reason (zaroori)</span></div></div><div class="k"><span class="ct">Ban Vikas P.?</span><div class="in" style="margin-top:4px;padding:3px 8px">Type CONFIRM</div></div></div>
+ <div class="abar"><span class="sub">2,418 users</span><span class="r" style="gap:5px"><span class="b o" style="padding:2px 7px">‹</span><span class="b o" style="padding:2px 7px">›</span></span></div>`,ANAV),
+ rows:{Top:'Filter: All / Students / Teachers / Ops / Admins, search',Main:['User table: profile, status, usage, credits, role'],Controls:['Promote / demote teacher','Manual credit adjust + reason','Suspend / ban','Activity log drawer'],Bottom:'Pagination + total users'},
+ edge:'Ban karne ke liye "CONFIRM" type karna zaroori.',now:['no','Code me nahi. Aaj teacher banana = Supabase me role column hand se badalna.']},
+
+{g:'A',id:'A-05',p:'P1',who:'Admin',name:'Monetization & Billing Engine',top:'Fiscal period',backb:'Mission Control',comp:'MonetizationEngine.tsx',desk:1,
+ mock:WIN('/admin/billing','Billing',`<div class="mtop"><span class="ct" style="font-size:13px">Billing</span><span class="r" style="gap:5px"><span class="in" style="padding:3px 8px">INR ▾</span><span class="in" style="padding:3px 8px">FY 26-27 Q2 ▾</span></span></div>
+ <div class="cols" style="grid-template-columns:1fr 1fr">
+ <div class="k"><span class="ct">Credit bundles</span><table class="mt"><tbody><tr><td>10 credits</td><td>₹49</td><td>✎</td></tr><tr><td>30 credits</td><td>₹129</td><td>✎</td></tr><tr><td>100 credits</td><td>₹399</td><td>✎</td></tr></tbody></table><span class="sub">Conversion 3.8%</span></div>
+ <div class="k"><span class="ct">Play IAP reconciliation</span><table class="mt"><tbody><tr><td>GPA.33…12</td><td>30 cr</td><td style="color:var(--ok)">✓</td></tr><tr style="background:var(--no-soft)"><td>GPA.33…47</td><td>100 cr</td><td><span class="b" style="padding:2px 5px">Force sync</span></td></tr></tbody></table><span class="sub">UPI / Razorpay logs →</span></div></div>
+ <div class="k"><div class="r"><span class="ct">Teacher payouts · this week</span><span class="b" style="padding:3px 7px">Authorize batch (6)</span></div></div>
+ <div class="abar"><span class="sub">Pending payout liability: ₹14,220</span></div>`,ANAV),
+ rows:{Top:'Currency, fiscal period',Main:['Credit bundle price editor','Conversion analytics','Play Console IAP reconciliation','UPI / Razorpay logs','Teacher payout batch approval'],Controls:['Bundle price edit','Batch payout authorize','Reconciliation run','Transaction search'],Bottom:'Pending payout liability bar'},
+ edge:'Receipt match na ho to laal row + "Force Synchronize Receipt".',now:['no','Code me nahi.']},
+
+{g:'A',id:'A-06',p:'P0',who:'Admin',name:'Legal, Compliance & Privacy Center',top:'Framework summary',backb:'Mission Control',comp:'ComplianceCenter.tsx',desk:1,
+ mock:WIN('/admin/compliance','Compliance',`<div class="mtop"><span class="ct" style="font-size:13px">Compliance</span><span class="r" style="gap:5px"><span class="bd ok">DPDP ✓</span><span class="bd wip">Consent log 2 due</span></span></div>
+ <div class="cols" style="grid-template-columns:repeat(3,1fr)"><div class="k"><small>Consent logs</small><b>2,418</b></div><div class="k"><small>Access requests</small><b>3</b></div><div class="k"><small>Erasure requests</small><b style="color:var(--wip)">2</b></div></div>
+ <div class="k"><div class="r"><span class="ct">Auto audio deletion</span><span class="in" style="padding:2px 7px">90 days</span></div><span class="sub">Next purge: 30 Sep 02:00 · 1,204 files</span><span class="b o" style="margin-top:4px">Run purge now</span></div>
+ <table class="mt"><thead><tr><th>Request</th><th>User</th><th>Date</th><th></th></tr></thead><tbody><tr><td>Erasure</td><td>STU-7781</td><td>27 Sep</td><td><span class="b" style="padding:2px 6px">Approve Erasure</span></td></tr><tr><td>Export</td><td>STU-1177</td><td>28 Sep</td><td><span class="b o" style="padding:2px 6px">Generate</span></td></tr></tbody></table>
+ <div class="abar"><span class="sub">Last automated purge: 29 Sep 02:00 ✓</span></div>`,ANAV),
+ rows:{Top:'Compliance status pills',Main:['DPDP dashboard: consent logs, access requests, deletion','90-day audio auto-delete scheduler','Data erasure request queue'],Controls:['Manual purge','Data export generator','Retention period edit','Approve Erasure'],Bottom:'Last successful purge time'},
+ edge:'Erasure approve → cascading check: PII hate, anonymized aggregate analytics bache.',now:['no','Code me nahi. Privacy page draft hai, auto-delete nahi.']},
+];
+
+const stMap={ok:['ok','✓','Bana hai'],wip:['wip','!','Aadha'],no:['no','✕','Nahi hai']};
+const tb=document.querySelector('#idx tbody');
+for(const s of S){
+  const st=stMap[s.now[0]];
+  tb.insertAdjacentHTML('beforeend',`<tr><td class="id">${s.id}</td><td><span class="pr ${s.p}">${s.p}</span></td><td>${s.who}</td><td>${s.name}</td><td>${s.top}</td><td>${s.backb}</td><td><code>${s.comp}</code></td><td><span class="st ${st[0]}"><i>${st[1]}</i>${st[2]}</span></td></tr>`);
+  const li=v=>Array.isArray(v)?`<ul>${v.map(x=>`<li>${x}</li>`).join('')}</ul>`:v;
+  const el=document.createElement('article');
+  el.className='screen'+(s.desk?' desk':'');
+  el.innerHTML=`<div>${s.mock}</div><div class="spec">
+   <div class="top"><span class="sid">${s.id}</span><h3>${s.name}</h3><span class="pr ${s.p}">${s.p}</span><span class="who">${s.who.toUpperCase()}${s.desk?' · DESKTOP':' · MOBILE'}</span></div>
+   <dl class="kv"><dt>Top bar</dt><dd>${s.rows.Top}</dd><dt>Main</dt><dd>${li(s.rows.Main)}</dd><dt>Controls</dt><dd>${li(s.rows.Controls)}</dd><dt>Bottom bar</dt><dd>${s.rows.Bottom}</dd><dt>Back</dt><dd>${s.backb}</dd><dt>Component</dt><dd><code>${s.comp}</code></dd>${s.edge!=='—'?`<dt>Edge case</dt><dd class="edge">${s.edge}</dd>`:''}</dl>
+   <div class="now ${st[0]}"><b>AAJ KE CODE ME · ${st[2].toUpperCase()}</b>${s.now[1]}</div></div>`;
+  document.querySelector(`[data-g="${s.g}"]`).appendChild(el);
+}
+</script>

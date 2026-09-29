@@ -86,8 +86,9 @@ export default auth((req) => {
 });
 
 export const config = {
-  // Everything except Next's internals, the auth endpoints, and files with an
-  // extension. api/auth must be excluded or the sign-in POST is intercepted by
-  // the very middleware that depends on it.
-  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  // Everything except Next's internals, every API route, and files with an
+  // extension. All of /api is excluded, not just /api/auth: a signed-out
+  // POST /api/register was being redirected to /login, so the browser got
+  // HTML where it expected JSON. Every route handler checks its own session.
+  matcher: ["/((?!api/|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

@@ -1,4 +1,5 @@
-// Owns outbound email: verification codes and password reset links.
+// Owns outbound email: verification codes, sign-in codes and links, and
+// password reset links.
 //
 // It deliberately does NOT decide when to send. Callers own that, so a route
 // handler can issue a code and skip the email in a test without this file
@@ -52,5 +53,18 @@ export async function sendPasswordResetLink(to: string, url: string) {
     <p style="color:#6b6470;font-size:13px">If you did not ask to reset your password, you can ignore this email — nothing has changed.</p>
   `;
 
+  await send(to, subject, text, html);
+}
+
+export async function sendLoginEmail(to: string, code: string, url: string) {
+  const subject = `${code} is your Edusarthi sign-in code`;
+  const text = `Your sign-in code is ${code}.\n\nOr open this link on the same phone to sign in straight away:\n${url}\n\nBoth expire in 10 minutes and work once. If you did not try to sign in, you can ignore this email.`;
+  const html = `
+    <p>Your Edusarthi sign-in code is:</p>
+    <p style="font-size:28px;letter-spacing:6px;font-weight:700">${code}</p>
+    <p>Or sign in with one tap:</p>
+    <p><a href="${url}" style="display:inline-block;padding:10px 18px;background:#1a1420;color:#ffffff;border-radius:8px;text-decoration:none">Sign in to Edusarthi</a></p>
+    <p style="color:#6b6470;font-size:13px">Both expire in 10 minutes and work once. If you did not try to sign in, you can ignore this email.</p>
+  `;
   await send(to, subject, text, html);
 }

@@ -5,17 +5,39 @@
 // student's recording — reads go through a short-lived signed URL generated
 // per page view.
 //
+// Without Supabase configured, and only outside production, it falls back to
+// a folder on disk (.dev-uploads/) served by /api/dev-storage. That lets the
+// whole record → upload → audit loop run on a laptop with no cloud account.
+// Production with the keys missing still throws, exactly as before.
+//
 // It deliberately does NOT run in the browser. It uses the service-role key,
 // which bypasses row-level security entirely; importing this file into a
 // client component would ship that key to every visitor.
 
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
+import { rm, stat } from "fs/promises";
+import path from "path";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export const BUCKET = "submissions";
+
+/// True only in development with no Supabase keys. Never true in production:
+/// a missing key there must fail loudly, not quietly write to a disk that a
+/// serverless function loses on the next cold start.
+export const LOCAL_STORAGE =
+  process.env.NODE_ENV !== "production" && (!SUPABASE_URL || !SERVICE_ROLE_KEY);
+
+export const LOCAL_DIR = path.join(process.cwd(), ".dev-uploads");
+
+/// Resolves a key to a file inside LOCAL_DIR, or null if the key would escape
+/// it. Keys come from buildKey(), but the dev route takes them from a URL.
+export function localPath(key: string): string | null {
+  const full = path.resolve(LOCAL_DIR, key);
+  return full.startsWith(LOCAL_DIR + path.sep) ? full : null;
+}
 
 /// Seconds a read URL stays valid. Long enough to play a 5-minute recording
 /// and scrub back through it, short enough that a copied URL is useless by
@@ -83,6 +105,10 @@ export async function createUploadTarget(
 ): Promise<UploadTarget> {
   const key = buildKey(userId, filename);
 
+  if (LOCAL_STORAGE) {
+    return { key, url: `/api/dev-storage/${key}`, token: "local" };
+  }
+
   const { data, error } = await client()
     .storage.from(BUCKET)
     .createSignedUploadUrl(key);
@@ -103,6 +129,8 @@ export async function resolveMediaUrl(key: string): Promise<string | null> {
   // as-is so the review flow can be tested before anything is uploaded.
   if (key.startsWith("/") || key.startsWith("http")) return key;
 
+  if (LOCAL_STORAGE) return `/api/dev-storage/${key}`;
+
   try {
     const { data, error } = await client()
       .storage.from(BUCKET)
@@ -112,5 +140,54 @@ export async function resolveMediaUrl(key: string): Promise<string | null> {
     return data.signedUrl;
   } catch {
     return null;
+  }
+}
+
+/// The HEAD check: does the file behind this key actually exist? Run before a
+/// Submission row is created, so a client that skips or abandons the upload
+/// cannot put a row in the teacher queue that will never play.
+///
+/// Returns false on any error. Refusing a real upload costs the student one
+/// retry; accepting a missing one costs a teacher a dead claim.
+export async function objectExists(key: string): Promise<boolean> {
+  if (LOCAL_STORAGE) {
+    const full = localPath(key);
+    if (!full) return false;
+    try {
+      return (await stat(full)).size > 0;
+    } catch {
+      return false;
+    }
+  }
+
+  try {
+    const { data, error } = await client().storage.from(BUCKET).exists(key);
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
+/// Deletes stored files, for account deletion. Best effort: a file that is
+/// already gone is not an error, and one failed delete must not stop the
+/// account itself from being erased.
+export async function removeObjects(keys: readonly string[]): Promise<void> {
+  const real = keys.filter((k) => !k.startsWith("/") && !k.startsWith("http"));
+  if (real.length === 0) return;
+
+  if (LOCAL_STORAGE) {
+    await Promise.all(
+      real.map(async (k) => {
+        const full = localPath(k);
+        if (full) await rm(full, { force: true });
+      }),
+    );
+    return;
+  }
+
+  try {
+    await client().storage.from(BUCKET).remove(real);
+  } catch {
+    console.error("Could not delete some stored files during account deletion");
   }
 }

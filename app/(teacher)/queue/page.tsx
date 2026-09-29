@@ -9,6 +9,7 @@ import Link from "next/link";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { displayId } from "@/lib/publicId";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
@@ -35,7 +36,7 @@ export default async function QueuePage() {
         createdAt: true,
         mediaKind: true,
         durationSec: true,
-        student: { select: { name: true } },
+        student: { select: { publicId: true } },
         exercise: { select: { title: true } },
       },
     }),
@@ -49,7 +50,7 @@ export default async function QueuePage() {
         createdAt: true,
         mediaKind: true,
         durationSec: true,
-        student: { select: { name: true } },
+        student: { select: { publicId: true } },
         exercise: { select: { title: true } },
       },
     }),
@@ -75,7 +76,7 @@ export default async function QueuePage() {
                 <div className="min-w-0">
                   <CardTitle>{s.exercise.title}</CardTitle>
                   <p className="mt-1 text-xs text-ink-muted">
-                    {s.student.name ?? "Unnamed student"} · submitted{" "}
+                    {displayId(s.student.publicId)} · submitted{" "}
                     {waitingFor(s.createdAt)}
                   </p>
                 </div>
@@ -105,7 +106,7 @@ export default async function QueuePage() {
                 <div className="min-w-0">
                   <CardTitle>{s.exercise.title}</CardTitle>
                   <p className="mt-1 text-xs text-ink-muted">
-                    {s.student.name ?? "Unnamed student"} ·{" "}
+                    {displayId(s.student.publicId)} ·{" "}
                     {waitingFor(s.createdAt)}
                     {s.durationSec ? ` · ${s.durationSec}s` : ""}
                   </p>

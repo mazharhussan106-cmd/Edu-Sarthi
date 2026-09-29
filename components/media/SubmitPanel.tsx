@@ -5,6 +5,10 @@
 // both feed it. Those two produce a File; this is the only thing that talks to
 // the network.
 //
+// The PUT goes through XMLHttpRequest, not fetch: fetch reports no upload
+// progress, and on patchy mobile data a two-minute video with no progress bar
+// looks exactly like a frozen app.
+//
 // It deliberately uploads direct to storage rather than through a route
 // handler. Vercel caps a function's request body at 4.5 MB — a two-minute
 // video posted through an API route fails outright.
@@ -21,6 +25,27 @@ import { Uploader } from "@/components/media/Uploader";
 import { formatBytes } from "@/lib/media";
 
 type Source = "record" | "upload";
+
+/// Resolves true on a 2xx, false on any failure. Never rejects, so the caller
+/// has one path for "did not finish" whatever the cause.
+function putWithProgress(
+  url: string,
+  file: File,
+  onProgress: (fraction: number) => void,
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 300);
+    xhr.onerror = () => resolve(false);
+    xhr.ontimeout = () => resolve(false);
+    xhr.send(file);
+  });
+}
 
 async function parseJson(res: Response) {
   // text() then JSON.parse, never a bare res.json(). A serverless timeout
@@ -39,11 +64,16 @@ export function SubmitPanel({
   expects,
   maxSeconds,
   maxBytes,
+  retryOfId,
+  submitLabel = "Send to a teacher",
 }: {
   exerciseId: string;
   expects: MediaKind;
   maxSeconds: number | null;
   maxBytes: number;
+  /// Set on the send-back screen: the new recording replaces this attempt.
+  retryOfId?: string;
+  submitLabel?: string;
 }) {
   const router = useRouter();
 
@@ -56,6 +86,7 @@ export function SubmitPanel({
   const [durationSec, setDurationSec] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stage, setStage] = useState<"idle" | "uploading" | "saving">("idle");
+  const [progress, setProgress] = useState(0);
 
   function handleUnavailable(reason: string) {
     // Falls all the way over to the uploader rather than showing a dead Record
@@ -69,6 +100,7 @@ export function SubmitPanel({
     if (!file) return;
     setError(null);
     setStage("uploading");
+    setProgress(0);
 
     try {
       const urlRes = await fetch("/api/upload-url", {
@@ -91,13 +123,9 @@ export function SubmitPanel({
 
       // Straight to Supabase. Nothing about this request touches our server,
       // so file size is bounded by the bucket, not by a function limit.
-      const put = await fetch(urlData.url as string, {
-        method: "PUT",
-        headers: { "Content-Type": file.type },
-        body: file,
-      });
+      const put = await putWithProgress(urlData.url as string, file, setProgress);
 
-      if (!put.ok) {
+      if (!put) {
         setError(
           "The upload did not finish. Check your connection and try again — your recording is still here.",
         );
@@ -115,6 +143,7 @@ export function SubmitPanel({
           key: urlData.key,
           contentType: file.type,
           durationSec,
+          ...(retryOfId ? { retryOfId } : {}),
         }),
       });
 
@@ -125,7 +154,9 @@ export function SubmitPanel({
         return;
       }
 
-      router.push("/modules");
+      // To My Audits, where the new attempt now shows as waiting — the answer
+      // to the question every student has right after pressing Send.
+      router.push("/feedback?sent=1");
       router.refresh();
     } catch {
       setError("Could not reach the server. Your recording is still here — try again.");
@@ -189,6 +220,34 @@ export function SubmitPanel({
         )}
       </div>
 
+      {stage !== "idle" ? (
+        <div className="mt-4" aria-live="polite">
+          <div className="flex justify-between text-xs text-ink-muted">
+            <span>{stage === "uploading" ? "Uploading…" : "Saving…"}</span>
+            <span className="font-mono">{Math.round(progress * 100)}%</span>
+          </div>
+          <div
+            className="mt-1 h-2 overflow-hidden rounded-full bg-paper-dim"
+            role="progressbar"
+            aria-label="Upload progress"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress * 100)}
+          >
+            <div
+              className="h-full rounded-full bg-success transition-[width] duration-200"
+              style={{ width: `${Math.round(progress * 100)}%` }}
+            />
+          </div>
+          {stage === "uploading" ? (
+            <p className="mt-1 text-xs text-mist">
+              Keep this screen open. On mobile data a longer clip can take a
+              minute.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {error ? (
         <p role="alert" aria-live="assertive" className="mt-3 text-xs text-error">
           {error}
@@ -201,7 +260,7 @@ export function SubmitPanel({
             ? "Uploading…"
             : stage === "saving"
               ? "Saving…"
-              : "Send to a teacher"}
+              : submitLabel}
         </Button>
 
         {file ? (

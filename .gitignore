@@ -48,3 +48,6 @@ Thumbs.db
 *.jks
 *.keystore
 google-services.json
+
+# Local stand-in for Supabase Storage (development only)
+.dev-uploads/

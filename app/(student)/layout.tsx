@@ -9,14 +9,9 @@ import { cookies } from "next/headers";
 
 import { Footer } from "@/components/layout/Footer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
-import type { NavLink } from "@/components/layout/NavLinks";
+import { BottomNav } from "@/components/layout/BottomNav";
+import { STUDENT_LINKS } from "@/lib/studentNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
-
-const STUDENT_LINKS: readonly NavLink[] = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/modules", label: "Modules" },
-  { href: "/feedback", label: "Feedback" },
-];
 
 export default async function StudentLayout({
   children,
@@ -30,7 +25,11 @@ export default async function StudentLayout({
           exists in Phase 6 — an empty bar is worse than no bar. */}
       <StickyHeader links={STUDENT_LINKS} theme={theme} homeHref="/dashboard" />
       <div className="flex-1">{children}</div>
-      <Footer />
+      {/* Clears the fixed bottom bar on phones so the footer is not hidden. */}
+      <div className="pb-16 md:pb-0">
+        <Footer />
+      </div>
+      <BottomNav />
     </div>
   );
 }

@@ -52,6 +52,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Enter your password"),
 });
 
+// --- Passwordless email sign-in -------------------------------------------
+
+export const emailLoginRequestSchema = z.object({ email });
+
+export const emailCodeSchema = z.object({
+  email,
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter the 6-digit code from your email"),
+});
+
+export const emailLinkSchema = z.object({ token: z.string().min(20).max(200) });
+
 export const verifyCodeSchema = z.object({
   code: z
     .string()
@@ -95,6 +109,20 @@ export const noteSchema = z.object({
     .min(3, "Write at least a few words in each note")
     .max(500, "Keep each note under 500 characters"),
   severity: z.enum(["minor", "major"]),
+});
+
+export const RETURN_REASONS = [
+  "BACKGROUND_NOISE",
+  "INAUDIBLE",
+  "WRONG_PROMPT",
+  "INCOMPLETE",
+] as const;
+
+export const returnSchema = z.object({
+  action: z.literal("return"),
+  submissionId: z.string().min(1),
+  reason: z.enum(RETURN_REASONS, "Pick a reason"),
+  note: z.string().trim().max(500, "Keep the note under 500 characters").optional(),
 });
 
 export const feedbackSchema = z.object({
@@ -154,6 +182,20 @@ export const submissionSchema = z.object({
     // a browser reporting Infinity or a corrupt file, not a submission.
     .max(14_400)
     .nullable(),
+  /// Set when this replaces a submission a teacher sent back.
+  retryOfId: z.string().min(1).optional(),
+});
+
+// --- Account ---------------------------------------------------------------
+
+export const nameSchema = z.object({
+  name: z.string().trim().min(2, "Enter your name").max(80, "Keep it under 80 characters"),
+});
+
+export const deleteAccountSchema = z.object({
+  // Typed by hand, not a checkbox: deletion cannot be undone, and a tap is
+  // too easy to make by accident on a phone.
+  confirm: z.literal("DELETE", "Type DELETE in capitals to confirm"),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

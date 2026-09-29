@@ -12,13 +12,9 @@ import { auth } from "@/lib/auth";
 import { Footer } from "@/components/layout/Footer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
 import type { NavLink } from "@/components/layout/NavLinks";
+import { BottomNav } from "@/components/layout/BottomNav";
+import { STUDENT_LINKS } from "@/lib/studentNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
-
-const STUDENT_LINKS: readonly NavLink[] = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/modules", label: "Modules" },
-  { href: "/feedback", label: "Feedback" },
-];
 
 const TEACHER_LINKS: readonly NavLink[] = [
   { href: "/queue", label: "Queue" },
@@ -42,7 +38,10 @@ export default async function SharedLayout({
         homeHref={isTeacher ? "/queue" : "/dashboard"}
       />
       <div className="flex-1">{children}</div>
-      <Footer />
+      <div className={isTeacher ? undefined : "pb-16 md:pb-0"}>
+        <Footer />
+      </div>
+      {isTeacher ? null : <BottomNav />}
     </div>
   );
 }

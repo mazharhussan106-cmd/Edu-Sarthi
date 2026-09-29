@@ -14,15 +14,9 @@ import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { SubmitPanel } from "@/components/media/SubmitPanel";
 import { MAX_UPLOAD_BYTES } from "@/lib/storage";
+import { STATUS_BADGE } from "@/lib/audits";
 
 export const revalidate = 0;
-
-const STATUS_LABEL = {
-  PENDING: { text: "Waiting for a teacher", variant: "neutral" },
-  IN_REVIEW: { text: "Being reviewed", variant: "accent" },
-  REVIEWED: { text: "Audit ready", variant: "success" },
-  RETURNED: { text: "Sent back — try again", variant: "error" },
-} as const;
 
 const HOW_TO: Record<string, string> = {
   AUDIO:
@@ -67,7 +61,7 @@ export default async function PracticePage({
   if (!exercise) notFound();
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
       <Link
         href={`/modules/${exercise.module.id}`}
         className="text-xs text-ink-muted hover:text-accent"
@@ -108,22 +102,20 @@ export default async function PracticePage({
           <CardTitle>Your earlier attempts</CardTitle>
           <ul className="mt-3 divide-y divide-border border-y border-border">
             {previous.map((s) => {
-              const status = STATUS_LABEL[s.status];
+              const status = STATUS_BADGE[s.status];
               return (
-                <li key={s.id} className="flex items-center justify-between gap-3 py-2">
-                  <span className="text-xs text-ink-muted">
-                    {s.createdAt.toLocaleDateString("en-IN")}
-                  </span>
-                  {s.status === "REVIEWED" ? (
-                    <Link
-                      href={`/feedback/${s.id}`}
-                      className="text-xs font-medium text-accent hover:underline"
-                    >
-                      Read the audit
-                    </Link>
-                  ) : (
+                <li key={s.id}>
+                  {/* Every attempt opens its own page, whatever its state:
+                      the audit, the send-back reason, or "waiting". */}
+                  <Link
+                    href={`/feedback/${s.id}`}
+                    className="flex items-center justify-between gap-3 py-2 hover:text-accent"
+                  >
+                    <span className="text-xs text-ink-muted">
+                      {s.createdAt.toLocaleDateString("en-IN")}
+                    </span>
                     <Badge variant={status.variant}>{status.text}</Badge>
-                  )}
+                  </Link>
                 </li>
               );
             })}

@@ -12,6 +12,7 @@
 import Link from "next/link";
 
 import { prisma } from "@/lib/prisma";
+import { displayId } from "@/lib/publicId";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 
@@ -33,8 +34,9 @@ export default async function StudentsPage() {
     orderBy: { createdAt: "asc" },
     select: {
       id: true,
-      name: true,
-      email: true,
+      // Teachers see the anonymized ID only. Name and email stay out of the
+      // query entirely, so no later edit to the JSX can leak them.
+      publicId: true,
       submissions: {
         orderBy: { createdAt: "desc" },
         select: {
@@ -69,8 +71,7 @@ export default async function StudentsPage() {
 
       return {
         id: s.id,
-        name: s.name ?? "Unnamed student",
-        email: s.email ?? "",
+        name: displayId(s.publicId),
         total: s.submissions.length,
         audited: audited.length,
         waiting: s.submissions.filter(
@@ -113,8 +114,7 @@ export default async function StudentsPage() {
           {rows.map((r) => (
             <Card key={r.id} className="flex flex-wrap items-center gap-4">
               <div className="min-w-0 flex-1">
-                <CardTitle>{r.name}</CardTitle>
-                <p className="mt-0.5 truncate text-xs text-ink-muted">{r.email}</p>
+                <CardTitle className="font-mono">{r.name}</CardTitle>
               </div>
 
               <div className="flex shrink-0 items-center gap-6">

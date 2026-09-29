@@ -11,7 +11,8 @@ import bcrypt from "bcryptjs";
 
 import { authConfig } from "@/lib/auth.config";
 import { prisma } from "@/lib/prisma";
-import { loginSchema } from "@/lib/validations";
+import { emailCodeSchema, emailLinkSchema, loginSchema } from "@/lib/validations";
+import { redeemCode, redeemLink, userForProvenEmail } from "@/lib/emailLogin";
 import {
   clearLoginAttempts,
   isRateLimited,
@@ -25,6 +26,25 @@ class InvalidCredentials extends CredentialsSignin {
 }
 class TooManyAttempts extends CredentialsSignin {
   code = "throttled";
+}
+class BadEmailCode extends CredentialsSignin {
+  code = "email-code";
+}
+
+function sessionUser(user: {
+  id: string;
+  name: string | null;
+  email: string | null;
+  role: "STUDENT" | "TEACHER" | "ADMIN";
+  emailVerified: Date | null;
+}) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    emailVerified: user.emailVerified,
+  };
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -71,13 +91,49 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // nothing to verify against — and at this point they have already
         // proven they know the password, so "verify your email" reveals
         // nothing they did not already know.
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          emailVerified: user.emailVerified,
-        };
+        return sessionUser(user);
+      },
+    }),
+
+    // Passwordless: the six-digit code typed from the email. Shares the
+    // password login's throttle, so switching methods buys no extra guesses.
+    Credentials({
+      id: "email-code",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        code: { label: "Code", type: "text" },
+      },
+      async authorize(raw) {
+        const parsed = emailCodeSchema.safeParse(raw);
+        if (!parsed.success) throw new BadEmailCode();
+
+        const { email, code } = parsed.data;
+        if (await isRateLimited(email)) throw new TooManyAttempts();
+
+        const redeemed = await redeemCode(email, code);
+        if (!redeemed) {
+          await recordFailedLogin(email);
+          throw new BadEmailCode();
+        }
+
+        await clearLoginAttempts(email);
+        return sessionUser(await userForProvenEmail(redeemed.email));
+      },
+    }),
+
+    // Passwordless: the one-tap link from the same email. No throttle — the
+    // token is 32 random bytes, so there is nothing to guess.
+    Credentials({
+      id: "email-link",
+      credentials: { token: { label: "Token", type: "text" } },
+      async authorize(raw) {
+        const parsed = emailLinkSchema.safeParse(raw);
+        if (!parsed.success) throw new BadEmailCode();
+
+        const redeemed = await redeemLink(parsed.data.token);
+        if (!redeemed) throw new BadEmailCode();
+
+        return sessionUser(await userForProvenEmail(redeemed.email));
       },
     }),
   ],

@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations";
 import { issueVerificationCode } from "@/lib/verification";
 import { sendVerificationCode } from "@/lib/email";
+import { generatePublicId } from "@/lib/publicId";
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -62,6 +63,7 @@ export async function POST(req: Request) {
         name,
         email,
         passwordHash,
+        publicId: generatePublicId(),
         phone: phone ? phone : null,
         // Not set. The account exists but middleware holds it at /verify until
         // the code is entered.

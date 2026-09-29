@@ -37,6 +37,15 @@ enum SubmissionStatus {
   RETURNED // sent back for a re-attempt
 }
 
+/// Why a teacher sent a submission back instead of auditing it. A fixed list,
+/// not free text, so the student screen can show matching re-recording tips.
+enum ReturnReason {
+  BACKGROUND_NOISE
+  INAUDIBLE
+  WRONG_PROMPT
+  INCOMPLETE
+}
+
 /// Must stay in sync with the [data-theme="…"] blocks in app/globals.css and
 /// the THEMES array in lib/theme.ts. A value here with no matching CSS block
 /// renders as light with no error anywhere — the failure is silent.
@@ -51,6 +60,10 @@ enum Theme {
 
 model User {
   id            String    @id @default(cuid())
+  /// What teachers see instead of the student's name, e.g. "STU-7K3Q9P".
+  /// Nullable so rows created before this column existed stay valid; the
+  /// backfill script fills them in.
+  publicId      String?   @unique
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -98,6 +111,15 @@ model Submission {
   /// insert fails on the submissionId unique constraint — after the typing.
   claimedById String?
   claimedAt   DateTime?
+
+  /// Set only when status is RETURNED.
+  returnReason ReturnReason?
+  returnNote   String?       @db.Text
+  /// The RETURNED submission this one replaces. Lets the student screen show
+  /// "replaced" on the old attempt instead of asking them to re-record twice.
+  retryOfId    String?       @unique
+  retryOf      Submission?   @relation("Retry", fields: [retryOfId], references: [id], onDelete: SetNull)
+  retry        Submission?   @relation("Retry")
 
   student   User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
   // No cascade: deleting an exercise students have already submitted against

@@ -1,5 +1,5 @@
-// Owns two teacher actions on a submission: claiming it for review, and
-// submitting the finished audit.
+// Owns three teacher actions on a submission: claiming it for review,
+// sending it back to the student with a reason, and submitting the audit.
 //
 // Both live here because both are writes against the same row by the same role,
 // and splitting them would mean duplicating the claim check in two files.
@@ -12,7 +12,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { claimSchema, feedbackSchema } from "@/lib/validations";
+import { claimSchema, feedbackSchema, returnSchema } from "@/lib/validations";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -67,6 +67,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  if (action === "return") {
+    const parsed = returnSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message ?? "Pick a reason and try again." },
+        { status: 400 },
+      );
+    }
+
+    // Same claim scoping as submitting an audit: only the teacher holding the
+    // claim can send it back, and only while it is still in review.
+    const returned = await prisma.submission.updateMany({
+      where: { id: parsed.data.submissionId, claimedById: teacherId, status: "IN_REVIEW" },
+      data: {
+        status: "RETURNED",
+        returnReason: parsed.data.reason,
+        returnNote: parsed.data.note || null,
+      },
+    });
+    if (returned.count === 0) {
+      return NextResponse.json(
+        { error: "This submission is no longer yours to review. Go back to the queue." },
+        { status: 409 },
+      );
+    }
+    return NextResponse.json({ ok: true });
+  }
+
   const parsed = feedbackSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
@@ -75,7 +103,9 @@ export async function POST(req: Request) {
     );
   }
 
-  const { submissionId, notes, ...scores } = parsed.data;
+  // `action` is pulled out explicitly. Left inside the spread it reached
+  // feedback.create() as an unknown column, and every audit failed to save.
+  const { action: _action, submissionId, notes, ...scores } = parsed.data;
 
   // Scoped by claimedById in the WHERE clause rather than fetched and compared.
   // One round trip, and no window where a mistyped early return writes an audit

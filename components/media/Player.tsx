@@ -27,6 +27,7 @@ export function Player({
   kind,
   onTimeUpdate,
   onReady,
+  showSpeed = false,
   className,
 }: {
   src: string;
@@ -36,6 +37,9 @@ export function Player({
   /// Handed a seek function once the element exists, so the parent can jump to
   /// a timestamp without holding a ref into this component's internals.
   onReady?: (seekTo: (seconds: number) => void) => void;
+  /// Adds 1x / 1.25x / 1.5x. The student side wants it for re-listening to
+  /// their own answer; the teacher's form does not.
+  showSpeed?: boolean;
   className?: string;
 }) {
   const mediaRef = useRef<HTMLVideoElement>(null);
@@ -43,6 +47,7 @@ export function Player({
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [rate, setRate] = useState(1);
 
   useEffect(() => {
     const el = mediaRef.current;
@@ -51,6 +56,9 @@ export function Player({
     onReady((seconds) => {
       el.currentTime = seconds;
       setCurrent(seconds);
+      // Pressing a note's time means "let me hear that", so it plays rather
+      // than leaving the student to find the play button as well.
+      void el.play().catch(() => undefined);
     });
     // Runs once per mounted element. onReady in the dependency list would
     // re-fire on every parent render unless the parent memoised it, which is a
@@ -157,6 +165,29 @@ export function Player({
           {formatTime(current)} / {formatTime(duration)}
         </span>
       </div>
+
+      {showSpeed ? (
+        <div className="mt-2 flex items-center justify-end gap-1" role="group" aria-label="Playback speed">
+          {[1, 1.25, 1.5].map((r) => (
+            <button
+              key={r}
+              type="button"
+              aria-pressed={rate === r}
+              onClick={() => {
+                const el = mediaRef.current;
+                if (el) el.playbackRate = r;
+                setRate(r);
+              }}
+              className={cn(
+                "rounded-md px-2 py-0.5 font-mono text-xs",
+                rate === r ? "bg-accent text-on-accent" : "text-player-text hover:text-accent",
+              )}
+            >
+              {r}x
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

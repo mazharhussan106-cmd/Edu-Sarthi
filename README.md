@@ -72,6 +72,28 @@ To test the teacher side: open the `User` table in Supabase, change your `role`
 to `TEACHER`, then **sign out and back in**. The role lives in the JWT, so the
 old token still says student until a new one is issued.
 
+## Running without Supabase (development only)
+
+Leave `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` out of `.env` and uploads
+go to `.dev-uploads/` on disk, served by `/api/dev-storage`. This never
+switches on in production. With no `SENDGRID_API_KEY`, sign-in codes and links
+print to the terminal running `npm run dev`.
+
+## Sign-in
+
+Students sign in with a six-digit code or a one-tap link sent to their email.
+The first successful code creates the account. Password sign-in still works
+for accounts registered with one. SMS OTP is not built yet.
+
+## After pulling this schema change
+
+`User.publicId` (the anonymized ID teachers see) is new. Existing rows get one
+with:
+
+```powershell
+npx tsx prisma/backfill-public-ids.ts
+```
+
 ## Layout
 
 ```

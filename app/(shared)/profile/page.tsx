@@ -6,9 +6,9 @@
 // received" are different questions, and one number labelled for both would be
 // wrong for at least one of them.
 //
-// Editing name and email is deliberately absent. Changing an email means
-// re-verifying it, which is a flow of its own, and a form that silently does
-// not re-verify is worse than no form.
+// Students can set their name here (email-code sign-in creates accounts with
+// none) and use their data rights. Editing email is deliberately absent:
+// changing it means re-verifying, a flow of its own.
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -18,6 +18,8 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
+import { DataRights, NameForm } from "@/components/student/AccountActions";
+import { displayId } from "@/lib/publicId";
 
 export const revalidate = 0;
 
@@ -40,6 +42,7 @@ export default async function ProfilePage() {
       prisma.user.findUnique({
         where: { id: userId },
         select: {
+          publicId: true,
           name: true,
           email: true,
           phone: true,
@@ -56,7 +59,7 @@ export default async function ProfilePage() {
   if (!user) redirect("/login");
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
       <h1 className="font-display text-2xl font-bold text-ink">Your account</h1>
 
       <Card className="mt-6">
@@ -70,6 +73,17 @@ export default async function ProfilePage() {
           </div>
           <Badge variant="accent">{ROLE_LABEL[user.role]}</Badge>
         </div>
+
+        {!isTeacher ? (
+          <div className="mt-5 border-t border-border pt-4">
+            <NameForm initialName={user.name} />
+            <p className="mt-3 text-xs text-ink-muted">
+              Teachers see you only as{" "}
+              <span className="font-mono text-ink">{displayId(user.publicId)}</span>, never
+              by name.
+            </p>
+          </div>
+        ) : null}
 
         <div className="mt-5 flex flex-col gap-2 border-t border-border pt-4 text-xs text-ink-muted">
           <p>
@@ -121,6 +135,16 @@ export default async function ProfilePage() {
         </div>
       </Card>
 
+      <Link href="/settings" className="mt-4 block">
+        <Card className="flex items-center justify-between p-4 transition-colors hover:bg-hover">
+          <span>
+            <span className="block font-display text-base font-bold text-ink">Settings</span>
+            <span className="text-sm text-ink-muted">Theme, text size, notifications</span>
+          </span>
+          <span aria-hidden="true" className="text-ink-muted">›</span>
+        </Card>
+      </Link>
+
       <Card className="mt-4">
         <CardTitle>Password</CardTitle>
         <p className="mt-2 text-sm text-ink-muted">
@@ -133,6 +157,8 @@ export default async function ProfilePage() {
           </Button>
         </Link>
       </Card>
+
+      {!isTeacher ? <DataRights /> : null}
     </main>
   );
 }

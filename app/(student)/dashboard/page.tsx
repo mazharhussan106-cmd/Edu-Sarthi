@@ -1,8 +1,10 @@
 // Owns the student's home screen: what is waiting, what came back, and whether
 // the scores are moving.
 //
-// It deliberately leads with in-flight submissions rather than with the score
-// trend. The first question a student opens this page with is "has my teacher
+// It opens with one "do this next" card and the habit numbers (streak, today's
+// goal), then in-flight submissions, then the score trend.
+//
+// It deliberately puts in-flight submissions above the score trend. The first question a student opens this page with is "has my teacher
 // looked at it yet", not "what is my average".
 //
 // It deliberately computes the weakest criterion in application code rather
@@ -17,6 +19,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { ScoreTrend, type TrendPoint } from "@/components/dashboard/ScoreTrend";
+import { DAILY_GOAL, sentToday, streakDays } from "@/lib/progress";
+import { TodayStrip } from "@/components/student/TodayStrip";
 
 // Anything reflecting user state must not be cached, or one student's view is
 // served to everyone until it expires.
@@ -39,11 +43,23 @@ const IN_FLIGHT_LABEL = {
 export default async function DashboardPage() {
   const session = await auth();
   const studentId = session?.user?.id;
-  const firstName = session?.user?.name?.split(" ")[0] ?? "there";
+  // Read from the row, not the JWT: a name set on the profile page after
+  // sign-in is not in the token until the next sign-in.
+  const me = await prisma.user.findUnique({ where: { id: studentId }, select: { name: true } });
+  const firstName = me?.name?.split(" ")[0] ?? "there";
 
-  const [inFlight, reviewed, moduleCount] = await Promise.all([
+  const since = new Date(Date.now() - 400 * 86_400_000);
+  const [inFlight, reviewed, moduleCount, recent, toRedo, nextExercise] = await Promise.all([
     prisma.submission.findMany({
-      where: { studentId, status: { in: ["PENDING", "IN_REVIEW", "RETURNED"] } },
+      // A sent-back attempt that has been replaced is finished business; the
+      // replacement is what is with a teacher now.
+      where: {
+        studentId,
+        OR: [
+          { status: { in: ["PENDING", "IN_REVIEW"] } },
+          { status: "RETURNED", retry: { is: null } },
+        ],
+      },
       orderBy: { createdAt: "asc" },
       take: 5,
       select: {
@@ -76,7 +92,53 @@ export default async function DashboardPage() {
       },
     }),
     prisma.module.count(),
+    // Dates only, for the streak. A year is longer than any streak worth
+    // showing, and bounds the query for a student who has sent thousands.
+    prisma.submission.findMany({
+      where: { studentId, createdAt: { gte: since } },
+      select: { createdAt: true },
+    }),
+    // Sent back and not yet replaced: the one thing on this page the student
+    // must act on, so it outranks every other suggestion.
+    prisma.submission.findFirst({
+      where: { studentId, status: "RETURNED", retry: { is: null } },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, exercise: { select: { title: true } } },
+    }),
+    // The first exercise, in curriculum order, this student has never tried.
+    prisma.exercise.findFirst({
+      where: { submissions: { none: { studentId } } },
+      orderBy: [{ module: { level: "asc" } }, { title: "asc" }],
+      select: { id: true, title: true, module: { select: { level: true } } },
+    }),
   ]);
+
+  const dates = recent.map((r) => r.createdAt);
+  const streak = streakDays(dates);
+  const today = Math.min(sentToday(dates), DAILY_GOAL);
+  const next = toRedo
+    ? {
+        eyebrow: "Action needed",
+        title: `Re-record “${toRedo.exercise.title}”`,
+        body: "Your teacher sent this back. The reason and tips are on the next screen.",
+        href: `/feedback/${toRedo.id}`,
+        cta: "Open it",
+      }
+    : nextExercise
+      ? {
+          eyebrow: `Next up · Level ${nextExercise.module.level}`,
+          title: nextExercise.title,
+          body: "A new exercise you have not tried yet.",
+          href: `/practice/${nextExercise.id}`,
+          cta: "Start",
+        }
+      : {
+          eyebrow: "Keep going",
+          title: "Practise again",
+          body: "You have tried every exercise. Repeat one and compare the audits.",
+          href: "/modules",
+          cta: "Choose one",
+        };
 
   const scored = reviewed.filter((s) => s.feedback !== null);
 
@@ -107,7 +169,7 @@ export default async function DashboardPage() {
   const latest = scored.length > 0 ? scored[scored.length - 1] : null;
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
+    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
       <h1 className="font-display text-2xl font-bold text-ink">
         Hello, {firstName}
       </h1>
@@ -119,7 +181,9 @@ export default async function DashboardPage() {
             : `${moduleCount} module${moduleCount === 1 ? "" : "s"} to work through. Start anywhere.`}
       </p>
 
-      <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_280px]">
+      <TodayStrip next={next} streak={streak} today={today} goal={DAILY_GOAL} />
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="flex flex-col gap-4">
           {inFlight.length > 0 ? (
             <Card>

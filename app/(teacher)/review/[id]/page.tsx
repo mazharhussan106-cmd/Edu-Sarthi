@@ -9,9 +9,11 @@ import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { displayId } from "@/lib/publicId";
 import { resolveMediaUrl } from "@/lib/storage";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { RubricForm } from "@/components/review/RubricForm";
+import { SendBackForm } from "@/components/review/SendBackForm";
 
 export const revalidate = 0;
 
@@ -43,7 +45,7 @@ export default async function ReviewPage({
       durationSec: true,
       claimedById: true,
       createdAt: true,
-      student: { select: { name: true } },
+      student: { select: { publicId: true } },
       exercise: { select: { title: true, prompt: true } },
     },
   });
@@ -52,7 +54,7 @@ export default async function ReviewPage({
 
   // Claimed by someone else, or already finished. Both mean this teacher
   // should not be typing an audit that cannot be saved.
-  if (submission.claimedById !== teacherId || submission.status === "REVIEWED") {
+  if (submission.claimedById !== teacherId || submission.status !== "IN_REVIEW") {
     return (
       <main className="mx-auto max-w-4xl px-6 py-10">
         <Card>
@@ -60,6 +62,8 @@ export default async function ReviewPage({
           <p className="mt-2 text-sm text-ink-muted">
             {submission.status === "REVIEWED"
               ? "This submission has already been reviewed."
+              : submission.status === "RETURNED"
+              ? "This submission was sent back to the student."
               : "Another teacher is reviewing this one."}{" "}
             Go back to the queue and pick a different submission.
           </p>
@@ -95,7 +99,7 @@ export default async function ReviewPage({
         {submission.exercise.title}
       </h1>
       <p className="mt-1 text-sm text-ink-muted">
-        {submission.student.name ?? "Unnamed student"} ·{" "}
+        {displayId(submission.student.publicId)} ·{" "}
         {submission.createdAt.toLocaleDateString("en-IN")}
       </p>
 
@@ -103,6 +107,8 @@ export default async function ReviewPage({
         <CardTitle>What they were asked</CardTitle>
         <p className="mt-2 text-sm text-ink-muted">{submission.exercise.prompt}</p>
       </Card>
+
+      <SendBackForm submissionId={submission.id} />
 
       <RubricForm
         submissionId={submission.id}

@@ -1,0 +1,394 @@
+<title>Edusarthi All Pages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: har section me phones ki grid; har phone ke neeche "is page me" + "badlo" card. Palette: saffron + green on warm stone — koi purple / pink / blue nahi. */
+:root{
+  --ink:#1c1a17; --muted:#6b645a; --mist:#a39a8c;
+  --bg:#efebe4; --paper:#faf8f4; --dim:#ebe6dd; --surface:#ffffff;
+  --accent:#b8520f; --on-accent:#ffffff;        /* saffron */
+  --green:#1f6b45; --green-soft:rgba(31,107,69,.1);
+  --ok:#2e8a55; --wip:#9a7400; --no:#c23b2b;
+  --border:rgba(28,26,23,.11); --border-strong:rgba(28,26,23,.22);
+  --player:#26231f; --player-text:#e6dfd3;
+  --frame:#2b2823;
+  --f-display:"Sora",system-ui,sans-serif; --f-body:"Inter",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#efe9df; --muted:#a79f92; --mist:#7d7569;
+  --bg:#121110; --paper:#1a1816; --dim:#262320; --surface:#201e1b;
+  --accent:#f08a3c; --on-accent:#1a1410;
+  --green:#5cc68d; --green-soft:rgba(92,198,141,.12);
+  --ok:#5cc68d; --wip:#e0b340; --no:#ef6b5a;
+  --border:rgba(239,233,223,.12); --border-strong:rgba(239,233,223,.24);
+  --player:#2c2925; --player-text:#e6dfd3; --frame:#3a3631; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ink:#efe9df; --muted:#a79f92; --mist:#7d7569;
+  --bg:#121110; --paper:#1a1816; --dim:#262320; --surface:#201e1b;
+  --accent:#f08a3c; --on-accent:#1a1410;
+  --green:#5cc68d; --green-soft:rgba(92,198,141,.12);
+  --ok:#5cc68d; --wip:#e0b340; --no:#ef6b5a;
+  --border:rgba(239,233,223,.12); --border-strong:rgba(239,233,223,.24);
+  --player:#2c2925; --player-text:#e6dfd3; --frame:#3a3631; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h1{font-size:clamp(26px,4vw,38px)} h2{font-size:22px} h3{font-size:15px}
+p{margin:0}
+.lede{color:var(--muted);max-width:70ch;margin-top:8px}
+.eyebrow{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+code{font-family:var(--f-mono);font-size:.85em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-size:13px;color:var(--muted)}
+.st{display:inline-flex;align-items:center;gap:6px;font:600 11px var(--f-mono)}
+.st i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;color:#fff}
+.st.ok i{background:var(--ok)} .st.wip i{background:var(--wip)} .st.no i{background:var(--no)}
+.st.ok{color:var(--ok)} .st.wip{color:var(--wip)} .st.no{color:var(--no)}
+
+/* sitemap */
+.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.grp{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.grp h3{font:600 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.grp ol{margin:0;padding-left:20px;font-size:13.5px}
+.grp li{margin:2px 0}
+.grp li span{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+
+/* grid of pages */
+.sec-hd{display:flex;flex-direction:column;gap:4px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px 22px}
+.pg{display:flex;flex-direction:column;gap:12px;min-width:0}
+.cap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.cap .top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.cap .route{font:12px var(--f-mono);color:var(--muted)}
+.cap ul{margin:0;padding-left:16px;color:var(--muted)}
+.cap .fix{border-top:1px solid var(--border);padding-top:7px}
+.cap .fix b{font:600 10px var(--f-mono);letter-spacing:.08em;color:var(--green);display:block;margin-bottom:2px}
+.num{font:700 12px var(--f-mono);color:var(--accent)}
+
+/* phone */
+.phone{width:260px;max-width:100%;margin:0 auto;border:9px solid var(--frame);border-radius:30px;background:var(--paper);overflow:hidden;box-shadow:0 10px 26px rgba(28,26,23,.14)}
+.notch{height:20px;display:flex;justify-content:space-between;align-items:center;padding:0 14px;font:600 9px var(--f-mono);color:var(--muted)}
+.hd{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;border-bottom:1px solid var(--border)}
+.logo{font:700 13px var(--f-display)} .logo i{font-style:normal;color:var(--accent)}
+.bg{width:16px;height:11px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);position:relative}
+.bg:after{content:"";position:absolute;left:0;right:0;top:2.5px;border-top:2px solid var(--ink)}
+.scr{padding:11px;display:flex;flex-direction:column;gap:8px;font-size:10.5px;line-height:1.4;min-height:380px}
+.h{font:700 15px var(--f-display);line-height:1.2}
+.hero{font:700 19px var(--f-display);line-height:1.15}
+.sub{color:var(--muted);font-size:10px}
+.back{color:var(--muted);font-size:9.5px}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 9px;display:flex;flex-direction:column;gap:5px}
+.ct{font:600 10.5px var(--f-display)}
+.b{display:inline-block;background:var(--accent);color:var(--on-accent);font:600 10px var(--f-body);padding:6px 9px;border-radius:7px;text-align:center}
+.b.o{background:transparent;color:var(--ink);border:1px solid var(--border-strong)}
+.b.full{display:block}
+.r{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bd{font:600 8.5px var(--f-mono);padding:2px 6px;border-radius:99px;background:var(--dim);color:var(--muted);white-space:nowrap}
+.bd.acc{background:rgba(184,82,15,.13);color:var(--accent)}
+.bd.ok{background:var(--green-soft);color:var(--ok)}
+.bd.no{background:rgba(194,59,43,.12);color:var(--no)}
+.in{border:1px solid var(--border-strong);border-radius:6px;padding:6px 8px;color:var(--mist);background:var(--surface);font-size:10px}
+.lb{font-size:9.5px;font-weight:600;margin-bottom:-3px}
+.in.area{height:34px}
+.pl{background:var(--player);color:var(--player-text);border-radius:7px;padding:7px;display:flex;flex-direction:column;gap:5px}
+.wv{height:18px;background:repeating-linear-gradient(90deg,var(--accent) 0 2px,transparent 2px 5px);border-radius:3px;opacity:.85}
+.pc{display:flex;justify-content:space-between;font:9px var(--f-mono)}
+.tr{height:5px;border-radius:99px;background:var(--dim);position:relative}
+.tr i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--accent)}
+.nt{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:5px;padding:4px 0;border-top:1px solid var(--border)}
+.nt .t{font:600 9.5px var(--f-mono);color:var(--accent)}
+.seg{display:flex;border:1px solid var(--border-strong);border-radius:7px;overflow:hidden;font-size:9.5px}
+.seg span{flex:1;text-align:center;padding:5px}
+.seg .on{background:var(--accent);color:var(--on-accent)}
+.rec{width:48px;height:48px;border-radius:50%;background:var(--accent);margin:4px auto;box-shadow:0 0 0 6px rgba(184,82,15,.18)}
+.new{border:1.5px dashed var(--green);border-radius:9px;padding:7px 9px;color:var(--green);font-size:10px;background:var(--green-soft)}
+.new b{font:600 8.5px var(--f-mono);letter-spacing:.08em;display:block}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;text-align:center}
+.tiles b{display:block;font:700 14px var(--f-mono)}
+.tiles small{font-size:7.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.chart{height:50px;border-bottom:1px solid var(--border);border-left:1px solid var(--border);position:relative}
+.chart svg{position:absolute;inset:0;width:100%;height:100%}
+.sw{width:26px;height:14px;border-radius:99px;background:var(--dim);position:relative;flex:none}
+.sw.on{background:var(--green)}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff}
+.sw.on:after{left:14px}
+.faq{border-top:1px solid var(--border);padding-top:5px;display:flex;justify-content:space-between;gap:6px}
+.code6{display:flex;gap:4px;justify-content:center}
+.code6 span{width:24px;height:30px;border:1px solid var(--border-strong);border-radius:6px;display:grid;place-items:center;font:600 12px var(--f-mono);background:var(--surface)}
+.av{width:36px;height:36px;border-radius:50%;background:var(--dim);display:grid;place-items:center;font:700 13px var(--f-display);color:var(--accent);flex:none}
+.foot{margin-top:auto;border-top:1px solid var(--border);padding-top:6px;font-size:8.5px;color:var(--mist);display:flex;gap:8px;flex-wrap:wrap}
+.para{height:5px;background:var(--dim);border-radius:3px}
+
+/* table */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+.pr{font:600 10px var(--f-mono);padding:2px 6px;border-radius:4px}
+.pr.p0{background:rgba(194,59,43,.12);color:var(--no)}
+.pr.p1{background:rgba(154,116,0,.14);color:var(--wip)}
+.pr.p2{background:var(--dim);color:var(--muted)}
+</style>
+
+<div class="wrap">
+
+<section>
+  <p class="eyebrow">Edusarthi · 21 pages · phone view</p>
+  <h1>Har page ka plan: kya dikhega, kya badalna hai</h1>
+  <p class="lede">Branch <code>claude/festive-thompson-k5upud</code> ke Next.js code se bana. Har phone wahi dikhata hai jo code me hai. Hara dotted box = naya cheez jo add karni hai. Page ke neeche "Badlo" me kaam aur file.</p>
+  <div class="legend">
+    <span class="st ok"><i>✓</i>Chal ke test hua</span>
+    <span class="st wip"><i>!</i>Likha hai, kabhi chala nahi</span>
+    <span class="st no"><i>✕</i>Bana hi nahi</span>
+  </div>
+</section>
+
+<section>
+  <div class="sec-hd"><p class="eyebrow">Sitemap</p><h2>Saare pages ek nazar me</h2></div>
+  <div class="map">
+    <div class="grp"><h3>Public</h3><ol><li>Landing <span>/</span></li><li>About <span>/about</span></li><li>Support <span>/support</span></li><li>Privacy <span>/legal/privacy</span></li><li>Terms <span>/legal/terms</span></li></ol></div>
+    <div class="grp"><h3>Login / Account</h3><ol start="6"><li>Sign in <span>/login</span></li><li>Register <span>/register</span></li><li>Verify email <span>/verify</span></li><li>Forgot password <span>/forgot-password</span></li><li>Reset password <span>/reset-password/…</span></li></ol></div>
+    <div class="grp"><h3>Student</h3><ol start="11"><li>Dashboard <span>/dashboard</span></li><li>Modules <span>/modules</span></li><li>Module detail <span>/modules/[id]</span></li><li>Practice <span>/practice/[id]</span></li><li>Your audits <span>/feedback</span></li><li>Audit detail <span>/feedback/[id]</span></li></ol></div>
+    <div class="grp"><h3>Teacher</h3><ol start="17"><li>Review queue <span>/queue</span></li><li>Audit form <span>/review/[id]</span></li><li>Students <span>/students</span></li></ol></div>
+    <div class="grp"><h3>Dono ke liye</h3><ol start="20"><li>Settings <span>/settings</span></li><li>Profile <span>/profile</span></li></ol></div>
+  </div>
+</section>
+
+<section id="public"><div class="sec-hd"><p class="eyebrow">Group 1</p><h2>Public pages (bina login)</h2></div><div class="grid" data-g="public"></div></section>
+<section id="auth"><div class="sec-hd"><p class="eyebrow">Group 2</p><h2>Login aur account</h2></div><div class="grid" data-g="auth"></div></section>
+<section id="student"><div class="sec-hd"><p class="eyebrow">Group 3</p><h2>Student pages</h2></div><div class="grid" data-g="student"></div></section>
+<section id="teacher"><div class="sec-hd"><p class="eyebrow">Group 4 · audit</p><h2>Teacher pages</h2></div><div class="grid" data-g="teacher"></div></section>
+<section id="shared"><div class="sec-hd"><p class="eyebrow">Group 5</p><h2>Settings aur profile</h2></div><div class="grid" data-g="shared"></div></section>
+
+<section>
+  <div class="sec-hd"><p class="eyebrow">Kaam ka order</p><h2>Pehle kya karna hai</h2>
+  <p class="lede">Sabse pehle ek pura round trip chalao: student submit → teacher audit → student padhe. Isse page 14, 17, 18 aur 16 ek saath test ho jaate hain.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Priority</th><th>Kaam</th><th>Page</th><th>File</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pr p0">P0</span></td><td>End-to-end audit round trip test</td><td>14 → 17 → 18 → 16</td><td><code>README</code></td></tr>
+      <tr><td><span class="pr p0">P0</span></td><td>Rubric draft autosave wire karo (code likha hai, juda nahi)</td><td>18</td><td><code>components/review/RubricForm.tsx</code></td></tr>
+      <tr><td><span class="pr p0">P0</span></td><td>Sticky player + "note at current time"</td><td>18, 16</td><td><code>RubricForm.tsx · AuditPlayback.tsx</code></td></tr>
+      <tr><td><span class="pr p0">P0</span></td><td>Claim chhodne ka button (release)</td><td>17, 18</td><td><code>app/api/feedback/route.ts</code></td></tr>
+      <tr><td><span class="pr p0">P0</span></td><td>Upload progress bar + storage HEAD check</td><td>14</td><td><code>SubmitPanel.tsx · api/submissions</code></td></tr>
+      <tr><td><span class="pr p1">P1</span></td><td>Score "touched" rule + send se pehle confirm</td><td>18</td><td><code>RubricForm.tsx</code></td></tr>
+      <tr><td><span class="pr p1">P1</span></td><td>"Send back to student" (RETURNED) + reason — schema change, approval pehle</td><td>18, 11, 15</td><td><code>prisma/schema.prisma</code></td></tr>
+      <tr><td><span class="pr p1">P1</span></td><td>Password reset ke baad purane login band karo</td><td>10</td><td><code>lib/auth.ts</code></td></tr>
+      <tr><td><span class="pr p1">P1</span></td><td>SendGrid setup, legal pages lawyer se</td><td>8, 9, 4, 5</td><td><code>lib/email.ts</code></td></tr>
+      <tr><td><span class="pr p2">P2</span></td><td>Header stats row: wire karo ya doc se hatao</td><td>11</td><td><code>app/(student)/layout.tsx</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</div>
+
+<script>
+const HD='<div class="notch"><span>9:41</span><span>4G ▮▮▮</span></div><div class="hd"><span class="logo">edu<i>sarthi</i></span><span class="bg"></span></div>';
+const FOOT='<div class="foot"><span>About</span><span>Support</span><span>Privacy</span><span>Terms</span></div>';
+const bar=(l,v)=>`<div><div class="r"><span>${l}</span><span style="font-family:var(--f-mono)">${v}/10</span></div><div class="tr"><i style="width:${v*10}%"></i></div></div>`;
+const P=[
+/* ---------- PUBLIC ---------- */
+{g:'public',n:1,name:'Landing',route:'/',st:'ok',
+ body:`<span class="hero">Someone actually listens to your English.</span><span class="sub">Send a recording. A teacher listens to all of it and sends back a written audit — five scores, a summary, and notes pinned to the exact moments.</span>
+ <span class="b full">Create an account</span><span class="b o full">How it works</span>
+ <div class="c"><span class="ct">Submit how you practise</span><span class="sub">Record, upload, or photograph written work.</span></div>
+ <div class="c"><span class="ct">Five things, scored separately</span></div>
+ <div class="c"><span class="ct">Notes fixed to the moment</span></div>
+ <div class="faq"><span>Is the feedback from a real teacher?</span><span>+</span></div><div class="faq"><span>Who can hear my recordings?</span><span>+</span></div>
+ <div class="new"><b>NEW</b>Ek sample audit ka screenshot (demo data se)</div>`,
+ has:['Hero line + 2 button','3 feature card','FAQ (5 sawaal)','"Honest about what this isn\'t" section'],
+ fix:'Hero ke neeche ek asli sample audit dikhao — log samjhenge unhe kya milega. Fake stats mat daalo.'},
+{g:'public',n:2,name:'About',route:'/about',st:'ok',
+ body:`<span class="h">How Edusarthi works</span>
+ <div class="c"><span class="ct"><span class="num">1</span> Pick an exercise</span><span class="sub">Introduce yourself, read a passage…</span></div>
+ <div class="c"><span class="ct"><span class="num">2</span> Record or upload</span><span class="sub">A phone in a normal room is good enough.</span></div>
+ <div class="c"><span class="ct"><span class="num">3</span> A teacher listens to all of it</span><span class="sub">Queue, oldest first.</span></div>
+ <div class="c"><span class="ct"><span class="num">4</span> Five scores + moments</span><span class="sub">Pronunciation · Grammar · Fluency · Vocabulary · Confidence</span></div>
+ <span class="b full">Create an account</span>`+FOOT,
+ has:['4 step: exercise → record → teacher → audit','5 rubric naam','Create account button'],
+ fix:'Theek hai. Audit kitne din me aata hai, ye likhna hai jab teacher count pata ho.'},
+{g:'public',n:3,name:'Support',route:'/support',st:'ok',
+ body:`<span class="h">Support</span><span class="sub">Fixes for recording, uploading and signing in.</span>
+ <div class="faq"><span>Record button does nothing</span><span>+</span></div>
+ <div class="faq"><span>Works on laptop, not on phone</span><span>+</span></div>
+ <div class="faq"><span>Upload stuck on Uploading</span><span>+</span></div>
+ <div class="faq"><span>File rejected as wrong type</span><span>+</span></div>
+ <div class="faq"><span>Never got the verification code</span><span>+</span></div>
+ <div class="faq"><span>Too many sign-in attempts</span><span>+</span></div>
+ <div class="faq"><span>Audit still says waiting</span><span>+</span></div>
+ <div class="c"><span class="ct">Still stuck</span><span class="sub">support@… (copy)</span></div>`+FOOT,
+ has:['8 aam problem aur unka hal','"Still stuck" contact'],
+ fix:'WhatsApp support number jodo — Indian students email kam use karte hain.'},
+{g:'public',n:4,name:'Privacy',route:'/legal/privacy',st:'wip',
+ body:`<span class="h">Privacy</span><span class="sub">What we collect, why, how long.</span>
+ <div class="c"><span class="ct">What we collect</span><span class="sub">Name, email · Mobile (optional) · Password (hashed) · Recordings · Audits · Failed sign-ins</span></div>
+ <div class="c"><span class="ct">Who processes it</span><span class="sub">Supabase · Vercel · SendGrid</span></div>
+ <div class="para"></div><div class="para" style="width:80%"></div><div class="para" style="width:60%"></div>
+ <div class="c"><span class="ct">Changes</span></div>`+FOOT,
+ has:['Kya data lete hain','Kaunsi company process karti hai','Aapke adhikar'],
+ fix:'Draft hai. Launch se pehle lawyer se check (DPDP Act 2023).'},
+{g:'public',n:5,name:'Terms',route:'/legal/terms',st:'wip',
+ body:`<span class="h">Terms</span><span class="sub">Using Edusarthi</span>
+ <div class="para"></div><div class="para" style="width:90%"></div><div class="para" style="width:70%"></div>
+ <div class="c"><span class="ct">Your account</span></div><div class="c"><span class="ct">Your recordings</span></div><div class="c"><span class="ct">Audits</span></div>
+ <div class="para"></div><div class="para" style="width:50%"></div>
+ <div class="c"><span class="ct">Changes</span></div>`+FOOT,
+ has:['Account, recordings, audit ke niyam'],
+ fix:'Draft hai — lawyer. Refund/payment section tab jab paid plan aaye.'},
+
+/* ---------- AUTH ---------- */
+{g:'auth',n:6,name:'Sign in',route:'/login',st:'ok',
+ body:`<span class="h">Sign in</span>
+ <span class="lb">Email</span><div class="in">you@example.com</div>
+ <span class="lb">Password</span><div class="in r"><span>••••••••</span><span>show</span></div>
+ <span class="sub" style="text-align:right">Forgot password?</span>
+ <span class="b full">Sign in</span>
+ <span class="sub" style="text-align:center">No account? Create one</span>
+ <div class="new"><b>NEW · brief me tha</b>Continue with Google</div>`,
+ has:['Email + password','Galat password pe saaf error','8 galat try = kuch minute ruko'],
+ fix:'Google login brief me tha, bana nahi. Pehle core loop, phir ye.'},
+{g:'auth',n:7,name:'Register',route:'/register',st:'ok',
+ body:`<span class="h">Create account</span>
+ <span class="lb">Full name</span><div class="in">Rahul Sharma</div>
+ <span class="lb">Email</span><div class="in">you@example.com</div>
+ <span class="lb">Mobile number (optional)</span><div class="in">10 digits</div>
+ <span class="lb">Password</span><div class="in">••••••••</div>
+ <span class="lb">Confirm password</span><div class="in">••••••••</div>
+ <span class="b full">Create account</span>`,
+ has:['Naam, email, mobile (optional), password ×2','Role nahi puchta — teacher hand se banta hai'],
+ fix:'Theek hai. Mobile field ke saath "+91" prefix dikhao.'},
+{g:'auth',n:8,name:'Verify email',route:'/verify',st:'ok',
+ body:`<span class="h">Check your email</span><span class="sub">We sent a 6-digit code to you@example.com</span>
+ <span class="lb">Verification code</span>
+ <div class="code6"><span>4</span><span>8</span><span>2</span><span></span><span></span><span></span></div>
+ <span class="b full">Verify email</span>
+ <span class="b o full">Send a new code</span>
+ <span class="sub">Code 10 minute me expire. Naya code 60 sec baad.</span>`,
+ has:['6 digit code','Naya code bhejo (60s wait)'],
+ fix:'SendGrid set karo — abhi code sirf terminal me print hota hai. Bina iske koi asli user verify nahi kar payega.'},
+{g:'auth',n:9,name:'Forgot password',route:'/forgot-password',st:'wip',
+ body:`<span class="h">Reset password</span><span class="sub">We'll email you a link.</span>
+ <span class="lb">Email</span><div class="in">you@example.com</div>
+ <span class="b full">Send reset link</span>
+ <div class="c"><span class="ct">Check your email</span><span class="sub">If an account exists, a link is on its way.</span></div>`,
+ has:['Email do → link bhejo','Account ho ya na ho, same message'],
+ fix:'SendGrid ke bina test nahi ho sakta.'},
+{g:'auth',n:10,name:'Reset password',route:'/reset-password/[token]',st:'wip',
+ body:`<span class="h">Choose a new password</span>
+ <span class="lb">New password</span><div class="in">••••••••</div>
+ <span class="lb">Confirm new password</span><div class="in">••••••••</div>
+ <span class="b full">Update password</span>
+ <span class="sub" style="text-align:center">Go to sign in</span>`,
+ has:['Naya password ×2'],
+ fix:'Reset ke baad purane device pe login chalta rehta hai. passwordChangedAt column chahiye — lib/auth.ts.'},
+
+/* ---------- STUDENT ---------- */
+{g:'student',n:11,name:'Dashboard',route:'/dashboard',st:'ok',
+ body:`<span class="h">Hello, Rahul</span><span class="sub">1 with a teacher.</span>
+ <div class="c"><span class="ct">With a teacher</span><div class="r"><span>Describe your city</span><span class="bd">Waiting</span></div></div>
+ <div class="c"><span class="ct">Your average, audit by audit</span><div class="chart"><svg viewBox="0 0 100 50" preserveAspectRatio="none"><polyline points="0,38 25,32 50,34 75,22 100,16" fill="none" stroke="var(--accent)" stroke-width="2"/></svg></div></div>
+ <div class="c"><span class="ct">Your latest audit</span><div class="tiles" style="grid-template-columns:repeat(5,1fr)"><div><b>7</b><small>Pron</small></div><div><b>5</b><small>Gram</small></div><div><b>6</b><small>Flu</small></div><div><b>7</b><small>Voc</small></div><div><b>7</b><small>Conf</small></div></div><span class="b o">Read audit</span></div>
+ <div class="c"><span class="ct">What to work on</span><span class="sub">Grammar is your lowest.</span><span class="b">Pick an exercise</span></div>`,
+ has:['Teacher ke paas kya pending','Average score trend','Latest audit ke 5 score','Kamzor area + exercise button'],
+ fix:'Header stats row (StudentStats) layout me connected nahi. Wire karo ya doc sahi karo.'},
+{g:'student',n:12,name:'Modules',route:'/modules',st:'ok',
+ body:`<span class="h">Modules</span><span class="sub">Start anywhere.</span>
+ <div class="c"><div class="r"><span class="ct">Everyday Conversations</span><span class="bd ok">2/2</span></div><span class="sub">Greetings, introductions, small talk.</span><span class="sub">Level 1</span></div>
+ <div class="c"><div class="r"><span class="ct">Explaining Things</span><span class="bd">0/2</span></div><span class="sub">Describe a process clearly.</span><span class="sub">Level 2</span></div>
+ <div class="c"><div class="r"><span class="ct">Reading Aloud</span><span class="bd">1/2</span></div><span class="sub">Pronunciation and pacing.</span><span class="sub">Level 2</span></div>`,
+ has:['Module cards: naam, detail, level','Kitne exercise done'],
+ fix:'Level ko upar chip banao; level ke hisaab se filter.'},
+{g:'student',n:13,name:'Module detail',route:'/modules/[id]',st:'wip',
+ body:`<span class="back">← Modules</span><span class="h">Everyday Conversations</span><span class="sub">Greetings, introductions, small talk.</span>
+ <span class="b o">Enroll</span>
+ <div class="c"><div class="r"><span class="ct">Introduce yourself</span><span class="bd ok">Audit ready</span></div><span class="sub">60–90 seconds about you. · audio</span><div class="r"><span class="b o">Submit again</span><span class="b o">View audit</span></div></div>
+ <div class="c"><div class="r"><span class="ct">Ordering at a café</span></div><span class="sub">Role-play an order. · video</span><span class="b">Start</span></div>`,
+ has:['Exercise list + status','Start / Submit again / View audit','Enroll button'],
+ fix:'Enroll kabhi click nahi hua — test. Status badge me RETURNED ka rang pehle se hai.'},
+{g:'student',n:14,name:'Practice',route:'/practice/[id]',st:'wip',
+ body:`<span class="back">← Everyday Conversations</span><span class="h">Introduce yourself</span>
+ <div class="c"><span class="ct">What to do</span><span class="sub">Speak for 60–90 seconds about who you are.</span></div>
+ <div class="seg"><span class="on">Record</span><span>Upload file</span></div>
+ <div class="c" style="align-items:center"><div class="rec"></div><span style="font-family:var(--f-mono)">00:00 / 03:00</span></div>
+ <div class="new"><b>NEW</b>Upload 62% ▓▓▓▓▓░░░</div>
+ <span class="b full">Send to a teacher</span>
+ <div class="c"><span class="ct">Your earlier attempts</span><div class="r"><span>12 Sep</span><span class="bd ok">Audit ready</span></div></div>`,
+ has:['Prompt + record tip','Record ya upload → Send','Pichhle attempts'],
+ fix:'P0: upload progress bar (XMLHttpRequest) + file storage me hai ya nahi check. Recorder real phone pe kabhi nahi chala.'},
+{g:'student',n:15,name:'Your audits',route:'/feedback',st:'ok',
+ body:`<span class="h">Your audits</span>
+ <div class="c"><div class="r"><div><span class="ct">Introduce yourself</span><br><span class="sub">Reviewed 27 Sep</span></div><div style="text-align:right"><b style="font:700 14px var(--f-mono)">6.4</b><br><span class="sub">AVG</span></div></div></div>
+ <div class="c"><div class="r"><div><span class="ct">Reading a notice</span><br><span class="sub">Reviewed 20 Sep</span></div><div style="text-align:right"><b style="font:700 14px var(--f-mono)">5.6</b><br><span class="sub">AVG</span></div></div></div>
+ <div class="new"><b>NEW</b>"Sent back" wale bhi yahan, reason ke saath</div>`,
+ has:['Sab reviewed audits, naya upar','Har ek ka average'],
+ fix:'RETURNED feature bane to wo yahan dikhao.'},
+{g:'student',n:16,name:'Audit detail',route:'/feedback/[id]',st:'wip',
+ body:`<span class="back">← All audits</span><span class="h">Introduce yourself</span><span class="sub">Reviewed 27/9/2026</span>
+ <div class="new"><b>NEW</b>Overall 6.4 · pichhli baar se +0.8</div>
+ <div class="c"><span class="ct">Scores</span>${bar('Pronunciation',7)}${bar('Grammar',5)}${bar('Fluency',6)}</div>
+ <div class="c"><span class="ct">What your teacher said</span><span class="sub">Clear voice, good pace. Work on present simple…</span></div>
+ <div class="c"><div class="pl"><div class="wv"></div><div class="pc"><span>▶ 0:12</span><span>1:14</span></div></div>
+ <div class="nt"><span class="t">0:12</span><span>"I am working" → "I work"</span><span class="bd no">major</span></div></div>
+ <div class="new"><b>NEW</b>Try this exercise again →</div>`,
+ has:['5 score bar + summary','Player + notes; time dabao to wahan se chale'],
+ fix:'P0: note tap karne pe player screen se bahar hota hai — scrollIntoView / sticky. Overall score + "try again" jodo.'},
+
+/* ---------- TEACHER ---------- */
+{g:'teacher',n:17,name:'Review queue',route:'/queue',st:'wip',
+ body:`<span class="h">Review queue</span><span class="sub">3 waiting, oldest first.</span>
+ <span class="ct">Open with you</span>
+ <div class="c"><div class="r"><div><span class="ct">Ordering at a café</span><br><span class="sub">Priya · 5h ago</span></div><span class="b">Continue</span></div>
+ <div class="new"><b>NEW</b>Release — queue me wapas</div></div>
+ <span class="ct">Waiting</span>
+ <div class="c"><div class="r"><div><span class="ct">Introduce yourself</span><br><span class="sub">Rahul · 2d ago · 74s</span></div><span class="bd">audio</span></div></div>
+ <div class="c"><div class="r"><div><span class="ct">Describe your city</span><br><span class="sub">Aman · 1d · 58s</span></div><span class="bd">video</span></div></div>`,
+ has:['Mere claimed items upar','PENDING list, purana pehle, max 50'],
+ fix:'P0: release-claim button. Page kholte hi claim hota hai, galti se khola item lock ho jaata hai.'},
+{g:'teacher',n:18,name:'Audit form',route:'/review/[id]',st:'wip',
+ body:`<span class="h">Introduce yourself</span><span class="sub">Rahul · 26/9/2026</span>
+ <div class="pl"><div class="wv"></div><div class="pc"><span>▶ 0:42</span><span>+ Note here</span></div></div>
+ <div class="c"><span class="ct">Scores</span>${bar('Pronunciation',5)}${bar('Grammar',5)}${bar('Fluency',5)}<span class="sub">+ Vocabulary, Confidence</span></div>
+ <div class="c"><span class="ct">Timestamped notes</span><div class="nt"><span class="t">0:12</span><span>"I am working" → "I work"</span><span class="bd no">major</span></div>
+ <div class="in area">What did you hear?</div><div class="r"><span class="seg" style="flex:0 0 96px"><span class="on">Minor</span><span>Major</span></span><span class="b">Add note</span></div></div>
+ <div class="c"><span class="ct">Summary</span><div class="in area">What went well…</div></div>
+ <div class="new"><b>NEW</b>Draft saved · Send back · Confirm</div>
+ <span class="b full">Send audit to student</span>`,
+ has:['Player / photo','5 slider 0–10','Time wale notes (min 1)','Summary 40+ akshar'],
+ fix:'P0: draftStorage.ts wire karo; sticky player. P1: score "touched" rule, confirm step, Send back (schema).'},
+{g:'teacher',n:19,name:'Students',route:'/students',st:'wip',
+ body:`<span class="h">Students</span><span class="sub">4 students have submitted.</span>
+ <div class="c"><div class="r"><span class="ct">Rahul Sharma</span><span class="bd acc">1 waiting</span></div><span class="sub">rahul@…</span><div class="tiles"><div><b>3</b><small>Audits</small></div><div><b>6.1</b><small>Avg</small></div><div><b>2d</b><small>Last</small></div></div></div>
+ <div class="c"><div class="r"><span class="ct">Priya Nair</span><span class="bd ok">Clear</span></div><span class="sub">priya@…</span><div class="tiles"><div><b>5</b><small>Audits</small></div><div><b>7.0</b><small>Avg</small></div><div><b>5h</b><small>Last</small></div></div></div>`,
+ has:['Har student: audits, avg, last submit','Waiting / Clear badge'],
+ fix:'Kabhi khola nahi. Student pe tap karke uski audit history — abhi koi detail page nahi.'},
+
+/* ---------- SHARED ---------- */
+{g:'shared',n:20,name:'Settings',route:'/settings',st:'wip',
+ body:`<span class="h">Settings</span>
+ <div class="c"><span class="ct">Theme</span><div class="seg"><span class="on">Light</span><span>Dark</span><span>+4</span></div></div>
+ <div class="c"><div class="r"><span>Email me when an audit arrives</span><span class="sw on"></span></div></div>
+ <div class="c"><div class="r"><span>Start playing when I open an audit</span><span class="sw"></span></div></div>
+ <div class="c"><div class="r"><span>Larger text</span><span class="sw"></span></div></div>`,
+ has:['6 theme','3 toggle: email, autoplay, bada text'],
+ fix:'Toggles code me padhe jaate hain, visual check baaki. Theme list me pink/blue waale themes hain — naye colour ke hisaab se badalne hain to globals.css.'},
+{g:'shared',n:21,name:'Profile',route:'/profile',st:'ok',
+ body:`<span class="h">Your account</span>
+ <div class="c"><div class="r" style="justify-content:flex-start;gap:9px"><span class="av">R</span><div><span class="ct">Rahul Sharma</span><br><span class="sub">rahul@example.com · 98xxxxxx10</span></div></div><span class="sub">Joined 12/9/2026 · Phone stored, not verified.</span></div>
+ <div class="c"><span class="ct">Your practice</span><div class="tiles"><div><b>6</b><small>Sent</small></div><div><b>3</b><small>Audits</small></div><div><b>6.1</b><small>Avg</small></div></div></div>
+ <div class="c"><span class="ct">Password</span><span class="sub">Change it with a reset link.</span><span class="b o">Reset password</span></div>`,
+ has:['Naam, email, phone','Student: practice stats / Teacher: reviewing stats','Password reset link'],
+ fix:'Naam edit karne ka option nahi hai — jodo.'},
+];
+for(const p of P){
+  const g=document.querySelector(`[data-g="${p.g}"]`);
+  const st={ok:['ok','✓','Test hua'],wip:['wip','!','Test baaki'],no:['no','✕','Bana nahi']}[p.st];
+  const el=document.createElement('article');el.className='pg';
+  el.innerHTML=`<div class="phone" role="img" aria-label="${p.name} phone mockup">${HD}<div class="scr">${p.body}</div></div>
+  <div class="cap"><div class="top"><h3><span class="num">${p.n}</span> ${p.name}</h3><span class="st ${st[0]}"><i>${st[1]}</i>${st[2]}</span></div>
+  <span class="route">${p.route}</span><ul>${p.has.map(h=>`<li>${h}</li>`).join('')}</ul>
+  <div class="fix"><b>BADLO</b>${p.fix}</div></div>`;
+  g.appendChild(el);
+}
+</script>

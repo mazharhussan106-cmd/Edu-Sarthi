@@ -1,4 +1,4 @@
-// Owns the about page: what Edusarthi does, how the loop works, and what it
+// Owns the about page: what EduSarthi does, how the loop works, and what it
 // deliberately is not.
 //
 // Every claim here has to be one the product actually delivers. No student
@@ -11,9 +11,9 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 
 export const metadata = {
-  title: "About — Edusarthi",
+  title: "About — EduSarthi",
   description:
-    "How Edusarthi works: you send a recording, a teacher sends back a scored audit with timestamped notes.",
+    "How EduSarthi works: you send a recording, a teacher sends back a scored audit with timestamped notes.",
 };
 
 const STEPS = [
@@ -43,11 +43,11 @@ export default function AboutPage() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-16">
       <h1 className="font-display text-3xl font-bold text-ink">
-        What Edusarthi is
+        What EduSarthi is
       </h1>
       <p className="mt-4 text-base text-ink-muted">
         Most spoken-English practice gives you a score and no explanation, or an
-        explanation so general it fits anyone. Edusarthi does the opposite: a
+        explanation so general it fits anyone. EduSarthi does the opposite: a
         teacher listens to your actual recording and tells you which sentence
         went wrong and why.
       </p>

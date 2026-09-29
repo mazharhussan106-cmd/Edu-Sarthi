@@ -1,5 +1,5 @@
 // Owns /.well-known/assetlinks.json — the Digital Asset Links file that proves
-// to Android that the Edusarthi app and this website belong together. With it,
+// to Android that the EduSarthi app and this website belong together. With it,
 // the app opens full screen with no browser bar, and sign-in links from email
 // open in the app.
 //

@@ -31,40 +31,40 @@ async function send(to: string, subject: string, text: string, html: string) {
 }
 
 export async function sendVerificationCode(to: string, code: string) {
-  const subject = "Your Edusarthi verification code";
-  const text = `Your verification code is ${code}. It expires in 10 minutes.\n\nIf you did not create an Edusarthi account, you can ignore this email.`;
+  const subject = "Your EduSarthi verification code";
+  const text = `Your verification code is ${code}. It expires in 10 minutes.\n\nIf you did not create an EduSarthi account, you can ignore this email.`;
   const html = `
-    <p>Your Edusarthi verification code is:</p>
+    <p>Your EduSarthi verification code is:</p>
     <p style="font-size:28px;letter-spacing:6px;font-weight:700">${code}</p>
     <p>It expires in 10 minutes.</p>
-    <p style="color:#6b6470;font-size:13px">If you did not create an Edusarthi account, you can ignore this email.</p>
+    <p style="color:#5f6773;font-size:13px">If you did not create an EduSarthi account, you can ignore this email.</p>
   `;
 
   await send(to, subject, text, html);
 }
 
 export async function sendPasswordResetLink(to: string, url: string) {
-  const subject = "Reset your Edusarthi password";
+  const subject = "Reset your EduSarthi password";
   const text = `Open this link to set a new password:\n${url}\n\nThe link works once and expires in 1 hour. If you did not ask to reset your password, you can ignore this email — nothing has changed.`;
   const html = `
     <p>Open this link to set a new password:</p>
     <p><a href="${url}">${url}</a></p>
     <p>The link works once and expires in 1 hour.</p>
-    <p style="color:#6b6470;font-size:13px">If you did not ask to reset your password, you can ignore this email — nothing has changed.</p>
+    <p style="color:#5f6773;font-size:13px">If you did not ask to reset your password, you can ignore this email — nothing has changed.</p>
   `;
 
   await send(to, subject, text, html);
 }
 
 export async function sendLoginEmail(to: string, code: string, url: string) {
-  const subject = `${code} is your Edusarthi sign-in code`;
+  const subject = `${code} is your EduSarthi sign-in code`;
   const text = `Your sign-in code is ${code}.\n\nOr open this link on the same phone to sign in straight away:\n${url}\n\nBoth expire in 10 minutes and work once. If you did not try to sign in, you can ignore this email.`;
   const html = `
-    <p>Your Edusarthi sign-in code is:</p>
+    <p>Your EduSarthi sign-in code is:</p>
     <p style="font-size:28px;letter-spacing:6px;font-weight:700">${code}</p>
     <p>Or sign in with one tap:</p>
-    <p><a href="${url}" style="display:inline-block;padding:10px 18px;background:#1a1420;color:#ffffff;border-radius:8px;text-decoration:none">Sign in to Edusarthi</a></p>
-    <p style="color:#6b6470;font-size:13px">Both expire in 10 minutes and work once. If you did not try to sign in, you can ignore this email.</p>
+    <p><a href="${url}" style="display:inline-block;padding:10px 18px;background:#0077b3;color:#ffffff;border-radius:8px;text-decoration:none">Sign in to EduSarthi</a></p>
+    <p style="color:#5f6773;font-size:13px">Both expire in 10 minutes and work once. If you did not try to sign in, you can ignore this email.</p>
   `;
   await send(to, subject, text, html);
 }

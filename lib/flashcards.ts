@@ -5,6 +5,10 @@
 // done for today; "keep going" lifts the new-card limit on request.
 //
 // Days are counted in India time, as everywhere else in the app.
+//
+// `skip` is the list of cards the student passed over with › this session.
+// It lives in the URL, not the database: skipping is "not now", not an
+// answer, so it must never move a card's review date.
 
 import type { CardKind, Prisma } from "@prisma/client";
 
@@ -57,10 +61,16 @@ export async function deckCounts(userId: string, kind: CardKind) {
   };
 }
 
-export async function nextCardId(userId: string, kind: CardKind, extra: boolean): Promise<string | null> {
+export async function nextCardId(
+  userId: string,
+  kind: CardKind,
+  extra: boolean,
+  skip: string[] = [],
+): Promise<string | null> {
   const now = new Date();
+  const notSkipped = skip.length ? { code: { notIn: skip } } : {};
   const due = await prisma.cardState.findFirst({
-    where: { userId, dueAt: { lte: now }, word: { kind } },
+    where: { userId, dueAt: { lte: now }, word: { kind, ...notSkipped } },
     orderBy: { dueAt: "asc" },
     select: { wordId: true },
   });
@@ -74,7 +84,7 @@ export async function nextCardId(userId: string, kind: CardKind, extra: boolean)
   }
 
   const fresh = await prisma.word.findFirst({
-    where: { kind, states: { none: { userId } } },
+    where: { kind, states: { none: { userId } }, ...notSkipped },
     orderBy: { serial: "asc" },
     select: { id: true },
   });

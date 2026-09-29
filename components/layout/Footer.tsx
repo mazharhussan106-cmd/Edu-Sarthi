@@ -17,7 +17,7 @@ export function Footer() {
     <footer className="mt-16 border-t border-border">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10">
         <div>
-          <p className="font-display text-base font-bold text-ink">Edusarthi</p>
+          <p className="font-display text-base font-bold text-brand">EduSarthi</p>
           <p className="mt-1 max-w-md text-xs text-ink-muted">
             Spoken English practice with a written audit from a teacher —
             pronunciation, grammar, fluency, vocabulary and confidence, scored
@@ -38,7 +38,7 @@ export function Footer() {
         </nav>
 
         <p className="text-xs text-mist">
-          © {new Date().getFullYear()} Edusarthi. All rights reserved.
+          © {new Date().getFullYear()} EduSarthi. All rights reserved.
         </p>
       </div>
     </footer>

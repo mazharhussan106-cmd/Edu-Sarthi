@@ -1,203 +1,192 @@
 /* Owns every colour, font and theme in the app. Nothing else in the codebase
-   may name a colour: components reference tokens only, so adding a seventh
+   may name a colour: components reference tokens only, so adding a sixth
    theme means editing this file and nothing else.
 
    It deliberately does NOT define component styles, spacing scales or layout
    utilities — those stay as Tailwind classes at the call site, where they are
-   visible next to the markup they affect. */
+   visible next to the markup they affect.
+
+   Palette: HP cerulean #0096D6 is the brand, saffron #FF8206 the highlight.
+   #0096D6 measures 3.3:1 against white, which fails AA for button-sized
+   text, so "accent" (buttons, links) is a deeper step of the same blue and
+   #0096D6 itself is kept for large marks — the logo, the waveform. */
 
 @import "tailwindcss";
 
-/* --- Light (default) ----------------------------------------------------- */
+/* --- Light (default) ------------------------------------------------------- */
 :root {
   color-scheme: light;
-
-  --color-ink: #1a1420;
-  --color-ink-light: #2a2135;
-  --color-ink-muted: #6b6470;
-  --color-paper: #faf7f9;
-  --color-paper-dim: #f0e9ed;
-
-  /* Named "accent", not "pink": the Ocean theme puts a blue here. A token
-     named after one theme's hue is a trap for whoever edits this next. */
-  --color-accent: #dc2087;
-  --color-accent-dark: #b81a70;
+  --color-ink: #1b1f24;
+  --color-ink-light: #2b3038;
+  --color-ink-muted: #5f6773;
+  --color-paper: #faf8f5;
+  --color-paper-dim: #f0ece5;
   /* Text drawn ON the accent. Never assume: each theme's accent differs in
      lightness, and a fixed value silently fails somewhere. */
+  --color-accent: #0077b3;
+  --color-accent-dark: #005f8f;
   --color-on-accent: #ffffff;
-
-  --color-success: #2f9e64;
-  --color-error: #d6455a;
-  --color-mist: #a89bb0;
-
+  --color-brand: #0096d6;
+  --color-saffron: #ff8206;
+  --color-on-saffron: #1b1f24;
+  --color-success: #1a7f45;
+  --color-error: #c73a3a;
+  --color-mist: #9aa1ab;
   --color-surface: #ffffff;
   --color-surface-raised: #ffffff;
-  --color-border: rgba(26, 20, 32, 0.1);
-  --color-border-strong: rgba(26, 20, 32, 0.2);
-  /* Tinted rather than neutral grey, so hover reads as "this app" and not as
-     an unstyled default. */
-  --color-hover: rgba(220, 32, 135, 0.06);
-  --color-shadow: rgba(26, 20, 32, 0.05);
-  --color-nav-bg: rgba(250, 247, 249, 0.95);
-
-  /* Domain surfaces — the media player chrome. */
-  --color-player-bg: #1a1420;
-  --color-player-text: #cfc6d4;
-  --color-waveform: #dc2087;
-  --color-waveform-dim: rgba(220, 32, 135, 0.25);
+  --color-border: rgba(27, 31, 36, 0.1);
+  --color-border-strong: rgba(27, 31, 36, 0.2);
+  --color-hover: rgba(0, 119, 179, 0.06);
+  --color-shadow: rgba(27, 31, 36, 0.06);
+  --color-nav-bg: rgba(250, 248, 245, 0.95);
+  --color-player-bg: #1b1f24;
+  --color-player-text: #d5d9de;
+  --color-waveform: #0096d6;
+  --color-waveform-dim: rgba(0, 150, 214, 0.25);
+  /* Card heading colours. Named by hue on purpose: unlike accent, the hue
+     is the meaning (Synonyms are always green) and only the lightness moves
+     per theme to keep 4.5:1 on that theme's surface. */
+  --color-tag-blue: #0077b3;
+  --color-tag-saffron: #b35500;
+  --color-tag-green: #1a7f45;
+  --color-tag-red: #c73a3a;
+  --color-tag-teal: #0f7f74;
+  --color-tag-amber: #8f6300;
+  --color-tag-navy: #1f3a68;
 }
 
-/* --- Dark ---------------------------------------------------------------- */
+/* --- Dark ------------------------------------------------------------------ */
 [data-theme="dark"] {
   color-scheme: dark;
-
-  --color-ink: #ece7f0;
-  --color-ink-light: #c8c0ce;
-  --color-ink-muted: #928a99;
-  --color-paper: #120e17;
-  --color-paper-dim: #1c1723;
-
-  --color-accent: #ff5fae;
-  --color-accent-dark: #ff8bc4;
-  /* White on this pink is 2.80:1 — unreadable. Dark text is 6.81:1. */
-  --color-on-accent: #120e17;
-
+  --color-ink: #edeff2;
+  --color-ink-light: #c9ced5;
+  --color-ink-muted: #98a0aa;
+  --color-paper: #14171b;
+  --color-paper-dim: #1b1f24;
+  --color-accent: #3db4ee;
+  --color-accent-dark: #6cc6f2;
+  --color-on-accent: #0b1520;
+  --color-brand: #3db4ee;
+  --color-saffron: #ff9a3d;
+  --color-on-saffron: #14171b;
   --color-success: #4cc98a;
-  --color-error: #ff6b7f;
-  --color-mist: #7d7288;
-
-  --color-surface: #1c1723;
-  --color-surface-raised: #251e2e;
-  --color-border: rgba(236, 231, 240, 0.12);
-  --color-border-strong: rgba(236, 231, 240, 0.24);
-  --color-hover: rgba(255, 95, 174, 0.1);
+  --color-error: #ff6b6b;
+  --color-mist: #6b737d;
+  --color-surface: #1e232a;
+  --color-surface-raised: #262c34;
+  --color-border: rgba(237, 239, 242, 0.12);
+  --color-border-strong: rgba(237, 239, 242, 0.24);
+  --color-hover: rgba(61, 180, 238, 0.1);
   --color-shadow: rgba(0, 0, 0, 0.4);
-  --color-nav-bg: rgba(18, 14, 23, 0.95);
-
-  --color-player-bg: #251e2e;
-  --color-player-text: #c8c0ce;
-  --color-waveform: #ff5fae;
-  --color-waveform-dim: rgba(255, 95, 174, 0.25);
+  --color-nav-bg: rgba(20, 23, 27, 0.95);
+  --color-player-bg: #262c34;
+  --color-player-text: #c9ced5;
+  --color-waveform: #3db4ee;
+  --color-waveform-dim: rgba(61, 180, 238, 0.25);
+  --color-tag-blue: #5ec2f2;
+  --color-tag-saffron: #ffa559;
+  --color-tag-green: #5ad08f;
+  --color-tag-red: #ff7b7b;
+  --color-tag-teal: #3fd0c0;
+  --color-tag-amber: #f2c14e;
+  --color-tag-navy: #a9c3ee;
 }
 
-/* --- Rose (warm, low-glare — the sepia analogue) ------------------------- */
-[data-theme="rose"] {
+/* --- Sepia (warm paper, low glare) ----------------------------------------- */
+[data-theme="sepia"] {
   color-scheme: light;
-
-  --color-ink: #2b1a24;
-  --color-ink-light: #3d2733;
-  --color-ink-muted: #7a6169;
-  --color-paper: #fbf1f4;
-  --color-paper-dim: #f3e3e8;
-
-  --color-accent: #c81e74;
-  --color-accent-dark: #a3175d;
+  /* #0096D6 is 2.9:1 on this paper, too faint even for the logo, so the blue
+     drops a step. Saffron takes near-black text: white on it is 3.5:1. */
+  --color-ink: #3b2f20;
+  --color-ink-light: #4e3f2c;
+  --color-ink-muted: #6e5e48;
+  --color-paper: #f4ecd8;
+  --color-paper-dim: #eadfc4;
+  --color-accent: #0a6e99;
+  --color-accent-dark: #075878;
   --color-on-accent: #ffffff;
-
-  --color-success: #2b8a5b;
-  --color-error: #c43b52;
-  --color-mist: #b09aa3;
-
-  --color-surface: #fffafb;
-  --color-surface-raised: #ffffff;
-  --color-border: rgba(43, 26, 36, 0.12);
-  --color-border-strong: rgba(43, 26, 36, 0.24);
-  --color-hover: rgba(200, 30, 116, 0.07);
-  --color-shadow: rgba(43, 26, 36, 0.06);
-  --color-nav-bg: rgba(251, 241, 244, 0.95);
-
-  --color-player-bg: #2b1a24;
-  --color-player-text: #e0d0d7;
-  --color-waveform: #c81e74;
-  --color-waveform-dim: rgba(200, 30, 116, 0.25);
+  --color-brand: #0a6e99;
+  --color-saffron: #d96a00;
+  --color-on-saffron: #1e160c;
+  --color-success: #2f7a3e;
+  --color-error: #b03a2e;
+  --color-mist: #a08f74;
+  --color-surface: #fbf6ea;
+  --color-surface-raised: #fffbf2;
+  --color-border: rgba(59, 47, 32, 0.14);
+  --color-border-strong: rgba(59, 47, 32, 0.28);
+  --color-hover: rgba(10, 110, 153, 0.07);
+  --color-shadow: rgba(59, 47, 32, 0.08);
+  --color-nav-bg: rgba(244, 236, 216, 0.95);
+  --color-player-bg: #3b2f20;
+  --color-player-text: #eadfc4;
+  --color-waveform: #0a6e99;
+  --color-waveform-dim: rgba(10, 110, 153, 0.25);
+  --color-tag-blue: #0a6e99;
+  --color-tag-saffron: #a04c00;
+  --color-tag-green: #2f7a3e;
+  --color-tag-red: #b03a2e;
+  --color-tag-teal: #1b6f66;
+  --color-tag-amber: #7e5a00;
+  --color-tag-navy: #2a3f66;
 }
 
-/* --- Ocean (cool, blue accent) ------------------------------------------- */
-[data-theme="ocean"] {
-  color-scheme: light;
-
-  --color-ink: #0d1b26;
-  --color-ink-light: #1a2c3a;
-  --color-ink-muted: #566878;
-  --color-paper: #f2f7fa;
-  --color-paper-dim: #e2edf4;
-
-  /* One shade deeper than #0096D6, which measures 3.32:1 against white and
-     fails AA for text below 18pt — which is every button in this app. */
-  --color-accent: #007cb2;
-  --color-accent-dark: #005b83;
-  --color-on-accent: #ffffff;
-
-  --color-success: #12855a;
-  --color-error: #c8384f;
-  --color-mist: #92a5b3;
-
-  --color-surface: #ffffff;
-  --color-surface-raised: #ffffff;
-  --color-border: rgba(13, 27, 38, 0.12);
-  --color-border-strong: rgba(13, 27, 38, 0.24);
-  --color-hover: rgba(0, 124, 178, 0.07);
-  --color-shadow: rgba(13, 27, 38, 0.06);
-  --color-nav-bg: rgba(242, 247, 250, 0.95);
-
-  --color-player-bg: #0d1b26;
-  --color-player-text: #c5d3dd;
-  --color-waveform: #007cb2;
-  --color-waveform-dim: rgba(0, 124, 178, 0.25);
-}
-
-/* --- Midnight (deeper than dark, cooler) --------------------------------- */
+/* --- Midnight (deep navy) -------------------------------------------------- */
 [data-theme="midnight"] {
   color-scheme: dark;
-
-  --color-ink: #e6e3f2;
-  --color-ink-light: #bfbad4;
-  --color-ink-muted: #8b85a3;
-  --color-paper: #0b0a14;
-  --color-paper-dim: #14121f;
-
-  --color-accent: #ff77bd;
-  --color-accent-dark: #ff9ed0;
-  --color-on-accent: #0b0a14;
-
+  --color-ink: #e4ecf7;
+  --color-ink-light: #bcc9db;
+  --color-ink-muted: #8c9db5;
+  --color-paper: #0b1526;
+  --color-paper-dim: #111e33;
+  --color-accent: #4cc3f5;
+  --color-accent-dark: #7dd3f8;
+  --color-on-accent: #0b1526;
+  --color-brand: #4cc3f5;
+  --color-saffron: #ffa14a;
+  --color-on-saffron: #0b1526;
   --color-success: #57d69a;
-  --color-error: #ff7d90;
-  --color-mist: #6f6889;
-
-  --color-surface: #14121f;
-  --color-surface-raised: #1d1a2c;
-  --color-border: rgba(230, 227, 242, 0.12);
-  --color-border-strong: rgba(230, 227, 242, 0.24);
-  --color-hover: rgba(255, 119, 189, 0.1);
+  --color-error: #ff7d7d;
+  --color-mist: #5f7190;
+  --color-surface: #13233d;
+  --color-surface-raised: #1a2d4b;
+  --color-border: rgba(228, 236, 247, 0.12);
+  --color-border-strong: rgba(228, 236, 247, 0.24);
+  --color-hover: rgba(76, 195, 245, 0.1);
   --color-shadow: rgba(0, 0, 0, 0.55);
-  --color-nav-bg: rgba(11, 10, 20, 0.95);
-
-  --color-player-bg: #1d1a2c;
-  --color-player-text: #bfbad4;
-  --color-waveform: #ff77bd;
-  --color-waveform-dim: rgba(255, 119, 189, 0.25);
+  --color-nav-bg: rgba(11, 21, 38, 0.95);
+  --color-player-bg: #1a2d4b;
+  --color-player-text: #bcc9db;
+  --color-waveform: #4cc3f5;
+  --color-waveform-dim: rgba(76, 195, 245, 0.25);
+  --color-tag-blue: #6fd0f7;
+  --color-tag-saffron: #ffb06a;
+  --color-tag-green: #6adba2;
+  --color-tag-red: #ff8c8c;
+  --color-tag-teal: #52d6c6;
+  --color-tag-amber: #f5c95c;
+  --color-tag-navy: #afc6f0;
 }
 
-/* --- High contrast ------------------------------------------------------- */
+/* --- High contrast --------------------------------------------------------- */
 [data-theme="high-contrast"] {
   color-scheme: light;
-
+  /* Every colour here clears 4.5:1 on white, the saffron included, so this
+     theme is the one to point a student to when text is hard to read. */
   --color-ink: #000000;
   --color-ink-light: #000000;
-  /* Not grey. Muted text in this theme still has to clear AA against paper,
-     so it drops to a dark slate rather than a light one. */
   --color-ink-muted: #3a3a3a;
   --color-paper: #ffffff;
   --color-paper-dim: #f0f0f0;
-
-  --color-accent: #a3005f;
-  --color-accent-dark: #7a0047;
+  --color-accent: #005a87;
+  --color-accent-dark: #00476b;
   --color-on-accent: #ffffff;
-
+  --color-brand: #005a87;
+  --color-saffron: #b85300;
+  --color-on-saffron: #ffffff;
   --color-success: #0a6b3d;
   --color-error: #a80020;
   --color-mist: #5a5a5a;
-
   --color-surface: #ffffff;
   --color-surface-raised: #ffffff;
   --color-border: rgba(0, 0, 0, 0.55);
@@ -205,11 +194,17 @@
   --color-hover: rgba(0, 0, 0, 0.1);
   --color-shadow: rgba(0, 0, 0, 0.25);
   --color-nav-bg: #ffffff;
-
   --color-player-bg: #000000;
   --color-player-text: #ffffff;
-  --color-waveform: #a3005f;
-  --color-waveform-dim: rgba(163, 0, 95, 0.35);
+  --color-waveform: #005a87;
+  --color-waveform-dim: rgba(0, 90, 135, 0.35);
+  --color-tag-blue: #005a87;
+  --color-tag-saffron: #8a3e00;
+  --color-tag-green: #0a6b3d;
+  --color-tag-red: #a80020;
+  --color-tag-teal: #005f56;
+  --color-tag-amber: #6b4a00;
+  --color-tag-navy: #0b2447;
 }
 
 /* Every token re-declared here so Tailwind generates the utilities. Without
@@ -220,15 +215,15 @@
   --color-ink-muted: var(--color-ink-muted);
   --color-paper: var(--color-paper);
   --color-paper-dim: var(--color-paper-dim);
-
   --color-accent: var(--color-accent);
   --color-accent-dark: var(--color-accent-dark);
   --color-on-accent: var(--color-on-accent);
-
+  --color-brand: var(--color-brand);
+  --color-saffron: var(--color-saffron);
+  --color-on-saffron: var(--color-on-saffron);
   --color-success: var(--color-success);
   --color-error: var(--color-error);
   --color-mist: var(--color-mist);
-
   --color-surface: var(--color-surface);
   --color-surface-raised: var(--color-surface-raised);
   --color-border: var(--color-border);
@@ -236,11 +231,17 @@
   --color-hover: var(--color-hover);
   --color-shadow: var(--color-shadow);
   --color-nav-bg: var(--color-nav-bg);
-
   --color-player-bg: var(--color-player-bg);
   --color-player-text: var(--color-player-text);
   --color-waveform: var(--color-waveform);
   --color-waveform-dim: var(--color-waveform-dim);
+  --color-tag-blue: var(--color-tag-blue);
+  --color-tag-saffron: var(--color-tag-saffron);
+  --color-tag-green: var(--color-tag-green);
+  --color-tag-red: var(--color-tag-red);
+  --color-tag-teal: var(--color-tag-teal);
+  --color-tag-amber: var(--color-tag-amber);
+  --color-tag-navy: var(--color-tag-navy);
 
   --font-display: var(--font-sora);
   --font-body: var(--font-inter);

@@ -52,7 +52,7 @@ const FAQ = [
     a: "A phone in a normal room is fine. If audio is unclear enough to affect the audit, the teacher will say so rather than guess.",
   },
   {
-    q: "Can I become a teacher on Edusarthi?",
+    q: "Can I become a teacher on EduSarthi?",
     a: "Not through the signup form. Teacher accounts are set up manually, because a teacher account can read student submissions.",
   },
 ] as const;
@@ -64,9 +64,9 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-3">
           <Link
             href="/"
-            className="font-display text-lg font-bold text-ink hover:text-accent"
+            className="font-display text-lg font-bold text-brand hover:text-accent"
           >
-            Edusarthi
+            EduSarthi
           </Link>
           <div className="ml-auto flex items-center gap-2">
             <Link href="/login">

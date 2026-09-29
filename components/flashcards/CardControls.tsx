@@ -1,34 +1,38 @@
-// Owns the four controls under the flashcard, as in the design: Known,
-// Unknown, Remark ▾ and Level ▾.
+// Owns the one control line under the card, as the owner specified:
+//   ‹  Known  Unknown  [Remark ▾]  ›
+// ‹ and › move between cards without answering. Remark ▾ opens a small panel
+// with the five remarks (💯 ⭐ ❤️ ❓ 📝) as one-tap toggles and the level
+// (Hard / Medium / Easy).
 //
-// Level (Hard / Medium / Easy) is chosen before pressing Known and decides
-// how far the next review is pushed; Known alone counts as Medium. Remarks
-// save the moment they are tapped and never move the card on.
+// Level is chosen before pressing Known and decides how far the next review
+// is pushed; Known alone counts as Medium. Remarks save the moment they are
+// tapped and never move the card on. Zoom is not here on purpose: it is
+// fingers only, on the card itself.
 
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 export type Remarks = { confident: boolean; important: boolean; favourite: boolean; doubt: boolean };
 export type Level = "HARD" | "MEDIUM" | "EASY";
 
-const REMARKS: { key: keyof Remarks; label: string }[] = [
-  { key: "confident", label: "💯 100% confident" },
-  { key: "important", label: "⭐ Important" },
-  { key: "favourite", label: "❤️ Favourite" },
-  { key: "doubt", label: "❓ Doubt — ask teacher" },
+const REMARKS: { key: keyof Remarks; icon: string; label: string }[] = [
+  { key: "confident", icon: "💯", label: "100% confident" },
+  { key: "important", icon: "⭐", label: "Important" },
+  { key: "favourite", icon: "❤️", label: "Favourite" },
+  { key: "doubt", icon: "❓", label: "Doubt — ask teacher" },
 ];
 
-const LEVELS: { value: Level; label: string; hint: string }[] = [
-  { value: "HARD", label: "Hard", hint: "same gap again" },
-  { value: "MEDIUM", label: "Medium", hint: "next step" },
-  { value: "EASY", label: "Easy", hint: "skip a step" },
+const LEVELS: { value: Level; label: string }[] = [
+  { value: "HARD", label: "Hard" },
+  { value: "MEDIUM", label: "Medium" },
+  { value: "EASY", label: "Easy" },
 ];
 
-const pill = "flex h-11 min-w-0 items-center justify-center gap-1 rounded-full border px-2 text-sm font-medium";
+const box = "flex h-12 items-center justify-center whitespace-nowrap rounded-xl border font-display text-[13px] font-bold disabled:opacity-60";
 
 export function CardControls({
   busy,
@@ -39,6 +43,8 @@ export function CardControls({
   note,
   onNote,
   onMark,
+  onPrev,
+  onNext,
 }: {
   busy: boolean;
   level: Level;
@@ -48,90 +54,131 @@ export function CardControls({
   note: string;
   onNote: (n: string) => void;
   onMark: (known: boolean) => void;
+  onPrev: () => void;
+  onNext: () => void;
 }) {
-  const [open, setOpen] = useState<"remark" | "level" | null>(null);
+  const [open, setOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
   const [draft, setDraft] = useState(note);
-  const anyRemark = Object.values(remarks).some(Boolean) || Boolean(note);
+  const wrap = useRef<HTMLDivElement>(null);
+  const count = Object.values(remarks).filter(Boolean).length + (note ? 1 : 0);
+
+  // Closes on a tap outside or Escape, like any menu.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!wrap.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   return (
-    <div className="relative">
-      <div className="grid grid-cols-4 gap-1.5">
-        <button type="button" disabled={busy} onClick={() => onMark(true)} className={cn(pill, "border-success bg-success text-on-accent disabled:opacity-60")}>
+    <div ref={wrap} className="relative">
+      <div className="grid grid-cols-[2.5rem_1fr_1fr_auto_2.5rem] gap-1.5">
+        <button type="button" onClick={onPrev} aria-label="Previous card" className={cn(box, "border-border-strong bg-surface text-ink hover:bg-hover")}>
+          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <button type="button" disabled={busy} onClick={() => onMark(true)} className={cn(box, "border-success bg-success text-on-accent")}>
           Known
         </button>
-        <button type="button" disabled={busy} onClick={() => onMark(false)} className={cn(pill, "border-error text-error disabled:opacity-60")}>
+        <button type="button" disabled={busy} onClick={() => onMark(false)} className={cn(box, "border-error bg-surface text-error")}>
           Unknown
         </button>
         <button
           type="button"
-          aria-expanded={open === "remark"}
-          onClick={() => setOpen(open === "remark" ? null : "remark")}
-          className={cn(pill, "border-border-strong text-ink", anyRemark && "border-accent text-accent")}
+          aria-expanded={open}
+          aria-controls="card-remark-panel"
+          onClick={() => setOpen((o) => !o)}
+          className={cn(box, "gap-0.5 bg-surface px-2 text-ink hover:bg-hover", open || count ? "border-accent" : "border-border-strong")}
         >
-          Remark <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+          Remark
+          {count ? <span className="rounded-full bg-accent px-1.5 text-[10px] text-on-accent">{count}</span> : null}
+          <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} aria-hidden="true" />
         </button>
-        <button
-          type="button"
-          aria-expanded={open === "level"}
-          onClick={() => setOpen(open === "level" ? null : "level")}
-          className={cn(pill, "border-border-strong text-ink")}
-        >
-          {LEVELS.find((l) => l.value === level)?.label} <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+        <button type="button" onClick={onNext} aria-label="Next card" className={cn(box, "border-border-strong bg-surface text-ink hover:bg-hover")}>
+          <ChevronRight className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
 
-      {open === "remark" ? (
-        <div className="absolute bottom-full right-0 z-20 mb-2 w-72 max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-surface-raised p-3 shadow-lg">
-          <div className="flex flex-col gap-1">
+      {open ? (
+        <div
+          id="card-remark-panel"
+          className="absolute bottom-full right-0 z-30 mb-2 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-border bg-surface-raised p-3 shadow-lg"
+        >
+          <p className="font-display text-xs font-bold text-ink-muted">Remark</p>
+          <div className="mt-1.5 grid grid-cols-5 gap-1.5">
             {REMARKS.map((r) => (
-              <label key={r.key} className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm text-ink hover:bg-hover">
-                {r.label}
-                <input
-                  type="checkbox"
-                  checked={remarks[r.key]}
-                  onChange={(e) => onRemark(r.key, e.target.checked)}
-                  className="h-4 w-4 accent-[var(--color-accent)]"
-                />
-              </label>
+              <button
+                key={r.key}
+                type="button"
+                aria-pressed={remarks[r.key]}
+                aria-label={r.label}
+                title={r.label}
+                onClick={() => onRemark(r.key, !remarks[r.key])}
+                className={cn(
+                  "grid h-11 place-items-center rounded-xl border text-lg",
+                  remarks[r.key] ? "border-saffron bg-saffron/15" : "border-border hover:bg-hover",
+                )}
+              >
+                {r.icon}
+              </button>
+            ))}
+            <button
+              type="button"
+              aria-expanded={noteOpen}
+              aria-label="My note"
+              title="My note"
+              onClick={() => setNoteOpen((o) => !o)}
+              className={cn("grid h-11 place-items-center rounded-xl border text-lg", note ? "border-saffron bg-saffron/15" : "border-border hover:bg-hover")}
+            >
+              📝
+            </button>
+          </div>
+
+          {noteOpen ? (
+            <div className="mt-2">
+              <label htmlFor="card-note" className="text-xs font-medium text-ink-muted">My note</label>
+              <textarea
+                id="card-note"
+                rows={2}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Anything to remember about this word"
+                className="mt-1 w-full rounded-lg border border-border-strong bg-surface px-2 py-1.5 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+              />
+              <button
+                type="button"
+                disabled={draft === note}
+                onClick={() => onNote(draft)}
+                className="mt-1 w-full rounded-lg bg-accent py-2 text-xs font-medium text-on-accent disabled:opacity-50"
+              >
+                Save note
+              </button>
+            </div>
+          ) : null}
+
+          <p className="mt-3 font-display text-xs font-bold text-ink-muted">Level — how well you know it</p>
+          <div role="radiogroup" aria-label="Level" className="mt-1.5 grid grid-cols-3 overflow-hidden rounded-xl border border-border-strong">
+            {LEVELS.map((l) => (
+              <button
+                key={l.value}
+                type="button"
+                role="radio"
+                aria-checked={level === l.value}
+                onClick={() => onLevel(l.value)}
+                className={cn("h-10 text-sm font-medium", level === l.value ? "bg-accent text-on-accent" : "text-ink hover:bg-hover")}
+              >
+                {l.label}
+              </button>
             ))}
           </div>
-          <label htmlFor="card-note" className="mt-2 block px-2 text-xs font-medium text-ink-muted">
-            📝 My note
-          </label>
-          <textarea
-            id="card-note"
-            rows={2}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onBlur={() => draft !== note && onNote(draft)}
-            placeholder="Anything to remember about this word"
-            className="mt-1 w-full rounded-lg border border-border-strong bg-surface px-2 py-1.5 text-sm text-ink placeholder:text-mist"
-          />
-          <button type="button" onClick={() => { if (draft !== note) onNote(draft); setOpen(null); }} className="mt-1 w-full rounded-lg bg-paper-dim py-1.5 text-xs text-ink">
-            Done
-          </button>
-        </div>
-      ) : null}
-
-      {open === "level" ? (
-        <div className="absolute bottom-full right-0 z-20 mb-2 w-56 rounded-xl border border-border bg-surface-raised p-2 shadow-lg" role="radiogroup" aria-label="How well do you know it">
-          <p className="px-2 pb-1 text-xs text-ink-muted">How well do you know it?</p>
-          {LEVELS.map((l) => (
-            <button
-              key={l.value}
-              type="button"
-              role="radio"
-              aria-checked={level === l.value}
-              onClick={() => {
-                onLevel(l.value);
-                setOpen(null);
-              }}
-              className={cn("flex w-full items-center justify-between rounded-lg px-2 py-2 text-sm", level === l.value ? "bg-accent/12 text-accent" : "text-ink hover:bg-hover")}
-            >
-              {l.label}
-              <span className="text-xs text-ink-muted">{l.hint}</span>
-            </button>
-          ))}
+          <p className="mt-1.5 text-[11px] text-ink-muted">Used when you press Known: Easy skips ahead, Hard repeats the same gap.</p>
         </div>
       ) : null}
     </div>

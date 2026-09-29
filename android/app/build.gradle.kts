@@ -1,4 +1,4 @@
-// The Edusarthi app module. It packages androidbrowserhelper's LauncherActivity,
+// The EduSarthi app module. It packages androidbrowserhelper's LauncherActivity,
 // which opens the website in a Trusted Web Activity (Chrome, full screen, no
 // URL bar once Digital Asset Links verify).
 //

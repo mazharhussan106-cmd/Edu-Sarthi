@@ -7,6 +7,10 @@
 //   /flashcards?q=choose        → search results
 //   /flashcards?list=important  → a remark list
 //   /flashcards?more=1          → keep going past today's new-card limit
+//   /flashcards?skip=A.B        → cards passed over with › this session
+//
+// The top is kept to two short rows (search, then type chips with the lists
+// and counts) so the card itself gets most of a phone screen.
 
 import Link from "next/link";
 import { Search } from "lucide-react";
@@ -14,6 +18,7 @@ import type { CardKind } from "@prisma/client";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { parseSkip } from "@/lib/cardSkip";
 import { deckCounts, nextCardId, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
 import { NEW_PER_DAY } from "@/lib/srs";
@@ -40,7 +45,7 @@ type ListKey = (typeof LISTS)[number]["value"];
 export default async function FlashcardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ kind?: string; card?: string; q?: string; list?: string; more?: string }>;
+  searchParams: Promise<{ kind?: string; card?: string; q?: string; list?: string; more?: string; skip?: string }>;
 }) {
   const sp = await searchParams;
   const k = KINDS.find((x) => x.value === sp.kind) ?? KINDS[0];
@@ -49,6 +54,7 @@ export default async function FlashcardsPage({
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
   const base = `/flashcards?kind=${k.value}`;
+  const skip = parseSkip(sp.skip);
 
   const counts = k.ready ? await deckCounts(userId, k.kind) : null;
 
@@ -107,21 +113,30 @@ export default async function FlashcardsPage({
     const byCode = sp.card
       ? await prisma.word.findUnique({ where: { code: sp.card }, select: { id: true, kind: true } })
       : null;
-    const id = byCode?.id ?? (await nextCardId(userId, k.kind, sp.more === "1"));
+    const id = byCode?.id ?? (await nextCardId(userId, k.kind, sp.more === "1", skip));
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
 
     if (!word) {
       body = (
         <Card className="mt-4 text-center">
           <p className="font-display text-lg font-bold text-ink">
-            {counts && counts.known >= counts.total ? "You have seen every card" : "Done for today"}
+            {skip.length ? "No more cards except the ones you skipped" : counts && counts.known >= counts.total ? "You have seen every card" : "Done for today"}
           </p>
           <p className="mt-1 text-sm text-ink-muted">
-            No reviews are due and today’s {NEW_PER_DAY} new words are done. Coming back tomorrow is what makes them stick.
+            {skip.length
+              ? `You skipped ${skip.length} card${skip.length === 1 ? "" : "s"} with ›. Go through them now, or come back later.`
+              : `No reviews are due and today’s ${NEW_PER_DAY} new words are done. Coming back tomorrow is what makes them stick.`}
           </p>
-          <Link href={`${base}&more=1`} className="mt-4 inline-flex h-10 items-center rounded-lg border border-border-strong px-4 text-sm text-ink hover:bg-hover">
-            Learn more new words anyway
-          </Link>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {skip.length ? (
+              <Link href={sp.more === "1" ? `${base}&more=1` : base} className="inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark">
+                Show skipped cards again
+              </Link>
+            ) : null}
+            <Link href={`${base}&more=1`} className="inline-flex h-10 items-center rounded-lg border border-border-strong px-4 text-sm text-ink hover:bg-hover">
+              Learn more new words anyway
+            </Link>
+          </div>
         </Card>
       );
     } else {
@@ -130,7 +145,7 @@ export default async function FlashcardsPage({
         prisma.exercise.findFirst({ where: { module: { isSystem: true } }, select: { id: true } }),
       ]);
       body = (
-        <div className="mt-4">
+        <div className="mt-2">
           <FlashcardDeck
             key={word.id}
             word={{ ...word, details: detailsOf(word.details) }}
@@ -146,6 +161,7 @@ export default async function FlashcardsPage({
             }}
             recordHref={exercise ? `/practice/${exercise.id}?word=${word.code}` : null}
             nextHref={sp.more === "1" ? `${base}&more=1` : base}
+            skip={skip}
           />
         </div>
       );
@@ -153,7 +169,7 @@ export default async function FlashcardsPage({
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-4 sm:px-6 sm:py-8">
+    <main className="mx-auto max-w-2xl px-3 pb-4 pt-3 sm:px-6 sm:pt-6">
       <form action="/flashcards" className="relative">
         <input type="hidden" name="kind" value={k.value} />
         <label htmlFor="card-search" className="sr-only">Search words</label>
@@ -164,51 +180,55 @@ export default async function FlashcardsPage({
           type="search"
           defaultValue={q}
           placeholder="Search a word or ID"
-          className="h-10 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+          className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
         />
       </form>
 
-      <nav aria-label="Card type" className="mt-3 flex gap-2 overflow-x-auto pb-1">
-        {KINDS.map((x) => (
-          <Link
-            key={x.value}
-            href={`/flashcards?kind=${x.value}`}
-            aria-current={x.value === k.value ? "page" : undefined}
-            className={cn(
-              "shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium",
-              x.value === k.value ? "border-accent bg-accent text-on-accent" : "border-border-strong text-ink hover:bg-hover",
-            )}
-          >
-            {x.label}
-            {!x.ready ? <span className="ml-1 text-[10px] opacity-70">soon</span> : null}
-          </Link>
-        ))}
-      </nav>
-
-      {counts ? (
-        <>
-          <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-muted">
-            <span><b className="font-mono text-ink">{counts.due}</b> due</span>
-            <span><b className="font-mono text-ink">{counts.newLeft}</b> new left today</span>
-            <span><b className="font-mono text-ink">{counts.known}</b> / {counts.total} known</span>
-          </p>
-          <nav aria-label="My lists" className="mt-2 flex gap-1.5 overflow-x-auto pb-1">
-            {LISTS.map((l) => (
-              <Link
-                key={l.value}
-                href={list === l.value ? base : `${base}&list=${l.value}`}
-                aria-current={list === l.value ? "page" : undefined}
-                className={cn(
-                  "shrink-0 rounded-full px-2.5 py-1 text-xs",
-                  list === l.value ? "bg-accent/12 font-medium text-accent" : "bg-paper-dim text-ink-muted hover:text-ink",
-                )}
-              >
-                {l.label} <span className="font-mono">{counts.lists[l.value]}</span>
-              </Link>
-            ))}
-          </nav>
-        </>
-      ) : null}
+      {/* One scrolling row: card types, then the student's lists, then
+          today's counts. Three rows here would push the card below the fold. */}
+      <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+        <nav aria-label="Card type" className="flex shrink-0 gap-1.5">
+          {KINDS.map((x) => (
+            <Link
+              key={x.value}
+              href={`/flashcards?kind=${x.value}`}
+              aria-current={x.value === k.value ? "page" : undefined}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium",
+                x.value === k.value ? "border-accent bg-accent text-on-accent" : "border-border-strong text-ink hover:bg-hover",
+              )}
+            >
+              {x.label}
+              {!x.ready ? <span className="ml-1 text-[10px] opacity-70">soon</span> : null}
+            </Link>
+          ))}
+        </nav>
+        {counts ? (
+          <>
+            <span aria-hidden="true" className="mx-0.5 h-5 w-px shrink-0 bg-border-strong" />
+            <nav aria-label="My lists" className="flex shrink-0 gap-1">
+              {LISTS.map((l) => (
+                <Link
+                  key={l.value}
+                  href={list === l.value ? base : `${base}&list=${l.value}`}
+                  aria-current={list === l.value ? "page" : undefined}
+                  aria-label={`${l.label} list, ${counts.lists[l.value]} words`}
+                  className={cn(
+                    "shrink-0 rounded-full px-2 py-1 text-xs",
+                    list === l.value ? "bg-accent/12 font-medium text-accent" : "bg-paper-dim text-ink-muted hover:text-ink",
+                  )}
+                >
+                  {l.label.split(" ")[0]} <span className="font-mono">{counts.lists[l.value]}</span>
+                </Link>
+              ))}
+            </nav>
+            <p className="ml-1 shrink-0 text-xs text-ink-muted">
+              <b className="font-mono text-ink">{counts.due}</b> due · <b className="font-mono text-ink">{counts.newLeft}</b> new ·{" "}
+              <b className="font-mono text-ink">{counts.known}</b>/{counts.total} known
+            </p>
+          </>
+        ) : null}
+      </div>
 
       {body}
     </main>

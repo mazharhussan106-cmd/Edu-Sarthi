@@ -1,7 +1,10 @@
-// Owns page 3 of a flashcard: the practice zone (MCQ, fill the blank, find &
-// fix, translate, own sentence), real-life examples, the review plan, a
-// reverse recall, and the two exits — watch the video, or record yourself for
-// a teacher's audit.
+// Owns the practice half of side 3: the practice zone (MCQ, fill the blank,
+// find & fix, translate, own sentence, reverse recall), the review plan, and
+// the two exits — watch the video, or record yourself for a teacher's audit.
+// Those two are deliberately large (the owner asked for them three times the
+// old height): they are the point of the card, not a footnote.
+//
+// Real-life examples come before this on the same side, from CardRealLife.
 //
 // Answers are checked in the browser against the sheet's own answers. That is
 // fine for self-practice: nothing here is scored or saved, so there is nothing
@@ -16,12 +19,12 @@ import { Mic, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { LADDER_DAYS } from "@/lib/srs";
 import { cn } from "@/lib/utils";
-import { lines, parseOptions, sameAnswer, splitArrow, type WordDetails } from "@/lib/wordCard";
+import { parseOptions, sameAnswer, splitArrow, type WordDetails } from "@/lib/wordCard";
 
-function Block({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+function Block({ n, title, tone, children }: { n: number; title: string; tone: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-border bg-surface p-3">
-      <p className="text-xs font-semibold text-accent">
+      <p className={cn("font-display text-[0.8em] font-bold", tone)}>
         {n}. {title}
       </p>
       <div className="mt-2 text-sm text-ink">{children}</div>
@@ -78,22 +81,17 @@ export function CardPractice({
   const correct = (d.mcq_answer ?? "").trim().charAt(0);
   const [picked, setPicked] = useState<string | null>(null);
   const [recall, setRecall] = useState(false);
+  const [own, setOwn] = useState("");
   const fill = splitArrow(d.fill_in_the_blank_to_answer);
   const fix = splitArrow(d.find_and_fix_to_correct);
   const tr = splitArrow(d.translate);
 
-  const real = [
-    { label: "Everyday", text: d.everyday_scene },
-    { label: "News style", text: d.news_style_line },
-    { label: "Casual talk", text: d.casual_conversation },
-  ].filter((r) => r.text);
-
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="font-display text-base font-bold text-ink">Practice zone</h3>
+      <h3 className="font-display text-[0.75em] font-extrabold tracking-widest text-tag-navy">PRACTICE ZONE</h3>
 
       {d.mcq_question && options.length ? (
-        <Block n={1} title="Multiple choice">
+        <Block n={1} title="Multiple Choice" tone="text-tag-blue">
           <p>{d.mcq_question}</p>
           <div className="mt-2 flex flex-col gap-1.5" role="radiogroup" aria-label="Options">
             {options.map((o) => {
@@ -126,63 +124,58 @@ export function CardPractice({
       ) : null}
 
       {fill.answer ? (
-        <Block n={2} title="Fill in the blank">
+        <Block n={2} title="Fill in the Blank" tone="text-tag-green">
           <p>{fill.prompt}</p>
           <TypeCheck id="fill" answer={fill.answer} placeholder="Type the missing word" />
         </Block>
       ) : null}
 
       {fix.answer ? (
-        <Block n={3} title="Find & fix the mistake">
+        <Block n={3} title="Find & Fix" tone="text-tag-red">
           <p className="text-error">{fix.prompt}</p>
           <TypeCheck id="fix" answer={fix.answer} placeholder="Write the correct sentence" />
         </Block>
       ) : null}
 
       {tr.answer ? (
-        <Block n={4} title="Translate (Hindi → English)">
+        <Block n={4} title="Translate (Hindi → English)" tone="text-tag-saffron">
           <p className="text-base">{tr.prompt}</p>
           <TypeCheck id="translate" answer={tr.answer} placeholder="Write it in English" />
         </Block>
       ) : null}
 
       {d.write_your_own_sentence ? (
-        <Block n={5} title="Use it in your own sentence">
+        <Block n={5} title="Use in Your Own Sentence" tone="text-tag-teal">
           <p>{d.write_your_own_sentence}</p>
-          <p className="mt-1 text-xs text-ink-muted">Say it out loud — then record it below for your teacher.</p>
+          <label htmlFor="own-sentence" className="sr-only">Your sentence</label>
+          <textarea
+            id="own-sentence"
+            rows={2}
+            value={own}
+            onChange={(e) => setOwn(e.target.value)}
+            placeholder="Write your sentence here"
+            className="mt-2 w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+          />
+          <p className="mt-1 text-xs text-ink-muted">Not saved or marked. Say it out loud, then record it below for your teacher.</p>
         </Block>
       ) : null}
 
-      {real.length || d.emotion_feel || d.visual_association ? (
-        <>
-          <h3 className="mt-2 font-display text-base font-bold text-ink">Examples in real life</h3>
-          <div className="flex flex-col gap-2">
-            {real.map((r) => (
-              <div key={r.label} className="rounded-lg bg-paper-dim p-2.5 text-sm">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">{r.label}</p>
-                {lines(r.text).map((l) => <p key={l} className="text-ink">{l}</p>)}
-              </div>
-            ))}
-            <div className="grid grid-cols-2 gap-2">
-              {d.emotion_feel ? (
-                <div className="rounded-lg border border-border p-2.5 text-sm">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">Feel</p>
-                  <p className="text-ink">{d.emotion_feel}</p>
-                </div>
-              ) : null}
-              {d.visual_association ? (
-                <div className="rounded-lg border border-border p-2.5 text-sm">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">Picture it</p>
-                  <p className="text-ink">{d.visual_association}</p>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </>
+      {d.reverse_quick_recall ? (
+        <Block n={6} title="Quick Recall (Reverse)" tone="text-tag-navy">
+          <p>{d.reverse_quick_recall}</p>
+          <button
+            type="button"
+            onClick={() => setRecall(true)}
+            aria-live="polite"
+            className="mt-2 rounded-lg border border-accent px-3 py-1.5 text-sm font-medium text-accent hover:bg-hover"
+          >
+            {recall ? d.recall_answer : "Tap to see answer"}
+          </button>
+        </Block>
       ) : null}
 
       <div className="rounded-xl border border-border bg-surface p-3">
-        <p className="text-xs font-semibold text-accent">Your review plan</p>
+        <p className="font-display text-[0.8em] font-bold text-tag-green">Spaced Repetition · Your Review Plan</p>
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
           {LADDER_DAYS.map((day, i) => (
             <span
@@ -199,41 +192,29 @@ export function CardPractice({
         <p className="mt-2 text-xs text-ink-muted">{dueLabel ? `Next review ${dueLabel}.` : "Mark Known or Unknown to start the plan."}</p>
       </div>
 
-      {d.reverse_quick_recall ? (
-        <button
-          type="button"
-          onClick={() => setRecall(true)}
-          className="rounded-xl border border-dashed border-border-strong p-3 text-left text-sm"
-        >
-          <p className="text-xs font-semibold text-accent">Quick recall</p>
-          <p className="mt-1 text-ink">{d.reverse_quick_recall}</p>
-          <p className="mt-1 font-medium text-ink">{recall ? d.recall_answer : "Tap to reveal"}</p>
-        </button>
-      ) : null}
-
-      <div className="grid grid-cols-2 gap-2 pt-1">
+      <div className="grid grid-cols-2 gap-2 pb-1 pt-1">
         {videoUrl ? (
           <a
             href={videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border-strong p-4 text-sm text-ink hover:bg-hover"
+            className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-accent p-4 font-display text-base font-bold text-accent hover:bg-hover"
           >
-            <PlayCircle className="h-7 w-7 text-accent" aria-hidden="true" />
+            <PlayCircle className="h-11 w-11" aria-hidden="true" />
             See video
           </a>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-border p-4 text-sm text-mist">
-            <PlayCircle className="h-7 w-7" aria-hidden="true" />
+          <div className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border-strong p-4 text-center font-display text-base font-bold text-ink-muted">
+            <PlayCircle className="h-11 w-11" aria-hidden="true" />
             Video coming soon
           </div>
         )}
         {recordHref ? (
           <Link
             href={recordHref}
-            className="flex flex-col items-center justify-center gap-1 rounded-xl bg-accent p-4 text-center text-sm font-medium text-on-accent hover:bg-accent-dark"
+            className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-2xl bg-saffron p-4 text-center font-display text-base font-bold text-on-saffron hover:opacity-90"
           >
-            <Mic className="h-7 w-7" aria-hidden="true" />
+            <Mic className="h-11 w-11" aria-hidden="true" />
             Record yourself for audit
           </Link>
         ) : null}

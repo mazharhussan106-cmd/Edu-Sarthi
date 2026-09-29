@@ -11,8 +11,8 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "Edusarthi — Spoken English practice",
-    short_name: "Edusarthi",
+    name: "EduSarthi — Spoken English practice",
+    short_name: "EduSarthi",
     description:
       "Record your spoken English and get a scored audit with timestamped notes from a real teacher.",
     // The student home. Signed-out users are sent on to /login by middleware.
@@ -20,8 +20,8 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#faf7f9",
-    theme_color: "#1a1420",
+    background_color: "#faf8f5",
+    theme_color: "#1b1f24",
     lang: "en-IN",
     categories: ["education"],
     icons: [

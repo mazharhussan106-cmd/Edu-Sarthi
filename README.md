@@ -48,6 +48,18 @@ constraints of its own, so the bucket is the only real enforcement.
 npx prisma db push
 ```
 
+**Upgrading a database that already has users** from the Rose/Ocean themes:
+run the one-off script first, then push. Rose users move to Sepia, Ocean users
+to Light; nothing else changes.
+
+```powershell
+npx prisma db execute --file prisma/migrate-themes.sql --schema prisma/schema.prisma
+```
+
+```powershell
+npx prisma db push --accept-data-loss
+```
+
 Add to `package.json`, alongside `"scripts"`:
 
 ```json

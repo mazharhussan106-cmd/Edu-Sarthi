@@ -8,8 +8,8 @@
 // review by a lawyer familiar with India's DPDP Act 2023 before launch.
 
 export const metadata = {
-  title: "Privacy — Edusarthi",
-  description: "What Edusarthi collects, why, how long it is kept, and your rights.",
+  title: "Privacy — EduSarthi",
+  description: "What EduSarthi collects, why, how long it is kept, and your rights.",
 };
 
 const CONTACT = "privacy@edusarthi.com";
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
             </li>
             <li>
               <span className="text-ink">Your password, hashed.</span> We store a
-              bcrypt hash, never the password itself. Nobody at Edusarthi can
+              bcrypt hash, never the password itself. Nobody at EduSarthi can
               read or recover it.
             </li>
             <li>
@@ -143,7 +143,7 @@ export default function PrivacyPage() {
             Children
           </h2>
           <p className="mt-2">
-            Edusarthi is not intended for children under 18. If you are under 18,
+            EduSarthi is not intended for children under 18. If you are under 18,
             do not create an account without a parent or guardian&apos;s consent.
             If we learn we hold a child&apos;s data without that consent, we will
             delete it.

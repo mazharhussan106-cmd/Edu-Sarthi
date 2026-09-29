@@ -8,8 +8,8 @@
 // launch, particularly the liability and governing-law sections.
 
 export const metadata = {
-  title: "Terms — Edusarthi",
-  description: "The terms you agree to when you use Edusarthi.",
+  title: "Terms — EduSarthi",
+  description: "The terms you agree to when you use EduSarthi.",
 };
 
 const CONTACT = "support@edusarthi.com";

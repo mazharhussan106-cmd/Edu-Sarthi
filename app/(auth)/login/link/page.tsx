@@ -39,7 +39,7 @@ function LinkSignIn() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-ink">Sign in to Edusarthi</h1>
+      <h1 className="font-display text-2xl font-bold text-ink">Sign in to EduSarthi</h1>
       <p className="mt-1 text-sm text-ink-muted">One tap and you are in.</p>
 
       {error ? (

@@ -12,8 +12,7 @@ import type { Theme } from "@prisma/client";
 export const THEMES = [
   { value: "LIGHT", attr: "light", label: "Light" },
   { value: "DARK", attr: "dark", label: "Dark" },
-  { value: "ROSE", attr: "rose", label: "Rose" },
-  { value: "OCEAN", attr: "ocean", label: "Ocean" },
+  { value: "SEPIA", attr: "sepia", label: "Sepia" },
   { value: "MIDNIGHT", attr: "midnight", label: "Midnight" },
   { value: "HIGH_CONTRAST", attr: "high-contrast", label: "High contrast" },
 ] as const satisfies readonly { value: Theme; attr: string; label: string }[];

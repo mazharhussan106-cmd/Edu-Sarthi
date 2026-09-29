@@ -10,7 +10,7 @@ import Link from "next/link";
 import { Card, CardTitle } from "@/components/ui/Card";
 
 export const metadata = {
-  title: "Support — Edusarthi",
+  title: "Support — EduSarthi",
   description: "Fixes for common problems with recording, uploading and signing in.",
 };
 

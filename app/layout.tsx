@@ -33,10 +33,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Edusarthi — Spoken English, audited by a teacher",
+  title: "EduSarthi — Spoken English, audited by a teacher",
   description:
     "Record your spoken English, get a rubric-scored audit with timestamped notes from a real teacher.",
-  appleWebApp: { capable: true, title: "Edusarthi", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "EduSarthi", statusBarStyle: "default" },
   icons: { icon: "/icons/icon-192.png", apple: "/apple-touch-icon.png" },
 };
 
@@ -47,7 +47,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#1a1420",
+  themeColor: "#1b1f24",
 };
 
 export default async function RootLayout({

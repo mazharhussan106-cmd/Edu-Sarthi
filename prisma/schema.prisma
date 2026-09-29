@@ -52,8 +52,7 @@ enum ReturnReason {
 enum Theme {
   LIGHT
   DARK
-  ROSE
-  OCEAN
+  SEPIA
   MIDNIGHT
   HIGH_CONTRAST
 }

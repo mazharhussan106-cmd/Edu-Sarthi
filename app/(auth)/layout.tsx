@@ -17,9 +17,9 @@ export default function AuthLayout({
       <main className="mx-auto max-w-sm px-6 py-16">
         <Link
           href="/"
-          className="font-display text-xl font-bold text-ink hover:text-accent"
+          className="font-display text-xl font-bold text-brand hover:text-accent"
         >
-          Edusarthi
+          EduSarthi
         </Link>
         <div className="mt-8">{children}</div>
       </main>

@@ -14,7 +14,7 @@ type Size = "sm" | "md";
 
 const VARIANTS: Record<Variant, string> = {
   // text-on-accent, never a fixed white: the dark and midnight themes put a
-  // light pink in --color-accent, where white text measures under 3:1.
+  // light cerulean in --color-accent, where white text measures under 3:1.
   primary:
     "bg-accent text-on-accent hover:bg-accent-dark disabled:hover:bg-accent",
   outline:

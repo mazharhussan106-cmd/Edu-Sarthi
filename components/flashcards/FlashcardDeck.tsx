@@ -1,21 +1,30 @@
-// Owns one flashcard on screen: the three pages (Recognition, Understanding,
-// Practice) side by side in a swipeable strip with tabs and dots, and the
-// controls underneath that mark it and move to the next card.
+// Owns one flashcard on screen: which side is showing, the card's remarks and
+// level, saving them, and moving between cards —
+//   Known / Unknown → saved, then the next card the review plan picks
+//   › or swipe ←    → the next card without answering (skipped this session)
+//   ‹ or swipe →    → the card seen before this one
 //
-// Swiping is native horizontal scroll with snap points, not a gesture
-// library: it works with touch, trackpad and keyboard, and costs no script.
+// "Before" is a list of codes this tab has shown, kept in sessionStorage. It
+// is a convenience only: if storage is blocked, ‹ just says there is nothing
+// to go back to. Skips live in the URL (lib/cardSkip), so they survive a
+// refresh and vanish when the student leaves the flashcard tab.
+//
+// It deliberately does NOT draw the card or handle gestures (CardSurface) or
+// pick the next card (the page, on the server).
 
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CardControls, type Level, type Remarks } from "@/components/flashcards/CardControls";
 import { CardFront } from "@/components/flashcards/CardFront";
 import { CardPractice } from "@/components/flashcards/CardPractice";
+import { CardRealLife } from "@/components/flashcards/CardRealLife";
+import { CardSurface } from "@/components/flashcards/CardSurface";
 import { CardUsage } from "@/components/flashcards/CardUsage";
+import { skipQuery, withSkipped } from "@/lib/cardSkip";
 import { describeDue } from "@/lib/srs";
-import { cn } from "@/lib/utils";
 import type { WordDetails } from "@/lib/wordCard";
 
 export type DeckWord = {
@@ -39,7 +48,26 @@ export type DeckState = Remarks & {
   dueAt: string | null;
 };
 
-const PAGES = ["Recognition", "Understanding", "Practice"] as const;
+const TITLES = ["FRONT SIDE · RECOGNITION", "BACK SIDE · UNDERSTANDING & USAGE", "SIDE 3 · REAL LIFE & PRACTICE"] as const;
+const HISTORY_KEY = "flashcard-history";
+const HISTORY_MAX = 50;
+
+function readHistory(): string[] {
+  try {
+    const v: unknown = JSON.parse(sessionStorage.getItem(HISTORY_KEY) ?? "[]");
+    return Array.isArray(v) ? v.filter((c): c is string => typeof c === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeHistory(list: string[]) {
+  try {
+    sessionStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(-HISTORY_MAX)));
+  } catch {
+    // Private mode or blocked storage: ‹ simply has nothing to go back to.
+  }
+}
 
 async function post(body: object) {
   try {
@@ -55,9 +83,9 @@ async function post(body: object) {
     } catch {
       data = { error: "Something went wrong. Try again." };
     }
-    return res.ok ? { ok: true as const, dueAt: data.dueAt } : { ok: false as const, error: data.error ?? "Could not save." };
+    return res.ok ? { ok: true as const, dueAt: data.dueAt } : { ok: false as const, error: data.error ?? "Could not save. Try again." };
   } catch {
-    return { ok: false as const, error: "No connection. Your answer was not saved — try again." };
+    return { ok: false as const, error: "No connection. Your answer was not saved — try again when you are back online." };
   }
 }
 
@@ -66,15 +94,16 @@ export function FlashcardDeck({
   state,
   recordHref,
   nextHref,
+  skip,
 }: {
   word: DeckWord;
   state: DeckState;
   recordHref: string | null;
   nextHref: string;
+  skip: string[];
 }) {
   const router = useRouter();
-  const strip = useRef<HTMLDivElement>(null);
-  const [page, setPage] = useState(0);
+  const [side, setSide] = useState<0 | 1 | 2>(0);
   const [level, setLevel] = useState<Level>(state.recall ?? "MEDIUM");
   const [remarks, setRemarks] = useState<Remarks>({
     confident: state.confident,
@@ -86,26 +115,20 @@ export function FlashcardDeck({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  // A new card starts on its first page.
   useEffect(() => {
-    strip.current?.scrollTo({ left: 0 });
-    setPage(0);
-  }, [word.id]);
-
-  function go(i: number) {
-    const el = strip.current;
-    if (el) el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
-  }
+    const h = readHistory();
+    if (h[h.length - 1] !== word.code) writeHistory([...h, word.code]);
+  }, [word.code]);
 
   function speak() {
     if (word.audioUrl) {
-      void new Audio(word.audioUrl).play().catch(() => undefined);
+      void new Audio(word.audioUrl).play().catch(() => setMessage("The recording would not play. Check the volume and try again."));
       return;
     }
     // The phone's own voice until recorded audio exists. Indian English
     // first, so the model matches what students hear around them.
     const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
-    if (!synth) return setMessage("This phone cannot read words aloud.");
+    if (!synth) return setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
     const u = new SpeechSynthesisUtterance(word.text);
     const voices = synth.getVoices();
     u.voice = voices.find((v) => v.lang === "en-IN") ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
@@ -124,96 +147,90 @@ export function FlashcardDeck({
       setBusy(false);
       return;
     }
-    setMessage(r.dueAt ? `Saved — next review ${describeDue(new Date(r.dueAt))}.` : null);
-    router.push(nextHref);
+    router.push(`${nextHref}${skipQuery(skip)}`);
     router.refresh();
+    // Cleared even on success: if the plan picks this same card again the
+    // component is reused, and it must not stay locked.
     setBusy(false);
+  }
+
+  function next() {
+    router.push(`${nextHref}${skipQuery(withSkipped(skip, word.code))}`);
+  }
+
+  function prev() {
+    const h = readHistory();
+    const at = h.lastIndexOf(word.code);
+    if (at <= 0) return setMessage("This is the first card you opened here.");
+    writeHistory(h.slice(0, at));
+    router.push(`${nextHref}&card=${h[at - 1]}${skipQuery(skip)}`);
   }
 
   async function remark(k: keyof Remarks, v: boolean) {
     setRemarks((r) => ({ ...r, [k]: v }));
     const r = await post({ action: "remark", wordId: word.id, field: k, value: v });
     if (!r.ok) {
-      setRemarks((prev) => ({ ...prev, [k]: !v }));
+      setRemarks((prevState) => ({ ...prevState, [k]: !v }));
       setMessage(r.error);
     }
   }
 
   async function saveNote(n: string) {
-    setNote(n);
     const r = await post({ action: "note", wordId: word.id, note: n });
+    if (r.ok) setNote(n);
     setMessage(r.ok ? "Note saved." : r.error);
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <div role="tablist" aria-label="Card pages" className="grid grid-cols-3 gap-1 rounded-full bg-paper-dim p-1">
-        {PAGES.map((p, i) => (
-          <button
-            key={p}
-            type="button"
-            role="tab"
-            aria-selected={page === i}
-            onClick={() => go(i)}
-            className={cn("rounded-full py-1.5 text-xs font-medium", page === i ? "bg-surface text-ink shadow-sm" : "text-ink-muted")}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
-
-      <div className="rounded-3xl border-2 border-ink bg-surface">
-        <div
-          ref={strip}
-          onScroll={(e) => {
-            const el = e.currentTarget;
-            setPage(Math.round(el.scrollLeft / Math.max(1, el.clientWidth)));
-          }}
-          className="flex snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    <div className="flex flex-col gap-2">
+      {/* Tall enough to fill a phone between the chips and the control line;
+          the numbers are the header, page chrome and bottom bar around it. */}
+      <div className="h-[calc(100dvh-17.5rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-14rem)] md:max-h-[52rem]">
+        <CardSurface
+          side={side}
+          titles={TITLES}
+          word={word.text}
+          onTurn={() => setSide((s) => ((s + 1) % 3) as 0 | 1 | 2)}
+          onSwipe={(dir) => (dir === "next" ? next() : prev())}
         >
-          {[0, 1, 2].map((i) => (
-            <section
-              key={i}
-              aria-label={PAGES[i]}
-              className="max-h-[56vh] w-full shrink-0 snap-start overflow-y-auto p-4"
-            >
-              {i === 0 ? (
-                <CardFront code={word.code} text={word.text} d={word.details} imageUrl={word.imageUrl} onSpeak={speak} meta={word} />
-              ) : i === 1 ? (
-                <CardUsage d={word.details} />
-              ) : (
-                <CardPractice
-                  d={word.details}
-                  stage={state.stage}
-                  dueLabel={state.dueAt ? describeDue(new Date(state.dueAt)) : null}
-                  videoUrl={word.videoUrl}
-                  recordHref={recordHref}
-                />
-              )}
-            </section>
-          ))}
-        </div>
-        <div className="flex justify-center gap-1.5 pb-3" aria-hidden="true">
-          {PAGES.map((p, i) => (
-            <span key={p} className={cn("h-1.5 rounded-full transition-all", page === i ? "w-5 bg-accent" : "w-1.5 bg-border-strong")} />
-          ))}
-        </div>
+          {side === 0 ? (
+            <CardFront code={word.code} text={word.text} d={word.details} imageUrl={word.imageUrl} onSpeak={speak} meta={word} />
+          ) : side === 1 ? (
+            <CardUsage d={word.details} />
+          ) : (
+            <div className="flex flex-col gap-3">
+              <CardRealLife d={word.details} />
+              <CardPractice
+                d={word.details}
+                stage={state.stage}
+                dueLabel={state.dueAt ? describeDue(new Date(state.dueAt)) : null}
+                videoUrl={word.videoUrl}
+                recordHref={recordHref}
+              />
+              <button
+                type="button"
+                onClick={() => setSide(0)}
+                className="self-center rounded-full px-3 py-1 text-xs text-ink-muted hover:bg-hover"
+              >
+                ↻ Back to the front
+              </button>
+            </div>
+          )}
+        </CardSurface>
       </div>
 
-      {/* Pinned just above the bottom navigation on phones, as in the design,
-          so Known / Unknown are always one thumb-reach away. */}
-      <div className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px))] z-30 -mx-4 bg-paper/95 px-4 py-2 backdrop-blur md:bottom-0 md:mx-0 md:px-0">
-        <CardControls
-          busy={busy}
-          level={level}
-          onLevel={setLevel}
-          remarks={remarks}
-          onRemark={(k, v) => void remark(k, v)}
-          note={note}
-          onNote={(n) => void saveNote(n)}
-          onMark={(k) => void mark(k)}
-        />
-      </div>
+      <CardControls
+        busy={busy}
+        level={level}
+        onLevel={setLevel}
+        remarks={remarks}
+        onRemark={(k, v) => void remark(k, v)}
+        note={note}
+        onNote={(n) => void saveNote(n)}
+        onMark={(k) => void mark(k)}
+        onPrev={prev}
+        onNext={next}
+      />
       {message ? (
         <p aria-live="polite" className="text-center text-xs text-ink-muted">
           {message}

@@ -94,9 +94,9 @@ export function StickyHeader({
         <div className="flex h-14 items-center gap-4">
           <Link
             href={homeHref}
-            className="font-display text-lg font-bold text-ink hover:text-accent"
+            className="font-display text-lg font-bold text-brand hover:text-accent"
           >
-            Edusarthi
+            EduSarthi
           </Link>
 
           <NavLinks links={links} className="hidden md:flex" />

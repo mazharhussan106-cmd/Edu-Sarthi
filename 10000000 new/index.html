@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1000 Essential English Words — Flashcards</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>1000 Essential English Words</h1>
+    <p>Search, filter by category, or browse all <span id="totalCount">1000</span> flashcards — fully offline, no server needed.</p>
+  </div>
+
+  <div class="controls">
+    <input id="searchBox" type="text" placeholder="Search a word (e.g. want, however, quickly)...">
+    <select id="categoryFilter">
+      <option value="">All categories</option>
+    </select>
+  </div>
+
+  <div class="nav-row">
+    <div class="nav-btns">
+      <button id="prevBtn">← Prev</button>
+      <button id="randomBtn">🔀 Random</button>
+      <button id="nextBtn">Next →</button>
+    </div>
+    <div id="counter"></div>
+  </div>
+
+  <div id="cardArea"></div>
+
+  <footer>Data: vocabulary_database.json (embedded in app.js). Structure: index.html + styles.css + app.js — no build step, no dependencies.</footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

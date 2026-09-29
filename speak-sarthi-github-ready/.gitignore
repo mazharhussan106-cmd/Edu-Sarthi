@@ -1,0 +1,121 @@
+# ============================================================
+# Speak Sarthi — .gitignore
+# Hardened during the pre-deploy security audit (2026-09-17).
+# Verified by simulating `git init && git add -A` with real
+# secret filenames present: nothing sensitive stages.
+# ============================================================
+
+# ---------- SECRETS: never commit any of these ----------
+# A leaked upload keystore CANNOT be rotated. Lose it or leak it
+# and the app can never be updated again under the same listing.
+*.jks
+*.keystore
+*.p12
+*.pfx
+keystore.properties
+signing.properties
+
+# Environment / credential files
+.env
+.env.*
+!.env.example
+!.env.template
+*.env
+!*.env.example
+secrets.properties
+secrets.json
+
+# Google / Play credentials
+google-services.json
+*service-account*.json
+play-service-account*.json
+*-key.json
+api-key.txt
+
+# Cloudflare Worker local secrets
+worker/.dev.vars
+worker/.dev.vars.*
+.dev.vars
+
+# Azure
+azure-speech-key*
+*.azurekey
+
+# ---------- Local machine config ----------
+local.properties
+!local.properties.template
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# ---------- Android / Gradle build output ----------
+build/
+*/build/
+app/build/
+.cxx/
+.externalNativeBuild/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+output.json
+/release/
+app/release/
+lint-results*.html
+lint-results*.xml
+
+# Keep the Room schema files — MigrationTest needs them and they
+# must be committed after every schema version bump.
+!app/schemas/
+!app/schemas/**/*.json
+
+# ---------- IDE ----------
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+
+# ---------- Node / Cloudflare Worker ----------
+node_modules/
+worker/node_modules/
+worker/dist/
+worker/.wrangler/
+.wrangler/
+dist/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+*.tsbuildinfo
+
+# ---------- Python tooling (tools/, content/) ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------- Generated / large artwork intermediates ----------
+tools/out/
+tools/_work/
+*.svg.tmp
+illustrations_raw/
+
+# ---------- Logs & scratch ----------
+*.log
+tmp/
+temp/
+scratch/

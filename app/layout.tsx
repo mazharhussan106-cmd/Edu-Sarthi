@@ -6,10 +6,11 @@
 // belong to the route group layouts — a shared one here would mean every page
 // hiding pieces it does not want.
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { Inter, JetBrains_Mono, Sora } from "next/font/google";
 
+import { ServiceWorker } from "@/components/layout/ServiceWorker";
 import { attrFromCookie, THEME_COOKIE } from "@/lib/theme";
 import "./globals.css";
 
@@ -35,6 +36,18 @@ export const metadata: Metadata = {
   title: "Edusarthi — Spoken English, audited by a teacher",
   description:
     "Record your spoken English, get a rubric-scored audit with timestamped notes from a real teacher.",
+  appleWebApp: { capable: true, title: "Edusarthi", statusBarStyle: "default" },
+  icons: { icon: "/icons/icon-192.png", apple: "/apple-touch-icon.png" },
+};
+
+// viewport-fit=cover lets the bottom navigation sit above the phone's gesture
+// bar using env(safe-area-inset-bottom). The theme colour is the Light
+// theme's ink — a literal, because the browser reads it before any CSS.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#1a1420",
 };
 
 export default async function RootLayout({
@@ -55,7 +68,10 @@ export default async function RootLayout({
       {/* Browser extensions — Grammarly especially — inject attributes into
           <body> before React hydrates, which React reports as a mismatch.
           Suppression is scoped to this one element, not the whole tree. */}
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        <ServiceWorker />
+      </body>
     </html>
   );
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Match the web app's Light theme (app/globals.css) so the status bar and
+     splash do not flash a different colour before the site paints. -->
+<resources>
+    <color name="ink">#1A1420</color>
+    <color name="paper">#FAF7F9</color>
+</resources>

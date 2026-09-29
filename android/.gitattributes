@@ -1,0 +1,6 @@
+# A CRLF gradlew fails on Linux and macOS with "bad interpreter: /bin/sh^M",
+# which is how a Windows checkout silently breaks the CI build.
+gradlew     text eol=lf
+gradlew.bat text eol=crlf
+*.jar       binary
+*.png       binary

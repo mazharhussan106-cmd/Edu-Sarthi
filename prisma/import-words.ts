@@ -23,34 +23,62 @@ const CORE = new Set(["word_id", "word", "s_no", "part_of_speech", "category", "
 
 export const WORD_PRACTICE_TITLE = "Use the word in your own sentences";
 
+// Key-order-independent comparison: Postgres jsonb hands object keys back in
+// its own order, so a plain JSON.stringify would call every row "changed".
+function stable(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(stable).join(",")}]`;
+  if (v && typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    return `{${Object.keys(o).filter((k) => o[k] !== undefined).sort().map((k) => `${JSON.stringify(k)}:${stable(o[k])}`).join(",")}}`;
+  }
+  return JSON.stringify(v ?? null);
+}
+
 async function main() {
   const rows = JSON.parse(readFileSync("content/wordmaster-2000/words.json", "utf8")) as Row[];
 
-  let done = 0;
-  for (let i = 0; i < rows.length; i += 200) {
-    const batch = rows.slice(i, i + 200);
-    await prisma.$transaction(
-      batch.map((r) => {
-        const details = Object.fromEntries(Object.entries(r).filter(([k]) => !CORE.has(k)));
-        const data = {
-          text: r.word,
-          serial: Number(r.s_no) || 0,
-          partOfSpeech: r.part_of_speech ?? null,
-          category: r.category ?? null,
-          cefr: r.cefr_level ?? null,
-          importance: Number(r.importance_1_5) || null,
-          details,
-        };
-        return prisma.word.upsert({
-          where: { code: r.word_id },
-          create: { code: r.word_id, kind: "WORD", ...data },
-          update: data,
-        });
-      }),
-    );
-    done += batch.length;
+  // One round trip to read what exists, one createMany per chunk for new rows,
+  // and an update only for rows whose content actually changed. Row-by-row
+  // upserts cost 2+ round trips per word, which from a CI runner to a remote
+  // database ran past the 15-minute job limit for 2,227 words.
+  const existing = await prisma.word.findMany({
+    select: { code: true, text: true, serial: true, partOfSpeech: true, category: true, cefr: true, importance: true, details: true },
+  });
+  const byCode = new Map(existing.map((w) => [w.code, w]));
+
+  const toCreate: Array<Record<string, unknown>> = [];
+  const toUpdate: Array<{ code: string; data: Record<string, unknown> }> = [];
+  for (const r of rows) {
+    const details = Object.fromEntries(Object.entries(r).filter(([k]) => !CORE.has(k)));
+    const data = {
+      text: r.word,
+      serial: Number(r.s_no) || 0,
+      partOfSpeech: r.part_of_speech ?? null,
+      category: r.category ?? null,
+      cefr: r.cefr_level ?? null,
+      importance: Number(r.importance_1_5) || null,
+      details,
+    };
+    const cur = byCode.get(r.word_id);
+    if (!cur) {
+      toCreate.push({ code: r.word_id, kind: "WORD", ...data });
+    } else if (stable({ ...cur, code: undefined }) !== stable({ ...data, code: undefined })) {
+      toUpdate.push({ code: r.word_id, data });
+    }
   }
-  console.log(`Words imported or updated: ${done}`);
+
+  for (let i = 0; i < toCreate.length; i += 500) {
+    await prisma.word.createMany({
+      data: toCreate.slice(i, i + 500) as never,
+      skipDuplicates: true,
+    });
+  }
+  for (let i = 0; i < toUpdate.length; i += 200) {
+    await prisma.$transaction(
+      toUpdate.slice(i, i + 200).map((u) => prisma.word.update({ where: { code: u.code }, data: u.data as never })),
+    );
+  }
+  console.log(`Words created: ${toCreate.length}, updated: ${toUpdate.length}, total in sheet: ${rows.length}`);
 
   // The flashcard's "Record yourself for audit" needs an Exercise to attach
   // the Submission to. One hidden module holds it.

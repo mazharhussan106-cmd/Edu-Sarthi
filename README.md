@@ -121,6 +121,25 @@ If the Excel changes, regenerate the JSON first:
 python content/wordmaster-2000/tools/export_json.py
 ```
 
+1,430 chunks (Core 220, sentence and preposition frames, collocations,
+utterances, polywords) live in `content/chunk-library/chunks.json`, built from
+`Chunk_Library_Master.xlsx`. Load or update them the same way:
+
+```powershell
+npx tsx prisma/import-chunks.ts
+```
+
+If the chunk Excel changes, regenerate the JSON first (needs `pip install openpyxl`):
+
+```powershell
+python content/chunk-library/tools/export_json.py
+```
+
+The workbook's `PRP-xxx` (preposition frames) are imported as `PFR-xxx`,
+because the word list already uses `PRP-001…077`. Devanagari Hindi and the
+Core 220 gap-fills in `tools/` are Claude's drafts; the card marks them as not
+yet checked by a teacher.
+
 ## Admin
 
 The first admin is made by hand, once: set `role` to `ADMIN` on your own row in

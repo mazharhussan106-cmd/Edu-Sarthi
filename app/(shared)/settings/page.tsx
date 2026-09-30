@@ -11,6 +11,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
+import { ChunkPathPicker } from "@/app/(shared)/settings/ChunkPathPicker";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 
@@ -55,8 +56,9 @@ export default async function SettingsPage() {
       {session.user.role === "STUDENT" ? (
         <Card className="mt-6">
           <CardTitle>Flashcard</CardTitle>
-          <div className="mt-4">
+          <div className="mt-4 flex flex-col gap-6">
             <CardColorPicker initial={preferences.cardColor} />
+            <ChunkPathPicker initial={preferences.chunkPath} />
           </div>
         </Card>
       ) : null}

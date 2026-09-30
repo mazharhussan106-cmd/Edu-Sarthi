@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/ClaimControls";
 import { cn } from "@/lib/utils";
+import { cardNoun } from "@/lib/chunkCard";
 
 export const revalidate = 0;
 
@@ -51,7 +52,7 @@ const ROW_SELECT = {
   durationSec: true,
   student: { select: { publicId: true } },
   exercise: { select: { title: true, module: { select: { level: true } } } },
-  word: { select: { text: true } },
+  word: { select: { text: true, kind: true } },
 } as const;
 
 export default async function QueuePage({
@@ -176,7 +177,7 @@ export default async function QueuePage({
                       {displayId(s.student.publicId)}
                     </td>
                     <td className="max-w-64 truncate px-4 py-3 text-ink">
-                      {s.word ? `Word: ${s.word.text}` : s.exercise.title}
+                      {s.word ? `${cardNoun(s.word.kind)}: ${s.word.text}` : s.exercise.title}
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant="accent">L{s.exercise.module.level}</Badge>

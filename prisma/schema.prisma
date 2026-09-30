@@ -1,0 +1,406 @@
+// Owns the entire database shape for Edusarthi: auth tables, the curriculum
+// (Module/Exercise), and the submission-and-audit loop (Submission/Feedback).
+// It deliberately does NOT store media bytes — Submission.mediaUrl holds a
+// storage key only. It also deliberately does not model progress, badges or
+// certificates; those are derived from Feedback rows at read time, not stored.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Pooled, port 6543 — every serverless invocation opens its own connection,
+  // and the session pooler's 15-client cap is gone within seconds of traffic.
+  url       = env("DATABASE_URL")
+  // Direct, port 5432 — migrations need DDL and advisory locks, which the
+  // transaction pooler cannot run.
+  directUrl = env("DIRECT_URL")
+  provider  = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum MediaKind {
+  AUDIO
+  VIDEO
+  IMAGE
+}
+
+enum SubmissionStatus {
+  PENDING // uploaded, awaiting a teacher
+  IN_REVIEW // a teacher has claimed it
+  REVIEWED // feedback delivered
+  RETURNED // sent back for a re-attempt
+}
+
+/// Why a teacher sent a submission back instead of auditing it. A fixed list,
+/// not free text, so the student screen can show matching re-recording tips.
+enum ReturnReason {
+  BACKGROUND_NOISE
+  INAUDIBLE
+  WRONG_PROMPT
+  INCOMPLETE
+}
+
+/// Must stay in sync with the [data-theme="…"] blocks in app/globals.css and
+/// the THEMES array in lib/theme.ts. A value here with no matching CSS block
+/// renders as light with no error anywhere — the failure is silent.
+enum Theme {
+  LIGHT
+  DARK
+  SEPIA
+  MIDNIGHT
+  HIGH_CONTRAST
+}
+
+model User {
+  id            String    @id @default(cuid())
+  /// What teachers see instead of the student's name, e.g. "STU-7K3Q9P".
+  /// Nullable so rows created before this column existed stay valid; the
+  /// backfill script fills them in.
+  publicId      String?   @unique
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  phone         String?   @unique
+  phoneVerified DateTime?
+  passwordHash  String?
+  role          Role      @default(STUDENT)
+  /// Set by an admin. A suspended account cannot sign in, and any session it
+  /// already has is turned away at the next page load.
+  suspendedAt   DateTime?
+  suspendReason String?
+  isGuest       Boolean   @default(false)
+  theme         Theme     @default(LIGHT)
+  preferences   Json?
+
+  // Student side
+  submissions Submission[] @relation("StudentSubmissions")
+  enrollments Enrollment[]
+
+  // Teacher side
+  reviewsGiven       Feedback[]   @relation("TeacherFeedback")
+  claimedSubmissions Submission[] @relation("ClaimedSubmissions")
+
+  accounts            Account[]
+  sessions            Session[]
+  verificationCodes   VerificationCode[]
+  passwordResetTokens PasswordResetToken[]
+  adminActions        AdminLog[]
+  cardStates          CardState[]
+
+  createdAt DateTime @default(now())
+}
+
+/// One student's attempt at one exercise.
+model Submission {
+  id         String           @id @default(cuid())
+  studentId  String
+  exerciseId String
+  status     SubmissionStatus @default(PENDING)
+
+  /// Storage key, not the file itself. A three-minute recording is 3-5 MB and
+  /// would slow every query that touches this table.
+  mediaUrl    String
+  mediaKind   MediaKind
+  /// Null for images. Drives the player UI and the timestamp validation on notes.
+  durationSec Int?
+  transcript  String?          @db.Text
+
+  /// Who is currently reviewing this. Without it, two teachers can both open a
+  /// PENDING submission, both write a full audit, and the second Feedback
+  /// insert fails on the submissionId unique constraint — after the typing.
+  claimedById String?
+  claimedAt   DateTime?
+
+  /// Set when the recording was made from a flashcard ("Record yourself").
+  wordId       String?
+  word         Word?         @relation(fields: [wordId], references: [id], onDelete: SetNull)
+
+  /// Set only when status is RETURNED.
+  returnReason ReturnReason?
+  returnNote   String?       @db.Text
+  /// The RETURNED submission this one replaces. Lets the student screen show
+  /// "replaced" on the old attempt instead of asking them to re-record twice.
+  retryOfId    String?       @unique
+  retryOf      Submission?   @relation("Retry", fields: [retryOfId], references: [id], onDelete: SetNull)
+  retry        Submission?   @relation("Retry")
+
+  /// When the recording was deleted under the retention policy. The row and
+  /// its audit stay; only the audio or video is gone.
+  mediaPurgedAt DateTime?
+
+  student   User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+  // No cascade: deleting an exercise students have already submitted against
+  // should fail loudly, not silently erase their work.
+  exercise  Exercise  @relation(fields: [exerciseId], references: [id])
+  // SetNull, not Cascade: a deleted teacher account releases the claim rather
+  // than deleting the student's submission.
+  claimedBy User?     @relation("ClaimedSubmissions", fields: [claimedById], references: [id], onDelete: SetNull)
+  feedback  Feedback?
+
+  createdAt DateTime @default(now())
+
+  @@index([studentId, createdAt])
+  @@index([status, createdAt]) // the teacher queue reads on this
+  @@index([claimedById, status])
+}
+
+/// A teacher's audit of one submission. One-to-one with Submission.
+model Feedback {
+  id           String @id @default(cuid())
+  submissionId String @unique
+  teacherId    String
+
+  /// Rubric scores, 0-10 each. Separate columns rather than a JSON blob so a
+  /// student's trend over twenty submissions is one AVG() query instead of
+  /// twenty deserialisations in application code.
+  pronunciation Int
+  grammar       Int
+  fluency       Int
+  vocabulary    Int
+  confidence    Int
+
+  summary String @db.Text
+  /// Timestamped annotations: [{ at: 12.4, note: "…", severity: "minor" }]
+  /// Json because the shape is a list the UI renders whole — it is never
+  /// filtered, averaged or queried, which is what columns would buy.
+  notes   Json?
+
+  /// Flagged by an admin for a quality check of the audit itself.
+  qaFlaggedAt DateTime?
+  qaNote      String?
+
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  // No cascade: an audit outlives the teacher's account.
+  teacher    User       @relation("TeacherFeedback", fields: [teacherId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([teacherId, createdAt])
+}
+
+model Module {
+  id          String     @id @default(cuid())
+  /// System modules hold exercises the app creates for itself (flashcard
+  /// speaking practice). They are hidden from Learn and from "next up".
+  isSystem    Boolean    @default(false)
+  level       Int
+  title       String
+  description String
+  exercises   Exercise[]
+}
+
+model Exercise {
+  id       String @id @default(cuid())
+  moduleId String
+  title    String
+  prompt   String @db.Text
+  /// What the student is expected to submit for this exercise.
+  expects  MediaKind
+  /// Soft guidance shown in the UI, and validated on upload.
+  minSeconds Int?
+  maxSeconds Int?
+
+  module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  studentId String
+  moduleId  String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, moduleId])
+}
+
+/// Six-digit email verification code.
+model VerificationCode {
+  id String @id @default(cuid())
+
+  userId String
+  /// Hashed, never stored raw. A leaked database read should not hand over a
+  /// working code for an account the attacker already knows the password to.
+  codeHash   String
+  expiresAt  DateTime
+  /// Capped at 5 in application code. Six digits is a million-guess space only
+  /// if guessing is expensive.
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+/// Single-use password reset token, one-hour expiry.
+model PasswordResetToken {
+  id String @id @default(cuid())
+
+  userId String
+  /// The raw token only ever exists in the email. Storing the hash means a
+  /// database dump cannot be replayed into account takeover.
+  tokenHash String    @unique
+  expiresAt DateTime
+  /// Set on first use rather than deleting the row, so a second click gets
+  /// "already used" instead of a confusing "invalid link".
+  usedAt    DateTime?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// One row per failed sign-in. Read as a count over a 15-minute window.
+model LoginAttempt {
+  id String @id @default(cuid())
+
+  /// Not a foreign key. Attempts are recorded even for addresses with no
+  /// account, or the throttle only protects real users and probing for valid
+  /// addresses stays free.
+  email     String
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+}
+
+// --- Auth.js v5 adapter tables ---------------------------------------------
+// Session is unused today because the strategy is JWT, but the adapter expects
+// the table to exist and Google OAuth will need Account regardless.
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Auth.js's own table for OAuth email links. Not the six-digit code above —
+/// different flow, different lifetime, deliberately kept separate.
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+/// One row per admin action: role changes, suspensions, reassignments,
+/// content edits, purges. Kept so every change to someone else's account or
+/// work has a name and a reason attached.
+model AdminLog {
+  id         String   @id @default(cuid())
+  /// Null for actions the system took on its own (scheduled purges) or on a
+  /// student's behalf (self-service export and deletion).
+  actorId    String?
+  action     String
+  targetType String
+  targetId   String?
+  detail     Json?
+  createdAt  DateTime @default(now())
+
+  // SetNull: the log entry outlives the account that made it.
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
+
+enum CardKind {
+  WORD
+  CHUNK
+  GRAMMAR
+}
+
+/// One flashcard: a word (and later a chunk or grammar pattern). The columns
+/// here are the ones the app filters or sorts on; every other field from the
+/// 56-column WordMaster sheet lives in `details`, keyed as in words.json, so a
+/// new column in the sheet needs no migration.
+model Word {
+  id         String   @id @default(cuid())
+  kind       CardKind @default(WORD)
+  /// The sheet's own ID, e.g. "VRB-006". Stable across re-imports.
+  code       String   @unique
+  serial     Int
+  text       String
+  partOfSpeech String?
+  category   String?
+  cefr       String?
+  importance Int?
+  details    Json
+
+  /// Empty until media is supplied; the card shows a placeholder.
+  imageUrl   String?
+  audioUrl   String?
+  videoUrl   String?
+
+  states      CardState[]
+  submissions Submission[]
+
+  @@index([kind, serial])
+  @@index([text])
+}
+
+enum Recall {
+  HARD
+  MEDIUM
+  EASY
+}
+
+/// One student's progress on one card: known or not, how well, when it is
+/// next due, and their remarks. Created the first time they mark the card.
+model CardState {
+  id        String   @id @default(cuid())
+  userId    String
+  wordId    String
+
+  known     Boolean  @default(false)
+  recall    Recall?
+  /// Index into the review ladder (1, 3, 7, 15, 30, 60 days).
+  stage     Int      @default(0)
+  dueAt     DateTime
+  reviews   Int      @default(0)
+  lastReviewedAt DateTime?
+  /// When the student first saw and marked this card; counts today's new cards.
+  createdAt DateTime @default(now())
+
+  // Remarks
+  confident  Boolean @default(false)
+  important  Boolean @default(false)
+  favourite  Boolean @default(false)
+  doubt      Boolean @default(false)
+  note       String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@index([userId, dueAt])
+}

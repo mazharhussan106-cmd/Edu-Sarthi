@@ -1,34 +1,53 @@
-# Gradle files
-.gradle/
-build/
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
 
-# Local configuration file (sdk path, etc)
-local.properties
+# Next.js build output
+/.next/
+/out/
+/build
+next-env.d.ts
 
-# Log/OS Files
-*.log
+# Environment — the whole point of this file.
+# .env holds the Supabase service-role key and the database password.
+# .env.example is committed on purpose; it contains placeholders only.
+.env
+.env.*
+!.env.example
 
-# Android Studio generated files and folders
-captures/
-.externalNativeBuild/
-.cxx/
-*.aab
-*.apk
-output-metadata.json
+# Prisma generated client
+/generated
+/prisma/generated
 
-# IntelliJ
-*.iml
+# Vercel
+.vercel
+
+# Testing
+/coverage
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS and editor
+.DS_Store
+Thumbs.db
+*.pem
 .idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+.vscode/*
+!.vscode/extensions.json
 
-# Keystore files
+# TypeScript
+*.tsbuildinfo
+
+# Signing keys and Google credentials — kept from the repo's original
+# Android .gitignore so nothing slips through if Android code lands here.
 *.jks
 *.keystore
-
-# Google Services (e.g. APIs or Firebase)
 google-services.json
 
-# Android Profiling
-*.hprof
+# Local stand-in for Supabase Storage (development only)
+.dev-uploads/

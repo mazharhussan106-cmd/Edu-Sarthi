@@ -2,7 +2,7 @@
 //   ‹  Known  Unknown  [Remark ▾]  ›
 // ‹ and › move between cards without answering. Remark ▾ opens a small panel
 // with the five remarks (💯 ⭐ ❤️ ❓ 📝) as one-tap toggles and the level
-// (Hard / Medium / Easy), then the card's own colour (lib/cardColors).
+// (Hard / Medium / Easy). The card's colour is chosen in Settings.
 //
 // Level is chosen before pressing Known and decides how far the next review
 // is pushed; Known alone counts as Medium. Remarks save the moment they are
@@ -14,7 +14,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { CARD_COLORS, cardSwatch, type CardColor } from "@/lib/cardColors";
 import { cn } from "@/lib/utils";
 
 export type Remarks = { confident: boolean; important: boolean; favourite: boolean; doubt: boolean };
@@ -46,8 +45,6 @@ export function CardControls({
   onMark,
   onPrev,
   onNext,
-  cardColor,
-  onCardColor,
 }: {
   busy: boolean;
   level: Level;
@@ -59,8 +56,6 @@ export function CardControls({
   onMark: (known: boolean) => void;
   onPrev: () => void;
   onNext: () => void;
-  cardColor: CardColor;
-  onCardColor: (c: CardColor) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
@@ -184,26 +179,6 @@ export function CardControls({
             ))}
           </div>
           <p className="mt-1.5 text-[11px] text-ink-muted">Used when you press Known: Easy skips ahead, Hard repeats the same gap.</p>
-
-          <p className="mt-3 font-display text-xs font-bold text-ink-muted">Card colour</p>
-          <div role="radiogroup" aria-label="Card colour" className="mt-1.5 grid grid-cols-6 gap-1.5">
-            {CARD_COLORS.map((c) => (
-              <button
-                key={c.value}
-                type="button"
-                role="radio"
-                aria-checked={cardColor === c.value}
-                aria-label={c.label}
-                title={c.label}
-                onClick={() => onCardColor(c.value)}
-                style={{ backgroundColor: cardSwatch(c.value) }}
-                className={cn(
-                  "h-9 rounded-full border-2",
-                  cardColor === c.value ? "border-ink ring-2 ring-accent ring-offset-2 ring-offset-surface-raised" : "border-border-strong",
-                )}
-              />
-            ))}
-          </div>
         </div>
       ) : null}
     </div>

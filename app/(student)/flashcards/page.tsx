@@ -168,7 +168,7 @@ export default async function FlashcardsPage({
             recordHref={exercise ? `/practice/${exercise.id}?word=${word.code}` : null}
             nextHref={sp.more === "1" ? `${base}&more=1` : base}
             skip={skip}
-            initialColor={cardColor}
+            cardColor={cardColor}
           />
         </div>
       );
@@ -194,16 +194,6 @@ export default async function FlashcardsPage({
       {/* One scrolling row: card types, then the student's lists, then
           today's counts. Three rows here would push the card below the fold. */}
       <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-        {/* First in the row so it is on screen without scrolling: the
-            student has to be able to find the cards they skipped. */}
-        {skip.length ? (
-          <Link
-            href={sp.more === "1" ? `${base}&more=1` : base}
-            className="shrink-0 rounded-full border border-saffron px-2 py-1 text-xs font-medium text-ink hover:bg-hover"
-          >
-            ⏭ {skip.length} skipped · show again
-          </Link>
-        ) : null}
         <nav aria-label="Card type" className="flex shrink-0 gap-1.5">
           {KINDS.map((x) => (
             <Link
@@ -220,6 +210,16 @@ export default async function FlashcardsPage({
             </Link>
           ))}
         </nav>
+        {/* After the card types and before the lists, where the owner placed
+            it. On a narrow phone the row scrolls sideways to reach it. */}
+        {skip.length ? (
+          <Link
+            href={sp.more === "1" ? `${base}&more=1` : base}
+            className="shrink-0 rounded-full border border-saffron px-2 py-1 text-xs font-medium text-ink hover:bg-hover"
+          >
+            ⏭ {skip.length} skipped · show again
+          </Link>
+        ) : null}
         {counts ? (
           <>
             <span aria-hidden="true" className="mx-0.5 h-5 w-px shrink-0 bg-border-strong" />

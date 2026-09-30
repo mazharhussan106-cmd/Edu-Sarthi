@@ -1,12 +1,10 @@
 // Owns the flashcard deck's talking to the outside world: saving marks,
-// remarks and notes (/api/flashcards), saving the card colour
-// (/api/profile/preferences), and the ‹ history kept in sessionStorage.
+// remarks and notes (/api/flashcards), and the ‹ history kept in
+// sessionStorage.
 //
 // Every call returns a message the student can act on instead of throwing,
 // and every response is read as text first: a proxy error page is not JSON.
 // It deliberately holds no React state; FlashcardDeck decides what to show.
-
-import type { CardColor } from "@/lib/cardColors";
 
 const HISTORY_KEY = "flashcard-history";
 const HISTORY_MAX = 50;
@@ -48,18 +46,3 @@ export async function post(body: object) {
   }
 }
 
-/// Returns null on success, or what to tell the student.
-export async function saveCardColor(color: CardColor): Promise<string | null> {
-  try {
-    const res = await fetch("/api/profile/preferences", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cardColor: color }),
-    });
-    // A failed save only means the colour is not remembered next visit, so
-    // the card keeps the new colour either way.
-    return res.ok ? null : "Colour applied, but it may not be remembered next time. Try again later.";
-  } catch {
-    return "Colour applied, but it was not saved — you are offline.";
-  }
-}

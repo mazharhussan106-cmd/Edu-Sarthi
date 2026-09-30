@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
+import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 
@@ -49,6 +50,16 @@ export default async function SettingsPage() {
           />
         </div>
       </Card>
+
+      {/* Students only: teachers and admins have no flashcards. */}
+      {session.user.role === "STUDENT" ? (
+        <Card className="mt-6">
+          <CardTitle>Flashcard</CardTitle>
+          <div className="mt-4">
+            <CardColorPicker initial={preferences.cardColor} />
+          </div>
+        </Card>
+      ) : null}
     </main>
   );
 }

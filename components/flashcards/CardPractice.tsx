@@ -174,22 +174,33 @@ export function CardPractice({
         </Block>
       ) : null}
 
-      <div className="rounded-xl border border-border bg-surface p-3">
-        <p className="font-display text-[0.8em] font-bold text-tag-green">Spaced Repetition · Your Review Plan</p>
-        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-          {LADDER_DAYS.map((day, i) => (
-            <span
-              key={day}
-              className={cn(
-                "rounded-md px-2 py-1 font-mono",
-                stage !== null && i < stage ? "bg-success/15 text-success" : stage === i ? "bg-accent text-on-accent" : "bg-paper-dim text-ink-muted",
-              )}
-            >
-              Day {day}
-            </span>
-          ))}
-        </div>
-        <p className="mt-2 text-xs text-ink-muted">{dueLabel ? `Next review ${dueLabel}.` : "Mark Known or Unknown to start the plan."}</p>
+      {/* In ink only, at the owner's request: the plan is information, not a
+          heading to scan for, so it stays out of the colour coding. Done
+          steps are filled, the next one is outlined bold, later ones faint. */}
+      <div className="rounded-xl border border-ink/30 bg-surface p-3 text-ink">
+        <p className="font-display text-[0.8em] font-bold">Spaced Repetition · Your Review Plan</p>
+        <ol className="mt-2 flex flex-wrap items-center gap-1.5 text-xs" aria-label="Review steps">
+          {LADDER_DAYS.map((day, i) => {
+            const done = stage !== null && i < stage;
+            const next = stage === i;
+            return (
+              <li
+                key={day}
+                aria-current={next ? "step" : undefined}
+                className={cn(
+                  "rounded-md border px-2 py-1 font-mono",
+                  done && "border-ink bg-ink text-surface",
+                  next && "border-2 border-ink font-bold",
+                  !done && !next && "border-ink/30",
+                )}
+              >
+                {done ? "✓ " : ""}Day {day}
+                {next ? " · next" : ""}
+              </li>
+            );
+          })}
+        </ol>
+        <p className="mt-2 text-xs">{dueLabel ? `Next review ${dueLabel}.` : "Mark Known or Unknown to start the plan."}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-2 pb-1 pt-1">

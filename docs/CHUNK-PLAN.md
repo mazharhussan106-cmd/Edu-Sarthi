@@ -62,3 +62,10 @@ every card field for all 1,430 chunks, data first and the card layout later.
 - **Not done yet (code):** the app still shows the "Core 220" chip and the
   Path A/B chooser, and the card does not show the new fields. That is the
   next step, waiting for the owner's go-ahead.
+
+**Grammar split (owner's choice):** 247 frames whose group teaches a grammar
+point (Present, Past, Future, Modals, Passive, Reported speech, Conditions,
+Tenses, Questions, Comparing, It/There, Verb patterns, Make/let/get, and the 13
+"Grammatical chunks") now live in `grammar.json` for the Grammar tab. 1,183
+stay in `chunks.json`. Each file has its own A1 → A2 → B1 order. Review
+workbooks: `Chunk_Library_Review.xlsx` and `Grammar_Library_Review.xlsx`.

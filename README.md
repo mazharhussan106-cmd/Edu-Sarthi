@@ -137,6 +137,11 @@ If the chunk Excel changes, regenerate the JSON first (needs `pip install openpy
 python content/chunk-library/tools/export_json.py
 ```
 
+The 247 grammar-topic frames (tenses, modals, passive, conditions…) are
+written to `content/chunk-library/grammar.json` instead, for the Grammar tab;
+the app does not load them yet. Review workbooks for a teacher (one per file)
+are rebuilt with `python content/chunk-library/tools/review_xlsx.py`.
+
 The workbook's `PRP-xxx` (preposition frames) are imported as `PFR-xxx`,
 because the word list already uses `PRP-001…077`. Devanagari Hindi and the
 Core 220 gap-fills in `tools/` are Claude's drafts, and so is every field in

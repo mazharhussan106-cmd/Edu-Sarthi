@@ -11,6 +11,9 @@
 # core chunk takes the type its Lewis type points to, and there is one order:
 # level A1 → A2 → B1, former core chunks first inside each level.
 #
+# Grammar-topic frames (tenses, modals, passive, conditions…) go to a separate
+# grammar.json for the Grammar tab; everything else stays in chunks.json.
+#
 # It deliberately does NOT invent practice questions. Gap-fill, multiple
 # choice and translation are assembled in the app from these fields.
 #
@@ -52,6 +55,17 @@ CORE_TO_TYPE = {
     "Collocations": "collocations",
     "Sentence frames & heads": "frames",
     "Polywords": "polywords",
+}
+# Frame groups that teach a grammar point rather than a conversation move. They
+# become the Grammar tab's cards; opinion, polite, linking and answer frames
+# stay chunks.
+GRAMMAR_GROUPS = {
+    "1. Present", "2. Past", "3. Future & plans", "4. Can / must / should",
+    "6. Questions", "7. Comparing & pairs", "11. Passive",
+    "12. Reported speech & what/if clauses", "13. Make / let / get someone",
+    "14. Modals (more)", "15. Verb patterns", "16. Questions (more)",
+    "17. Tenses (more)", "18. Conditions & time clauses", "20. It / There frames",
+    "22. Comparing (more)", "Grammatical chunks",
 }
 LEVELS = ["A1", "A2", "B1"]
 # Round-robin order for the non-core chunks inside each level, so a student
@@ -176,46 +190,58 @@ def main() -> None:
         rich_fields.merge(chunk, rich.get(chunk["code"]))
         chunks.append(chunk)
 
-    # One learning order: by level, former core chunks first (in their sheet
-    # order), then the rest with types interleaved. order_a and order_b are
-    # kept equal so the app's two sort columns agree until the paths are
-    # removed from the code too.
+    grammar = [c for c in chunks if c["group"] in GRAMMAR_GROUPS]
+    chunks = [c for c in chunks if c["group"] not in GRAMMAR_GROUPS]
+    for c in grammar:
+        c["type"] = "grammar"
+    order(chunks)
+    order(grammar)
+    for name, rows in (("chunks.json", chunks), ("grammar.json", grammar)):
+        out = os.path.join(ROOT, name)
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump(sorted(rows, key=lambda c: c["order_a"]), f, ensure_ascii=False, indent=1)
+        print(f"{len(rows)} cards → {os.path.relpath(out)}")
+    report(chunks)
+    report(grammar)
+
+
+def order(rows: list[dict]) -> None:
+    """One learning order: by level, former core chunks first (sheet order),
+    then the rest with types interleaved. order_a and order_b are kept equal
+    so the app's two sort columns agree until the paths leave the code too."""
     seq: list[dict] = []
     for level in LEVELS:
-        seq += sorted((c for c in chunks if c["was_core"] and c["level"] == level), key=lambda c: c["sheet_id"])
+        seq += sorted((c for c in rows if c["was_core"] and c["level"] == level), key=lambda c: c["sheet_id"])
         buckets = defaultdict(list)
-        for c in chunks:
+        for c in rows:
             if not c["was_core"] and c["level"] == level:
                 buckets[c["type"]].append(c)
         for b in buckets.values():
             b.sort(key=lambda c: c["sheet_id"])
         while any(buckets.values()):
-            for t in MIX:
+            for t in MIX + ["grammar"]:
                 if buckets[t]:
                     seq.append(buckets[t].pop(0))
+    assert len(seq) == len(rows), "a card is missing from the learning order"
     for i, c in enumerate(seq, 1):
         c["order_a"] = c["order_b"] = i
 
-    chunks.sort(key=lambda c: c["order_a"])
-    out = os.path.join(ROOT, "chunks.json")
-    with open(out, "w", encoding="utf-8") as f:
-        json.dump(chunks, f, ensure_ascii=False, indent=1)
 
+def report(chunks: list[dict]) -> None:
     # Coverage report: what the card will and will not have.
     n = len(chunks)
+    print(f"— {chunks[0]['type'] if chunks and chunks[0]['type'] == 'grammar' else 'chunks'}: {n}")
     def pct(k):  # noqa: E306
         return sum(1 for c in chunks if c.get(k))
-    print(f"{n} chunks → {os.path.relpath(out)}")
     for k in ["hindi", "hindi_example", "example", "when", "watch_out", "note", "gap", "slot", "topic", "related",
               "ipa", "stress", "simple", "more_examples", "conversation", "speaking_task"]:
         print(f"  {k:14s} {pct(k):5d}  ({100 * pct(k) // n}%)")
     print("  drafted:", sum(1 for c in chunks if c["drafted"]), "chunks have at least one Claude draft field")
     missing_dev = [c["code"] for c in chunks if c["hindi"] and not c["hindi"]["dev"]]
     print("  Hindi without Devanagari:", len(missing_dev), missing_dev[:5])
-    print("  types:", dict(sorted(defaultdict(int, {t: sum(1 for c in chunks if c["type"] == t) for t in MIX}).items())))
+    print("  types:", {t: sum(1 for c in chunks if c["type"] == t) for t in MIX + ["grammar"] if any(c["type"] == t for c in chunks)})
     assert len({c["code"] for c in chunks}) == n, "duplicate app codes"
-    assert len(seq) == n, "a chunk is missing from the learning order"
-    assert all(c["code"] in rich for c in chunks), "a chunk has no drafted card fields"
+    assert all("card_fields" in c["drafted"] for c in chunks), "a card has no drafted card fields"
 
 
 if __name__ == "__main__":

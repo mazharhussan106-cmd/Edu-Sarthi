@@ -42,3 +42,23 @@ Same frame, colours, zoom, PTO on side 2, controls line and card colour as the w
 ## Status (30 Sep 2026)
 
 Steps 1–4 done and committed locally, not pushed. Checks: chunk flow 25/25, word cards 23/23, student 18/18, teacher 14/14, admin 22/22, production build passes. Gap-fill is available for 1,102 of 1,430 chunks (the rest have no exact match in their example); translation for all 1,430; multiple choice wherever the group has other chunks.
+
+## Update (30 Sep 2026): full card fields, Core merged, paths dropped
+
+Owner's decisions: merge Core 220 into the other types, remove Path A/B, draft
+every card field for all 1,430 chunks, data first and the card layout later.
+
+- **Data done:** `tools/rich/rich_01…35.txt` hold Claude's drafts of 30 fields
+  per chunk (IPA, linking, Indian pronunciation, stress, register, when to use,
+  pronunciation tip, when not to use, memory trick, simple meaning, examples
+  2–3, common mistake, grammar pattern, other forms, similar, don't say, reply
+  you'll hear, confusing pair, where used, tone, three real-life lines, mini
+  conversation, speaking task). `tools/rich_fields.py` merges them; the
+  workbook still wins where it has a value. All marked as drafts.
+- **Core merged:** each former Core chunk takes its Lewis type (78 →
+  utterances, 58 → collocations, 54 → frames, 30 → polywords). IDs stay
+  `CORE-xxx`, so links and progress keep working.
+- **One order:** A1 → A2 → B1; former Core chunks first inside each level.
+- **Not done yet (code):** the app still shows the "Core 220" chip and the
+  Path A/B chooser, and the card does not show the new fields. That is the
+  next step, waiting for the owner's go-ahead.

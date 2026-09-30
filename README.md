@@ -121,9 +121,11 @@ If the Excel changes, regenerate the JSON first:
 python content/wordmaster-2000/tools/export_json.py
 ```
 
-1,430 chunks (Core 220, sentence and preposition frames, collocations,
-utterances, polywords) live in `content/chunk-library/chunks.json`, built from
-`Chunk_Library_Master.xlsx`. Load or update them the same way:
+1,430 chunks (sentence and preposition frames, collocations, utterances,
+polywords; the old Core 220 are merged into these by Lewis type) live in
+`content/chunk-library/chunks.json`, built from `Chunk_Library_Master.xlsx`
+plus Claude's drafts of the extra card fields in `tools/rich/`. Load or update
+them the same way:
 
 ```powershell
 npx tsx prisma/import-chunks.ts
@@ -137,8 +139,9 @@ python content/chunk-library/tools/export_json.py
 
 The workbook's `PRP-xxx` (preposition frames) are imported as `PFR-xxx`,
 because the word list already uses `PRP-001…077`. Devanagari Hindi and the
-Core 220 gap-fills in `tools/` are Claude's drafts; the card marks them as not
-yet checked by a teacher.
+Core 220 gap-fills in `tools/` are Claude's drafts, and so is every field in
+`tools/rich/` (IPA, stress, linking, examples 2–3, mini conversation, speaking
+task and the rest); the card marks them as not yet checked by a teacher.
 
 ## Admin
 

@@ -1,10 +1,15 @@
 # Owns turning Chunk_Library_Master.xlsx into chunks.json, the file the
 # database importer (prisma/import-chunks.ts) reads.
 #
-# It merges three sources, in this order of trust:
+# It merges four sources, in this order of trust:
 #   1. the owner's workbook ("All Chunks" sheet) — always wins where it has a value
 #   2. core_drafts.py  — Claude's drafts for the Core 220 gaps (marked "draft")
 #   3. dev_*.txt       — Claude's Devanagari for the workbook's Roman Hindi (marked "draft")
+#   4. rich/rich_*.txt — Claude's drafts of the extra card fields (via rich_fields.py)
+#
+# The owner merged "Core 220" into the other types and dropped Path A/B, so a
+# core chunk takes the type its Lewis type points to, and there is one order:
+# level A1 → A2 → B1, former core chunks first inside each level.
 #
 # It deliberately does NOT invent practice questions. Gap-fill, multiple
 # choice and translation are assembled in the app from these fields.
@@ -27,6 +32,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import core_drafts  # noqa: E402
+import rich_fields  # noqa: E402
 
 # The word list already owns PRP-001…077, and codes must be unique across all
 # cards, so Preposition Frames are renamed on import. The workbook keeps PRP.
@@ -38,6 +44,13 @@ SHEET_KEY = {
     "Preposition Frames": "prepositions",
     "Collocations": "collocations",
     "Utterances": "utterances",
+    "Polywords": "polywords",
+}
+# Where a Core 220 chunk goes now that Core is not a type of its own.
+CORE_TO_TYPE = {
+    "Institutionalised utterances": "utterances",
+    "Collocations": "collocations",
+    "Sentence frames & heads": "frames",
     "Polywords": "polywords",
 }
 LEVELS = ["A1", "A2", "B1"]
@@ -97,6 +110,7 @@ def main() -> None:
     data = [dict(zip(head, r)) for r in rows[1:] if any(r)]
 
     drafts = core_drafts.load()
+    rich = rich_fields.load()
     dev = load_devanagari()
     ids = {d["ID"] for d in data}
 
@@ -134,12 +148,13 @@ def main() -> None:
             prep = None
         related = clean(d["Related ID"])
 
-        chunks.append(
-            {
+        lewis = clean(d["Lewis type"])
+        chunk = {
                 "code": app_code(sid),
                 "sheet_id": sid,
-                "type": sheet,
-                "lewis_type": clean(d["Lewis type"]),
+                "type": CORE_TO_TYPE[lewis] if sheet == "core" else sheet,
+                "was_core": sheet == "core",
+                "lewis_type": lewis,
                 "group": clean(d["Group"]),
                 "text": clean(d["English"]),
                 "level": clean(d["Level"]),
@@ -152,36 +167,34 @@ def main() -> None:
                 "watch_out": watch(clean(d["Watch out / wrong version"])),
                 "note": clean(d["Note"]),
                 "gap": {"q": clean(d["Gap-fill question"]), "a": clean(d["Gap-fill answer"])} if d["Gap-fill question"] else None,
-                "path_a": {"n": int(d["Path A #"]), "stage": clean(d["Path A stage"])} if d["Path A #"] else None,
-                "path_b": {"n": int(d["Path B #"]), "stage": clean(d["Path B stage"])} if d["Path B #"] else None,
                 "preposition": prep,
                 "related": app_code(related) if related and related in ids else None,
                 "phase": clean(d["Phase / Set"]),
                 "merged_from": clean(d["Merged from"]),
                 "drafted": drafted,
-            }
-        )
+        }
+        rich_fields.merge(chunk, rich.get(chunk["code"]))
+        chunks.append(chunk)
 
-    # Two learning orders. Core first by its path number, then the rest by
-    # level, types interleaved, each type in its own ID order.
-    core = [c for c in chunks if c["type"] == "core"]
-    rest = [c for c in chunks if c["type"] != "core"]
-    tail: list[dict] = []
+    # One learning order: by level, former core chunks first (in their sheet
+    # order), then the rest with types interleaved. order_a and order_b are
+    # kept equal so the app's two sort columns agree until the paths are
+    # removed from the code too.
+    seq: list[dict] = []
     for level in LEVELS:
+        seq += sorted((c for c in chunks if c["was_core"] and c["level"] == level), key=lambda c: c["sheet_id"])
         buckets = defaultdict(list)
-        for c in rest:
-            if c["level"] == level:
+        for c in chunks:
+            if not c["was_core"] and c["level"] == level:
                 buckets[c["type"]].append(c)
         for b in buckets.values():
             b.sort(key=lambda c: c["sheet_id"])
         while any(buckets.values()):
             for t in MIX:
                 if buckets[t]:
-                    tail.append(buckets[t].pop(0))
-    for key, path in (("order_a", "path_a"), ("order_b", "path_b")):
-        seq = sorted(core, key=lambda c: c[path]["n"]) + tail
-        for i, c in enumerate(seq, 1):
-            c[key] = i
+                    seq.append(buckets[t].pop(0))
+    for i, c in enumerate(seq, 1):
+        c["order_a"] = c["order_b"] = i
 
     chunks.sort(key=lambda c: c["order_a"])
     out = os.path.join(ROOT, "chunks.json")
@@ -193,12 +206,16 @@ def main() -> None:
     def pct(k):  # noqa: E306
         return sum(1 for c in chunks if c.get(k))
     print(f"{n} chunks → {os.path.relpath(out)}")
-    for k in ["hindi", "hindi_example", "example", "when", "watch_out", "note", "gap", "slot", "topic", "related"]:
+    for k in ["hindi", "hindi_example", "example", "when", "watch_out", "note", "gap", "slot", "topic", "related",
+              "ipa", "stress", "simple", "more_examples", "conversation", "speaking_task"]:
         print(f"  {k:14s} {pct(k):5d}  ({100 * pct(k) // n}%)")
     print("  drafted:", sum(1 for c in chunks if c["drafted"]), "chunks have at least one Claude draft field")
     missing_dev = [c["code"] for c in chunks if c["hindi"] and not c["hindi"]["dev"]]
     print("  Hindi without Devanagari:", len(missing_dev), missing_dev[:5])
+    print("  types:", dict(sorted(defaultdict(int, {t: sum(1 for c in chunks if c["type"] == t) for t in MIX}).items())))
     assert len({c["code"] for c in chunks}) == n, "duplicate app codes"
+    assert len(seq) == n, "a chunk is missing from the learning order"
+    assert all(c["code"] in rich for c in chunks), "a chunk has no drafted card fields"
 
 
 if __name__ == "__main__":

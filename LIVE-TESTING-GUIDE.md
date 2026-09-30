@@ -92,18 +92,23 @@ Phir GitHub par PR kholkar **Merge pull request** dabaiye. Bas.
 > `db.xxxx.supabase.co` wala address **mat** lijiye — woh kaam nahi karta.
 > `service_role` key database ki master chaabi hai. Kisi chat, email ya screenshot me kabhi mat daalein.
 
-### Step 3 — Database me tables aur 2,227 words daalna (Claude karega)
+### Step 3 — Database me tables aur 2,227 words daalna (GitHub ka ek button)
 
-Yeh kaam computer par commands chalane ka hai. Aapko khud nahi karna:
+Claude ke cloud computer se Supabase database tak connection nahi ban sakta,
+isliye yeh kaam GitHub khud karega. Aapko sirf copy-paste aur ek button:
 
-1. claude.ai/code par jis environment me yeh project chalta hai, uski
-   settings me **Environment variables / secrets** me `DATABASE_URL` aur
-   `DIRECT_URL` daal dijiye (chat me paste nahi karna).
-2. Phir Claude ko likhiye:
-   > "Environment me DATABASE_URL aur DIRECT_URL set hain. Supabase database par
-   > `prisma db push`, `prisma/seed.ts` aur `prisma/import-words.ts` chala do aur batao
-   > kitne words import hue."
-3. Jawab me **2,227 words** aane chahiye.
+1. GitHub par repo kholiye → **Settings** → baayein taraf **Secrets and variables** → **Actions**.
+2. **New repository secret** dabaiye:
+   - Name: `DATABASE_URL` → Secret: Step 2 wala transaction pooler address (6543 wala, aakhir me `?pgbouncer=true&connection_limit=1` ke saath) → **Add secret**
+   - Phir dobara **New repository secret**: Name: `DIRECT_URL` → Secret: session pooler address (5432 wala) → **Add secret**
+   - Dono me `[YOUR-PASSWORD]` ki jagah apna database password likhna na bhoolein.
+3. Repo me upar **Actions** tab → baayein list me **Database setup** → daayein **Run workflow** → hara **Run workflow**.
+4. 3–5 minute baad run par ✅ hara tick aana chahiye. Andar "Load flashcard words" step kholenge to
+   `Words imported or updated: 2227` likha dikhega.
+5. ❌ laal cross aaye to us run ka screenshot Claude ko bhejiye (secret wahan dikhte nahi, bhejna safe hai).
+
+> Yeh button dobara dabane se kuch kharab nahi hota — jo pehle se hai woh update hota hai, double nahi.
+> **Region check:** 6543 wale address me `ap-south-1` likha ho to project Mumbai me hai. Kuch aur ho (jaise `us-east-1`) to abhi naya project Mumbai me bana lijiye — baad me badalna mushkil hai.
 
 ### Step 4 — Vercel par website
 
@@ -199,6 +204,7 @@ Yahan sab chal gaya to APK me bhi chalega.
 ## Claude ke liye zaroori baatein (doosre chat ko yeh padhwaiye)
 
 - **Code branch `claude/ecstatic-mccarthy-z2n9e3` par hai**, `main` par nahi (jab tak Step 1 ka PR merge na ho). Pehle `git fetch origin` aur `git checkout claude/ecstatic-mccarthy-z2n9e3` kariye. `main` dekh kar "code nahi hai" mat kahiye.
+- Claude ka cloud environment Supabase tak nahi pahunch sakta (network policy, aur Postgres port proxy se nahi jaata). Database setup `.github/workflows/database.yml` ("Database setup", manual run) se hota hai, jo GitHub repository secrets `DATABASE_URL`/`DIRECT_URL` padhta hai.
 - Stack: Next.js 16 (App Router), TypeScript, Tailwind v4, Prisma 6, Auth.js v5 (JWT), Supabase Postgres + Storage, Vercel. Android = TWA wrapper in `android/` (koi Kotlin app code nahi), APK GitHub Actions `.github/workflows/android.yml` se.
 - Kaam shuru karne se pehle **`CLAUDE.md`** padhiye — coding rules wahi hain. Deploy details: `DEPLOY.md`, `README.md`, `android/README.md`. Saare env variables: `.env.example`.
 - Existing Supabase database me purane themes (Rose/Ocean) hon to `db push` se **pehle** `prisma/migrate-themes.sql` chalaiye (README me likha hai). Naye database me zaroorat nahi.

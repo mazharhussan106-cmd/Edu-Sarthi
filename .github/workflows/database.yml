@@ -1,0 +1,54 @@
+# Sets up the live Supabase database from a button in GitHub, so the owner
+# never has to install anything or run a command on a computer:
+#   Actions → "Database setup" → Run workflow.
+#
+# It creates or updates the tables (prisma db push), adds the starter modules
+# (seed) and loads the 2,227 flashcard words (import-words). All three are
+# safe to run again: they update what exists instead of duplicating it.
+#
+# It deliberately does NOT pass --accept-data-loss. If a schema change would
+# drop data, the run stops and says so, and a person decides — a button that
+# silently deletes student recordings is not a button anyone should press.
+#
+# The connection strings come from repository secrets (Settings → Secrets and
+# variables → Actions): DATABASE_URL (transaction pooler, 6543) and
+# DIRECT_URL (session pooler, 5432). They never appear in the log.
+
+name: Database setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+    steps:
+      - name: Check the secrets are set
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$DIRECT_URL" ]; then
+            echo "::error::Add DATABASE_URL and DIRECT_URL under Settings → Secrets and variables → Actions, then run this again."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Create or update the tables
+        run: npx prisma db push
+
+      - name: Add starter modules
+        run: npx tsx prisma/seed.ts
+
+      - name: Load flashcard words
+        run: npx tsx prisma/import-words.ts

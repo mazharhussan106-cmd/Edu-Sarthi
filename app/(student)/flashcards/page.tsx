@@ -19,6 +19,7 @@ import type { CardKind } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
+import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { deckCounts, nextCardId, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
 import { NEW_PER_DAY } from "@/lib/srs";
@@ -140,10 +141,15 @@ export default async function FlashcardsPage({
         </Card>
       );
     } else {
-      const [state, exercise] = await Promise.all([
+      const [state, exercise, user] = await Promise.all([
         prisma.cardState.findUnique({ where: { userId_wordId: { userId, wordId: word.id } } }),
         prisma.exercise.findFirst({ where: { module: { isSystem: true } }, select: { id: true } }),
+        prisma.user.findUnique({ where: { id: userId }, select: { preferences: true } }),
       ]);
+      // Read loosely: a stored colour this version no longer offers falls back
+      // to plain instead of throwing away the student's other settings.
+      const prefs = PREFERENCE_SCHEMA.pick({ cardColor: true }).safeParse(user?.preferences ?? {});
+      const cardColor = prefs.success ? prefs.data.cardColor : DEFAULT_PREFERENCES.cardColor;
       body = (
         <div className="mt-2">
           <FlashcardDeck
@@ -162,6 +168,7 @@ export default async function FlashcardsPage({
             recordHref={exercise ? `/practice/${exercise.id}?word=${word.code}` : null}
             nextHref={sp.more === "1" ? `${base}&more=1` : base}
             skip={skip}
+            initialColor={cardColor}
           />
         </div>
       );
@@ -187,6 +194,16 @@ export default async function FlashcardsPage({
       {/* One scrolling row: card types, then the student's lists, then
           today's counts. Three rows here would push the card below the fold. */}
       <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+        {/* First in the row so it is on screen without scrolling: the
+            student has to be able to find the cards they skipped. */}
+        {skip.length ? (
+          <Link
+            href={sp.more === "1" ? `${base}&more=1` : base}
+            className="shrink-0 rounded-full border border-saffron px-2 py-1 text-xs font-medium text-ink hover:bg-hover"
+          >
+            ⏭ {skip.length} skipped · show again
+          </Link>
+        ) : null}
         <nav aria-label="Card type" className="flex shrink-0 gap-1.5">
           {KINDS.map((x) => (
             <Link

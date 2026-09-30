@@ -53,6 +53,21 @@
   --color-tag-teal: #0f7f74;
   --color-tag-amber: #8f6300;
   --color-tag-navy: #1f3a68;
+
+  /* Flashcard colours (lib/cardColors). Declared once, not per theme: the
+     card mixes a small share of one into the theme's own surface, so the
+     theme still decides light or dark and these only decide the hue. */
+  --color-card-cerulean: #0096d6;
+  --color-card-saffron: #ff8206;
+  --color-card-pink: #e84a8a;
+  --color-card-red: #e0403a;
+  --color-card-yellow: #f2c200;
+  --color-card-lime: #8cc63f;
+  --color-card-green: #2e9e5b;
+  --color-card-teal: #14a098;
+  --color-card-navy: #1f3a68;
+  --color-card-brown: #8d6e63;
+  --color-card-slate: #607d8b;
 }
 
 /* --- Dark ------------------------------------------------------------------ */

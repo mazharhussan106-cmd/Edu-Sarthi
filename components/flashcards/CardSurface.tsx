@@ -17,6 +17,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { cardFrameStyle, cardSheetStyle, type CardColor } from "@/lib/cardColors";
 import { cn } from "@/lib/utils";
 import { useFitFont } from "@/components/flashcards/useFitFont";
 
@@ -33,6 +34,7 @@ export function CardSurface({
   side,
   titles,
   word,
+  color,
   onTurn,
   onSwipe,
   children,
@@ -40,6 +42,7 @@ export function CardSurface({
   side: 0 | 1 | 2;
   titles: readonly [string, string, string];
   word: string;
+  color: CardColor;
   onTurn: () => void;
   onSwipe: (dir: "next" | "prev") => void;
   children: ReactNode;
@@ -153,7 +156,12 @@ export function CardSurface({
       aria-roledescription="flashcard"
       aria-label={`${word}. ${titles[side]}, side ${side + 1} of 3. Enter turns the card, arrow keys change card, plus and minus zoom.`}
       onKeyDown={key}
-      className="flex h-full flex-col overflow-hidden rounded-2xl border-[1.5px] border-border-strong bg-surface shadow-[0_6px_18px_var(--color-shadow)]"
+      style={cardFrameStyle(color)}
+      className={cn(
+        "flex h-full flex-col overflow-hidden rounded-2xl border-[1.5px] border-border-strong bg-surface shadow-[0_6px_18px_var(--color-shadow)]",
+        // A coloured card shows its colour as a frame round the text sheet.
+        color !== "plain" && "pb-1.5",
+      )}
     >
       <div className="flex shrink-0 items-center justify-between bg-tag-navy px-3 py-1.5 font-display text-[11px] font-bold tracking-wider text-surface">
         <span aria-live="polite">{titles[side]}</span>
@@ -165,8 +173,10 @@ export function CardSurface({
         onPointerMove={move}
         onPointerUp={up}
         onPointerCancel={(e) => pts.current.delete(e.pointerId)}
+        style={cardSheetStyle(color)}
         className={cn(
-          "relative min-h-0 flex-1",
+          "relative min-h-0 flex-1 bg-surface",
+          color !== "plain" && "mx-1.5 mt-1.5 rounded-xl",
           zoomable && !overflow ? "touch-none select-none overflow-hidden" : "touch-pan-y overflow-y-auto overscroll-contain",
         )}
       >

@@ -23,6 +23,8 @@ import { CardPractice } from "@/components/flashcards/CardPractice";
 import { CardRealLife } from "@/components/flashcards/CardRealLife";
 import { CardSurface } from "@/components/flashcards/CardSurface";
 import { CardUsage } from "@/components/flashcards/CardUsage";
+import { post, readHistory, saveCardColor, writeHistory } from "@/components/flashcards/deckApi";
+import type { CardColor } from "@/lib/cardColors";
 import { skipQuery, withSkipped } from "@/lib/cardSkip";
 import { describeDue } from "@/lib/srs";
 import type { WordDetails } from "@/lib/wordCard";
@@ -49,58 +51,20 @@ export type DeckState = Remarks & {
 };
 
 const TITLES = ["FRONT SIDE · RECOGNITION", "BACK SIDE · UNDERSTANDING & USAGE", "SIDE 3 · REAL LIFE & PRACTICE"] as const;
-const HISTORY_KEY = "flashcard-history";
-const HISTORY_MAX = 50;
-
-function readHistory(): string[] {
-  try {
-    const v: unknown = JSON.parse(sessionStorage.getItem(HISTORY_KEY) ?? "[]");
-    return Array.isArray(v) ? v.filter((c): c is string => typeof c === "string") : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeHistory(list: string[]) {
-  try {
-    sessionStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(-HISTORY_MAX)));
-  } catch {
-    // Private mode or blocked storage: ‹ simply has nothing to go back to.
-  }
-}
-
-async function post(body: object) {
-  try {
-    const res = await fetch("/api/flashcards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const raw = await res.text();
-    let data: { error?: string; dueAt?: string } = {};
-    try {
-      data = JSON.parse(raw);
-    } catch {
-      data = { error: "Something went wrong. Try again." };
-    }
-    return res.ok ? { ok: true as const, dueAt: data.dueAt } : { ok: false as const, error: data.error ?? "Could not save. Try again." };
-  } catch {
-    return { ok: false as const, error: "No connection. Your answer was not saved — try again when you are back online." };
-  }
-}
-
 export function FlashcardDeck({
   word,
   state,
   recordHref,
   nextHref,
   skip,
+  initialColor,
 }: {
   word: DeckWord;
   state: DeckState;
   recordHref: string | null;
   nextHref: string;
   skip: string[];
+  initialColor: CardColor;
 }) {
   const router = useRouter();
   const [side, setSide] = useState<0 | 1 | 2>(0);
@@ -114,6 +78,7 @@ export function FlashcardDeck({
   const [note, setNote] = useState(state.note ?? "");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [color, setColor] = useState<CardColor>(initialColor);
 
   useEffect(() => {
     const h = readHistory();
@@ -175,6 +140,14 @@ export function FlashcardDeck({
     }
   }
 
+  // Applied at once and saved behind it; a failed save only means the colour
+  // is not remembered next time, so the card is not switched back.
+  async function saveColor(c: CardColor) {
+    setColor(c);
+    const error = await saveCardColor(c);
+    if (error) setMessage(error);
+  }
+
   async function saveNote(n: string) {
     const r = await post({ action: "note", wordId: word.id, note: n });
     if (r.ok) setNote(n);
@@ -190,6 +163,7 @@ export function FlashcardDeck({
           side={side}
           titles={TITLES}
           word={word.text}
+          color={color}
           onTurn={() => setSide((s) => ((s + 1) % 3) as 0 | 1 | 2)}
           onSwipe={(dir) => (dir === "next" ? next() : prev())}
         >
@@ -230,6 +204,8 @@ export function FlashcardDeck({
         onMark={(k) => void mark(k)}
         onPrev={prev}
         onNext={next}
+        cardColor={color}
+        onCardColor={(c) => void saveColor(c)}
       />
       {message ? (
         <p aria-live="polite" className="text-center text-xs text-ink-muted">

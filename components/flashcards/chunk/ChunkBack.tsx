@@ -1,31 +1,25 @@
-// Owns side 2 of a chunk card, "Understanding": the Hindi meaning (Devanagari
-// with Roman underneath), the example in English and Hindi, the common
-// mistake to avoid, the sheet's note, and a related chunk.
+// Owns side 2 of a chunk or grammar card, "Understanding & Usage", in the
+// word card's style (CardUsage): bordered boxes, coloured headings.
 //
-// Hindi that Claude drafted (all Devanagari, and the Core 220 gaps) is
-// labelled as a draft on the card, so a student knows a teacher has not
-// checked it yet. Sizes are `em` so CardSurface can fit the side.
+// Same layout rule as the word card: fields that hold sentences (meaning,
+// examples, the common mistake, pattern, forms, the confusing pair) get the
+// full width; short lists (similar / don't say, reply / related, where /
+// tone) share a box two to a row.
+//
+// Fields Claude drafted are named in the footer as not yet checked by a
+// teacher, so a student knows how far to trust them. All sizes are `em` so
+// CardSurface can fit the side.
 
 import Link from "next/link";
-import type { ReactNode } from "react";
 
+import { Box } from "@/components/flashcards/chunk/parts";
 import type { Bilingual, ChunkDetails } from "@/lib/chunkCard";
-import { cn } from "@/lib/utils";
 
-function Box({ edge, title, tone, children }: { edge: string; title: string; tone: string; children: ReactNode }) {
-  return (
-    <div className={cn("rounded-[0.6em] border-[1.3px] px-[0.7em] py-[0.45em]", edge)}>
-      <p className={cn("text-[0.72em] font-bold", tone)}>{title}</p>
-      <div className="text-[0.85em] leading-snug text-ink">{children}</div>
-    </div>
-  );
-}
-
-function Hindi({ h, big = false }: { h: Bilingual; big?: boolean }) {
+function Hindi({ h }: { h: Bilingual }) {
   return (
     <>
-      {h.dev ? <p className={cn(big && "text-[1.15em] font-medium")}>{h.dev}</p> : null}
-      {h.roman ? <p className="text-[0.9em] text-ink-muted">{h.roman}</p> : null}
+      {h.dev ? <p>{h.dev}</p> : null}
+      {h.roman ? <p className="text-ink-muted">{h.roman}</p> : null}
     </>
   );
 }
@@ -42,65 +36,108 @@ export function ChunkBack({
   relatedHref: string | null;
 }) {
   const w = d.watch_out;
+  const examples = [d.example, ...(d.more_examples ?? [])].filter(Boolean) as string[];
+  const tone = [d.register && `Register: ${d.register}`, d.tone && `Tone: ${d.tone}`].filter(Boolean) as string[];
   const drafts = d.drafted ?? [];
-  const draftNote = [
-    drafts.some((f) => f.startsWith("hindi")) && "Hindi script",
-    drafts.includes("example") && "the example",
-  ].filter(Boolean);
+  const draftNote = drafts.length ? "Draft, not yet checked by a teacher. " : "";
 
   return (
-    <div className="flex flex-col gap-[0.5em]">
-      {d.hindi ? (
-        <Box edge="border-tag-saffron/35" title="हिंदी मतलब · Hindi meaning" tone="text-tag-saffron">
-          <Hindi h={d.hindi} big />
-        </Box>
-      ) : null}
+    <div className="flex flex-col gap-[0.4em]">
+      <Box
+        tone="blue"
+        items={[
+          { tone: "blue", label: "Meaning (Simple)", body: d.simple },
+          { tone: "saffron", label: "Hindi Meaning", body: d.hindi ? <Hindi h={d.hindi} /> : null },
+          {
+            tone: "navy",
+            label: "Example Sentences",
+            body: examples.length ? (
+              <ul className="list-disc pl-[1.1em]">
+                {examples.map((e) => <li key={e}>{e}</li>)}
+              </ul>
+            ) : null,
+          },
+          { tone: "saffron", label: "Hindi Example", body: d.hindi_example ? <Hindi h={d.hindi_example} /> : null },
+        ]}
+      />
 
-      {d.example || d.hindi_example ? (
-        <Box edge="border-tag-blue/35" title="Example" tone="text-tag-blue">
-          {d.example ? <p className="font-medium">{d.example}</p> : null}
-          {d.hindi_example ? (
-            <div className="mt-[0.3em] border-t border-dashed border-border pt-[0.3em]">
-              <Hindi h={d.hindi_example} />
-            </div>
-          ) : null}
-        </Box>
-      ) : null}
+      <Box
+        tone="saffron"
+        items={[
+          {
+            tone: "saffron",
+            label: "Common Mistake",
+            body: w?.wrong ? (
+              <>
+                <p><span className="font-bold text-error">✗</span> {w.wrong}</p>
+                <p><span className="font-bold text-success">✓</span> {w.right ?? text}</p>
+                {w.why ? <p className="text-ink-muted">{w.why}</p> : null}
+              </>
+            ) : w?.tip,
+          },
+          { tone: "blue", label: "Grammar Pattern", body: d.pattern },
+          { tone: "green", label: "Other Forms", body: d.forms },
+        ]}
+      />
 
-      {w?.wrong || w?.tip ? (
-        <Box edge="border-tag-red/35" title="⚠ Watch out" tone="text-tag-red">
-          {w.wrong ? (
-            <>
-              <p><span className="font-bold text-error">✗</span> {w.wrong}</p>
-              <p><span className="font-bold text-success">✓</span> {text}</p>
-              {w.why ? <p className="text-ink-muted">{w.why}</p> : null}
-            </>
-          ) : (
-            <p>{w.tip}</p>
-          )}
-        </Box>
-      ) : null}
+      <Box
+        tone="green"
+        cols={2}
+        items={[
+          { tone: "green", label: "Similar Chunks", body: d.similar },
+          { tone: "red", label: "Don’t Say", body: d.dont_say },
+        ]}
+      />
 
-      {d.note ? (
-        <Box edge="border-tag-teal/35" title="Note" tone="text-tag-teal">
-          <p>{d.note}</p>
-        </Box>
-      ) : null}
+      <Box
+        tone="navy"
+        cols={2}
+        items={[
+          { tone: "navy", label: "Reply You’ll Hear", body: d.reply },
+          {
+            tone: "teal",
+            label: "Related Chunk",
+            body:
+              related && relatedHref ? (
+                <Link href={relatedHref} className="font-medium text-accent underline underline-offset-2">
+                  {related.text}
+                </Link>
+              ) : null,
+          },
+        ]}
+      />
 
-      {related && relatedHref ? (
-        <Box edge="border-tag-navy/35" title="Related chunk" tone="text-tag-navy">
-          <Link href={relatedHref} className="font-medium text-accent underline underline-offset-2">
-            {related.text}
-          </Link>
-        </Box>
-      ) : null}
+      <Box
+        tone="amber"
+        items={[
+          {
+            tone: "saffron",
+            label: "Confusing Chunks",
+            body: d.confusing?.pair ? (
+              <>
+                <p className="font-semibold">{d.confusing.pair}</p>
+                {d.confusing.diff ? <p>{d.confusing.diff}</p> : null}
+              </>
+            ) : null,
+          },
+          { tone: "amber", label: "Note", body: d.note },
+        ]}
+      />
 
-      {d.merged_from ? <p className="text-[0.68em] text-ink-muted">Also covers {d.merged_from.replace(/^Frames:\s*/, "the frame ")}</p> : null}
+      <Box
+        tone="blue"
+        cols={2}
+        items={[
+          { tone: "green", label: "Where It’s Used", body: d.where?.length ? d.where.join(" · ") : null },
+          { tone: "blue", label: "Register & Tone", body: tone.length ? tone.map((t) => <p key={t}>{t}</p>) : null },
+        ]}
+      />
+
+      {d.merged_from ? <p className="text-[0.62em] text-ink-muted">Also covers {d.merged_from.replace(/^Frames:\s*/, "the frame ")}</p> : null}
 
       <div className="flex items-end justify-between gap-[0.6em]">
-        <p className="text-[0.62em] text-ink-muted">
-          {draftNote.length ? `Draft, not yet checked by a teacher: ${draftNote.join(" and ")}. ` : ""}tap = turn over
-        </p>
+        <p className="text-[0.62em] text-ink-muted">{draftNote}tap = turn over · pinch = zoom</p>
+        {/* "Please turn over", as on the word card: a third side follows. */}
         <span className="shrink-0 rounded-tl-[0.8em] bg-saffron/25 px-[0.6em] py-[0.25em] font-display text-[0.7em] font-extrabold text-tag-saffron">
           PTO ↻
         </span>

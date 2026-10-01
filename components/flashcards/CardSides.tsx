@@ -1,5 +1,6 @@
 // Owns choosing what is drawn on each side of a card, for each kind of card:
-// a word (WordMaster sheet) or a chunk (Chunk Library). The deck hands over
+// a word (WordMaster sheet), or a chunk or grammar card (Chunk Library; both
+// use the chunk card). The deck hands over
 // the side number and the card; this file picks the components.
 //
 // It deliberately holds no state and no gestures — FlashcardDeck and
@@ -16,11 +17,13 @@ import { CardUsage } from "@/components/flashcards/CardUsage";
 import { ChunkBack } from "@/components/flashcards/chunk/ChunkBack";
 import { ChunkFront } from "@/components/flashcards/chunk/ChunkFront";
 import { ChunkPractice } from "@/components/flashcards/chunk/ChunkPractice";
-import { chunkDetailsOf, type ChunkPath } from "@/lib/chunkCard";
+import { ChunkRealLife } from "@/components/flashcards/chunk/ChunkRealLife";
+import { chunkDetailsOf } from "@/lib/chunkCard";
 import { detailsOf } from "@/lib/wordCard";
 
+// Chunk and grammar cards carry the same titles as words: the owner asked
+// for one card design across the tabs.
 export const WORD_TITLES = ["FRONT SIDE · RECOGNITION", "BACK SIDE · UNDERSTANDING & USAGE", "SIDE 3 · REAL LIFE & PRACTICE"] as const;
-export const CHUNK_TITLES = ["CHUNK · RECOGNITION", "CHUNK · MEANING & USE", "CHUNK · PRACTICE"] as const;
 
 export type SideCard = {
   code: string;
@@ -34,9 +37,9 @@ export type SideCard = {
   videoUrl: string | null;
 };
 
-/// What only a chunk card needs, looked up by the page on the server.
+/// What only a chunk or grammar card needs, looked up by the page on the server.
 export type ChunkExtras = {
-  path: ChunkPath;
+  grammar: boolean;
   distractors: string[];
   related: { code: string; text: string } | null;
   relatedHref: string | null;
@@ -72,11 +75,12 @@ export function ChunkSide({ side, card, stage, dueLabel, recordHref, onSpeak, ba
       <ChunkFront
         code={card.code}
         text={card.text}
+        grammar={extras.grammar}
         type={card.category}
         level={card.cefr}
         lewisType={card.partOfSpeech}
         d={d}
-        path={extras.path}
+        imageUrl={card.imageUrl}
         onSpeak={onSpeak}
       />
     );
@@ -84,6 +88,7 @@ export function ChunkSide({ side, card, stage, dueLabel, recordHref, onSpeak, ba
   if (side === 1) return <ChunkBack text={card.text} d={d} related={extras.related} relatedHref={extras.relatedHref} />;
   return (
     <div className="flex flex-col gap-3">
+      <ChunkRealLife d={d} />
       <ChunkPractice
         code={card.code}
         text={card.text}

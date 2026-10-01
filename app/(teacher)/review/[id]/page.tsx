@@ -152,7 +152,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         <p className="mt-1 text-sm text-ink-muted">{submission.exercise.prompt}</p>
         {submission.word ? (
           <p className="mt-2 text-sm text-ink">
-            <span className="font-medium">{submission.word.text}</span> — {submission.word.kind === "CHUNK" ? chunkGloss(chunkDetailsOf(submission.word.details)) : detailsOf(submission.word.details).simple_explanation}
+            <span className="font-medium">{submission.word.text}</span> — {submission.word.kind !== "WORD" ? chunkGloss(chunkDetailsOf(submission.word.details)) : detailsOf(submission.word.details).simple_explanation}
           </p>
         ) : null}
       </Card>

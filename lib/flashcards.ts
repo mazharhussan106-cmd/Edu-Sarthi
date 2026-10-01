@@ -6,8 +6,8 @@
 //
 // Days are counted in India time, as everywhere else in the app.
 //
-// A Deck is one kind of card (words, chunks), optionally narrowed to one chunk
-// type, in one learning order (chunks have Path A and Path B). The daily
+// A Deck is one kind of card (words, chunks, grammar), optionally narrowed to
+// one chunk type. Every kind has one learning order, `serial`. The daily
 // new-card limit counts the whole kind, so filtering to one type does not
 // hand out another ten new cards.
 //
@@ -44,14 +44,14 @@ export const WORD_SELECT = {
   videoUrl: true,
 } satisfies Prisma.WordSelect;
 
-export type Deck = { kind: CardKind; category?: string; path?: "A" | "B" };
+export type Deck = { kind: CardKind; category?: string };
 
 // Must match the exercise titles created by prisma/import-words.ts and
-// prisma/import-chunks.ts. "Record yourself" attaches the recording to these.
+// prisma/import-chunks.ts (which also loads grammar). "Record yourself" attaches the recording to these.
 export const PRACTICE_TITLE: Record<CardKind, string> = {
   WORD: "Use the word in your own sentences",
   CHUNK: "Use the chunk in your own sentences",
-  GRAMMAR: "Use the word in your own sentences",
+  GRAMMAR: "Use the grammar frame in your own sentences",
 };
 
 function wordWhere(deck: Deck) {
@@ -108,24 +108,24 @@ export async function nextCardId(
 
   const fresh = await prisma.word.findFirst({
     where: { ...wordWhere(deck), states: { none: { userId } }, ...notSkipped },
-    orderBy: deck.path === "B" ? { serialB: "asc" } : { serial: "asc" },
+    orderBy: { serial: "asc" },
     select: { id: true },
   });
   return fresh?.id ?? null;
 }
 
-/// What a chunk card needs beyond its own row: three other chunks for the
+/// What a chunk or grammar card needs beyond its own row: three other chunks for the
 /// multiple choice (from the same group, so the choice is a real one, and
 /// the nearest in learning order, so they stay the same on every visit),
 /// and the text of the related chunk the sheet points to.
-export async function chunkExtras(word: { id: string; serial: number; category: string | null; details: unknown }) {
+export async function chunkExtras(word: { id: string; kind: CardKind; serial: number; category: string | null; details: unknown }) {
   const d = (word.details ?? {}) as { group?: string | null; related?: string | null };
   const near = (rows: { text: string; serial: number }[]) =>
     rows.sort((a, b) => Math.abs(a.serial - word.serial) - Math.abs(b.serial - word.serial)).map((r) => r.text);
 
   const sameGroup = d.group
     ? await prisma.word.findMany({
-        where: { kind: "CHUNK", id: { not: word.id }, details: { path: ["group"], equals: d.group } },
+        where: { kind: word.kind, id: { not: word.id }, details: { path: ["group"], equals: d.group } },
         select: { text: true, serial: true },
         take: 40,
       })
@@ -133,7 +133,7 @@ export async function chunkExtras(word: { id: string; serial: number; category: 
   let distractors = near(sameGroup).slice(0, 3);
   if (distractors.length < 3 && word.category) {
     const sameType = await prisma.word.findMany({
-      where: { kind: "CHUNK", id: { not: word.id }, category: word.category, text: { notIn: distractors } },
+      where: { kind: word.kind, id: { not: word.id }, category: word.category, text: { notIn: distractors } },
       select: { text: true, serial: true },
       orderBy: { serial: "asc" },
       take: 40,

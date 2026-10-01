@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { CardControls, type Level, type Remarks } from "@/components/flashcards/CardControls";
-import { CHUNK_TITLES, ChunkSide, WORD_TITLES, WordSide, type ChunkExtras } from "@/components/flashcards/CardSides";
+import { ChunkSide, WORD_TITLES, WordSide, type ChunkExtras } from "@/components/flashcards/CardSides";
 import { CardSurface } from "@/components/flashcards/CardSurface";
 import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi";
 import type { CardColor } from "@/lib/cardColors";
@@ -64,9 +64,9 @@ export function FlashcardDeck({
   nextHref: string;
   skip: string[];
   cardColor: CardColor;
-  /** Present for chunk cards; words leave it out. */
+  /** Present for chunk and grammar cards; words leave it out. */
   chunk?: ChunkExtras;
-  /** The chunk tab has one more row of chips above the card. */
+  /** The Chunk tab has one more row of chips above the card. */
   tallTop?: boolean;
 }) {
   const router = useRouter();
@@ -175,7 +175,7 @@ export function FlashcardDeck({
       >
         <CardSurface
           side={side}
-          titles={chunk ? CHUNK_TITLES : WORD_TITLES}
+          titles={WORD_TITLES}
           word={word.text}
           color={cardColor}
           onTurn={() => setSide((s) => ((s + 1) % 3) as 0 | 1 | 2)}

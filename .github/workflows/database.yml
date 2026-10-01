@@ -3,8 +3,8 @@
 #   Actions → "Database setup" → Run workflow.
 #
 # It creates or updates the tables (prisma db push), adds the starter modules
-# (seed), loads the 2,227 flashcard words (import-words) and the 1,430 chunks
-# (import-chunks). All four are safe to run again: they update what exists
+# (seed), loads the 2,227 flashcard words (import-words), and the 1,183 chunks
+# and 247 grammar cards (import-chunks loads both). All four are safe to run again: they update what exists
 # instead of duplicating it.
 #
 # It deliberately does NOT pass --accept-data-loss. If a schema change would
@@ -54,5 +54,5 @@ jobs:
       - name: Load flashcard words
         run: npx tsx prisma/import-words.ts
 
-      - name: Load chunk cards
+      - name: Load chunk and grammar cards
         run: npx tsx prisma/import-chunks.ts

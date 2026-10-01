@@ -1,6 +1,6 @@
-// Loads content/chunk-library/chunks.json into the Word table as kind CHUNK,
-// and makes sure the hidden system exercise for "Record yourself" on a chunk
-// card exists.
+// Loads content/chunk-library/chunks.json into the Word table as kind CHUNK
+// and grammar.json as kind GRAMMAR (the Grammar tab), and makes sure the
+// hidden system exercises for "Record yourself" on those cards exist.
 //
 // Safe to run again after the workbook changes: rows are matched on the app
 // code (the workbook ID, with PRP renamed PFR) and updated in place, so
@@ -11,7 +11,7 @@
 //            python content/chunk-library/tools/export_json.py
 
 import { readFileSync } from "fs";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type CardKind } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -30,11 +30,24 @@ type Chunk = {
 // else stays in `details`.
 const CORE = new Set(["code", "text", "type", "lewis_type", "level", "order_a", "order_b"]);
 
-// Must match CHUNK_PRACTICE_TITLE in lib/flashcards.ts.
-const CHUNK_PRACTICE_TITLE = "Use the chunk in your own sentences";
+// Titles must match PRACTICE_TITLE in lib/flashcards.ts.
+const FILES: { kind: CardKind; file: string; title: string; prompt: string }[] = [
+  {
+    kind: "CHUNK",
+    file: "content/chunk-library/chunks.json",
+    title: "Use the chunk in your own sentences",
+    prompt: "Say the chunk clearly, then use it in three sentences of your own, the way you would say them in a real conversation.",
+  },
+  {
+    kind: "GRAMMAR",
+    file: "content/chunk-library/grammar.json",
+    title: "Use the grammar frame in your own sentences",
+    prompt: "Say the frame clearly, then fill it in three sentences of your own about your day, your work or your studies.",
+  },
+];
 
-async function main() {
-  const rows = JSON.parse(readFileSync("content/chunk-library/chunks.json", "utf8")) as Chunk[];
+async function load(kind: CardKind, file: string) {
+  const rows = JSON.parse(readFileSync(file, "utf8")) as Chunk[];
 
   let done = 0;
   for (let i = 0; i < rows.length; i += 200) {
@@ -54,14 +67,20 @@ async function main() {
         };
         return prisma.word.upsert({
           where: { code: r.code },
-          create: { code: r.code, kind: "CHUNK", ...data },
-          update: data,
+          // Kind is updated too: a card moved between files (the grammar
+          // split) changes tab but keeps the student's progress on it.
+          create: { code: r.code, kind, ...data },
+          update: { kind, ...data },
         });
       }),
     );
     done += batch.length;
   }
-  console.log(`Chunks imported or updated: ${done}`);
+  console.log(`${kind} cards imported or updated: ${done}`);
+}
+
+async function main() {
+  for (const f of FILES) await load(f.kind, f.file);
 
   // Same hidden module as the word recordings (created by import-words.ts,
   // or here if chunks are imported first).
@@ -76,21 +95,15 @@ async function main() {
       },
     });
   }
-  const ex = await prisma.exercise.findFirst({ where: { moduleId: mod.id, title: CHUNK_PRACTICE_TITLE } });
-  if (!ex) {
-    await prisma.exercise.create({
-      data: {
-        moduleId: mod.id,
-        title: CHUNK_PRACTICE_TITLE,
-        prompt:
-          "Say the chunk clearly, then use it in three sentences of your own, the way you would say them in a real conversation.",
-        expects: "AUDIO",
-        minSeconds: 15,
-        maxSeconds: 90,
-      },
-    });
+  for (const f of FILES) {
+    const ex = await prisma.exercise.findFirst({ where: { moduleId: mod.id, title: f.title } });
+    if (!ex) {
+      await prisma.exercise.create({
+        data: { moduleId: mod.id, title: f.title, prompt: f.prompt, expects: "AUDIO", minSeconds: 15, maxSeconds: 90 },
+      });
+    }
   }
-  console.log("Chunk exercise ready.");
+  console.log("Chunk and grammar exercises ready.");
 }
 
 main().finally(() => prisma.$disconnect());

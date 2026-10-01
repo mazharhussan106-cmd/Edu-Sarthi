@@ -17,8 +17,6 @@ export const PREFERENCE_SCHEMA = z.object({
   autoplayAudit: z.boolean(),
   largerText: z.boolean(),
   cardColor: z.enum(CARD_COLOR_VALUES),
-  // Null until the student picks Path A or B on the Chunk tab.
-  chunkPath: z.enum(["A", "B"]).nullable(),
 });
 
 export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
@@ -28,5 +26,4 @@ export const DEFAULT_PREFERENCES: Preferences = {
   autoplayAudit: false,
   largerText: false,
   cardColor: "plain" as CardColor,
-  chunkPath: null,
 };

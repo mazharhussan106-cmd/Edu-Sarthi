@@ -1,6 +1,7 @@
-// Owns reading a chunk's `details` (from content/chunk-library/chunks.json)
-// into typed pieces the chunk card shows, the chunk-type filter's labels,
-// and building a gap-fill from the chunk's own data.
+// Owns reading a chunk's `details` (from content/chunk-library/chunks.json,
+// and grammar.json for the Grammar tab, which uses the same card) into typed
+// pieces the card shows, the chunk-type filter's labels, and building a
+// gap-fill from the card's own data.
 //
 // Like lib/wordCard.ts it never throws on odd data: the sheet was written by
 // people, and a field that does not parse is simply not shown.
@@ -19,7 +20,7 @@ export type ChunkDetails = {
   example?: string | null;
   hindi?: Bilingual | null;
   hindi_example?: Bilingual | null;
-  watch_out?: { wrong: string | null; why: string | null; tip: string | null } | null;
+  watch_out?: { wrong: string | null; right?: string | null; why: string | null; tip: string | null } | null;
   note?: string | null;
   gap?: { q: string | null; a: string | null } | null;
   path_a?: { n: number; stage: string | null } | null;
@@ -28,7 +29,31 @@ export type ChunkDetails = {
   related?: string | null;
   phase?: string | null;
   merged_from?: string | null;
+  was_core?: boolean;
   drafted?: string[];
+  // Drafted card fields (content/chunk-library/tools/rich_fields.py).
+  ipa?: string | null;
+  linking?: string | null;
+  hi_pron?: string | null;
+  stress?: string | null;
+  register?: string | null;
+  pron_tip?: string | null;
+  not_when?: string | null;
+  memory?: string | null;
+  simple?: string | null;
+  more_examples?: string[];
+  pattern?: string | null;
+  forms?: string | null;
+  similar?: string | null;
+  dont_say?: string | null;
+  reply?: string | null;
+  reply_wrong?: string[];
+  confusing?: { pair: string | null; diff: string | null } | null;
+  where?: string[];
+  tone?: string | null;
+  real_life?: { everyday: string | null; work: string | null; casual: string | null } | null;
+  conversation?: string[];
+  speaking_task?: string | null;
 };
 
 export function chunkDetailsOf(json: unknown): ChunkDetails {
@@ -37,7 +62,6 @@ export function chunkDetailsOf(json: unknown): ChunkDetails {
 
 /// The type filter on the Chunk tab. `value` is what `Word.category` holds.
 export const CHUNK_TYPES = [
-  { value: "core", label: "Core 220" },
   { value: "frames", label: "Frames" },
   { value: "prepositions", label: "Prepositions" },
   { value: "collocations", label: "Collocations" },
@@ -54,22 +78,6 @@ export function isChunkType(v: unknown): v is ChunkType {
 export function chunkTypeLabel(v: string | null | undefined): string {
   return CHUNK_TYPES.find((t) => t.value === v)?.label ?? "Chunk";
 }
-
-export type ChunkPath = "A" | "B";
-
-/// The two learning orders, described from the sheet's own stage names.
-export const CHUNK_PATHS: { value: ChunkPath; title: string; steps: string[] }[] = [
-  {
-    value: "A",
-    title: "Path A · Level by level",
-    steps: ["Survival chunks", "Slot stems", "Collocations & fillers", "Connectors", "Idioms"],
-  },
-  {
-    value: "B",
-    title: "Path B · Stage by stage",
-    steps: ["Unfreeze", "Fix errors people notice", "Skim the basics", "Collocations & natural speech", "Connectors", "Idioms"],
-  },
-];
 
 /// The chunk without its placeholders ("___", "…", "(someone)"): what
 /// is actually said, for the speak button and for gap-fill matching.
@@ -106,7 +114,7 @@ export function chunkGloss(d: ChunkDetails): string {
   return d.hindi?.roman ?? d.example ?? "";
 }
 
-/// "Word" or "Chunk", for screens that label a flashcard recording.
-export function cardNoun(kind: string | null | undefined): "Word" | "Chunk" {
-  return kind === "CHUNK" ? "Chunk" : "Word";
+/// "Word", "Chunk" or "Grammar", for screens that label a flashcard recording.
+export function cardNoun(kind: string | null | undefined): "Word" | "Chunk" | "Grammar" {
+  return kind === "CHUNK" ? "Chunk" : kind === "GRAMMAR" ? "Grammar" : "Word";
 }

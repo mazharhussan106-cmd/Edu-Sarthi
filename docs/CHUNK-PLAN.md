@@ -59,9 +59,14 @@ every card field for all 1,430 chunks, data first and the card layout later.
   utterances, 58 → collocations, 54 → frames, 30 → polywords). IDs stay
   `CORE-xxx`, so links and progress keep working.
 - **One order:** A1 → A2 → B1; former Core chunks first inside each level.
-- **Not done yet (code):** the app still shows the "Core 220" chip and the
-  Path A/B chooser, and the card does not show the new fields. That is the
-  next step, waiting for the owner's go-ahead.
+- **Code done (1 Oct 2026):** the card now matches the approved mockup and
+  the word card — side 1 picture, ID, IPA, linking, Indian pronunciation,
+  profile rows and tips; side 2 boxes from meaning to tone; side 3 real-life
+  lines, mini conversation, then practice (fill the blank, multiple choice,
+  what would you reply, quick recall, translate, speaking task), review plan,
+  video and record. The Core 220 chip and the Path A/B chooser (and its
+  Settings picker) are gone. `serialB` stays in the schema, unused, so no
+  migration and no data loss.
 
 **Grammar split (owner's choice):** 247 frames whose group teaches a grammar
 point (Present, Past, Future, Modals, Passive, Reported speech, Conditions,
@@ -69,3 +74,8 @@ Tenses, Questions, Comparing, It/There, Verb patterns, Make/let/get, and the 13
 "Grammatical chunks") now live in `grammar.json` for the Grammar tab. 1,183
 stay in `chunks.json`. Each file has its own A1 → A2 → B1 order. Review
 workbooks: `Chunk_Library_Review.xlsx` and `Grammar_Library_Review.xlsx`.
+
+**Grammar tab live (1 Oct 2026):** `prisma/import-chunks.ts` loads
+`grammar.json` as kind GRAMMAR (a card moved from chunks keeps its progress and
+switches tab). Grammar cards use the chunk card, with "Grammar topic" in place
+of the type, and their own hidden "Record yourself" exercise.

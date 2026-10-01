@@ -1,7 +1,7 @@
 // Owns the top of the Flashcard tab: the search box, then one scrolling row
 // with the card kinds (Words, Chunk, Grammar), the "skipped" chip, the
 // student's remark lists and today's counts; on the Chunk tab, a second row
-// with the chunk types (Core 220, Frames, …).
+// with the chunk types (Frames, Prepositions, …).
 //
 // Kept to as few short rows as possible so the card gets most of a phone
 // screen. A server component: it only links, it never fetches.
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 export const DECK_KINDS = [
   { value: "words", label: "Words", kind: "WORD", ready: true, noun: "word" },
   { value: "chunks", label: "Chunk", kind: "CHUNK", ready: true, noun: "chunk" },
-  { value: "grammar", label: "Grammar", kind: "GRAMMAR", ready: false, noun: "card" },
+  { value: "grammar", label: "Grammar", kind: "GRAMMAR", ready: true, noun: "card" },
 ] as const;
 export type DeckKind = (typeof DECK_KINDS)[number];
 

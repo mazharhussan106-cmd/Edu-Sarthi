@@ -83,7 +83,7 @@ export default async function PracticePage({
       </h1>
       {word ? (
         <p className="mt-1 text-sm text-ink-muted">
-          {word.kind === "CHUNK"
+          {word.kind !== "WORD"
             ? chunkGloss(chunkDetailsOf(word.details))
             : `${detailsOf(word.details).hindi_meaning} · ${detailsOf(word.details).ipa}`}
         </p>

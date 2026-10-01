@@ -1,10 +1,12 @@
 // Owns the Flashcard tab: picks what to show — a card, search results, a
-// remark list, the chunk path chooser, or "done for today" — and loads it.
+// remark list, or "done for today" — and loads it. Chunk and Grammar cards
+// share the chunk card; only the Chunk tab has the type filter.
 // The top bar (DeckTopBar) and the messages (DeckMessages) are drawn by
 // their own components; the card by FlashcardDeck.
 //
 // URL decides what is shown, so back, refresh and sharing all work:
 //   /flashcards?kind=chunks&type=frames → one chunk type (Chunk tab only)
+//   /flashcards?kind=grammar            → the Grammar tab
 //   /flashcards?card=VRB-006            → that card (its kind is taken from it)
 //   /flashcards?q=choose                → search results
 //   /flashcards?list=important          → a remark list
@@ -18,7 +20,6 @@ import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/c
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { chunkExtras, deckCounts, nextCardId, PRACTICE_TITLE, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
-import { ChunkPathChooser } from "@/components/flashcards/ChunkPathChooser";
 import { ComingSoon, DeckDone, DeckResults } from "@/components/flashcards/DeckMessages";
 import { DECK_KINDS, DECK_LISTS, DeckTopBar, type ListKey } from "@/components/flashcards/DeckTopBar";
 import { FlashcardDeck } from "@/components/flashcards/FlashcardDeck";
@@ -40,22 +41,23 @@ export default async function FlashcardsPage({
     ? await prisma.word.findUnique({ where: { code: sp.card }, select: { id: true, kind: true } })
     : null;
   const k = DECK_KINDS.find((x) => (byCode ? x.kind === byCode.kind : x.value === sp.kind)) ?? DECK_KINDS[0];
-  const isChunk = k.kind === "CHUNK";
-  const type = isChunk && isChunkType(sp.type) ? sp.type : null;
+  // Grammar cards are drawn and searched like chunks; only the Chunk tab
+  // has types to filter by.
+  const isChunk = k.kind !== "WORD";
+  const type = k.kind === "CHUNK" && isChunkType(sp.type) ? sp.type : null;
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { preferences: true } });
   // Read loosely: a stored value this version no longer offers falls back to
   // its default instead of throwing away the student's other settings.
   const prefs = PREFERENCE_SCHEMA.partial().safeParse(user?.preferences ?? {});
   const cardColor = (prefs.success && prefs.data.cardColor) || DEFAULT_PREFERENCES.cardColor;
-  const path = prefs.success ? prefs.data.chunkPath ?? null : null;
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
   const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}`;
   const withMore = sp.more === "1" ? `${base}&more=1` : base;
   const skip = parseSkip(sp.skip);
-  const deck = { kind: k.kind, category: type ?? undefined, path: path ?? undefined };
+  const deck = { kind: k.kind, category: type ?? undefined };
   const counts = k.ready ? await deckCounts(userId, deck) : null;
 
   let body: React.ReactNode;
@@ -78,11 +80,9 @@ export default async function FlashcardsPage({
       code: w.code,
       text: w.text,
       gloss: isChunk ? chunkGloss(chunkDetailsOf(w.details)) : detailsOf(w.details).hindi_meaning ?? "",
-      meta: `${w.cefr ?? ""} · ${isChunk ? chunkTypeLabel(w.category) : w.partOfSpeech ?? ""}`,
+      meta: `${w.cefr ?? ""} · ${k.kind === "CHUNK" ? chunkTypeLabel(w.category) : k.kind === "GRAMMAR" ? chunkDetailsOf(w.details).group ?? "" : w.partOfSpeech ?? ""}`,
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
-  } else if (isChunk && !path && !byCode) {
-    body = <ChunkPathChooser />;
   } else {
     const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip));
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
@@ -104,7 +104,7 @@ export default async function FlashcardsPage({
           where: { module: { isSystem: true }, title: PRACTICE_TITLE[word.kind] },
           select: { id: true },
         }),
-        word.kind === "CHUNK" ? chunkExtras(word) : null,
+        word.kind !== "WORD" ? chunkExtras(word) : null,
       ]);
       body = (
         <div className="mt-2">
@@ -125,11 +125,11 @@ export default async function FlashcardsPage({
             nextHref={withMore}
             skip={skip}
             cardColor={cardColor}
-            tallTop={isChunk}
+            tallTop={k.kind === "CHUNK"}
             chunk={
               extras
                 ? {
-                    path: path ?? "A",
+                    grammar: word.kind === "GRAMMAR",
                     distractors: extras.distractors,
                     related: extras.related,
                     relatedHref: extras.related ? `/flashcards?card=${extras.related.code}` : null,

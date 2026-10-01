@@ -1,0 +1,162 @@
+# A third example for cards whose drafted example repeated example 1.
+# One card per line:  CODE | sentence
+POL-163 | Ladies and gentlemen, please take your seats.
+COL-066 | We leave for Shimla at six, so pack your bags tonight.
+PFR-089 | Who will take care of the dog while you're away?
+UTT-114 | You came second this time. Better luck next time!
+POL-190 | The new teacher is, you know, very strict.
+PFR-090 | What time does the train arrive in Mumbai?
+UTT-121 | Excuse me, I'd like to order, please. One masala dosa.
+POL-191 | The film was long — I mean, three hours long!
+PFR-091 | My grandmother worries about everything.
+UTT-122 | The fare is 180? Here's 200. Keep the change.
+PFR-092 | Did you tell your parents about the new job?
+UTT-123 | I need it for my office. Could I get a receipt?
+PFR-093 | That cloud looks like an elephant.
+COL-071 | Nurses should earn a better salary.
+UTT-124 | Can I help you, madam? — I'm just looking, thanks.
+POL-213 | Sorry, this machine is out of order. Use the next one.
+POL-214 | Winter jackets are on sale this week.
+PFR-109 | The landlord fixed the problem with the tap.
+COL-074 | My grandfather watches the news every evening at nine.
+UTT-127 | I called the office three times; the line is busy.
+PFR-126 | What happened to the cake? It's all gone!
+COL-078 | We do the laundry when it's sunny.
+UTT-134 | My son is already in college. Time flies!
+UTT-145 | Saving is easy. Let me give you an example.
+PFR-128 | My grandfather needs help with his new phone.
+COL-080 | I got dressed in five minutes this morning.
+UTT-156 | Hello? You're breaking up. I'll call you back.
+UTT-159 | Sorry, the call dropped. I was in the lift.
+PFR-136 | My cousin is going to marry her college friend.
+COL-153 | If he still has a high temperature tomorrow, take him to the doctor.
+UTT-160 | I can't see the slides. Can you share your screen?
+PFR-137 | For any problem, contact the customer care number.
+UTT-161 | I'll text you the details after the meeting.
+PFR-138 | Nobody answered the door.
+COL-155 | I can tell her anything; she's a close friend.
+UTT-165 | The guests are here. Let's get started.
+PFR-139 | We ordered two plates of momos.
+UTT-166 | We've talked about the budget. Let's move on.
+COL-157 | His hard work got him the promotion.
+UTT-167 | That's the first part. Any questions so far?
+COL-158 | After college, she found a full-time job in a bank.
+UTT-169 | The meeting is moved to 3 p.m. — Noted, thanks.
+UTT-170 | I'm not sure the room is free. Let me check and confirm.
+UTT-179 | Welcome to City Hospital. May I have your name, please?
+UTT-180 | Your surname is new to me. Could you spell that for me?
+UTT-181 | Your ticket is booked. Is there anything else I can help you with?
+COL-165 | My father is a big fan of old Hindi songs.
+COL-166 | Sir, a quick question: is the test on Monday?
+UTT-190 | I broke my arm. This happened a few years ago.
+UTT-191 | Personally, I prefer studying in the morning.
+COL-168 | Yoga is part of my daily routine.
+UTT-202 | You speak Marathi! Where are you from originally?
+COL-170 | You look tired. Was it a long day at work?
+UTT-203 | Hello, Uncle! How's the family?
+UTT-204 | Lovely weather today! Let's sit outside.
+UTT-205 | Are you enjoying yourself? Have some more food.
+COL-173 | The video keeps stopping because of a weak signal.
+COL-175 | Junk food is cheap, but it's bad for your health.
+COL-177 | After a long journey, a hot bath feels great.
+COL-180 | Is Independence Day a public holiday?
+COL-181 | In a joint family, there's always someone at home.
+COL-245 | I totally agree; we need more buses.
+COL-246 | Don't worry, it's perfectly fine to ask questions.
+COL-249 | After a year in London, he could speak fluently.
+COL-250 | The road is wet, so drive carefully.
+COL-252 | If you study hard, you'll get into a good college.
+COL-272 | Wear formal clothes to a job interview.
+COL-274 | Waiting in this queue is a waste of time.
+COL-276 | I can't sing today; I have a sore throat.
+COL-280 | Charge your phone before the battery dies.
+COL-281 | Every Sunday we have a video call with my sister in Canada.
+COL-282 | Eating street food in the rain gave him a stomach ache.
+COL-283 | My grandmother always picks cash on delivery when she shops online.
+COL-284 | After ten years in a village, city life feels noisy.
+COL-285 | I'm taking a day off to go to my cousin's wedding.
+CORE-066 | The best way to learn a language is to speak it every day.
+CORE-148 | You have a point; the bus is cheaper.
+CORE-150 | I'm running late. Start the meeting without me.
+CORE-151 | I said I'd help you, and I always keep a promise.
+CORE-191 | Before we start, let's get everyone on the same page.
+CORE-195 | The wedding cost an arm and a leg.
+CORE-216 | Please find attached the photos from the event.
+FRM-042 | After two years in Chennai, I'm used to eating rice every day.
+UTT-011 | Your face looks familiar. Have we met before?
+POL-019 | I visit my old school from time to time.
+PFR-016 | You'll get your refund within seven days.
+UTT-012 | Hello, I'm Anil. — It's a pleasure to meet you.
+POL-020 | Hurry, or we won't get to the station in time.
+PFR-033 | Light comes in through the window.
+POL-021 | They sold the house and moved to Goa for good.
+COL-085 | May I make a suggestion? Let's leave early.
+UTT-040 | He won the lottery? You're kidding!
+POL-022 | I saw a snake in the garden the other day.
+COL-086 | Call the clinic and make an appointment for Monday.
+POL-023 | The fire alarm rang, and we left the building at once.
+PFR-048 | Most villagers are against the new factory.
+FRM-239 | Even though I was tired, I finished the work.
+COL-090 | Could you do me a favour and water my plants?
+POL-027 | I've been late three days in a row.
+FRM-240 | She saves money every month so that she can buy a scooter.
+UTT-051 | Why is the sky blue? That's an interesting question.
+PFR-066 | Parents are responsible for their children's safety.
+FRM-241 | Delhi is hot in summer, whereas Shimla stays cool.
+PFR-067 | Marathi is similar to Hindi in many ways.
+FRM-242 | The trip was not only fun but also cheap.
+UTT-053 | Sorry, the phone rang. Where was I?
+PFR-068 | My grandmother is very fond of gardening.
+COL-094 | The final match will take place in Kolkata.
+UTT-054 | Which job will I take? Let me think about that for a second.
+POL-031 | The shop is no longer open on Sundays.
+PFR-069 | Not many people are aware of this scheme.
+POL-032 | I fell off a bike as a child. Since then, I've been scared of bikes.
+PFR-070 | Don't be jealous of your friends' success.
+POL-033 | The results come out in June. Until then, relax.
+PFR-071 | The customer wasn't satisfied with the answer.
+FRM-246 | As I said, we need two more volunteers.
+UTT-066 | First we turn left, then right at the temple. Are you with me?
+PFR-072 | He was ashamed of his lie.
+FRM-247 | Whether you like it or not, you have to finish your homework.
+POL-035 | With a mixer, the chutney is ready in no time.
+PFR-073 | We're all fed up with the power cuts.
+UTT-068 | Sorry, I'm not sure I follow. Which form do I fill in?
+POL-036 | The vegetable seller comes every other day.
+PFR-074 | Are you familiar with the bus routes here?
+UTT-075 | We need more trees in the city. — I couldn't agree more.
+POL-037 | At present, she's studying for her exams.
+PFR-075 | I'm grateful for everything my teachers did.
+POL-050 | Each student can bring two guests at most.
+PFR-076 | We were surprised by the size of the crowd.
+FRM-267 | I don't agree that boys are better at maths.
+UTT-077 | I'm afraid I disagree; I think the old plan was better.
+PFR-095 | My grandmother believes in home remedies.
+FRM-268 | I believe that hard work always pays off.
+COL-103 | The students made posters to raise awareness about clean water.
+POL-052 | Since I started walking, I use the lift less and less.
+COL-104 | Using public transport helps reduce pollution.
+UTT-079 | You think the rule is fair? That's not how I see it.
+POL-053 | My uncle lives abroad, so we hardly ever see him.
+PFR-097 | That red scooter belongs to my neighbour.
+COL-105 | The team worked late to meet the deadline.
+UTT-080 | You like tea, I like coffee. Let's agree to disagree.
+POL-055 | Every now and then, my mother makes gulab jamun.
+UTT-082 | Let's order pizza! — That's exactly what I was thinking.
+POL-056 | It's fine to eat junk food once in a while.
+PFR-100 | Could you lend your notes to me for one day?
+COL-108 | The principal will hold a meeting with the parents.
+POL-057 | His English has improved quite a bit.
+PFR-101 | Many people suffer from back pain.
+FRM-285 | The reason I like my town is that everyone knows each other.
+COL-109 | My aunt runs a small business selling pickles.
+UTT-092 | You brought food for me? That's very kind of you.
+PFR-102 | Turn off your phone and focus on the lesson.
+COL-110 | Farmers work very hard to earn a living.
+POL-059 | The music is far too loud.
+PFR-103 | Many villages rely on rain for farming.
+FRM-287 | Living in a small town has several advantages. The biggest one is clean air.
+FRM-288 | Working from home is nice. The downside is that I feel lonely.
+POL-067 | Quite a few students failed the test.
+UTT-106 | Can you work on Sunday? — I'm afraid I can't.
+POL-068 | A number of shops were closed for the festival.

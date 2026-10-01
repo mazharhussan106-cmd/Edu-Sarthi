@@ -55,6 +55,25 @@ def load() -> dict[str, dict[str, str | None]]:
     return out
 
 
+def load_extra() -> dict[str, str]:
+    """A third example for cards whose drafts repeated example 1
+    (tools/rich/extra_ex_*.txt, "CODE | sentence")."""
+    out: dict[str, str] = {}
+    for path in sorted(glob.glob(os.path.join(HERE, "rich", "extra_ex_*.txt"))):
+        for n, line in enumerate(open(path, encoding="utf-8"), 1):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            code, _, sentence = line.partition(" | ")
+            if not sentence or code in out:
+                raise ValueError(f"{os.path.basename(path)}:{n}: bad or duplicate line")
+            out[code] = sentence.strip()
+    return out
+
+
+EXTRA = load_extra()
+
+
 def merge(chunk: dict, r: dict[str, str | None] | None) -> None:
     """Add the drafted fields to one chunk, in place."""
     if not r:
@@ -80,6 +99,9 @@ def merge(chunk: dict, r: dict[str, str | None] | None) -> None:
         if e and e.strip().lower() not in seen:
             seen.add(e.strip().lower())
             examples.append(e)
+    extra = EXTRA.get(chunk["code"])
+    if extra and len(examples) < 2 and extra.strip().lower() not in seen:
+        examples.append(extra)
     chunk.update(
         {
             # Side 1 · sound

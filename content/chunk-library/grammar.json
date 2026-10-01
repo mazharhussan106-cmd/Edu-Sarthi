@@ -1117,7 +1117,8 @@
   "memory": "Will + you + base verb.",
   "simple": "Used to ask about the future or make a request.",
   "more_examples": [
-   "Will you come tomorrow?"
+   "Will you come tomorrow?",
+   "Will you come to my birthday party?"
   ],
   "pattern": "Will you + base verb?",
   "forms": "Won't you…? · Would you…?",
@@ -1446,7 +1447,8 @@
   "memory": "May = polite; can = casual.",
   "simple": "Used to ask permission.",
   "more_examples": [
-   "Can I sit here?"
+   "Can I sit here?",
+   "Can I use your phone for a minute?"
   ],
   "pattern": "May I / Can I + base verb?",
   "forms": "Could I…?",
@@ -1776,7 +1778,8 @@
   "memory": "Call = name.",
   "simple": "Asks for the English word for something.",
   "more_examples": [
-   "What do you call this in English?"
+   "What do you call this in English?",
+   "What do you call \"jhadu\" in English?"
   ],
   "pattern": "What do you call + noun + in English?",
   "forms": "What's the English word for…?",
@@ -2431,7 +2434,8 @@
   "memory": "Don't want to + verb.",
   "simple": "Used to say you don't wish to do something.",
   "more_examples": [
-   "I don't want to eat."
+   "I don't want to eat.",
+   "I don't want to be late for the train."
   ],
   "pattern": "I don't want to + base verb.",
   "forms": "I'd rather not…",
@@ -2594,7 +2598,8 @@
   "memory": "Hobby + -ing.",
   "simple": "Used to say what you like to do in free time.",
   "more_examples": [
-   "My hobbies are reading and cooking."
+   "My hobbies are reading and cooking.",
+   "My hobby is collecting old coins."
   ],
   "pattern": "My hobby is + -ing.",
   "forms": "My hobbies are…",
@@ -2676,7 +2681,8 @@
   "memory": "What's = what is.",
   "simple": "Asks for a piece of information.",
   "more_examples": [
-   "What's your number?"
+   "What's your number?",
+   "What's your favourite food?"
   ],
   "pattern": "What's your + noun?",
   "forms": "What's his…?",
@@ -2837,7 +2843,8 @@
   "memory": "Which = from options.",
   "simple": "Asks someone to choose from options.",
   "more_examples": [
-   "Which one do you like?"
+   "Which one do you like?",
+   "Which subject do you like the most?"
   ],
   "pattern": "Which + noun + do you like?",
   "forms": "Which one… · Which is your favourite…?",
@@ -2998,7 +3005,8 @@
   "memory": "Many + plural noun.",
   "simple": "Asks about the number of things.",
   "more_examples": [
-   "How many brothers do you have?"
+   "How many brothers do you have?",
+   "How many students do you have in your class?"
   ],
   "pattern": "How many + plural noun + do you have?",
   "forms": "How many … are there?",
@@ -3242,7 +3250,8 @@
   "memory": "Did + do.",
   "simple": "Asks what someone did at a past time.",
   "more_examples": [
-   "What did you do on the weekend?"
+   "What did you do on the weekend?",
+   "What did you do last night?"
   ],
   "pattern": "What did you do + time?",
   "forms": "What did you…?",
@@ -3322,7 +3331,8 @@
   "memory": "Do + verb.",
   "simple": "Asks where someone does something regularly.",
   "more_examples": [
-   "Where do you work?"
+   "Where do you work?",
+   "Where do you buy your vegetables?"
   ],
   "pattern": "Where do you + base verb?",
   "forms": "Where does he…?",
@@ -3485,7 +3495,8 @@
   "memory": "Do + have.",
   "simple": "Asks if someone has something.",
   "more_examples": [
-   "Do you have change?"
+   "Do you have change?",
+   "Do you have a charger I can use?"
   ],
   "pattern": "Do you have + noun?",
   "forms": "Have you got…?",
@@ -4570,7 +4581,8 @@
   "memory": "About to = very soon.",
   "simple": "Used to say you will do something very soon.",
   "more_examples": [
-   "The film is about to start."
+   "The film is about to start.",
+   "Hurry up, the bus is about to leave."
   ],
   "pattern": "I'm about to + base verb.",
   "forms": "I was about to…",
@@ -4897,7 +4909,8 @@
   "memory": "Should = good idea.",
   "simple": "Used to give advice.",
   "more_examples": [
-   "You should rest."
+   "You should rest.",
+   "You should drink more water in summer."
   ],
   "pattern": "You should + base verb.",
   "forms": "You shouldn't…",
@@ -5304,7 +5317,8 @@
   "memory": "The + -est.",
   "simple": "Used to say something is number one.",
   "more_examples": [
-   "She's the tallest in class."
+   "She's the tallest in class.",
+   "Mount Everest is the highest mountain in the world."
   ],
   "pattern": "the + adjective-est / the most + long adjective",
   "forms": null,
@@ -5469,7 +5483,8 @@
   "memory": "Either … or = one of two.",
   "simple": "Used to give two choices.",
   "more_examples": [
-   "Either tea or coffee."
+   "Either tea or coffee.",
+   "You can pay either by cash or by card."
   ],
   "pattern": "either A or B",
   "forms": "neither … nor",
@@ -5632,7 +5647,8 @@
   "memory": "Is + past participle.",
   "simple": "Used when the action matters more than who does it.",
   "more_examples": [
-   "Rice is grown in Punjab."
+   "Rice is grown in Punjab.",
+   "Tea is grown in Assam."
   ],
   "pattern": "noun + is/are + past participle",
   "forms": "was ___ed",
@@ -5712,7 +5728,8 @@
   "memory": "Was + past participle.",
   "simple": "Used for past actions when the doer is not important.",
   "more_examples": [
-   "The Taj Mahal was built by Shah Jahan."
+   "The Taj Mahal was built by Shah Jahan.",
+   "The bridge was opened in 2015."
   ],
   "pattern": "noun + was/were + past participle",
   "forms": "is ___ed",
@@ -6035,7 +6052,8 @@
   "memory": "Asked + person + to.",
   "simple": "Used to report a request.",
   "more_examples": [
-   "She asked me to help."
+   "She asked me to help.",
+   "My teacher asked me to read the poem aloud."
   ],
   "pattern": "He asked me to + base verb.",
   "forms": "He told me to…",
@@ -6198,7 +6216,8 @@
   "memory": "Verb last.",
   "simple": "Used to say you don't know something.",
   "more_examples": [
-   "I don't know what time it is."
+   "I don't know what time it is.",
+   "I don't know what her phone number is."
   ],
   "pattern": "I don't know what + noun + is.",
   "forms": "I don't know where…",
@@ -6280,7 +6299,8 @@
   "memory": "Sure = certain.",
   "simple": "Used to say you are certain.",
   "more_examples": [
-   "I'm sure he's home."
+   "I'm sure he's home.",
+   "I'm sure that the shop opens at ten."
   ],
   "pattern": "I'm sure (that) + clause.",
   "forms": "I'm not sure…",
@@ -6360,7 +6380,8 @@
   "memory": "Negative goes on \"think\".",
   "simple": "Used to give a negative opinion softly.",
   "more_examples": [
-   "I don't think it's true."
+   "I don't think it's true.",
+   "I don't think we need an umbrella today."
   ],
   "pattern": "I don't think + clause.",
   "forms": "I doubt…",
@@ -6442,7 +6463,8 @@
   "memory": "Hope = wish.",
   "simple": "Used to say you want something good to happen.",
   "more_examples": [
-   "I hope it doesn't rain."
+   "I hope it doesn't rain.",
+   "I hope that you feel better soon."
   ],
   "pattern": "I hope (that) + clause.",
   "forms": "I hope so · Hopefully",
@@ -6605,7 +6627,8 @@
   "memory": "Let + person + base verb.",
   "simple": "Used to say someone allowed you to do something.",
   "more_examples": [
-   "She let me use her phone."
+   "She let me use her phone.",
+   "My brother let me ride his bike."
   ],
   "pattern": "He let me + base verb.",
   "forms": "allowed me to",
@@ -7177,7 +7200,8 @@
   "memory": "Should I = advise me.",
   "simple": "Asks for advice.",
   "more_examples": [
-   "Should I take the job?"
+   "Should I take the job?",
+   "It's very cold. Should I wear a jacket?"
   ],
   "pattern": "Should I + base verb?",
   "forms": "Do you think I should…?",
@@ -7338,7 +7362,8 @@
   "memory": "Had to = was necessary.",
   "simple": "Used to say something was necessary in the past.",
   "more_examples": [
-   "I had to wait an hour."
+   "I had to wait an hour.",
+   "The lift was broken, so I had to take the stairs."
   ],
   "pattern": "I had to + base verb.",
   "forms": "I didn't have to…",
@@ -7665,7 +7690,8 @@
   "memory": "Must = very important.",
   "simple": "Used for strong advice or rules.",
   "more_examples": [
-   "You must wear a helmet."
+   "You must wear a helmet.",
+   "You must switch off your phone in the exam hall."
   ],
   "pattern": "You must + base verb.",
   "forms": "You mustn't… · You have to…",
@@ -7992,7 +8018,8 @@
   "memory": "Finish + -ing.",
   "simple": "Used to say you have completed an activity.",
   "more_examples": [
-   "I've finished eating."
+   "I've finished eating.",
+   "I've finished reading the book you gave me."
   ],
   "pattern": "I've finished + -ing.",
   "forms": "I'm done + -ing",
@@ -8074,7 +8101,8 @@
   "memory": "Forgot to = didn't do.",
   "simple": "Used to say you didn't do something because you didn't remember.",
   "more_examples": [
-   "I forgot to call."
+   "I forgot to call.",
+   "I forgot to bring my lunch today."
   ],
   "pattern": "I forgot to + base verb.",
   "forms": "I didn't remember to…",
@@ -8156,7 +8184,8 @@
   "memory": "Learning to + verb.",
   "simple": "Used to say you are learning a skill now.",
   "more_examples": [
-   "She's learning to swim."
+   "She's learning to swim.",
+   "My grandmother is learning to use WhatsApp."
   ],
   "pattern": "I'm learning to + base verb.",
   "forms": "I'm learning how to…",
@@ -8236,7 +8265,8 @@
   "memory": "Start + -ing.",
   "simple": "Used to say you began doing something.",
   "more_examples": [
-   "She started learning Hindi."
+   "She started learning Hindi.",
+   "Last year I started learning the guitar."
   ],
   "pattern": "I started + -ing/to + verb.",
   "forms": "I began…",
@@ -8648,7 +8678,8 @@
   "memory": "Scared to + verb.",
   "simple": "Used to say you are afraid to do something.",
   "more_examples": [
-   "I'm scared to fly."
+   "I'm scared to fly.",
+   "I'm scared to swim in the deep end."
   ],
   "pattern": "I'm scared to + base verb.",
   "forms": "scared of + noun",
@@ -8813,7 +8844,8 @@
   "memory": "Glad = happy.",
   "simple": "Used to say you're happy to do or hear something.",
   "more_examples": [
-   "I'm glad to help."
+   "I'm glad to help.",
+   "I'm glad to see you again."
   ],
   "pattern": "I'm glad to + base verb.",
   "forms": "I'm happy to…",
@@ -9142,7 +9174,8 @@
   "memory": "How = method.",
   "simple": "Asks how someone does something.",
   "more_examples": [
-   "How do you cook dal?"
+   "How do you cook dal?",
+   "How do you remember new words?"
   ],
   "pattern": "How do you + base verb?",
   "forms": "How does he…?",
@@ -9305,7 +9338,8 @@
   "memory": "Why + are + -ing.",
   "simple": "Asks the reason for what someone is doing now.",
   "more_examples": [
-   "Why are you crying?"
+   "Why are you crying?",
+   "Why are you running? We have time."
   ],
   "pattern": "Why are you + -ing?",
   "forms": "How come you're…?",
@@ -9470,7 +9504,8 @@
   "memory": "Why + do.",
   "simple": "Asks the reason someone likes something.",
   "more_examples": [
-   "Why do you like this song?"
+   "Why do you like this song?",
+   "Why do you like living in a small town?"
   ],
   "pattern": "Why do you like + noun/-ing?",
   "forms": "What do you like about…?",
@@ -9552,7 +9587,8 @@
   "memory": "Do you think + clause.",
   "simple": "Asks someone's opinion.",
   "more_examples": [
-   "Do you think he's right?"
+   "Do you think he's right?",
+   "Do you think we'll get tickets for the match?"
   ],
   "pattern": "Do you think + clause?",
   "forms": "What do you think?",
@@ -9634,7 +9670,8 @@
   "memory": "Which = choose.",
   "simple": "Asks which of two is better.",
   "more_examples": [
-   "Which is better, this or that?"
+   "Which is better, this or that?",
+   "Which is better, the train or the bus to Jaipur?"
   ],
   "pattern": "Which is better, A or B?",
   "forms": "Which do you prefer?",
@@ -9716,7 +9753,8 @@
   "memory": "The best = number one.",
   "simple": "Asks which is the best one.",
   "more_examples": [
-   "Which school is the best?"
+   "Which school is the best?",
+   "Which app is the best for learning English?"
   ],
   "pattern": "Which + noun + is the best?",
   "forms": "What's the best…?",
@@ -9796,7 +9834,8 @@
   "memory": "Not yet = still waiting.",
   "simple": "Used to say something hasn't happened so far.",
   "more_examples": [
-   "I haven't finished yet."
+   "I haven't finished yet.",
+   "I haven't paid the electricity bill yet."
   ],
   "pattern": "I haven't + past participle + yet.",
   "forms": "not yet",
@@ -9961,7 +10000,8 @@
   "memory": "Were + -ing.",
   "simple": "Asks what someone was doing at a past time.",
   "more_examples": [
-   "Were you working at 6?"
+   "Were you working at 6?",
+   "Were you watching TV when I called?"
   ],
   "pattern": "Were you + -ing?",
   "forms": "Was he…?",
@@ -10290,7 +10330,8 @@
   "memory": "Whenever = every time.",
   "simple": "Used to say something happens every time.",
   "more_examples": [
-   "Whenever it rains, I stay in."
+   "Whenever it rains, I stay in.",
+   "Whenever I visit my grandmother, she makes halwa."
   ],
   "pattern": "Whenever + clause, + clause.",
   "forms": "every time",
@@ -10702,7 +10743,8 @@
   "memory": "Time to = now we should.",
   "simple": "Used to say it's the moment for something.",
   "more_examples": [
-   "It's time to go."
+   "It's time to go.",
+   "It's time to start the class."
   ],
   "pattern": "It's time to + base verb.",
   "forms": "It's time for + noun",
@@ -10950,7 +10992,8 @@
   "memory": "No need = not necessary.",
   "simple": "Used to say something is not necessary.",
   "more_examples": [
-   "There's no need to shout."
+   "There's no need to shout.",
+   "There's no need to bring food; lunch is provided."
   ],
   "pattern": "There's no need to + base verb.",
   "forms": "You don't have to…",
@@ -11032,7 +11075,8 @@
   "memory": "Good that = happy about.",
   "simple": "Used to say you're happy about a fact.",
   "more_examples": [
-   "It's good that it stopped raining."
+   "It's good that it stopped raining.",
+   "It's good that you told me the truth."
   ],
   "pattern": "It's good that + clause.",
   "forms": "I'm glad that…",
@@ -11363,7 +11407,8 @@
   "memory": "Both = the two.",
   "simple": "Used to say you like two things.",
   "more_examples": [
-   "She likes both dogs and cats."
+   "She likes both dogs and cats.",
+   "I like both Hindi and English films."
   ],
   "pattern": "I like both A and B.",
   "forms": "neither … nor",
@@ -11445,7 +11490,8 @@
   "memory": "As … as possible = max.",
   "simple": "Used to say to the greatest amount you can.",
   "more_examples": [
-   "Come as soon as possible."
+   "Come as soon as possible.",
+   "Please reply as soon as possible."
   ],
   "pattern": "as + adjective/adverb + as possible",
   "forms": "ASAP",
@@ -12117,7 +12163,8 @@
   "memory": "Keep + -ing = again and again.",
   "simple": "Used to say you do something again and again.",
   "more_examples": [
-   "I keep losing my keys."
+   "I keep losing my keys.",
+   "My little brother keeps asking for chocolate."
   ],
   "pattern": "I keep + -ing.",
   "forms": "I always…",
@@ -12282,7 +12329,8 @@
   "memory": "Had = earlier past.",
   "simple": "Used to show one past action happened before another.",
   "more_examples": [
-   "The film had started before we came."
+   "The film had started before we came.",
+   "The shop had already closed before I arrived."
   ],
   "pattern": "noun + had already + past participle + before …",
   "forms": "by the time",
@@ -12362,7 +12410,8 @@
   "memory": "Thinking OF + -ing.",
   "simple": "Used to talk about a plan you're considering.",
   "more_examples": [
-   "I'm thinking of buying a car."
+   "I'm thinking of buying a car.",
+   "I'm thinking of joining a dance class."
   ],
   "pattern": "I'm thinking of + -ing.",
   "forms": "I'm planning to…",
@@ -12851,7 +12900,8 @@
   "memory": "How long + have been.",
   "simple": "Asks how long something has continued.",
   "more_examples": [
-   "How long have you been waiting?"
+   "How long have you been waiting?",
+   "How long have you been living in Hyderabad?"
   ],
   "pattern": "How long have you been + -ing?",
   "forms": "Since when…?",
@@ -13178,7 +13228,8 @@
   "memory": "Neither … nor = not A and not B.",
   "simple": "Used to say both things are not true.",
   "more_examples": [
-   "He's neither rich nor poor."
+   "He's neither rich nor poor.",
+   "The room was neither clean nor quiet."
   ],
   "pattern": "neither A nor B",
   "forms": "either … or",
@@ -13260,7 +13311,8 @@
   "memory": "Will be + past participle.",
   "simple": "Used when something will be done in future.",
   "more_examples": [
-   "The work will be done by Friday."
+   "The work will be done by Friday.",
+   "The new road will be opened next month."
   ],
   "pattern": "noun + will be + past participle",
   "forms": "is going to be…",
@@ -13340,7 +13392,8 @@
   "memory": "Has been + past participle.",
   "simple": "Used when something has been done (now matters).",
   "more_examples": [
-   "The room has been cleaned."
+   "The room has been cleaned.",
+   "The bill has been paid."
   ],
   "pattern": "noun + has been + past participle",
   "forms": "was ___ed",
@@ -13588,7 +13641,8 @@
   "memory": "Should be + past participle.",
   "simple": "Used to say something ought to be done.",
   "more_examples": [
-   "Waste should be recycled."
+   "Waste should be recycled.",
+   "Old phones should be recycled, not thrown away."
   ],
   "pattern": "noun + should be + past participle",
   "forms": "must be · needs to be",
@@ -13749,7 +13803,8 @@
   "memory": "Was given = received.",
   "simple": "Used to say you received something.",
   "more_examples": [
-   "I was given a chance."
+   "I was given a chance.",
+   "I was given a gift by my students."
   ],
   "pattern": "I was given + noun.",
   "forms": "I got… · I received…",
@@ -13912,7 +13967,8 @@
   "memory": "Told + not to.",
   "simple": "Used to report an instruction not to do something.",
   "more_examples": [
-   "Mum told me not to worry."
+   "Mum told me not to worry.",
+   "The doctor told me not to eat fried food."
   ],
   "pattern": "He told me not to + base verb.",
   "forms": "He asked me not to…",
@@ -13992,7 +14048,8 @@
   "memory": "Asked if + statement.",
   "simple": "Used to report a yes/no question.",
   "more_examples": [
-   "She asked if we were coming."
+   "She asked if we were coming.",
+   "The teacher asked if we had any questions."
   ],
   "pattern": "He asked if + clause.",
   "forms": "He asked whether…",
@@ -14072,7 +14129,8 @@
   "memory": "Verb last.",
   "simple": "Used to report a \"where\" question.",
   "more_examples": [
-   "She asked where I lived."
+   "She asked where I lived.",
+   "A tourist asked me where the museum was."
   ],
   "pattern": "He asked where + noun + was.",
   "forms": "He asked what/when…",
@@ -14397,7 +14455,8 @@
   "memory": "Statement order.",
   "simple": "A polite way to ask for information.",
   "more_examples": [
-   "Could you tell me where the lift is?"
+   "Could you tell me where the lift is?",
+   "Could you tell me how much this costs?"
   ],
   "pattern": "Could you tell me + wh- + clause?",
   "forms": "Do you know…?",
@@ -14479,7 +14538,8 @@
   "memory": "Emphasis.",
   "simple": "Used to stress what you need.",
   "more_examples": [
-   "What I need is a good job."
+   "What I need is a good job.",
+   "What I need is a cup of hot tea."
   ],
   "pattern": "What I need is + noun.",
   "forms": "All I need is…",
@@ -14725,7 +14785,8 @@
   "memory": "Advise (verb) + person + to.",
   "simple": "Used to report advice.",
   "more_examples": [
-   "She advised me to wait."
+   "She advised me to wait.",
+   "My teacher advised me to read English newspapers."
   ],
   "pattern": "He advised me to + base verb.",
   "forms": "He told me to…",
@@ -14886,7 +14947,8 @@
   "memory": "Got + thing + done = someone else did.",
   "simple": "Used to say someone did a service for you.",
   "more_examples": [
-   "I got my hair cut."
+   "I got my hair cut.",
+   "I got my watch fixed at the market."
   ],
   "pattern": "I got my + noun + past participle.",
   "forms": "I had my … done",
@@ -14966,7 +15028,8 @@
   "memory": "Have + thing + done.",
   "simple": "Used for services you regularly get done.",
   "more_examples": [
-   "I have my car washed weekly."
+   "I have my car washed weekly.",
+   "We have our house painted every five years."
   ],
   "pattern": "I have my + noun + past participle.",
   "forms": "I get my … done",
@@ -15046,7 +15109,8 @@
   "memory": "Allow + person + to.",
   "simple": "Used to say someone gave permission.",
   "more_examples": [
-   "Dad allowed me to go."
+   "Dad allowed me to go.",
+   "The guard allowed me to park near the gate."
   ],
   "pattern": "He allowed me to + base verb.",
   "forms": "He let me…",
@@ -15209,7 +15273,8 @@
   "memory": "Must be = I'm sure.",
   "simple": "Used to guess something is very likely true.",
   "more_examples": [
-   "She must be at home."
+   "She must be at home.",
+   "You walked ten kilometres? You must be hungry."
   ],
   "pattern": "He must be + adjective/place.",
   "forms": "He can't be…",
@@ -15372,7 +15437,8 @@
   "memory": "Can't be = impossible.",
   "simple": "Used to say something is surely not true.",
   "more_examples": [
-   "That can't be true."
+   "That can't be true.",
+   "He just ate two plates of rice. He can't be hungry."
   ],
   "pattern": "He can't be + adjective/place.",
   "forms": "must be",
@@ -15454,7 +15520,8 @@
   "memory": "Must have + past participle.",
   "simple": "Used to guess what surely happened.",
   "more_examples": [
-   "She must have forgotten."
+   "She must have forgotten.",
+   "The ground is wet. It must have rained last night."
   ],
   "pattern": "He must have + past participle.",
   "forms": "He can't have…",
@@ -15536,7 +15603,8 @@
   "memory": "Might have + past participle.",
   "simple": "Used to say something possibly happened.",
   "more_examples": [
-   "She might have left."
+   "She might have left.",
+   "I can't find my keys. I might have left them at work."
   ],
   "pattern": "He might have + past participle.",
   "forms": "He may have…",
@@ -15618,7 +15686,8 @@
   "memory": "Can't have = impossible.",
   "simple": "Used to say something surely didn't happen.",
   "more_examples": [
-   "She can't have forgotten."
+   "She can't have forgotten.",
+   "She can't have finished the book already; it's 500 pages."
   ],
   "pattern": "He can't have + past participle.",
   "forms": "He couldn't have…",
@@ -15698,7 +15767,8 @@
   "memory": "Could have + past participle.",
   "simple": "Used to say something was possible but didn't happen.",
   "more_examples": [
-   "You could have told me."
+   "You could have told me.",
+   "I could have taken the earlier bus, but I missed it."
   ],
   "pattern": "I could have + past participle.",
   "forms": "I might have…",
@@ -15863,7 +15933,8 @@
   "memory": "Shouldn't have = regret.",
   "simple": "Used to say you regret doing something.",
   "more_examples": [
-   "I shouldn't have shouted."
+   "I shouldn't have shouted.",
+   "I shouldn't have stayed up so late."
   ],
   "pattern": "I shouldn't have + past participle.",
   "forms": "I regret -ing",
@@ -15943,7 +16014,8 @@
   "memory": "'d better = should strongly.",
   "simple": "Used for strong advice or warning.",
   "more_examples": [
-   "You'd better study."
+   "You'd better study.",
+   "It's getting dark. You'd better go home."
   ],
   "pattern": "You'd better + base verb.",
   "forms": "You should…",
@@ -16108,7 +16180,8 @@
   "memory": "Didn't need to = not necessary.",
   "simple": "Used to say something wasn't necessary.",
   "more_examples": [
-   "You didn't need to wait."
+   "You didn't need to wait.",
+   "You didn't need to pick me up; I could take an auto."
   ],
   "pattern": "You didn't need to + base verb.",
   "forms": "You needn't have…",
@@ -16190,7 +16263,8 @@
   "memory": "Might not = maybe not.",
   "simple": "Used to say something maybe won't happen.",
   "more_examples": [
-   "It might not rain."
+   "It might not rain.",
+   "Take the umbrella. The rain might not stop soon."
   ],
   "pattern": "He might not + base verb.",
   "forms": "He may not…",
@@ -16270,7 +16344,8 @@
   "memory": "Should = expected.",
   "simple": "Used to say what is expected by a time.",
   "more_examples": [
-   "The parcel should come by Friday."
+   "The parcel should come by Friday.",
+   "The results should be online by Monday."
   ],
   "pattern": "noun + should + verb + by + time",
   "forms": "is expected to",
@@ -16352,7 +16427,8 @@
   "memory": "No choice but = must.",
   "simple": "Used to say you are forced to do something.",
   "more_examples": [
-   "We had no choice but to wait."
+   "We had no choice but to wait.",
+   "The bus didn't come, so I had no choice but to walk."
   ],
   "pattern": "I have no choice but to + verb.",
   "forms": "I have to…",
@@ -16596,7 +16672,8 @@
   "memory": "Promise + to.",
   "simple": "Used to say you promised to do something.",
   "more_examples": [
-   "She promised to help."
+   "She promised to help.",
+   "I promised to visit my grandparents this summer."
   ],
   "pattern": "I promised to + base verb.",
   "forms": "I gave my word to…",
@@ -16676,7 +16753,8 @@
   "memory": "Refuse + to.",
   "simple": "Used to say someone would not do something.",
   "more_examples": [
-   "She refused to answer."
+   "She refused to answer.",
+   "The shopkeeper refused to give me a refund."
   ],
   "pattern": "He refused to + base verb.",
   "forms": "He wouldn't…",
@@ -16839,7 +16917,8 @@
   "memory": "Find it hard to.",
   "simple": "Used to say something is difficult for you.",
   "more_examples": [
-   "I find it hard to focus."
+   "I find it hard to focus.",
+   "I find it hard to speak English in front of many people."
   ],
   "pattern": "I find it hard to + base verb.",
   "forms": "It's hard for me to…",
@@ -16921,7 +17000,8 @@
   "memory": "Chance = opportunity.",
   "simple": "Used to say you had an opportunity.",
   "more_examples": [
-   "I got a chance to meet her."
+   "I got a chance to meet her.",
+   "At the festival, I got a chance to meet a famous singer."
   ],
   "pattern": "I got a chance to + base verb.",
   "forms": "I had the opportunity to…",
@@ -17001,7 +17081,8 @@
   "memory": "Mind + -ing.",
   "simple": "Used to say something is okay for you.",
   "more_examples": [
-   "I don't mind helping."
+   "I don't mind helping.",
+   "I don't mind sitting at the back."
   ],
   "pattern": "I don't mind + -ing.",
   "forms": "It's okay with me…",
@@ -17081,7 +17162,8 @@
   "memory": "Tried + -ing = tested a method.",
   "simple": "Used to say you tested a way to solve something.",
   "more_examples": [
-   "Try adding more salt."
+   "Try adding more salt.",
+   "I tried calling her, but she didn't pick up."
   ],
   "pattern": "I tried + -ing.",
   "forms": "I tested…",
@@ -17163,7 +17245,8 @@
   "memory": "Regret + -ing.",
   "simple": "Used to say you feel sorry you did something.",
   "more_examples": [
-   "I regret not studying."
+   "I regret not studying.",
+   "I regret not learning to swim as a child."
   ],
   "pattern": "I regret + -ing.",
   "forms": "I wish I hadn't…",
@@ -17245,7 +17328,8 @@
   "memory": "Determined = strong decision.",
   "simple": "Used to say you have firmly decided to do something.",
   "more_examples": [
-   "She's determined to win."
+   "She's determined to win.",
+   "After failing once, he's determined to pass this time."
   ],
   "pattern": "I'm determined to + base verb.",
   "forms": "I'm set on…",
@@ -17408,7 +17492,8 @@
   "memory": "Give up + -ing.",
   "simple": "Used to say you will stop a habit.",
   "more_examples": [
-   "I'll give up eating sugar."
+   "I'll give up eating sugar.",
+   "For my health, I'll give up drinking cold drinks."
   ],
   "pattern": "I'll give up + -ing.",
   "forms": "I'll quit…",
@@ -17488,7 +17573,8 @@
   "memory": "Suggest + -ing.",
   "simple": "Used to make a suggestion.",
   "more_examples": [
-   "I suggest trying this."
+   "I suggest trying this.",
+   "I suggest taking the metro; it's faster."
   ],
   "pattern": "I suggest + -ing / that + clause.",
   "forms": "I recommend…",
@@ -17651,7 +17737,8 @@
   "memory": "Spend + time + -ing.",
   "simple": "Used to say how long you did something.",
   "more_examples": [
-   "I spent the day cooking."
+   "I spent the day cooking.",
+   "We spent the whole evening talking about old times."
   ],
   "pattern": "I spent + time + -ing.",
   "forms": "It took me…",
@@ -17731,7 +17818,8 @@
   "memory": "Trouble + -ing.",
   "simple": "Used to say something was hard for you.",
   "more_examples": [
-   "I had trouble sleeping."
+   "I had trouble sleeping.",
+   "I had trouble understanding his accent."
   ],
   "pattern": "I had trouble + -ing.",
   "forms": "It was hard to…",
@@ -17811,7 +17899,8 @@
   "memory": "Couldn't help + -ing.",
   "simple": "Used to say you couldn't stop yourself.",
   "more_examples": [
-   "I couldn't help crying."
+   "I couldn't help crying.",
+   "The film was so sad that I couldn't help crying."
   ],
   "pattern": "I couldn't help + -ing.",
   "forms": "I couldn't stop…",
@@ -17891,7 +17980,8 @@
   "memory": "Who + past verb.",
   "simple": "Asks who did something.",
   "more_examples": [
-   "Who broke the glass?"
+   "Who broke the glass?",
+   "Who left the tap open?"
   ],
   "pattern": "Who + past verb + this?",
   "forms": "Who's responsible for…?",
@@ -17973,7 +18063,8 @@
   "memory": "Best way = method.",
   "simple": "Asks for the most effective method.",
   "more_examples": [
-   "What's the best way to get there?"
+   "What's the best way to get there?",
+   "What's the best way to save money?"
   ],
   "pattern": "What's the best way to + base verb?",
   "forms": "How can I best…?",
@@ -18053,7 +18144,8 @@
   "memory": "Made + person + verb.",
   "simple": "Asks why someone chose something.",
   "more_examples": [
-   "What made you choose this city?"
+   "What made you choose this city?",
+   "What made you choose this college?"
   ],
   "pattern": "What made you choose + noun?",
   "forms": "Why did you choose…?",
@@ -18133,7 +18225,8 @@
   "memory": "Haven't + for time.",
   "simple": "Used to say how long since you last did something.",
   "more_examples": [
-   "I haven't eaten for hours."
+   "I haven't eaten for hours.",
+   "I haven't seen my cousins for a long time."
   ],
   "pattern": "I haven't + past participle + for + time.",
   "forms": "since",
@@ -18215,7 +18308,8 @@
   "memory": "It's been time since.",
   "simple": "Used to say how long ago something last happened.",
   "more_examples": [
-   "It's been ages since I cooked."
+   "It's been ages since I cooked.",
+   "It's been two years since I visited my village."
   ],
   "pattern": "It's been + time + since + past.",
   "forms": "I haven't … for…",
@@ -18297,7 +18391,8 @@
   "memory": "Was going to = planned.",
   "simple": "Used to say you planned something but it didn't happen.",
   "more_examples": [
-   "I was going to cook, but I was tired."
+   "I was going to cook, but I was tired.",
+   "I was going to buy the shoes, but they were too costly."
   ],
   "pattern": "I was going to + verb, but + clause.",
   "forms": "I meant to…, but…",
@@ -18379,7 +18474,8 @@
   "memory": "Had never = not until then.",
   "simple": "Used to say you hadn't done something until a past time.",
   "more_examples": [
-   "She had never seen snow before."
+   "She had never seen snow before.",
+   "I had never eaten sushi before that day."
   ],
   "pattern": "I had never + past participle + before.",
   "forms": "It was my first time…",
@@ -18542,7 +18638,8 @@
   "memory": "Always + -ing = annoying.",
   "simple": "Used to complain about someone's habit.",
   "more_examples": [
-   "She's always losing her keys."
+   "She's always losing her keys.",
+   "My neighbour is always playing loud music."
   ],
   "pattern": "He's always + -ing.",
   "forms": "He keeps -ing",
@@ -18622,7 +18719,8 @@
   "memory": "Didn't use to.",
   "simple": "Used to say something wasn't a habit before.",
   "more_examples": [
-   "She didn't use to like maths."
+   "She didn't use to like maths.",
+   "I didn't use to like vegetables, but now I do."
   ],
   "pattern": "I didn't use to + base verb.",
   "forms": "I never used to…",
@@ -18704,7 +18802,8 @@
   "memory": "Had been + -ing.",
   "simple": "Used for an action that continued before another past event.",
   "more_examples": [
-   "She had been working there for years when she left."
+   "She had been working there for years when she left.",
+   "We had been walking for two hours when it started to rain."
   ],
   "pattern": "I had been + -ing + for + time + when + past.",
   "forms": "I'd been…",
@@ -18865,7 +18964,8 @@
   "memory": "Had + would have = past regret.",
   "simple": "Used to imagine a different past result.",
   "more_examples": [
-   "If you had called, I would have come."
+   "If you had called, I would have come.",
+   "If I had left earlier, I would have caught the train."
   ],
   "pattern": "If + past perfect, would have + past participle.",
   "forms": "If only I had…",
@@ -18947,7 +19047,8 @@
   "memory": "As long as = only if.",
   "simple": "Only if; provided that.",
   "more_examples": [
-   "You can go, as long as you're back by 9."
+   "You can go, as long as you're back by 9.",
+   "As long as you're honest, I'll help you."
   ],
   "pattern": "As long as + clause, + clause",
   "forms": "provided that · if",
@@ -19108,7 +19209,8 @@
   "memory": "In case = because it might.",
   "simple": "Used to do something as a precaution.",
   "more_examples": [
-   "Save the file in case it crashes."
+   "Save the file in case it crashes.",
+   "Keep some water in the car in case you get thirsty."
   ],
   "pattern": "action + in case + clause",
   "forms": "just in case",
@@ -19190,7 +19292,8 @@
   "memory": "Even if = whatever.",
   "simple": "Used to say something is true in any case.",
   "more_examples": [
-   "Even if you shout, I won't go."
+   "Even if you shout, I won't go.",
+   "Even if he says sorry, I won't forget it."
   ],
   "pattern": "Even if + clause, + clause",
   "forms": "no matter",
@@ -19270,7 +19373,8 @@
   "memory": "Wish + could = can't now.",
   "simple": "Used to wish for an ability you don't have.",
   "more_examples": [
-   "I wish I could come."
+   "I wish I could come.",
+   "I wish I could visit my family more often."
   ],
   "pattern": "I wish I could + base verb.",
   "forms": "If only I could…",
@@ -19352,7 +19456,8 @@
   "memory": "Wish + had = past regret.",
   "simple": "Used to regret something in the past.",
   "more_examples": [
-   "I wish I had listened."
+   "I wish I had listened.",
+   "I wish I had brought a jacket; it's so cold."
   ],
   "pattern": "I wish I had + past participle.",
   "forms": "If only I had…",
@@ -19517,7 +19622,8 @@
   "memory": "Suppose = imagine.",
   "simple": "Used to ask about an imaginary situation.",
   "more_examples": [
-   "Suppose it rained, what would we do?"
+   "Suppose it rained, what would we do?",
+   "Suppose you lost your phone, what would you do?"
   ],
   "pattern": "Suppose + past, what would + subject + verb?",
   "forms": "Imagine… · What if…?",
@@ -19680,7 +19786,8 @@
   "memory": "Worth + -ing.",
   "simple": "Used to say something is good enough to do.",
   "more_examples": [
-   "It's worth trying."
+   "It's worth trying.",
+   "Ooty is worth visiting in summer."
   ],
   "pattern": "noun + is worth + -ing",
   "forms": "worthwhile",
@@ -19843,7 +19950,8 @@
   "memory": "Doesn't matter = not important.",
   "simple": "Used to say something is not important.",
   "more_examples": [
-   "It doesn't matter if you're late."
+   "It doesn't matter if you're late.",
+   "It doesn't matter what you wear; just come."
   ],
   "pattern": "It doesn't matter + wh-/if clause.",
   "forms": "No matter…",
@@ -20006,7 +20114,8 @@
   "memory": "Such a + adjective + noun.",
   "simple": "Used to show a strong quality and its result.",
   "more_examples": [
-   "She's such a kind person that everyone likes her."
+   "She's such a kind person that everyone likes her.",
+   "It was such a hot day that we stayed indoors."
   ],
   "pattern": "such a + adjective + noun + that + clause",
   "forms": "so + adjective + that",

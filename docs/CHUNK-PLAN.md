@@ -82,8 +82,13 @@ of the type, and their own hidden "Record yourself" exercise.
 
 **Review audit (1 Oct 2026):** an automated check of all 1,430 cards found
 632 cards whose drafted example 2 or 3 repeated example 1 (repeats are now
-dropped, so those cards show 2 examples), and 6 cards whose workbook "wrong
+dropped, and each of those cards now has a new third example from
+`tools/rich/extra_ex_*.txt`), and 6 cards whose workbook "wrong
 version" cell held a label ("Future plan", "Followed by \"to\"") instead of a
 mistake (the drafted mistake is used, the label kept as the tip). Left as
 they are on purpose: 12 sign-off phrases with no "reply", Hindi that keeps
 "ATM"/"AI" in Latin letters, and examples that use an inflected form.
+
+**Words audit (1 Oct 2026):** 36 words repeated an example and two listed an
+opposite as a synonym ("take" for bring, "first" for last). Fixed in
+`content/wordmaster-2000/tools/word_fixes.py`, applied by its export_json.py.

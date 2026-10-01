@@ -2250,7 +2250,8 @@
   "memory": "Bed without \"the\" = to sleep.",
   "simple": "To lie down in bed to sleep.",
   "more_examples": [
-   "Go to bed, it's late!"
+   "Go to bed, it's late!",
+   "The kids go to bed early on school nights."
   ],
   "pattern": "go to bed (early/late)",
   "forms": "went to bed · going to bed",
@@ -2422,7 +2423,8 @@
   "memory": "TAKE a photo.",
   "simple": "To make a photograph with a camera or phone.",
   "more_examples": [
-   "I took a lot of photos in Goa."
+   "I took a lot of photos in Goa.",
+   "Excuse me, could you take a photo of my family?"
   ],
   "pattern": "take a photo (of + noun)",
   "forms": "took a photo · taking photos",
@@ -3121,7 +3123,8 @@
   "memory": "Wake = eyes open.",
   "simple": "To stop sleeping.",
   "more_examples": [
-   "Wake up! You'll be late."
+   "Wake up! You'll be late.",
+   "What time do you usually wake up on Sundays?"
   ],
   "pattern": "wake up (at + time)",
   "forms": "woke up · waking up",
@@ -3207,7 +3210,8 @@
   "memory": "Turn = switch.",
   "simple": "To start or stop a machine or light.",
   "more_examples": [
-   "Turn on the lights."
+   "Turn on the lights.",
+   "Don't forget to turn off the geyser."
   ],
   "pattern": "turn on/off + noun",
   "forms": "switch on/off",
@@ -3722,7 +3726,8 @@
   "memory": "Parson = the day after tomorrow.",
   "simple": "The day that comes two days from today.",
   "more_examples": [
-   "I'll see you the day after tomorrow."
+   "I'll see you the day after tomorrow.",
+   "My cousin's wedding is the day after tomorrow."
   ],
   "pattern": "the day after tomorrow",
   "forms": "the day before yesterday",
@@ -4153,7 +4158,8 @@
   "memory": "Salt first, always.",
   "simple": "Salt and black pepper, used together.",
   "more_examples": [
-   "Add salt and pepper to taste."
+   "Add salt and pepper to taste.",
+   "This soup needs a little salt and pepper."
   ],
   "pattern": "salt and pepper",
   "forms": "salt-and-pepper hair",
@@ -5010,7 +5016,8 @@
   "memory": "Right = exactly.",
   "simple": "At this exact moment.",
   "more_examples": [
-   "Do it right now."
+   "Do it right now.",
+   "Can you call me back? I'm driving right now."
   ],
   "pattern": "right now",
   "forms": "right away",
@@ -5337,7 +5344,8 @@
   "memory": "Was = day is over.",
   "simple": "A friendly question about someone's day.",
   "more_examples": [
-   "How was your day at school?"
+   "How was your day at school?",
+   "Hi, Papa! How was your day at the office?"
   ],
   "pattern": "How was your day/week?",
   "forms": "How's your day going?",
@@ -5419,7 +5427,8 @@
   "memory": "In = after.",
   "simple": "Very soon.",
   "more_examples": [
-   "Dinner's ready in a minute."
+   "Dinner's ready in a minute.",
+   "Hold on, I'll be with you in a minute."
   ],
   "pattern": "in a minute",
   "forms": "in a second · in a moment",
@@ -5747,7 +5756,8 @@
   "memory": "Was = over.",
   "simple": "A friendly question about someone's weekend.",
   "more_examples": [
-   "How was your weekend? Do anything fun?"
+   "How was your weekend? Do anything fun?",
+   "Hi Neha, how was your weekend? Did you go home?"
   ],
   "pattern": "How was your weekend?",
   "forms": "Did you have a good weekend?",
@@ -5994,7 +6004,8 @@
   "memory": "Don't + like.",
   "simple": "Used to say you dislike something.",
   "more_examples": [
-   "I don't like waking up early."
+   "I don't like waking up early.",
+   "I don't like spicy food at night."
   ],
   "pattern": "I don't like + noun/-ing.",
   "forms": "I hate… · I'm not a fan of…",
@@ -6240,7 +6251,8 @@
   "memory": "Bit = small piece.",
   "simple": "A little.",
   "more_examples": [
-   "Wait a bit."
+   "Wait a bit.",
+   "The tea is a bit too sweet for me."
   ],
   "pattern": "a bit + adjective / a bit of + noun",
   "forms": "a little bit",
@@ -6484,7 +6496,8 @@
   "memory": "Have a + pain.",
   "simple": "To have pain in your head.",
   "more_examples": [
-   "She has a bad headache."
+   "She has a bad headache.",
+   "I have a headache, so I'm going to lie down."
   ],
   "pattern": "have a headache/stomach ache",
   "forms": "have a cold · have a fever",
@@ -7067,7 +7080,8 @@
   "memory": "Too = more than okay.",
   "simple": "More than is good.",
   "more_examples": [
-   "This is too much food."
+   "This is too much food.",
+   "Don't put too much sugar in my tea."
   ],
   "pattern": "too much + uncountable / verb + too much",
   "forms": "too many",
@@ -7313,7 +7327,8 @@
   "memory": "Save = keep.",
   "simple": "To keep money and not spend it.",
   "more_examples": [
-   "Cook at home to save money."
+   "Cook at home to save money.",
+   "We take the bus to save money."
   ],
   "pattern": "save money (for + noun)",
   "forms": "savings",
@@ -7477,7 +7492,8 @@
   "memory": "At the end.",
   "simple": "A lot; strongly.",
   "more_examples": [
-   "Thank you very much."
+   "Thank you very much.",
+   "We enjoyed the trip very much."
   ],
   "pattern": "verb + object + very much",
   "forms": "so much",
@@ -7723,7 +7739,8 @@
   "memory": "ASK a question.",
   "simple": "To say a question to someone.",
   "more_examples": [
-   "Please ask questions."
+   "Please ask questions.",
+   "You can ask a question at the end of the class."
   ],
   "pattern": "ask a question",
   "forms": "asked · questions",
@@ -7806,7 +7823,8 @@
   "memory": "A good wish.",
   "simple": "A friendly goodbye wish.",
   "more_examples": [
-   "Have a nice day!"
+   "Have a nice day!",
+   "Here's your change. Have a nice day!"
   ],
   "pattern": "Have a nice/great day!",
   "forms": "Have a good one!",
@@ -7889,7 +7907,8 @@
   "memory": "At the end.",
   "simple": "Much or often.",
   "more_examples": [
-   "Thanks a lot!"
+   "Thanks a lot!",
+   "My grandfather walks a lot every morning."
   ],
   "pattern": "verb + a lot",
   "forms": "lots",
@@ -7971,7 +7990,8 @@
   "memory": "On = touching the top.",
   "simple": "On top of a surface.",
   "more_examples": [
-   "There's a picture on the wall."
+   "There's a picture on the wall.",
+   "Your keys are on the fridge."
   ],
   "pattern": "on + surface",
   "forms": "on top of",
@@ -8135,7 +8155,8 @@
   "memory": "Enjoy + your + noun.",
   "simple": "A wish for a nice weekend.",
   "more_examples": [
-   "Enjoy your weekend, see you Monday."
+   "Enjoy your weekend, see you Monday.",
+   "No more work today. Enjoy your weekend!"
   ],
   "pattern": "Enjoy your + noun!",
   "forms": "Have a great weekend!",
@@ -8218,7 +8239,8 @@
   "memory": "Very small.",
   "simple": "Slightly; a small amount.",
   "more_examples": [
-   "Move a little bit left."
+   "Move a little bit left.",
+   "Can you turn the volume down a little bit?"
   ],
   "pattern": "a little bit + adjective",
   "forms": "a bit · a little",
@@ -8711,7 +8733,8 @@
   "memory": "Charge = fill battery.",
   "simple": "To put power into your phone battery.",
   "more_examples": [
-   "Can I charge my phone here?"
+   "Can I charge my phone here?",
+   "My battery is low; I forgot to charge my phone."
   ],
   "pattern": "charge + device",
   "forms": "charger · fully charged",
@@ -9371,7 +9394,8 @@
   "memory": "Send = make it go.",
   "simple": "To send a text to someone.",
   "more_examples": [
-   "Send me a message when you reach."
+   "Send me a message when you reach.",
+   "I'll send a message to the group about the meeting."
   ],
   "pattern": "send + person + a message",
   "forms": "text · message (verb)",
@@ -9536,7 +9560,8 @@
   "memory": "Over there = far, pointing.",
   "simple": "In that place, a little far.",
   "more_examples": [
-   "Sit over there."
+   "Sit over there.",
+   "Can you see that tall building over there?"
   ],
   "pattern": "over there",
   "forms": "over here",
@@ -9697,7 +9722,8 @@
   "memory": "Have a fever.",
   "simple": "To have a high body temperature.",
   "more_examples": [
-   "She has a high fever."
+   "She has a high fever.",
+   "He has a fever, so he's staying home today."
   ],
   "pattern": "have a (high) fever",
   "forms": "had a fever",
@@ -9779,7 +9805,8 @@
   "memory": "Amazing = wow.",
   "simple": "Used to show you are very impressed.",
   "more_examples": [
-   "That's amazing news."
+   "That's amazing news.",
+   "You got full marks? That's amazing!"
   ],
   "pattern": "That's amazing!",
   "forms": "How amazing!",
@@ -9859,7 +9886,8 @@
   "memory": "ON the left.",
   "simple": "On the left side.",
   "more_examples": [
-   "Turn left, it's on the left."
+   "Turn left, it's on the left.",
+   "The ticket counter is on the left of the gate."
   ],
   "pattern": "on the left/right",
   "forms": "to the left",
@@ -10024,7 +10052,8 @@
   "memory": "Book = reserve.",
   "simple": "To reserve a ticket.",
   "more_examples": [
-   "Book the tickets online."
+   "Book the tickets online.",
+   "I need to book a ticket to Patna for Friday."
   ],
   "pattern": "book a ticket/room/table",
   "forms": "booked · booking",
@@ -10189,7 +10218,8 @@
   "memory": "Straight = no turns.",
   "simple": "Directly forward.",
   "more_examples": [
-   "It's straight ahead."
+   "It's straight ahead.",
+   "Walk straight ahead and you'll see the temple."
   ],
   "pattern": "go straight ahead",
   "forms": "straight on",
@@ -10271,7 +10301,8 @@
   "memory": "With = together.",
   "simple": "Together with someone.",
   "more_examples": [
-   "Come with me."
+   "Come with me.",
+   "I live with my parents and my sister."
   ],
   "pattern": "with + person",
   "forms": "together with",
@@ -10353,7 +10384,8 @@
   "memory": "Take = use.",
   "simple": "To travel by taxi.",
   "more_examples": [
-   "I took a taxi home."
+   "I took a taxi home.",
+   "It's raining, so I'll take a taxi to the station."
   ],
   "pattern": "take a taxi/cab/auto",
   "forms": "took a taxi",
@@ -10516,7 +10548,8 @@
   "memory": "AT home, GO home.",
   "simple": "In your home.",
   "more_examples": [
-   "Stay at home today."
+   "Stay at home today.",
+   "My mother works at home."
   ],
   "pattern": "at home",
   "forms": "go home",
@@ -11089,7 +11122,8 @@
   "memory": "Slowly = not fast.",
   "simple": "A polite way to ask someone to speak more slowly.",
   "more_examples": [
-   "Sorry, could you speak more slowly?"
+   "Sorry, could you speak more slowly?",
+   "Your English is good. Could you speak a bit more slowly, though?"
   ],
   "pattern": "Could you speak (a bit) more slowly?",
   "forms": "Could you slow down a bit?",
@@ -11172,7 +11206,8 @@
   "memory": "All right = okay.",
   "simple": "Okay; fine.",
   "more_examples": [
-   "Are you all right?"
+   "Are you all right?",
+   "Is everything all right at home?"
   ],
   "pattern": "All right. / Are you all right?",
   "forms": "Okay · fine",
@@ -11583,7 +11618,8 @@
   "memory": "Big = serious.",
   "simple": "A serious error.",
   "more_examples": [
-   "Don't make a big mistake."
+   "Don't make a big mistake.",
+   "Leaving the job was a big mistake."
   ],
   "pattern": "a big/huge mistake",
   "forms": "small mistake",
@@ -12164,7 +12200,8 @@
   "memory": "Right = correct.",
   "simple": "Means \"You are correct.\"",
   "more_examples": [
-   "You're right, sorry."
+   "You're right, sorry.",
+   "You're right, the shop is closed on Mondays."
   ],
   "pattern": "You're right.",
   "forms": "You're absolutely right.",
@@ -12412,7 +12449,8 @@
   "memory": "True = correct.",
   "simple": "Used to agree that something is correct.",
   "more_examples": [
-   "That's true."
+   "That's true.",
+   "That's true, the traffic is bad at this time."
   ],
   "pattern": "That's true.",
   "forms": "So true. · True.",
@@ -12907,7 +12945,8 @@
   "memory": "So = very.",
   "simple": "A strong apology.",
   "more_examples": [
-   "I'm so sorry for your loss."
+   "I'm so sorry for your loss.",
+   "I'm so sorry I'm late. The bus broke down."
   ],
   "pattern": "I'm so sorry (for/about + noun).",
   "forms": "I'm really sorry.",
@@ -12987,7 +13026,8 @@
   "memory": "Call + person.",
   "simple": "Asks someone to phone you.",
   "more_examples": [
-   "Call me when you're free."
+   "Call me when you're free.",
+   "Call me after lunch, please."
   ],
   "pattern": "Call me + time.",
   "forms": "Give me a call. · Ring me.",
@@ -13318,7 +13358,8 @@
   "memory": "Offer help.",
   "simple": "A polite offer of help.",
   "more_examples": [
-   "Can I help you find something?"
+   "Can I help you find something?",
+   "Good morning, sir. Can I help you?"
   ],
   "pattern": "Can I help you (with + noun)?",
   "forms": "How can I help?",
@@ -13648,7 +13689,8 @@
   "memory": "Always add thanks.",
   "simple": "A polite way to refuse an offer.",
   "more_examples": [
-   "No, thanks, I just ate."
+   "No, thanks, I just ate.",
+   "Would you like some tea? — No, thanks. I'm fine."
   ],
   "pattern": "No, thanks.",
   "forms": "I'm okay, thanks.",
@@ -13730,7 +13772,8 @@
   "memory": "Ring = sound.",
   "simple": "When a phone makes a sound for a call.",
   "more_examples": [
-   "My phone rang in class."
+   "My phone rang in class.",
+   "The phone rings every morning at seven; it's my mother."
   ],
   "pattern": "the phone rings / is ringing",
   "forms": "rang · ringtone",
@@ -14060,7 +14103,8 @@
   "memory": "Window = view.",
   "simple": "A seat next to the window.",
   "more_examples": [
-   "Can I get a window seat?"
+   "Can I get a window seat?",
+   "I always ask for a window seat on the train."
   ],
   "pattern": "a window/aisle seat",
   "forms": "aisle seat",
@@ -14142,7 +14186,8 @@
   "memory": "Can = belief.",
   "simple": "Used to encourage someone.",
   "more_examples": [
-   "You can do it!"
+   "You can do it!",
+   "It's only one more kilometre. You can do it!"
   ],
   "pattern": "You can do it!",
   "forms": "You've got this!",
@@ -14225,7 +14270,8 @@
   "memory": "Fine = okay.",
   "simple": "Used to comfort someone who is worried.",
   "more_examples": [
-   "Everything will be fine, trust me."
+   "Everything will be fine, trust me.",
+   "The doctor is very good. Everything will be fine."
   ],
   "pattern": "Everything will be fine/okay.",
   "forms": "It'll be okay.",
@@ -14306,7 +14352,8 @@
   "memory": "Have = get.",
   "simple": "A polite way to ask for the menu.",
   "more_examples": [
-   "Could we have the menu?"
+   "Could we have the menu?",
+   "Excuse me, can I have the menu, please?"
   ],
   "pattern": "Can I have + noun, please?",
   "forms": "Could I have…?",
@@ -14388,7 +14435,8 @@
   "memory": "Wrong = not right.",
   "simple": "Said when someone calls the wrong number.",
   "more_examples": [
-   "I think you have the wrong number."
+   "I think you have the wrong number.",
+   "Hello? Is this Ramesh? — Sorry, wrong number."
   ],
   "pattern": "Sorry, wrong number.",
   "forms": "You've got the wrong number.",
@@ -14470,7 +14518,8 @@
   "memory": "Nearest = closest.",
   "simple": "Asks where the closest ATM is.",
   "more_examples": [
-   "Where's the nearest chemist?"
+   "Where's the nearest chemist?",
+   "Excuse me, where's the nearest ATM? I need cash."
   ],
   "pattern": "Where's the nearest + noun?",
   "forms": "Is there an ATM near here?",
@@ -14552,7 +14601,8 @@
   "memory": "Far = long way.",
   "simple": "Asks if a place is a long distance away.",
   "more_examples": [
-   "Is it far from here?"
+   "Is it far from here?",
+   "I want to go to the museum. Is it far from here?"
   ],
   "pattern": "Is it far (from here)?",
   "forms": "How far is it?",
@@ -14632,7 +14682,8 @@
   "memory": "Hear = sound reaches.",
   "simple": "Asks if the other person can hear you.",
   "more_examples": [
-   "Can you hear me now?"
+   "Can you hear me now?",
+   "The network is weak. Can you hear me?"
   ],
   "pattern": "Can you hear me (now)?",
   "forms": "Am I audible? (Indian)",
@@ -14713,7 +14764,8 @@
   "memory": "Great = very good.",
   "simple": "A warm goodbye wish.",
   "more_examples": [
-   "Have a great day!"
+   "Have a great day!",
+   "Thanks for your help. Have a great day!"
   ],
   "pattern": "Have a great day!",
   "forms": "Have a good one!",
@@ -14796,7 +14848,8 @@
   "memory": "Free = not busy.",
   "simple": "Asks if someone has time this weekend.",
   "more_examples": [
-   "Are you free on Saturday?"
+   "Are you free on Saturday?",
+   "Are you free this weekend? Let's watch a film."
   ],
   "pattern": "Are you free + time?",
   "forms": "Are you busy…?",
@@ -17916,7 +17969,8 @@
   "memory": "Heavy = a lot.",
   "simple": "A lot of rain falling.",
   "more_examples": [
-   "Heavy rain is expected tomorrow."
+   "Heavy rain is expected tomorrow.",
+   "The roads were full of water after the heavy rain."
   ],
   "pattern": "heavy rain",
   "forms": "light rain · heavy traffic",
@@ -18003,7 +18057,8 @@
   "memory": "CATCH like a ball.",
   "simple": "To get a cold (the illness).",
   "more_examples": [
-   "Wear a jacket or you'll catch a cold."
+   "Wear a jacket or you'll catch a cold.",
+   "Don't sit under the fan with wet hair; you'll catch a cold."
   ],
   "pattern": "catch a cold",
   "forms": "caught a cold · have a cold",
@@ -18176,7 +18231,8 @@
   "memory": "Save = keep, not waste.",
   "simple": "To use less time.",
   "more_examples": [
-   "Take the metro to save time."
+   "Take the metro to save time.",
+   "We cook dinner in the morning to save time."
   ],
   "pattern": "save time/money",
   "forms": "saved time · time-saving",
@@ -18263,7 +18319,8 @@
   "memory": "Least = smallest.",
   "simple": "Not less than; the minimum.",
   "more_examples": [
-   "At least call me!"
+   "At least call me!",
+   "Drink at least eight glasses of water a day."
   ],
   "pattern": "at least + number/noun",
   "forms": "at the very least",
@@ -18347,7 +18404,8 @@
   "memory": "As well = also, at the end.",
   "simple": "Means \"also\" or \"too\".",
   "more_examples": [
-   "She speaks Tamil as well."
+   "She speaks Tamil as well.",
+   "Can I come as well?"
   ],
   "pattern": "… as well.",
   "forms": "too · also",
@@ -18433,7 +18491,8 @@
   "memory": "At = right now.",
   "simple": "Now, at this time.",
   "more_examples": [
-   "I'm not free at the moment."
+   "I'm not free at the moment.",
+   "The manager is in a meeting at the moment."
   ],
   "pattern": "at the moment",
   "forms": "right now · currently",
@@ -19550,7 +19609,8 @@
   "memory": "Explain SOMETHING TO someone.",
   "simple": "To make something clear to a person.",
   "more_examples": [
-   "Explain it to him."
+   "Explain it to him.",
+   "Could you explain the rules to my brother?"
   ],
   "pattern": "explain + thing + to + person",
   "forms": "explained · explanation",
@@ -19806,7 +19866,8 @@
   "memory": "In a while = after some time.",
   "simple": "After a short time.",
   "more_examples": [
-   "See you in a while."
+   "See you in a while.",
+   "The doctor will see you in a while."
   ],
   "pattern": "in a while",
   "forms": "once in a while",
@@ -19978,7 +20039,8 @@
   "memory": "IN cash, BY card.",
   "simple": "To pay with money, not a card.",
   "more_examples": [
-   "I paid in cash."
+   "I paid in cash.",
+   "The shop doesn't take cards, so I'll pay in cash."
   ],
   "pattern": "pay in cash / by card",
   "forms": "paid in cash",
@@ -22821,7 +22883,8 @@
   "memory": "To = in order to.",
   "simple": "Used to say why you do something.",
   "more_examples": [
-   "I came to see you."
+   "I came to see you.",
+   "She went to the market to buy vegetables."
   ],
   "pattern": "verb + to + base verb",
   "forms": "in order to · so that",
@@ -22987,7 +23050,8 @@
   "memory": "Fixed friendly phrase.",
   "simple": "A friendly greeting after a long time.",
   "more_examples": [
-   "Long time no see! How are you?"
+   "Long time no see! How are you?",
+   "Rahul! Long time no see! Where have you been?"
   ],
   "pattern": "Long time no see!",
   "forms": "It's been ages!",
@@ -23229,7 +23293,8 @@
   "memory": "Enjoy + -ing.",
   "simple": "Used to say you like doing something.",
   "more_examples": [
-   "I enjoy reading at night."
+   "I enjoy reading at night.",
+   "My father enjoys walking in the park."
   ],
   "pattern": "I enjoy + -ing.",
   "forms": "I really enjoy…",
@@ -23390,7 +23455,8 @@
   "memory": "Been = all this time.",
   "simple": "Asks how someone has been since you last met.",
   "more_examples": [
-   "How have you been?"
+   "How have you been?",
+   "Hi Aunty, how have you been?"
   ],
   "pattern": "How have you been?",
   "forms": "What have you been up to?",
@@ -23800,7 +23866,8 @@
   "memory": "Up = happening.",
   "simple": "A casual \"How are you?\" or \"What's happening?\".",
   "more_examples": [
-   "What's up with you these days?"
+   "What's up with you these days?",
+   "What's up? You look worried."
   ],
   "pattern": "What's up (with + noun)?",
   "forms": "Sup? · What's new?",
@@ -24125,7 +24192,8 @@
   "memory": "Best = full effort.",
   "simple": "To try as hard as you can.",
   "more_examples": [
-   "I'll do my best."
+   "I'll do my best.",
+   "The exam is hard, but do your best."
   ],
   "pattern": "do your/my best",
   "forms": "did my best",
@@ -24291,7 +24359,8 @@
   "memory": "While = some time.",
   "simple": "For some time.",
   "more_examples": [
-   "Rest for a while."
+   "Rest for a while.",
+   "I lived in Pune for a while."
   ],
   "pattern": "for a while",
   "forms": "in a while",
@@ -24618,7 +24687,8 @@
   "memory": "Taken = someone's seat.",
   "simple": "Asks if someone is already sitting there.",
   "more_examples": [
-   "Is this seat free?"
+   "Is this seat free?",
+   "Is this seat taken, or can I sit here?"
   ],
   "pattern": "Is this seat taken/free?",
   "forms": "Is anyone sitting here?",
@@ -24701,7 +24771,8 @@
   "memory": "All the time = always.",
   "simple": "Very often; always.",
   "more_examples": [
-   "It rains all the time here."
+   "It rains all the time here.",
+   "My little brother asks questions all the time."
   ],
   "pattern": "all the time",
   "forms": "always",
@@ -24947,7 +25018,8 @@
   "memory": "Do = chore.",
   "simple": "To buy food and things for the house.",
   "more_examples": [
-   "Who does the shopping?"
+   "Who does the shopping?",
+   "Can you do the shopping today? I'm busy."
   ],
   "pattern": "do the shopping",
   "forms": "grocery shopping",
@@ -25029,7 +25101,8 @@
   "memory": "Was = over now.",
   "simple": "A polite way to end a conversation.",
   "more_examples": [
-   "It was nice talking to you. See you!"
+   "It was nice talking to you. See you!",
+   "Well, I have to go. It was nice talking to you."
   ],
   "pattern": "It was nice talking to you.",
   "forms": "Nice talking to you. · Great chatting.",
@@ -25111,7 +25184,8 @@
   "memory": "Same time = together.",
   "simple": "Together; or \"but also\".",
   "more_examples": [
-   "I laughed and cried at the same time."
+   "I laughed and cried at the same time.",
+   "Don't all talk at the same time, please."
   ],
   "pattern": "at the same time",
   "forms": "simultaneously",
@@ -25355,7 +25429,8 @@
   "memory": "Do = study.",
   "simple": "To study a course.",
   "more_examples": [
-   "She did a cooking course."
+   "She did a cooking course.",
+   "I want to do a course in English speaking."
   ],
   "pattern": "do/take a course",
   "forms": "course in",
@@ -25435,7 +25510,8 @@
   "memory": "Safe = no harm.",
   "simple": "A wish for safe travel.",
   "more_examples": [
-   "Have a safe journey home."
+   "Have a safe journey home.",
+   "You leave for Delhi tomorrow? Have a safe trip!"
   ],
   "pattern": "Have a safe trip/journey!",
   "forms": "Safe travels!",
@@ -25681,7 +25757,8 @@
   "memory": "Sorry + clause.",
   "simple": "Used to apologise for a situation.",
   "more_examples": [
-   "I'm sorry that you're ill."
+   "I'm sorry that you're ill.",
+   "I'm sorry that I missed your call."
   ],
   "pattern": "I'm sorry (that) + clause.",
   "forms": "I'm sorry for + noun",
@@ -25847,7 +25924,8 @@
   "memory": "Soon = next chat.",
   "simple": "A friendly goodbye on calls or chats.",
   "more_examples": [
-   "Talk to you soon!"
+   "Talk to you soon!",
+   "I'll check and call you back. Talk to you soon."
   ],
   "pattern": "Talk to you soon/later.",
   "forms": "TTYL (text)",
@@ -26012,7 +26090,8 @@
   "memory": "Before + -ing.",
   "simple": "Earlier than something.",
   "more_examples": [
-   "Call before coming."
+   "Call before coming.",
+   "Please switch off the lights before leaving."
   ],
   "pattern": "before + -ing/noun",
   "forms": "after",
@@ -26258,7 +26337,8 @@
   "memory": "Say hi = greet from me.",
   "simple": "Asks someone to greet others for you.",
   "more_examples": [
-   "Say hi to your parents."
+   "Say hi to your parents.",
+   "Have a good holiday, and say hi to everyone."
   ],
   "pattern": "Say hi to + person.",
   "forms": "Give my regards to…",
@@ -26423,7 +26503,8 @@
   "memory": "After + -ing/noun.",
   "simple": "Later than something.",
   "more_examples": [
-   "After eating, I slept."
+   "After eating, I slept.",
+   "After finishing my homework, I watched TV."
   ],
   "pattern": "after + -ing/noun",
   "forms": "before",
@@ -26671,7 +26752,8 @@
   "memory": "Touch = contact.",
   "simple": "Used to say you want to stay in contact.",
   "more_examples": [
-   "Let's keep in touch after college."
+   "Let's keep in touch after college.",
+   "It was great working with you. Let's keep in touch."
   ],
   "pattern": "Let's keep/stay in touch.",
   "forms": "Stay in touch!",
@@ -26834,7 +26916,8 @@
   "memory": "Between two.",
   "simple": "In the space in the middle of two things.",
   "more_examples": [
-   "Sit between Ravi and me."
+   "Sit between Ravi and me.",
+   "I'm free between two and four."
   ],
   "pattern": "between A and B",
   "forms": "among (3+)",
@@ -26916,7 +26999,8 @@
   "memory": "Ask you = permission.",
   "simple": "Asks permission before a question.",
   "more_examples": [
-   "Can I ask you something?"
+   "Can I ask you something?",
+   "Can I ask you for a small favour?"
   ],
   "pattern": "Can I ask you + noun?",
   "forms": "May I ask…?",
@@ -26998,7 +27082,8 @@
   "memory": "A look = quick check.",
   "simple": "To look at something quickly.",
   "more_examples": [
-   "Have a look at this."
+   "Have a look at this.",
+   "Have a look at this photo from the trip."
   ],
   "pattern": "have/take a look (at + noun)",
   "forms": "had a look",
@@ -27080,7 +27165,8 @@
   "memory": "Happy FOR someone.",
   "simple": "Used to share someone's joy.",
   "more_examples": [
-   "I'm so happy for you both."
+   "I'm so happy for you both.",
+   "You're getting married? I'm so happy for you!"
   ],
   "pattern": "I'm so happy for + person!",
   "forms": "Good for you!",
@@ -27162,7 +27248,8 @@
   "memory": "One more time.",
   "simple": "One more time.",
   "more_examples": [
-   "Once again, sorry."
+   "Once again, sorry.",
+   "Could you explain it once again?"
   ],
   "pattern": "once again",
   "forms": "one more time",
@@ -27324,7 +27411,8 @@
   "memory": "Talk ABOUT.",
   "simple": "Used to introduce your topic.",
   "more_examples": [
-   "I'd like to talk about climate change."
+   "I'd like to talk about climate change.",
+   "Today I'd like to talk about my favourite festival."
   ],
   "pattern": "I'd like to talk about + noun.",
   "forms": "Today I'll talk about…",
@@ -27654,7 +27742,8 @@
   "memory": "Over = above, across.",
   "simple": "Above or across something.",
   "more_examples": [
-   "Jump over the wall."
+   "Jump over the wall.",
+   "There's a bridge over the river."
   ],
   "pattern": "over + noun",
   "forms": "above",
@@ -27734,7 +27823,8 @@
   "memory": "Time + ago.",
   "simple": "Used to say when a story happened.",
   "more_examples": [
-   "This happened a long time ago."
+   "This happened a long time ago.",
+   "We moved to this city. This happened five years ago."
   ],
   "pattern": "This happened + time + ago.",
   "forms": "…back",
@@ -27980,7 +28070,8 @@
   "memory": "Later = after now.",
   "simple": "At a later time.",
   "more_examples": [
-   "Later on, we went home."
+   "Later on, we went home.",
+   "I'm busy now; let's talk later on."
   ],
   "pattern": "later on",
   "forms": "afterwards",
@@ -28060,7 +28151,8 @@
   "memory": "Into = go in.",
   "simple": "Moving to the inside of something.",
   "more_examples": [
-   "Put it into the box."
+   "Put it into the box.",
+   "She poured the milk into the glass."
   ],
   "pattern": "into + noun",
   "forms": "out of",
@@ -28223,7 +28315,8 @@
   "memory": "Give = deliver.",
   "simple": "To present information to a group.",
   "more_examples": [
-   "She gave a great presentation."
+   "She gave a great presentation.",
+   "Every student has to give a presentation in English."
   ],
   "pattern": "give/make a presentation",
   "forms": "present",
@@ -28389,7 +28482,8 @@
   "memory": "Just now = a moment ago.",
   "simple": "A very short time ago.",
   "more_examples": [
-   "I saw her just now."
+   "I saw her just now.",
+   "Your mother called just now."
   ],
   "pattern": "past verb + just now",
   "forms": "a moment ago",
@@ -28552,7 +28646,8 @@
   "memory": "Never forget = special memory.",
   "simple": "Used to say why a memory is special.",
   "more_examples": [
-   "I'll never forget that day."
+   "I'll never forget that day.",
+   "I'll never forget it because my whole family was there."
   ],
   "pattern": "I'll never forget it because + clause.",
   "forms": "It stays with me because…",
@@ -28634,7 +28729,8 @@
   "memory": "Give = offer.",
   "simple": "To show an example.",
   "more_examples": [
-   "Let me give you an example."
+   "Let me give you an example.",
+   "Can you give an example of a good habit?"
   ],
   "pattern": "give an example (of + noun)",
   "forms": "for example",
@@ -28716,7 +28812,8 @@
   "memory": "How = very.",
   "simple": "Used to show interest in what someone says.",
   "more_examples": [
-   "How interesting! I didn't know."
+   "How interesting! I didn't know.",
+   "You speak five languages? How interesting!"
   ],
   "pattern": "How + adjective!",
   "forms": "That's interesting!",
@@ -28881,7 +28978,8 @@
   "memory": "Towards = in the direction of.",
   "simple": "In the direction of something.",
   "more_examples": [
-   "Drive towards the station."
+   "Drive towards the station.",
+   "The dog ran towards me."
   ],
   "pattern": "towards + noun",
   "forms": "toward (US)",
@@ -28963,7 +29061,8 @@
   "memory": "Get = receive.",
   "simple": "To be hired for work.",
   "more_examples": [
-   "I want to get a job."
+   "I want to get a job.",
+   "My brother wants to get a job in Bengaluru."
   ],
   "pattern": "get a job (at/in + place)",
   "forms": "got a job · find a job",
@@ -29788,7 +29887,8 @@
   "memory": "Usual = normal.",
   "simple": "In the normal way.",
   "more_examples": [
-   "See you at 8 as usual."
+   "See you at 8 as usual.",
+   "As usual, the train was late."
   ],
   "pattern": "as usual",
   "forms": "like always",
@@ -30119,7 +30219,8 @@
   "memory": "Even = surprise.",
   "simple": "To a greater degree than expected.",
   "more_examples": [
-   "I love it even more now."
+   "I love it even more now.",
+   "After the rain, it got even more humid."
   ],
   "pattern": "even more + adjective",
   "forms": "even better · even worse",
@@ -30201,7 +30302,8 @@
   "memory": "With a tool.",
   "simple": "Used to show the tool you use.",
   "more_examples": [
-   "Cut it with a knife."
+   "Cut it with a knife.",
+   "Please write with a black pen."
   ],
   "pattern": "with + tool",
   "forms": "by (for transport)",
@@ -30283,7 +30385,8 @@
   "memory": "Pay = give money.",
   "simple": "To pay money you owe.",
   "more_examples": [
-   "Pay the bill online."
+   "Pay the bill online.",
+   "Did you pay the phone bill this month?"
   ],
   "pattern": "pay a bill",
   "forms": "paid · bill payment",
@@ -30448,7 +30551,8 @@
   "memory": "So = very.",
   "simple": "A lot; very much.",
   "more_examples": [
-   "I miss you so much."
+   "I miss you so much.",
+   "There's so much traffic today."
   ],
   "pattern": "verb + so much / so much + noun",
   "forms": "so many",
@@ -30613,7 +30717,8 @@
   "memory": "Keep = not share.",
   "simple": "To not tell others something private.",
   "more_examples": [
-   "She kept the secret."
+   "She kept the secret.",
+   "I told her about the gift, and she kept the secret."
   ],
   "pattern": "keep a secret",
   "forms": "tell a secret",
@@ -30944,7 +31049,8 @@
   "memory": "Touch = contact.",
   "simple": "To continue to contact someone.",
   "more_examples": [
-   "We keep in touch on WhatsApp."
+   "We keep in touch on WhatsApp.",
+   "My school friends and I still keep in touch."
   ],
   "pattern": "keep in touch (with + person)",
   "forms": "stay in touch",
@@ -31109,7 +31215,8 @@
   "memory": "Plenty = enough and more.",
   "simple": "More than enough.",
   "more_examples": [
-   "There's plenty of food."
+   "There's plenty of food.",
+   "Drink plenty of water in the summer."
   ],
   "pattern": "plenty of + noun",
   "forms": "lots of",
@@ -31272,7 +31379,8 @@
   "memory": "Break = not follow.",
   "simple": "To not follow a rule.",
   "more_examples": [
-   "Don't break the rules."
+   "Don't break the rules.",
+   "If you break a rule, you pay a fine."
   ],
   "pattern": "break/follow a rule",
   "forms": "broke a rule",
@@ -31602,7 +31710,8 @@
   "memory": "Lose = less.",
   "simple": "To become thinner.",
   "more_examples": [
-   "She lost 5 kg."
+   "She lost 5 kg.",
+   "He started walking every day to lose weight."
   ],
   "pattern": "lose/gain weight",
   "forms": "lost weight",
@@ -32014,7 +32123,8 @@
   "memory": "Catch = hear.",
   "simple": "A polite way to say you didn't hear.",
   "more_examples": [
-   "Sorry, I didn't catch your name."
+   "Sorry, I didn't catch your name.",
+   "Sorry, I didn't catch that. Which platform?"
   ],
   "pattern": "Sorry, I didn't catch that/your name.",
   "forms": "Pardon?",
@@ -32259,7 +32369,8 @@
   "memory": "Spend = use.",
   "simple": "To use time doing something.",
   "more_examples": [
-   "She spends time reading."
+   "She spends time reading.",
+   "I love to spend time with my grandparents."
   ],
   "pattern": "spend time (with/on/-ing)",
   "forms": "spent · spend money",
@@ -32341,7 +32452,8 @@
   "memory": "Checks meaning.",
   "simple": "Asks if you understood correctly.",
   "more_examples": [
-   "Do you mean the red one?"
+   "Do you mean the red one?",
+   "Do you mean the shop near the bus stand?"
   ],
   "pattern": "Do you mean + noun/clause?",
   "forms": "You mean…?",
@@ -32423,7 +32535,8 @@
   "memory": "On the way = coming.",
   "simple": "Travelling to a place now.",
   "more_examples": [
-   "Buy milk on the way home."
+   "Buy milk on the way home.",
+   "I'll pick up the kids on the way."
   ],
   "pattern": "on the/my way (to + place)",
   "forms": "on my way",
@@ -32503,7 +32616,8 @@
   "memory": "Angry WITH a person.",
   "simple": "Feeling anger at someone.",
   "more_examples": [
-   "Don't be angry with her."
+   "Don't be angry with her.",
+   "Is Mum still angry with you?"
   ],
   "pattern": "angry with + person / about + thing",
   "forms": "upset with",
@@ -32667,7 +32781,8 @@
   "memory": "Checks understanding.",
   "simple": "Asks if your explanation was clear.",
   "more_examples": [
-   "Does that make sense so far?"
+   "Does that make sense so far?",
+   "First add the water, then the rice. Does that make sense?"
   ],
   "pattern": "Does that make sense (to you)?",
   "forms": "Is that clear?",
@@ -32750,7 +32865,8 @@
   "memory": "Far away = long distance.",
   "simple": "At a long distance.",
   "more_examples": [
-   "Don't go far away."
+   "Don't go far away.",
+   "Her son works far away, in Dubai."
   ],
   "pattern": "far away (from + place)",
   "forms": "far from",
@@ -32832,7 +32948,8 @@
   "memory": "Happy WITH = satisfied.",
   "simple": "Satisfied with something.",
   "more_examples": [
-   "Are you happy with the room?"
+   "Are you happy with the room?",
+   "My parents are happy with my new job."
   ],
   "pattern": "happy with + noun",
   "forms": "pleased with",
@@ -32912,7 +33029,8 @@
   "memory": "TELL the truth.",
   "simple": "To say what is true.",
   "more_examples": [
-   "Tell me the truth."
+   "Tell me the truth.",
+   "It's better to tell the truth, even when it's hard."
   ],
   "pattern": "tell the truth",
   "forms": "tell a lie",
@@ -32994,7 +33112,8 @@
   "memory": "Again = repeat.",
   "simple": "Asks someone to repeat.",
   "more_examples": [
-   "What was your name again?"
+   "What was your name again?",
+   "What was that again? The meeting is at what time?"
   ],
   "pattern": "What was that again?",
   "forms": "Sorry? · Pardon?",
@@ -33076,7 +33195,8 @@
   "memory": "Next door = house beside.",
   "simple": "In the house or room beside yours.",
   "more_examples": [
-   "The shop next door."
+   "The shop next door.",
+   "The girl next door plays the sitar."
   ],
   "pattern": "next door (to + place)",
   "forms": "neighbour",
@@ -33239,7 +33359,8 @@
   "memory": "TELL a lie.",
   "simple": "To say something false.",
   "more_examples": [
-   "Don't tell lies."
+   "Don't tell lies.",
+   "I never tell a lie to my parents."
   ],
   "pattern": "tell a lie / tell lies",
   "forms": "lied (verb)",
@@ -33402,7 +33523,8 @@
   "memory": "Back = rear.",
   "simple": "In the rear part.",
   "more_examples": [
-   "The door is at the back."
+   "The door is at the back.",
+   "Please put your bags at the back of the bus."
   ],
   "pattern": "at the back (of + noun)",
   "forms": "at the front",
@@ -33649,7 +33771,8 @@
   "memory": "Explain again = new try.",
   "simple": "Asks for another explanation.",
   "more_examples": [
-   "Could you explain that again, more slowly?"
+   "Could you explain that again, more slowly?",
+   "I didn't understand the last step. Could you explain that again?"
   ],
   "pattern": "Could you explain + noun + again?",
   "forms": "Could you go over that again?",
@@ -33812,7 +33935,8 @@
   "memory": "Full OF.",
   "simple": "Containing a lot of something.",
   "more_examples": [
-   "The room was full of people."
+   "The room was full of people.",
+   "The streets are full of lights during Diwali."
   ],
   "pattern": "full of + noun",
   "forms": "empty",
@@ -33973,7 +34097,8 @@
   "memory": "Too = also.",
   "simple": "Means \"I have the same opinion.\"",
   "more_examples": [
-   "Yes, I think so too."
+   "Yes, I think so too.",
+   "This restaurant is great. — I think so too."
   ],
   "pattern": "I think so too.",
   "forms": "Me too. · I agree.",
@@ -34138,7 +34263,8 @@
   "memory": "Sure ABOUT something.",
   "simple": "Certain about something.",
   "more_examples": [
-   "I'm not sure about the time."
+   "I'm not sure about the time.",
+   "I'm sure about the address; I checked it twice."
   ],
   "pattern": "sure about + noun",
   "forms": "sure of",
@@ -34218,7 +34344,8 @@
   "memory": "Fail = not pass.",
   "simple": "To not pass an exam.",
   "more_examples": [
-   "Don't worry if you fail."
+   "Don't worry if you fail.",
+   "He studied hard because he didn't want to fail the exam again."
   ],
   "pattern": "fail an exam",
   "forms": "pass an exam",
@@ -34300,7 +34427,8 @@
   "memory": "Point = idea.",
   "simple": "Used to say someone made a good argument.",
   "more_examples": [
-   "Good point."
+   "Good point.",
+   "We should leave early to avoid traffic. — Good point."
   ],
   "pattern": "Good point.",
   "forms": "Fair point. · That's a good point.",
@@ -34631,7 +34759,8 @@
   "memory": "May = maybe.",
   "simple": "Means \"Perhaps you're correct.\"",
   "more_examples": [
-   "You may be right, let's check."
+   "You may be right, let's check.",
+   "You may be right, but let's ask the teacher."
   ],
   "pattern": "You may/might be right.",
   "forms": "You could be right.",
@@ -34792,7 +34921,8 @@
   "memory": "Ready FOR + noun.",
   "simple": "Prepared for something.",
   "more_examples": [
-   "Are you ready for school?"
+   "Are you ready for school?",
+   "Is everyone ready for the trip?"
   ],
   "pattern": "ready for + noun / ready to + verb",
   "forms": "prepared for",
@@ -35040,7 +35170,8 @@
   "memory": "Hurry = rush.",
   "simple": "Rushing; with little time.",
   "more_examples": [
-   "Sorry, I'm in a hurry."
+   "Sorry, I'm in a hurry.",
+   "She left in a hurry and forgot her phone."
   ],
   "pattern": "be in a hurry",
   "forms": "hurry up",
@@ -35120,7 +35251,8 @@
   "memory": "Kind TO a person.",
   "simple": "Nice and caring towards someone.",
   "more_examples": [
-   "Be kind to animals."
+   "Be kind to animals.",
+   "Our neighbours were very kind to us."
   ],
   "pattern": "kind to + person",
   "forms": "nice to",
@@ -35202,7 +35334,8 @@
   "memory": "Correct = fix.",
   "simple": "To fix an error.",
   "more_examples": [
-   "Please correct my mistakes."
+   "Please correct my mistakes.",
+   "Please check my letter and correct any mistakes."
   ],
   "pattern": "correct a mistake",
   "forms": "fix a mistake",
@@ -35366,7 +35499,8 @@
   "memory": "ON foot.",
   "simple": "Walking.",
   "more_examples": [
-   "It's ten minutes on foot."
+   "It's ten minutes on foot.",
+   "The market is close, so we go on foot."
   ],
   "pattern": "on foot",
   "forms": "walk",
@@ -35446,7 +35580,8 @@
   "memory": "Afraid OF.",
   "simple": "Feeling fear of something.",
   "more_examples": [
-   "She's afraid of the dark."
+   "She's afraid of the dark.",
+   "My little sister is afraid of thunder."
   ],
   "pattern": "afraid of + noun/-ing",
   "forms": "scared of",
@@ -35609,7 +35744,8 @@
   "memory": "Fault = blame.",
   "simple": "Used to accept responsibility for a mistake.",
   "more_examples": [
-   "Sorry, it was my fault."
+   "Sorry, it was my fault.",
+   "Don't blame Riya. It was my fault."
   ],
   "pattern": "It was my fault.",
   "forms": "My bad.",
@@ -35938,7 +36074,8 @@
   "memory": "Promise.",
   "simple": "A promise not to repeat a mistake.",
   "more_examples": [
-   "It won't happen again, I promise."
+   "It won't happen again, I promise.",
+   "I'm sorry I came late, sir. It won't happen again."
   ],
   "pattern": "It won't happen again.",
   "forms": "I'll make sure it doesn't…",
@@ -36100,7 +36237,8 @@
   "memory": "Worried ABOUT.",
   "simple": "Anxious about something.",
   "more_examples": [
-   "Don't be worried about it."
+   "Don't be worried about it.",
+   "My mother is worried about my health."
   ],
   "pattern": "worried about + noun",
   "forms": "anxious about",
@@ -36182,7 +36320,8 @@
   "memory": "Update = new version.",
   "simple": "To install the newest version.",
   "more_examples": [
-   "My phone needs an update."
+   "My phone needs an update.",
+   "The app won't open until you update the software."
   ],
   "pattern": "update the software/app",
   "forms": "upgrade",
@@ -36347,7 +36486,8 @@
   "memory": "Sure = certain.",
   "simple": "Certainly; definitely.",
   "more_examples": [
-   "For sure, it'll rain."
+   "For sure, it'll rain.",
+   "I don't know for sure, but I think the bank is closed."
   ],
   "pattern": "for sure",
   "forms": "definitely",
@@ -36427,7 +36567,8 @@
   "memory": "Depend ON.",
   "simple": "To be decided by something.",
   "more_examples": [
-   "Kids depend on parents."
+   "Kids depend on parents.",
+   "Our plans depend on the train timings."
   ],
   "pattern": "depend on + noun",
   "forms": "rely on",
@@ -36509,7 +36650,8 @@
   "memory": "Protect = keep safe.",
   "simple": "To keep nature safe.",
   "more_examples": [
-   "Recycling helps protect the environment."
+   "Recycling helps protect the environment.",
+   "Using cloth bags helps protect the environment."
   ],
   "pattern": "protect the environment",
   "forms": "save the planet",
@@ -36755,7 +36897,8 @@
   "memory": "Agree WITH a person.",
   "simple": "To have the same opinion as someone.",
   "more_examples": [
-   "I agree with Ravi."
+   "I agree with Ravi.",
+   "I don't agree with that idea."
   ],
   "pattern": "agree with + person / on + topic",
   "forms": "disagree with",
@@ -36835,7 +36978,8 @@
   "memory": "Plant = put in soil.",
   "simple": "To put young trees in the ground.",
   "more_examples": [
-   "Let's plant trees."
+   "Let's plant trees.",
+   "The students plant trees around the school every July."
   ],
   "pattern": "plant trees",
   "forms": "tree planting",
@@ -36917,7 +37061,8 @@
   "memory": "Offer politely.",
   "simple": "A polite offer of help.",
   "more_examples": [
-   "Would you like some help with that?"
+   "Would you like some help with that?",
+   "Your bags look heavy. Would you like some help?"
   ],
   "pattern": "Would you like some help (with + noun)?",
   "forms": "Can I help?",
@@ -36997,7 +37142,8 @@
   "memory": "Each other = both ways.",
   "simple": "Used when two people do the same to one another.",
   "more_examples": [
-   "They love each other."
+   "They love each other.",
+   "The two sisters call each other every day."
   ],
   "pattern": "each other",
   "forms": "one another",
@@ -37329,7 +37475,8 @@
   "memory": "For fun = not serious.",
   "simple": "For enjoyment, not work.",
   "more_examples": [
-   "We played just for fun."
+   "We played just for fun.",
+   "I learn French just for fun."
   ],
   "pattern": "for fun",
   "forms": "just for fun",
@@ -37577,7 +37724,8 @@
   "memory": "You go first.",
   "simple": "A polite way to let someone go first.",
   "more_examples": [
-   "After you, please."
+   "After you, please.",
+   "(holding the door) After you, Aunty."
   ],
   "pattern": "After you.",
   "forms": "Please, go ahead.",
@@ -37822,7 +37970,8 @@
   "memory": "Sick = unwell or nauseous.",
   "simple": "To feel ill or want to vomit.",
   "more_examples": [
-   "The bus makes me feel sick."
+   "The bus makes me feel sick.",
+   "I ate too many sweets and now I feel sick."
   ],
   "pattern": "feel sick",
   "forms": "feel ill · be sick",
@@ -37904,7 +38053,8 @@
   "memory": "Soft no.",
   "simple": "A polite way to say no to an invitation for now.",
   "more_examples": [
-   "Maybe another time."
+   "Maybe another time.",
+   "I can't come tonight. Maybe another time?"
   ],
   "pattern": "Maybe another time.",
   "forms": "Some other time. · Rain check?",
@@ -38067,7 +38217,8 @@
   "memory": "Ask FOR a thing.",
   "simple": "To request something.",
   "more_examples": [
-   "Ask for the bill."
+   "Ask for the bill.",
+   "You can ask for a glass of water at the counter."
   ],
   "pattern": "ask for + noun",
   "forms": "request",
@@ -38147,7 +38298,8 @@
   "memory": "See = visit.",
   "simple": "To visit a doctor.",
   "more_examples": [
-   "I saw a doctor yesterday."
+   "I saw a doctor yesterday.",
+   "Your cough is bad. Please see a doctor today."
   ],
   "pattern": "see a doctor",
   "forms": "visit a doctor",
@@ -38229,7 +38381,8 @@
   "memory": "Continue = keep going.",
   "simple": "Encourages someone to continue doing well.",
   "more_examples": [
-   "Keep it up!"
+   "Keep it up!",
+   "Your handwriting is much better now. Keep it up!"
   ],
   "pattern": "Keep it up!",
   "forms": "Keep going!",
@@ -38312,7 +38465,8 @@
   "memory": "Many times.",
   "simple": "Many times.",
   "more_examples": [
-   "Read it again and again."
+   "Read it again and again.",
+   "I called him again and again, but he didn't answer."
   ],
   "pattern": "again and again",
   "forms": "over and over",
@@ -38556,7 +38710,8 @@
   "memory": "Keep trying.",
   "simple": "Encourages someone not to stop trying.",
   "more_examples": [
-   "Don't give up."
+   "Don't give up.",
+   "You failed once, but don't give up."
   ],
   "pattern": "Don't give up (on + noun).",
   "forms": "Keep going.",
@@ -38638,7 +38793,8 @@
   "memory": "One step at a time.",
   "simple": "Slowly, one stage at a time.",
   "more_examples": [
-   "Learn it step by step."
+   "Learn it step by step.",
+   "We built the website step by step."
   ],
   "pattern": "step by step",
   "forms": "one step at a time",
@@ -38970,7 +39126,8 @@
   "memory": "One after another.",
   "simple": "One after another.",
   "more_examples": [
-   "Answer one by one."
+   "Answer one by one.",
+   "The doctor saw the patients one by one."
   ],
   "pattern": "one by one",
   "forms": "one at a time",
@@ -39052,7 +39209,8 @@
   "memory": "Apply FOR the job, TO the company.",
   "simple": "To ask formally for a job or permission.",
   "more_examples": [
-   "Apply for a visa."
+   "Apply for a visa.",
+   "My sister applied for a scholarship."
   ],
   "pattern": "apply for + noun",
   "forms": "apply to + company",
@@ -39134,7 +39292,8 @@
   "memory": "Miss = too late.",
   "simple": "To be too late for the train.",
   "more_examples": [
-   "Hurry or you'll miss the train."
+   "Hurry or you'll miss the train.",
+   "Leave now, or you'll miss the train."
   ],
   "pattern": "miss the train/bus",
   "forms": "catch the train",
@@ -39216,7 +39375,8 @@
   "memory": "Pride = happy for their success.",
   "simple": "Used to praise someone you care about.",
   "more_examples": [
-   "I'm so proud of you, beta."
+   "I'm so proud of you, beta.",
+   "You helped your little brother. I'm proud of you."
   ],
   "pattern": "I'm proud of + person.",
   "forms": "Well done!",
@@ -39298,7 +39458,8 @@
   "memory": "Formal opening.",
   "simple": "A formal way to address an audience.",
   "more_examples": [
-   "Good evening, ladies and gentlemen."
+   "Good evening, ladies and gentlemen.",
+   "Ladies and gentlemen, please take your seats."
   ],
   "pattern": "Ladies and gentlemen, …",
   "forms": "Dear guests",
@@ -39463,7 +39624,8 @@
   "memory": "Pack = put in.",
   "simple": "To put your things into bags for a trip.",
   "more_examples": [
-   "I packed my bags last night."
+   "I packed my bags last night.",
+   "We leave for Shimla at six, so pack your bags tonight."
   ],
   "pattern": "pack your bags",
   "forms": "unpack",
@@ -39711,7 +39873,8 @@
   "memory": "Care OF someone.",
   "simple": "To look after someone or something.",
   "more_examples": [
-   "I'll take care of it."
+   "I'll take care of it.",
+   "Who will take care of the dog while you're away?"
   ],
   "pattern": "take care of + noun",
   "forms": "look after",
@@ -39875,7 +40038,8 @@
   "memory": "Hope for next.",
   "simple": "A kind thing to say when someone fails.",
   "more_examples": [
-   "Oh well, better luck next time."
+   "Oh well, better luck next time.",
+   "You came second this time. Better luck next time!"
   ],
   "pattern": "Better luck next time.",
   "forms": "Never mind.",
@@ -39958,7 +40122,8 @@
   "memory": "Filler.",
   "simple": "A filler to keep talking or check understanding.",
   "more_examples": [
-   "It's, you know, hard."
+   "It's, you know, hard.",
+   "The new teacher is, you know, very strict."
   ],
   "pattern": "…, you know, …",
   "forms": "I mean · like",
@@ -40038,7 +40203,8 @@
   "memory": "AT small place, IN city.",
   "simple": "To reach a place.",
   "more_examples": [
-   "We arrived in Delhi."
+   "We arrived in Delhi.",
+   "What time does the train arrive in Mumbai?"
   ],
   "pattern": "arrive at + place / arrive in + city",
   "forms": "reach",
@@ -40201,7 +40367,8 @@
   "memory": "Order = ask for food.",
   "simple": "A polite way to tell the waiter you're ready to order.",
   "more_examples": [
-   "We'd like to order now."
+   "We'd like to order now.",
+   "Excuse me, I'd like to order, please. One masala dosa."
   ],
   "pattern": "I'd like to order (+ noun).",
   "forms": "Can I order? · We're ready to order.",
@@ -40283,7 +40450,8 @@
   "memory": "Filler to clarify.",
   "simple": "Used to explain or correct what you just said.",
   "more_examples": [
-   "It's far, I mean, not too far."
+   "It's far, I mean, not too far.",
+   "The film was long — I mean, three hours long!"
   ],
   "pattern": "I mean, + clause",
   "forms": "You know · That is",
@@ -40365,7 +40533,8 @@
   "memory": "Worry ABOUT.",
   "simple": "To feel anxious about something.",
   "more_examples": [
-   "I worry about my parents."
+   "I worry about my parents.",
+   "My grandmother worries about everything."
   ],
   "pattern": "worry about + noun",
   "forms": "be worried about",
@@ -40528,7 +40697,8 @@
   "memory": "Change = extra coins.",
   "simple": "Tells someone to keep the extra money.",
   "more_examples": [
-   "Here's 200, keep the change."
+   "Here's 200, keep the change.",
+   "The fare is 180? Here's 200. Keep the change."
   ],
   "pattern": "Keep the change.",
   "forms": "That's for you.",
@@ -40692,7 +40862,8 @@
   "memory": "Tell + person + about.",
   "simple": "To give someone information about something.",
   "more_examples": [
-   "Tell me about your trip."
+   "Tell me about your trip.",
+   "Did you tell your parents about the new job?"
   ],
   "pattern": "tell + person + about + noun",
   "forms": "inform … about",
@@ -40855,7 +41026,8 @@
   "memory": "Receipt = proof of payment.",
   "simple": "A polite way to ask for a receipt.",
   "more_examples": [
-   "Could I get a receipt, please?"
+   "Could I get a receipt, please?",
+   "I need it for my office. Could I get a receipt?"
   ],
   "pattern": "Could I get a receipt?",
   "forms": "Can I have a receipt?",
@@ -41020,7 +41192,8 @@
   "memory": "Look like = similar appearance.",
   "simple": "To have a similar appearance to.",
   "more_examples": [
-   "It looks like rain."
+   "It looks like rain.",
+   "That cloud looks like an elephant."
   ],
   "pattern": "noun + looks like + noun",
   "forms": "resembles",
@@ -41102,7 +41275,8 @@
   "memory": "Earn = get paid.",
   "simple": "To get paid for work.",
   "more_examples": [
-   "How much do you earn?"
+   "How much do you earn?",
+   "Nurses should earn a better salary."
   ],
   "pattern": "earn a salary",
   "forms": "draw a salary",
@@ -41184,7 +41358,8 @@
   "memory": "Browsing, not buying.",
   "simple": "Tells a shop assistant you don't need help now.",
   "more_examples": [
-   "Just looking, thank you."
+   "Just looking, thank you.",
+   "Can I help you, madam? — I'm just looking, thanks."
   ],
   "pattern": "I'm just looking, thanks.",
   "forms": "Just browsing.",
@@ -41264,7 +41439,8 @@
   "memory": "Out of order = not working.",
   "simple": "Not working (for machines).",
   "more_examples": [
-   "The ATM is out of order."
+   "The ATM is out of order.",
+   "Sorry, this machine is out of order. Use the next one."
   ],
   "pattern": "out of order",
   "forms": "broken · not working",
@@ -41591,7 +41767,8 @@
   "memory": "On sale = discount.",
   "simple": "Available at a lower price.",
   "more_examples": [
-   "Everything is on sale today."
+   "Everything is on sale today.",
+   "Winter jackets are on sale this week."
   ],
   "pattern": "on sale",
   "forms": "for sale (different)",
@@ -42005,7 +42182,8 @@
   "memory": "Problem WITH.",
   "simple": "Something wrong with something.",
   "more_examples": [
-   "Is there a problem with the order?"
+   "Is there a problem with the order?",
+   "The landlord fixed the problem with the tap."
   ],
   "pattern": "a problem with + noun",
   "forms": "an issue with",
@@ -42085,7 +42263,8 @@
   "memory": "Watch = look at TV.",
   "simple": "To see the news on TV.",
   "more_examples": [
-   "Did you watch the news?"
+   "Did you watch the news?",
+   "My grandfather watches the news every evening at nine."
   ],
   "pattern": "watch the news",
   "forms": "read the news",
@@ -42167,7 +42346,8 @@
   "memory": "Busy = in another call.",
   "simple": "The person is on another call.",
   "more_examples": [
-   "The line is busy."
+   "The line is busy.",
+   "I called the office three times; the line is busy."
   ],
   "pattern": "The line is busy/engaged.",
   "forms": "The number is busy.",
@@ -43071,7 +43251,8 @@
   "memory": "Happened TO.",
   "simple": "Asks what went wrong with someone or something.",
   "more_examples": [
-   "What happened to Ravi?"
+   "What happened to Ravi?",
+   "What happened to the cake? It's all gone!"
   ],
   "pattern": "What happened to + noun?",
   "forms": "What's wrong with…?",
@@ -43153,7 +43334,8 @@
   "memory": "Laundry = clothes to wash.",
   "simple": "To wash clothes.",
   "more_examples": [
-   "Who does the laundry?"
+   "Who does the laundry?",
+   "We do the laundry when it's sunny."
   ],
   "pattern": "do the laundry/washing",
   "forms": "wash clothes",
@@ -43235,7 +43417,8 @@
   "memory": "Flies = passes fast.",
   "simple": "Used to say time passes very quickly.",
   "more_examples": [
-   "Time flies when you're having fun."
+   "Time flies when you're having fun.",
+   "My son is already in college. Time flies!"
   ],
   "pattern": "Time flies!",
   "forms": "Time flies when you're having fun.",
@@ -43483,7 +43666,8 @@
   "memory": "Example helps understanding.",
   "simple": "Used before giving an example.",
   "more_examples": [
-   "Let me give you an example from real life."
+   "Let me give you an example from real life.",
+   "Saving is easy. Let me give you an example."
   ],
   "pattern": "Let me give you an example.",
   "forms": "For example,…",
@@ -43564,7 +43748,8 @@
   "memory": "Help WITH.",
   "simple": "Used to ask for help with something.",
   "more_examples": [
-   "I need help with my homework."
+   "I need help with my homework.",
+   "My grandfather needs help with his new phone."
   ],
   "pattern": "I need help with + noun.",
   "forms": "Can you help me with…?",
@@ -43644,7 +43829,8 @@
   "memory": "Get dressed = put clothes on.",
   "simple": "To put on your clothes.",
   "more_examples": [
-   "I got dressed and left."
+   "I got dressed and left.",
+   "I got dressed in five minutes this morning."
   ],
   "pattern": "get dressed",
   "forms": "get ready",
@@ -43724,7 +43910,8 @@
   "memory": "Breaking up = voice cutting.",
   "simple": "Means your voice is cutting on the call.",
   "more_examples": [
-   "You're breaking up, can you repeat?"
+   "You're breaking up, can you repeat?",
+   "Hello? You're breaking up. I'll call you back."
   ],
   "pattern": "You're breaking up.",
   "forms": "The line is bad.",
@@ -44460,7 +44647,8 @@
   "memory": "Dropped = cut.",
   "simple": "The call ended by accident.",
   "more_examples": [
-   "The call dropped twice."
+   "The call dropped twice.",
+   "Sorry, the call dropped. I was in the lift."
   ],
   "pattern": "The call dropped.",
   "forms": "We got cut off.",
@@ -44540,7 +44728,8 @@
   "memory": "Marry + person.",
   "simple": "To become someone's husband or wife.",
   "more_examples": [
-   "Will you marry me?"
+   "Will you marry me?",
+   "My cousin is going to marry her college friend."
   ],
   "pattern": "marry + person",
   "forms": "get married to",
@@ -44620,7 +44809,8 @@
   "memory": "High = up.",
   "simple": "Fever; or hot weather.",
   "more_examples": [
-   "Temperatures are high today."
+   "Temperatures are high today.",
+   "If he still has a high temperature tomorrow, take him to the doctor."
   ],
   "pattern": "a high temperature/fever",
   "forms": "low temperature",
@@ -44702,7 +44892,8 @@
   "memory": "Share = show others.",
   "simple": "Asks someone to show their screen online.",
   "more_examples": [
-   "Could you share your screen, please?"
+   "Could you share your screen, please?",
+   "I can't see the slides. Can you share your screen?"
   ],
   "pattern": "Can you share your screen?",
   "forms": "Let me share my screen.",
@@ -44782,7 +44973,8 @@
   "memory": "Contact + person.",
   "simple": "To call or email someone.",
   "more_examples": [
-   "Contact me on email."
+   "Contact me on email.",
+   "For any problem, contact the customer care number."
   ],
   "pattern": "contact + person",
   "forms": "get in touch with",
@@ -44945,7 +45137,8 @@
   "memory": "Text = message.",
   "simple": "Promises to send information by message.",
   "more_examples": [
-   "I'll text you the details."
+   "I'll text you the details.",
+   "I'll text you the details after the meeting."
   ],
   "pattern": "I'll text/message you + noun.",
   "forms": "I'll send you…",
@@ -45025,7 +45218,8 @@
   "memory": "Answer + thing.",
   "simple": "To reply to something.",
   "more_examples": [
-   "Answer the phone."
+   "Answer the phone.",
+   "Nobody answered the door."
   ],
   "pattern": "answer + noun",
   "forms": "reply to",
@@ -45105,7 +45299,8 @@
   "memory": "Close = near in heart.",
   "simple": "A very good friend.",
   "more_examples": [
-   "She's a close friend."
+   "She's a close friend.",
+   "I can tell her anything; she's a close friend."
   ],
   "pattern": "a close friend",
   "forms": "best friend",
@@ -45187,7 +45382,8 @@
   "memory": "Start now.",
   "simple": "Used to begin an activity.",
   "more_examples": [
-   "Let's get started."
+   "Let's get started.",
+   "The guests are here. Let's get started."
   ],
   "pattern": "Let's get started.",
   "forms": "Let's begin.",
@@ -45267,7 +45463,8 @@
   "memory": "Order + thing.",
   "simple": "To ask for food or goods to be brought.",
   "more_examples": [
-   "Let's order food."
+   "Let's order food.",
+   "We ordered two plates of momos."
   ],
   "pattern": "order + noun",
   "forms": "place an order",
@@ -45430,7 +45627,8 @@
   "memory": "Move on = next.",
   "simple": "Used to go to the next topic.",
   "more_examples": [
-   "Let's move on."
+   "Let's move on.",
+   "We've talked about the budget. Let's move on."
   ],
   "pattern": "Let's move on (to + noun).",
   "forms": "Next point.",
@@ -45512,7 +45710,8 @@
   "memory": "Hard = with effort.",
   "simple": "A lot of effort.",
   "more_examples": [
-   "Thanks for your hard work."
+   "Thanks for your hard work.",
+   "His hard work got him the promotion."
   ],
   "pattern": "hard work",
   "forms": "hard-working (adj)",
@@ -45594,7 +45793,8 @@
   "memory": "So far = until now.",
   "simple": "Asks if anyone has questions up to now.",
   "more_examples": [
-   "Okay, any questions so far?"
+   "Okay, any questions so far?",
+   "That's the first part. Any questions so far?"
   ],
   "pattern": "Any questions (so far)?",
   "forms": "Is everything clear?",
@@ -45676,7 +45876,8 @@
   "memory": "Full-time = all week.",
   "simple": "A job with all standard working hours.",
   "more_examples": [
-   "I have a full-time job."
+   "I have a full-time job.",
+   "After college, she found a full-time job in a bank."
   ],
   "pattern": "a full-time/part-time job",
   "forms": "work full-time",
@@ -45922,7 +46123,8 @@
   "memory": "Noted = I got it.",
   "simple": "Means \"I've got the information, thanks.\"",
   "more_examples": [
-   "Noted, I'll update the file."
+   "Noted, I'll update the file.",
+   "The meeting is moved to 3 p.m. — Noted, thanks."
   ],
   "pattern": "Noted, thanks.",
   "forms": "Got it, thanks.",
@@ -46087,7 +46289,8 @@
   "memory": "Check first.",
   "simple": "Promises to check and reply.",
   "more_examples": [
-   "Let me check and get back to you."
+   "Let me check and get back to you.",
+   "I'm not sure the room is free. Let me check and confirm."
   ],
   "pattern": "Let me check and confirm.",
   "forms": "I'll get back to you.",
@@ -46416,7 +46619,8 @@
   "memory": "Polite ask.",
   "simple": "A very polite way to ask someone's name.",
   "more_examples": [
-   "May I have your number?"
+   "May I have your number?",
+   "Welcome to City Hospital. May I have your name, please?"
   ],
   "pattern": "May I have your + noun, please?",
   "forms": "Could I get your name?",
@@ -46581,7 +46785,8 @@
   "memory": "Spell = letters.",
   "simple": "Asks someone to say the letters of a word.",
   "more_examples": [
-   "Could you spell that for me?"
+   "Could you spell that for me?",
+   "Your surname is new to me. Could you spell that for me?"
   ],
   "pattern": "Could you spell + noun (for me)?",
   "forms": "How do you spell…?",
@@ -46745,7 +46950,8 @@
   "memory": "Else = more.",
   "simple": "Asks if the customer needs more help.",
   "more_examples": [
-   "Anything else?"
+   "Anything else?",
+   "Your ticket is booked. Is there anything else I can help you with?"
   ],
   "pattern": "Is there anything else (I can help with)?",
   "forms": "Anything else?",
@@ -46827,7 +47033,8 @@
   "memory": "Fan = admirer.",
   "simple": "Someone who likes something very much.",
   "more_examples": [
-   "She's a big fan of SRK."
+   "She's a big fan of SRK.",
+   "My father is a big fan of old Hindi songs."
   ],
   "pattern": "a big fan of + noun",
   "forms": "huge fan",
@@ -46990,7 +47197,8 @@
   "memory": "Quick = short.",
   "simple": "A short question.",
   "more_examples": [
-   "Just a quick question."
+   "Just a quick question.",
+   "Sir, a quick question: is the test on Monday?"
   ],
   "pattern": "a quick question",
   "forms": "a small question",
@@ -47072,7 +47280,8 @@
   "memory": "Sets the time.",
   "simple": "Used to start a story set in the past.",
   "more_examples": [
-   "This happened last year."
+   "This happened last year.",
+   "I broke my arm. This happened a few years ago."
   ],
   "pattern": "This happened + time + ago.",
   "forms": "A few years back,…",
@@ -47237,7 +47446,8 @@
   "memory": "Personally = my view.",
   "simple": "Used to say your own preference.",
   "more_examples": [
-   "Personally, I prefer the train."
+   "Personally, I prefer the train.",
+   "Personally, I prefer studying in the morning."
   ],
   "pattern": "Personally, I prefer + noun/-ing.",
   "forms": "I'd rather…",
@@ -47319,7 +47529,8 @@
   "memory": "Routine = usual order.",
   "simple": "The things you do every day.",
   "more_examples": [
-   "Describe your daily routine."
+   "Describe your daily routine.",
+   "Yoga is part of my daily routine."
   ],
   "pattern": "a daily routine",
   "forms": "schedule",
@@ -47565,7 +47776,8 @@
   "memory": "Originally = birth place.",
   "simple": "Asks where someone first came from.",
   "more_examples": [
-   "I live in Delhi, but I'm from Bihar originally."
+   "I live in Delhi, but I'm from Bihar originally.",
+   "You speak Marathi! Where are you from originally?"
   ],
   "pattern": "Where are you from originally?",
   "forms": "Where did you grow up?",
@@ -47647,7 +47859,8 @@
   "memory": "Long = tiring.",
   "simple": "A tiring day with a lot of work.",
   "more_examples": [
-   "Tomorrow will be a long day."
+   "Tomorrow will be a long day.",
+   "You look tired. Was it a long day at work?"
   ],
   "pattern": "a long day",
   "forms": "a busy day",
@@ -47729,7 +47942,8 @@
   "memory": "Caring question.",
   "simple": "A friendly way to ask about someone's family.",
   "more_examples": [
-   "How's the family doing?"
+   "How's the family doing?",
+   "Hello, Uncle! How's the family?"
   ],
   "pattern": "How's the family?",
   "forms": "How's everyone at home?",
@@ -47892,7 +48106,8 @@
   "memory": "Weather talk.",
   "simple": "A friendly comment on nice weather.",
   "more_examples": [
-   "Lovely weather for a walk."
+   "Lovely weather for a walk.",
+   "Lovely weather today! Let's sit outside."
   ],
   "pattern": "Lovely weather (today)!",
   "forms": "Nice day!",
@@ -48057,7 +48272,8 @@
   "memory": "Yourself = you.",
   "simple": "Asks if someone is having a good time.",
   "more_examples": [
-   "Are you enjoying yourself?"
+   "Are you enjoying yourself?",
+   "Are you enjoying yourself? Have some more food."
   ],
   "pattern": "Are you enjoying yourself?",
   "forms": "Having fun?",
@@ -48137,7 +48353,8 @@
   "memory": "Weak = not strong.",
   "simple": "A poor phone or internet signal.",
   "more_examples": [
-   "I have a weak signal."
+   "I have a weak signal.",
+   "The video keeps stopping because of a weak signal."
   ],
   "pattern": "a weak/strong signal",
   "forms": "poor network",
@@ -48466,7 +48683,8 @@
   "memory": "Junk = rubbish.",
   "simple": "Unhealthy food like chips.",
   "more_examples": [
-   "Kids love junk food."
+   "Kids love junk food.",
+   "Junk food is cheap, but it's bad for your health."
   ],
   "pattern": "junk food",
   "forms": "fast food",
@@ -48793,7 +49011,8 @@
   "memory": "Journey = travel.",
   "simple": "A trip that takes a long time.",
   "more_examples": [
-   "We had a long journey."
+   "We had a long journey.",
+   "After a long journey, a hot bath feels great."
   ],
   "pattern": "a long journey",
   "forms": "a short trip",
@@ -49122,7 +49341,8 @@
   "memory": "Public = for all.",
   "simple": "A day off for everyone.",
   "more_examples": [
-   "Banks close on public holidays."
+   "Banks close on public holidays.",
+   "Is Independence Day a public holiday?"
   ],
   "pattern": "a public holiday",
   "forms": "bank holiday (UK)",
@@ -49204,7 +49424,8 @@
   "memory": "Joint = together.",
   "simple": "Several generations living together.",
   "more_examples": [
-   "Joint families are common in India."
+   "Joint families are common in India.",
+   "In a joint family, there's always someone at home."
   ],
   "pattern": "a joint/nuclear family",
   "forms": "extended family",
@@ -49612,7 +49833,8 @@
   "memory": "Totally = 100%.",
   "simple": "To agree completely.",
   "more_examples": [
-   "I totally agree."
+   "I totally agree.",
+   "I totally agree; we need more buses."
   ],
   "pattern": "totally agree (with + person)",
   "forms": "completely agree",
@@ -49694,7 +49916,8 @@
   "memory": "Perfectly = completely.",
   "simple": "Completely okay.",
   "more_examples": [
-   "The food is perfectly fine."
+   "The food is perfectly fine.",
+   "Don't worry, it's perfectly fine to ask questions."
   ],
   "pattern": "perfectly fine",
   "forms": "totally fine",
@@ -49938,7 +50161,8 @@
   "memory": "Fluently = smoothly.",
   "simple": "To speak a language smoothly.",
   "more_examples": [
-   "I want to speak fluently."
+   "I want to speak fluently.",
+   "After a year in London, he could speak fluently."
   ],
   "pattern": "speak fluently",
   "forms": "fluent in",
@@ -50018,7 +50242,8 @@
   "memory": "Carefully = safely.",
   "simple": "To drive safely.",
   "more_examples": [
-   "Please drive carefully at night."
+   "Please drive carefully at night.",
+   "The road is wet, so drive carefully."
   ],
   "pattern": "drive carefully/safely",
   "forms": "drive safe (casual)",
@@ -50181,7 +50406,8 @@
   "memory": "Hard = with effort.",
   "simple": "To study with a lot of effort.",
   "more_examples": [
-   "She studies hard."
+   "She studies hard.",
+   "If you study hard, you'll get into a good college."
   ],
   "pattern": "study hard",
   "forms": "work hard",
@@ -50263,7 +50489,8 @@
   "memory": "Interview = hiring meeting.",
   "simple": "A meeting to decide if you get a job.",
   "more_examples": [
-   "How was your job interview?"
+   "How was your job interview?",
+   "Wear formal clothes to a job interview."
   ],
   "pattern": "a job interview",
   "forms": "an interview",
@@ -50426,7 +50653,8 @@
   "memory": "Waste = no use.",
   "simple": "Something that is not useful.",
   "more_examples": [
-   "TV is a waste of time."
+   "TV is a waste of time.",
+   "Waiting in this queue is a waste of time."
   ],
   "pattern": "a waste of time/money",
   "forms": "pointless",
@@ -50589,7 +50817,8 @@
   "memory": "Sore = painful.",
   "simple": "A painful throat.",
   "more_examples": [
-   "Drink warm water for a sore throat."
+   "Drink warm water for a sore throat.",
+   "I can't sing today; I have a sore throat."
   ],
   "pattern": "have a sore throat",
   "forms": "cough",
@@ -50914,7 +51143,8 @@
   "memory": "Dies = ends.",
   "simple": "When a battery has no power left.",
   "more_examples": [
-   "My phone battery is dying."
+   "My phone battery is dying.",
+   "Charge your phone before the battery dies."
   ],
   "pattern": "the battery dies/is dead",
   "forms": "runs out",
@@ -50996,7 +51226,8 @@
   "memory": "Video = with camera.",
   "simple": "A call where you see each other.",
   "more_examples": [
-   "We had a video call."
+   "We had a video call.",
+   "Every Sunday we have a video call with my sister in Canada."
   ],
   "pattern": "a video call",
   "forms": "voice call",
@@ -51078,7 +51309,8 @@
   "memory": "Ache = pain.",
   "simple": "Pain in the stomach.",
   "more_examples": [
-   "Too much food gave me a stomach ache."
+   "Too much food gave me a stomach ache.",
+   "Eating street food in the rain gave him a stomach ache."
   ],
   "pattern": "have a stomach ache",
   "forms": "tummy ache",
@@ -51160,7 +51392,8 @@
   "memory": "Pay when it arrives.",
   "simple": "Paying when the order arrives.",
   "more_examples": [
-   "Is cash on delivery available?"
+   "Is cash on delivery available?",
+   "My grandmother always picks cash on delivery when she shops online."
   ],
   "pattern": "cash on delivery (COD)",
   "forms": "pay online",
@@ -51242,7 +51475,8 @@
   "memory": "City = big town.",
   "simple": "Life in a big city.",
   "more_examples": [
-   "I love city life."
+   "I love city life.",
+   "After ten years in a village, city life feels noisy."
   ],
   "pattern": "city life",
   "forms": "village life",
@@ -51322,7 +51556,8 @@
   "memory": "Off = no work.",
   "simple": "A day when you don't work.",
   "more_examples": [
-   "Take a day off."
+   "Take a day off.",
+   "I'm taking a day off to go to my cousin's wedding."
   ],
   "pattern": "a day off",
   "forms": "leave · holiday",
@@ -52104,7 +52339,8 @@
   "memory": "Best way = top method.",
   "simple": "Used to give strong advice.",
   "more_examples": [
-   "The best way to save is to cook at home."
+   "The best way to save is to cook at home.",
+   "The best way to learn a language is to speak it every day."
   ],
   "pattern": "The best way to + verb + is to + verb.",
   "forms": "One way to … is to…",
@@ -52960,7 +53196,8 @@
   "memory": "Point = good reason.",
   "simple": "To have a good reason or idea.",
   "more_examples": [
-   "She has a point about cost."
+   "She has a point about cost.",
+   "You have a point; the bus is cheaper."
   ],
   "pattern": "have a point",
   "forms": "good point · fair point",
@@ -53130,7 +53367,8 @@
   "memory": "Running = still on the way.",
   "simple": "To be later than planned.",
   "more_examples": [
-   "The train is running late."
+   "The train is running late.",
+   "I'm running late. Start the meeting without me."
   ],
   "pattern": "be running late",
   "forms": "ran late",
@@ -53217,7 +53455,8 @@
   "memory": "Keep = don't break.",
   "simple": "To do what you promised.",
   "more_examples": [
-   "Keep your promise."
+   "Keep your promise.",
+   "I said I'd help you, and I always keep a promise."
   ],
   "pattern": "keep/break a promise",
   "forms": "kept a promise",
@@ -55376,7 +55615,8 @@
   "memory": "Same page = same idea.",
   "simple": "Agreeing and understanding the same thing.",
   "more_examples": [
-   "Are we on the same page?"
+   "Are we on the same page?",
+   "Before we start, let's get everyone on the same page."
   ],
   "pattern": "be on the same page",
   "forms": null,
@@ -55716,7 +55956,8 @@
   "memory": "So costly you'd give your arm and leg.",
   "simple": "To be very expensive.",
   "more_examples": [
-   "Houses here cost an arm and a leg."
+   "Houses here cost an arm and a leg.",
+   "The wedding cost an arm and a leg."
   ],
   "pattern": "cost an arm and a leg",
   "forms": null,
@@ -56402,7 +56643,8 @@
   "memory": "Attached = the file with this email.",
   "simple": "A formal way to say a file is attached.",
   "more_examples": [
-   "Please find attached the invoice."
+   "Please find attached the invoice.",
+   "Please find attached the photos from the event."
   ],
   "pattern": "Please find attached + noun.",
   "forms": "I've attached… · Attached is…",
@@ -56829,7 +57071,8 @@
   "memory": "Be used to + -ing.",
   "simple": "Used to say something is normal for you now.",
   "more_examples": [
-   "I'm used to the heat."
+   "I'm used to the heat.",
+   "After two years in Chennai, I'm used to eating rice every day."
   ],
   "pattern": "I'm used to + -ing/noun.",
   "forms": "I've got used to…",
@@ -56992,7 +57235,8 @@
   "memory": "Met before?",
   "simple": "Asks if you've met someone earlier.",
   "more_examples": [
-   "Have we met before?"
+   "Have we met before?",
+   "Your face looks familiar. Have we met before?"
   ],
   "pattern": "Have we met before?",
   "forms": "You look familiar.",
@@ -57074,7 +57318,8 @@
   "memory": "Sometimes.",
   "simple": "Sometimes; not often.",
   "more_examples": [
-   "We meet from time to time."
+   "We meet from time to time.",
+   "I visit my old school from time to time."
   ],
   "pattern": "from time to time",
   "forms": "now and then",
@@ -57156,7 +57401,8 @@
   "memory": "Within = not more than.",
   "simple": "Before the end of a time period.",
   "more_examples": [
-   "Deliver within a week."
+   "Deliver within a week.",
+   "You'll get your refund within seven days."
   ],
   "pattern": "within + time/distance",
   "forms": "in",
@@ -57400,7 +57646,8 @@
   "memory": "Pleasure = happy.",
   "simple": "A formal way to say \"Nice to meet you\".",
   "more_examples": [
-   "It's a pleasure to meet you, sir."
+   "It's a pleasure to meet you, sir.",
+   "Hello, I'm Anil. — It's a pleasure to meet you."
   ],
   "pattern": "It's a pleasure to meet you.",
   "forms": "Pleased to meet you.",
@@ -57482,7 +57729,8 @@
   "memory": "In time = before too late.",
   "simple": "Early enough.",
   "more_examples": [
-   "Did you reach in time for the movie?"
+   "Did you reach in time for the movie?",
+   "Hurry, or we won't get to the station in time."
   ],
   "pattern": "in time (for + noun)",
   "forms": "on time",
@@ -57564,7 +57812,8 @@
   "memory": "Through = in one side, out other.",
   "simple": "From one end to the other of something.",
   "more_examples": [
-   "Walk through the park."
+   "Walk through the park.",
+   "Light comes in through the window."
   ],
   "pattern": "through + noun",
   "forms": "across",
@@ -57891,7 +58140,8 @@
   "memory": "For good = forever.",
   "simple": "Permanently; forever.",
   "more_examples": [
-   "I've quit sugar for good."
+   "I've quit sugar for good.",
+   "They sold the house and moved to Goa for good."
   ],
   "pattern": "for good",
   "forms": "forever · permanently",
@@ -58136,7 +58386,8 @@
   "memory": "Make = offer.",
   "simple": "To offer an idea.",
   "more_examples": [
-   "She made a good suggestion."
+   "She made a good suggestion.",
+   "May I make a suggestion? Let's leave early."
   ],
   "pattern": "make a suggestion",
   "forms": "suggest",
@@ -58218,7 +58469,8 @@
   "memory": "Kidding = joking.",
   "simple": "Used to show surprise or disbelief.",
   "more_examples": [
-   "You're kidding, right?"
+   "You're kidding, right?",
+   "He won the lottery? You're kidding!"
   ],
   "pattern": "You're kidding!",
   "forms": "No way! · Seriously?",
@@ -58300,7 +58552,8 @@
   "memory": "Other day = recently.",
   "simple": "A few days ago.",
   "more_examples": [
-   "I saw your mum the other day."
+   "I saw your mum the other day.",
+   "I saw a snake in the garden the other day."
   ],
   "pattern": "the other day",
   "forms": "recently",
@@ -58546,7 +58799,8 @@
   "memory": "Make = book.",
   "simple": "To book a time to see someone.",
   "more_examples": [
-   "Make an appointment online."
+   "Make an appointment online.",
+   "Call the clinic and make an appointment for Monday."
   ],
   "pattern": "make/book an appointment",
   "forms": "schedule",
@@ -58712,7 +58966,8 @@
   "memory": "At once = right now.",
   "simple": "Immediately.",
   "more_examples": [
-   "Call him at once."
+   "Call him at once.",
+   "The fire alarm rang, and we left the building at once."
   ],
   "pattern": "at once",
   "forms": "immediately",
@@ -60031,7 +60286,8 @@
   "memory": "Against = opposed.",
   "simple": "Opposed to something.",
   "more_examples": [
-   "She's against smoking."
+   "She's against smoking.",
+   "Most villagers are against the new factory."
   ],
   "pattern": "against + noun",
   "forms": "for (support)",
@@ -60111,7 +60367,8 @@
   "memory": "Even though = although (stronger).",
   "simple": "Used to contrast two true facts.",
   "more_examples": [
-   "Even though it rained, we went."
+   "Even though it rained, we went.",
+   "Even though I was tired, I finished the work."
   ],
   "pattern": "Even though + clause, + clause",
   "forms": "although",
@@ -60191,7 +60448,8 @@
   "memory": "Do + person + a favour.",
   "simple": "To help someone as a kindness.",
   "more_examples": [
-   "Do me a favour and call him."
+   "Do me a favour and call him.",
+   "Could you do me a favour and water my plants?"
   ],
   "pattern": "do + person + a favour",
   "forms": "help",
@@ -60354,7 +60612,8 @@
   "memory": "Row = one after another.",
   "simple": "One after another without a break.",
   "more_examples": [
-   "It rained five days in a row."
+   "It rained five days in a row.",
+   "I've been late three days in a row."
   ],
   "pattern": "number + in a row",
   "forms": "consecutively",
@@ -60519,7 +60778,8 @@
   "memory": "So that = in order that.",
   "simple": "Used to give the purpose of an action.",
   "more_examples": [
-   "Speak clearly so that everyone hears."
+   "Speak clearly so that everyone hears.",
+   "She saves money every month so that she can buy a scooter."
   ],
   "pattern": "action + so that + clause",
   "forms": "in order to",
@@ -60682,7 +60942,8 @@
   "memory": "Buys time.",
   "simple": "Used to get time to think before answering.",
   "more_examples": [
-   "That's an interesting question. Let me think."
+   "That's an interesting question. Let me think.",
+   "Why is the sky blue? That's an interesting question."
   ],
   "pattern": "That's an interesting question.",
   "forms": "Good question.",
@@ -60845,7 +61106,8 @@
   "memory": "Responsible FOR.",
   "simple": "Having the duty for something.",
   "more_examples": [
-   "Who is responsible for this?"
+   "Who is responsible for this?",
+   "Parents are responsible for their children's safety."
   ],
   "pattern": "responsible for + noun/-ing",
   "forms": "in charge of",
@@ -60927,7 +61189,8 @@
   "memory": "Whereas = but on the other hand.",
   "simple": "Used to compare two different facts.",
   "more_examples": [
-   "She's quiet, whereas he's loud."
+   "She's quiet, whereas he's loud.",
+   "Delhi is hot in summer, whereas Shimla stays cool."
   ],
   "pattern": "___, whereas + clause",
   "forms": "while · but",
@@ -61256,7 +61519,8 @@
   "memory": "Similar TO.",
   "simple": "Almost the same as.",
   "more_examples": [
-   "This is similar to that."
+   "This is similar to that.",
+   "Marathi is similar to Hindi in many ways."
   ],
   "pattern": "similar to + noun",
   "forms": "like · the same as",
@@ -61338,7 +61602,8 @@
   "memory": "Both.",
   "simple": "Used to say two things are true.",
   "more_examples": [
-   "It's not only cheap but also good."
+   "It's not only cheap but also good.",
+   "The trip was not only fun but also cheap."
   ],
   "pattern": "not only A but also B",
   "forms": "both … and",
@@ -61503,7 +61768,8 @@
   "memory": "Where = which point.",
   "simple": "Used when you forget what you were saying.",
   "more_examples": [
-   "Where was I? Oh yes…"
+   "Where was I? Oh yes…",
+   "Sorry, the phone rang. Where was I?"
   ],
   "pattern": "Where was I?",
   "forms": "What was I saying?",
@@ -61668,7 +61934,8 @@
   "memory": "Fond OF.",
   "simple": "Liking something or someone.",
   "more_examples": [
-   "She's fond of her teacher."
+   "She's fond of her teacher.",
+   "My grandmother is very fond of gardening."
   ],
   "pattern": "fond of + noun/-ing",
   "forms": "like · keen on",
@@ -61831,7 +62098,8 @@
   "memory": "Take place = happen.",
   "simple": "To happen (for planned events).",
   "more_examples": [
-   "The wedding will take place in May."
+   "The wedding will take place in May.",
+   "The final match will take place in Kolkata."
   ],
   "pattern": "take place",
   "forms": "happen · be held",
@@ -61913,7 +62181,8 @@
   "memory": "Buying time politely.",
   "simple": "Used to get a moment to think.",
   "more_examples": [
-   "Let me think about that for a second… yes."
+   "Let me think about that for a second… yes.",
+   "Which job will I take? Let me think about that for a second."
   ],
   "pattern": "Let me think about that (for a second).",
   "forms": "Give me a moment.",
@@ -61995,7 +62264,8 @@
   "memory": "No longer = not anymore.",
   "simple": "Not anymore.",
   "more_examples": [
-   "I no longer eat meat."
+   "I no longer eat meat.",
+   "The shop is no longer open on Sundays."
   ],
   "pattern": "no longer + verb",
   "forms": "not anymore",
@@ -62077,7 +62347,8 @@
   "memory": "Aware OF.",
   "simple": "Knowing about something.",
   "more_examples": [
-   "I'm aware of the problem."
+   "I'm aware of the problem.",
+   "Not many people are aware of this scheme."
   ],
   "pattern": "aware of + noun",
   "forms": "know about",
@@ -62404,7 +62675,8 @@
   "memory": "Since then = from that time.",
   "simple": "From that time until now.",
   "more_examples": [
-   "Since then, I haven't smoked."
+   "Since then, I haven't smoked.",
+   "I fell off a bike as a child. Since then, I've been scared of bikes."
   ],
   "pattern": "since then",
   "forms": "ever since",
@@ -62486,7 +62758,8 @@
   "memory": "Jealous OF.",
   "simple": "Unhappy because someone has something you want.",
   "more_examples": [
-   "I'm jealous of your trip!"
+   "I'm jealous of your trip!",
+   "Don't be jealous of your friends' success."
   ],
   "pattern": "jealous of + noun",
   "forms": "envious of",
@@ -62815,7 +63088,8 @@
   "memory": "Until then = till that time.",
   "simple": "Up to that time.",
   "more_examples": [
-   "See you on Monday; until then, rest."
+   "See you on Monday; until then, rest.",
+   "The results come out in June. Until then, relax."
   ],
   "pattern": "until then",
   "forms": "till then",
@@ -62897,7 +63171,8 @@
   "memory": "Satisfied WITH.",
   "simple": "Happy with something.",
   "more_examples": [
-   "I'm satisfied with my marks."
+   "I'm satisfied with my marks.",
+   "The customer wasn't satisfied with the answer."
   ],
   "pattern": "satisfied with + noun",
   "forms": "happy with",
@@ -62979,7 +63254,8 @@
   "memory": "As I said = reminder.",
   "simple": "Used to remind someone of what you said.",
   "more_examples": [
-   "As I said, it's closed."
+   "As I said, it's closed.",
+   "As I said, we need two more volunteers."
   ],
   "pattern": "As I said, + clause",
   "forms": "As I mentioned,…",
@@ -63142,7 +63418,8 @@
   "memory": "With me = following.",
   "simple": "Asks if the listener is following.",
   "more_examples": [
-   "Okay, are you with me so far?"
+   "Okay, are you with me so far?",
+   "First we turn left, then right at the temple. Are you with me?"
   ],
   "pattern": "Are you with me?",
   "forms": "Are you following?",
@@ -63307,7 +63584,8 @@
   "memory": "Ashamed OF.",
   "simple": "Feeling bad about something you did.",
   "more_examples": [
-   "Don't be ashamed of mistakes."
+   "Don't be ashamed of mistakes.",
+   "He was ashamed of his lie."
   ],
   "pattern": "ashamed of + noun",
   "forms": "embarrassed about",
@@ -63389,7 +63667,8 @@
   "memory": "Whether or not = either way.",
   "simple": "Used to say something happens in either case.",
   "more_examples": [
-   "Whether it rains or not, we'll play."
+   "Whether it rains or not, we'll play.",
+   "Whether you like it or not, you have to finish your homework."
   ],
   "pattern": "Whether + clause + or not, + clause",
   "forms": "Either way",
@@ -63637,7 +63916,8 @@
   "memory": "No time = very fast.",
   "simple": "Very quickly.",
   "more_examples": [
-   "Dinner will be ready in no time."
+   "Dinner will be ready in no time.",
+   "With a mixer, the chutney is ready in no time."
   ],
   "pattern": "in no time",
   "forms": "very soon",
@@ -63719,7 +63999,8 @@
   "memory": "Fed up = had enough.",
   "simple": "Annoyed and tired of something.",
   "more_examples": [
-   "She's fed up with excuses."
+   "She's fed up with excuses.",
+   "We're all fed up with the power cuts."
   ],
   "pattern": "fed up with + noun",
   "forms": "sick of",
@@ -63967,7 +64248,8 @@
   "memory": "Follow = understand.",
   "simple": "A polite way to say you don't understand.",
   "more_examples": [
-   "I'm not sure I follow. Can you explain?"
+   "I'm not sure I follow. Can you explain?",
+   "Sorry, I'm not sure I follow. Which form do I fill in?"
   ],
   "pattern": "I'm not sure I follow.",
   "forms": "Sorry, I don't understand.",
@@ -64047,7 +64329,8 @@
   "memory": "Every other = skip one.",
   "simple": "On alternate days.",
   "more_examples": [
-   "Water plants every other day."
+   "Water plants every other day.",
+   "The vegetable seller comes every other day."
   ],
   "pattern": "every other day/week",
   "forms": "alternate days",
@@ -64129,7 +64412,8 @@
   "memory": "Familiar WITH.",
   "simple": "Knowing something well.",
   "more_examples": [
-   "I'm familiar with the area."
+   "I'm familiar with the area.",
+   "Are you familiar with the bus routes here?"
   ],
   "pattern": "familiar with + noun",
   "forms": "know",
@@ -64377,7 +64661,8 @@
   "memory": "Couldn't more = 100%.",
   "simple": "Means you agree completely.",
   "more_examples": [
-   "I couldn't agree more with you."
+   "I couldn't agree more with you.",
+   "We need more trees in the city. — I couldn't agree more."
   ],
   "pattern": "I couldn't agree more.",
   "forms": "Absolutely.",
@@ -64459,7 +64744,8 @@
   "memory": "Present = now.",
   "simple": "Now; at this time.",
   "more_examples": [
-   "At present, we have no jobs."
+   "At present, we have no jobs.",
+   "At present, she's studying for her exams."
   ],
   "pattern": "at present",
   "forms": "currently · right now",
@@ -64539,7 +64825,8 @@
   "memory": "Grateful FOR a thing, TO a person.",
   "simple": "Thankful for something.",
   "more_examples": [
-   "We're grateful for the support."
+   "We're grateful for the support.",
+   "I'm grateful for everything my teachers did."
   ],
   "pattern": "grateful for + noun / to + person",
   "forms": "thankful for",
@@ -64868,7 +65155,8 @@
   "memory": "At most = not more than.",
   "simple": "Not more than.",
   "more_examples": [
-   "At most, 20 people will come."
+   "At most, 20 people will come.",
+   "Each student can bring two guests at most."
   ],
   "pattern": "at most",
   "forms": "at the most",
@@ -64948,7 +65236,8 @@
   "memory": "Surprised BY/AT.",
   "simple": "Feeling surprise because of something.",
   "more_examples": [
-   "She was surprised by the gift."
+   "She was surprised by the gift.",
+   "We were surprised by the size of the crowd."
   ],
   "pattern": "surprised by/at + noun",
   "forms": "amazed by",
@@ -65030,7 +65319,8 @@
   "memory": "Don't agree.",
   "simple": "Used to say you disagree with a statement.",
   "more_examples": [
-   "I don't agree that he's lazy."
+   "I don't agree that he's lazy.",
+   "I don't agree that boys are better at maths."
   ],
   "pattern": "I don't agree that + clause.",
   "forms": "I disagree that…",
@@ -65195,7 +65485,8 @@
   "memory": "Afraid = sorry.",
   "simple": "A polite, formal way to disagree.",
   "more_examples": [
-   "I'm afraid I don't agree."
+   "I'm afraid I don't agree.",
+   "I'm afraid I disagree; I think the old plan was better."
   ],
   "pattern": "I'm afraid I disagree.",
   "forms": "I see it differently.",
@@ -65360,7 +65651,8 @@
   "memory": "Believe IN = trust.",
   "simple": "To trust that something is good or real.",
   "more_examples": [
-   "Do you believe in ghosts?"
+   "Do you believe in ghosts?",
+   "My grandmother believes in home remedies."
   ],
   "pattern": "believe in + noun",
   "forms": "trust in",
@@ -65442,7 +65734,8 @@
   "memory": "Believe = strongly think.",
   "simple": "Used to give a strong opinion.",
   "more_examples": [
-   "I believe in you."
+   "I believe in you.",
+   "I believe that hard work always pays off."
   ],
   "pattern": "I believe (that) + clause.",
   "forms": "I think · I feel",
@@ -65524,7 +65817,8 @@
   "memory": "Raise = increase.",
   "simple": "To make more people know about an issue.",
   "more_examples": [
-   "We want to raise awareness about health."
+   "We want to raise awareness about health.",
+   "The students made posters to raise awareness about clean water."
   ],
   "pattern": "raise awareness (of/about + noun)",
   "forms": "spread awareness",
@@ -65689,7 +65983,8 @@
   "memory": "Getting smaller.",
   "simple": "Decreasing amount.",
   "more_examples": [
-   "I watch TV less and less."
+   "I watch TV less and less.",
+   "Since I started walking, I use the lift less and less."
   ],
   "pattern": "less and less",
   "forms": "decreasingly",
@@ -65937,7 +66232,8 @@
   "memory": "Reduce = make less.",
   "simple": "To make pollution less.",
   "more_examples": [
-   "Cycling reduces pollution."
+   "Cycling reduces pollution.",
+   "Using public transport helps reduce pollution."
   ],
   "pattern": "reduce pollution",
   "forms": "cut pollution",
@@ -66019,7 +66315,8 @@
   "memory": "See = view.",
   "simple": "A polite way to say you have a different view.",
   "more_examples": [
-   "Hmm, that's not how I see it."
+   "Hmm, that's not how I see it.",
+   "You think the rule is fair? That's not how I see it."
   ],
   "pattern": "That's not how I see it.",
   "forms": "I see it differently.",
@@ -66101,7 +66398,8 @@
   "memory": "Hardly ever = almost never.",
   "simple": "Almost never.",
   "more_examples": [
-   "He hardly ever calls."
+   "He hardly ever calls.",
+   "My uncle lives abroad, so we hardly ever see him."
   ],
   "pattern": "hardly ever",
   "forms": "rarely · almost never",
@@ -66181,7 +66479,8 @@
   "memory": "Belong TO = owned by.",
   "simple": "To be owned by someone.",
   "more_examples": [
-   "Who does this belong to?"
+   "Who does this belong to?",
+   "That red scooter belongs to my neighbour."
   ],
   "pattern": "belong to + person",
   "forms": "owned by",
@@ -66344,7 +66643,8 @@
   "memory": "Meet = achieve.",
   "simple": "To finish work by the set time.",
   "more_examples": [
-   "We must meet the deadline."
+   "We must meet the deadline.",
+   "The team worked late to meet the deadline."
   ],
   "pattern": "meet/miss a deadline",
   "forms": "on time",
@@ -66426,7 +66726,8 @@
   "memory": "Accept difference.",
   "simple": "Used to end a disagreement calmly.",
   "more_examples": [
-   "Okay, let's agree to disagree."
+   "Okay, let's agree to disagree.",
+   "You like tea, I like coffee. Let's agree to disagree."
   ],
   "pattern": "Let's agree to disagree.",
   "forms": "Let's leave it there.",
@@ -66919,7 +67220,8 @@
   "memory": "Sometimes.",
   "simple": "Sometimes; not often.",
   "more_examples": [
-   "Every now and then, we meet."
+   "Every now and then, we meet.",
+   "Every now and then, my mother makes gulab jamun."
   ],
   "pattern": "every now and then",
   "forms": "now and then",
@@ -67248,7 +67550,8 @@
   "memory": "Same idea!",
   "simple": "Used when someone says what you were thinking.",
   "more_examples": [
-   "That's exactly what I was thinking, yes."
+   "That's exactly what I was thinking, yes.",
+   "Let's order pizza! — That's exactly what I was thinking."
   ],
   "pattern": "That's exactly what I was thinking.",
   "forms": "Great minds think alike!",
@@ -67330,7 +67633,8 @@
   "memory": "Sometimes.",
   "simple": "Sometimes; not often.",
   "more_examples": [
-   "I eat sweets once in a while."
+   "I eat sweets once in a while.",
+   "It's fine to eat junk food once in a while."
   ],
   "pattern": "once in a while",
   "forms": "now and then",
@@ -67412,7 +67716,8 @@
   "memory": "Lend = give; borrow = take.",
   "simple": "To give something for a short time.",
   "more_examples": [
-   "Can you lend me 100?"
+   "Can you lend me 100?",
+   "Could you lend your notes to me for one day?"
   ],
   "pattern": "lend + thing + to + person / lend + person + thing",
   "forms": "borrow",
@@ -67575,7 +67880,8 @@
   "memory": "Hold = organise.",
   "simple": "To have a meeting.",
   "more_examples": [
-   "The board will hold a meeting."
+   "The board will hold a meeting.",
+   "The principal will hold a meeting with the parents."
   ],
   "pattern": "hold/have a meeting",
   "forms": "call a meeting",
@@ -67740,7 +68046,8 @@
   "memory": "Quite a bit = a lot.",
   "simple": "A fairly large amount.",
   "more_examples": [
-   "It rained quite a bit."
+   "It rained quite a bit.",
+   "His English has improved quite a bit."
   ],
   "pattern": "quite a bit (of + noun)",
   "forms": "quite a lot",
@@ -67822,7 +68129,8 @@
   "memory": "Suffer FROM.",
   "simple": "To have an illness or problem.",
   "more_examples": [
-   "She suffers from asthma."
+   "She suffers from asthma.",
+   "Many people suffer from back pain."
   ],
   "pattern": "suffer from + noun",
   "forms": "have",
@@ -67902,7 +68210,8 @@
   "memory": "Reason is that.",
   "simple": "Used to explain why you like something.",
   "more_examples": [
-   "The reason I like her is that she's kind."
+   "The reason I like her is that she's kind.",
+   "The reason I like my town is that everyone knows each other."
   ],
   "pattern": "The reason I like it is that + clause.",
   "forms": "I like it because…",
@@ -67984,7 +68293,8 @@
   "memory": "Run = manage.",
   "simple": "To own and manage a business.",
   "more_examples": [
-   "Running a business is hard."
+   "Running a business is hard.",
+   "My aunt runs a small business selling pickles."
   ],
   "pattern": "run a business/shop",
   "forms": "own a business",
@@ -68066,7 +68376,8 @@
   "memory": "Kind = nice.",
   "simple": "A polite way to thank someone for kindness.",
   "more_examples": [
-   "Oh, that's very kind of you."
+   "Oh, that's very kind of you.",
+   "You brought food for me? That's very kind of you."
   ],
   "pattern": "That's (very) kind of you.",
   "forms": "How kind!",
@@ -68231,7 +68542,8 @@
   "memory": "Focus ON.",
   "simple": "To give attention to something.",
   "more_examples": [
-   "Let's focus on the main issue."
+   "Let's focus on the main issue.",
+   "Turn off your phone and focus on the lesson."
   ],
   "pattern": "focus on + noun/-ing",
   "forms": "concentrate on",
@@ -68395,7 +68707,8 @@
   "memory": "Living = money to live.",
   "simple": "To make money to live.",
   "more_examples": [
-   "It's hard to earn a living."
+   "It's hard to earn a living.",
+   "Farmers work very hard to earn a living."
   ],
   "pattern": "earn a living (by + -ing / as + role)",
   "forms": "make a living",
@@ -68560,7 +68873,8 @@
   "memory": "Far too = way too.",
   "simple": "Much too.",
   "more_examples": [
-   "You work far too much."
+   "You work far too much.",
+   "The music is far too loud."
   ],
   "pattern": "far too + adjective",
   "forms": "much too",
@@ -68642,7 +68956,8 @@
   "memory": "Rely ON.",
   "simple": "To trust someone to help.",
   "more_examples": [
-   "I rely on my phone too much."
+   "I rely on my phone too much.",
+   "Many villages rely on rain for farming."
   ],
   "pattern": "rely on + noun",
   "forms": "depend on",
@@ -68724,7 +69039,8 @@
   "memory": "Many advantages, one main.",
   "simple": "Used to introduce advantages and the main one.",
   "more_examples": [
-   "Online study has several advantages."
+   "Online study has several advantages.",
+   "Living in a small town has several advantages. The biggest one is clean air."
   ],
   "pattern": "noun + has several advantages. The biggest one is + noun/-ing.",
   "forms": "There are many benefits…",
@@ -69136,7 +69452,8 @@
   "memory": "Downside = bad part.",
   "simple": "Used to give the negative side.",
   "more_examples": [
-   "The downside is that it's far."
+   "The downside is that it's far.",
+   "Working from home is nice. The downside is that I feel lonely."
   ],
   "pattern": "The downside is that + clause.",
   "forms": "The problem is…",
@@ -69382,7 +69699,8 @@
   "memory": "Quite a few = many.",
   "simple": "A fairly large number.",
   "more_examples": [
-   "I have quite a few books."
+   "I have quite a few books.",
+   "Quite a few students failed the test."
   ],
   "pattern": "quite a few + plural noun",
   "forms": "many · several",
@@ -69709,7 +70027,8 @@
   "memory": "Afraid = sorry.",
   "simple": "A polite way to say no.",
   "more_examples": [
-   "I'm afraid I can't."
+   "I'm afraid I can't.",
+   "Can you work on Sunday? — I'm afraid I can't."
   ],
   "pattern": "I'm afraid I can't (+ verb).",
   "forms": "Sorry, I can't.",
@@ -69791,7 +70110,8 @@
   "memory": "A number of = many (plural).",
   "simple": "Several; many.",
   "more_examples": [
-   "A number of problems remain."
+   "A number of problems remain.",
+   "A number of shops were closed for the festival."
   ],
   "pattern": "a number of + plural noun + plural verb",
   "forms": "several",
@@ -69871,7 +70191,8 @@
   "memory": "Remind OF = bring memory.",
   "simple": "Used to say something brings a memory.",
   "more_examples": [
-   "You remind me of my sister."
+   "You remind me of my sister.",
+   "The smell of rain reminds me of my village."
   ],
   "pattern": "noun + reminds me of + noun",
   "forms": "makes me think of",
@@ -69953,7 +70274,8 @@
   "memory": "Go for = choose.",
   "simple": "Used to state your choice.",
   "more_examples": [
-   "If I had to choose, I'd go for tea."
+   "If I had to choose, I'd go for tea.",
+   "City or village? If I had to choose, I'd go for the village."
   ],
   "pattern": "If I had to choose, I'd go for + noun.",
   "forms": "I'd pick…",
@@ -70201,7 +70523,8 @@
   "memory": "Great deal = a lot.",
   "simple": "A large amount.",
   "more_examples": [
-   "He has a great deal of money."
+   "He has a great deal of money.",
+   "Raising three children takes a great deal of patience."
   ],
   "pattern": "a great deal of + uncountable",
   "forms": "a lot of",
@@ -70283,7 +70606,8 @@
   "memory": "Past = polite.",
   "simple": "A polite way to ask about something.",
   "more_examples": [
-   "I wanted to ask about the job."
+   "I wanted to ask about the job.",
+   "Good morning. I wanted to ask about the bus timings."
   ],
   "pattern": "I wanted to ask about + noun.",
   "forms": "I'd like to know about…",
@@ -70363,7 +70687,8 @@
   "memory": "Some differ, most do.",
   "simple": "Used to give a general answer with an exception.",
   "more_examples": [
-   "It depends on the person, but most people like music."
+   "It depends on the person, but most people like music.",
+   "It depends on the person, but most people sleep about seven hours."
   ],
   "pattern": "It depends on the person, but most people + verb.",
   "forms": "Generally,…",
@@ -70528,7 +70853,8 @@
   "memory": "Got this = can do it.",
   "simple": "Means \"you can do it\".",
   "more_examples": [
-   "You've got this!"
+   "You've got this!",
+   "It's just an interview. You've got this."
   ],
   "pattern": "You've got this!",
   "forms": "You can do it!",
@@ -70853,7 +71179,8 @@
   "memory": "Back up = save a copy.",
   "simple": "To make a copy of your files.",
   "more_examples": [
-   "I back up my phone weekly."
+   "I back up my phone weekly.",
+   "Before you reset the phone, back up your data."
   ],
   "pattern": "back up + data",
   "forms": "backup (noun)",
@@ -71018,7 +71345,8 @@
   "memory": "Top at bottom.",
   "simple": "With the top at the bottom.",
   "more_examples": [
-   "Turn the glass upside down."
+   "Turn the glass upside down.",
+   "The baby is holding the book upside down."
   ],
   "pattern": "upside down",
   "forms": "inside out",
@@ -71183,7 +71511,8 @@
   "memory": "Future + will.",
   "simple": "Used to make a prediction.",
   "more_examples": [
-   "I think in the future, cars will fly."
+   "I think in the future, cars will fly.",
+   "I think in the future, most people will work from home."
   ],
   "pattern": "I think in the future, + noun + will + verb.",
   "forms": "I predict that…",
@@ -71265,7 +71594,8 @@
   "memory": "Viral = spreads fast.",
   "simple": "To spread very fast online.",
   "more_examples": [
-   "The post went viral."
+   "The post went viral.",
+   "A small dog's dance video went viral overnight."
   ],
   "pattern": "go viral",
   "forms": "trend",
@@ -71347,7 +71677,8 @@
   "memory": "Keep waiting = made you wait.",
   "simple": "A polite apology for making someone wait.",
   "more_examples": [
-   "Sorry to keep you waiting, sir."
+   "Sorry to keep you waiting, sir.",
+   "Sorry to keep you waiting. The doctor will see you now."
   ],
   "pattern": "Sorry to keep you waiting.",
   "forms": "Sorry I'm late.",
@@ -71755,7 +72086,8 @@
   "memory": "Discount = lower price.",
   "simple": "A polite way to ask for a lower price.",
   "more_examples": [
-   "Could you give me a small discount?"
+   "Could you give me a small discount?",
+   "I'm buying three shirts. Could you give me a discount?"
   ],
   "pattern": "Could you give me a discount?",
   "forms": "Is there any discount?",
@@ -72169,7 +72501,8 @@
   "memory": "Cup of tea = my style.",
   "simple": "Means \"I don't really like it\".",
   "more_examples": [
-   "Cricket isn't my cup of tea."
+   "Cricket isn't my cup of tea.",
+   "Shopping all day is not my cup of tea."
   ],
   "pattern": "Not my cup of tea.",
   "forms": "Not for me.",
@@ -72251,7 +72584,8 @@
   "memory": "Here, there = many places.",
   "simple": "In different places.",
   "more_examples": [
-   "I looked here and there."
+   "I looked here and there.",
+   "We saw small temples here and there along the road."
   ],
   "pattern": "here and there",
   "forms": "everywhere",
@@ -72414,7 +72748,8 @@
   "memory": "Overall = in total.",
   "simple": "Used to give a final opinion.",
   "more_examples": [
-   "Overall, I'd say it was good."
+   "Overall, I'd say it was good.",
+   "Overall, I'd say the new teacher is very good."
   ],
   "pattern": "Overall, I'd say + clause.",
   "forms": "All in all…",
@@ -72496,7 +72831,8 @@
   "memory": "Green = eco.",
   "simple": "To become eco-friendly.",
   "more_examples": [
-   "Let's go green at home."
+   "Let's go green at home.",
+   "Our school decided to go green and stopped using plastic."
   ],
   "pattern": "go green",
   "forms": "be eco-friendly",
@@ -72578,7 +72914,8 @@
   "memory": "All ears = listening fully.",
   "simple": "Means \"I'm listening carefully\".",
   "more_examples": [
-   "Tell me, I'm all ears."
+   "Tell me, I'm all ears.",
+   "You have news? I'm all ears."
   ],
   "pattern": "I'm all ears.",
   "forms": "I'm listening.",
@@ -72743,7 +73080,8 @@
   "memory": "Relationship WITH.",
   "simple": "A connection with someone.",
   "more_examples": [
-   "Build a relationship with clients."
+   "Build a relationship with clients.",
+   "Teachers should build a good relationship with students."
   ],
   "pattern": "a relationship with + person",
   "forms": "bond with",
@@ -72826,7 +73164,8 @@
   "memory": "Two ways = two angles.",
   "simple": "Used to explain two sides of a topic.",
   "more_examples": [
-   "I see it in two ways: good and bad."
+   "I see it in two ways: good and bad.",
+   "I see it in two ways: as a chance to learn and as a risk."
   ],
   "pattern": "I see it in two ways: A and B.",
   "forms": "There are two sides…",
@@ -73072,7 +73411,8 @@
   "memory": "On board = agreed / inside.",
   "simple": "Agreeing with a plan; or on a vehicle.",
   "more_examples": [
-   "Welcome on board!"
+   "Welcome on board!",
+   "Is the whole family on board with the plan?"
   ],
   "pattern": "on board",
   "forms": "agree · aboard",
@@ -73155,7 +73495,8 @@
   "memory": "Demand FOR.",
   "simple": "The need for something by buyers.",
   "more_examples": [
-   "There's high demand for mangoes."
+   "There's high demand for mangoes.",
+   "In summer, there's a big demand for coolers."
   ],
   "pattern": "demand for + noun",
   "forms": "need for",
@@ -73484,7 +73825,8 @@
   "memory": "Addition = more.",
   "simple": "Also; as well as that.",
   "more_examples": [
-   "In addition to English, he speaks Urdu."
+   "In addition to English, he speaks Urdu.",
+   "The room is big. In addition, it has a balcony."
   ],
   "pattern": "In addition, + clause / in addition to + noun",
   "forms": "also · moreover",
@@ -73566,7 +73908,8 @@
   "memory": "Key TO.",
   "simple": "The most important thing for something.",
   "more_examples": [
-   "Practice is the key to fluency."
+   "Practice is the key to fluency.",
+   "Good sleep is the key to good health."
   ],
   "pattern": "the key to + noun",
   "forms": "secret of",
@@ -73646,7 +73989,8 @@
   "memory": "Honest but still answer.",
   "simple": "Used to give an opinion while admitting limited knowledge.",
   "more_examples": [
-   "I don't know much about cars, but this looks good."
+   "I don't know much about cars, but this looks good.",
+   "I don't know much about cricket, but I enjoyed the match."
   ],
   "pattern": "I don't know much about + noun, but + clause.",
   "forms": "I'm no expert, but…",
@@ -73809,7 +74153,8 @@
   "memory": "Full hands = too busy.",
   "simple": "Means \"I'm very busy\".",
   "more_examples": [
-   "Sorry, my hands are full."
+   "Sorry, my hands are full.",
+   "Can you help me move? — Sorry, my hands are full this weekend."
   ],
   "pattern": "My hands are full.",
   "forms": "I'm swamped.",
@@ -73891,7 +74236,8 @@
   "memory": "As well as = and also.",
   "simple": "And also.",
   "more_examples": [
-   "I speak Hindi as well as English."
+   "I speak Hindi as well as English.",
+   "The hotel has a pool as well as a gym."
   ],
   "pattern": "A as well as B",
   "forms": "and also · both … and",
@@ -74056,7 +74402,8 @@
   "memory": "Affects both.",
   "simple": "Used to show something affects two groups.",
   "more_examples": [
-   "It affects not only health but also mood."
+   "It affects not only health but also mood.",
+   "Pollution affects not only people but also animals."
   ],
   "pattern": "It affects not only A but also B.",
   "forms": "It affects both A and B.",
@@ -74302,7 +74649,8 @@
   "memory": "In fact.",
   "simple": "Used to add a surprising or correcting fact.",
   "more_examples": [
-   "As a matter of fact, I know him."
+   "As a matter of fact, I know him.",
+   "As a matter of fact, I've never been to Mumbai."
   ],
   "pattern": "As a matter of fact, + clause.",
   "forms": "in fact · actually",
@@ -74631,7 +74979,8 @@
   "memory": "Bell = memory.",
   "simple": "Means \"it sounds familiar\".",
   "more_examples": [
-   "It rings a bell, but I can't remember."
+   "It rings a bell, but I can't remember.",
+   "Sharma Sweets? It rings a bell. Is it near the station?"
   ],
   "pattern": "It rings a bell.",
   "forms": "It sounds familiar.",
@@ -74713,7 +75062,8 @@
   "memory": "Whole = overall.",
   "simple": "Generally; overall.",
   "more_examples": [
-   "On the whole, I agree."
+   "On the whole, I agree.",
+   "On the whole, the students did well in the exam."
   ],
   "pattern": "on the whole",
   "forms": "overall · in general",
@@ -74961,7 +75311,8 @@
   "memory": "Cut = reduce.",
   "simple": "To reduce spending.",
   "more_examples": [
-   "We need to cut costs."
+   "We need to cut costs.",
+   "We switched off extra lights to cut costs."
   ],
   "pattern": "cut costs",
   "forms": "reduce costs",
@@ -75043,7 +75394,8 @@
   "memory": "Last straw = too much now.",
   "simple": "Means \"I can't accept this any more\".",
   "more_examples": [
-   "That's the last straw!"
+   "That's the last straw!",
+   "He broke his promise again. That's the last straw."
   ],
   "pattern": "That's the last straw.",
   "forms": "Enough is enough!",
@@ -75125,7 +75477,8 @@
   "memory": "General = usually.",
   "simple": "Usually; in most cases.",
   "more_examples": [
-   "In general, I like it."
+   "In general, I like it.",
+   "In general, mornings are cooler here."
   ],
   "pattern": "in general",
   "forms": "generally · usually",
@@ -75371,7 +75724,8 @@
   "memory": "Make = do.",
   "simple": "To pay money.",
   "more_examples": [
-   "Please make the payment by Friday."
+   "Please make the payment by Friday.",
+   "You can make a payment with any UPI app."
   ],
   "pattern": "make a payment",
   "forms": "pay",
@@ -75453,7 +75807,8 @@
   "memory": "Crossed fingers = hope.",
   "simple": "Means \"I hope it goes well for you\".",
   "more_examples": [
-   "I'll keep my fingers crossed."
+   "I'll keep my fingers crossed.",
+   "Your interview is today? I'll keep my fingers crossed."
   ],
   "pattern": "I'll keep my fingers crossed (for you).",
   "forms": "Fingers crossed!",
@@ -75701,7 +76056,8 @@
   "memory": "Should = advice.",
   "simple": "Used to suggest what the government ought to do.",
   "more_examples": [
-   "The government should reduce pollution."
+   "The government should reduce pollution.",
+   "The government should build more public toilets."
   ],
   "pattern": "The government should + base verb.",
   "forms": "Authorities need to…",
@@ -75783,7 +76139,8 @@
   "memory": "Refund = money back.",
   "simple": "To get your money back.",
   "more_examples": [
-   "Can I get a refund?"
+   "Can I get a refund?",
+   "The shoes were broken, so I got a refund."
   ],
   "pattern": "get a refund",
   "forms": "return · money back",
@@ -75948,7 +76305,8 @@
   "memory": "All in all = overall.",
   "simple": "Considering everything.",
   "more_examples": [
-   "All in all, I'm happy."
+   "All in all, I'm happy.",
+   "The food was late, but all in all, we had fun."
   ],
   "pattern": "all in all",
   "forms": "overall · on the whole",
@@ -76028,7 +76386,8 @@
   "memory": "Discuss + noun.",
   "simple": "To talk about a topic in detail.",
   "more_examples": [
-   "We discussed the budget."
+   "We discussed the budget.",
+   "My parents discussed my college options with me."
   ],
   "pattern": "discuss + noun",
   "forms": "talk about",
@@ -76193,7 +76552,8 @@
   "memory": "Headlines = big news.",
   "simple": "To be reported as big news.",
   "more_examples": [
-   "His win made headlines."
+   "His win made headlines.",
+   "A local girl made headlines by winning a gold medal."
   ],
   "pattern": "make headlines",
   "forms": "hit the news",
@@ -76358,7 +76718,8 @@
   "memory": "In any case = anyway.",
   "simple": "Whatever happens; anyway.",
   "more_examples": [
-   "In any case, thanks."
+   "In any case, thanks.",
+   "It may rain, but in any case, the match will happen."
   ],
   "pattern": "in any case",
   "forms": "anyway · regardless",
@@ -76522,7 +76883,8 @@
   "memory": "Most surprising.",
   "simple": "Used to say what surprises you most.",
   "more_examples": [
-   "What surprises me most is the cost."
+   "What surprises me most is the cost.",
+   "What surprises me most is how fast children learn phones."
   ],
   "pattern": "What surprises me most is + noun/clause.",
   "forms": "The most surprising thing is…",
@@ -76604,7 +76966,8 @@
   "memory": "Break = tell first.",
   "simple": "To tell someone important news.",
   "more_examples": [
-   "Who will break the news?"
+   "Who will break the news?",
+   "The doctor broke the news gently to the family."
   ],
   "pattern": "break the news (to + person)",
   "forms": "tell",
@@ -76686,7 +77049,8 @@
   "memory": "Situation decides.",
   "simple": "Means the answer changes with circumstances.",
   "more_examples": [
-   "Well, it depends on the situation."
+   "Well, it depends on the situation.",
+   "Should I call or text him? It depends on the situation."
   ],
   "pattern": "It depends on the situation.",
   "forms": "It depends.",
@@ -76768,7 +77132,8 @@
   "memory": "Short = summary.",
   "simple": "Used to give a short summary.",
   "more_examples": [
-   "In short, we won."
+   "In short, we won.",
+   "The hotel was dirty, far and costly. In short, never again."
   ],
   "pattern": "in short",
   "forms": "in brief · to sum up",
@@ -76848,7 +77213,8 @@
   "memory": "Request + noun.",
   "simple": "To formally ask for something.",
   "more_examples": [
-   "I request your help."
+   "I request your help.",
+   "The passenger requested a window seat."
   ],
   "pattern": "request + noun",
   "forms": "ask for",
@@ -76928,7 +77294,8 @@
   "memory": "Summary.",
   "simple": "Used to sum up an experience.",
   "more_examples": [
-   "All in all, it was a great experience."
+   "All in all, it was a great experience.",
+   "We got lost twice, but all in all, it was a fun experience."
   ],
   "pattern": "All in all, it was a + adjective + experience.",
   "forms": "Overall, it was…",
@@ -77093,7 +77460,8 @@
   "memory": "Good and bad.",
   "simple": "Means there are good and bad sides.",
   "more_examples": [
-   "There are pros and cons."
+   "There are pros and cons.",
+   "Living in a hostel? There are pros and cons."
   ],
   "pattern": "There are pros and cons (to + noun).",
   "forms": "It has good and bad sides.",
@@ -77257,7 +77625,8 @@
   "memory": "Emphasise + noun.",
   "simple": "To show something is important.",
   "more_examples": [
-   "I want to emphasise safety."
+   "I want to emphasise safety.",
+   "The doctor emphasised the need for rest."
   ],
   "pattern": "emphasise + noun",
   "forms": "stress",
@@ -77420,7 +77789,8 @@
   "memory": "Hard question.",
   "simple": "Used to show a question needs thought.",
   "more_examples": [
-   "That's a difficult question. Let me think."
+   "That's a difficult question. Let me think.",
+   "Which is better, Hindi films or English films? That's a difficult question."
   ],
   "pattern": "That's a difficult question, but…",
   "forms": "That's a tough one.",
@@ -77502,7 +77872,8 @@
   "memory": "Foremost = most important.",
   "simple": "Most importantly; first of all.",
   "more_examples": [
-   "First and foremost, thank you."
+   "First and foremost, thank you.",
+   "First and foremost, I'd like to thank my parents."
   ],
   "pattern": "First and foremost, + clause",
   "forms": "above all",
@@ -77746,7 +78117,8 @@
   "memory": "New angle.",
   "simple": "Used when someone shows you a new way to see something.",
   "more_examples": [
-   "Wow, I've never thought about it that way."
+   "Wow, I've never thought about it that way.",
+   "Failure can teach you more than success? I've never thought about it that way."
   ],
   "pattern": "I've never thought about it that way.",
   "forms": "Interesting point.",
@@ -77828,7 +78200,8 @@
   "memory": "Last but still important.",
   "simple": "Used before the final item that is still important.",
   "more_examples": [
-   "Last but not least, my parents."
+   "Last but not least, my parents.",
+   "Bring water, snacks and, last but not least, your ID card."
   ],
   "pattern": "Last but not least, + noun/clause",
   "forms": "finally",
@@ -78072,7 +78445,8 @@
   "memory": "Opinion = no right answer.",
   "simple": "Means people can see it differently.",
   "more_examples": [
-   "That's a matter of opinion."
+   "That's a matter of opinion.",
+   "Is Delhi food better than Mumbai food? It's a matter of opinion."
   ],
   "pattern": "It's a matter of opinion.",
   "forms": "It depends who you ask.",
@@ -78154,7 +78528,8 @@
   "memory": "Instance = example.",
   "simple": "For example.",
   "more_examples": [
-   "For instance, I cook daily."
+   "For instance, I cook daily.",
+   "Some fruits, for instance bananas, are cheap all year."
   ],
   "pattern": "for instance",
   "forms": "for example",
@@ -78234,7 +78609,8 @@
   "memory": "Lack (verb) + noun.",
   "simple": "To not have enough of something.",
   "more_examples": [
-   "The team lacks experience."
+   "The team lacks experience.",
+   "The village school lacks good teachers."
   ],
   "pattern": "lack + noun",
   "forms": "be short of",
@@ -78561,7 +78937,8 @@
   "memory": "Describe + noun.",
   "simple": "To say what something is like.",
   "more_examples": [
-   "Describe the man."
+   "Describe the man.",
+   "Can you describe the bag you lost?"
   ],
   "pattern": "describe + noun",
   "forms": "tell about",
@@ -78726,7 +79103,8 @@
   "memory": "That's all = no more.",
   "simple": "Used to end your answer.",
   "more_examples": [
-   "Hmm, that's all I can think of."
+   "Hmm, that's all I can think of.",
+   "We need rice, oil and soap. That's all I can think of."
   ],
   "pattern": "That's all I can think of.",
   "forms": "That's it.",
@@ -78808,7 +79186,8 @@
   "memory": "More = extra.",
   "simple": "Used to add another, stronger point.",
   "more_examples": [
-   "What's more, it's free."
+   "What's more, it's free.",
+   "The flat is near the metro. What's more, the rent is low."
   ],
   "pattern": "What's more, + clause",
   "forms": "also · moreover",
@@ -79139,7 +79518,8 @@
   "memory": "Hurt = pain.",
   "simple": "To make someone sad.",
   "more_examples": [
-   "Don't hurt her feelings."
+   "Don't hurt her feelings.",
+   "Be careful with your words; you can hurt someone's feelings."
   ],
   "pattern": "hurt + person's feelings",
   "forms": "upset",
@@ -79219,7 +79599,8 @@
   "memory": "Speaking with = talking to.",
   "simple": "Asks the name of the person on the phone.",
   "more_examples": [
-   "Who am I speaking with?"
+   "Who am I speaking with?",
+   "Hello, this is the bank. — Who am I speaking with?"
   ],
   "pattern": "Who am I speaking with/to?",
   "forms": "May I know your name?",
@@ -79467,7 +79848,8 @@
   "memory": "Speaker = loud.",
   "simple": "Tells the caller you'll use speakerphone.",
   "more_examples": [
-   "Let me put you on speaker."
+   "Let me put you on speaker.",
+   "Mum wants to talk to you too. Let me put you on speaker."
   ],
   "pattern": "Let me put you on speaker.",
   "forms": "You're on speaker.",
@@ -79632,7 +80014,8 @@
   "memory": "Word = promise.",
   "simple": "To do what you promised.",
   "more_examples": [
-   "Always keep your word."
+   "Always keep your word.",
+   "He said he would pay me back, and he kept his word."
   ],
   "pattern": "keep your word",
   "forms": "keep a promise",
@@ -79714,7 +80097,8 @@
   "memory": "Let you go = end call.",
   "simple": "A polite way to end a call.",
   "more_examples": [
-   "I'll let you go; talk soon."
+   "I'll let you go; talk soon.",
+   "It's late and you have work tomorrow. I'll let you go."
   ],
   "pattern": "I'll let you go.",
   "forms": "I won't keep you.",
@@ -79962,7 +80346,8 @@
   "memory": "Come back = discuss later.",
   "simple": "Asks to discuss something later.",
   "more_examples": [
-   "Good point; can we come back to that later?"
+   "Good point; can we come back to that later?",
+   "That's a big topic. Can we come back to that later?"
   ],
   "pattern": "Can we come back to that later?",
   "forms": "Let's park that.",
@@ -80293,7 +80678,8 @@
   "memory": "Whatever happens.",
   "simple": "Whatever happens.",
   "more_examples": [
-   "I'll support you no matter what."
+   "I'll support you no matter what.",
+   "No matter what happens, don't open the door to strangers."
   ],
   "pattern": "no matter what",
   "forms": "whatever happens",
@@ -80375,7 +80761,8 @@
   "memory": "Healthy = good for body.",
   "simple": "Good, balanced food.",
   "more_examples": [
-   "Eat a healthy diet."
+   "Eat a healthy diet.",
+   "Fruits and vegetables are part of a healthy diet."
   ],
   "pattern": "a healthy/balanced diet",
   "forms": "balanced diet",
@@ -80457,7 +80844,8 @@
   "memory": "Walk through = explain steps.",
   "simple": "Asks someone to explain step by step.",
   "more_examples": [
-   "Could you walk me through it?"
+   "Could you walk me through it?",
+   "I've never used this app. Could you walk me through it?"
   ],
   "pattern": "Could you walk me through + noun?",
   "forms": "Explain step by step",
@@ -80539,7 +80927,8 @@
   "memory": "Above all = most important.",
   "simple": "Most importantly.",
   "more_examples": [
-   "Above all, stay safe."
+   "Above all, stay safe.",
+   "Above all, I want my children to be happy."
   ],
   "pattern": "above all",
   "forms": "most importantly",
@@ -80787,7 +81176,8 @@
   "memory": "Begin = start.",
   "simple": "First; as the first point.",
   "more_examples": [
-   "To begin with, it's cheap."
+   "To begin with, it's cheap.",
+   "To begin with, we need a list of guests."
   ],
   "pattern": "To begin with, + clause",
   "forms": "First of all · To start with",
@@ -80867,7 +81257,8 @@
   "memory": "Well-paid = good money.",
   "simple": "A job with a good salary.",
   "more_examples": [
-   "It's a well-paid job."
+   "It's a well-paid job.",
+   "Every parent hopes their child will get a well-paid job."
   ],
   "pattern": "a well-paid job",
   "forms": "high-paying",
@@ -80949,7 +81340,8 @@
   "memory": "Sorry first.",
   "simple": "A polite way to interrupt.",
   "more_examples": [
-   "Sorry to interrupt, but it's time."
+   "Sorry to interrupt, but it's time.",
+   "Sorry to interrupt, but your car is blocking the gate."
   ],
   "pattern": "Sorry to interrupt, but…",
   "forms": "Excuse me, …",
@@ -81114,7 +81506,8 @@
   "memory": "Bright = good.",
   "simple": "A successful future.",
   "more_examples": [
-   "Kids have a bright future."
+   "Kids have a bright future.",
+   "With your marks, you have a bright future ahead."
   ],
   "pattern": "a bright future",
   "forms": "promising future",
@@ -81196,7 +81589,8 @@
   "memory": "Touch base = talk briefly.",
   "simple": "Means \"let's talk briefly tomorrow\".",
   "more_examples": [
-   "Let's touch base next week."
+   "Let's touch base next week.",
+   "I'll read the report tonight. Let's touch base tomorrow."
   ],
   "pattern": "Let's touch base (+ time).",
   "forms": "Let's catch up.",
@@ -81278,7 +81672,8 @@
   "memory": "Surprising.",
   "simple": "Used before a surprising fact.",
   "more_examples": [
-   "Believe it or not, he's 60."
+   "Believe it or not, he's 60.",
+   "Believe it or not, my grandmother uses Instagram."
   ],
   "pattern": "Believe it or not, + clause",
   "forms": "Surprisingly, …",
@@ -81441,7 +81836,8 @@
   "memory": "Concern = worry.",
   "simple": "Shows you understand someone's worry.",
   "more_examples": [
-   "I understand your concern; let me help."
+   "I understand your concern; let me help.",
+   "I understand your concern. We'll fix the bill today."
   ],
   "pattern": "I understand your concern.",
   "forms": "I see why you're worried.",
@@ -81523,7 +81919,8 @@
   "memory": "Whole = all together.",
   "simple": "Considering all parts together.",
   "more_examples": [
-   "The team as a whole did well."
+   "The team as a whole did well.",
+   "The school as a whole won the sports trophy."
   ],
   "pattern": "as a whole",
   "forms": "overall",
@@ -81686,7 +82083,8 @@
   "memory": "Inconvenience = trouble.",
   "simple": "A formal apology for trouble caused.",
   "more_examples": [
-   "We apologise for the inconvenience."
+   "We apologise for the inconvenience.",
+   "The train is delayed by an hour. We apologise for the inconvenience."
   ],
   "pattern": "I/We apologise for the inconvenience.",
   "forms": "Sorry for the trouble.",
@@ -81768,7 +82166,8 @@
   "memory": "Contrast = opposite.",
   "simple": "Used to show a difference.",
   "more_examples": [
-   "In contrast to her sister, she's shy."
+   "In contrast to her sister, she's shy.",
+   "My brother loves noise. In contrast, I like silence."
   ],
   "pattern": "In contrast, + clause / in contrast to + noun",
   "forms": "however · by contrast",
@@ -81933,7 +82332,8 @@
   "memory": "Look into = investigate.",
   "simple": "Promises to check a problem.",
   "more_examples": [
-   "I'll look into it."
+   "I'll look into it.",
+   "Your parcel hasn't arrived? Let me look into this for you."
   ],
   "pattern": "Let me look into + noun.",
   "forms": "Let me check.",
@@ -82098,7 +82498,8 @@
   "memory": "Latest = newest.",
   "simple": "The newest technology.",
   "more_examples": [
-   "Our school uses the latest technology."
+   "Our school uses the latest technology.",
+   "Farmers now use the latest technology to check the weather."
   ],
   "pattern": "the latest technology",
   "forms": "new tech",
@@ -82180,7 +82581,8 @@
   "memory": "Bear = be patient.",
   "simple": "Asks someone to be patient.",
   "more_examples": [
-   "Please bear with me."
+   "Please bear with me.",
+   "The system is slow today. Please bear with me."
   ],
   "pattern": "Please bear with me.",
   "forms": "Please be patient.",
@@ -82428,7 +82830,8 @@
   "memory": "Patience = waiting calmly.",
   "simple": "Thanks someone for waiting.",
   "more_examples": [
-   "Thanks for your patience."
+   "Thanks for your patience.",
+   "Your issue is fixed now. Thank you for your patience."
   ],
   "pattern": "Thank you for your patience.",
   "forms": "Thanks for waiting.",
@@ -82510,7 +82913,8 @@
   "memory": "Theory = on paper.",
   "simple": "In an ideal situation, but maybe not in reality.",
   "more_examples": [
-   "In theory, it should work."
+   "In theory, it should work.",
+   "In theory, the bus comes every ten minutes."
   ],
   "pattern": "in theory",
   "forms": "on paper",
@@ -82758,7 +83162,8 @@
   "memory": "Practice = real life.",
   "simple": "In reality, when actually done.",
   "more_examples": [
-   "In practice, it's harder."
+   "In practice, it's harder.",
+   "The rule sounds simple, but in practice, few people follow it."
   ],
   "pattern": "in practice",
   "forms": "in reality",
@@ -82840,7 +83245,8 @@
   "memory": "Narrow = just barely.",
   "simple": "A situation where you nearly got hurt.",
   "more_examples": [
-   "That was a narrow escape!"
+   "That was a narrow escape!",
+   "The bus stopped just in time. It was a narrow escape."
   ],
   "pattern": "a narrow escape",
   "forms": "close call",
@@ -83003,7 +83409,8 @@
   "memory": "In order to = so as to.",
   "simple": "For the purpose of.",
   "more_examples": [
-   "In order to pass, study."
+   "In order to pass, study.",
+   "She wakes up at five in order to study."
   ],
   "pattern": "in order to + base verb",
   "forms": "to · so as to",
@@ -83251,7 +83658,8 @@
   "memory": "As if = like.",
   "simple": "In a way that suggests something.",
   "more_examples": [
-   "She looked as if she was tired."
+   "She looked as if she was tired.",
+   "It looks as if it's going to rain."
   ],
   "pattern": "as if + clause",
   "forms": "as though",
@@ -83333,7 +83741,8 @@
   "memory": "Deep = heavy.",
   "simple": "Very heavy sleep.",
   "more_examples": [
-   "I fell into a deep sleep."
+   "I fell into a deep sleep.",
+   "After the long trip, the kids fell into a deep sleep."
   ],
   "pattern": "a deep sleep",
   "forms": "sound sleep",
@@ -83415,7 +83824,8 @@
   "memory": "Hard choice.",
   "simple": "Used to give a choice between difficult options.",
   "more_examples": [
-   "If I had to choose, I'd say tea."
+   "If I had to choose, I'd say tea.",
+   "Football or cricket? If I had to choose, I'd say football."
   ],
   "pattern": "If I had to choose, I'd say + noun.",
   "forms": "I'd probably pick…",
@@ -83580,7 +83990,8 @@
   "memory": "Golden = rare, valuable.",
   "simple": "A very good chance.",
   "more_examples": [
-   "Don't miss this golden opportunity."
+   "Don't miss this golden opportunity.",
+   "Studying abroad on a scholarship is a golden opportunity."
   ],
   "pattern": "a golden opportunity",
   "forms": "great chance",
@@ -83662,7 +84073,8 @@
   "memory": "Varies = changes.",
   "simple": "Means it's different for each person.",
   "more_examples": [
-   "Taste varies from person to person."
+   "Taste varies from person to person.",
+   "How much sleep do you need? It varies from person to person."
   ],
   "pattern": "It varies from person to person.",
   "forms": "It depends on the person.",
@@ -83825,7 +84237,8 @@
   "memory": "Basic = simple.",
   "simple": "Simple understanding.",
   "more_examples": [
-   "Basic knowledge of English."
+   "Basic knowledge of English.",
+   "This job needs basic knowledge of Excel."
   ],
   "pattern": "basic knowledge of + noun",
   "forms": "working knowledge",
@@ -83907,7 +84320,8 @@
   "memory": "Hard, but choose.",
   "simple": "Used before making a hard choice.",
   "more_examples": [
-   "It's hard to choose, but tea."
+   "It's hard to choose, but tea.",
+   "Mango or banana? It's hard to choose, but mango."
   ],
   "pattern": "It's hard to choose, but + choice.",
   "forms": "Tough choice, but…",
@@ -84404,7 +84818,8 @@
   "memory": "Pretty much = almost all.",
   "simple": "Means \"that's almost everything\".",
   "more_examples": [
-   "That's pretty much it."
+   "That's pretty much it.",
+   "We pack, we lock the house, and we leave. That's pretty much it."
   ],
   "pattern": "That's pretty much it.",
   "forms": "That's all.",
@@ -84484,7 +84899,8 @@
   "memory": "On purpose = deliberately.",
   "simple": "Deliberately.",
   "more_examples": [
-   "I didn't do it on purpose."
+   "I didn't do it on purpose.",
+   "Sorry, I didn't step on your foot on purpose."
   ],
   "pattern": "on purpose",
   "forms": "deliberately",
@@ -84730,7 +85146,8 @@
   "memory": "By chance = accidentally.",
   "simple": "Without planning.",
   "more_examples": [
-   "I found it by chance."
+   "I found it by chance.",
+   "I found my old school photo by chance."
   ],
   "pattern": "by chance",
   "forms": "by accident · luckily",
@@ -84812,7 +85229,8 @@
   "memory": "Tight = little time.",
   "simple": "A deadline with very little time.",
   "more_examples": [
-   "We're on a tight deadline."
+   "We're on a tight deadline.",
+   "With such a tight deadline, we'll work this weekend."
   ],
   "pattern": "a tight deadline",
   "forms": "little time",
@@ -84894,7 +85312,8 @@
   "memory": "This way = new words.",
   "simple": "Used to explain something in a different way.",
   "more_examples": [
-   "Let me put it this way: no."
+   "Let me put it this way: no.",
+   "Let me put it this way: I won't buy it again."
   ],
   "pattern": "Let me put it this way: + clause",
   "forms": "In other words…",
@@ -84976,7 +85395,8 @@
   "memory": "By heart = from memory.",
   "simple": "From memory.",
   "more_examples": [
-   "She knows the song by heart."
+   "She knows the song by heart.",
+   "Every child here knows the national anthem by heart."
   ],
   "pattern": "learn/know by heart",
   "forms": "memorise",
@@ -85058,7 +85478,8 @@
   "memory": "Higher = after school.",
   "simple": "Study at college or university.",
   "more_examples": [
-   "Higher education is costly."
+   "Higher education is costly.",
+   "Many students take loans for higher education."
   ],
   "pattern": "higher education",
   "forms": "university · college",
@@ -85140,7 +85561,8 @@
   "memory": "Brings = reason.",
   "simple": "A friendly way to ask why someone came.",
   "more_examples": [
-   "What brings you to Delhi?"
+   "What brings you to Delhi?",
+   "Hello, sir. What brings you here today?"
   ],
   "pattern": "What brings you (here/to + place)?",
   "forms": "Why are you here?",
@@ -85222,7 +85644,8 @@
   "memory": "In person = physically.",
   "simple": "Face to face, not online.",
   "more_examples": [
-   "She came in person."
+   "She came in person.",
+   "It's better to pay the fee in person."
   ],
   "pattern": "in person",
   "forms": "face to face",
@@ -85387,7 +85810,8 @@
   "memory": "Heard = people told me.",
   "simple": "A warm line when meeting someone you've heard about.",
   "more_examples": [
-   "I've heard a lot about you."
+   "I've heard a lot about you.",
+   "So you're Ravi's sister! I've heard a lot about you."
   ],
   "pattern": "I've heard a lot about you.",
   "forms": "Good things, I hope!",
@@ -85469,7 +85893,8 @@
   "memory": "Public = others see.",
   "simple": "Where other people can see.",
   "more_examples": [
-   "He spoke in public."
+   "He spoke in public.",
+   "Please don't eat in public places on the metro."
   ],
   "pattern": "in public",
   "forms": "openly",
@@ -85634,7 +86059,8 @@
   "memory": "Grab = get quickly.",
   "simple": "A casual invitation to meet.",
   "more_examples": [
-   "Let's grab lunch sometime."
+   "Let's grab lunch sometime.",
+   "It was nice to see you. Let's grab a coffee sometime."
   ],
   "pattern": "Let's grab a coffee/lunch sometime.",
   "forms": "Let's meet up.",
@@ -85716,7 +86142,8 @@
   "memory": "Private = alone.",
   "simple": "Without others present.",
   "more_examples": [
-   "Let's discuss it in private."
+   "Let's discuss it in private.",
+   "The doctor wants to speak to you in private."
   ],
   "pattern": "in private",
   "forms": "privately",
@@ -85962,7 +86389,8 @@
   "memory": "In a way = partly.",
   "simple": "Partly; to some extent.",
   "more_examples": [
-   "In a way, it helped."
+   "In a way, it helped.",
+   "In a way, losing the job was good for me."
   ],
   "pattern": "in a way",
   "forms": "partly",
@@ -86127,7 +86555,8 @@
   "memory": "Treat = I pay.",
   "simple": "Means \"I'll pay for this\".",
   "more_examples": [
-   "It's my treat."
+   "It's my treat.",
+   "Put your wallet away. It's my treat."
   ],
   "pattern": "It's my treat.",
   "forms": "I'll pay. · It's on me.",
@@ -86209,7 +86638,8 @@
   "memory": "Particular = specific.",
   "simple": "Especially.",
   "more_examples": [
-   "Nothing in particular."
+   "Nothing in particular.",
+   "I love Indian food, South Indian food in particular."
   ],
   "pattern": "in particular",
   "forms": "especially",
@@ -86291,7 +86721,8 @@
   "memory": "Online = internet.",
   "simple": "Banking on the internet.",
   "more_examples": [
-   "Online banking is quick."
+   "Online banking is quick.",
+   "With online banking, my father doesn't go to the bank any more."
   ],
   "pattern": "online banking",
   "forms": "net banking",
@@ -86456,7 +86887,8 @@
   "memory": "Detail = small parts.",
   "simple": "Fully, with all parts.",
   "more_examples": [
-   "We discussed it in detail."
+   "We discussed it in detail.",
+   "The guide told us about the fort in detail."
   ],
   "pattern": "in detail",
   "forms": "thoroughly",
@@ -86787,7 +87219,8 @@
   "memory": "Natural = from nature.",
   "simple": "Things from nature like water and forests.",
   "more_examples": [
-   "India has many natural resources."
+   "India has many natural resources.",
+   "Water and forests are natural resources we must protect."
   ],
   "pattern": "natural resources",
   "forms": "raw materials",
@@ -86952,7 +87385,8 @@
   "memory": "Random = no plan.",
   "simple": "Without choosing on purpose.",
   "more_examples": [
-   "Choose a card at random."
+   "Choose a card at random.",
+   "Five winners will be chosen at random."
   ],
   "pattern": "at random",
   "forms": "randomly",
@@ -87034,7 +87468,8 @@
   "memory": "Disaster = big damage.",
   "simple": "A flood, storm or earthquake.",
   "more_examples": [
-   "Natural disasters hit Assam often."
+   "Natural disasters hit Assam often.",
+   "The cyclone was the worst natural disaster in years."
   ],
   "pattern": "a natural disaster",
   "forms": "calamity",
@@ -87365,7 +87800,8 @@
   "memory": "Fed up = had enough.",
   "simple": "Means \"I've had enough\".",
   "more_examples": [
-   "I'm fed up!"
+   "I'm fed up!",
+   "The lift is broken again. I'm fed up."
   ],
   "pattern": "I'm fed up (with + noun).",
   "forms": "I've had enough.",
@@ -87447,7 +87883,8 @@
   "memory": "Secret = hidden.",
   "simple": "Without others knowing.",
   "more_examples": [
-   "He met her in secret."
+   "He met her in secret.",
+   "They planned the surprise party in secret."
   ],
   "pattern": "in secret",
   "forms": "secretly",
@@ -87529,7 +87966,8 @@
   "memory": "Endangered = in danger.",
   "simple": "Animals or plants that may disappear.",
   "more_examples": [
-   "Save endangered species."
+   "Save endangered species.",
+   "The snow leopard is an endangered species."
   ],
   "pattern": "an endangered species",
   "forms": "at risk",
@@ -87611,7 +88049,8 @@
   "memory": "Pressure = stress.",
   "simple": "Feeling stress to do something.",
   "more_examples": [
-   "He's under a lot of pressure."
+   "He's under a lot of pressure.",
+   "Students are under a lot of pressure before board exams."
   ],
   "pattern": "under pressure",
   "forms": "stressed",
@@ -87693,7 +88132,8 @@
   "memory": "Green = plants.",
   "simple": "Parks and areas with trees.",
   "more_examples": [
-   "Green spaces improve health."
+   "Green spaces improve health.",
+   "Children need green spaces to play."
   ],
   "pattern": "green spaces",
   "forms": "parks",
@@ -87775,7 +88215,8 @@
   "memory": "Risk = possible harm.",
   "simple": "In danger.",
   "more_examples": [
-   "Kids are at risk online."
+   "Kids are at risk online.",
+   "Old buildings are at risk during an earthquake."
   ],
   "pattern": "at risk (of + noun)",
   "forms": "in danger",
@@ -87940,7 +88381,8 @@
   "memory": "Tears = crying.",
   "simple": "Crying.",
   "more_examples": [
-   "He was in tears."
+   "He was in tears.",
+   "The little boy was in tears after he lost his toy."
   ],
   "pattern": "in tears",
   "forms": "crying",
@@ -88271,7 +88713,8 @@
   "memory": "Out of control = can't stop.",
   "simple": "Impossible to manage.",
   "more_examples": [
-   "The kids are out of control."
+   "The kids are out of control.",
+   "The prices are out of control this year."
   ],
   "pattern": "out of control",
   "forms": "under control",
@@ -88353,7 +88796,8 @@
   "memory": "Minor = small.",
   "simple": "A small, not serious injury.",
   "more_examples": [
-   "It's a minor injury."
+   "It's a minor injury.",
+   "She fell off her bike but had only a minor injury."
   ],
   "pattern": "a minor/serious injury",
   "forms": "small cut",
@@ -88435,7 +88879,8 @@
   "memory": "Average = usual.",
   "simple": "Usually; as a typical amount.",
   "more_examples": [
-   "On average, it rains 20 days."
+   "On average, it rains 20 days.",
+   "On average, we spend 5,000 rupees on groceries a month."
   ],
   "pattern": "on average",
   "forms": "typically",
@@ -88600,7 +89045,8 @@
   "memory": "Common = shared.",
   "simple": "Shared by two or more.",
   "more_examples": [
-   "We have nothing in common."
+   "We have nothing in common.",
+   "My best friend and I have a lot in common; we both love music."
   ],
   "pattern": "have (a lot) in common",
   "forms": "similar",
@@ -88763,7 +89209,8 @@
   "memory": "On the spot = right then.",
   "simple": "Immediately, at that place.",
   "more_examples": [
-   "He paid on the spot."
+   "He paid on the spot.",
+   "The traffic police fined him on the spot."
   ],
   "pattern": "on the spot",
   "forms": "immediately",
@@ -88928,7 +89375,8 @@
   "memory": "Change = different.",
   "simple": "To do something different from usual.",
   "more_examples": [
-   "He was on time for a change!"
+   "He was on time for a change!",
+   "We always go to the hills. Let's go to the beach for a change."
   ],
   "pattern": "for a change",
   "forms": "for once",
@@ -89093,7 +89541,8 @@
   "memory": "Slowly.",
   "simple": "Slowly, in small steps.",
   "more_examples": [
-   "Save little by little."
+   "Save little by little.",
+   "Little by little, the plant grew into a tree."
   ],
   "pattern": "little by little",
   "forms": "step by step",
@@ -89175,7 +89624,8 @@
   "memory": "Expenses = spending.",
   "simple": "Money you spend every month.",
   "more_examples": [
-   "Track your monthly expenses."
+   "Track your monthly expenses.",
+   "Rent is the biggest part of our monthly expenses."
   ],
   "pattern": "monthly expenses",
   "forms": "monthly bills",
@@ -89423,7 +89873,8 @@
   "memory": "Face to face = together.",
   "simple": "In person, looking at each other.",
   "more_examples": [
-   "We met face to face."
+   "We met face to face.",
+   "We chat online, but I'd like to meet face to face."
   ],
   "pattern": "face to face",
   "forms": "in person",
@@ -89505,7 +89956,8 @@
   "memory": "Fixed = same each month.",
   "simple": "Money that stays the same each month.",
   "more_examples": [
-   "A fixed income helps planning."
+   "A fixed income helps planning.",
+   "With a fixed income, my uncle plans every rupee."
   ],
   "pattern": "a fixed income",
   "forms": "steady income",
@@ -89587,7 +90039,8 @@
   "memory": "Each day more.",
   "simple": "Gradually, each day.",
   "more_examples": [
-   "He's improving day by day."
+   "He's improving day by day.",
+   "Day by day, the baby is learning new words."
   ],
   "pattern": "day by day",
   "forms": "gradually",
@@ -89752,7 +90205,8 @@
   "memory": "Together.",
   "simple": "Holding hands; or closely connected.",
   "more_examples": [
-   "Health and happiness go hand in hand."
+   "Health and happiness go hand in hand.",
+   "Practice and progress go hand in hand."
   ],
   "pattern": "hand in hand",
   "forms": "together",
@@ -89834,7 +90288,8 @@
   "memory": "Social = society.",
   "simple": "A problem that affects society.",
   "more_examples": [
-   "Poverty is a social problem."
+   "Poverty is a social problem.",
+   "Child labour is still a social problem."
   ],
   "pattern": "a social problem",
   "forms": "social issue",
@@ -89916,7 +90371,8 @@
   "memory": "Peace + quiet = calm.",
   "simple": "A calm, quiet situation.",
   "more_examples": [
-   "The village has peace and quiet."
+   "The village has peace and quiet.",
+   "My father goes to the farm for some peace and quiet."
   ],
   "pattern": "peace and quiet",
   "forms": "calm",
@@ -89996,7 +90452,8 @@
   "memory": "Public = people.",
   "simple": "Ordinary people.",
   "more_examples": [
-   "The general public was angry."
+   "The general public was angry.",
+   "The new hospital is open to the general public."
   ],
   "pattern": "the general public",
   "forms": "people · citizens",
@@ -90161,7 +90618,8 @@
   "memory": "Rights = what all deserve.",
   "simple": "Basic rights every person has.",
   "more_examples": [
-   "Protect human rights."
+   "Protect human rights.",
+   "Education and health are basic human rights."
   ],
   "pattern": "human rights",
   "forms": "civil rights",
@@ -90409,7 +90867,8 @@
   "memory": "Try, fail, learn.",
   "simple": "Learning by trying and making mistakes.",
   "more_examples": [
-   "Cooking is trial and error."
+   "Cooking is trial and error.",
+   "We fixed the old radio by trial and error."
   ],
   "pattern": "by trial and error",
   "forms": "experiment",
@@ -90491,7 +90950,8 @@
   "memory": "Senior = older.",
   "simple": "Older people, usually over 60.",
   "more_examples": [
-   "Respect senior citizens."
+   "Respect senior citizens.",
+   "This bus has seats for senior citizens."
   ],
   "pattern": "senior citizens",
   "forms": "elderly people",
@@ -90573,7 +91033,8 @@
   "memory": "Loud + clear = fully heard.",
   "simple": "Very clearly.",
   "more_examples": [
-   "The message was loud and clear."
+   "The message was loud and clear.",
+   "Stop talking during the test — is that loud and clear?"
   ],
   "pattern": "loud and clear",
   "forms": "clearly",
@@ -90655,7 +91116,8 @@
   "memory": "Equal = same.",
   "simple": "The same chances for everyone.",
   "more_examples": [
-   "We offer equal opportunities."
+   "We offer equal opportunities.",
+   "Every child should have equal opportunities in school."
   ],
   "pattern": "equal opportunities",
   "forms": "fair chances",
@@ -90818,7 +91280,8 @@
   "memory": "Warm = friendly.",
   "simple": "A friendly welcome.",
   "more_examples": [
-   "Please give her a warm welcome."
+   "Please give her a warm welcome.",
+   "The new students got a warm welcome from the teachers."
   ],
   "pattern": "a warm welcome",
   "forms": "hearty welcome",
@@ -90983,7 +91446,8 @@
   "memory": "Listener = one who listens.",
   "simple": "Someone who listens carefully.",
   "more_examples": [
-   "Be a good listener."
+   "Be a good listener.",
+   "My grandfather is a good listener; I tell him everything."
   ],
   "pattern": "a good listener",
   "forms": "attentive",
@@ -91063,7 +91527,8 @@
   "memory": "Tidy = neat.",
   "simple": "Clean and in order.",
   "more_examples": [
-   "The office is clean and tidy."
+   "The office is clean and tidy.",
+   "The hotel room was clean and tidy."
   ],
   "pattern": "clean and tidy",
   "forms": "neat",
@@ -91311,7 +91776,8 @@
   "memory": "Bond = connection.",
   "simple": "A close relationship.",
   "more_examples": [
-   "We have a strong bond."
+   "We have a strong bond.",
+   "Cricket built a strong bond between the two boys."
   ],
   "pattern": "a strong bond (with + person)",
   "forms": "close relationship",
@@ -91393,7 +91859,8 @@
   "memory": "Many small things.",
   "simple": "Various small things.",
   "more_examples": [
-   "I did this and that."
+   "I did this and that.",
+   "I spent the morning doing this and that."
   ],
   "pattern": "this and that",
   "forms": "various things",
@@ -91473,7 +91940,8 @@
   "memory": "Only = no siblings.",
   "simple": "A child with no brothers or sisters.",
   "more_examples": [
-   "She's an only child."
+   "She's an only child.",
+   "As an only child, I always wanted a brother."
   ],
   "pattern": "an only child",
   "forms": "no siblings",
@@ -91555,7 +92023,8 @@
   "memory": "Wait = then know.",
   "simple": "Let's wait to see what happens.",
   "more_examples": [
-   "We'll have to wait and see."
+   "We'll have to wait and see.",
+   "Will the shop reopen? We'll just wait and see."
   ],
   "pattern": "wait and see",
   "forms": "let's see",
@@ -91803,7 +92272,8 @@
   "memory": "Bite = snack.",
   "simple": "A small, fast meal.",
   "more_examples": [
-   "I had a quick bite."
+   "I had a quick bite.",
+   "We stopped at a dhaba for a quick bite."
   ],
   "pattern": "a quick bite",
   "forms": "snack",
@@ -91885,7 +92355,8 @@
   "memory": "Short + pleasant.",
   "simple": "Brief and pleasant.",
   "more_examples": [
-   "The meeting was short and sweet."
+   "The meeting was short and sweet.",
+   "Her answer was short and sweet: \"No.\""
   ],
   "pattern": "short and sweet",
   "forms": "brief",
@@ -91967,7 +92438,8 @@
   "memory": "Chores = jobs.",
   "simple": "Everyday jobs at home.",
   "more_examples": [
-   "Kids should help with household chores."
+   "Kids should help with household chores.",
+   "My father and I do the household chores on Sundays."
   ],
   "pattern": "household chores",
   "forms": "housework",
@@ -92130,7 +92602,8 @@
   "memory": "Absolutely = 100%.",
   "simple": "Completely correct.",
   "more_examples": [
-   "That's absolutely right."
+   "That's absolutely right.",
+   "You said the train leaves at six, and you were absolutely right."
   ],
   "pattern": "absolutely right",
   "forms": "totally right",
@@ -92212,7 +92685,8 @@
   "memory": "Never stops.",
   "simple": "Continuously, for a long time.",
   "more_examples": [
-   "The meeting went on and on."
+   "The meeting went on and on.",
+   "The rain went on and on all night."
   ],
   "pattern": "go on and on",
   "forms": "endlessly",
@@ -92377,7 +92851,8 @@
   "memory": "All or none.",
   "simple": "Either everything or nothing.",
   "more_examples": [
-   "It's an all-or-nothing deal."
+   "It's an all-or-nothing deal.",
+   "You can't learn English in a day; it's not all or nothing."
   ],
   "pattern": "all or nothing",
   "forms": "do or die",
@@ -92459,7 +92934,8 @@
   "memory": "Deeply = very.",
   "simple": "Very sorry.",
   "more_examples": [
-   "We're deeply sorry for the loss."
+   "We're deeply sorry for the loss.",
+   "I'm deeply sorry for my rude words yesterday."
   ],
   "pattern": "deeply sorry",
   "forms": "truly sorry",
@@ -92624,7 +93100,8 @@
   "memory": "Fully = completely.",
   "simple": "Knowing something completely.",
   "more_examples": [
-   "We're fully aware of the issue."
+   "We're fully aware of the issue.",
+   "The teachers are fully aware of the problem."
   ],
   "pattern": "fully aware (of + noun)",
   "forms": "well aware",
@@ -92787,7 +93264,8 @@
   "memory": "Unlikely = probably not.",
   "simple": "Very improbable.",
   "more_examples": [
-   "It's highly unlikely he'll come."
+   "It's highly unlikely he'll come.",
+   "With this traffic, it's highly unlikely we'll be on time."
   ],
   "pattern": "highly unlikely",
   "forms": "very unlikely",
@@ -92869,7 +93347,8 @@
   "memory": "Sometimes.",
   "simple": "Sometimes.",
   "more_examples": [
-   "Now and again, we eat out."
+   "Now and again, we eat out.",
+   "Now and again, my grandmother tells us old stories."
   ],
   "pattern": "now and again",
   "forms": "now and then",
@@ -92949,7 +93428,8 @@
   "memory": "Bitterly = painfully.",
   "simple": "Extremely cold.",
   "more_examples": [
-   "A bitterly cold night."
+   "A bitterly cold night.",
+   "It was bitterly cold in Manali this morning."
   ],
   "pattern": "bitterly cold",
   "forms": "freezing",
@@ -93031,7 +93511,8 @@
   "memory": "Kind of = a little.",
   "simple": "A little; somewhat.",
   "more_examples": [
-   "It's kind of strange."
+   "It's kind of strange.",
+   "The new restaurant is kind of expensive."
   ],
   "pattern": "kind of + adjective",
   "forms": "sort of",
@@ -93196,7 +93677,8 @@
   "memory": "Sort of = kind of.",
   "simple": "A little; or a type of.",
   "more_examples": [
-   "I'm sort of busy."
+   "I'm sort of busy.",
+   "I sort of understand, but please explain once more."
   ],
   "pattern": "sort of + noun/adjective",
   "forms": "kind of",
@@ -93361,7 +93843,8 @@
   "memory": "Or something = similar.",
   "simple": "Or something similar.",
   "more_examples": [
-   "He's a doctor or something."
+   "He's a doctor or something.",
+   "Let's watch a film or something tonight."
   ],
   "pattern": "…, or something",
   "forms": "or whatever",
@@ -93443,7 +93926,8 @@
   "memory": "Clearly = sharply.",
   "simple": "To remember very well.",
   "more_examples": [
-   "I clearly remember his face."
+   "I clearly remember his face.",
+   "I clearly remember my first day at school."
   ],
   "pattern": "clearly remember",
   "forms": "vividly recall",
@@ -93606,7 +94090,8 @@
   "memory": "Seriously = badly.",
   "simple": "Very sick.",
   "more_examples": [
-   "She was seriously ill last year."
+   "She was seriously ill last year.",
+   "Last winter my grandfather was seriously ill with pneumonia."
   ],
   "pattern": "seriously ill",
   "forms": "very sick",
@@ -93688,7 +94173,8 @@
   "memory": "Fair = just.",
   "simple": "Used to give a fairer view.",
   "more_examples": [
-   "To be fair, it was raining."
+   "To be fair, it was raining.",
+   "To be fair, the food was good; only the service was slow."
   ],
   "pattern": "To be fair, + clause",
   "forms": "In fairness,…",
@@ -93768,7 +94254,8 @@
   "memory": "Extremely = very very.",
   "simple": "Very important.",
   "more_examples": [
-   "Health is extremely important."
+   "Health is extremely important.",
+   "It's extremely important to wear a seat belt."
   ],
   "pattern": "extremely important",
   "forms": "crucial · vital",
@@ -93931,7 +94418,8 @@
   "memory": "Easily = without trouble.",
   "simple": "Easy to get.",
   "more_examples": [
-   "Fruit is easily available here."
+   "Fruit is easily available here.",
+   "Clean drinking water should be easily available to everyone."
   ],
   "pattern": "easily available",
   "forms": "widely available",
@@ -94013,7 +94501,8 @@
   "memory": "Mostly.",
   "simple": "Generally; mostly.",
   "more_examples": [
-   "By and large, the plan worked."
+   "By and large, the plan worked.",
+   "By and large, the new rules are working."
   ],
   "pattern": "by and large",
   "forms": "on the whole · mostly",
@@ -94095,7 +94584,8 @@
   "memory": "Rapidly = fast.",
   "simple": "Growing very fast.",
   "more_examples": [
-   "A rapidly growing city."
+   "A rapidly growing city.",
+   "Online shopping is a rapidly growing business in India."
   ],
   "pattern": "rapidly growing",
   "forms": "fast-growing",
@@ -94177,7 +94667,8 @@
   "memory": "Usually.",
   "simple": "Usually; most of the time.",
   "more_examples": [
-   "More often than not, it rains."
+   "More often than not, it rains.",
+   "More often than not, the 8 o'clock bus is full."
   ],
   "pattern": "more often than not",
   "forms": "usually",
@@ -94259,7 +94750,8 @@
   "memory": "Light = little luggage.",
   "simple": "To travel with very little luggage.",
   "more_examples": [
-   "Travel light on short trips."
+   "Travel light on short trips.",
+   "It's only two days, so I'll travel light with one bag."
   ],
   "pattern": "travel light",
   "forms": "pack light",
@@ -94341,7 +94833,8 @@
   "memory": "Let's say = suppose.",
   "simple": "Suppose; for example.",
   "more_examples": [
-   "Let's say it costs 500."
+   "Let's say it costs 500.",
+   "Let's say you have 1,000 rupees. What would you buy?"
   ],
   "pattern": "Let's say + clause",
   "forms": "suppose",
@@ -94506,7 +94999,8 @@
   "memory": "As far as = to my knowledge.",
   "simple": "Based on what I know.",
   "more_examples": [
-   "As far as I know, it's free."
+   "As far as I know, it's free.",
+   "As far as I know, the exam is next Monday."
   ],
   "pattern": "As far as I know, + clause",
   "forms": "To my knowledge",
@@ -94588,7 +95082,8 @@
   "memory": "Humour = funny side.",
   "simple": "The ability to be funny or enjoy jokes.",
   "more_examples": [
-   "He has no sense of humour."
+   "He has no sense of humour.",
+   "Our maths teacher has a good sense of humour."
   ],
   "pattern": "a (good) sense of humour",
   "forms": "funny",
@@ -94753,7 +95248,8 @@
   "memory": "Peace of mind = no worry.",
   "simple": "A feeling of calm with no worries.",
   "more_examples": [
-   "Insurance gives peace of mind."
+   "Insurance gives peace of mind.",
+   "Locking the door twice gives my mother peace of mind."
   ],
   "pattern": "peace of mind",
   "forms": "calm · relief",
@@ -94835,7 +95331,8 @@
   "memory": "Or so = about.",
   "simple": "Approximately.",
   "more_examples": [
-   "It costs 500 or so."
+   "It costs 500 or so.",
+   "The wedding had 500 guests or so."
   ],
   "pattern": "number + or so",
   "forms": "about · roughly",
@@ -94917,7 +95414,8 @@
   "memory": "Balance = both.",
   "simple": "A healthy mix of work and personal life.",
   "more_examples": [
-   "I need better work-life balance."
+   "I need better work-life balance.",
+   "Working till midnight every day is bad for your work-life balance."
   ],
   "pattern": "work-life balance",
   "forms": "balance",
@@ -94999,7 +95497,8 @@
   "memory": "Stuff = things.",
   "simple": "And similar things.",
   "more_examples": [
-   "Pens, books and stuff like that."
+   "Pens, books and stuff like that.",
+   "I bought rice, dal, oil and stuff like that."
   ],
   "pattern": "…, and stuff like that",
   "forms": "and so on · etc.",
@@ -95081,7 +95580,8 @@
   "memory": "Customer = buyer.",
   "simple": "Help given to buyers.",
   "more_examples": [
-   "Call customer service."
+   "Call customer service.",
+   "I called customer service about my broken fridge."
   ],
   "pattern": "customer service",
   "forms": "customer care",
@@ -95246,7 +95746,8 @@
   "memory": "Air = what we breathe.",
   "simple": "Dirty, harmful air.",
   "more_examples": [
-   "Air pollution causes asthma."
+   "Air pollution causes asthma.",
+   "Burning crop waste adds to air pollution."
   ],
   "pattern": "air pollution",
   "forms": "smog",
@@ -95411,7 +95912,8 @@
   "memory": "Global = whole world.",
   "simple": "The Earth getting hotter.",
   "more_examples": [
-   "Global warming melts ice."
+   "Global warming melts ice.",
+   "Global warming is making summers hotter every year."
   ],
   "pattern": "global warming",
   "forms": "climate change",
@@ -95493,7 +95995,8 @@
   "memory": "Polite permission.",
   "simple": "A polite way to do or ask something.",
   "more_examples": [
-   "If you don't mind, I'll leave early."
+   "If you don't mind, I'll leave early.",
+   "If you don't mind, can I sit here?"
   ],
   "pattern": "if you don't mind",
   "forms": "if that's okay",
@@ -95575,7 +96078,8 @@
   "memory": "Climate = long-term weather.",
   "simple": "Long-term change in world weather.",
   "more_examples": [
-   "Climate change affects farming."
+   "Climate change affects farming.",
+   "Climate change is making the monsoon less regular."
   ],
   "pattern": "climate change",
   "forms": "global warming",
@@ -95657,7 +96161,8 @@
   "memory": "Just in case = to be safe.",
   "simple": "As a precaution.",
   "more_examples": [
-   "I saved a copy, just in case."
+   "I saved a copy, just in case.",
+   "I'll keep some cash with me, just in case."
   ],
   "pattern": "…, just in case",
   "forms": "to be safe",
@@ -95739,7 +96244,8 @@
   "memory": "Heart attack = heart stops working well.",
   "simple": "A sudden serious heart problem.",
   "more_examples": [
-   "A heart attack is serious."
+   "A heart attack is serious.",
+   "Regular exercise lowers the risk of a heart attack."
   ],
   "pattern": "have a heart attack",
   "forms": "cardiac arrest",
@@ -95904,7 +96410,8 @@
   "memory": "Offer = invitation to work.",
   "simple": "An invitation to take a job.",
   "more_examples": [
-   "Accept the job offer."
+   "Accept the job offer.",
+   "She is thinking about the job offer from Pune."
   ],
   "pattern": "a job offer",
   "forms": "offer letter",
@@ -96069,7 +96576,8 @@
   "memory": "Rise = go up (no object).",
   "simple": "When prices go up.",
   "more_examples": [
-   "Prices are rising."
+   "Prices are rising.",
+   "When petrol prices rise, bus fares go up too."
   ],
   "pattern": "prices rise / go up",
   "forms": "prices fall",
@@ -96151,7 +96659,8 @@
   "memory": "Up to date = latest.",
   "simple": "Modern; with the latest information.",
   "more_examples": [
-   "This list is up to date."
+   "This list is up to date.",
+   "Is this bus timetable up to date?"
   ],
   "pattern": "up to date",
   "forms": "current · updated",
@@ -96233,7 +96742,8 @@
   "memory": "Goes off = rings.",
   "simple": "When an alarm starts ringing.",
   "more_examples": [
-   "My alarm didn't go off."
+   "My alarm didn't go off.",
+   "The fire alarm went off during the exam."
   ],
   "pattern": "the alarm goes off",
   "forms": "rings",
@@ -96315,7 +96825,8 @@
   "memory": "Out of date = old.",
   "simple": "Old; no longer current.",
   "more_examples": [
-   "My phone is out of date."
+   "My phone is out of date.",
+   "This map is out of date; the road has changed."
   ],
   "pattern": "out of date",
   "forms": "outdated · old",
@@ -96480,7 +96991,8 @@
   "memory": "Stock = supply.",
   "simple": "Not available to buy now.",
   "more_examples": [
-   "Sorry, it's out of stock."
+   "Sorry, it's out of stock.",
+   "Sorry, the blue size M is out of stock."
   ],
   "pattern": "out of stock",
   "forms": "sold out",
@@ -96562,7 +97074,8 @@
   "memory": "Team player = works well with others.",
   "simple": "Someone who works well in a group.",
   "more_examples": [
-   "Be a team player."
+   "Be a team player.",
+   "Rohan is a team player; he always helps others."
   ],
   "pattern": "a (good) team player",
   "forms": "cooperative",
@@ -96644,7 +97157,8 @@
   "memory": "Under control = managed.",
   "simple": "Being managed well.",
   "more_examples": [
-   "The fire is under control."
+   "The fire is under control.",
+   "Don't worry, the doctor says his fever is under control."
   ],
   "pattern": "under control",
   "forms": "out of control",
@@ -97139,7 +97653,8 @@
   "memory": "Screen = phone/TV.",
   "simple": "Time spent looking at screens.",
   "more_examples": [
-   "My screen time is too high."
+   "My screen time is too high.",
+   "Too much screen time can hurt your eyes."
   ],
   "pattern": "screen time",
   "forms": "device use",
@@ -97221,7 +97736,8 @@
   "memory": "Waste = rubbish.",
   "simple": "Used plastic thrown away.",
   "more_examples": [
-   "Reduce plastic waste."
+   "Reduce plastic waste.",
+   "The beach was full of plastic waste after the festival."
   ],
   "pattern": "plastic waste",
   "forms": "plastic garbage",
@@ -97303,7 +97819,8 @@
   "memory": "Shortage = not enough.",
   "simple": "Not enough water.",
   "more_examples": [
-   "Water shortages are common."
+   "Water shortages are common.",
+   "In May, our town faces a serious water shortage."
   ],
   "pattern": "a water shortage",
   "forms": "water scarcity",
@@ -97385,7 +97902,8 @@
   "memory": "Emissions = gas released.",
   "simple": "Harmful gases released into the air.",
   "more_examples": [
-   "Cut carbon emissions."
+   "Cut carbon emissions.",
+   "Planting trees helps reduce carbon emissions."
   ],
   "pattern": "carbon emissions",
   "forms": "greenhouse gases",
@@ -97467,7 +97985,8 @@
   "memory": "Side = extra, unwanted.",
   "simple": "Unwanted effects of medicine.",
   "more_examples": [
-   "Ask about side effects."
+   "Ask about side effects.",
+   "Tell your doctor if you notice any side effects."
   ],
   "pattern": "side effects",
   "forms": "reactions",
@@ -97549,7 +98068,8 @@
   "memory": "BP = blood force.",
   "simple": "The force of blood in your body.",
   "more_examples": [
-   "Check your blood pressure."
+   "Check your blood pressure.",
+   "Too much salt is bad for your blood pressure."
   ],
   "pattern": "high/low blood pressure",
   "forms": "BP",
@@ -97712,7 +98232,8 @@
   "memory": "Rush = hurry.",
   "simple": "The busy time when people go to or from work.",
   "more_examples": [
-   "Avoid rush hour."
+   "Avoid rush hour.",
+   "I leave home early to avoid the rush hour traffic."
   ],
   "pattern": "rush hour",
   "forms": "peak hours",
@@ -97794,7 +98315,8 @@
   "memory": "Worth the price.",
   "simple": "Worth the money you pay.",
   "more_examples": [
-   "The trip was value for money."
+   "The trip was value for money.",
+   "The thali was big and cheap — real value for money."
   ],
   "pattern": "(good) value for money",
   "forms": "worth it",
@@ -97876,7 +98398,8 @@
   "memory": "Cost of living = daily expenses.",
   "simple": "The money needed to live somewhere.",
   "more_examples": [
-   "The cost of living keeps rising."
+   "The cost of living keeps rising.",
+   "Students worry about the cost of living in big cities."
   ],
   "pattern": "the cost of living",
   "forms": "expenses",

@@ -1,0 +1,162 @@
+# A third example for cards whose drafted example repeated example 1.
+# One card per line:  CODE | sentence
+CORE-085 | The kids go to bed early on school nights.
+CORE-087 | Excuse me, could you take a photo of my family?
+CORE-095 | What time do you usually wake up on Sundays?
+CORE-096 | Don't forget to turn off the geyser.
+CORE-102 | My cousin's wedding is the day after tomorrow.
+CORE-107 | This soup needs a little salt and pepper.
+POL-001 | Can you call me back? I'm driving right now.
+UTT-002 | Hi, Papa! How was your day at the office?
+POL-002 | Hold on, I'll be with you in a minute.
+UTT-003 | Hi Neha, how was your weekend? Did you go home?
+FRM-041 | I don't like spicy food at night.
+POL-038 | The tea is a bit too sweet for me.
+COL-005 | I have a headache, so I'm going to lie down.
+POL-040 | Don't put too much sugar in my tea.
+COL-007 | We take the bus to save money.
+POL-041 | We enjoyed the trip very much.
+COL-008 | You can ask a question at the end of the class.
+UTT-015 | Here's your change. Have a nice day!
+POL-042 | My grandfather walks a lot every morning.
+PFR-018 | Your keys are on the fridge.
+UTT-016 | No more work today. Enjoy your weekend!
+POL-043 | Can you turn the volume down a little bit?
+COL-011 | My battery is low; I forgot to charge my phone.
+COL-013 | I'll send a message to the group about the meeting.
+POL-071 | Can you see that tall building over there?
+COL-014 | He has a fever, so he's staying home today.
+UTT-027 | You got full marks? That's amazing!
+POL-072 | The ticket counter is on the left of the gate.
+COL-015 | I need to book a ticket to Patna for Friday.
+POL-073 | Walk straight ahead and you'll see the temple.
+PFR-034 | I live with my parents and my sister.
+COL-016 | It's raining, so I'll take a taxi to the station.
+POL-074 | My mother works at home.
+UTT-057 | Your English is good. Could you speak a bit more slowly, though?
+POL-189 | Is everything all right at home?
+COL-143 | Leaving the job was a big mistake.
+UTT-070 | You're right, the shop is closed on Mondays.
+UTT-071 | That's true, the traffic is bad at this time.
+UTT-084 | I'm so sorry I'm late. The bus broke down.
+PFR-133 | Call me after lunch, please.
+UTT-095 | Good morning, sir. Can I help you?
+UTT-097 | Would you like some tea? — No, thanks. I'm fine.
+COL-269 | The phone rings every morning at seven; it's my mother.
+COL-271 | I always ask for a window seat on the train.
+UTT-107 | It's only one more kilometre. You can do it!
+UTT-108 | The doctor is very good. Everything will be fine.
+UTT-117 | Excuse me, can I have the menu, please?
+UTT-118 | Hello? Is this Ramesh? — Sorry, wrong number.
+UTT-119 | Excuse me, where's the nearest ATM? I need cash.
+UTT-120 | I want to go to the museum. Is it far from here?
+UTT-155 | The network is weak. Can you hear me?
+UTT-177 | Thanks for your help. Have a great day!
+UTT-200 | Are you free this weekend? Let's watch a film.
+CORE-113 | The roads were full of water after the heavy rain.
+CORE-114 | Don't sit under the fan with wet hair; you'll catch a cold.
+CORE-116 | We cook dinner in the morning to save time.
+CORE-117 | Drink at least eight glasses of water a day.
+CORE-118 | Can I come as well?
+CORE-119 | The manager is in a meeting at the moment.
+CORE-132 | Could you explain the rules to my brother?
+CORE-135 | The doctor will see you in a while.
+CORE-137 | The shop doesn't take cards, so I'll pay in cash.
+FRM-061 | She went to the market to buy vegetables.
+UTT-006 | Rahul! Long time no see! Where have you been?
+FRM-064 | My father enjoys walking in the park.
+UTT-007 | Hi Aunty, how have you been?
+UTT-008 | What's up? You look worried.
+COL-022 | The exam is hard, but do your best.
+POL-007 | I lived in Pune for a while.
+UTT-010 | Is this seat taken, or can I sit here?
+POL-008 | My little brother asks questions all the time.
+COL-024 | Can you do the shopping today? I'm busy.
+UTT-017 | Well, I have to go. It was nice talking to you.
+POL-009 | Don't all talk at the same time, please.
+COL-025 | I want to do a course in English speaking.
+UTT-018 | You leave for Delhi tomorrow? Have a safe trip!
+FRM-261 | I'm sorry that I missed your call.
+UTT-019 | I'll check and call you back. Talk to you soon.
+PFR-014 | Please switch off the lights before leaving.
+UTT-020 | Have a good holiday, and say hi to everyone.
+PFR-015 | After finishing my homework, I watched TV.
+UTT-021 | It was great working with you. Let's keep in touch.
+PFR-025 | I'm free between two and four.
+FRM-264 | Can I ask you for a small favour?
+COL-029 | Have a look at this photo from the trip.
+UTT-029 | You're getting married? I'm so happy for you!
+POL-014 | Could you explain it once again?
+FRM-278 | Today I'd like to talk about my favourite festival.
+PFR-027 | There's a bridge over the river.
+FRM-279 | We moved to this city. This happened five years ago.
+POL-016 | I'm busy now; let's talk later on.
+PFR-028 | She poured the milk into the glass.
+COL-032 | Every student has to give a presentation in English.
+POL-017 | Your mother called just now.
+FRM-281 | I'll never forget it because my whole family was there.
+COL-033 | Can you give an example of a good habit?
+UTT-033 | You speak five languages? How interesting!
+PFR-030 | The dog ran towards me.
+COL-034 | My brother wants to get a job in Bengaluru.
+POL-046 | As usual, the train was late.
+POL-047 | After the rain, it got even more humid.
+PFR-039 | Please write with a black pen.
+COL-038 | Did you pay the phone bill this month?
+POL-048 | There's so much traffic today.
+COL-039 | I told her about the gift, and she kept the secret.
+COL-040 | My school friends and I still keep in touch.
+POL-064 | Drink plenty of water in the summer.
+COL-041 | If you break a rule, you pay a fine.
+COL-042 | He started walking every day to lose weight.
+UTT-060 | Sorry, I didn't catch that. Which platform?
+COL-044 | I love to spend time with my grandparents.
+UTT-061 | Do you mean the shop near the bus stand?
+POL-077 | I'll pick up the kids on the way.
+PFR-054 | Is Mum still angry with you?
+UTT-062 | First add the water, then the rice. Does that make sense?
+POL-078 | Her son works far away, in Dubai.
+PFR-055 | My parents are happy with my new job.
+COL-046 | It's better to tell the truth, even when it's hard.
+UTT-063 | What was that again? The meeting is at what time?
+POL-079 | The girl next door plays the sitar.
+COL-047 | I never tell a lie to my parents.
+POL-080 | Please put your bags at the back of the bus.
+UTT-065 | I didn't understand the last step. Could you explain that again?
+PFR-058 | The streets are full of lights during Diwali.
+UTT-072 | This restaurant is great. — I think so too.
+PFR-059 | I'm sure about the address; I checked it twice.
+COL-050 | He studied hard because he didn't want to fail the exam again.
+UTT-073 | We should leave early to avoid traffic. — Good point.
+UTT-074 | You may be right, but let's ask the teacher.
+PFR-061 | Is everyone ready for the trip?
+POL-128 | She left in a hurry and forgot her phone.
+PFR-062 | Our neighbours were very kind to us.
+COL-053 | Please check my letter and correct any mistakes.
+POL-129 | The market is close, so we go on foot.
+PFR-063 | My little sister is afraid of thunder.
+UTT-088 | Don't blame Riya. It was my fault.
+UTT-089 | I'm sorry I came late, sir. It won't happen again.
+PFR-065 | My mother is worried about my health.
+COL-056 | The app won't open until you update the software.
+POL-132 | I don't know for sure, but I think the bank is closed.
+PFR-079 | Our plans depend on the train timings.
+COL-057 | Using cloth bags helps protect the environment.
+PFR-080 | I don't agree with that idea.
+COL-058 | The students plant trees around the school every July.
+UTT-101 | Your bags look heavy. Would you like some help?
+POL-134 | The two sisters call each other every day.
+POL-135 | I learn French just for fun.
+UTT-103 | (holding the door) After you, Aunty.
+COL-061 | I ate too many sweets and now I feel sick.
+UTT-104 | I can't come tonight. Maybe another time?
+PFR-084 | You can ask for a glass of water at the counter.
+COL-062 | Your cough is bad. Please see a doctor today.
+UTT-109 | Your handwriting is much better now. Keep it up!
+POL-160 | I called him again and again, but he didn't answer.
+UTT-110 | You failed once, but don't give up.
+POL-161 | We built the website step by step.
+POL-162 | The doctor saw the patients one by one.
+PFR-087 | My sister applied for a scholarship.
+COL-065 | Leave now, or you'll miss the train.
+UTT-112 | You helped your little brother. I'm proud of you.

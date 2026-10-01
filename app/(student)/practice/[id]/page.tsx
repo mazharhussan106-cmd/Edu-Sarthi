@@ -16,6 +16,7 @@ import { SubmitPanel } from "@/components/media/SubmitPanel";
 import { MAX_UPLOAD_BYTES } from "@/lib/storage";
 import { STATUS_BADGE } from "@/lib/audits";
 import { detailsOf } from "@/lib/wordCard";
+import { chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
 
 export const revalidate = 0;
 
@@ -39,7 +40,7 @@ export default async function PracticePage({
   // Arriving from a flashcard's "Record yourself": the recording is about
   // this word, and the teacher sees which one.
   const word = sp.word
-    ? await prisma.word.findUnique({ where: { code: sp.word }, select: { id: true, code: true, text: true, details: true } })
+    ? await prisma.word.findUnique({ where: { code: sp.word }, select: { id: true, code: true, kind: true, text: true, details: true } })
     : null;
   const session = await auth();
   const studentId = session?.user?.id;
@@ -82,7 +83,9 @@ export default async function PracticePage({
       </h1>
       {word ? (
         <p className="mt-1 text-sm text-ink-muted">
-          {detailsOf(word.details).hindi_meaning} · {detailsOf(word.details).ipa}
+          {word.kind !== "WORD"
+            ? chunkGloss(chunkDetailsOf(word.details))
+            : `${detailsOf(word.details).hindi_meaning} · ${detailsOf(word.details).ipa}`}
         </p>
       ) : null}
 

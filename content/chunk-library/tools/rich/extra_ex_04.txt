@@ -1,0 +1,154 @@
+# A third example for cards whose drafted example repeated example 1.
+# One card per line:  CODE | sentence
+POL-194 | The new restaurant is kind of expensive.
+POL-195 | I sort of understand, but please explain once more.
+POL-196 | Let's watch a film or something tonight.
+COL-261 | I clearly remember my first day at school.
+COL-262 | Last winter my grandfather was seriously ill with pneumonia.
+POL-198 | To be fair, the food was good; only the service was slow.
+COL-263 | It's extremely important to wear a seat belt.
+COL-264 | Clean drinking water should be easily available to everyone.
+POL-200 | By and large, the new rules are working.
+COL-265 | Online shopping is a rapidly growing business in India.
+POL-201 | More often than not, the 8 o'clock bus is full.
+COL-266 | It's only two days, so I'll travel light with one bag.
+POL-202 | Let's say you have 1,000 rupees. What would you buy?
+POL-203 | As far as I know, the exam is next Monday.
+COL-287 | Our maths teacher has a good sense of humour.
+COL-288 | Locking the door twice gives my mother peace of mind.
+POL-205 | The wedding had 500 guests or so.
+COL-289 | Working till midnight every day is bad for your work-life balance.
+POL-206 | I bought rice, dal, oil and stuff like that.
+COL-290 | I called customer service about my broken fridge.
+COL-291 | Burning crop waste adds to air pollution.
+COL-292 | Global warming is making summers hotter every year.
+POL-209 | If you don't mind, can I sit here?
+COL-293 | Climate change is making the monsoon less regular.
+POL-210 | I'll keep some cash with me, just in case.
+COL-294 | Regular exercise lowers the risk of a heart attack.
+COL-295 | She is thinking about the job offer from Pune.
+COL-296 | When petrol prices rise, bus fares go up too.
+POL-217 | Is this bus timetable up to date?
+COL-297 | The fire alarm went off during the exam.
+POL-218 | This map is out of date; the road has changed.
+POL-219 | Sorry, the blue size M is out of stock.
+COL-299 | Rohan is a team player; he always helps others.
+POL-220 | Don't worry, the doctor says his fever is under control.
+COL-304 | Too much screen time can hurt your eyes.
+COL-305 | The beach was full of plastic waste after the festival.
+COL-306 | In May, our town faces a serious water shortage.
+COL-307 | Planting trees helps reduce carbon emissions.
+COL-308 | Tell your doctor if you notice any side effects.
+COL-309 | Too much salt is bad for your blood pressure.
+COL-311 | I leave home early to avoid the rush hour traffic.
+COL-312 | The thali was big and cheap — real value for money.
+COL-313 | Students worry about the cost of living in big cities.
+FRM-020 | Will you come to my birthday party?
+FRM-030 | Can I use your phone for a minute?
+FRM-045 | What do you call "jhadu" in English?
+FRM-145 | I don't want to be late for the train.
+FRM-147 | My hobby is collecting old coins.
+FRM-180 | What's your favourite food?
+FRM-182 | Which subject do you like the most?
+FRM-184 | How many students do you have in your class?
+FRM-187 | What did you do last night?
+FRM-188 | Where do you buy your vegetables?
+FRM-190 | Do you have a charger I can use?
+FRM-022 | Hurry up, the bus is about to leave.
+FRM-033 | You should drink more water in summer.
+FRM-051 | Mount Everest is the highest mountain in the world.
+FRM-053 | You can pay either by cash or by card.
+FRM-073 | Tea is grown in Assam.
+FRM-074 | The bridge was opened in 2015.
+FRM-086 | My teacher asked me to read the poem aloud.
+FRM-088 | I don't know what her phone number is.
+FRM-089 | I'm sure that the shop opens at ten.
+FRM-090 | I don't think we need an umbrella today.
+FRM-091 | I hope that you feel better soon.
+FRM-105 | My brother let me ride his bike.
+FRM-120 | It's very cold. Should I wear a jacket?
+FRM-122 | The lift was broken, so I had to take the stairs.
+FRM-126 | You must switch off your phone in the exam hall.
+FRM-150 | I've finished reading the book you gave me.
+FRM-151 | I forgot to bring my lunch today.
+FRM-152 | My grandmother is learning to use WhatsApp.
+FRM-153 | Last year I started learning the guitar.
+FRM-158 | I'm scared to swim in the deep end.
+FRM-160 | I'm glad to see you again.
+FRM-193 | How do you remember new words?
+FRM-195 | Why are you running? We have time.
+FRM-197 | Why do you like living in a small town?
+FRM-198 | Do you think we'll get tickets for the match?
+FRM-199 | Which is better, the train or the bus to Jaipur?
+FRM-200 | Which app is the best for learning English?
+FRM-205 | I haven't paid the electricity bill yet.
+FRM-207 | Were you watching TV when I called?
+FRM-220 | Whenever I visit my grandmother, she makes halwa.
+FRM-251 | It's time to start the class.
+FRM-254 | There's no need to bring food; lunch is provided.
+FRM-255 | It's good that you told me the truth.
+FRM-273 | I like both Hindi and English films.
+FRM-274 | Please reply as soon as possible.
+FRM-010 | My little brother keeps asking for chocolate.
+FRM-018 | The shop had already closed before I arrived.
+FRM-025 | I'm thinking of joining a dance class.
+FRM-049 | How long have you been living in Hyderabad?
+FRM-058 | The room was neither clean nor quiet.
+FRM-076 | The new road will be opened next month.
+FRM-077 | The bill has been paid.
+FRM-080 | Old phones should be recycled, not thrown away.
+FRM-082 | I was given a gift by my students.
+FRM-093 | The doctor told me not to eat fried food.
+FRM-094 | The teacher asked if we had any questions.
+FRM-095 | A tourist asked me where the museum was.
+FRM-099 | Could you tell me how much this costs?
+FRM-100 | What I need is a cup of hot tea.
+FRM-103 | My teacher advised me to read English newspapers.
+FRM-110 | I got my watch fixed at the market.
+FRM-111 | We have our house painted every five years.
+FRM-112 | The guard allowed me to park near the gate.
+FRM-128 | You walked ten kilometres? You must be hungry.
+FRM-130 | He just ate two plates of rice. He can't be hungry.
+FRM-131 | The ground is wet. It must have rained last night.
+FRM-132 | I can't find my keys. I might have left them at work.
+FRM-133 | She can't have finished the book already; it's 500 pages.
+FRM-134 | I could have taken the earlier bus, but I missed it.
+FRM-136 | I shouldn't have stayed up so late.
+FRM-137 | It's getting dark. You'd better go home.
+FRM-139 | You didn't need to pick me up; I could take an auto.
+FRM-140 | Take the umbrella. The rain might not stop soon.
+FRM-141 | The results should be online by Monday.
+FRM-142 | The bus didn't come, so I had no choice but to walk.
+FRM-164 | I promised to visit my grandparents this summer.
+FRM-165 | The shopkeeper refused to give me a refund.
+FRM-167 | I find it hard to speak English in front of many people.
+FRM-168 | At the festival, I got a chance to meet a famous singer.
+FRM-169 | I don't mind sitting at the back.
+FRM-170 | I tried calling her, but she didn't pick up.
+FRM-171 | I regret not learning to swim as a child.
+FRM-172 | After failing once, he's determined to pass this time.
+FRM-174 | For my health, I'll give up drinking cold drinks.
+FRM-175 | I suggest taking the metro; it's faster.
+FRM-177 | We spent the whole evening talking about old times.
+FRM-178 | I had trouble understanding his accent.
+FRM-179 | The film was so sad that I couldn't help crying.
+FRM-201 | Who left the tap open?
+FRM-202 | What's the best way to save money?
+FRM-203 | What made you choose this college?
+FRM-210 | I haven't seen my cousins for a long time.
+FRM-211 | It's been two years since I visited my village.
+FRM-212 | I was going to buy the shoes, but they were too costly.
+FRM-213 | I had never eaten sushi before that day.
+FRM-215 | My neighbour is always playing loud music.
+FRM-216 | I didn't use to like vegetables, but now I do.
+FRM-217 | We had been walking for two hours when it started to rain.
+FRM-224 | If I had left earlier, I would have caught the train.
+FRM-225 | As long as you're honest, I'll help you.
+FRM-227 | Keep some water in the car in case you get thirsty.
+FRM-228 | Even if he says sorry, I won't forget it.
+FRM-229 | I wish I could visit my family more often.
+FRM-230 | I wish I had brought a jacket; it's so cold.
+FRM-232 | Suppose you lost your phone, what would you do?
+FRM-257 | Ooty is worth visiting in summer.
+FRM-259 | It doesn't matter what you wear; just come.
+FRM-275 | It was such a hot day that we stayed indoors.

@@ -1,0 +1,162 @@
+# A third example for cards whose drafted example repeated example 1.
+# One card per line:  CODE | sentence
+PFR-106 | The smell of rain reminds me of my village.
+FRM-290 | City or village? If I had to choose, I'd go for the village.
+POL-069 | Raising three children takes a great deal of patience.
+PFR-107 | Good morning. I wanted to ask about the bus timings.
+FRM-291 | It depends on the person, but most people sleep about seven hours.
+UTT-116 | It's just an interview. You've got this.
+COL-116 | Before you reset the phone, back up your data.
+POL-083 | The baby is holding the book upside down.
+FRM-293 | I think in the future, most people will work from home.
+COL-117 | A small dog's dance video went viral overnight.
+UTT-131 | Sorry to keep you waiting. The doctor will see you now.
+UTT-132 | I'm buying three shirts. Could you give me a discount?
+UTT-135 | Shopping all day is not my cup of tea.
+POL-086 | We saw small temples here and there along the road.
+FRM-296 | Overall, I'd say the new teacher is very good.
+COL-120 | Our school decided to go green and stopped using plastic.
+UTT-136 | You have news? I'm all ears.
+PFR-116 | Teachers should build a good relationship with students.
+FRM-297 | I see it in two ways: as a chance to learn and as a risk.
+POL-088 | Is the whole family on board with the plan?
+PFR-117 | In summer, there's a big demand for coolers.
+POL-090 | The room is big. In addition, it has a balcony.
+PFR-118 | Good sleep is the key to good health.
+FRM-299 | I don't know much about cricket, but I enjoyed the match.
+UTT-139 | Can you help me move? — Sorry, my hands are full this weekend.
+POL-091 | The hotel has a pool as well as a gym.
+FRM-300 | Pollution affects not only people but also animals.
+POL-092 | As a matter of fact, I've never been to Mumbai.
+UTT-141 | Sharma Sweets? It rings a bell. Is it near the station?
+POL-093 | On the whole, the students did well in the exam.
+COL-126 | We switched off extra lights to cut costs.
+UTT-142 | He broke his promise again. That's the last straw.
+POL-094 | In general, mornings are cooler here.
+COL-127 | You can make a payment with any UPI app.
+UTT-143 | Your interview is today? I'll keep my fingers crossed.
+FRM-304 | The government should build more public toilets.
+COL-128 | The shoes were broken, so I got a refund.
+POL-096 | The food was late, but all in all, we had fun.
+PFR-140 | My parents discussed my college options with me.
+COL-129 | A local girl made headlines by winning a gold medal.
+POL-097 | It may rain, but in any case, the match will happen.
+FRM-306 | What surprises me most is how fast children learn phones.
+COL-130 | The doctor broke the news gently to the family.
+UTT-147 | Should I call or text him? It depends on the situation.
+POL-098 | The hotel was dirty, far and costly. In short, never again.
+PFR-142 | The passenger requested a window seat.
+FRM-307 | We got lost twice, but all in all, it was a fun experience.
+UTT-148 | Living in a hostel? There are pros and cons.
+PFR-143 | The doctor emphasised the need for rest.
+UTT-149 | Which is better, Hindi films or English films? That's a difficult question.
+POL-100 | First and foremost, I'd like to thank my parents.
+UTT-150 | Failure can teach you more than success? I've never thought about it that way.
+POL-101 | Bring water, snacks and, last but not least, your ID card.
+UTT-151 | Is Delhi food better than Mumbai food? It's a matter of opinion.
+POL-102 | Some fruits, for instance bananas, are cheap all year.
+PFR-146 | The village school lacks good teachers.
+PFR-147 | Can you describe the bag you lost?
+UTT-153 | We need rice, oil and soap. That's all I can think of.
+POL-104 | The flat is near the metro. What's more, the rent is low.
+COL-138 | Be careful with your words; you can hurt someone's feelings.
+UTT-162 | Hello, this is the bank. — Who am I speaking with?
+UTT-163 | Mum wants to talk to you too. Let me put you on speaker.
+COL-140 | He said he would pay me back, and he kept his word.
+UTT-164 | It's late and you have work tomorrow. I'll let you go.
+UTT-171 | That's a big topic. Can we come back to that later?
+POL-110 | No matter what happens, don't open the door to strangers.
+COL-187 | Fruits and vegetables are part of a healthy diet.
+UTT-173 | I've never used this app. Could you walk me through it?
+POL-111 | Above all, I want my children to be happy.
+POL-112 | To begin with, we need a list of guests.
+COL-189 | Every parent hopes their child will get a well-paid job.
+UTT-175 | Sorry to interrupt, but your car is blocking the gate.
+COL-190 | With your marks, you have a bright future ahead.
+UTT-176 | I'll read the report tonight. Let's touch base tomorrow.
+POL-114 | Believe it or not, my grandmother uses Instagram.
+UTT-182 | I understand your concern. We'll fix the bill today.
+POL-115 | The school as a whole won the sports trophy.
+UTT-183 | The train is delayed by an hour. We apologise for the inconvenience.
+POL-116 | My brother loves noise. In contrast, I like silence.
+UTT-184 | Your parcel hasn't arrived? Let me look into this for you.
+COL-194 | Farmers now use the latest technology to check the weather.
+UTT-185 | The system is slow today. Please bear with me.
+UTT-186 | Your issue is fixed now. Thank you for your patience.
+POL-119 | In theory, the bus comes every ten minutes.
+POL-120 | The rule sounds simple, but in practice, few people follow it.
+COL-197 | The bus stopped just in time. It was a narrow escape.
+POL-121 | She wakes up at five in order to study.
+POL-122 | It looks as if it's going to rain.
+COL-199 | After the long trip, the kids fell into a deep sleep.
+UTT-193 | Football or cricket? If I had to choose, I'd say football.
+COL-200 | Studying abroad on a scholarship is a golden opportunity.
+UTT-194 | How much sleep do you need? It varies from person to person.
+COL-201 | This job needs basic knowledge of Excel.
+UTT-195 | Mango or banana? It's hard to choose, but mango.
+UTT-197 | We pack, we lock the house, and we leave. That's pretty much it.
+POL-138 | Sorry, I didn't step on your foot on purpose.
+POL-139 | I found my old school photo by chance.
+COL-205 | With such a tight deadline, we'll work this weekend.
+UTT-199 | Let me put it this way: I won't buy it again.
+POL-140 | Every child here knows the national anthem by heart.
+COL-206 | Many students take loans for higher education.
+UTT-206 | Hello, sir. What brings you here today?
+POL-141 | It's better to pay the fee in person.
+UTT-207 | So you're Ravi's sister! I've heard a lot about you.
+POL-142 | Please don't eat in public places on the metro.
+UTT-208 | It was nice to see you. Let's grab a coffee sometime.
+POL-143 | The doctor wants to speak to you in private.
+POL-144 | In a way, losing the job was good for me.
+UTT-210 | Put your wallet away. It's my treat.
+POL-145 | I love Indian food, South Indian food in particular.
+COL-211 | With online banking, my father doesn't go to the bank any more.
+POL-146 | The guide told us about the fort in detail.
+COL-213 | Water and forests are natural resources we must protect.
+POL-148 | Five winners will be chosen at random.
+COL-214 | The cyclone was the worst natural disaster in years.
+UTT-221 | The lift is broken again. I'm fed up.
+POL-150 | They planned the surprise party in secret.
+COL-216 | The snow leopard is an endangered species.
+POL-151 | Students are under a lot of pressure before board exams.
+COL-217 | Children need green spaces to play.
+POL-152 | Old buildings are at risk during an earthquake.
+POL-153 | The little boy was in tears after he lost his toy.
+POL-155 | The prices are out of control this year.
+COL-221 | She fell off her bike but had only a minor injury.
+POL-156 | On average, we spend 5,000 rupees on groceries a month.
+POL-157 | My best friend and I have a lot in common; we both love music.
+POL-158 | The traffic police fined him on the spot.
+POL-159 | We always go to the hills. Let's go to the beach for a change.
+POL-165 | Little by little, the plant grew into a tree.
+COL-226 | Rent is the biggest part of our monthly expenses.
+POL-167 | We chat online, but I'd like to meet face to face.
+COL-228 | With a fixed income, my uncle plans every rupee.
+POL-168 | Day by day, the baby is learning new words.
+POL-169 | Practice and progress go hand in hand.
+COL-230 | Child labour is still a social problem.
+POL-170 | My father goes to the farm for some peace and quiet.
+COL-231 | The new hospital is open to the general public.
+COL-232 | Education and health are basic human rights.
+POL-173 | We fixed the old radio by trial and error.
+COL-234 | This bus has seats for senior citizens.
+POL-174 | Stop talking during the test — is that loud and clear?
+COL-235 | Every child should have equal opportunities in school.
+COL-236 | The new students got a warm welcome from the teachers.
+COL-237 | My grandfather is a good listener; I tell him everything.
+POL-177 | The hotel room was clean and tidy.
+COL-239 | Cricket built a strong bond between the two boys.
+POL-179 | I spent the morning doing this and that.
+COL-240 | As an only child, I always wanted a brother.
+POL-180 | Will the shop reopen? We'll just wait and see.
+COL-242 | We stopped at a dhaba for a quick bite.
+POL-182 | Her answer was short and sweet: "No."
+COL-243 | My father and I do the household chores on Sundays.
+COL-253 | You said the train leaves at six, and you were absolutely right.
+POL-184 | The rain went on and on all night.
+POL-185 | You can't learn English in a day; it's not all or nothing.
+COL-255 | I'm deeply sorry for my rude words yesterday.
+COL-256 | The teachers are fully aware of the problem.
+COL-257 | With this traffic, it's highly unlikely we'll be on time.
+POL-188 | Now and again, my grandmother tells us old stories.
+COL-258 | It was bitterly cold in Manali this morning.

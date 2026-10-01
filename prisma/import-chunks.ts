@@ -46,37 +46,61 @@ const FILES: { kind: CardKind; file: string; title: string; prompt: string }[] =
   },
 ];
 
+// Key-order-independent comparison (same as import-words.ts): Postgres jsonb
+// hands object keys back in its own order, so a plain JSON.stringify would
+// call every row "changed".
+function stable(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(stable).join(",")}]`;
+  if (v && typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    return `{${Object.keys(o).filter((k) => o[k] !== undefined).sort().map((k) => `${JSON.stringify(k)}:${stable(o[k])}`).join(",")}}`;
+  }
+  return JSON.stringify(v ?? null);
+}
+
 async function load(kind: CardKind, file: string) {
   const rows = JSON.parse(readFileSync(file, "utf8")) as Chunk[];
 
-  let done = 0;
-  for (let i = 0; i < rows.length; i += 200) {
-    const batch = rows.slice(i, i + 200);
-    await prisma.$transaction(
-      batch.map((r) => {
-        const details = Object.fromEntries(Object.entries(r).filter(([k]) => !CORE.has(k)));
-        const data = {
-          text: r.text,
-          serial: r.order_a,
-          serialB: r.order_b,
-          partOfSpeech: r.lewis_type,
-          category: r.type,
-          cefr: r.level,
-          importance: null,
-          details: details as object,
-        };
-        return prisma.word.upsert({
-          where: { code: r.code },
-          // Kind is updated too: a card moved between files (the grammar
-          // split) changes tab but keeps the student's progress on it.
-          create: { code: r.code, kind, ...data },
-          update: { kind, ...data },
-        });
-      }),
-    );
-    done += batch.length;
+  // Bulk, as in import-words.ts: one read of what exists, createMany for new
+  // rows, and an update only where something changed. Row-by-row upserts
+  // cost a round trip per card, which from a CI runner to a remote database
+  // risks the job's 15-minute limit.
+  const existing = await prisma.word.findMany({
+    where: { code: { in: rows.map((r) => r.code) } },
+    select: { code: true, kind: true, text: true, serial: true, serialB: true, partOfSpeech: true, category: true, cefr: true, importance: true, details: true },
+  });
+  const byCode = new Map(existing.map((w) => [w.code, w]));
+
+  const toCreate: Array<Record<string, unknown>> = [];
+  const toUpdate: Array<{ code: string; data: Record<string, unknown> }> = [];
+  for (const r of rows) {
+    // Kind is part of the data: a card moved between files (the grammar
+    // split) changes tab but keeps the student's progress on it.
+    const data = {
+      kind,
+      text: r.text,
+      serial: r.order_a,
+      serialB: r.order_b,
+      partOfSpeech: r.lewis_type,
+      category: r.type,
+      cefr: r.level,
+      importance: null,
+      details: Object.fromEntries(Object.entries(r).filter(([k]) => !CORE.has(k))),
+    };
+    const cur = byCode.get(r.code);
+    if (!cur) toCreate.push({ code: r.code, ...data });
+    else if (stable({ ...cur, code: undefined }) !== stable(data)) toUpdate.push({ code: r.code, data });
   }
-  console.log(`${kind} cards imported or updated: ${done}`);
+
+  for (let i = 0; i < toCreate.length; i += 500) {
+    await prisma.word.createMany({ data: toCreate.slice(i, i + 500) as never, skipDuplicates: true });
+  }
+  for (let i = 0; i < toUpdate.length; i += 200) {
+    await prisma.$transaction(
+      toUpdate.slice(i, i + 200).map((u) => prisma.word.update({ where: { code: u.code }, data: u.data as never })),
+    );
+  }
+  console.log(`${kind} cards created: ${toCreate.length}, updated: ${toUpdate.length}, total in file: ${rows.length}`);
 }
 
 async function main() {

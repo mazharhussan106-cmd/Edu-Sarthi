@@ -15,6 +15,12 @@ import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# Cards whose workbook "Watch out / wrong version" cell holds a label ("Future
+# plan", "Followed by \"to\"") rather than a wrong sentence. The card would show
+# it as "✗ Future plan", so the drafted mistake is used and the label kept as
+# the tip. Found by the review audit (1 Oct 2026).
+SHEET_LABEL_NOT_MISTAKE = {"CORE-034", "CORE-055", "CORE-072", "CORE-106", "CORE-111", "CORE-138"}
+
 FIELDS = [
     "code", "ipa", "linking", "hi_pron", "stress", "register", "when", "pron_tip",
     "not_when", "memory", "simple", "ex2", "ex3", "wrong", "right", "why",
@@ -58,11 +64,22 @@ def merge(chunk: dict, r: dict[str, str | None] | None) -> None:
     if not chunk.get("when") and r["when"]:
         chunk["when"] = r["when"]
         drafted.append("when")
+    label = None
+    if chunk["code"] in SHEET_LABEL_NOT_MISTAKE and chunk.get("watch_out"):
+        label = chunk["watch_out"].get("wrong")
+        chunk["watch_out"] = None
     if not chunk.get("watch_out") and (r["wrong"] or r["right"]):
-        chunk["watch_out"] = {"wrong": r["wrong"], "right": r["right"], "why": r["why"], "tip": None}
+        chunk["watch_out"] = {"wrong": r["wrong"], "right": r["right"], "why": r["why"], "tip": label}
         drafted.append("watch_out")
 
-    examples = [e for e in (r["ex2"], r["ex3"]) if e]
+    # The drafts sometimes repeat the workbook's own example as example 2 or
+    # 3; a card showing the same sentence twice looks broken, so repeats go.
+    seen = {(chunk.get("example") or "").strip().lower()}
+    examples = []
+    for e in (r["ex2"], r["ex3"]):
+        if e and e.strip().lower() not in seen:
+            seen.add(e.strip().lower())
+            examples.append(e)
     chunk.update(
         {
             # Side 1 · sound

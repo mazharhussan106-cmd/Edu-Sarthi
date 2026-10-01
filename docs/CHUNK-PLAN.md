@@ -79,3 +79,11 @@ workbooks: `Chunk_Library_Review.xlsx` and `Grammar_Library_Review.xlsx`.
 `grammar.json` as kind GRAMMAR (a card moved from chunks keeps its progress and
 switches tab). Grammar cards use the chunk card, with "Grammar topic" in place
 of the type, and their own hidden "Record yourself" exercise.
+
+**Review audit (1 Oct 2026):** an automated check of all 1,430 cards found
+632 cards whose drafted example 2 or 3 repeated example 1 (repeats are now
+dropped, so those cards show 2 examples), and 6 cards whose workbook "wrong
+version" cell held a label ("Future plan", "Followed by \"to\"") instead of a
+mistake (the drafted mistake is used, the label kept as the tip). Left as
+they are on purpose: 12 sign-off phrases with no "reply", Hindi that keeps
+"ATM"/"AI" in Latin letters, and examples that use an inflected form.

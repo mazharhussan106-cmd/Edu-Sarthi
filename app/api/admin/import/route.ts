@@ -44,6 +44,7 @@ export async function POST(req: Request) {
   const summary = {
     cards: parsed.cards.length,
     sheets: parsed.sheets,
+    skipped: parsed.skipped,
     topics: topicCounts(parsed.cards),
     warnings: parsed.warnings.slice(0, 20),
   };

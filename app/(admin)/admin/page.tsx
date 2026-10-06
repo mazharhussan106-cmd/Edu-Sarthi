@@ -13,6 +13,7 @@ import { overviewStats } from "@/lib/adminStats";
 import { SLA_HOURS } from "@/lib/claims";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -20,6 +21,9 @@ export const revalidate = 0;
 const QUEUE_ALERT = 100;
 
 export default async function AdminOverviewPage() {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const [s, logs, decksPending, decksReported, institutesPending] = await Promise.all([
     overviewStats(14),
     prisma.adminLog.findMany({
@@ -68,7 +72,7 @@ export default async function AdminOverviewPage() {
             <Card className={cn("h-full p-4", t.alert && "border-error/40 bg-error/10")}>
               <p className={cn("font-mono text-2xl font-bold", t.alert ? "text-error" : "text-ink")}>{t.value}</p>
               <p className="mt-1 text-xs text-ink-muted">{t.label}</p>
-              {t.sub ? <p className="text-[11px] text-mist">{t.sub}</p> : null}
+              {t.sub ? <p className="text-[11px] text-ink-muted">{t.sub}</p> : null}
             </Card>
           );
           return t.href ? (
@@ -104,7 +108,7 @@ export default async function AdminOverviewPage() {
           </div>
           <div className="mt-1 flex gap-1.5">
             {s.series.map((d) => (
-              <span key={d.day} className="min-w-0 flex-1 text-center font-mono text-[10px] text-mist">
+              <span key={d.day} className="min-w-0 flex-1 text-center font-mono text-[10px] text-ink-muted">
                 {d.day.slice(8)}
               </span>
             ))}
@@ -128,7 +132,7 @@ export default async function AdminOverviewPage() {
                   <span className="text-ink-muted">
                     · {l.targetType} {l.targetId ? l.targetId.slice(-8) : ""}
                   </span>
-                  <span className="block text-xs text-mist">
+                  <span className="block text-xs text-ink-muted">
                     {l.actor?.email ?? "System"} · {l.createdAt.toLocaleString("en-IN")}
                   </span>
                 </li>

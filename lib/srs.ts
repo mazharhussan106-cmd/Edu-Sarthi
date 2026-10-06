@@ -34,7 +34,9 @@ export function nextReview(
 }
 
 export function describeDue(dueAt: Date, now = new Date()): string {
-  const days = Math.round((dueAt.getTime() - now.getTime()) / DAY);
+  // Rounded UP: 11 hours away is "tomorrow", not "due now". Only a time
+  // already past (or this instant) is due now.
+  const days = Math.ceil((dueAt.getTime() - now.getTime()) / DAY);
   if (days <= 0) return "due now";
   if (days === 1) return "tomorrow";
   return `in ${days} days`;

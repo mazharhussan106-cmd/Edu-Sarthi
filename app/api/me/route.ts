@@ -113,13 +113,26 @@ export async function DELETE(req: Request) {
   // Rows first, files second. If storage fails the account is still gone and
   // the orphaned files are unreachable (no row points at them); the other
   // order could leave a live account whose recordings have vanished.
-  await prisma.user.delete({ where: { id: userId } });
-  await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia)]);
-  // Kept as the record that an erasure request was carried out. Only the
-  // student ID is stored — the email is exactly what was asked to be erased.
-  await logAdmin(null, "Student deleted own account", "user", me?.publicId ?? null, {
-    submissions: keys.length,
-  });
+  try {
+    // Earlier admin-log entries about this person may hold their email in
+    // `detail`; the log line stays, the personal data does not.
+    await prisma.adminLog.updateMany({ where: { targetType: "user", targetId: userId }, data: { detail: { redacted: true } } });
+    await prisma.user.delete({ where: { id: userId } });
+  } catch {
+    return NextResponse.json(
+      { error: "We could not delete the account just now. Nothing was lost; try again in a minute, and if it keeps failing write to support from the Support page." },
+      { status: 500 },
+    );
+  }
+  const failed = await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia)]);
+  try {
+    // Kept as the record that an erasure request was carried out. Only the
+    // student ID is stored — the email is exactly what was asked to be erased.
+    await logAdmin(null, "Student deleted own account", "user", me?.publicId ?? null, { submissions: keys.length, filesNotDeleted: failed.length });
+  } catch {
+    // The erasure is done; a log failure must not turn it into an error.
+    console.error("Could not write the erasure log entry");
+  }
 
   return NextResponse.json({ ok: true });
 }

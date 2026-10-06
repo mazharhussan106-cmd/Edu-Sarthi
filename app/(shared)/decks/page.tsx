@@ -27,7 +27,7 @@ export default async function DecksPage() {
   const now = new Date();
   const dueRows = await prisma.cardState.groupBy({
     by: ["wordId"],
-    where: { userId, dueAt: { lte: now }, word: { ownerId: userId, deckId: { not: null } } },
+    where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { ownerId: userId, deckId: { not: null } } },
   });
   // Due per deck: one extra read of the due cards' decks rather than a count
   // per deck, so the page costs three queries however many decks there are.

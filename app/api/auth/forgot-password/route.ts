@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server";
 import { createHash, randomBytes } from "crypto";
 
+import { appUrl } from "@/lib/appUrl";
 import { prisma } from "@/lib/prisma";
 import { forgotPasswordSchema } from "@/lib/validations";
 import { sendPasswordResetLink } from "@/lib/email";
@@ -43,6 +44,15 @@ export async function POST(req: Request) {
 
   if (!user) return NextResponse.json(GENERIC);
 
+  // One reset email a minute per account. Without it anyone can POST this
+  // endpoint in a loop and bury a stranger's inbox. The answer is the same
+  // neutral one, so it does not reveal that the account exists.
+  const recent = await prisma.passwordResetToken.findFirst({
+    where: { userId: user.id, createdAt: { gt: new Date(Date.now() - 60_000) } },
+    select: { id: true },
+  });
+  if (recent) return NextResponse.json(GENERIC);
+
   // 32 random bytes, hex. The raw token exists only in the email; the database
   // stores its hash, so a database dump cannot be replayed into account takeover.
   const token = randomBytes(32).toString("hex");
@@ -63,8 +73,7 @@ export async function POST(req: Request) {
     },
   });
 
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const url = `${base}/reset-password/${token}`;
+  const url = `${appUrl(req)}/reset-password/${token}`;
 
   try {
     await sendPasswordResetLink(email, url);

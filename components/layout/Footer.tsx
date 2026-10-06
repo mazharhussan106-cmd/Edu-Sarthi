@@ -37,7 +37,7 @@ export function Footer() {
           ))}
         </nav>
 
-        <p className="text-xs text-mist">
+        <p className="text-xs text-ink-muted">
           © {new Date().getFullYear()} EduSarthi. All rights reserved.
         </p>
       </div>

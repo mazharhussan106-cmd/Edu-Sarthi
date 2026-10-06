@@ -6,16 +6,14 @@
 
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { nameSchema } from "@/lib/validations";
 
 export async function PATCH(req: Request) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
-    return NextResponse.json({ error: "Your session has expired. Sign in and try again." }, { status: 401 });
-  }
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
 
   let body: unknown;
   try {

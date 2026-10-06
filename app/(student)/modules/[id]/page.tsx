@@ -88,7 +88,7 @@ export default async function ModuleDetailPage({
                 <div className="min-w-0">
                   <CardTitle>{e.title}</CardTitle>
                   <p className="mt-1 text-sm text-ink-muted">{e.prompt}</p>
-                  <p className="mt-2 text-xs text-mist">
+                  <p className="mt-2 text-xs text-ink-muted">
                     {e.expects.toLowerCase()}
                     {e.minSeconds && e.maxSeconds
                       ? ` · ${e.minSeconds}–${e.maxSeconds} seconds`

@@ -96,7 +96,9 @@ const MODULES = [
 ] as const;
 
 async function main() {
-  const existing = await prisma.module.count();
+  // Curriculum modules only: the hidden system modules (flashcard practice) are
+  // created by the importers and must not make the seed think it already ran.
+  const existing = await prisma.module.count({ where: { isSystem: false } });
 
   if (existing > 0) {
     console.log(`Modules already present (${existing}) — skipping curriculum.`);
@@ -112,6 +114,15 @@ async function main() {
       });
     }
     console.log(`Created ${MODULES.length} modules.`);
+  }
+
+  // The demo recording is for building the review screens on a laptop. It is
+  // OFF unless SEED_DEMO=1: the "Database setup" button runs this seed against
+  // the live database, where the oldest student account is a real person and a
+  // fake recording would land in the real teacher queue.
+  if (process.env.SEED_DEMO !== "1") {
+    console.log("Demo submission skipped (set SEED_DEMO=1 on a laptop to add it).");
+    return;
   }
 
   // The demo submission needs a real student, which means signing up first.

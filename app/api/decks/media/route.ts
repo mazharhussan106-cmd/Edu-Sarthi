@@ -7,7 +7,7 @@
 
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { readJson } from "@/lib/decks";
 import { DECK_LIMITS, mediaRequestSchema } from "@/lib/deckSchemas";
 import { ALLOWED_TYPES, createUploadTarget } from "@/lib/storage";
@@ -15,8 +15,9 @@ import { ALLOWED_TYPES, createUploadTarget } from "@/lib/storage";
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
 
 export async function POST(req: Request) {
-  const userId = (await auth())?.user?.id;
-  if (!userId) return fail("Your session has expired. Sign in again.", 401);
+  const gate = await requireUser({ verified: true });
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
 
   const parsed = mediaRequestSchema.safeParse(await readJson(req));
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Could not start the upload. Try again.", 400);

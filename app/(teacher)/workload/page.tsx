@@ -15,6 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { SLA_HOURS } from "@/lib/claims";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -38,6 +39,9 @@ export default async function WorkloadPage({
 }: {
   searchParams: Promise<{ days?: string }>;
 }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
   const sp = await searchParams;
   const days = sp.days === "30" ? 30 : 7;
   const session = await auth();
@@ -145,7 +149,7 @@ export default async function WorkloadPage({
         {audits.length > 0 ? (
           <div className="mt-1 flex gap-1">
             {bars.map(([d]) => (
-              <span key={d} className="min-w-0 flex-1 truncate text-center font-mono text-[10px] text-mist">
+              <span key={d} className="min-w-0 flex-1 truncate text-center font-mono text-[10px] text-ink-muted">
                 {days <= 7 ? d.slice(5) : d.slice(8)}
               </span>
             ))}
@@ -153,7 +157,7 @@ export default async function WorkloadPage({
         ) : null}
       </Card>
 
-      <p className="mt-4 text-xs text-mist">
+      <p className="mt-4 text-xs text-ink-muted">
         Earnings and payouts will appear here once payments are set up.
       </p>
     </main>

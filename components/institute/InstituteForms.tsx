@@ -68,7 +68,7 @@ export function ApplyForm({ label = "Send application" }: { label?: string }) {
       </div>
       <div>
         <Label htmlFor={`${uid}-desc`}>What does it teach, and who for?</Label>
-        <textarea id={`${uid}-desc`} value={f.description} onChange={set("description")} maxLength={600} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none" />
+        <textarea id={`${uid}-desc`} value={f.description} onChange={set("description")} maxLength={600} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent" />
       </div>
       <div>
         <Label htmlFor={`${uid}-contact`}>Phone or email we can reach you on</Label>

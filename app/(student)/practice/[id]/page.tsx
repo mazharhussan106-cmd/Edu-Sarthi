@@ -94,9 +94,9 @@ export default async function PracticePage({
       <Card className="mt-6">
         <CardTitle>What to do</CardTitle>
         <p className="mt-2 text-sm text-ink-muted">{exercise.prompt}</p>
-        <p className="mt-3 text-xs text-mist">{HOW_TO[exercise.expects]}</p>
+        <p className="mt-3 text-xs text-ink-muted">{HOW_TO[exercise.expects]}</p>
         {exercise.minSeconds && exercise.maxSeconds ? (
-          <p className="mt-1 text-xs text-mist">
+          <p className="mt-1 text-xs text-ink-muted">
             Aim for {exercise.minSeconds}–{exercise.maxSeconds} seconds. Going a
             little over is fine.
           </p>

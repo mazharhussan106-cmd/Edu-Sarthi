@@ -62,7 +62,7 @@ export function DeckSide({ side, card, stage, dueLabel, onSpeak, backToFront }: 
             // eslint-disable-next-line @next/next/no-img-element -- signed storage URL
             <img src={card.imageSrc} alt={`Picture for ${card.front}`} className="h-full w-full object-contain" />
           ) : (
-            <span className="flex flex-col items-center gap-[0.2em] text-mist">
+            <span className="flex flex-col items-center gap-[0.2em] text-ink-muted">
               <ImageIcon className="h-[2em] w-[2em]" aria-hidden="true" />
               <span className="text-[0.6em]">No picture</span>
             </span>

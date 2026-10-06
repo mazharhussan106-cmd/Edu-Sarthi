@@ -44,7 +44,7 @@ export function TypeCheck({ id, answer, placeholder }: { id: string; answer: str
           setResult(null);
         }}
         placeholder={placeholder}
-        className="h-9 rounded-lg border border-border-strong bg-surface px-3 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+        className="h-9 rounded-lg border border-border-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
       />
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" onClick={() => setResult(sameAnswer(value, answer) ? "right" : "wrong")} disabled={!value.trim()}>
@@ -108,7 +108,7 @@ export function OwnSentence({ id }: { id: string }) {
         value={own}
         onChange={(e) => setOwn(e.target.value)}
         placeholder="Write your sentence here"
-        className="mt-2 w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+        className="mt-2 w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
       />
       <p className="mt-1 text-xs text-ink-muted">Not saved or marked. Say it out loud, then record it below for your teacher.</p>
     </>
@@ -120,7 +120,7 @@ export function OwnSentence({ id }: { id: string }) {
 /// filled, the next one is outlined bold, later ones faint.
 export function ReviewPlan({ stage, dueLabel }: { stage: number | null; dueLabel: string | null }) {
   return (
-    <div className="rounded-xl border border-ink/30 bg-surface p-3 text-ink">
+    <div className="rounded-xl border border-border-strong bg-surface p-3 text-ink">
       <p className="font-display text-[0.8em] font-bold">Spaced Repetition · Your Review Plan</p>
       <ol className="mt-2 flex flex-wrap items-center gap-1.5 text-xs" aria-label="Review steps">
         {LADDER_DAYS.map((day, i) => {
@@ -134,7 +134,7 @@ export function ReviewPlan({ stage, dueLabel }: { stage: number | null; dueLabel
                 "rounded-md border px-2 py-1 font-mono",
                 done && "border-ink bg-ink text-surface",
                 next && "border-2 border-ink font-bold",
-                !done && !next && "border-ink/30",
+                !done && !next && "border-border-strong",
               )}
             >
               {done ? "✓ " : ""}Day {day}

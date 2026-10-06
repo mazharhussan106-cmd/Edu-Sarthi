@@ -86,7 +86,9 @@ export async function reviewDeck(adminId: string, id: string, decision: "approve
     where: { id, visibility: "PUBLIC", status: "PENDING_REVIEW" },
     data: approve
       ? { status: "APPROVED", rejectReason: null, reviewedById: adminId, reviewedAt: new Date() }
-      : { status: "REJECTED", rejectReason: reason, reviewedById: adminId, reviewedAt: new Date() },
+      // A rejected deck's link is switched off too, or the content the admin just
+      // refused would stay readable by anyone who has it.
+      : { status: "REJECTED", rejectReason: reason, reviewedById: adminId, reviewedAt: new Date(), shareToken: null },
   });
   await tellOwner(id, approve ? "approved" : "rejected", reason);
   await logAdmin(adminId, approve ? "Approved public deck" : "Rejected public deck", "deck", id, { title: deck.title, ...(approve ? {} : { reason }) });

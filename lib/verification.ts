@@ -88,10 +88,13 @@ export async function verifyCode(
 
   // Counted before the comparison. Incrementing only on failure means a
   // crash mid-check hands back a free attempt.
-  await prisma.verificationCode.update({
-    where: { id: record.id },
+  // One conditional statement, not read-then-write: 50 parallel guesses would
+  // all pass a separate "attempts < 5" check, but only five can match this one.
+  const counted = await prisma.verificationCode.updateMany({
+    where: { id: record.id, attempts: { lt: MAX_ATTEMPTS } },
     data: { attempts: { increment: 1 } },
   });
+  if (counted.count === 0) return { ok: false, reason: "too-many-attempts" };
 
   // timingSafeEqual on the hex digests, not === on the codes. String compare
   // exits at the first differing character, which leaks how many leading

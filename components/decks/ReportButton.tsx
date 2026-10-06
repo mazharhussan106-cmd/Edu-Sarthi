@@ -47,7 +47,7 @@ export function ReportButton({ deckId }: { deckId: string }) {
       </div>
       <div>
         <Label htmlFor={`${uid}-n`}>Details (optional)</Label>
-        <textarea id={`${uid}-n`} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none" />
+        <textarea id={`${uid}-n`} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent" />
       </div>
       <div className="flex gap-2">
         <Button size="sm" disabled={busy} onClick={send}>{busy ? "Sending…" : "Send report"}</Button>

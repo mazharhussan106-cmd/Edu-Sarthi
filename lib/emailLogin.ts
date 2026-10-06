@@ -88,9 +88,14 @@ export async function userForProvenEmail(email: string) {
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     if (existing.emailVerified) return existing;
+    // Someone may have registered THIS address with a password of their own
+    // before its owner ever proved the inbox. The owner just did, so that
+    // password goes — otherwise the person who registered first keeps a working
+    // key to the owner's account. Outstanding reset links go with it.
+    await prisma.passwordResetToken.updateMany({ where: { userId: existing.id, usedAt: null }, data: { usedAt: new Date() } });
     return prisma.user.update({
       where: { id: existing.id },
-      data: { emailVerified: new Date() },
+      data: { emailVerified: new Date(), passwordHash: null },
     });
   }
 

@@ -75,7 +75,7 @@ export function ChunkFront({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={imageUrl} alt={`Picture for ${text}`} className="h-full w-full object-cover" />
           ) : (
-            <span className="flex flex-col items-center gap-[0.2em] text-mist">
+            <span className="flex flex-col items-center gap-[0.2em] text-ink-muted">
               <ImageIcon className="h-[2em] w-[2em]" aria-hidden="true" />
               <span className="text-[0.6em]">Picture coming</span>
             </span>

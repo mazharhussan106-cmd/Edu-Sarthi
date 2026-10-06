@@ -131,7 +131,7 @@ export default async function AuditsPage({
                         <p className="mt-0.5 line-clamp-1 text-xs text-ink-muted">
                           {s.exercise.prompt}
                         </p>
-                        <p className="mt-1 text-xs text-mist">
+                        <p className="mt-1 text-xs text-ink-muted">
                           {s.createdAt.toLocaleString("en-IN", {
                             day: "numeric",
                             month: "short",

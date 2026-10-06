@@ -31,6 +31,8 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     where: {
       visibility: "PUBLIC",
       status: "APPROVED",
+      // A suspended owner's decks are not shown while the suspension lasts.
+      owner: { suspendedAt: null },
       ...(tag ? { tags: { has: tag } } : {}),
       ...(q
         ? { OR: [{ title: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }, { tags: { has: q.toLowerCase() } }] }
@@ -55,7 +57,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist" aria-hidden="true" />
         {tag ? <input type="hidden" name="tag" value={tag} /> : null}
         <input type="hidden" name="sort" value={sort} />
-        <input id="lib-search" name="q" type="search" defaultValue={q} placeholder="Search decks or tags" className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none" />
+        <input id="lib-search" name="q" type="search" defaultValue={q} placeholder="Search decks or tags" className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent" />
       </form>
       <nav aria-label="Sort decks" className="mt-2 flex gap-1.5">
         {SORTS.map((x) => (

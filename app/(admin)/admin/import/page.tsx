@@ -5,12 +5,14 @@
 // It deliberately does NOT show past imports; each import is an entry in the
 // admin log, and the deck itself is in the library.
 
+import { ensureActiveUser } from "@/lib/activeUser";
 import { Card } from "@/components/ui/Card";
 import { XlsxImport } from "@/components/admin/XlsxImport";
 
 export const revalidate = 0;
 
-export default function AdminImportPage() {
+export default async function AdminImportPage() {
+  await ensureActiveUser(["ADMIN"]);
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <h1 className="font-display text-2xl font-bold text-ink">Import flashcards from Excel</h1>

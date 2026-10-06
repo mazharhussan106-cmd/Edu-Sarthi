@@ -10,9 +10,9 @@
 
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
-import { copyDeck, deleteDeck, newShareToken, ownDeck, readJson } from "@/lib/decks";
+import { copyDeck, deleteDeck, LimitReached, lockUser, newShareToken, ownDeck, readJson } from "@/lib/decks";
 import { instituteDeckScope } from "@/lib/institutes";
 import { publishDeck, sendBackIfPublished, unpublishDeck } from "@/lib/deckReview";
 import { DECK_LIMITS, deckActionSchema } from "@/lib/deckSchemas";
@@ -21,8 +21,9 @@ const fail = (error: string, status: number) => NextResponse.json({ error }, { s
 const done = (r: { ok: true } | { error: string }) => ("error" in r ? fail(r.error, 400) : NextResponse.json({ ok: true }));
 
 export async function POST(req: Request) {
-  const userId = (await auth())?.user?.id;
-  if (!userId) return fail("Your session has expired. Sign in again.", 401);
+  const gate = await requireUser({ verified: true });
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
 
   const parsed = deckActionSchema.safeParse(await readJson(req));
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Could not save that. Check the fields and try again.", 400);
@@ -30,16 +31,22 @@ export async function POST(req: Request) {
 
   switch (a.action) {
     case "create": {
-      // Counted before the insert, outside any transaction: a race can overshoot
-      // by one deck, which is harmless; the limit exists to stop runaway growth.
-      if ((await prisma.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) {
-        return fail(`You can have ${DECK_LIMITS.decksPerUser} decks. Delete one you no longer need, then try again.`, 400);
+      // Count and insert under one per-user lock, so parallel requests cannot all
+      // pass the limit before any of them has created a deck.
+      try {
+        const deck = await prisma.$transaction(
+          async (tx) => {
+            await lockUser(tx, userId);
+            if ((await tx.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
+            return tx.deck.create({ data: { ownerId: userId, title: a.title, description: a.description || null, tags: a.tags }, select: { id: true } });
+          },
+          { maxWait: 10_000, timeout: 20_000 },
+        );
+        return NextResponse.json({ ok: true, id: deck.id });
+      } catch (e) {
+        if (e instanceof LimitReached) return fail(`You can have ${DECK_LIMITS.decksPerUser} decks. Delete one you no longer need, then try again.`, 400);
+        throw e;
       }
-      const deck = await prisma.deck.create({
-        data: { ownerId: userId, title: a.title, description: a.description || null, tags: a.tags },
-        select: { id: true },
-      });
-      return NextResponse.json({ ok: true, id: deck.id });
     }
     case "copy":
     case "copyPublic": {
@@ -68,16 +75,20 @@ export async function POST(req: Request) {
   if (!deck) return fail("That deck no longer exists.", 404);
 
   if (a.action === "update") {
+    // Back to review first, then the edit: if the second step failed, approved
+    // content must never be left changed without a fresh look.
+    await sendBackIfPublished(a.id);
     await prisma.deck.updateMany({
       where: { id: a.id, ownerId: userId },
       data: { title: a.title, description: a.description || null, tags: a.tags },
     });
-    await sendBackIfPublished(a.id);
     return NextResponse.json({ ok: true });
   }
 
   // share: turning it off clears the token, which revokes every copy of the
   // link; turning it on again issues a fresh one rather than reviving the old.
+  if (a.on && deck.visibility === "INSTITUTE") return fail("This deck is shared inside your institute only. Stop sharing it with the institute first if you want a link.", 400);
+  if (a.on && deck.status === "REJECTED") return fail("An admin did not approve this deck, so it cannot be shared by link. Fix what the reviewer's note says and submit it again.", 400);
   if (a.on && deck.shareToken) return NextResponse.json({ ok: true, token: deck.shareToken });
   const token = a.on ? newShareToken() : null;
   await prisma.deck.updateMany({

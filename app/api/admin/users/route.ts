@@ -21,6 +21,16 @@ const schema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("unsuspend"), userId: z.string().min(1), reason }),
 ]);
 
+/// Recordings routed to one teacher's deck are invisible to everyone else. When
+/// that person stops being a verified, active teacher they would sit unseen
+/// until the 24-hour promise lapsed, so they go back to the shared queue.
+async function releaseAssigned(teacherId: string) {
+  await prisma.submission.updateMany({
+    where: { assignedTeacherId: teacherId, status: { in: ["PENDING", "IN_REVIEW"] } },
+    data: { assignedTeacherId: null },
+  });
+}
+
 export async function POST(req: Request) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Admins only." }, { status: 403 });
@@ -51,7 +61,8 @@ export async function POST(req: Request) {
   if (a.action === "verifyTeacher") {
     if (target.role !== "TEACHER") return NextResponse.json({ error: "Only a teacher account can be verified. Change the role first." }, { status: 400 });
     await prisma.user.update({ where: { id: target.id }, data: { teacherVerifiedAt: a.on ? new Date() : null } });
-    await logAdmin(admin.id, a.on ? "Verified teacher" : "Removed teacher verification", "user", target.id, { email: target.email, reason: a.reason });
+    if (!a.on) await releaseAssigned(target.id);
+    await logAdmin(admin.id, a.on ? "Verified teacher" : "Removed teacher verification", "user", target.id, { student: target.publicId, reason: a.reason });
     return NextResponse.json({ ok: true });
   }
 
@@ -65,7 +76,8 @@ export async function POST(req: Request) {
       // later return to teaching needs a fresh look.
       data: { role: a.role, publicId: target.publicId ?? generatePublicId(), ...(a.role === "TEACHER" ? {} : { teacherVerifiedAt: null }) },
     });
-    await logAdmin(admin.id, `Changed role ${target.role} → ${a.role}`, "user", target.id, { email: target.email, reason: a.reason });
+    if (a.role !== "TEACHER") await releaseAssigned(target.id);
+    await logAdmin(admin.id, `Changed role ${target.role} → ${a.role}`, "user", target.id, { student: target.publicId, reason: a.reason });
     return NextResponse.json({ ok: true });
   }
 
@@ -77,6 +89,7 @@ export async function POST(req: Request) {
         : { suspendedAt: null, suspendReason: null },
   });
   if (a.action === "suspend") {
+    await releaseAssigned(target.id);
     // A suspended teacher's open claims go straight back to the queue rather
     // than sitting locked for half an hour.
     await prisma.submission.updateMany({
@@ -89,7 +102,7 @@ export async function POST(req: Request) {
     a.action === "suspend" ? "Suspended account" : "Lifted suspension",
     "user",
     target.id,
-    { email: target.email, reason: a.reason },
+    { student: target.publicId, reason: a.reason },
   );
   return NextResponse.json({ ok: true });
 }

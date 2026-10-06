@@ -7,22 +7,16 @@
 
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { practiceWord } from "@/lib/decks";
 import { submissionSchema } from "@/lib/validations";
-import { ALLOWED_TYPES, objectExists } from "@/lib/storage";
+import { ALLOWED_TYPES, objectExists, isOwnKey } from "@/lib/storage";
 
 export async function POST(req: Request) {
-  const session = await auth();
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Your session has expired. Sign in and try again." },
-      { status: 401 },
-    );
-  }
+  const gate = await requireUser({ verified: true });
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
 
   let body: unknown;
   try {
@@ -50,7 +44,7 @@ export async function POST(req: Request) {
 
   // The one check that matters. buildKey() writes `${userId}/uuid-name`, so
   // anything else is a key this user was never given.
-  if (!key.startsWith(`${userId}/`)) {
+  if (!isOwnKey(userId, key)) {
     return NextResponse.json({ error: "That file does not belong to you." }, { status: 403 });
   }
 
@@ -122,20 +116,31 @@ export async function POST(req: Request) {
     );
   }
 
-  const submission = await prisma.submission.create({
-    data: {
-      studentId: userId,
-      exerciseId,
-      retryOfId: retryOfId ?? null,
-      wordId: wordId ?? null,
-      assignedTeacherId: target?.teacherId ?? null,
-      mediaUrl: key,
-      mediaKind: kind,
-      durationSec: kind === "IMAGE" ? null : durationSec,
-      status: "PENDING",
-    },
-    select: { id: true },
-  });
+  // The same recording sent twice (a double tap, a phone retry) or two
+  // simultaneous replacements for one send-back would otherwise end in a bare
+  // 500 from the database's unique rule on retryOfId.
+  if (!retryOfId && (await prisma.submission.findFirst({ where: { studentId: userId, mediaUrl: key }, select: { id: true } }))) {
+    return NextResponse.json({ error: "That recording was already sent. Open My Audits to see it." }, { status: 409 });
+  }
+  let submission: { id: string };
+  try {
+    submission = await prisma.submission.create({
+      data: {
+        studentId: userId,
+        exerciseId,
+        retryOfId: retryOfId ?? null,
+        wordId: wordId ?? null,
+        assignedTeacherId: target?.teacherId ?? null,
+        mediaUrl: key,
+        mediaKind: kind,
+        durationSec: kind === "IMAGE" ? null : durationSec,
+        status: "PENDING",
+      },
+      select: { id: true },
+    });
+  } catch {
+    return NextResponse.json({ error: "We could not save your submission. Check My Audits to see if it went through, and send it again if not." }, { status: 409 });
+  }
 
   return NextResponse.json({ ok: true, id: submission.id }, { status: 201 });
 }

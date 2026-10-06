@@ -27,6 +27,7 @@ import { Card } from "@/components/ui/Card";
 import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/ClaimControls";
 import { cn } from "@/lib/utils";
 import { cardNoun } from "@/lib/chunkCard";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -61,6 +62,9 @@ export default async function QueuePage({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
   const params = await searchParams;
   const session = await auth();
   const teacherId = session?.user?.id;
@@ -143,7 +147,7 @@ export default async function QueuePage({
             )}
           >
             {t.label}
-            <span className="ml-1.5 font-mono text-xs text-mist">{counts[t.value]}</span>
+            <span className="ml-1.5 font-mono text-xs text-ink-muted">{counts[t.value]}</span>
           </Link>
         ))}
       </nav>

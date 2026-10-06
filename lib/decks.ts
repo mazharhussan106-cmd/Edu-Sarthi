@@ -39,6 +39,17 @@ export function newShareToken(): string {
   return randomBytes(12).toString("base64url");
 }
 
+/// Serialises one user's "check the limit, then create" steps. Without it, 50
+/// parallel requests all read "19 decks" and all create one, so the limit only
+/// holds against a person clicking, not against a script. A transaction-scoped
+/// advisory lock on the user's id queues them one after another; it is released
+/// when the transaction ends and blocks no one else.
+export async function lockUser(tx: Prisma.TransactionClient, userId: string): Promise<void> {
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${userId}))`;
+}
+
+export class LimitReached extends Error {}
+
 export function wordData(c: CardFields) {
   return {
     text: c.front,
@@ -90,8 +101,8 @@ export async function deckStudyCounts(userId: string, deckId: string) {
   const now = new Date();
   const [total, due, started] = await Promise.all([
     prisma.word.count({ where: { deckId, ownerId: userId } }),
-    prisma.cardState.count({ where: { userId, dueAt: { lte: now }, word: { deckId, ownerId: userId } } }),
-    prisma.cardState.count({ where: { userId, word: { deckId, ownerId: userId } } }),
+    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { deckId, ownerId: userId } } }),
+    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, word: { deckId, ownerId: userId } } }),
   ]);
   return { total, due, fresh: Math.max(0, total - started) };
 }
@@ -102,13 +113,13 @@ export async function nextDeckCardId(userId: string, deckId: string, skip: strin
   // Skipped cards ("›") are "not now", kept in the URL, never a review answer.
   const mine = { deckId, ownerId: userId, ...(skip.length ? { code: { notIn: skip } } : {}) };
   const due = await prisma.cardState.findFirst({
-    where: { userId, dueAt: { lte: new Date() }, word: mine },
+    where: { userId, reviews: { gt: 0 }, dueAt: { lte: new Date() }, word: mine },
     orderBy: { dueAt: "asc" },
     select: { wordId: true },
   });
   if (due) return due.wordId;
   const fresh = await prisma.word.findFirst({
-    where: { ...mine, states: { none: { userId } } },
+    where: { ...mine, NOT: { states: { some: { userId, reviews: { gt: 0 } } } } },
     orderBy: { serial: "asc" },
     select: { id: true },
   });
@@ -137,48 +148,69 @@ export async function deleteDeck(userId: string, id: string): Promise<boolean> {
 export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Promise<{ id: string } | { error: string }> {
   const source = await prisma.deck.findFirst({
     where,
-    select: { id: true, title: true, description: true, tags: true, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
+    select: { id: true, title: true, description: true, tags: true, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true } } },
   });
   if (!source) return { error: "This deck is no longer available. Go back and pick another." };
   if ((await prisma.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) {
     return { error: `You have ${DECK_LIMITS.decksPerUser} decks already. Delete one you no longer need, then copy again.` };
   }
 
-  const cards = await Promise.all(
-    source.cards.map(async (c) => ({
-      c,
-      imageKey: c.imageUrl ? await copyObject(c.imageUrl, userId) : null,
-      audioKey: c.audioUrl ? await copyObject(c.audioUrl, userId) : null,
-    })),
-  );
-
-  // Counted outside the transaction: a missed increment must not undo a copy.
-  await prisma.deck.updateMany({ where: { id: source.id }, data: { copyCount: { increment: 1 } } });
-
-  const deck = await prisma.$transaction(
-    async (tx) => {
-      const created = await tx.deck.create({
-        data: { ownerId: userId, title: source.title.slice(0, 70) + " (copy)", description: source.description, tags: source.tags },
-        select: { id: true },
-      });
-      await tx.word.createMany({
-        data: cards.map(({ c, imageKey, audioKey }, i) => ({
-          code: newCardCode(),
-          serial: i + 1,
-          kind: "WORD" as const,
-          deckId: created.id,
-          ownerId: userId,
-          text: c.text,
-          details: (c.details ?? {}) as Prisma.InputJsonObject,
-          imageUrl: imageKey,
-          audioUrl: audioKey,
-          videoUrl: c.videoUrl,
+  // Files are copied a handful at a time, never hundreds at once: a 184-card
+  // deck with pictures would otherwise open hundreds of storage requests in one go.
+  const cards: { c: (typeof source.cards)[number]; imageKey: string | null; audioKey: string | null }[] = [];
+  for (let i = 0; i < source.cards.length; i += 8) {
+    cards.push(
+      ...(await Promise.all(
+        source.cards.slice(i, i + 8).map(async (c) => ({
+          c,
+          imageKey: c.imageUrl ? await copyObject(c.imageUrl, userId) : null,
+          audioKey: c.audioUrl ? await copyObject(c.audioUrl, userId) : null,
         })),
-      });
-      return created;
-    },
-    { maxWait: 10_000, timeout: 20_000 },
-  );
+      )),
+    );
+  }
+  const copiedKeys = cards.flatMap((x) => [x.imageKey, x.audioKey]).filter((k): k is string => Boolean(k));
+
+  let deck: { id: string };
+  try {
+    deck = await prisma.$transaction(
+      async (tx) => {
+        await lockUser(tx, userId);
+        // The real check, under the lock; the one above only saves work.
+        if ((await tx.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
+        const created = await tx.deck.create({
+          data: { ownerId: userId, title: source.title.slice(0, 70) + " (copy)", description: source.description, tags: source.tags },
+          select: { id: true },
+        });
+        await tx.word.createMany({
+          data: cards.map(({ c, imageKey, audioKey }, i) => ({
+            code: newCardCode(),
+            serial: i + 1,
+            kind: "WORD" as const,
+            deckId: created.id,
+            ownerId: userId,
+            text: c.text,
+            // Imported cards keep their topic, so the copy lists the same way.
+            category: c.category,
+            details: (c.details ?? {}) as Prisma.InputJsonObject,
+            imageUrl: imageKey,
+            audioUrl: audioKey,
+            videoUrl: c.videoUrl,
+          })),
+        });
+        return created;
+      },
+      { maxWait: 10_000, timeout: 20_000 },
+    );
+  } catch (e) {
+    // Nothing points at the copied files now, so they would sit in storage for good.
+    await removeObjects(copiedKeys);
+    if (e instanceof LimitReached) return { error: `You have ${DECK_LIMITS.decksPerUser} decks already. Delete one you no longer need, then copy again.` };
+    throw e;
+  }
+  // Counted only after the copy really exists, and outside the transaction:
+  // a missed increment must not undo a copy.
+  await prisma.deck.updateMany({ where: { id: source.id }, data: { copyCount: { increment: 1 } } });
   return deck;
 }
 

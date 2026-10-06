@@ -105,7 +105,7 @@ export function SendBackForm({ submissionId }: { submissionId: string }) {
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="e.g. A fan is running close to the phone."
-          className="w-full rounded-lg border border-border bg-surface px-3 py-2 font-body text-sm text-ink placeholder:text-mist hover:border-border-strong focus:border-accent focus:outline-none"
+          className="w-full rounded-lg border border-border bg-surface px-3 py-2 font-body text-sm text-ink placeholder:text-ink-muted hover:border-border-strong focus:border-accent"
         />
       </div>
 

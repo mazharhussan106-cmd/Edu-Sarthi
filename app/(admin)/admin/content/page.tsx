@@ -11,10 +11,14 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { ExerciseForm, ModuleForm } from "@/components/admin/ContentForms";
 import { CsvImport } from "@/components/admin/CsvImport";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
 export default async function ContentPage() {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const modules = await prisma.module.findMany({
     orderBy: [{ level: "asc" }, { title: "asc" }],
     select: {

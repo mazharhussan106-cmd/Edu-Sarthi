@@ -244,7 +244,7 @@ export function SubmitPanel({
             />
           </div>
           {stage === "uploading" ? (
-            <p className="mt-1 text-xs text-mist">
+            <p className="mt-1 text-xs text-ink-muted">
               Keep this screen open. On mobile data a longer clip can take a
               minute.
             </p>

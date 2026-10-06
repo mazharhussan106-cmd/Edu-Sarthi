@@ -11,14 +11,19 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
 const STATUS_BADGE = { PENDING: "accent", APPROVED: "success", REJECTED: "error", SUSPENDED: "error" } as const;
 
 export default async function AdminInstitutesPage() {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const institutes = await prisma.institute.findMany({
     orderBy: [{ status: "asc" }, { createdAt: "asc" }],
+    take: 200,
     select: { id: true, name: true, description: true, contact: true, status: true, statusNote: true, createdAt: true, _count: { select: { members: true, decks: true } } },
   });
   const pending = institutes.filter((i) => i.status === "PENDING");

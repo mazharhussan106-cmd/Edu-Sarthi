@@ -174,6 +174,13 @@ export default function RegisterPage() {
           </p>
         ) : null}
 
+        <p className="text-xs text-ink-muted">
+          By creating an account you agree to the{" "}
+          <Link href="/legal/terms" className="font-medium text-accent hover:underline">Terms</Link> and the{" "}
+          <Link href="/legal/privacy" className="font-medium text-accent hover:underline">Privacy Policy</Link>. If you are
+          under 18, ask a parent or guardian before you sign up.
+        </p>
+
         <Button type="submit" disabled={busy}>
           {busy ? "Creating account…" : "Create account"}
         </Button>

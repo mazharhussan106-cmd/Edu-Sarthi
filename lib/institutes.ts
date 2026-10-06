@@ -71,13 +71,19 @@ export async function joinInstitute(userId: string, code: string): Promise<Resul
 /// Takes a person out and pulls back any of their decks they shared there.
 async function drop(userId: string, instituteId: string) {
   await prisma.instituteMember.deleteMany({ where: { userId, instituteId } });
+  // Back to what the owner had before: link-only if a share link is on, else
+  // private. Setting PRIVATE while keeping the link would hide the truth from
+  // the owner — the deck would still open for anyone holding the link.
+  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, shareToken: { not: null } }, data: { visibility: "LINK", instituteId: null } });
   await prisma.deck.updateMany({ where: { ownerId: userId, instituteId }, data: { visibility: "PRIVATE", instituteId: null } });
 }
 
 export async function leaveInstitute(userId: string): Promise<Result> {
-  const m = await prisma.instituteMember.findUnique({ where: { userId }, select: { role: true, instituteId: true } });
+  const m = await prisma.instituteMember.findUnique({ where: { userId }, select: { role: true, instituteId: true, institute: { select: { status: true } } } });
   if (!m) return { error: "You are not in an institute." };
-  if (m.role === "ADMIN") return { error: "You run this institute, so you cannot leave it. Ask the site admin to hand it over first." };
+  // An admin of a running institute cannot walk away from it, but one whose
+  // institute was rejected or suspended is not stuck for ever.
+  if (m.role === "ADMIN" && m.institute.status === "APPROVED") return { error: "You run this institute, so you cannot leave it. Ask the site admin to hand it over first." };
   await drop(userId, m.instituteId);
   return { ok: true };
 }
@@ -121,7 +127,9 @@ export async function shareDeck(userId: string, deckId: string): Promise<Result>
   const deck = await prisma.deck.findFirst({ where: { id: deckId, ownerId: userId }, select: { visibility: true } });
   if (!deck) return { error: "That deck no longer exists." };
   if (deck.visibility === "PUBLIC") return { error: "This deck is in the public library. Remove it from there first — an institute deck stays inside the institute." };
-  await prisma.deck.updateMany({ where: { id: deckId, ownerId: userId }, data: { visibility: "INSTITUTE", instituteId: m.institute.id, status: "DRAFT" } });
+  await prisma.deck.updateMany({ where: { id: deckId, ownerId: userId }, // The share link is switched off: "inside the institute" must mean it, and
+    // a link would keep the deck open to anyone who holds it.
+    data: { visibility: "INSTITUTE", instituteId: m.institute.id, status: "DRAFT", shareToken: null } });
   return { ok: true };
 }
 

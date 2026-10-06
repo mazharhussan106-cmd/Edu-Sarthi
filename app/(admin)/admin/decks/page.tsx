@@ -10,19 +10,26 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
 export default async function AdminDecksPage() {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const [pending, reported] = await Promise.all([
     prisma.deck.findMany({
       where: { visibility: "PUBLIC", status: "PENDING_REVIEW" },
       orderBy: { updatedAt: "asc" },
+      // Oldest 100 first: a queue longer than that is a staffing problem, not a page problem.
+      take: 100,
       select: { id: true, title: true, updatedAt: true, _count: { select: { cards: true, reports: { where: { resolvedAt: null } } } } },
     }),
     prisma.deck.findMany({
       where: { reports: { some: { resolvedAt: null } } },
       orderBy: { updatedAt: "asc" },
+      take: 100,
       select: { id: true, title: true, status: true, _count: { select: { reports: { where: { resolvedAt: null } } } } },
     }),
   ]);

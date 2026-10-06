@@ -42,6 +42,9 @@ async function main() {
   // upserts cost 2+ round trips per word, which from a CI runner to a remote
   // database ran past the 15-minute job limit for 2,227 words.
   const existing = await prisma.word.findMany({
+    // Only the sheet's own words — never every card in the table, which now
+    // includes other people's deck cards and their large details.
+    where: { code: { in: rows.map((r) => r.word_id) } },
     select: { code: true, text: true, serial: true, partOfSpeech: true, category: true, cefr: true, importance: true, details: true },
   });
   const byCode = new Map(existing.map((w) => [w.code, w]));

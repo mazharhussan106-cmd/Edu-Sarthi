@@ -38,7 +38,7 @@ export function DeckResults({
                   <span className="block font-display font-bold text-ink">{w.text}</span>
                   <span className="block truncate text-xs text-ink-muted">{w.gloss}</span>
                 </span>
-                <span className="shrink-0 font-mono text-[11px] text-mist">{w.meta}</span>
+                <span className="shrink-0 font-mono text-[11px] text-ink-muted">{w.meta}</span>
               </Card>
             </Link>
           </li>

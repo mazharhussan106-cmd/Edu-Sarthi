@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 6 Oct 2026.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 6 Oct 2026 (audit fixes). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -25,8 +25,9 @@ An English spoken-communication training platform: students record or upload, te
 
 ## Open work, most important first
 
-1. **Imported 56-point cards (Python 184, SQL 40) do not use the EduSarthi card.** They use a plain tab view (`components/decks/RichCard.tsx`, `StudyCard.tsx`) with no frame, no turn/swipe/zoom and no Known/Unknown/Remark bar. Fix: render them with `CardSurface` + `CardControls`, laid out like `components/flashcards/chunk/*`, and move hand-made deck study onto the same card. Needs the owner's go-ahead (more than 6 files).
-2. Merge the branches into `main` (a pull request from `happy-galileo`), then run **Actions → Database setup** so the new tables exist on the live database.
+1. **Done (6 Oct):** imported 56-point cards and hand-made deck cards now use the EduSarthi card (`components/decks/rich/*`, `DeckStudy`). Do not add another card look.
+1b. **Audit done (6 Oct):** see `docs/AUDIT-2026-10.md` — what was fixed, and the deferred list (session end on password reset, register throttle, CSRF/CSP, upload quotas, DPDP consent, repo clutter for the owner to decide). Next ideas for revenue: `docs/ROADMAP-EARNING.md`.
+2. Merge the branches into `main` (a pull request from `happy-galileo`), then run **Actions → Database setup** so the new tables, indexes and the nullable `Institute.applicantId` exist on the live database.
 3. Hosting choice (Vercel or Hostinger) — see `LIVE-TESTING-GUIDE.md` and `DEPLOY.md`.
 4. Owner's backlog after a live test: orphan-upload cleanup, in-app notifications, licence and credit for public decks, institute recordings.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.

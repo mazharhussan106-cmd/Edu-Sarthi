@@ -21,6 +21,7 @@ import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/Clai
 import { RubricForm } from "@/components/review/RubricForm";
 import { SendBackForm } from "@/components/review/SendBackForm";
 import { cardNoun, chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -39,6 +40,9 @@ function Notice({ title, children }: { title: string; children: React.ReactNode 
 }
 
 export default async function ReviewPage({ params }: { params: Promise<{ id: string }> }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
   const { id } = await params;
   const session = await auth();
   const teacherId = session?.user?.id;

@@ -100,7 +100,7 @@ export default async function LearnPage({
           type="search"
           defaultValue={q}
           placeholder="Search lessons"
-          className="h-11 w-full rounded-lg border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+          className="h-11 w-full rounded-lg border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
         />
         {level ? <input type="hidden" name="level" value={level} /> : null}
       </form>

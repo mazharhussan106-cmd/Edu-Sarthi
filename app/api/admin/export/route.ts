@@ -15,7 +15,7 @@ function cell(v: unknown): string {
   const s = v === null || v === undefined ? "" : String(v);
   // Quoted when needed, and a leading = + - @ is neutralised so a spreadsheet
   // never runs a formula someone typed into an exercise title.
-  const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
+  const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
   return /[",\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 }
 

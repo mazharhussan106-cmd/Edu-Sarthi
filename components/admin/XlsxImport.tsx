@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 
-type Summary = { cards: number; sheets: { name: string; type: string; cards: number }[]; topics: { topic: string; cards: number }[]; warnings: string[] };
+type Summary = { cards: number; skipped?: string[]; sheets: { name: string; type: string; cards: number }[]; topics: { topic: string; cards: number }[]; warnings: string[] };
 type Reply = { error?: string; errors?: string[]; summary?: Summary; deckId?: string; created?: number; updated?: number };
 
 export function XlsxImport() {
@@ -106,6 +106,7 @@ export function XlsxImport() {
         <div className="rounded-lg border border-border bg-surface p-4">
           <p className="font-medium text-ink">Found {checked.cards} cards — no problems. Nothing is saved yet.</p>
           <p className="mt-1 text-xs text-ink-muted">{checked.sheets.map((s) => `${s.name}: ${s.cards} (${s.type})`).join(" · ")}</p>
+          {checked.skipped?.length ? <p className="mt-1 text-xs text-ink-muted">Not flashcards, left out: {checked.skipped.join(", ")}</p> : null}
           <ul className="mt-3 grid gap-x-10 gap-y-1 text-sm sm:grid-cols-2">
             {checked.topics.map((t) => <li key={t.topic} className="flex justify-between gap-2"><span className="truncate text-ink">{t.topic}</span><span className="font-mono text-ink-muted">{t.cards}</span></li>)}
           </ul>

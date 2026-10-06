@@ -97,6 +97,16 @@ export function buildKey(userId: string, filename: string): string {
   return `${userId}/${randomUUID()}-${sanitise(filename)}`;
 }
 
+/// True only for a key this user was actually issued: `<userId>/<uuid>-<name>`
+/// with a name made of the characters buildKey allows. A bare prefix test would
+/// accept `<userId>/../<someone-else>/…`, which path-resolves into another
+/// person's folder.
+export function isOwnKey(userId: string, key: string): boolean {
+  const id = userId.replace(/[^a-z0-9]/gi, "");
+  if (id !== userId || !id) return false;
+  return new RegExp(`^${id}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-[a-z0-9.-]{1,60}$`).test(key);
+}
+
 export type UploadTarget = { key: string; url: string; token: string };
 
 export async function createUploadTarget(
@@ -170,27 +180,38 @@ export async function objectExists(key: string): Promise<boolean> {
   }
 }
 
-/// Deletes stored files, for account deletion. Best effort: a file that is
-/// already gone is not an error, and one failed delete must not stop the
-/// account itself from being erased.
-export async function removeObjects(keys: readonly string[]): Promise<void> {
+/// Deletes stored files and returns the keys that could NOT be deleted.
+///
+/// Best effort — one failed delete must not stop an account erasure — but the
+/// caller is told, because a retention run that blanks a row after a failed
+/// delete orphans the file for good: nothing points at it any more, so nothing
+/// retries.
+export async function removeObjects(keys: readonly string[]): Promise<string[]> {
   const real = keys.filter((k) => !k.startsWith("/") && !k.startsWith("http"));
-  if (real.length === 0) return;
+  if (real.length === 0) return [];
 
   if (LOCAL_STORAGE) {
+    const failed: string[] = [];
     await Promise.all(
       real.map(async (k) => {
         const full = localPath(k);
-        if (full) await rm(full, { force: true });
+        try {
+          if (full) await rm(full, { force: true });
+        } catch {
+          failed.push(k);
+        }
       }),
     );
-    return;
+    return failed;
   }
 
   try {
-    await client().storage.from(BUCKET).remove(real);
+    const { error } = await client().storage.from(BUCKET).remove(real);
+    if (error) throw error;
+    return [];
   } catch {
-    console.error("Could not delete some stored files during account deletion");
+    console.error(`Could not delete ${real.length} stored file(s)`);
+    return [...real];
   }
 }
 

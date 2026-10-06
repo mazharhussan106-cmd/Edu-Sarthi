@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/Button";
 import { adminPost } from "@/components/admin/adminPost";
 
 const field =
-  "w-full rounded-md border border-border-strong bg-surface px-2.5 py-1.5 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none";
+  "w-full rounded-md border border-border-strong bg-surface px-2.5 py-1.5 text-sm text-ink placeholder:text-ink-muted focus:border-accent";
 
 function useSave(onDone: () => void) {
   const router = useRouter();

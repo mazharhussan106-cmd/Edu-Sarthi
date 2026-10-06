@@ -168,6 +168,9 @@ model Submission {
   @@index([status, createdAt]) // the teacher queue reads on this
   @@index([claimedById, status])
   @@index([assignedTeacherId, status])
+  @@index([wordId])
+  @@index([exerciseId])
+  @@index([createdAt])
 }
 
 /// A teacher's audit of one submission. One-to-one with Submission.
@@ -202,6 +205,7 @@ model Feedback {
   createdAt DateTime @default(now())
 
   @@index([teacherId, createdAt])
+  @@index([createdAt])
 }
 
 model Module {
@@ -351,6 +355,7 @@ model AdminLog {
   actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([createdAt])
+  @@index([actorId])
 }
 
 enum CardKind {
@@ -367,12 +372,12 @@ model Word {
   id           String   @id @default(cuid())
   kind         CardKind @default(WORD)
   /// The sheet's own ID, e.g. "VRB-006". Stable across re-imports.
-  code       String   @unique
+  code         String   @unique
   /// Learning order. For chunks this is Path A; serialB holds Path B.
-  serial     Int
+  serial       Int
   /// Chunks only: the order when the student chose Path B. Null for words.
-  serialB    Int?
-  text       String
+  serialB      Int?
+  text         String
   partOfSpeech String?
   category     String?
   cefr         String?
@@ -400,6 +405,7 @@ model Word {
   @@index([kind, serial])
   @@index([kind, serialB])
   @@index([text])
+  @@index([kind, deckId, serial])
 }
 
 enum Recall {
@@ -437,6 +443,7 @@ model CardState {
 
   @@unique([userId, wordId])
   @@index([userId, dueAt])
+  @@index([wordId])
 }
 
 /// Who may see a deck. PRIVATE is the default so nothing is shared by accident.
@@ -527,6 +534,7 @@ model DeckReport {
 
   @@unique([deckId, reporterId])
   @@index([resolvedAt, createdAt])
+  @@index([reporterId])
 }
 
 /// One like per person per deck. Likes only matter on published decks, but the
@@ -542,6 +550,7 @@ model DeckLike {
   createdAt DateTime @default(now())
 
   @@unique([deckId, userId])
+  @@index([userId])
 }
 
 enum InstituteStatus {
@@ -570,19 +579,20 @@ model Institute {
   statusNote   String?         @db.Text
   /// What a student types to join. Rotating it stops the old one working.
   joinCode     String          @unique
-  applicantId  String
+  applicantId  String?
   reviewedById String?
   reviewedAt   DateTime?
 
   // Restrict: an account that applied cannot be deleted out from under its
   // institute without an admin deciding what happens to it.
-  applicant User              @relation("InstituteApplicant", fields: [applicantId], references: [id], onDelete: Restrict)
+  applicant User?             @relation("InstituteApplicant", fields: [applicantId], references: [id], onDelete: SetNull)
   members   InstituteMember[]
   decks     Deck[]
 
   createdAt DateTime @default(now())
 
   @@index([status, createdAt])
+  @@index([applicantId])
 }
 
 /// One person's place in one institute. userId is unique: a person belongs to

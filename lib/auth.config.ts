@@ -12,7 +12,9 @@ export const authConfig = {
   // JWT, not database sessions. Every database-session read is a query, which
   // on serverless means a pooled connection per page load. JWTs verify
   // in-process.
-  session: { strategy: "jwt" },
+  // 7 days, not Auth.js's 30: a suspended or deleted account's token is useless
+  // sooner, and API routes re-check the database as well (lib/apiUser).
+  session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 7 },
 
   pages: {
     signIn: "/login",
@@ -22,7 +24,7 @@ export const authConfig = {
   providers: [], // filled in by lib/auth.ts, which runs on Node
 
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user }) {
       // `user` is present only on the sign-in call. On every later request the
       // token already carries these, so copying unconditionally would wipe them.
       if (user) {
@@ -30,22 +32,11 @@ export const authConfig = {
         token.emailVerified = user.emailVerified;
       }
 
-      // After verifying an email the JWT is stale — the client calls
-      // update() and this refreshes it without a full sign-out.
-      //
-      // `session` here is whatever the client passed to update(), so it is
-      // untyped by design. Parsed into a Date rather than cast: a client that
-      // sends nonsense should leave the token unchanged, not poison it.
-      if (trigger === "update") {
-        const raw = (session as { emailVerified?: unknown } | undefined)
-          ?.emailVerified;
-
-        if (typeof raw === "string" || raw instanceof Date) {
-          const parsed = new Date(raw);
-          if (!Number.isNaN(parsed.getTime())) token.emailVerified = parsed;
-        }
-      }
-
+      // After verifying an email the JWT is stale, and the client calls
+      // update() to refresh it. The payload it sends is NEVER trusted: it is
+      // whatever the browser chose to send, so reading emailVerified from it
+      // would let anyone mark their own address as verified. lib/auth.ts, which
+      // can reach the database, re-reads the truth on an update instead.
       return token;
     },
 

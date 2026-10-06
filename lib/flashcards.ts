@@ -69,8 +69,8 @@ export async function deckCounts(userId: string, deck: Deck) {
   const word = wordWhere(deck);
   const now = new Date();
   const [due, newToday, known, total, tagged] = await Promise.all([
-    prisma.cardState.count({ where: { userId, dueAt: { lte: now }, word } }),
-    prisma.cardState.count({ where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind, deckId: null } } }),
+    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word } }),
+    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, createdAt: { gte: startOfTodayIst(now) }, word: { kind, deckId: null } } }),
     prisma.cardState.count({ where: { userId, known: true, word } }),
     prisma.word.count({ where: word }),
     prisma.cardState.groupBy({
@@ -99,7 +99,7 @@ export async function nextCardId(
   const now = new Date();
   const notSkipped = skip.length ? { code: { notIn: skip } } : {};
   const due = await prisma.cardState.findFirst({
-    where: { userId, dueAt: { lte: now }, word: { ...wordWhere(deck), ...notSkipped } },
+    where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { ...wordWhere(deck), ...notSkipped } },
     orderBy: { dueAt: "asc" },
     select: { wordId: true },
   });
@@ -107,13 +107,14 @@ export async function nextCardId(
 
   if (!extra) {
     const newToday = await prisma.cardState.count({
-      where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind: deck.kind, deckId: null } },
+      where: { userId, reviews: { gt: 0 }, createdAt: { gte: startOfTodayIst(now) }, word: { kind: deck.kind, deckId: null } },
     });
     if (newToday >= NEW_PER_DAY) return null;
   }
 
   const fresh = await prisma.word.findFirst({
-    where: { ...wordWhere(deck), states: { none: { userId } }, ...notSkipped },
+    // Not yet answered: a card the student only tagged or noted is still new.
+    where: { ...wordWhere(deck), NOT: { states: { some: { userId, reviews: { gt: 0 } } } }, ...notSkipped },
     orderBy: { serial: "asc" },
     select: { id: true },
   });
@@ -133,6 +134,8 @@ export async function chunkExtras(word: { id: string; kind: CardKind; serial: nu
     ? await prisma.word.findMany({
         where: { kind: word.kind, id: { not: word.id }, details: { path: ["group"], equals: d.group } },
         select: { text: true, serial: true },
+        // Ordered, or "which 40" is arbitrary and the choices change between visits.
+        orderBy: { serial: "asc" },
         take: 40,
       })
     : [];

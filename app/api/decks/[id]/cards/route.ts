@@ -14,24 +14,25 @@
 
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
-import { cardText, isStaff, newCardCode, ownDeck, readJson, wordData } from "@/lib/decks";
+import { cardText, isStaff, LimitReached, lockUser, newCardCode, ownDeck, readJson, wordData } from "@/lib/decks";
 import { sendBackIfPublished } from "@/lib/deckReview";
 import { DECK_LIMITS, cardActionSchema } from "@/lib/deckSchemas";
-import { objectExists, removeObjects } from "@/lib/storage";
+import { objectExists, removeObjects, isOwnKey } from "@/lib/storage";
 import { parseVideoUrl } from "@/lib/video";
 
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
 
 async function badKey(userId: string, key: string | null, current: string | null): Promise<boolean> {
   if (!key || key === current) return false; // unchanged or cleared
-  return !key.startsWith(`${userId}/`) || !(await objectExists(key));
+  return !isOwnKey(userId, key) || !(await objectExists(key));
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const userId = (await auth())?.user?.id;
-  if (!userId) return fail("Your session has expired. Sign in again.", 401);
+  const gate = await requireUser({ verified: true });
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
   const { id: deckId } = await params;
 
   const parsed = cardActionSchema.safeParse(await readJson(req));
@@ -44,9 +45,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (a.action === "delete") {
     const card = await prisma.word.findFirst({ where: { id: a.cardId, ...mine }, select: { imageUrl: true, audioUrl: true } });
     if (!card) return fail("That card no longer exists.", 404);
+    await sendBackIfPublished(deckId);
     await prisma.word.deleteMany({ where: { id: a.cardId, ...mine } });
     await removeObjects([card.imageUrl, card.audioUrl].filter((k): k is string => Boolean(k)));
-    await sendBackIfPublished(deckId);
     return NextResponse.json({ ok: true });
   }
 
@@ -69,18 +70,31 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   if (a.action === "add") {
-    if ((await prisma.word.count({ where: mine })) >= DECK_LIMITS.cardsPerDeck) {
-      return fail(`A deck holds up to ${DECK_LIMITS.cardsPerDeck} cards. Start a new deck for more.`, 400);
-    }
-    const last = await prisma.word.findFirst({ where: mine, orderBy: { serial: "desc" }, select: { serial: true } });
-    const card = await prisma.word.create({
-      data: { ...wordData({ ...a, ...extras }), code: newCardCode(), serial: (last?.serial ?? 0) + 1, kind: "WORD", deckId, ownerId: userId },
-      select: { id: true },
-    });
+    // Limit check and insert under one per-user lock (see lockUser), and the
+    // new card's number taken inside it, so parallel adds neither pass the
+    // limit together nor share a position.
     await sendBackIfPublished(deckId);
-    return NextResponse.json({ ok: true, id: card.id });
+    try {
+      const card = await prisma.$transaction(
+        async (tx) => {
+          await lockUser(tx, userId);
+          if ((await tx.word.count({ where: mine })) >= DECK_LIMITS.cardsPerDeck) throw new LimitReached();
+          const last = await tx.word.findFirst({ where: mine, orderBy: { serial: "desc" }, select: { serial: true } });
+          return tx.word.create({
+            data: { ...wordData({ ...a, ...extras }), code: newCardCode(), serial: (last?.serial ?? 0) + 1, kind: "WORD", deckId, ownerId: userId },
+            select: { id: true },
+          });
+        },
+        { maxWait: 10_000, timeout: 20_000 },
+      );
+      return NextResponse.json({ ok: true, id: card.id });
+    } catch (e) {
+      if (e instanceof LimitReached) return fail(`A deck holds up to ${DECK_LIMITS.cardsPerDeck} cards. Start a new deck for more.`, 400);
+      throw e;
+    }
   }
 
+  await sendBackIfPublished(deckId);
   await prisma.word.updateMany({ where: { id: a.cardId, ...mine }, data: wordData({ ...a, ...extras }) });
   // Files the card no longer points at are removed after the row is saved.
   const dropped = [
@@ -88,6 +102,5 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     current!.audioUrl && current!.audioUrl !== a.audioKey ? current!.audioUrl : null,
   ].filter((k): k is string => Boolean(k));
   await removeObjects(dropped);
-  await sendBackIfPublished(deckId);
   return NextResponse.json({ ok: true });
 }

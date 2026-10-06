@@ -7,6 +7,7 @@
 // refuse anyway, and this says why in words an admin can act on.
 
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
@@ -43,7 +44,7 @@ const schema = z.discriminatedUnion("action", [
 
 const HEADER = ["module_title", "level", "module_description", "title", "prompt", "expects", "min_seconds", "max_seconds"];
 
-export async function POST(req: Request) {
+async function handle(req: Request) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Admins only." }, { status: 403 });
 
@@ -153,4 +154,18 @@ async function importCsv(adminId: string, csv: string, commit: boolean) {
   );
   await logAdmin(adminId, "Imported exercises from CSV", "exercise", null, { rows: valid.length });
   return NextResponse.json({ ok: true, rows: valid.length, errors: [] });
+}
+
+export async function POST(req: Request) {
+  try {
+    return await handle(req);
+  } catch (e) {
+    // A module or exercise that another admin deleted a moment ago, or an id
+    // that never existed: say so, instead of a bare 500.
+    if (e instanceof Prisma.PrismaClientKnownRequestError && (e.code === "P2025" || e.code === "P2003")) {
+      return NextResponse.json({ error: "That module or exercise no longer exists. Refresh the page and try again." }, { status: 404 });
+    }
+    console.error("Admin content action failed");
+    return NextResponse.json({ error: "That did not save. Refresh the page and try again." }, { status: 500 });
+  }
 }

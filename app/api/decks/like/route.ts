@@ -7,7 +7,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { readJson } from "@/lib/decks";
 
@@ -15,8 +15,9 @@ const schema = z.object({ deckId: z.string().min(1), on: z.boolean() });
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
 
 export async function POST(req: Request) {
-  const userId = (await auth())?.user?.id;
-  if (!userId) return fail("Your session has expired. Sign in again.", 401);
+  const gate = await requireUser({ verified: true });
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
   const parsed = schema.safeParse(await readJson(req));
   if (!parsed.success) return fail("Could not save that. Try again.", 400);
   const { deckId, on } = parsed.data;

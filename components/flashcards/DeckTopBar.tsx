@@ -63,7 +63,7 @@ export function DeckTopBar({
           type="search"
           defaultValue={q}
           placeholder={`Search a ${k.noun} or ID`}
-          className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+          className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
         />
       </form>
 

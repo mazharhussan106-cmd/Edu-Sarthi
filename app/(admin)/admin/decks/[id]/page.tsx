@@ -16,10 +16,14 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
 export default async function AdminDeckPage({ params }: { params: Promise<{ id: string }> }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const { id } = await params;
   const deck = await prisma.deck.findUnique({
     where: { id },

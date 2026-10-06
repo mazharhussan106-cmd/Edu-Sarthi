@@ -113,7 +113,7 @@ export function CardEditor({ deckId, card, staff, onDone }: { deckId: string; ca
       </div>
       <div>
         <Label htmlFor={`${uid}-body`}>Extra notes (optional) — **bold**, *italic*, - lists, `code`</Label>
-        <textarea id={`${uid}-body`} value={body} onChange={(e) => setBody(e.target.value)} maxLength={2000} rows={4} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none" />
+        <textarea id={`${uid}-body`} value={body} onChange={(e) => setBody(e.target.value)} maxLength={2000} rows={4} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent" />
       </div>
       <fieldset className="flex flex-col gap-1">
         <legend className="text-xs font-medium text-ink-muted">Picture (optional, up to 2 MB)</legend>
@@ -132,7 +132,7 @@ export function CardEditor({ deckId, card, staff, onDone }: { deckId: string; ca
           </div>
           <div>
             <Label htmlFor={`${uid}-audit`}>Teacher’s guide — what to listen for (optional)</Label>
-            <textarea id={`${uid}-audit`} value={audit} onChange={(e) => setAudit(e.target.value)} maxLength={1000} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none" />
+            <textarea id={`${uid}-audit`} value={audit} onChange={(e) => setAudit(e.target.value)} maxLength={1000} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent" />
           </div>
         </>
       ) : null}

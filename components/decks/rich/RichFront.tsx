@@ -23,7 +23,7 @@ function textSize(t: string): string {
 
 export function cueOf(f: F): string {
   if (f.cue) return f.cue;
-  const reverse = (f.quick_recall ?? "").replace(/\s*\(\s*answer\s*:[^)]*\)?\s*$/i, "").trim();
+  const reverse = (f.quick_recall ?? "").replace(/\s*\(\s*answer\s*:[\s\S]*$/i, "").trim();
   return reverse || "Before you turn the card: what is it, and when would you use it?";
 }
 

@@ -14,16 +14,9 @@ import { useState, type ReactNode } from "react";
 
 import { Block, Mcq, OwnSentence, ReviewPlan, TypeCheck } from "@/components/flashcards/PracticeParts";
 import { Button } from "@/components/ui/Button";
+import { parseMcqOptions } from "@/lib/mcq";
 
 type F = Record<string, string>;
-
-/// "A) one | B) two" or one option per line.
-function options(raw: string): { key: string; text: string }[] {
-  const parts = raw.split(/(?:^|\s)([A-D])\)\s*/).filter((p) => p !== "");
-  const out: { key: string; text: string }[] = [];
-  for (let i = 0; i + 1 < parts.length; i += 2) out.push({ key: parts[i], text: parts[i + 1].replace(/\s*\|\s*$/, "").trim() });
-  return out;
-}
 
 function Reveal({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -39,9 +32,14 @@ const Pre = ({ v }: { v: string }) => <pre className="overflow-x-auto whitespace
 export function RichPractice({
   code, f, stage, dueLabel, backToFront,
 }: { code: string; f: F; stage: number | null; dueLabel: string | null; backToFront: ReactNode }) {
-  const opts = options(f.mcq_options ?? "");
-  const [blank, inline] = (f.fill_blank ?? "").split("→").map((s) => s.trim());
-  const answer = f.fill_answer || inline;
+  const opts = parseMcqOptions(f.mcq_options);
+  // "code with ____ → answer": only the FIRST arrow separates question from
+  // answer (a question may itself contain one), and a separate answer column,
+  // when the sheet has one, wins.
+  const raw = f.fill_blank ?? "";
+  const cut = raw.indexOf("→");
+  const blank = (cut < 0 ? raw : raw.slice(0, cut)).trim();
+  const answer = f.fill_answer || (cut < 0 ? "" : raw.slice(cut + 1).trim());
   let n = 0;
   return (
     <div className="flex flex-col gap-3">

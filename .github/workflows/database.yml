@@ -20,6 +20,12 @@ name: Database setup
 on:
   workflow_dispatch:
 
+# One run at a time. Two button presses at once race the 'create the hidden
+# practice module' steps and leave duplicates.
+concurrency:
+  group: database-setup
+  cancel-in-progress: false
+
 jobs:
   setup:
     runs-on: ubuntu-latest

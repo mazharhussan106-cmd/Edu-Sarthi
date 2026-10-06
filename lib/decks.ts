@@ -98,8 +98,9 @@ export async function deckStudyCounts(userId: string, deckId: string) {
 
 /// Due cards first (oldest due first), then cards never seen, in deck order.
 /// Own decks have no daily new-card limit: the student chose every card.
-export async function nextDeckCardId(userId: string, deckId: string): Promise<string | null> {
-  const mine = { deckId, ownerId: userId };
+export async function nextDeckCardId(userId: string, deckId: string, skip: string[] = []): Promise<string | null> {
+  // Skipped cards ("›") are "not now", kept in the URL, never a review answer.
+  const mine = { deckId, ownerId: userId, ...(skip.length ? { code: { notIn: skip } } : {}) };
   const due = await prisma.cardState.findFirst({
     where: { userId, dueAt: { lte: new Date() }, word: mine },
     orderBy: { dueAt: "asc" },
@@ -210,6 +211,7 @@ export async function isStaff(userId: string): Promise<boolean> {
 export async function faceCard(c: StoredCard) {
   return {
     id: c.id,
+    code: c.code,
     front: c.text,
     ...cardText(c),
     videoSrc: c.videoUrl,

@@ -10,15 +10,21 @@ export const TEACHER_LINKS: readonly NavLink[] = [
   { href: "/queue", label: "Queue" },
   { href: "/students", label: "Students" },
   { href: "/workload", label: "Workload" },
+  { href: "/decks", label: "Decks" },
+  { href: "/institute", label: "Institute" },
 ];
 
 export const ADMIN_LINKS: readonly NavLink[] = [
   { href: "/admin", label: "Overview", exact: true },
   { href: "/admin/dispatch", label: "Dispatch" },
   { href: "/admin/content", label: "Content" },
+  { href: "/admin/decks", label: "Decks" },
+  { href: "/admin/institutes", label: "Institutes" },
+  { href: "/admin/import", label: "Import" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/compliance", label: "Compliance" },
   { href: "/queue", label: "Queue" },
+  { href: "/decks", label: "My decks" },
 ];
 
 export function staffNav(role: Role | undefined): { links: readonly NavLink[]; home: string } {

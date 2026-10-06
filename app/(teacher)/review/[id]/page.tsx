@@ -20,6 +20,8 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/ClaimControls";
 import { RubricForm } from "@/components/review/RubricForm";
 import { SendBackForm } from "@/components/review/SendBackForm";
+import { cardNoun, chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -38,6 +40,9 @@ function Notice({ title, children }: { title: string; children: React.ReactNode 
 }
 
 export default async function ReviewPage({ params }: { params: Promise<{ id: string }> }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
   const { id } = await params;
   const session = await auth();
   const teacherId = session?.user?.id;
@@ -55,14 +60,16 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
       durationSec: true,
       claimedById: true,
       claimedAt: true,
+      assignedTeacherId: true,
       createdAt: true,
       retryOfId: true,
       student: { select: { publicId: true } },
       exercise: { select: { title: true, prompt: true, module: { select: { level: true } } } },
-      word: { select: { text: true, details: true } },
+      word: { select: { text: true, kind: true, details: true } },
     },
   });
-  if (!submission) notFound();
+  // A recording on another teacher's deck is theirs to audit, not this teacher's.
+  if (!submission || (submission.assignedTeacherId && submission.assignedTeacherId !== teacherId && session?.user?.role !== "ADMIN")) notFound();
 
   const studentId = displayId(submission.student.publicId);
 
@@ -120,7 +127,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             </Link>
           </p>
           <h1 className="mt-1 font-display text-2xl font-bold text-ink">
-            {submission.word ? `Flashcard word: ${submission.word.text}` : submission.exercise.title}
+            {submission.word ? `Flashcard ${cardNoun(submission.word.kind).toLowerCase()}: ${submission.word.text}` : submission.exercise.title}
           </h1>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink-muted">
             <Link
@@ -151,7 +158,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         <p className="mt-1 text-sm text-ink-muted">{submission.exercise.prompt}</p>
         {submission.word ? (
           <p className="mt-2 text-sm text-ink">
-            <span className="font-medium">{submission.word.text}</span> — {detailsOf(submission.word.details).simple_explanation}
+            <span className="font-medium">{submission.word.text}</span> — {submission.word.kind !== "WORD" ? chunkGloss(chunkDetailsOf(submission.word.details)) : detailsOf(submission.word.details).simple_explanation}
           </p>
         ) : null}
       </Card>

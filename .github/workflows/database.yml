@@ -3,8 +3,9 @@
 #   Actions → "Database setup" → Run workflow.
 #
 # It creates or updates the tables (prisma db push), adds the starter modules
-# (seed) and loads the 2,227 flashcard words (import-words). All three are
-# safe to run again: they update what exists instead of duplicating it.
+# (seed), loads the 2,227 flashcard words (import-words), and the 1,183 chunks
+# and 247 grammar cards (import-chunks loads both). All four are safe to run again: they update what exists
+# instead of duplicating it.
 #
 # It deliberately does NOT pass --accept-data-loss. If a schema change would
 # drop data, the run stops and says so, and a person decides — a button that
@@ -18,6 +19,12 @@ name: Database setup
 
 on:
   workflow_dispatch:
+
+# One run at a time. Two button presses at once race the 'create the hidden
+# practice module' steps and leave duplicates.
+concurrency:
+  group: database-setup
+  cancel-in-progress: false
 
 jobs:
   setup:
@@ -52,3 +59,6 @@ jobs:
 
       - name: Load flashcard words
         run: npx tsx prisma/import-words.ts
+
+      - name: Load chunk and grammar cards
+        run: npx tsx prisma/import-chunks.ts

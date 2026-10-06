@@ -5,9 +5,14 @@ shared-strings table), keys every row by a snake_case version of the header,
 and writes one JSON array. Standard library only, so it runs anywhere Python
 does.
 
+Cell fixes from the review audit live in word_fixes.py and are applied last.
+
 Run from the repo root:  python content/wordmaster-2000/tools/export_json.py
 """
-import json, re, zipfile, html, os
+import json, re, zipfile, html, os, sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from word_fixes import FIXES
 
 SRC = "content/wordmaster-2000/WordMaster2000_FINAL.xlsx"
 OUT = "content/wordmaster-2000/words.json"
@@ -47,6 +52,15 @@ for name, rid in names:
         rec = {cols[k]: v for k, v in c.items() if k in cols and v and v != "—"}
         if rec.get("word_id") and rec.get("word"):
             words.append(rec)
+
+# Reviewed cell fixes (word_fixes.py) win over the workbook. An ID that no
+# longer exists is an error, so a stale fix cannot silently stop applying.
+by_id = {w["word_id"]: w for w in words}
+stale = [i for i in FIXES if i not in by_id]
+if stale:
+    raise SystemExit(f"word_fixes.py names IDs not in the workbook: {stale}")
+for i, cells_ in FIXES.items():
+    by_id[i].update(cells_)
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:

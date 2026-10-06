@@ -13,7 +13,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { claimSchema, feedbackSchema, holdSchema, returnSchema } from "@/lib/validations";
-import { releaseExpiredClaims } from "@/lib/claims";
+import { queueScope, releaseExpiredClaims } from "@/lib/claims";
+
+class ClaimLost extends Error {}
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
     // the same moment both pass a read check; only one can match
     // `status: PENDING` in the WHERE clause, and the loser gets count 0.
     const claimed = await prisma.submission.updateMany({
-      where: { id: parsed.data.submissionId, status: "PENDING" },
+      where: { id: parsed.data.submissionId, status: "PENDING", ...queueScope(teacherId, current.role) },
       data: { status: "IN_REVIEW", claimedById: teacherId, claimedAt: new Date() },
     });
 
@@ -176,20 +178,31 @@ export async function POST(req: Request) {
   try {
     await prisma.$transaction(
       async (tx) => {
+        // The claim is re-checked IN the transaction. If this teacher's claim
+        // ran out and another teacher took the submission while they were
+        // typing, the status flip matches nothing and the whole audit is
+        // refused — it must not overwrite the new claim and leave the other
+        // teacher's audit failing on the one-audit-per-submission rule.
+        const flipped = await tx.submission.updateMany({
+          where: { id: submissionId, claimedById: teacherId, status: "IN_REVIEW" },
+          data: { status: "REVIEWED" },
+        });
+        if (flipped.count === 0) throw new ClaimLost();
         await tx.feedback.create({
           data: { submissionId, teacherId, notes, ...scores },
-        });
-
-        await tx.submission.update({
-          where: { id: submissionId },
-          data: { status: "REVIEWED" },
         });
       },
       // Prisma's 5s default is too tight against pooler latency and throws
       // P2028 under no real load at all.
       { maxWait: 10_000, timeout: 20_000 },
     );
-  } catch {
+  } catch (e) {
+    if (e instanceof ClaimLost) {
+      return NextResponse.json(
+        { error: "This submission is no longer yours — your claim ran out and it went back to the queue. Copy your notes, then open it again from the queue." },
+        { status: 409 },
+      );
+    }
     return NextResponse.json(
       { error: "Could not save the audit. Your notes are still on screen — try again." },
       { status: 500 },

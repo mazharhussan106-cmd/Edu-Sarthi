@@ -58,25 +58,28 @@ enum Theme {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id                String    @id @default(cuid())
   /// What teachers see instead of the student's name, e.g. "STU-7K3Q9P".
   /// Nullable so rows created before this column existed stay valid; the
   /// backfill script fills them in.
-  publicId      String?   @unique
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  phone         String?   @unique
-  phoneVerified DateTime?
-  passwordHash  String?
-  role          Role      @default(STUDENT)
+  publicId          String?   @unique
+  name              String?
+  email             String?   @unique
+  emailVerified     DateTime?
+  phone             String?   @unique
+  phoneVerified     DateTime?
+  passwordHash      String?
+  role              Role      @default(STUDENT)
   /// Set by an admin. A suspended account cannot sign in, and any session it
   /// already has is turned away at the next page load.
-  suspendedAt   DateTime?
-  suspendReason String?
-  isGuest       Boolean   @default(false)
-  theme         Theme     @default(LIGHT)
-  preferences   Json?
+  suspendedAt       DateTime?
+  suspendReason     String?
+  /// Set by an admin once a teacher is vouched for. Only verified teachers can
+  /// submit decks to the public library; it is cleared if the role changes.
+  teacherVerifiedAt DateTime?
+  isGuest           Boolean   @default(false)
+  theme             Theme     @default(LIGHT)
+  preferences       Json?
 
   // Student side
   submissions Submission[] @relation("StudentSubmissions")
@@ -92,6 +95,14 @@ model User {
   passwordResetTokens PasswordResetToken[]
   adminActions        AdminLog[]
   cardStates          CardState[]
+  decks               Deck[]               @relation("DeckOwner")
+  reviewedDecks       Deck[]               @relation("DeckReviewer")
+  words               Word[]               @relation("WordOwner")
+  deckReports         DeckReport[]
+  deckLikes           DeckLike[]
+  instituteMembership InstituteMember?
+  institutesApplied   Institute[]          @relation("InstituteApplicant")
+  assignedSubmissions Submission[]         @relation("AssignedSubmissions")
 
   createdAt DateTime @default(now())
 }
@@ -109,7 +120,7 @@ model Submission {
   mediaKind   MediaKind
   /// Null for images. Drives the player UI and the timestamp validation on notes.
   durationSec Int?
-  transcript  String?          @db.Text
+  transcript  String?   @db.Text
 
   /// Who is currently reviewing this. Without it, two teachers can both open a
   /// PENDING submission, both write a full audit, and the second Feedback
@@ -117,9 +128,14 @@ model Submission {
   claimedById String?
   claimedAt   DateTime?
 
+  /// Set when the recording answers a card in a verified teacher's library
+  /// deck: only that teacher (and admins) see it in the queue. Null means the
+  /// general queue, which every teacher can claim from.
+  assignedTeacherId String?
+
   /// Set when the recording was made from a flashcard ("Record yourself").
-  wordId       String?
-  word         Word?         @relation(fields: [wordId], references: [id], onDelete: SetNull)
+  wordId String?
+  word   Word?   @relation(fields: [wordId], references: [id], onDelete: SetNull)
 
   /// Set only when status is RETURNED.
   returnReason ReturnReason?
@@ -134,20 +150,27 @@ model Submission {
   /// its audit stay; only the audio or video is gone.
   mediaPurgedAt DateTime?
 
-  student   User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+  student         User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
   // No cascade: deleting an exercise students have already submitted against
   // should fail loudly, not silently erase their work.
-  exercise  Exercise  @relation(fields: [exerciseId], references: [id])
+  exercise        Exercise  @relation(fields: [exerciseId], references: [id])
   // SetNull, not Cascade: a deleted teacher account releases the claim rather
   // than deleting the student's submission.
-  claimedBy User?     @relation("ClaimedSubmissions", fields: [claimedById], references: [id], onDelete: SetNull)
-  feedback  Feedback?
+  claimedBy       User?     @relation("ClaimedSubmissions", fields: [claimedById], references: [id], onDelete: SetNull)
+  // SetNull: if the deck's teacher account is deleted the recording falls back
+  // to the general queue instead of vanishing.
+  assignedTeacher User?     @relation("AssignedSubmissions", fields: [assignedTeacherId], references: [id], onDelete: SetNull)
+  feedback        Feedback?
 
   createdAt DateTime @default(now())
 
   @@index([studentId, createdAt])
   @@index([status, createdAt]) // the teacher queue reads on this
   @@index([claimedById, status])
+  @@index([assignedTeacherId, status])
+  @@index([wordId])
+  @@index([exerciseId])
+  @@index([createdAt])
 }
 
 /// A teacher's audit of one submission. One-to-one with Submission.
@@ -182,6 +205,7 @@ model Feedback {
   createdAt DateTime @default(now())
 
   @@index([teacherId, createdAt])
+  @@index([createdAt])
 }
 
 model Module {
@@ -196,12 +220,12 @@ model Module {
 }
 
 model Exercise {
-  id       String @id @default(cuid())
-  moduleId String
-  title    String
-  prompt   String @db.Text
+  id         String    @id @default(cuid())
+  moduleId   String
+  title      String
+  prompt     String    @db.Text
   /// What the student is expected to submit for this exercise.
-  expects  MediaKind
+  expects    MediaKind
   /// Soft guidance shown in the UI, and validated on upload.
   minSeconds Int?
   maxSeconds Int?
@@ -224,7 +248,7 @@ model Enrollment {
 model VerificationCode {
   id String @id @default(cuid())
 
-  userId String
+  userId     String
   /// Hashed, never stored raw. A leaked database read should not hand over a
   /// working code for an account the attacker already knows the password to.
   codeHash   String
@@ -244,7 +268,7 @@ model VerificationCode {
 model PasswordResetToken {
   id String @id @default(cuid())
 
-  userId String
+  userId    String
   /// The raw token only ever exists in the email. Storing the hash means a
   /// database dump cannot be replayed into account takeover.
   tokenHash String    @unique
@@ -331,6 +355,7 @@ model AdminLog {
   actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([createdAt])
+  @@index([actorId])
 }
 
 enum CardKind {
@@ -344,28 +369,43 @@ enum CardKind {
 /// 56-column WordMaster sheet lives in `details`, keyed as in words.json, so a
 /// new column in the sheet needs no migration.
 model Word {
-  id         String   @id @default(cuid())
-  kind       CardKind @default(WORD)
+  id           String   @id @default(cuid())
+  kind         CardKind @default(WORD)
   /// The sheet's own ID, e.g. "VRB-006". Stable across re-imports.
-  code       String   @unique
-  serial     Int
-  text       String
+  code         String   @unique
+  /// Learning order. For chunks this is Path A; serialB holds Path B.
+  serial       Int
+  /// Chunks only: the order when the student chose Path B. Null for words.
+  serialB      Int?
+  text         String
   partOfSpeech String?
-  category   String?
-  cefr       String?
-  importance Int?
-  details    Json
+  category     String?
+  cefr         String?
+  importance   Int?
+  details      Json
 
   /// Empty until media is supplied; the card shows a placeholder.
-  imageUrl   String?
-  audioUrl   String?
-  videoUrl   String?
+  imageUrl String?
+  audioUrl String?
+  videoUrl String?
+
+  /// Null for the built-in cards imported from the sheet — they form the
+  /// official deck, so every student's existing progress stays valid.
+  deckId  String?
+  /// Null for built-in cards. Set to the creator for user-made cards.
+  ownerId String?
+  deck    Deck?   @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  owner   User?   @relation("WordOwner", fields: [ownerId], references: [id], onDelete: SetNull)
 
   states      CardState[]
   submissions Submission[]
 
+  @@index([deckId])
+  @@index([ownerId])
   @@index([kind, serial])
+  @@index([kind, serialB])
   @@index([text])
+  @@index([kind, deckId, serial])
 }
 
 enum Recall {
@@ -377,30 +417,196 @@ enum Recall {
 /// One student's progress on one card: known or not, how well, when it is
 /// next due, and their remarks. Created the first time they mark the card.
 model CardState {
-  id        String   @id @default(cuid())
-  userId    String
-  wordId    String
+  id     String @id @default(cuid())
+  userId String
+  wordId String
 
-  known     Boolean  @default(false)
-  recall    Recall?
+  known          Boolean   @default(false)
+  recall         Recall?
   /// Index into the review ladder (1, 3, 7, 15, 30, 60 days).
-  stage     Int      @default(0)
-  dueAt     DateTime
-  reviews   Int      @default(0)
+  stage          Int       @default(0)
+  dueAt          DateTime
+  reviews        Int       @default(0)
   lastReviewedAt DateTime?
   /// When the student first saw and marked this card; counts today's new cards.
-  createdAt DateTime @default(now())
+  createdAt      DateTime  @default(now())
 
   // Remarks
-  confident  Boolean @default(false)
-  important  Boolean @default(false)
-  favourite  Boolean @default(false)
-  doubt      Boolean @default(false)
-  note       String?
+  confident Boolean @default(false)
+  important Boolean @default(false)
+  favourite Boolean @default(false)
+  doubt     Boolean @default(false)
+  note      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
 
   @@unique([userId, wordId])
   @@index([userId, dueAt])
+  @@index([wordId])
+}
+
+/// Who may see a deck. PRIVATE is the default so nothing is shared by accident.
+enum DeckVisibility {
+  PRIVATE // owner only
+  LINK // anyone holding the share link, view-only
+  PUBLIC // listed in the library — only once APPROVED
+  INSTITUTE // members of the deck's institute only; never in the public library
+}
+
+/// Where a deck is in the admin review. Only a deck that asks to go PUBLIC
+/// enters PENDING_REVIEW; private and link-shared decks stay DRAFT.
+enum DeckStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+/// A collection of cards made by one user. Cards with no deck are the
+/// built-in word list and are not represented here.
+model Deck {
+  id           String         @id @default(cuid())
+  ownerId      String
+  title        String
+  description  String?        @db.Text
+  tags         String[]
+  visibility   DeckVisibility @default(PRIVATE)
+  /// Random, unguessable. Set only while visibility is LINK; clearing it
+  /// revokes the link.
+  shareToken   String?        @unique
+  status       DeckStatus     @default(DRAFT)
+  /// Shown to the owner when status is REJECTED, so they know what to fix.
+  rejectReason String?        @db.Text
+  reviewedById String?
+  reviewedAt   DateTime?
+  /// Reserved for the later Institute area. Unused and has no relation yet.
+  instituteId  String?
+  institute    Institute?     @relation(fields: [instituteId], references: [id], onDelete: SetNull)
+  /// How many times readers copied it from the library, for sorting. Counted,
+  /// not derived, because copies are independent decks the owner cannot see.
+  copyCount    Int            @default(0)
+
+  // Cascade: deleting an account removes its decks. Cards made by that user
+  // inside them go with the deck.
+  owner    User         @relation("DeckOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  // SetNull: a deleted admin account must not delete the decks it approved.
+  reviewer User?        @relation("DeckReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  cards    Word[]
+  reports  DeckReport[]
+  likes    DeckLike[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId, createdAt])
+  @@index([visibility, status]) // the library and the review queue read on this
+  @@index([instituteId, visibility])
+}
+
+enum ReportReason {
+  INAPPROPRIATE
+  INCORRECT
+  COPYRIGHT
+  SPAM
+  OTHER
+}
+
+/// A reader's report on a public deck. One per person per deck, so a single
+/// account cannot hide a deck by reporting it repeatedly.
+model DeckReport {
+  id           String       @id @default(cuid())
+  deckId       String
+  reporterId   String
+  reason       ReportReason
+  note         String?      @db.Text
+  /// Set when an admin dismisses the report or takes the deck down. Open
+  /// reports (null) are what the admin queue lists.
+  resolvedAt   DateTime?
+  resolvedById String?
+
+  // Cascade: reports about a deleted deck have nothing left to point at.
+  deck     Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  // Cascade: a deleted account's reports go with it.
+  reporter User @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([deckId, reporterId])
+  @@index([resolvedAt, createdAt])
+  @@index([reporterId])
+}
+
+/// One like per person per deck. Likes only matter on published decks, but the
+/// row is kept if a deck is pulled and later republished.
+model DeckLike {
+  id     String @id @default(cuid())
+  deckId String
+  userId String
+
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([deckId, userId])
+  @@index([userId])
+}
+
+enum InstituteStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum InstituteRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+/// A school or coaching centre with its own admin, teachers and students.
+/// Anyone can apply; the site admin approves. Nothing about an institute works
+/// until status is APPROVED.
+model Institute {
+  id           String          @id @default(cuid())
+  name         String
+  description  String          @db.Text
+  contact      String
+  status       InstituteStatus @default(PENDING)
+  /// Shown to the applicant when status is REJECTED or SUSPENDED.
+  statusNote   String?         @db.Text
+  /// What a student types to join. Rotating it stops the old one working.
+  joinCode     String          @unique
+  applicantId  String?
+  reviewedById String?
+  reviewedAt   DateTime?
+
+  // Restrict: an account that applied cannot be deleted out from under its
+  // institute without an admin deciding what happens to it.
+  applicant User?             @relation("InstituteApplicant", fields: [applicantId], references: [id], onDelete: SetNull)
+  members   InstituteMember[]
+  decks     Deck[]
+
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([applicantId])
+}
+
+/// One person's place in one institute. userId is unique: a person belongs to
+/// at most one institute, so "my institute" is never ambiguous.
+model InstituteMember {
+  id          String        @id @default(cuid())
+  instituteId String
+  userId      String        @unique
+  role        InstituteRole @default(STUDENT)
+
+  institute Institute @relation(fields: [instituteId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([instituteId, role])
 }

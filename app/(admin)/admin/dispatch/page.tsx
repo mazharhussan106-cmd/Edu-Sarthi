@@ -17,6 +17,7 @@ import { Card } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { ReassignForm } from "@/components/admin/ReassignForm";
 import { cn } from "@/lib/utils";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -40,6 +41,9 @@ export default async function DispatchPage({
 }: {
   searchParams: Promise<{ view?: string; q?: string; page?: string }>;
 }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const sp = await searchParams;
   const view: View = VIEWS.some((v) => v.value === sp.view) ? (sp.view as View) : "live";
   const q = (sp.q ?? "").trim().slice(0, 60);
@@ -129,7 +133,7 @@ export default async function DispatchPage({
             name="q"
             defaultValue={q}
             placeholder="Student ID, teacher email, submission ID"
-            className="h-8 w-72 rounded-lg border border-border-strong bg-surface px-3 text-xs text-ink placeholder:text-mist"
+            className="h-8 w-72 rounded-lg border border-border-strong bg-surface px-3 text-xs text-ink placeholder:text-ink-muted"
           />
         </form>
       </div>

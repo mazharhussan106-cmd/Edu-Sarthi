@@ -16,6 +16,7 @@ import { Card } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { RoleForm } from "@/components/admin/RoleForm";
 import { cn } from "@/lib/utils";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -33,6 +34,9 @@ export default async function UsersPage({
 }: {
   searchParams: Promise<{ type?: string; q?: string; page?: string }>;
 }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const sp = await searchParams;
   const type = TYPES.find((t) => t.value === sp.type) ?? TYPES[0];
   const q = (sp.q ?? "").trim().slice(0, 80);
@@ -70,6 +74,7 @@ export default async function UsersPage({
         emailVerified: true,
         suspendedAt: true,
         suspendReason: true,
+        teacherVerifiedAt: true,
         createdAt: true,
         _count: { select: { submissions: true, reviewsGiven: true } },
         submissions: {
@@ -116,7 +121,7 @@ export default async function UsersPage({
             name="q"
             defaultValue={q}
             placeholder="Email, name or student ID"
-            className="h-8 w-64 rounded-lg border border-border-strong bg-surface px-3 text-xs text-ink placeholder:text-mist"
+            className="h-8 w-64 rounded-lg border border-border-strong bg-surface px-3 text-xs text-ink placeholder:text-ink-muted"
           />
         </form>
       </div>
@@ -146,7 +151,7 @@ export default async function UsersPage({
                     <td className="px-3 py-2.5">
                       <p className="text-ink">{u.name ?? "—"}</p>
                       <p className="text-xs text-ink-muted">{u.email}</p>
-                      {u.role === "STUDENT" && u.publicId ? <p className="font-mono text-[11px] text-mist">{u.publicId}</p> : null}
+                      {u.role === "STUDENT" && u.publicId ? <p className="font-mono text-[11px] text-ink-muted">{u.publicId}</p> : null}
                       {u.submissions.length > 0 ? (
                         <details className="mt-1 text-xs">
                           <summary className="cursor-pointer text-accent">Recent activity</summary>
@@ -177,7 +182,23 @@ export default async function UsersPage({
                       {u.role === "STUDENT" ? `${u._count.submissions} sent` : `${u._count.reviewsGiven} audits`}
                     </td>
                     <td className="px-3 py-2.5">
-                      {self ? <Badge variant="accent">You · {u.role.toLowerCase()}</Badge> : <RoleForm userId={u.id} role={u.role} />}
+                      {self ? (
+                        <Badge variant="accent">You · {u.role.toLowerCase()}</Badge>
+                      ) : (
+                        <span className="flex flex-col items-start gap-1.5">
+                          <RoleForm userId={u.id} role={u.role} />
+                          {u.role === "TEACHER" ? (
+                            u.teacherVerifiedAt ? (
+                              <span className="flex items-center gap-1.5">
+                                <Badge variant="success">Verified teacher</Badge>
+                                <ActionButton url="/api/admin/users" body={{ action: "verifyTeacher", userId: u.id, on: false }} label="Remove" variant="ghost" askReason />
+                              </span>
+                            ) : (
+                              <ActionButton url="/api/admin/users" body={{ action: "verifyTeacher", userId: u.id, on: true }} label="Verify teacher" askReason />
+                            )
+                          ) : null}
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-2.5">
                       <div className="flex justify-end">

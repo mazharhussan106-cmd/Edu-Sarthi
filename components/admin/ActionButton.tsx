@@ -93,7 +93,7 @@ export function ActionButton({
               placeholder="Reason (kept in the admin log)"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="h-8 w-56 rounded-md border border-border-strong bg-surface px-2 text-xs text-ink placeholder:text-mist"
+              className="h-8 w-56 rounded-md border border-border-strong bg-surface px-2 text-xs text-ink placeholder:text-ink-muted"
             />
           ) : null}
           {confirmWord ? (

@@ -16,6 +16,7 @@ import { SubmitPanel } from "@/components/media/SubmitPanel";
 import { MAX_UPLOAD_BYTES } from "@/lib/storage";
 import { STATUS_BADGE } from "@/lib/audits";
 import { detailsOf } from "@/lib/wordCard";
+import { chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
 
 export const revalidate = 0;
 
@@ -38,11 +39,13 @@ export default async function PracticePage({
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   // Arriving from a flashcard's "Record yourself": the recording is about
   // this word, and the teacher sees which one.
-  const word = sp.word
-    ? await prisma.word.findUnique({ where: { code: sp.word }, select: { id: true, code: true, text: true, details: true } })
-    : null;
   const session = await auth();
   const studentId = session?.user?.id;
+  // Built-in cards only: a student-made card's code must not open its text
+  // for anyone who guesses or is sent the link.
+  const word = sp.word
+    ? await prisma.word.findFirst({ where: { code: sp.word, deckId: null }, select: { id: true, code: true, kind: true, text: true, details: true } })
+    : null;
 
   const [exercise, previous] = await Promise.all([
     prisma.exercise.findUnique({
@@ -82,16 +85,18 @@ export default async function PracticePage({
       </h1>
       {word ? (
         <p className="mt-1 text-sm text-ink-muted">
-          {detailsOf(word.details).hindi_meaning} · {detailsOf(word.details).ipa}
+          {word.kind !== "WORD"
+            ? chunkGloss(chunkDetailsOf(word.details))
+            : `${detailsOf(word.details).hindi_meaning} · ${detailsOf(word.details).ipa}`}
         </p>
       ) : null}
 
       <Card className="mt-6">
         <CardTitle>What to do</CardTitle>
         <p className="mt-2 text-sm text-ink-muted">{exercise.prompt}</p>
-        <p className="mt-3 text-xs text-mist">{HOW_TO[exercise.expects]}</p>
+        <p className="mt-3 text-xs text-ink-muted">{HOW_TO[exercise.expects]}</p>
         {exercise.minSeconds && exercise.maxSeconds ? (
-          <p className="mt-1 text-xs text-mist">
+          <p className="mt-1 text-xs text-ink-muted">
             Aim for {exercise.minSeconds}–{exercise.maxSeconds} seconds. Going a
             little over is fine.
           </p>

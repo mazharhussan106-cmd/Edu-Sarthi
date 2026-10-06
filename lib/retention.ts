@@ -44,13 +44,31 @@ export async function purgeBatch(actorId: string | null): Promise<number> {
   });
   if (rows.length === 0) return 0;
 
-  // Storage first, rows second: if storage fails, the rows still point at
-  // the files and the next run tries again.
-  await removeObjects(rows.map((r) => r.mediaUrl));
+  // Storage first, rows second, and only the rows whose file is really gone:
+  // a row blanked after a failed delete would orphan the file for good, with
+  // nothing left to retry it. Failed ones stay and are tried on the next run.
+  const failed = new Set(await removeObjects(rows.map((r) => r.mediaUrl)));
+  const done = rows.filter((r) => !failed.has(r.mediaUrl));
+  if (done.length === 0) return 0;
   await prisma.submission.updateMany({
-    where: { id: { in: rows.map((r) => r.id) } },
+    where: { id: { in: done.map((r) => r.id) } },
     data: { mediaUrl: "", mediaPurgedAt: new Date() },
   });
-  await logAdmin(actorId, "Purged recordings", "submission", null, { count: rows.length, olderThanDays: days });
-  return rows.length;
+  await logAdmin(actorId, "Purged recordings", "submission", null, { count: done.length, failed: failed.size, olderThanDays: days });
+  return done.length;
+}
+
+/// Short-lived security rows that nothing else removes: expired sign-in codes,
+/// reset tokens and email links, and failed-login records (only the last 15
+/// minutes are ever read). Kept a day past expiry so a support question about
+/// "my code never worked" can still be answered, then gone.
+export async function sweepExpiredAuthRows(): Promise<number> {
+  const old = new Date(Date.now() - 86_400_000);
+  const [a, b, c, d] = await Promise.all([
+    prisma.verificationCode.deleteMany({ where: { expiresAt: { lt: old } } }),
+    prisma.passwordResetToken.deleteMany({ where: { expiresAt: { lt: old } } }),
+    prisma.loginAttempt.deleteMany({ where: { createdAt: { lt: old } } }),
+    prisma.verificationToken.deleteMany({ where: { expires: { lt: old } } }),
+  ]);
+  return a.count + b.count + c.count + d.count;
 }

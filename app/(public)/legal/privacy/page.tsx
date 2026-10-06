@@ -13,13 +13,13 @@ export const metadata = {
 };
 
 const CONTACT = "privacy@edusarthi.com";
-const UPDATED = "26 August 2026";
+const UPDATED = "6 October 2026";
 
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="font-display text-3xl font-bold text-ink">Privacy</h1>
-      <p className="mt-2 text-xs text-mist">Last updated {UPDATED}</p>
+      <p className="mt-2 text-xs text-ink-muted">Last updated {UPDATED}</p>
 
       <div className="mt-8 flex flex-col gap-8 text-sm text-ink-muted">
         <section>
@@ -65,10 +65,14 @@ export default function PrivacyPage() {
             Who can see your submissions
           </h2>
           <p className="mt-2">
-            You, and the teacher reviewing your submission. Submissions are
-            stored in a private bucket and are never publicly accessible. When a
-            page needs to play your recording, we generate a link that stops
-            working after thirty minutes.
+            You, and the teacher reviewing your submission. Teachers see your
+            student ID, not your name or email. A site administrator can also
+            open a submission, to reassign it, to check a complaint, or to keep
+            reviews fair. A recording you make on a teacher&apos;s own flashcard
+            deck is sent only to that teacher. Submissions are stored in a
+            private bucket and are never publicly accessible. When a page needs
+            to play your recording, we generate a link that stops working after
+            thirty minutes.
           </p>
           <p className="mt-2">
             We do not publish your recordings, use them as examples, sell them,
@@ -99,6 +103,13 @@ export default function PrivacyPage() {
             </li>
           </ul>
           <p className="mt-2">
+            If a teacher&apos;s flashcard includes a video, it plays from YouTube
+            or Google Drive, so your phone contacts them when you open that
+            card. Decks you share by link are visible to anyone who has the link,
+            and decks you submit to the public library are visible to every
+            signed-in user once an administrator approves them.
+          </p>
+          <p className="mt-2">
             We may disclose data where we are legally required to, and we will
             tell you where we are permitted to do so.
           </p>
@@ -109,15 +120,21 @@ export default function PrivacyPage() {
             How long we keep it
           </h2>
           <p className="mt-2">
-            Submissions and audits are kept while your account exists, because
-            your progress over time is the point of the service. Verification
+            Your recordings are deleted from storage 90 days after you send
+            them. The audit itself (scores and the teacher&apos;s notes) is kept
+            while your account exists, because your progress over time is the
+            point of the service. Verification
             codes expire after ten minutes and password reset links after one
             hour. Failed sign-in records are only read within a fifteen-minute
             window.
           </p>
           <p className="mt-2">
-            When you ask us to delete your account, your submissions and audits
-            are deleted with it.
+            When you delete your account, your submissions, audits, flashcard
+            progress and decks are deleted with it, and we remove your stored
+            recordings and card pictures. If storage is unavailable at that
+            moment, a file can be left behind until we clear it; write to us if
+            you want it confirmed. A copy of one of your decks that another
+            person made is theirs and stays with them.
           </p>
         </section>
 

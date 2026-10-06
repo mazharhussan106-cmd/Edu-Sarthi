@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { MetricTrend, type MetricPoint } from "@/components/review/MetricTrend";
 import { cn } from "@/lib/utils";
+import { auth } from "@/lib/auth";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -43,6 +45,12 @@ export default async function DossierPage({
   params: Promise<{ publicId: string }>;
   searchParams: Promise<{ range?: string }>;
 }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
+  const session = await auth();
+  const viewerId = session?.user?.id ?? "";
+  const isAdmin = session?.user?.role === "ADMIN";
   const [{ publicId }, sp] = await Promise.all([params, searchParams]);
   const range = RANGES.find((r) => r.value === sp.range) ?? RANGES[2];
   const since = range.days ? new Date(Date.now() - range.days * 86_400_000) : undefined;
@@ -53,13 +61,17 @@ export default async function DossierPage({
       publicId: true,
       // Words the student marked "Doubt — ask teacher" on a flashcard.
       cardStates: {
-        where: { doubt: true },
+        // Built-in cards only: a student's own deck is private to them.
+        where: { doubt: true, word: { deckId: null } },
         orderBy: { lastReviewedAt: "desc" },
         take: 20,
         select: { note: true, word: { select: { text: true, code: true } } },
       },
       createdAt: true,
       submissions: {
+        // Recordings made on another teacher's deck are theirs alone — their
+        // scores and notes are not listed here either (admins see all).
+        where: isAdmin ? {} : { OR: [{ assignedTeacherId: null }, { assignedTeacherId: viewerId }] },
         orderBy: { createdAt: "asc" },
         select: {
           id: true,
@@ -147,7 +159,7 @@ export default async function DossierPage({
               {/* One audit is its own first and latest; "+0.0" in green
                   would read as "no progress" when there is nothing to compare. */}
               {audited.length < 2 ? (
-                <p className="mt-1 font-mono text-3xl font-bold text-mist">—</p>
+                <p className="mt-1 font-mono text-3xl font-bold text-ink-muted">—</p>
               ) : (
                 <p
                   className={cn(
@@ -202,7 +214,7 @@ export default async function DossierPage({
                     {majorNotes.map((n, i) => (
                       <li key={i} className="text-sm text-ink">
                         {n.note}
-                        <span className="block text-xs text-mist">
+                        <span className="block text-xs text-ink-muted">
                           {n.title} · {n.at.toLocaleDateString("en-IN")}
                         </span>
                       </li>
@@ -210,7 +222,7 @@ export default async function DossierPage({
                   </ul>
                 </>
               ) : (
-                <p className="mt-3 text-xs text-mist">No notes marked Major yet.</p>
+                <p className="mt-3 text-xs text-ink-muted">No notes marked Major yet.</p>
               )}
             </Card>
           </div>

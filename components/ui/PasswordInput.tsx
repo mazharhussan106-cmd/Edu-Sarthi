@@ -81,9 +81,9 @@ export function PasswordInput({
           aria-describedby={showStrength && text ? meterId : undefined}
           className={cn(
             "h-10 w-full rounded-lg border border-border bg-surface px-3 pr-10",
-            "font-body text-sm text-ink placeholder:text-mist",
+            "font-body text-sm text-ink placeholder:text-ink-muted",
             "transition-colors hover:border-border-strong",
-            "focus:border-accent focus:outline-none",
+            "focus:border-accent",
             "disabled:cursor-not-allowed disabled:bg-paper-dim disabled:opacity-70",
             "aria-[invalid=true]:border-error",
             className,

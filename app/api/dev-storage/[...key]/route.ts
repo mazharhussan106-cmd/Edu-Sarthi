@@ -11,7 +11,7 @@ import path from "path";
 import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
-import { ALLOWED_TYPES, LOCAL_STORAGE, localPath, MAX_UPLOAD_BYTES } from "@/lib/storage";
+import { ALLOWED_TYPES, LOCAL_STORAGE, localPath, MAX_UPLOAD_BYTES, isOwnKey } from "@/lib/storage";
 
 const TYPE_BY_EXT: Record<string, string> = {
   webm: "audio/webm",
@@ -40,7 +40,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ key: str
   const userId = session?.user?.id;
   const { key, full } = await resolve(params);
   // Same ownership rule the real upload URL enforces by being issued per key.
-  if (!userId || !full || !key.startsWith(`${userId}/`)) {
+  if (!userId || !full || !isOwnKey(userId, key)) {
     return new NextResponse(null, { status: 403 });
   }
 
@@ -64,7 +64,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ key: str
   const user = session?.user;
   const { key, full } = await resolve(params);
   const isStaff = user?.role === "TEACHER" || user?.role === "ADMIN";
-  if (!user?.id || !full || (!isStaff && !key.startsWith(`${user.id}/`))) {
+  if (!user?.id || !full || (!isStaff && !isOwnKey(user.id, key))) {
     return new NextResponse(null, { status: 403 });
   }
 

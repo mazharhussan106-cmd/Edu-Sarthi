@@ -43,13 +43,13 @@ export function Input({
         "font-body text-sm text-ink",
         // Placeholder is mist, not ink-muted: it must read as absent-value
         // text, distinct from a label, without dropping below legibility.
-        "placeholder:text-mist",
+        "placeholder:text-ink-muted",
         "transition-colors",
         "hover:border-border-strong",
         // The global :focus-visible outline covers keyboard focus. This adds
         // the border change, which fires on click too — a click-focused field
         // still needs to look focused.
-        "focus:border-accent focus:outline-none",
+        "focus:border-accent",
         "disabled:cursor-not-allowed disabled:bg-paper-dim disabled:opacity-70",
         // aria-invalid drives the error colour, so the form sets one attribute
         // and gets both the visual state and the screen-reader announcement.

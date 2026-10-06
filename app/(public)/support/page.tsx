@@ -93,7 +93,7 @@ export default function SupportPage() {
           . Tell us which browser and phone you are using and what you saw on
           screen — that is usually enough to find it without a back-and-forth.
         </p>
-        <p className="mt-3 text-xs text-mist">
+        <p className="mt-3 text-xs text-ink-muted">
           We read every message. We are a small team, so a reply may take a day
           or two.
         </p>

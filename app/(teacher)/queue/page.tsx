@@ -17,6 +17,7 @@ import { displayId } from "@/lib/publicId";
 import {
   CLAIM_MINUTES,
   claimExpiresAt,
+  queueScope,
   releaseExpiredClaims,
   slaDueAt,
   urgentBefore,
@@ -25,6 +26,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/ClaimControls";
 import { cn } from "@/lib/utils";
+import { cardNoun } from "@/lib/chunkCard";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -51,7 +54,7 @@ const ROW_SELECT = {
   durationSec: true,
   student: { select: { publicId: true } },
   exercise: { select: { title: true, module: { select: { level: true } } } },
-  word: { select: { text: true } },
+  word: { select: { text: true, kind: true } },
 } as const;
 
 export default async function QueuePage({
@@ -59,17 +62,22 @@ export default async function QueuePage({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
   const params = await searchParams;
   const session = await auth();
   const teacherId = session?.user?.id;
+  // Recordings on another teacher's deck are not part of this teacher's queue.
+  const scope = queueScope(teacherId ?? "", session?.user?.role);
 
   const released = await releaseExpiredClaims();
   const now = new Date();
   const urgentCutoff = urgentBefore(now);
 
   const [urgentCount, pendingCount, mine] = await Promise.all([
-    prisma.submission.count({ where: { status: "PENDING", createdAt: { lt: urgentCutoff } } }),
-    prisma.submission.count({ where: { status: "PENDING" } }),
+    prisma.submission.count({ where: { status: "PENDING", ...scope, createdAt: { lt: urgentCutoff } } }),
+    prisma.submission.count({ where: { status: "PENDING", ...scope } }),
     prisma.submission.findMany({
       where: { claimedById: teacherId, status: "IN_REVIEW" },
       orderBy: { claimedAt: "asc" },
@@ -91,6 +99,7 @@ export default async function QueuePage({
       : await prisma.submission.findMany({
           where: {
             status: "PENDING",
+            ...scope,
             ...(tab === "urgent" ? { createdAt: { lt: urgentCutoff } } : {}),
           },
           orderBy: { createdAt: "asc" },
@@ -138,7 +147,7 @@ export default async function QueuePage({
             )}
           >
             {t.label}
-            <span className="ml-1.5 font-mono text-xs text-mist">{counts[t.value]}</span>
+            <span className="ml-1.5 font-mono text-xs text-ink-muted">{counts[t.value]}</span>
           </Link>
         ))}
       </nav>
@@ -176,7 +185,7 @@ export default async function QueuePage({
                       {displayId(s.student.publicId)}
                     </td>
                     <td className="max-w-64 truncate px-4 py-3 text-ink">
-                      {s.word ? `Word: ${s.word.text}` : s.exercise.title}
+                      {s.word ? `${cardNoun(s.word.kind)}: ${s.word.text}` : s.exercise.title}
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant="accent">L{s.exercise.module.level}</Badge>

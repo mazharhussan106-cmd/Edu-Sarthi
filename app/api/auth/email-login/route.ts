@@ -8,6 +8,8 @@
 
 import { NextResponse } from "next/server";
 
+import { appUrl } from "@/lib/appUrl";
+
 import { issueEmailLogin } from "@/lib/emailLogin";
 import { sendLoginEmail } from "@/lib/email";
 import { emailLoginRequestSchema } from "@/lib/validations";
@@ -37,8 +39,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(req.url).origin;
-  const url = `${origin}/login/link?token=${encodeURIComponent(issued.linkToken)}`;
+  const url = `${appUrl(req)}/login/link?token=${encodeURIComponent(issued.linkToken)}`;
 
   try {
     await sendLoginEmail(email, issued.code, url);

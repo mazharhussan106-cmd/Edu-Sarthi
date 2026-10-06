@@ -8,8 +8,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
+import { canStudyWord } from "@/lib/decks";
 import { nextReview } from "@/lib/srs";
 
 const schema = z.discriminatedUnion("action", [
@@ -33,11 +34,9 @@ const schema = z.discriminatedUnion("action", [
 ]);
 
 export async function POST(req: Request) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
-    return NextResponse.json({ error: "Your session has expired. Sign in again." }, { status: 401 });
-  }
+  const gate = await requireUser({ verified: true });
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
 
   let body: unknown;
   try {
@@ -51,15 +50,24 @@ export async function POST(req: Request) {
   }
   const a = parsed.data;
 
-  const word = await prisma.word.findUnique({ where: { id: a.wordId }, select: { id: true } });
-  if (!word) return NextResponse.json({ error: "That card no longer exists." }, { status: 404 });
+  // Built-in cards and the student's own only. A card in someone else's deck
+  // answers "no longer exists" so its existence is not revealed.
+  if (!(await canStudyWord(userId, a.wordId))) {
+    return NextResponse.json({ error: "That card no longer exists." }, { status: 404 });
+  }
 
   const key = { userId_wordId: { userId, wordId: a.wordId } };
 
   if (a.action === "mark") {
-    const current = await prisma.cardState.findUnique({ where: key, select: { stage: true } });
-    const next = nextReview(current, a.known, a.recall);
+    const current = await prisma.cardState.findUnique({ where: key, select: { stage: true, dueAt: true, reviews: true, lastReviewedAt: true } });
     const now = new Date();
+    // A double-tap or a phone's automatic retry arrives within moments of the
+    // first answer. Without this it would climb the ladder a second rung for
+    // one real answer — a card could reach 60 days in three presses.
+    if (current?.reviews && current.lastReviewedAt && now.getTime() - current.lastReviewedAt.getTime() < 8_000) {
+      return NextResponse.json({ ok: true, dueAt: current.dueAt.toISOString() });
+    }
+    const next = nextReview(current, a.known, a.recall);
     const saved = await prisma.cardState.upsert({
       where: key,
       create: {

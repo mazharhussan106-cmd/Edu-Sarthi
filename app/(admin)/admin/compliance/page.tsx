@@ -12,12 +12,16 @@ import { countPurgeable, retentionDays } from "@/lib/retention";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
 const DPDP_ACTIONS = ["Student exported own data", "Student deleted own account"];
 
 export default async function CompliancePage() {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["ADMIN"]);
   const days = retentionDays();
   const [purgeable, purgedTotal, lastPurge, requests, requestCounts, logs] = await Promise.all([
     countPurgeable(),
@@ -105,7 +109,7 @@ export default async function CompliancePage() {
                   <span className="text-ink">
                     {r.action} <span className="font-mono text-xs text-ink-muted">{r.targetId ?? ""}</span>
                   </span>
-                  <span className="shrink-0 text-xs text-mist">{r.createdAt.toLocaleString("en-IN")}</span>
+                  <span className="shrink-0 text-xs text-ink-muted">{r.createdAt.toLocaleString("en-IN")}</span>
                 </li>
               ))}
             </ul>

@@ -8,21 +8,15 @@
 
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { uploadUrlSchema } from "@/lib/validations";
 import { ALLOWED_TYPES, createUploadTarget, MAX_UPLOAD_BYTES } from "@/lib/storage";
 
 export async function POST(req: Request) {
-  const session = await auth();
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Your session has expired. Sign in and try again." },
-      { status: 401 },
-    );
-  }
+  const gate = await requireUser({ verified: true });
+  if (!gate.ok) return gate.res;
+  const userId = gate.id;
 
   let body: unknown;
   try {

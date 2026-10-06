@@ -239,7 +239,7 @@ export function RubricForm({
               placeholder="What went well, what to work on next, and one thing to practise before the next submission."
               aria-label="Summary"
               aria-invalid={(showMissing && summary.trim().length < 40) || undefined}
-              className="mt-3 w-full rounded-lg border border-border bg-surface px-3 py-2 font-body text-sm text-ink placeholder:text-mist hover:border-border-strong focus:border-accent focus:outline-none aria-[invalid=true]:border-error"
+              className="mt-3 w-full rounded-lg border border-border bg-surface px-3 py-2 font-body text-sm text-ink placeholder:text-ink-muted hover:border-border-strong focus:border-accent aria-[invalid=true]:border-error"
             />
             <p className="mt-1 text-xs text-ink-muted">{summary.trim().length} characters — at least 40.</p>
           </Card>

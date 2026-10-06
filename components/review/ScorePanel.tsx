@@ -43,7 +43,7 @@ export function ScorePanel({
               <Label htmlFor={c.key} className={cn("mb-0", missing && "text-error")}>
                 {c.label}
               </Label>
-              <span className={cn("font-mono text-sm", set ? "text-ink" : "text-mist", missing && "text-error")}>
+              <span className={cn("font-mono text-sm", set ? "text-ink" : "text-ink-muted", missing && "text-error")}>
                 {set ? `${scores[c.key]}/10` : "not set"}
               </span>
             </div>

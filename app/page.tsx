@@ -37,7 +37,7 @@ const FEATURES = [
 const FAQ = [
   {
     q: "Is the feedback from a real teacher or from software?",
-    a: "A person. Every audit is written by a teacher who listens to your submission. Nothing on this site is scored automatically.",
+    a: "A person. Every audit is written by a teacher who listens to your submission. The scores in an audit are never automatic. Flashcard practice answers are checked on your own phone, for your eyes only.",
   },
   {
     q: "How long does an audit take to come back?",

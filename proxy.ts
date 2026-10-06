@@ -1,3 +1,7 @@
+// (Named proxy.ts since Next 16 renamed the middleware convention; it behaves
+// the same. Next now runs it on Node by default, but it still imports only
+// lib/auth.config so nothing here depends on that.)
+//
 // Owns route protection: who is signed in, whether their email is verified,
 // and whether their role may see the path. Runs before the page renders, so a
 // blocked user never triggers the page's queries.
@@ -18,6 +22,8 @@ const { auth } = NextAuth(authConfig);
 // Reachable signed out. Prefix match, so /legal/privacy and
 // /reset-password/<token> are covered by their parents.
 const PUBLIC_PREFIXES = [
+  // Link-shared flashcard decks: possession of the link is the permission.
+  "/d",
   "/login",
   "/register",
   "/forgot-password",

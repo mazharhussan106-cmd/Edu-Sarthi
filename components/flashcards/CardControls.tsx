@@ -150,7 +150,7 @@ export function CardControls({
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="Anything to remember about this word"
-                className="mt-1 w-full rounded-lg border border-border-strong bg-surface px-2 py-1.5 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-border-strong bg-surface px-2 py-1.5 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
               />
               <button
                 type="button"

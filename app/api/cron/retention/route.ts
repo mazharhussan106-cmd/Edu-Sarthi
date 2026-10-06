@@ -6,7 +6,7 @@
 
 import { NextResponse } from "next/server";
 
-import { purgeBatch } from "@/lib/retention";
+import { purgeBatch, sweepExpiredAuthRows } from "@/lib/retention";
 
 export const dynamic = "force-dynamic";
 
@@ -22,5 +22,6 @@ export async function GET(req: Request) {
     total += n;
     if (n === 0) break;
   }
-  return NextResponse.json({ ok: true, purged: total });
+  const swept = await sweepExpiredAuthRows();
+  return NextResponse.json({ ok: true, purged: total, swept });
 }

@@ -15,6 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { displayId } from "@/lib/publicId";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
+import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
 
@@ -26,12 +27,22 @@ const CRITERIA = [
   "confidence",
 ] as const;
 
-export default async function StudentsPage() {
+const PAGE = 50;
+
+export default async function StudentsPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+  // Re-checked in the page itself: a layout is not re-run on a client-side
+  // navigation, and the role in the token can be older than a demotion.
+  await ensureActiveUser(["TEACHER", "ADMIN"]);
+  const page = Math.max(1, Number((await searchParams).page) || 1);
   // One query with the submissions nested, rather than a roster query plus a
   // count per student. The nested rows are small — no media, no summaries.
-  const students = await prisma.user.findMany({
+  const fetched = await prisma.user.findMany({
     where: { role: "STUDENT", submissions: { some: {} } },
     orderBy: { createdAt: "asc" },
+    // A page of students at a time: this query nests every submission of each,
+    // and it grows with every student the site gains.
+    skip: (page - 1) * PAGE,
+    take: PAGE + 1,
     select: {
       id: true,
       // Teachers see the anonymized ID only. Name and email stay out of the
@@ -56,6 +67,9 @@ export default async function StudentsPage() {
       },
     },
   });
+
+  const hasMore = fetched.length > PAGE;
+  const students = fetched.slice(0, PAGE);
 
   const rows = students
     .map((s) => {
@@ -95,7 +109,7 @@ export default async function StudentsPage() {
       <p className="mt-1 text-sm text-ink-muted">
         {rows.length === 0
           ? "Nobody has submitted anything yet."
-          : `${rows.length} student${rows.length === 1 ? "" : "s"} who have sent work.`}
+          : `${rows.length} student${rows.length === 1 ? "" : "s"} on this page, in the order they joined; those with work waiting come first.`}
       </p>
 
       {rows.length === 0 ? (
@@ -162,6 +176,12 @@ export default async function StudentsPage() {
           ))}
         </div>
       )}
+      {page > 1 || hasMore ? (
+        <nav aria-label="Pages" className="mt-6 flex items-center justify-between text-sm">
+          {page > 1 ? <Link href={`/students?page=${page - 1}`} className="text-accent hover:underline">← Earlier students</Link> : <span />}
+          {hasMore ? <Link href={`/students?page=${page + 1}`} className="text-accent hover:underline">More students →</Link> : <span />}
+        </nav>
+      ) : null}
     </main>
   );
 }

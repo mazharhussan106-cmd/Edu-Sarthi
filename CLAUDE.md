@@ -16,6 +16,7 @@ Do not redesign it.
 
 Every chat (session) starts with an empty memory. Chats do not share what was said; they share only what is **in the repository**. So before building anything:
 
+0. Read `docs/PROJECT-MEMORY.md` — what every chat has done, which branch holds what, decisions not to undo, and the open work in priority order.
 1. Read `docs/flashcard-library-plan.md` — what the flashcard library is, what is built, what was decided, what is still open.
 2. For anything about flashcards, look at the real card first: `components/flashcards/` (CardSurface, CardFront, CardUsage, CardPractice, CardControls, FlashcardDeck) and the mockups `docs/flashcard-v2-cards.png`, `docs/flashcard-built.png`. **Every kind of card (built-in words, student decks, Excel-imported Python/SQL cards) must use that same card — framed with the navy header band, three sides that turn, fit-to-screen text, and the Known / Unknown / Remark bar. Do not invent a new card look.**
 3. Before finishing a chat, write what changed and what is undecided into the plan doc (or a new file in `docs/`) and push it. A decision that lives only in a chat is lost.

@@ -92,7 +92,7 @@ Phir GitHub par PR kholkar **Merge pull request** dabaiye. Bas.
 > `db.xxxx.supabase.co` wala address **mat** lijiye — woh kaam nahi karta.
 > `service_role` key database ki master chaabi hai. Kisi chat, email ya screenshot me kabhi mat daalein.
 
-### Step 3 — Database me tables aur 2,227 words daalna (GitHub ka ek button)
+### Step 3 — Database me tables, 2,227 words aur 1,430 chunks daalna (GitHub ka ek button)
 
 Claude ke cloud computer se Supabase database tak connection nahi ban sakta,
 isliye yeh kaam GitHub khud karega. Aapko sirf copy-paste aur ek button:
@@ -104,7 +104,8 @@ isliye yeh kaam GitHub khud karega. Aapko sirf copy-paste aur ek button:
    - Dono me `[YOUR-PASSWORD]` ki jagah apna database password likhna na bhoolein.
 3. Repo me upar **Actions** tab → baayein list me **Database setup** → daayein **Run workflow** → hara **Run workflow**.
 4. 3–5 minute baad run par ✅ hara tick aana chahiye. Andar "Load flashcard words" step kholenge to
-   `Words imported or updated: 2227` likha dikhega.
+   `Words imported or updated: 2227` likha dikhega, aur "Load chunk cards" me
+   `Chunks imported or updated: 1430`.
 5. ❌ laal cross aaye to us run ka screenshot Claude ko bhejiye (secret wahan dikhte nahi, bhejna safe hai).
 
 > Yeh button dobara dabane se kuch kharab nahi hota — jo pehle se hai woh update hota hai, double nahi.

@@ -20,6 +20,7 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/ClaimControls";
 import { RubricForm } from "@/components/review/RubricForm";
 import { SendBackForm } from "@/components/review/SendBackForm";
+import { cardNoun, chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
 
 export const revalidate = 0;
 
@@ -60,7 +61,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
       retryOfId: true,
       student: { select: { publicId: true } },
       exercise: { select: { title: true, prompt: true, module: { select: { level: true } } } },
-      word: { select: { text: true, details: true } },
+      word: { select: { text: true, kind: true, details: true } },
     },
   });
   // A recording on another teacher's deck is theirs to audit, not this teacher's.
@@ -122,7 +123,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             </Link>
           </p>
           <h1 className="mt-1 font-display text-2xl font-bold text-ink">
-            {submission.word ? `Flashcard word: ${submission.word.text}` : submission.exercise.title}
+            {submission.word ? `Flashcard ${cardNoun(submission.word.kind).toLowerCase()}: ${submission.word.text}` : submission.exercise.title}
           </h1>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink-muted">
             <Link
@@ -153,7 +154,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         <p className="mt-1 text-sm text-ink-muted">{submission.exercise.prompt}</p>
         {submission.word ? (
           <p className="mt-2 text-sm text-ink">
-            <span className="font-medium">{submission.word.text}</span> — {detailsOf(submission.word.details).simple_explanation}
+            <span className="font-medium">{submission.word.text}</span> — {submission.word.kind !== "WORD" ? chunkGloss(chunkDetailsOf(submission.word.details)) : detailsOf(submission.word.details).simple_explanation}
           </p>
         ) : null}
       </Card>

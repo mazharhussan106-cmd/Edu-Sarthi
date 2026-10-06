@@ -114,7 +114,7 @@ export default async function DashboardPage() {
     }),
   ]);
 
-  const cards = await deckCounts(studentId!, "WORD");
+  const cards = await deckCounts(studentId!, { kind: "WORD" });
 
   const dates = recent.map((r) => r.createdAt);
   const streak = streakDays(dates);

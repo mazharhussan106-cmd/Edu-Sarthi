@@ -22,6 +22,7 @@ import { SendBackView } from "@/components/student/SendBackView";
 import { averageScore, STATUS_BADGE } from "@/lib/audits";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { noteSchema } from "@/lib/validations";
+import { cardNoun } from "@/lib/chunkCard";
 
 export const revalidate = 0;
 
@@ -46,7 +47,7 @@ export default async function SubmissionPage({
       returnNote: true,
       retry: { select: { id: true } },
       wordId: true,
-      word: { select: { text: true } },
+      word: { select: { text: true, kind: true } },
       exercise: {
         select: { id: true, title: true, prompt: true, expects: true, maxSeconds: true },
       },
@@ -83,7 +84,7 @@ export default async function SubmissionPage({
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <h1 className="font-display text-2xl font-bold text-ink">
-          {submission.word ? `Word: ${submission.word.text}` : submission.exercise.title}
+          {submission.word ? `${cardNoun(submission.word.kind)}: ${submission.word.text}` : submission.exercise.title}
         </h1>
         <Badge variant={badge.variant} className="mt-1 shrink-0">
           {badge.text}

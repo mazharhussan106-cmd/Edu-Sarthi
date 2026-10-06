@@ -367,9 +367,12 @@ model Word {
   id           String   @id @default(cuid())
   kind         CardKind @default(WORD)
   /// The sheet's own ID, e.g. "VRB-006". Stable across re-imports.
-  code         String   @unique
-  serial       Int
-  text         String
+  code       String   @unique
+  /// Learning order. For chunks this is Path A; serialB holds Path B.
+  serial     Int
+  /// Chunks only: the order when the student chose Path B. Null for words.
+  serialB    Int?
+  text       String
   partOfSpeech String?
   category     String?
   cefr         String?
@@ -395,6 +398,7 @@ model Word {
   @@index([deckId])
   @@index([ownerId])
   @@index([kind, serial])
+  @@index([kind, serialB])
   @@index([text])
 }
 

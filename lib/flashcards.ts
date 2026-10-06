@@ -10,6 +10,11 @@
 //
 // Days are counted in India time, as everywhere else in the app.
 //
+// A Deck is one kind of card (words, chunks, grammar), optionally narrowed to
+// one chunk type. Every kind has one learning order, `serial`. The daily
+// new-card limit counts the whole kind, so filtering to one type does not
+// hand out another ten new cards.
+//
 // `skip` is the list of cards the student passed over with › this session.
 // It lives in the URL, not the database: skipping is "not now", not an
 // answer, so it must never move a card's review date.
@@ -29,6 +34,8 @@ function startOfTodayIst(now = new Date()): Date {
 
 export const WORD_SELECT = {
   id: true,
+  kind: true,
+  serial: true,
   code: true,
   text: true,
   details: true,
@@ -41,16 +48,34 @@ export const WORD_SELECT = {
   videoUrl: true,
 } satisfies Prisma.WordSelect;
 
-export async function deckCounts(userId: string, kind: CardKind) {
+export type Deck = { kind: CardKind; category?: string };
+
+// Must match the exercise titles created by prisma/import-words.ts and
+// prisma/import-chunks.ts (which also loads grammar). "Record yourself" attaches the recording to these.
+export const PRACTICE_TITLE: Record<CardKind, string> = {
+  WORD: "Use the word in your own sentences",
+  CHUNK: "Use the chunk in your own sentences",
+  GRAMMAR: "Use the grammar frame in your own sentences",
+};
+
+function wordWhere(deck: Deck) {
+  // deckId null: only built-in cards. Student-made and imported deck cards are
+  // Word rows too, and must never leak into the shared daily session.
+  return { kind: deck.kind, deckId: null, ...(deck.category ? { category: deck.category } : {}) };
+}
+
+export async function deckCounts(userId: string, deck: Deck) {
+  const { kind } = deck;
+  const word = wordWhere(deck);
   const now = new Date();
   const [due, newToday, known, total, tagged] = await Promise.all([
-    prisma.cardState.count({ where: { userId, dueAt: { lte: now }, word: { kind, deckId: null } } }),
+    prisma.cardState.count({ where: { userId, dueAt: { lte: now }, word } }),
     prisma.cardState.count({ where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind, deckId: null } } }),
-    prisma.cardState.count({ where: { userId, known: true, word: { kind, deckId: null } } }),
-    prisma.word.count({ where: { kind, deckId: null } }),
+    prisma.cardState.count({ where: { userId, known: true, word } }),
+    prisma.word.count({ where: word }),
     prisma.cardState.groupBy({
       by: ["important", "favourite", "doubt", "confident"],
-      where: { userId, word: { kind, deckId: null } },
+      where: { userId, word },
       _count: true,
     }),
   ]);
@@ -67,14 +92,14 @@ export async function deckCounts(userId: string, kind: CardKind) {
 
 export async function nextCardId(
   userId: string,
-  kind: CardKind,
+  deck: Deck,
   extra: boolean,
   skip: string[] = [],
 ): Promise<string | null> {
   const now = new Date();
   const notSkipped = skip.length ? { code: { notIn: skip } } : {};
   const due = await prisma.cardState.findFirst({
-    where: { userId, dueAt: { lte: now }, word: { kind, deckId: null, ...notSkipped } },
+    where: { userId, dueAt: { lte: now }, word: { ...wordWhere(deck), ...notSkipped } },
     orderBy: { dueAt: "asc" },
     select: { wordId: true },
   });
@@ -82,15 +107,48 @@ export async function nextCardId(
 
   if (!extra) {
     const newToday = await prisma.cardState.count({
-      where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind, deckId: null } },
+      where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind: deck.kind, deckId: null } },
     });
     if (newToday >= NEW_PER_DAY) return null;
   }
 
   const fresh = await prisma.word.findFirst({
-    where: { kind, deckId: null, states: { none: { userId } }, ...notSkipped },
+    where: { ...wordWhere(deck), states: { none: { userId } }, ...notSkipped },
     orderBy: { serial: "asc" },
     select: { id: true },
   });
   return fresh?.id ?? null;
+}
+
+/// What a chunk or grammar card needs beyond its own row: three other chunks for the
+/// multiple choice (from the same group, so the choice is a real one, and
+/// the nearest in learning order, so they stay the same on every visit),
+/// and the text of the related chunk the sheet points to.
+export async function chunkExtras(word: { id: string; kind: CardKind; serial: number; category: string | null; details: unknown }) {
+  const d = (word.details ?? {}) as { group?: string | null; related?: string | null };
+  const near = (rows: { text: string; serial: number }[]) =>
+    rows.sort((a, b) => Math.abs(a.serial - word.serial) - Math.abs(b.serial - word.serial)).map((r) => r.text);
+
+  const sameGroup = d.group
+    ? await prisma.word.findMany({
+        where: { kind: word.kind, id: { not: word.id }, details: { path: ["group"], equals: d.group } },
+        select: { text: true, serial: true },
+        take: 40,
+      })
+    : [];
+  let distractors = near(sameGroup).slice(0, 3);
+  if (distractors.length < 3 && word.category) {
+    const sameType = await prisma.word.findMany({
+      where: { kind: word.kind, id: { not: word.id }, category: word.category, text: { notIn: distractors } },
+      select: { text: true, serial: true },
+      orderBy: { serial: "asc" },
+      take: 40,
+    });
+    distractors = [...distractors, ...near(sameType)].slice(0, 3);
+  }
+
+  const related = d.related
+    ? await prisma.word.findUnique({ where: { code: d.related }, select: { code: true, text: true } })
+    : null;
+  return { distractors, related };
 }

@@ -11,6 +11,7 @@ export const TEACHER_LINKS: readonly NavLink[] = [
   { href: "/students", label: "Students" },
   { href: "/workload", label: "Workload" },
   { href: "/decks", label: "Decks" },
+  { href: "/institute", label: "Institute" },
 ];
 
 export const ADMIN_LINKS: readonly NavLink[] = [
@@ -18,6 +19,7 @@ export const ADMIN_LINKS: readonly NavLink[] = [
   { href: "/admin/dispatch", label: "Dispatch" },
   { href: "/admin/content", label: "Content" },
   { href: "/admin/decks", label: "Decks" },
+  { href: "/admin/institutes", label: "Institutes" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/compliance", label: "Compliance" },
   { href: "/queue", label: "Queue" },

@@ -30,6 +30,7 @@ export async function publishDeck(userId: string, id: string): Promise<Result> {
   if (deck.owner.role === "TEACHER" && !deck.owner.teacherVerifiedAt) {
     return { error: "An admin needs to verify your teacher account before you can publish. Ask them to verify you, then submit again." };
   }
+  if (deck.visibility === "INSTITUTE") return { error: "This deck is shared with your institute. Stop sharing it there first — an institute deck stays inside the institute." };
   if (deck.visibility === "PUBLIC" && deck.status !== "REJECTED") return { error: "This deck is already waiting for review or published." };
   if (deck._count.cards < DECK_LIMITS.minCardsToPublish) {
     return { error: `Add at least ${DECK_LIMITS.minCardsToPublish} cards before submitting — it is the minimum for the public library.` };
@@ -44,8 +45,9 @@ export async function publishDeck(userId: string, id: string): Promise<Result> {
 /// Back to private (or link-only, if the link is on). Also how an owner pulls
 /// a deck out of the queue or off the library.
 export async function unpublishDeck(userId: string, id: string): Promise<Result> {
-  const deck = await prisma.deck.findFirst({ where: { id, ownerId: userId }, select: { shareToken: true } });
+  const deck = await prisma.deck.findFirst({ where: { id, ownerId: userId }, select: { shareToken: true, visibility: true } });
   if (!deck) return { error: "That deck no longer exists." };
+  if (deck.visibility === "INSTITUTE") return { error: "This deck is shared with your institute, not the library. Use “Stop sharing” instead." };
   await prisma.deck.updateMany({
     where: { id, ownerId: userId },
     data: { visibility: deck.shareToken ? "LINK" : "PRIVATE", status: "DRAFT", rejectReason: null },

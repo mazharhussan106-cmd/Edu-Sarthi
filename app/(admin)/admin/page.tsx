@@ -20,7 +20,7 @@ export const revalidate = 0;
 const QUEUE_ALERT = 100;
 
 export default async function AdminOverviewPage() {
-  const [s, logs, decksPending, decksReported] = await Promise.all([
+  const [s, logs, decksPending, decksReported, institutesPending] = await Promise.all([
     overviewStats(14),
     prisma.adminLog.findMany({
       orderBy: { createdAt: "desc" },
@@ -29,6 +29,7 @@ export default async function AdminOverviewPage() {
     }),
     prisma.deck.count({ where: { visibility: "PUBLIC", status: "PENDING_REVIEW" } }),
     prisma.deck.count({ where: { reports: { some: { resolvedAt: null } } } }),
+    prisma.institute.count({ where: { status: "PENDING" } }),
   ]);
   const peak = Math.max(1, ...s.series.map((d) => Math.max(d.sent, d.audited)));
 
@@ -37,6 +38,7 @@ export default async function AdminOverviewPage() {
     { label: `Over ${SLA_HOURS}h SLA`, value: s.overSla, alert: s.overSla > 0, href: "/admin/dispatch?view=sla" },
     { label: "Being reviewed", value: s.inReview, href: "/admin/dispatch?view=review" },
     { label: "Decks to review", value: decksPending, alert: decksReported > 0, sub: `${decksReported} reported`, href: "/admin/decks" },
+    { label: "Institute applications", value: institutesPending, href: "/admin/institutes" },
     { label: "Teachers active (24h)", value: s.activeTeachers },
     { label: "Audits sent (24h)", value: s.auditsToday },
     { label: "Students who sent work", value: `${s.studentsToday} / ${s.studentsWeek}`, sub: "today / 7 days" },
@@ -60,7 +62,7 @@ export default async function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-7">
+      <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-8">
         {tiles.map((t) => {
           const body = (
             <Card className={cn("h-full p-4", t.alert && "border-error/40 bg-error/10")}>

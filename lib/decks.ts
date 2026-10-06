@@ -188,11 +188,19 @@ export async function readJson(req: Request): Promise<unknown> {
   }
 }
 
-/// Staff accounts may use the teacher-only card sections (video, teacher's
+/// Staff accounts and institute teachers may use the teacher-only card sections (video, teacher's
 /// guide). Read from the database, not the JWT: a demotion applies at once.
 export async function isStaff(userId: string): Promise<boolean> {
-  const u = await prisma.user.findUnique({ where: { id: userId }, select: { role: true, suspendedAt: true } });
-  return !!u && !u.suspendedAt && (u.role === "TEACHER" || u.role === "ADMIN");
+  const u = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true, suspendedAt: true, instituteMembership: { select: { role: true, institute: { select: { status: true } } } } },
+  });
+  if (!u || u.suspendedAt) return false;
+  // An approved institute's teachers and admin count too, whatever their
+  // account role: the institute vouches for them inside its own walls.
+  const m = u.instituteMembership;
+  const instituteStaff = !!m && m.institute.status === "APPROVED" && m.role !== "STUDENT";
+  return u.role === "TEACHER" || u.role === "ADMIN" || instituteStaff;
 }
 
 /// A stored card as the card faces show it: media keys resolved to signed URLs.

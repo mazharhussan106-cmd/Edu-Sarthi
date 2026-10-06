@@ -44,6 +44,7 @@ export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("share"), id: z.string().min(1), on: z.boolean() }),
   z.object({ action: z.literal("copy"), token: z.string().min(8).max(64) }),
   z.object({ action: z.literal("copyPublic"), deckId: z.string().min(1) }),
+  z.object({ action: z.literal("copyInstitute"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("publish"), id: z.string().min(1) }),
   z.object({ action: z.literal("unpublish"), id: z.string().min(1) }),
 ]);

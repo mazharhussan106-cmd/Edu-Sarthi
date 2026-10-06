@@ -100,6 +100,8 @@ model User {
   words               Word[]               @relation("WordOwner")
   deckReports         DeckReport[]
   deckLikes           DeckLike[]
+  instituteMembership InstituteMember?
+  institutesApplied   Institute[]          @relation("InstituteApplicant")
   assignedSubmissions Submission[]         @relation("AssignedSubmissions")
 
   createdAt DateTime @default(now())
@@ -438,6 +440,7 @@ enum DeckVisibility {
   PRIVATE // owner only
   LINK // anyone holding the share link, view-only
   PUBLIC // listed in the library — only once APPROVED
+  INSTITUTE // members of the deck's institute only; never in the public library
 }
 
 /// Where a deck is in the admin review. Only a deck that asks to go PUBLIC
@@ -468,6 +471,7 @@ model Deck {
   reviewedAt   DateTime?
   /// Reserved for the later Institute area. Unused and has no relation yet.
   instituteId  String?
+  institute    Institute?     @relation(fields: [instituteId], references: [id], onDelete: SetNull)
   /// How many times readers copied it from the library, for sorting. Counted,
   /// not derived, because copies are independent decks the owner cannot see.
   copyCount    Int            @default(0)
@@ -486,6 +490,7 @@ model Deck {
 
   @@index([ownerId, createdAt])
   @@index([visibility, status]) // the library and the review queue read on this
+  @@index([instituteId, visibility])
 }
 
 enum ReportReason {
@@ -533,4 +538,61 @@ model DeckLike {
   createdAt DateTime @default(now())
 
   @@unique([deckId, userId])
+}
+
+enum InstituteStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum InstituteRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+/// A school or coaching centre with its own admin, teachers and students.
+/// Anyone can apply; the site admin approves. Nothing about an institute works
+/// until status is APPROVED.
+model Institute {
+  id           String          @id @default(cuid())
+  name         String
+  description  String          @db.Text
+  contact      String
+  status       InstituteStatus @default(PENDING)
+  /// Shown to the applicant when status is REJECTED or SUSPENDED.
+  statusNote   String?         @db.Text
+  /// What a student types to join. Rotating it stops the old one working.
+  joinCode     String          @unique
+  applicantId  String
+  reviewedById String?
+  reviewedAt   DateTime?
+
+  // Restrict: an account that applied cannot be deleted out from under its
+  // institute without an admin deciding what happens to it.
+  applicant User              @relation("InstituteApplicant", fields: [applicantId], references: [id], onDelete: Restrict)
+  members   InstituteMember[]
+  decks     Deck[]
+
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
+/// One person's place in one institute. userId is unique: a person belongs to
+/// at most one institute, so "my institute" is never ambiguous.
+model InstituteMember {
+  id          String        @id @default(cuid())
+  instituteId String
+  userId      String        @unique
+  role        InstituteRole @default(STUDENT)
+
+  institute Institute @relation(fields: [instituteId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([instituteId, role])
 }

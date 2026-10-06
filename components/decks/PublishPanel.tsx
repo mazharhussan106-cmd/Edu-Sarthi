@@ -16,25 +16,41 @@ import { DECK_LIMITS } from "@/lib/deckSchemas";
 
 type Props = {
   deckId: string;
-  visibility: "PRIVATE" | "LINK" | "PUBLIC";
+  visibility: "PRIVATE" | "LINK" | "PUBLIC" | "INSTITUTE";
+  /// Offered only to teachers and admin of an approved institute.
+  canShareInstitute?: boolean;
   status: "DRAFT" | "PENDING_REVIEW" | "APPROVED" | "REJECTED";
   rejectReason: string | null;
   cardCount: number;
 };
 
-export function PublishPanel({ deckId, visibility, status, rejectReason, cardCount }: Props) {
+export function PublishPanel({ deckId, visibility, status, rejectReason, cardCount, canShareInstitute }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inLibrary = visibility === "PUBLIC";
 
-  async function act(action: "publish" | "unpublish") {
+  async function act(action: "publish" | "unpublish" | "shareDeck" | "unshareDeck") {
     setBusy(true);
     setError(null);
-    const res = await callApi("/api/decks", { action, id: deckId });
+    const res = await callApi(action === "shareDeck" || action === "unshareDeck" ? "/api/institute" : "/api/decks", action === "shareDeck" || action === "unshareDeck" ? { action, deckId } : { action, id: deckId });
     setBusy(false);
     if (!res.ok) return setError(res.error);
     router.refresh();
+  }
+
+  if (visibility === "INSTITUTE") {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium text-ink">Institute</p>
+          <Badge variant="success">Shared with your institute</Badge>
+        </div>
+        <p className="text-xs text-ink-muted">Members of your institute can read and copy this deck. It is not in the public library and needs no admin review.</p>
+        <div><Button variant="outline" disabled={busy} onClick={() => act("unshareDeck")}>Stop sharing with the institute</Button></div>
+        {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      </div>
+    );
   }
 
   return (
@@ -64,6 +80,12 @@ export function PublishPanel({ deckId, visibility, status, rejectReason, cardCou
           <Button variant="outline" disabled={busy || cardCount < DECK_LIMITS.minCardsToPublish} onClick={() => act("publish")}>Submit for the public library</Button>
         )}
       </div>
+      {canShareInstitute && !inLibrary ? (
+        <div className="mt-2 border-t border-border pt-3">
+          <p className="text-xs text-ink-muted">Or keep it inside your institute: members can read and copy it, and it is never public.</p>
+          <Button className="mt-2" variant="outline" disabled={busy} onClick={() => act("shareDeck")}>Share with my institute</Button>
+        </div>
+      ) : null}
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
     </div>
   );

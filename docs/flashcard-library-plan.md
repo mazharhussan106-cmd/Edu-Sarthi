@@ -1,6 +1,6 @@
 # Flashcard Library — plan
 
-Status: **Phases 1–4 are built and pushed. Phase 5 (Institute) is not built — it waits until after the first public release.**
+Status: **All five phases are built and pushed.** Phase 5 (Institute) was built before the live test, at the owner's request, so it has had the least real-world checking.
 
 Before any of it works on the live site, run GitHub → Actions → **Database setup** → Run workflow. It adds the new tables and columns (all additive, no data is removed).
 
@@ -75,22 +75,16 @@ revises cards with the spaced-repetition ladder that already exists.
 - Admin overview tile: decks to review and reported.
 - Learner recordings on a verified teacher's published deck: the student records on a card, the recording goes only to that deck's teacher (`Submission.assignedTeacherId`), who audits it with the usual rubric. The teacher's deck page shows waiting and audited counts.
 
-### Phase 5 — Institute — NOT BUILT (plan only, decisions recorded)
+### Phase 5 — Institute — DONE
 
-Owner decided to live-test Phases 1–4 first; Institute starts after that.
+- **Apply:** any signed-in person can apply (name, what it teaches, a contact line). The applicant becomes its admin at once so they can see the status, but nothing works until the site admin approves at `/admin/institutes` (reject and suspend need a reason the institute's admin reads). A rejected applicant can apply again.
+- **Join:** the institute admin gives students a join code (8 characters, no look-alike letters). A wrong code and an unapproved institute give the same message. The admin can rotate the code, remove members, and make a member a teacher or student. A person belongs to at most one institute.
+- **Decks:** an institute's teachers and admin can "Share with my institute" from a deck. Members read and copy it; it is never in the public library, needs no review, and cannot be published while shared. Removing a member (or leaving) sends their shared decks back to private.
+- **Suspension:** a suspended institute's members lose access to its decks and the staff card sections at once.
+- Institute teachers and admin get the video and Teacher's guide card sections, whatever their account role.
+- Admin overview has an "Institute applications" tile.
 
-Decisions already made:
-
-| Topic | Decision |
-|---|---|
-| Who creates one | Anyone can **apply**; the site admin approves. Needs an apply form and an approval queue in the admin console. |
-| Institute roles | An institute has its own admin and teachers, limited to that institute. |
-| Decks | Institute decks are visible **only to its members**. They do not go to the public library and need no public admin review. |
-| Students joining | By an **invite link / join code** given by the institute admin. The admin can remove a member. |
-
-Still to decide when we start: whether an applying institute needs documents or just a name and contact; whether a teacher can belong to more than one institute; how an institute is suspended; and whether members' recordings go to the institute's teachers only.
-
-Planned shape (not final): `Institute` (name, status PENDING / APPROVED / SUSPENDED, join code), `InstituteMember` (user, institute, role ADMIN / TEACHER / STUDENT), and the already-reserved `Deck.instituteId`. Institute pages live under their own route group and check membership on every query, the same way decks check ownership today.
+Defaults chosen because they were not decided (easy to change): one institute per person; applying needs only a name, description and contact; the site admin suspends; learner recordings on institute decks are **not** built, so nothing is routed to institute teachers.
 
 ## Known gaps and things to watch
 
@@ -122,4 +116,4 @@ Planned shape (not final): `Institute` (name, status PENDING / APPROVED / SUSPEN
 
 ## Next step
 
-Run Database setup, test a full round on the live site (student deck → submit → admin approve → library → copy; teacher verify → deck with video → learner records → teacher audits), then decide the licence. Phase 5 after that.
+Run Database setup, then test a full round on the live site (student deck → submit → admin approve → library → copy; teacher verify → deck with video → learner records → teacher audits; institute apply → approve → join with code → teacher shares a deck → student copies it), then decide the licence.

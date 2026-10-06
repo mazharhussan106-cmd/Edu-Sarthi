@@ -13,6 +13,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { copyDeck, deleteDeck, newShareToken, ownDeck, readJson } from "@/lib/decks";
+import { instituteDeckScope } from "@/lib/institutes";
 import { publishDeck, sendBackIfPublished, unpublishDeck } from "@/lib/deckReview";
 import { DECK_LIMITS, deckActionSchema } from "@/lib/deckSchemas";
 
@@ -48,6 +49,13 @@ export async function POST(req: Request) {
       const res = await copyDeck(userId, where);
       return "error" in res ? fail(res.error, 400) : NextResponse.json({ ok: true, id: res.id });
     }
+    case "copyInstitute": {
+      // Only members of an approved institute, and only decks shared with it.
+      const scope = await instituteDeckScope(userId);
+      if (!scope) return fail("You are not in an active institute.", 403);
+      const res = await copyDeck(userId, { id: a.deckId, ...scope });
+      return "error" in res ? fail(res.error, 400) : NextResponse.json({ ok: true, id: res.id });
+    }
     case "delete":
       return (await deleteDeck(userId, a.id)) ? NextResponse.json({ ok: true }) : fail("That deck no longer exists.", 404);
     case "publish":
@@ -74,9 +82,9 @@ export async function POST(req: Request) {
   const token = a.on ? newShareToken() : null;
   await prisma.deck.updateMany({
     where: { id: a.id, ownerId: userId },
-    // A deck in the library keeps its visibility; the link is only an extra
+    // A deck in the library or an institute keeps its visibility; the link is only an extra
     // way in. Otherwise sharing would silently unpublish it.
-    data: { shareToken: token, ...(deck.visibility === "PUBLIC" ? {} : { visibility: a.on ? "LINK" : "PRIVATE" }) },
+    data: { shareToken: token, ...(deck.visibility === "PUBLIC" || deck.visibility === "INSTITUTE" ? {} : { visibility: a.on ? "LINK" : "PRIVATE" }) },
   });
   return NextResponse.json({ ok: true, token });
 }

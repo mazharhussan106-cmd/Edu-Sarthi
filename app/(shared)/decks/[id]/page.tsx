@@ -17,6 +17,7 @@ import { CardEditor } from "@/components/decks/CardEditor";
 import { CardRow } from "@/components/decks/CardRow";
 import { DeckActions } from "@/components/decks/DeckActions";
 import { DeckForm } from "@/components/decks/DeckForm";
+import { activeMembership } from "@/lib/institutes";
 import { PublishPanel } from "@/components/decks/PublishPanel";
 
 export const revalidate = 0;
@@ -43,6 +44,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
       })),
     ),
   ]);
+  const member = await activeMembership(userId);
   const studyable = counts.due + counts.fresh;
   // Learners' recordings on this deck's cards, for the teacher who will audit them.
   const [waiting, audited] = staff
@@ -105,7 +107,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
       <section className="mt-6" aria-labelledby="pub-h">
         <h2 id="pub-h" className="sr-only">Public library</h2>
-        <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} /></Card>
+        <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} canShareInstitute={Boolean(member && member.role !== "STUDENT")} /></Card>
       </section>
 
       <section className="mt-6" aria-labelledby="share-h">

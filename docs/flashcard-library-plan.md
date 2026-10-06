@@ -75,10 +75,22 @@ revises cards with the spaced-repetition ladder that already exists.
 - Admin overview tile: decks to review and reported.
 - Learner recordings on a verified teacher's published deck: the student records on a card, the recording goes only to that deck's teacher (`Submission.assignedTeacherId`), who audits it with the usual rubric. The teacher's deck page shows waiting and audited counts.
 
-### Phase 5 — Institute — NOT BUILT (plan only)
+### Phase 5 — Institute — NOT BUILT (plan only, decisions recorded)
 
-- Separate Institute area with its own admin and teachers, limited to that institute. Will use `Deck.instituteId` and a new `Institute` model.
-- Built after the first public release.
+Owner decided to live-test Phases 1–4 first; Institute starts after that.
+
+Decisions already made:
+
+| Topic | Decision |
+|---|---|
+| Who creates one | Anyone can **apply**; the site admin approves. Needs an apply form and an approval queue in the admin console. |
+| Institute roles | An institute has its own admin and teachers, limited to that institute. |
+| Decks | Institute decks are visible **only to its members**. They do not go to the public library and need no public admin review. |
+| Students joining | By an **invite link / join code** given by the institute admin. The admin can remove a member. |
+
+Still to decide when we start: whether an applying institute needs documents or just a name and contact; whether a teacher can belong to more than one institute; how an institute is suspended; and whether members' recordings go to the institute's teachers only.
+
+Planned shape (not final): `Institute` (name, status PENDING / APPROVED / SUSPENDED, join code), `InstituteMember` (user, institute, role ADMIN / TEACHER / STUDENT), and the already-reserved `Deck.instituteId`. Institute pages live under their own route group and check membership on every query, the same way decks check ownership today.
 
 ## Known gaps and things to watch
 

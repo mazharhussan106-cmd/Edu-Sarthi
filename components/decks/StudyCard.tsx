@@ -13,6 +13,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { CardBack, CardFront, type FaceCard } from "@/components/decks/CardFace";
+import { RichCard } from "@/components/decks/RichCard";
 import { post } from "@/components/flashcards/deckApi";
 
 const ANSWERS = [
@@ -24,6 +25,8 @@ const ANSWERS = [
 
 export function StudyCard({ wordId, card }: { wordId: string; card: FaceCard }) {
   const router = useRouter();
+  // An imported card shows its three sides as tabs; the rating buttons appear
+  // once the learner has looked past the first side.
   const [shown, setShown] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,11 +47,15 @@ export function StudyCard({ wordId, card }: { wordId: string; card: FaceCard }) 
 
   return (
     <div className="rounded-xl border border-border bg-surface p-5">
-      <CardFront card={card} />
+      {card.rich ? <RichCard rich={card.rich} onSide={(n) => n > 1 && setShown(true)} /> : <CardFront card={card} />}
       {shown ? (
         <>
-          <hr className="my-4 border-border" />
-          <CardBack card={card} />
+          {card.rich ? null : (
+            <>
+              <hr className="my-4 border-border" />
+              <CardBack card={card} />
+            </>
+          )}
           <p className="mt-5 text-xs text-ink-muted">How well did you know it?</p>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {ANSWERS.map((a) => (
@@ -60,8 +67,8 @@ export function StudyCard({ wordId, card }: { wordId: string; card: FaceCard }) 
           </div>
         </>
       ) : (
-        <Button className="mt-5 w-full" onClick={() => setShown(true)}>
-          Show answer
+        <Button className="mt-5 w-full" variant={card.rich ? "outline" : "primary"} onClick={() => setShown(true)}>
+          {card.rich ? "I’ve seen the answer — rate it" : "Show answer"}
         </Button>
       )}
       {error ? (

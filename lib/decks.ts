@@ -66,7 +66,10 @@ export type StoredCard = Prisma.WordGetPayload<{ select: typeof CARD_SELECT }>;
 export function cardText(card: Pick<StoredCard, "details">) {
   const d = card.details && typeof card.details === "object" ? (card.details as Record<string, unknown>) : {};
   const str = (k: string) => (typeof d[k] === "string" ? (d[k] as string) : "");
-  return { back: str("meaning"), example: str("example"), body: str("body"), audit: str("audit") };
+  // A card from an Excel import carries every field here; hand-made cards do not.
+  const r = d.rich && typeof d.rich === "object" ? (d.rich as Record<string, unknown>) : null;
+  const rich = r ? Object.fromEntries(Object.entries(r).filter(([, v]) => typeof v === "string")) as Record<string, string> : null;
+  return { back: str("meaning"), example: str("example"), body: str("body"), audit: str("audit"), rich };
 }
 
 export async function ownDeck(userId: string, id: string) {

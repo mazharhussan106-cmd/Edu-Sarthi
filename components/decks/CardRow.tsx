@@ -41,7 +41,7 @@ export function CardRow({ deckId, card, staff }: { deckId: string; card: Editabl
           <span className="block truncate text-xs text-ink-muted">{card.back}</span>
         </button>
         <div className="flex shrink-0 gap-1">
-          <Button variant="outline" size="sm" onClick={() => setEditing(true)}>Edit</Button>
+          {card.rich ? null : <Button variant="outline" size="sm" onClick={() => setEditing(true)}>Edit</Button>}
           <Button variant="ghost" size="sm" disabled={busy} onClick={remove} aria-label={`Delete card ${card.front}`}>Delete</Button>
         </div>
       </div>

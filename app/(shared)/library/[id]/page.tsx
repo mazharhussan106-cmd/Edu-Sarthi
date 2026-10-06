@@ -42,6 +42,7 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{cards.length} cards</span>
         {deck.owner.role === "TEACHER" && deck.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}
+        {deck.owner.role === "ADMIN" ? <Badge variant="accent">EduSarthi</Badge> : null}
         {deck.tags.map((t) => <Link key={t} href={`/library?tag=${encodeURIComponent(t)}`}><Badge>{t}</Badge></Link>)}
       </div>
       <div className="mt-4 flex flex-wrap items-start gap-3">
@@ -51,6 +52,32 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
       </div>
       <p className="mt-2 text-xs text-ink-muted">A copy is private to you. Changes you make to it do not affect the original.</p>
 
+      {cards.some((c) => c.rich) ? (
+        // An imported deck can hold hundreds of full cards; the page lists them
+        // by topic and each opens on its own, which a phone can load.
+        <div className="mt-5 flex flex-col gap-5">
+          {[...new Set(cards.map((c) => c.rich?.topic ?? "Cards"))].map((topic) => (
+            <section key={topic} aria-label={topic}>
+              <h2 className="font-display text-sm font-bold text-ink">{topic}</h2>
+              <ul className="mt-2 flex flex-col gap-1.5">
+                {cards.filter((c) => (c.rich?.topic ?? "Cards") === topic).map((c) => (
+                  <li key={c.id}>
+                    <Link href={`/library/${id}/card/${c.id}`} className="block">
+                      <Card className="flex items-center justify-between gap-3 p-3 hover:bg-hover">
+                        <span className="min-w-0">
+                          <span className="block truncate font-medium text-ink">{c.front}</span>
+                          <span className="block truncate text-xs text-ink-muted">{c.back}</span>
+                        </span>
+                        {c.rich?.level ? <span className="shrink-0 text-[11px] text-mist">{c.rich.level}</span> : null}
+                      </Card>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      ) : (
       <ul className="mt-5 flex flex-col gap-3">
         {cards.map((c) => (
           <li key={c.id}>
@@ -67,6 +94,7 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
           </li>
         ))}
       </ul>
+      )}
     </main>
   );
 }

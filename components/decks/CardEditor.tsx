@@ -32,6 +32,8 @@ export type EditableCard = {
   videoUrl: string;
   videoSrc: string | null;
   audit: string;
+  /// Set for a card imported from Excel: it is edited in the sheet, not here.
+  rich: Record<string, string> | null;
 };
 
 type Slot = { file: File | null; keep: boolean };

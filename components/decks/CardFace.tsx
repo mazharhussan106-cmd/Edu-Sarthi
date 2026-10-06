@@ -18,9 +18,21 @@ export type FaceCard = {
   videoSrc: string | null;
   /// Teacher's guide. Empty for student cards.
   audit: string;
+  /// Every field of an Excel-imported 56-point card, or null for a hand-made one.
+  rich: Record<string, string> | null;
 };
 
 export function CardFront({ card }: { card: FaceCard }) {
+  if (card.rich) {
+    // A short summary: the full three-side card is RichCard's job, and listing
+    // a few hundred of them on one page would be too heavy for a phone.
+    return (
+      <div className="flex flex-col items-center gap-1 text-center">
+        <p className="font-display text-2xl font-bold text-ink">{card.front}</p>
+        {card.rich.cue ? <p className="text-sm text-ink-muted">{card.rich.cue}</p> : null}
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col items-center gap-3 text-center">
       <p className="font-display text-2xl font-bold text-ink">{card.front}</p>
@@ -47,6 +59,15 @@ export function CardFront({ card }: { card: FaceCard }) {
 }
 
 export function CardBack({ card }: { card: FaceCard }) {
+  if (card.rich) {
+    return (
+      <div className="flex flex-col gap-2">
+        <p className="text-lg font-medium text-ink">{card.back}</p>
+        {card.rich.code ? <pre className="overflow-x-auto rounded-lg bg-paper-dim p-3 font-mono text-xs text-ink"><code>{card.rich.code}</code></pre> : null}
+        {card.rich.output ? <pre className="overflow-x-auto rounded-lg bg-paper-dim p-3 font-mono text-xs text-ink-muted"><code>{card.rich.output}</code></pre> : null}
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-3">
       <p className="text-lg font-medium text-ink">{card.back}</p>

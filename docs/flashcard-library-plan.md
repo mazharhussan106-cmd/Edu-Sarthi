@@ -86,6 +86,18 @@ revises cards with the spaced-repetition ladder that already exists.
 
 Defaults chosen because they were not decided (easy to change): one institute per person; applying needs only a name, description and contact; the site admin suspends; learner recordings on institute decks are **not** built, so nothing is routed to institute teachers.
 
+## Excel import — DONE (added after Phase 5)
+
+The site admin can turn a 56-point flashcard workbook into a published library deck at **Admin → Import** (`/admin/import`).
+
+- **Upload, check, import.** "Check file" reads the workbook and lists the cards found per topic plus any problems; nothing is saved. "Import" saves it. Any error blocks the whole import — half a deck is never published.
+- **Both layouts work:** the older Python layout (one heading row) and the newer two-row layout (SQL). Code, Word and Topic card types are detected from the sheet. Sheets such as Card View, Anki and Summary are skipped.
+- **Checks:** every card needs its own ID; required fields (concept, meaning, example, common mistake, MCQ with options A–D and a one-letter answer, and for code cards the code and practice) must be filled. The card's code is shown to learners and is **never run** by the site.
+- **Re-upload is safe:** cards are matched by ID — same ID updates, new ID is added, nothing is deleted, so students keep their review progress. An ID already used by another deck is refused.
+- **How it shows:** the deck is owned by the admin, public and already approved (marked "EduSarthi" in the library). Cards open as a three-tab card — Recognise, Understand, Practise — with answers hidden behind "Show answer". Side 1 never shows the answer (the older Python file's reverse prompt has its "(Answer: …)" tail removed). A student who copies the deck studies it on the usual Day 1·3·7·15·30·60 ladder; imported cards cannot be edited in the app, only in the sheet.
+- Limits: 4 MB per file; tested with the Python (184 cards) and SQL (39 code + 1 topic card) workbooks, both with zero errors.
+- The author's own check that runs the examples (the scripts inside the `.skill` file) was not available, only the `.md` spec. A quick run of the Python deck's code found 4 harmless output differences (random numbers, the current time, memory addresses, and log text that goes to stderr).
+
 ## Known gaps and things to watch
 
 - If a deck's teacher is suspended or demoted, recordings already assigned to them stay assigned; an admin reassigns them from Dispatch.

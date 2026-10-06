@@ -46,7 +46,7 @@ export function NavLinks({
             // decoration and says nothing on its own.
             aria-current={active ? "page" : undefined}
             className={cn(
-              "relative rounded-lg px-3 py-2 font-body text-sm transition-colors",
+              "relative whitespace-nowrap rounded-lg px-3 py-2 font-body text-sm transition-colors",
               active ? "text-ink" : "text-ink-muted hover:bg-hover hover:text-ink",
             )}
           >

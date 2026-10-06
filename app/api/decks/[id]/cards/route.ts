@@ -52,6 +52,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const current = a.action === "edit" ? await prisma.word.findFirst({ where: { id: a.cardId, ...mine }, select: { imageUrl: true, audioUrl: true, videoUrl: true, details: true } }) : null;
   if (a.action === "edit" && !current) return fail("That card no longer exists.", 404);
+  // An imported 56-point card has dozens of fields this form cannot show;
+  // saving it would overwrite them with four. Edit the Excel sheet instead.
+  if (current && cardText(current).rich) return fail("This card came from an Excel file, so it cannot be edited here. Change it in the sheet and upload the file again.", 400);
 
   // Staff-only sections: staff's input (rebuilt as our own embed address), or
   // for everyone else the card's current values, or nothing for a new card.

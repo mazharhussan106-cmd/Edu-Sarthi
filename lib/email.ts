@@ -68,3 +68,22 @@ export async function sendLoginEmail(to: string, code: string, url: string) {
   `;
   await send(to, subject, text, html);
 }
+
+/// Tells a deck's owner what an admin decided. `reason` is the admin's note for
+/// a rejection or takedown and is empty for an approval.
+export async function sendDeckDecision(to: string, title: string, outcome: "approved" | "rejected" | "removed", reason: string) {
+  const safe = title.replace(/[<>&"]/g, " ");
+  const headline = {
+    approved: `Your deck “${safe}” is now in the public library`,
+    rejected: `Your deck “${safe}” was not approved`,
+    removed: `Your deck “${safe}” was taken out of the library`,
+  }[outcome];
+  const next =
+    outcome === "approved"
+      ? "Anyone signed in can now find and copy it. If you change it later, it goes back to review."
+      : "Open the deck in My decks to read the note, fix what is needed, and submit it again.";
+  const note = reason ? `\n\nReviewer’s note: ${reason}` : "";
+  const text = `${headline}.${note}\n\n${next}`;
+  const html = `<p>${headline}.</p>${reason ? `<p><b>Reviewer’s note:</b> ${reason.replace(/[<>&]/g, " ")}</p>` : ""}<p>${next}</p>`;
+  await send(to, headline, text, html);
+}

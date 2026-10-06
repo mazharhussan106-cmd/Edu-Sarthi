@@ -9,6 +9,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { practiceWord } from "@/lib/decks";
 import { submissionSchema } from "@/lib/validations";
 import { ALLOWED_TYPES, objectExists } from "@/lib/storage";
 
@@ -40,8 +41,11 @@ export async function POST(req: Request) {
 
   const { exerciseId, key, contentType, durationSec, retryOfId, wordId } = parsed.data;
 
-  if (wordId && !(await prisma.word.findFirst({ where: { id: wordId, deckId: null }, select: { id: true } }))) {
-    return NextResponse.json({ error: "That flashcard no longer exists. Go back and open it again." }, { status: 400 });
+  // Built-in words, or a card on a verified teacher's published deck. The
+  // latter is routed to that teacher alone (assignedTeacherId below).
+  const target = wordId ? await practiceWord({ id: wordId }) : null;
+  if (wordId && !target) {
+    return NextResponse.json({ error: "That flashcard is not available for recording. Go back and open it again." }, { status: 400 });
   }
 
   // The one check that matters. buildKey() writes `${userId}/uuid-name`, so
@@ -124,6 +128,7 @@ export async function POST(req: Request) {
       exerciseId,
       retryOfId: retryOfId ?? null,
       wordId: wordId ?? null,
+      assignedTeacherId: target?.teacherId ?? null,
       mediaUrl: key,
       mediaKind: kind,
       durationSec: kind === "IMAGE" ? null : durationSec,

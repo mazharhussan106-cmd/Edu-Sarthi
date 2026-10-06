@@ -55,6 +55,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
       durationSec: true,
       claimedById: true,
       claimedAt: true,
+      assignedTeacherId: true,
       createdAt: true,
       retryOfId: true,
       student: { select: { publicId: true } },
@@ -62,7 +63,8 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
       word: { select: { text: true, details: true } },
     },
   });
-  if (!submission) notFound();
+  // A recording on another teacher's deck is theirs to audit, not this teacher's.
+  if (!submission || (submission.assignedTeacherId && submission.assignedTeacherId !== teacherId && session?.user?.role !== "ADMIN")) notFound();
 
   const studentId = displayId(submission.student.publicId);
 

@@ -13,7 +13,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { claimSchema, feedbackSchema, holdSchema, returnSchema } from "@/lib/validations";
-import { releaseExpiredClaims } from "@/lib/claims";
+import { queueScope, releaseExpiredClaims } from "@/lib/claims";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     // the same moment both pass a read check; only one can match
     // `status: PENDING` in the WHERE clause, and the loser gets count 0.
     const claimed = await prisma.submission.updateMany({
-      where: { id: parsed.data.submissionId, status: "PENDING" },
+      where: { id: parsed.data.submissionId, status: "PENDING", ...queueScope(teacherId, current.role) },
       data: { status: "IN_REVIEW", claimedById: teacherId, claimedAt: new Date() },
     });
 

@@ -17,6 +17,7 @@ import { displayId } from "@/lib/publicId";
 import {
   CLAIM_MINUTES,
   claimExpiresAt,
+  queueScope,
   releaseExpiredClaims,
   slaDueAt,
   urgentBefore,
@@ -62,14 +63,16 @@ export default async function QueuePage({
   const params = await searchParams;
   const session = await auth();
   const teacherId = session?.user?.id;
+  // Recordings on another teacher's deck are not part of this teacher's queue.
+  const scope = queueScope(teacherId ?? "", session?.user?.role);
 
   const released = await releaseExpiredClaims();
   const now = new Date();
   const urgentCutoff = urgentBefore(now);
 
   const [urgentCount, pendingCount, mine] = await Promise.all([
-    prisma.submission.count({ where: { status: "PENDING", createdAt: { lt: urgentCutoff } } }),
-    prisma.submission.count({ where: { status: "PENDING" } }),
+    prisma.submission.count({ where: { status: "PENDING", ...scope, createdAt: { lt: urgentCutoff } } }),
+    prisma.submission.count({ where: { status: "PENDING", ...scope } }),
     prisma.submission.findMany({
       where: { claimedById: teacherId, status: "IN_REVIEW" },
       orderBy: { claimedAt: "asc" },
@@ -91,6 +94,7 @@ export default async function QueuePage({
       : await prisma.submission.findMany({
           where: {
             status: "PENDING",
+            ...scope,
             ...(tab === "urgent" ? { createdAt: { lt: urgentCutoff } } : {}),
           },
           orderBy: { createdAt: "asc" },

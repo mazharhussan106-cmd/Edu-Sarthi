@@ -8,6 +8,8 @@
 // It deliberately does NOT decide who may claim. That is the route handler's
 // job, next to the role check.
 
+import type { Prisma, Role } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 /// How long a claim holds before the submission returns to the queue.
@@ -42,4 +44,13 @@ export async function releaseExpiredClaims(): Promise<number> {
     data: { status: "PENDING", claimedById: null, claimedAt: null },
   });
   return count;
+}
+
+/// Which pending submissions a staff member may see and claim. Recordings made
+/// on a verified teacher's own library deck (assignedTeacherId) belong to that
+/// teacher; everything else is the shared queue. Admins see all of it, since
+/// they dispatch and cover for absent teachers.
+export function queueScope(userId: string, role: Role | undefined): Prisma.SubmissionWhereInput {
+  if (role === "ADMIN") return {};
+  return { OR: [{ assignedTeacherId: null }, { assignedTeacherId: userId }] };
 }

@@ -20,13 +20,15 @@ export const revalidate = 0;
 const QUEUE_ALERT = 100;
 
 export default async function AdminOverviewPage() {
-  const [s, logs] = await Promise.all([
+  const [s, logs, decksPending, decksReported] = await Promise.all([
     overviewStats(14),
     prisma.adminLog.findMany({
       orderBy: { createdAt: "desc" },
       take: 6,
       select: { id: true, action: true, targetType: true, targetId: true, createdAt: true, actor: { select: { email: true } } },
     }),
+    prisma.deck.count({ where: { visibility: "PUBLIC", status: "PENDING_REVIEW" } }),
+    prisma.deck.count({ where: { reports: { some: { resolvedAt: null } } } }),
   ]);
   const peak = Math.max(1, ...s.series.map((d) => Math.max(d.sent, d.audited)));
 
@@ -34,6 +36,7 @@ export default async function AdminOverviewPage() {
     { label: "Waiting in queue", value: s.pending, alert: s.pending > QUEUE_ALERT, href: "/admin/dispatch" },
     { label: `Over ${SLA_HOURS}h SLA`, value: s.overSla, alert: s.overSla > 0, href: "/admin/dispatch?view=sla" },
     { label: "Being reviewed", value: s.inReview, href: "/admin/dispatch?view=review" },
+    { label: "Decks to review", value: decksPending, alert: decksReported > 0, sub: `${decksReported} reported`, href: "/admin/decks" },
     { label: "Teachers active (24h)", value: s.activeTeachers },
     { label: "Audits sent (24h)", value: s.auditsToday },
     { label: "Students who sent work", value: `${s.studentsToday} / ${s.studentsWeek}`, sub: "today / 7 days" },
@@ -57,7 +60,7 @@ export default async function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-7">
         {tiles.map((t) => {
           const body = (
             <Card className={cn("h-full p-4", t.alert && "border-error/40 bg-error/10")}>

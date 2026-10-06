@@ -14,6 +14,7 @@ import type { ReportReason } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { logAdmin } from "@/lib/admin";
+import { sendDeckDecision } from "@/lib/email";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 
 type Result = { ok: true } | { error: string };
@@ -52,6 +53,18 @@ export async function unpublishDeck(userId: string, id: string): Promise<Result>
   return { ok: true };
 }
 
+/// Best effort, after the decision is saved: a mail failure must never undo or
+/// block an admin's decision. Accounts with no email (phone sign-ups) are
+/// skipped; they see the status on the deck page.
+async function tellOwner(deckId: string, outcome: "approved" | "rejected" | "removed", reason: string) {
+  try {
+    const deck = await prisma.deck.findUnique({ where: { id: deckId }, select: { title: true, owner: { select: { email: true } } } });
+    if (deck?.owner.email) await sendDeckDecision(deck.owner.email, deck.title, outcome, reason);
+  } catch {
+    console.error("Could not send the deck decision email");
+  }
+}
+
 /// Called after any edit to a deck's text or cards. A published deck that
 /// changes goes back to review, or approval would only prove what the deck
 /// looked like on one day. Rejected and draft decks are left alone.
@@ -73,6 +86,7 @@ export async function reviewDeck(adminId: string, id: string, decision: "approve
       ? { status: "APPROVED", rejectReason: null, reviewedById: adminId, reviewedAt: new Date() }
       : { status: "REJECTED", rejectReason: reason, reviewedById: adminId, reviewedAt: new Date() },
   });
+  await tellOwner(id, approve ? "approved" : "rejected", reason);
   await logAdmin(adminId, approve ? "Approved public deck" : "Rejected public deck", "deck", id, { title: deck.title, ...(approve ? {} : { reason }) });
   return { ok: true };
 }
@@ -109,6 +123,7 @@ export async function resolveReports(adminId: string, deckId: string, outcome: "
     // Auto-hidden by reports and found fine: back into the library.
     await prisma.deck.updateMany({ where: { id: deckId, visibility: "PUBLIC", status: "PENDING_REVIEW" }, data: { status: "APPROVED", reviewedById: adminId, reviewedAt: now } });
   }
+  if (outcome === "takedown") await tellOwner(deckId, "removed", reason);
   await logAdmin(adminId, outcome === "takedown" ? "Took down reported deck" : "Dismissed deck reports", "deck", deckId, { title: deck.title, ...(outcome === "takedown" ? { reason } : {}) });
   return { ok: true };
 }

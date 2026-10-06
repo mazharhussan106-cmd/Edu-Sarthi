@@ -148,6 +148,9 @@ export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Pr
     })),
   );
 
+  // Counted outside the transaction: a missed increment must not undo a copy.
+  await prisma.deck.updateMany({ where: { id: source.id }, data: { copyCount: { increment: 1 } } });
+
   const deck = await prisma.$transaction(
     async (tx) => {
       const created = await tx.deck.create({
@@ -202,4 +205,26 @@ export async function faceCard(c: StoredCard) {
     imageSrc: c.imageUrl ? await resolveMediaUrl(c.imageUrl) : null,
     audioSrc: c.audioUrl ? await resolveMediaUrl(c.audioUrl) : null,
   };
+}
+
+/// Cards a learner may record themselves saying: the built-in words, and cards
+/// in a published deck whose owner is a verified, active teacher — the one who
+/// will audit the recording. Returns the card and that teacher's id (null for
+/// built-in words, which go to the general queue).
+export async function practiceWord(where: Prisma.WordWhereInput) {
+  const w = await prisma.word.findFirst({
+    where: {
+      AND: [
+        where,
+        {
+          OR: [
+            { deckId: null },
+            { deck: { visibility: "PUBLIC", status: "APPROVED", owner: { role: "TEACHER", teacherVerifiedAt: { not: null }, suspendedAt: null } } },
+          ],
+        },
+      ],
+    },
+    select: { id: true, code: true, text: true, deckId: true, deck: { select: { ownerId: true } } },
+  });
+  return w ? { ...w, teacherId: w.deck?.ownerId ?? null } : null;
 }

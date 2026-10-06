@@ -22,7 +22,7 @@ export default async function DecksPage() {
   const decks = await prisma.deck.findMany({
     where: { ownerId: userId },
     orderBy: { createdAt: "desc" },
-    select: { id: true, title: true, description: true, tags: true, shareToken: true, _count: { select: { cards: true } } },
+    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, _count: { select: { cards: true } } },
   });
   const now = new Date();
   const dueRows = await prisma.cardState.groupBy({
@@ -63,6 +63,9 @@ export default async function DecksPage() {
                   <span className="flex shrink-0 flex-col items-end gap-1">
                     <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
                     {due.get(d.id) ? <Badge variant="accent">{due.get(d.id)} due</Badge> : null}
+                    {d.visibility === "PUBLIC" && d.status === "PENDING_REVIEW" ? <Badge variant="accent">in review</Badge> : null}
+                    {d.visibility === "PUBLIC" && d.status === "APPROVED" ? <Badge variant="success">published</Badge> : null}
+                    {d.status === "REJECTED" ? <Badge variant="error">not approved</Badge> : null}
                     {d.shareToken ? <Badge>shared by link</Badge> : null}
                   </span>
                 </div>

@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
+import { LikeButton } from "@/components/decks/LikeButton";
 import { ReportButton } from "@/components/decks/ReportButton";
 
 export const revalidate = 0;
@@ -23,12 +24,15 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
   const [{ id }, session] = await Promise.all([params, auth()]);
   const deck = await prisma.deck.findFirst({
     where: { id, visibility: "PUBLIC", status: "APPROVED" },
-    select: { title: true, description: true, tags: true, ownerId: true, owner: { select: { role: true, teacherVerifiedAt: true } }, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
+    select: { title: true, description: true, tags: true, ownerId: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { likes: true } }, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
   });
   if (!deck) notFound();
 
   const cards = await Promise.all(deck.cards.map(faceCard));
   const own = deck.ownerId === session?.user?.id;
+  const liked = session?.user?.id ? (await prisma.deckLike.count({ where: { deckId: id, userId: session.user.id } })) > 0 : false;
+  // Recording for the teacher is offered on a verified teacher's deck, to students.
+  const canRecord = session?.user?.role === "STUDENT" && deck.owner.role === "TEACHER" && Boolean(deck.owner.teacherVerifiedAt);
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-8 pt-3 sm:px-6 sm:pt-6">
@@ -42,6 +46,7 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
       </div>
       <div className="mt-4 flex flex-wrap items-start gap-3">
         <CopyDeckButton deckId={id} signedIn />
+        <LikeButton deckId={id} likes={deck._count.likes} liked={liked} disabled={own} />
         {own ? null : <ReportButton deckId={id} />}
       </div>
       <p className="mt-2 text-xs text-ink-muted">A copy is private to you. Changes you make to it do not affect the original.</p>
@@ -53,6 +58,11 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
               <CardFront card={c} />
               <hr className="border-border" />
               <CardBack card={c} />
+              {canRecord ? (
+                <Link href={`/library/${id}/practice/${c.id}`} className="inline-flex h-9 w-fit items-center rounded-lg border border-border-strong px-3 text-sm text-ink hover:bg-hover">
+                  🎙 Record yourself — the teacher will audit it
+                </Link>
+              ) : null}
             </Card>
           </li>
         ))}

@@ -15,10 +15,17 @@ import { Card } from "@/components/ui/Card";
 
 export const revalidate = 0;
 
-export default async function LibraryPage({ searchParams }: { searchParams: Promise<{ q?: string; tag?: string }> }) {
+const SORTS = [
+  { value: "new", label: "Newest" },
+  { value: "liked", label: "Most liked" },
+  { value: "copied", label: "Most copied" },
+] as const;
+
+export default async function LibraryPage({ searchParams }: { searchParams: Promise<{ q?: string; tag?: string; sort?: string }> }) {
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().slice(0, 60);
   const tag = (sp.tag ?? "").trim().toLowerCase().slice(0, 24);
+  const sort = SORTS.some((x) => x.value === sp.sort) ? (sp.sort as string) : "new";
 
   const decks = await prisma.deck.findMany({
     where: {
@@ -29,9 +36,10 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
         ? { OR: [{ title: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }, { tags: { has: q.toLowerCase() } }] }
         : {}),
     },
-    orderBy: { reviewedAt: "desc" },
+    // Newest is the tiebreak, so equal counts do not shuffle between loads.
+    orderBy: sort === "liked" ? [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }] : sort === "copied" ? [{ copyCount: "desc" }, { reviewedAt: "desc" }] : [{ reviewedAt: "desc" }],
     take: 30,
-    select: { id: true, title: true, description: true, tags: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true } } },
+    select: { id: true, title: true, description: true, tags: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true, likes: true } } },
   });
 
   return (
@@ -45,8 +53,22 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
       <form action="/library" className="relative mt-3">
         <label htmlFor="lib-search" className="sr-only">Search the library</label>
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist" aria-hidden="true" />
+        {tag ? <input type="hidden" name="tag" value={tag} /> : null}
+        <input type="hidden" name="sort" value={sort} />
         <input id="lib-search" name="q" type="search" defaultValue={q} placeholder="Search decks or tags" className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-mist focus:border-accent focus:outline-none" />
       </form>
+      <nav aria-label="Sort decks" className="mt-2 flex gap-1.5">
+        {SORTS.map((x) => (
+          <Link
+            key={x.value}
+            href={`/library?${new URLSearchParams({ ...(q ? { q } : {}), ...(tag ? { tag } : {}), sort: x.value })}`}
+            aria-current={x.value === sort ? "page" : undefined}
+            className={x.value === sort ? "rounded-full bg-accent px-3 py-1 text-[13px] font-medium text-on-accent" : "rounded-full border border-border-strong px-3 py-1 text-[13px] text-ink hover:bg-hover"}
+          >
+            {x.label}
+          </Link>
+        ))}
+      </nav>
       {tag ? (
         <p className="mt-2 text-sm text-ink-muted">
           Tag: <Badge variant="accent">{tag}</Badge> <Link href="/library" className="ml-1 text-accent hover:underline">clear</Link>
@@ -71,7 +93,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
                     {d.description ? <span className="block truncate text-xs text-ink-muted">{d.description}</span> : null}
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-1">
-                    <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
+                    <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards · ♥ {d._count.likes}</span>
                     {d.owner.role === "TEACHER" && d.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}
                   </span>
                 </div>

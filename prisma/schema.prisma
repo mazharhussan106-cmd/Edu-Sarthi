@@ -99,6 +99,8 @@ model User {
   reviewedDecks       Deck[]               @relation("DeckReviewer")
   words               Word[]               @relation("WordOwner")
   deckReports         DeckReport[]
+  deckLikes           DeckLike[]
+  assignedSubmissions Submission[]         @relation("AssignedSubmissions")
 
   createdAt DateTime @default(now())
 }
@@ -124,6 +126,11 @@ model Submission {
   claimedById String?
   claimedAt   DateTime?
 
+  /// Set when the recording answers a card in a verified teacher's library
+  /// deck: only that teacher (and admins) see it in the queue. Null means the
+  /// general queue, which every teacher can claim from.
+  assignedTeacherId String?
+
   /// Set when the recording was made from a flashcard ("Record yourself").
   wordId String?
   word   Word?   @relation(fields: [wordId], references: [id], onDelete: SetNull)
@@ -141,20 +148,24 @@ model Submission {
   /// its audit stay; only the audio or video is gone.
   mediaPurgedAt DateTime?
 
-  student   User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+  student         User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
   // No cascade: deleting an exercise students have already submitted against
   // should fail loudly, not silently erase their work.
-  exercise  Exercise  @relation(fields: [exerciseId], references: [id])
+  exercise        Exercise  @relation(fields: [exerciseId], references: [id])
   // SetNull, not Cascade: a deleted teacher account releases the claim rather
   // than deleting the student's submission.
-  claimedBy User?     @relation("ClaimedSubmissions", fields: [claimedById], references: [id], onDelete: SetNull)
-  feedback  Feedback?
+  claimedBy       User?     @relation("ClaimedSubmissions", fields: [claimedById], references: [id], onDelete: SetNull)
+  // SetNull: if the deck's teacher account is deleted the recording falls back
+  // to the general queue instead of vanishing.
+  assignedTeacher User?     @relation("AssignedSubmissions", fields: [assignedTeacherId], references: [id], onDelete: SetNull)
+  feedback        Feedback?
 
   createdAt DateTime @default(now())
 
   @@index([studentId, createdAt])
   @@index([status, createdAt]) // the teacher queue reads on this
   @@index([claimedById, status])
+  @@index([assignedTeacherId, status])
 }
 
 /// A teacher's audit of one submission. One-to-one with Submission.
@@ -457,6 +468,9 @@ model Deck {
   reviewedAt   DateTime?
   /// Reserved for the later Institute area. Unused and has no relation yet.
   instituteId  String?
+  /// How many times readers copied it from the library, for sorting. Counted,
+  /// not derived, because copies are independent decks the owner cannot see.
+  copyCount    Int            @default(0)
 
   // Cascade: deleting an account removes its decks. Cards made by that user
   // inside them go with the deck.
@@ -465,6 +479,7 @@ model Deck {
   reviewer User?        @relation("DeckReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
   cards    Word[]
   reports  DeckReport[]
+  likes    DeckLike[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -503,4 +518,19 @@ model DeckReport {
 
   @@unique([deckId, reporterId])
   @@index([resolvedAt, createdAt])
+}
+
+/// One like per person per deck. Likes only matter on published decks, but the
+/// row is kept if a deck is pulled and later republished.
+model DeckLike {
+  id     String @id @default(cuid())
+  deckId String
+  userId String
+
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([deckId, userId])
 }

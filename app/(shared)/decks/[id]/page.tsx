@@ -44,6 +44,13 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
     ),
   ]);
   const studyable = counts.due + counts.fresh;
+  // Learners' recordings on this deck's cards, for the teacher who will audit them.
+  const [waiting, audited] = staff
+    ? await Promise.all([
+        prisma.submission.count({ where: { assignedTeacherId: userId, word: { deckId: id }, status: { in: ["PENDING", "IN_REVIEW"] } } }),
+        prisma.submission.count({ where: { assignedTeacherId: userId, word: { deckId: id }, status: "REVIEWED" } }),
+      ])
+    : [0, 0];
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
@@ -62,6 +69,15 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
           <span className="text-sm text-ink-muted">{counts.total === 0 ? "Add a card to start." : "Nothing due. Come back later."}</span>
         )}
       </Card>
+
+      {staff ? (
+        <Card className="mt-3 flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-ink-muted">
+            Learner recordings on this deck: <b className="font-mono text-ink">{waiting}</b> waiting · <b className="font-mono text-ink">{audited}</b> audited
+          </p>
+          <Link href="/queue" className="text-sm font-medium text-accent hover:underline">Open the review queue</Link>
+        </Card>
+      ) : null}
 
       <section className="mt-6" aria-labelledby="cards-h">
         <h2 id="cards-h" className="font-display text-base font-bold text-ink">Cards</h2>

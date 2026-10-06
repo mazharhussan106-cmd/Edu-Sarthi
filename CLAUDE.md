@@ -12,6 +12,15 @@ Modelled on TypeSarthi (typingsarthi.com) — same stack, same patterns, new
 niche. When something is described as "same as TypeSarthi", port it verbatim.
 Do not redesign it.
 
+## Read first — this is how separate chats stay connected
+
+Every chat (session) starts with an empty memory. Chats do not share what was said; they share only what is **in the repository**. So before building anything:
+
+1. Read `docs/flashcard-library-plan.md` — what the flashcard library is, what is built, what was decided, what is still open.
+2. For anything about flashcards, look at the real card first: `components/flashcards/` (CardSurface, CardFront, CardUsage, CardPractice, CardControls, FlashcardDeck) and the mockups `docs/flashcard-v2-cards.png`, `docs/flashcard-built.png`. **Every kind of card (built-in words, student decks, Excel-imported Python/SQL cards) must use that same card — framed with the navy header band, three sides that turn, fit-to-screen text, and the Known / Unknown / Remark bar. Do not invent a new card look.**
+3. Before finishing a chat, write what changed and what is undecided into the plan doc (or a new file in `docs/`) and push it. A decision that lives only in a chat is lost.
+4. Chats work on their own branches (`claude/<name>`). Work reaches the other chats only after it is merged into the main branch.
+
 ## Stack
 
 Next.js 16 (App Router, Turbopack) · TypeScript strict · Tailwind v4 ·

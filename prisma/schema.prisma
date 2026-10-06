@@ -92,6 +92,9 @@ model User {
   passwordResetTokens PasswordResetToken[]
   adminActions        AdminLog[]
   cardStates          CardState[]
+  decks               Deck[]               @relation("DeckOwner")
+  reviewedDecks       Deck[]               @relation("DeckReviewer")
+  words               Word[]               @relation("WordOwner")
 
   createdAt DateTime @default(now())
 }
@@ -109,7 +112,7 @@ model Submission {
   mediaKind   MediaKind
   /// Null for images. Drives the player UI and the timestamp validation on notes.
   durationSec Int?
-  transcript  String?          @db.Text
+  transcript  String?   @db.Text
 
   /// Who is currently reviewing this. Without it, two teachers can both open a
   /// PENDING submission, both write a full audit, and the second Feedback
@@ -118,8 +121,8 @@ model Submission {
   claimedAt   DateTime?
 
   /// Set when the recording was made from a flashcard ("Record yourself").
-  wordId       String?
-  word         Word?         @relation(fields: [wordId], references: [id], onDelete: SetNull)
+  wordId String?
+  word   Word?   @relation(fields: [wordId], references: [id], onDelete: SetNull)
 
   /// Set only when status is RETURNED.
   returnReason ReturnReason?
@@ -196,12 +199,12 @@ model Module {
 }
 
 model Exercise {
-  id       String @id @default(cuid())
-  moduleId String
-  title    String
-  prompt   String @db.Text
+  id         String    @id @default(cuid())
+  moduleId   String
+  title      String
+  prompt     String    @db.Text
   /// What the student is expected to submit for this exercise.
-  expects  MediaKind
+  expects    MediaKind
   /// Soft guidance shown in the UI, and validated on upload.
   minSeconds Int?
   maxSeconds Int?
@@ -224,7 +227,7 @@ model Enrollment {
 model VerificationCode {
   id String @id @default(cuid())
 
-  userId String
+  userId     String
   /// Hashed, never stored raw. A leaked database read should not hand over a
   /// working code for an account the attacker already knows the password to.
   codeHash   String
@@ -244,7 +247,7 @@ model VerificationCode {
 model PasswordResetToken {
   id String @id @default(cuid())
 
-  userId String
+  userId    String
   /// The raw token only ever exists in the email. Storing the hash means a
   /// database dump cannot be replayed into account takeover.
   tokenHash String    @unique
@@ -344,26 +347,36 @@ enum CardKind {
 /// 56-column WordMaster sheet lives in `details`, keyed as in words.json, so a
 /// new column in the sheet needs no migration.
 model Word {
-  id         String   @id @default(cuid())
-  kind       CardKind @default(WORD)
+  id           String   @id @default(cuid())
+  kind         CardKind @default(WORD)
   /// The sheet's own ID, e.g. "VRB-006". Stable across re-imports.
-  code       String   @unique
-  serial     Int
-  text       String
+  code         String   @unique
+  serial       Int
+  text         String
   partOfSpeech String?
-  category   String?
-  cefr       String?
-  importance Int?
-  details    Json
+  category     String?
+  cefr         String?
+  importance   Int?
+  details      Json
 
   /// Empty until media is supplied; the card shows a placeholder.
-  imageUrl   String?
-  audioUrl   String?
-  videoUrl   String?
+  imageUrl String?
+  audioUrl String?
+  videoUrl String?
+
+  /// Null for the built-in cards imported from the sheet — they form the
+  /// official deck, so every student's existing progress stays valid.
+  deckId  String?
+  /// Null for built-in cards. Set to the creator for user-made cards.
+  ownerId String?
+  deck    Deck?   @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  owner   User?   @relation("WordOwner", fields: [ownerId], references: [id], onDelete: SetNull)
 
   states      CardState[]
   submissions Submission[]
 
+  @@index([deckId])
+  @@index([ownerId])
   @@index([kind, serial])
   @@index([text])
 }
@@ -377,30 +390,80 @@ enum Recall {
 /// One student's progress on one card: known or not, how well, when it is
 /// next due, and their remarks. Created the first time they mark the card.
 model CardState {
-  id        String   @id @default(cuid())
-  userId    String
-  wordId    String
+  id     String @id @default(cuid())
+  userId String
+  wordId String
 
-  known     Boolean  @default(false)
-  recall    Recall?
+  known          Boolean   @default(false)
+  recall         Recall?
   /// Index into the review ladder (1, 3, 7, 15, 30, 60 days).
-  stage     Int      @default(0)
-  dueAt     DateTime
-  reviews   Int      @default(0)
+  stage          Int       @default(0)
+  dueAt          DateTime
+  reviews        Int       @default(0)
   lastReviewedAt DateTime?
   /// When the student first saw and marked this card; counts today's new cards.
-  createdAt DateTime @default(now())
+  createdAt      DateTime  @default(now())
 
   // Remarks
-  confident  Boolean @default(false)
-  important  Boolean @default(false)
-  favourite  Boolean @default(false)
-  doubt      Boolean @default(false)
-  note       String?
+  confident Boolean @default(false)
+  important Boolean @default(false)
+  favourite Boolean @default(false)
+  doubt     Boolean @default(false)
+  note      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
 
   @@unique([userId, wordId])
   @@index([userId, dueAt])
+}
+
+/// Who may see a deck. PRIVATE is the default so nothing is shared by accident.
+enum DeckVisibility {
+  PRIVATE // owner only
+  LINK // anyone holding the share link, view-only
+  PUBLIC // listed in the library — only once APPROVED
+}
+
+/// Where a deck is in the admin review. Only a deck that asks to go PUBLIC
+/// enters PENDING_REVIEW; private and link-shared decks stay DRAFT.
+enum DeckStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+/// A collection of cards made by one user. Cards with no deck are the
+/// built-in word list and are not represented here.
+model Deck {
+  id           String         @id @default(cuid())
+  ownerId      String
+  title        String
+  description  String?        @db.Text
+  tags         String[]
+  visibility   DeckVisibility @default(PRIVATE)
+  /// Random, unguessable. Set only while visibility is LINK; clearing it
+  /// revokes the link.
+  shareToken   String?        @unique
+  status       DeckStatus     @default(DRAFT)
+  /// Shown to the owner when status is REJECTED, so they know what to fix.
+  rejectReason String?        @db.Text
+  reviewedById String?
+  reviewedAt   DateTime?
+  /// Reserved for the later Institute area. Unused and has no relation yet.
+  instituteId  String?
+
+  // Cascade: deleting an account removes its decks. Cards made by that user
+  // inside them go with the deck.
+  owner    User   @relation("DeckOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  // SetNull: a deleted admin account must not delete the decks it approved.
+  reviewer User?  @relation("DeckReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  cards    Word[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId, createdAt])
+  @@index([visibility, status]) // the library and the review queue read on this
 }

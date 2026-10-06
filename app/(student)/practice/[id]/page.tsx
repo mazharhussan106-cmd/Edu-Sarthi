@@ -38,11 +38,13 @@ export default async function PracticePage({
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   // Arriving from a flashcard's "Record yourself": the recording is about
   // this word, and the teacher sees which one.
-  const word = sp.word
-    ? await prisma.word.findUnique({ where: { code: sp.word }, select: { id: true, code: true, text: true, details: true } })
-    : null;
   const session = await auth();
   const studentId = session?.user?.id;
+  // Built-in cards only: a student-made card's code must not open its text
+  // for anyone who guesses or is sent the link.
+  const word = sp.word
+    ? await prisma.word.findFirst({ where: { code: sp.word, deckId: null }, select: { id: true, code: true, text: true, details: true } })
+    : null;
 
   const [exercise, previous] = await Promise.all([
     prisma.exercise.findUnique({

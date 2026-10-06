@@ -16,7 +16,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
-import { rm, stat } from "fs/promises";
+import { copyFile, mkdir, rm, stat } from "fs/promises";
 import path from "path";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -191,5 +191,37 @@ export async function removeObjects(keys: readonly string[]): Promise<void> {
     await client().storage.from(BUCKET).remove(real);
   } catch {
     console.error("Could not delete some stored files during account deletion");
+  }
+}
+
+/// Copies a stored file to a new key owned by someone else, for "Copy to my
+/// decks". Copied rather than shared by key: if the original owner deletes
+/// their card, the copy must keep working.
+///
+/// Returns the new key, or null on any failure — a copied deck with one
+/// missing picture is better than no copy at all.
+export async function copyObject(fromKey: string, toUserId: string): Promise<string | null> {
+  if (!fromKey || fromKey.startsWith("/") || fromKey.startsWith("http")) return fromKey || null;
+  const name = fromKey.split("/").pop() ?? "file";
+  const toKey = `${toUserId}/${randomUUID()}-${name.replace(/^[0-9a-f-]{36}-/, "")}`;
+
+  if (LOCAL_STORAGE) {
+    const from = localPath(fromKey);
+    const to = localPath(toKey);
+    if (!from || !to) return null;
+    try {
+      await mkdir(path.dirname(to), { recursive: true });
+      await copyFile(from, to);
+      return toKey;
+    } catch {
+      return null;
+    }
+  }
+
+  try {
+    const { error } = await client().storage.from(BUCKET).copy(fromKey, toKey);
+    return error ? null : toKey;
+  } catch {
+    return null;
   }
 }

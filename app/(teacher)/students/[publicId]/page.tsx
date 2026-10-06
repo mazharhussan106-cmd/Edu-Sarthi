@@ -53,7 +53,8 @@ export default async function DossierPage({
       publicId: true,
       // Words the student marked "Doubt — ask teacher" on a flashcard.
       cardStates: {
-        where: { doubt: true },
+        // Built-in cards only: a student's own deck is private to them.
+        where: { doubt: true, word: { deckId: null } },
         orderBy: { lastReviewedAt: "desc" },
         take: 20,
         select: { note: true, word: { select: { text: true, code: true } } },

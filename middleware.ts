@@ -18,6 +18,8 @@ const { auth } = NextAuth(authConfig);
 // Reachable signed out. Prefix match, so /legal/privacy and
 // /reset-password/<token> are covered by their parents.
 const PUBLIC_PREFIXES = [
+  // Link-shared flashcard decks: possession of the link is the permission.
+  "/d",
   "/login",
   "/register",
   "/forgot-password",

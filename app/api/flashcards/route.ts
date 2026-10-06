@@ -10,6 +10,7 @@ import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { canStudyWord } from "@/lib/decks";
 import { nextReview } from "@/lib/srs";
 
 const schema = z.discriminatedUnion("action", [
@@ -51,8 +52,11 @@ export async function POST(req: Request) {
   }
   const a = parsed.data;
 
-  const word = await prisma.word.findUnique({ where: { id: a.wordId }, select: { id: true } });
-  if (!word) return NextResponse.json({ error: "That card no longer exists." }, { status: 404 });
+  // Built-in cards and the student's own only. A card in someone else's deck
+  // answers "no longer exists" so its existence is not revealed.
+  if (!(await canStudyWord(userId, a.wordId))) {
+    return NextResponse.json({ error: "That card no longer exists." }, { status: 404 });
+  }
 
   const key = { userId_wordId: { userId, wordId: a.wordId } };
 

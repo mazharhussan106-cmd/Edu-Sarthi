@@ -10,6 +10,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { mediaKeys } from "@/lib/decks";
 import { removeObjects } from "@/lib/storage";
 import { deleteAccountSchema } from "@/lib/validations";
 import { logAdmin } from "@/lib/admin";
@@ -105,13 +106,15 @@ export async function DELETE(req: Request) {
   }
 
   const keys = await prisma.submission.findMany({ where: { studentId: userId }, select: { mediaUrl: true } });
+  // Pictures and recordings on the student's own flashcards.
+  const cardMedia = await prisma.word.findMany({ where: { ownerId: userId }, select: { imageUrl: true, audioUrl: true } });
   const me = await prisma.user.findUnique({ where: { id: userId }, select: { publicId: true } });
 
   // Rows first, files second. If storage fails the account is still gone and
   // the orphaned files are unreachable (no row points at them); the other
   // order could leave a live account whose recordings have vanished.
   await prisma.user.delete({ where: { id: userId } });
-  await removeObjects(keys.map((k) => k.mediaUrl));
+  await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia)]);
   // Kept as the record that an erasure request was carried out. Only the
   // student ID is stored — the email is exactly what was asked to be erased.
   await logAdmin(null, "Student deleted own account", "user", me?.publicId ?? null, {

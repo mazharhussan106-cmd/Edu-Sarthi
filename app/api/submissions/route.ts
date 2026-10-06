@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
   const { exerciseId, key, contentType, durationSec, retryOfId, wordId } = parsed.data;
 
-  if (wordId && !(await prisma.word.findUnique({ where: { id: wordId }, select: { id: true } }))) {
+  if (wordId && !(await prisma.word.findFirst({ where: { id: wordId, deckId: null }, select: { id: true } }))) {
     return NextResponse.json({ error: "That flashcard no longer exists. Go back and open it again." }, { status: 400 });
   }
 

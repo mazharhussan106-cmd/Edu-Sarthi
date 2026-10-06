@@ -4,6 +4,10 @@
 // sheet's order, up to NEW_PER_DAY a day. When both run out the session is
 // done for today; "keep going" lifts the new-card limit on request.
 //
+// Only built-in cards (deckId null) count here. Student-made cards are Word
+// rows too, and without this filter one student's private card would show up
+// in another student's daily session and inflate the totals.
+//
 // Days are counted in India time, as everywhere else in the app.
 //
 // `skip` is the list of cards the student passed over with › this session.
@@ -40,13 +44,13 @@ export const WORD_SELECT = {
 export async function deckCounts(userId: string, kind: CardKind) {
   const now = new Date();
   const [due, newToday, known, total, tagged] = await Promise.all([
-    prisma.cardState.count({ where: { userId, dueAt: { lte: now }, word: { kind } } }),
-    prisma.cardState.count({ where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind } } }),
-    prisma.cardState.count({ where: { userId, known: true, word: { kind } } }),
-    prisma.word.count({ where: { kind } }),
+    prisma.cardState.count({ where: { userId, dueAt: { lte: now }, word: { kind, deckId: null } } }),
+    prisma.cardState.count({ where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind, deckId: null } } }),
+    prisma.cardState.count({ where: { userId, known: true, word: { kind, deckId: null } } }),
+    prisma.word.count({ where: { kind, deckId: null } }),
     prisma.cardState.groupBy({
       by: ["important", "favourite", "doubt", "confident"],
-      where: { userId, word: { kind } },
+      where: { userId, word: { kind, deckId: null } },
       _count: true,
     }),
   ]);
@@ -70,7 +74,7 @@ export async function nextCardId(
   const now = new Date();
   const notSkipped = skip.length ? { code: { notIn: skip } } : {};
   const due = await prisma.cardState.findFirst({
-    where: { userId, dueAt: { lte: now }, word: { kind, ...notSkipped } },
+    where: { userId, dueAt: { lte: now }, word: { kind, deckId: null, ...notSkipped } },
     orderBy: { dueAt: "asc" },
     select: { wordId: true },
   });
@@ -78,13 +82,13 @@ export async function nextCardId(
 
   if (!extra) {
     const newToday = await prisma.cardState.count({
-      where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind } },
+      where: { userId, createdAt: { gte: startOfTodayIst(now) }, word: { kind, deckId: null } },
     });
     if (newToday >= NEW_PER_DAY) return null;
   }
 
   const fresh = await prisma.word.findFirst({
-    where: { kind, states: { none: { userId } }, ...notSkipped },
+    where: { kind, deckId: null, states: { none: { userId } }, ...notSkipped },
     orderBy: { serial: "asc" },
     select: { id: true },
   });

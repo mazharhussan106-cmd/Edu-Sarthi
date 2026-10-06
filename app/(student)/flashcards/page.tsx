@@ -74,6 +74,7 @@ export default async function FlashcardsPage({
     const results = await prisma.word.findMany({
       where: {
         kind: k.kind,
+        deckId: null,
         ...(q
           ? { OR: [{ text: { contains: q, mode: "insensitive" } }, { code: { equals: q.toUpperCase() } }] }
           : { states: { some: { userId, [list!]: true } } }),
@@ -112,7 +113,7 @@ export default async function FlashcardsPage({
     );
   } else {
     const byCode = sp.card
-      ? await prisma.word.findUnique({ where: { code: sp.card }, select: { id: true, kind: true } })
+      ? await prisma.word.findFirst({ where: { code: sp.card, deckId: null }, select: { id: true, kind: true } })
       : null;
     const id = byCode?.id ?? (await nextCardId(userId, k.kind, sp.more === "1", skip));
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
@@ -212,6 +213,12 @@ export default async function FlashcardsPage({
         </nav>
         {/* After the card types and before the lists, where the owner placed
             it. On a narrow phone the row scrolls sideways to reach it. */}
+        <Link
+          href="/decks"
+          className="shrink-0 rounded-full border border-border-strong px-3 py-1 text-[13px] font-medium text-ink hover:bg-hover"
+        >
+          📚 My decks
+        </Link>
         {skip.length ? (
           <Link
             href={sp.more === "1" ? `${base}&more=1` : base}

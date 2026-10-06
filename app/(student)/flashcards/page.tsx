@@ -219,6 +219,12 @@ export default async function FlashcardsPage({
         >
           📚 My decks
         </Link>
+        <Link
+          href="/library"
+          className="shrink-0 rounded-full border border-border-strong px-3 py-1 text-[13px] font-medium text-ink hover:bg-hover"
+        >
+          🌐 Library
+        </Link>
         {skip.length ? (
           <Link
             href={sp.more === "1" ? `${base}&more=1` : base}

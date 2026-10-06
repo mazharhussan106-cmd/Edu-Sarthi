@@ -95,6 +95,7 @@ model User {
   decks               Deck[]               @relation("DeckOwner")
   reviewedDecks       Deck[]               @relation("DeckReviewer")
   words               Word[]               @relation("WordOwner")
+  deckReports         DeckReport[]
 
   createdAt DateTime @default(now())
 }
@@ -456,14 +457,47 @@ model Deck {
 
   // Cascade: deleting an account removes its decks. Cards made by that user
   // inside them go with the deck.
-  owner    User   @relation("DeckOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  owner    User         @relation("DeckOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   // SetNull: a deleted admin account must not delete the decks it approved.
-  reviewer User?  @relation("DeckReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewer User?        @relation("DeckReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
   cards    Word[]
+  reports  DeckReport[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([ownerId, createdAt])
   @@index([visibility, status]) // the library and the review queue read on this
+}
+
+enum ReportReason {
+  INAPPROPRIATE
+  INCORRECT
+  COPYRIGHT
+  SPAM
+  OTHER
+}
+
+/// A reader's report on a public deck. One per person per deck, so a single
+/// account cannot hide a deck by reporting it repeatedly.
+model DeckReport {
+  id           String       @id @default(cuid())
+  deckId       String
+  reporterId   String
+  reason       ReportReason
+  note         String?      @db.Text
+  /// Set when an admin dismisses the report or takes the deck down. Open
+  /// reports (null) are what the admin queue lists.
+  resolvedAt   DateTime?
+  resolvedById String?
+
+  // Cascade: reports about a deleted deck have nothing left to point at.
+  deck     Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  // Cascade: a deleted account's reports go with it.
+  reporter User @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([deckId, reporterId])
+  @@index([resolvedAt, createdAt])
 }

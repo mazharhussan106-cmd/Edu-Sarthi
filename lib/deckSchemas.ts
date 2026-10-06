@@ -16,6 +16,10 @@ export const DECK_LIMITS = {
   imageBytes: 2 * 1024 * 1024,
   audioBytes: 2 * 1024 * 1024,
   audioSeconds: 60,
+  /// A public deck with two cards is not worth an admin's review.
+  minCardsToPublish: 3,
+  /// Distinct open reports that pull a public deck back to review on their own.
+  reportsToHide: 3,
 } as const;
 
 const tag = z
@@ -37,7 +41,24 @@ export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("delete"), id: z.string().min(1) }),
   z.object({ action: z.literal("share"), id: z.string().min(1), on: z.boolean() }),
   z.object({ action: z.literal("copy"), token: z.string().min(8).max(64) }),
+  z.object({ action: z.literal("copyPublic"), deckId: z.string().min(1) }),
+  z.object({ action: z.literal("publish"), id: z.string().min(1) }),
+  z.object({ action: z.literal("unpublish"), id: z.string().min(1) }),
 ]);
+
+export const reportSchema = z.object({
+  deckId: z.string().min(1),
+  reason: z.enum(["INAPPROPRIATE", "INCORRECT", "COPYRIGHT", "SPAM", "OTHER"], "Choose a reason"),
+  note: z.string().trim().max(500, "Keep the note under 500 characters").default(""),
+});
+
+export const REPORT_REASONS = {
+  INAPPROPRIATE: "Inappropriate or offensive",
+  INCORRECT: "Wrong or misleading",
+  COPYRIGHT: "Copied from someone else",
+  SPAM: "Spam or advertising",
+  OTHER: "Something else",
+} as const;
 
 const cardFields = {
   front: z.string().trim().min(1, "Write the front of the card").max(200, "Keep the front under 200 characters"),

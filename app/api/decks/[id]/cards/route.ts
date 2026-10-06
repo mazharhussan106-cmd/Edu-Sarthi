@@ -13,6 +13,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { newCardCode, ownDeck, readJson, wordData } from "@/lib/decks";
+import { sendBackIfPublished } from "@/lib/deckReview";
 import { DECK_LIMITS, cardActionSchema } from "@/lib/deckSchemas";
 import { objectExists, removeObjects } from "@/lib/storage";
 
@@ -40,6 +41,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!card) return fail("That card no longer exists.", 404);
     await prisma.word.deleteMany({ where: { id: a.cardId, ...mine } });
     await removeObjects([card.imageUrl, card.audioUrl].filter((k): k is string => Boolean(k)));
+    await sendBackIfPublished(deckId);
     return NextResponse.json({ ok: true });
   }
 
@@ -59,6 +61,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       data: { ...wordData(a), code: newCardCode(), serial: (last?.serial ?? 0) + 1, kind: "WORD", deckId, ownerId: userId },
       select: { id: true },
     });
+    await sendBackIfPublished(deckId);
     return NextResponse.json({ ok: true, id: card.id });
   }
 
@@ -69,5 +72,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     current!.audioUrl && current!.audioUrl !== a.audioKey ? current!.audioUrl : null,
   ].filter((k): k is string => Boolean(k));
   await removeObjects(dropped);
+  await sendBackIfPublished(deckId);
   return NextResponse.json({ ok: true });
 }

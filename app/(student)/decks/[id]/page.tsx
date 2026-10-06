@@ -18,6 +18,7 @@ import { CardEditor } from "@/components/decks/CardEditor";
 import { CardRow } from "@/components/decks/CardRow";
 import { DeckActions } from "@/components/decks/DeckActions";
 import { DeckForm } from "@/components/decks/DeckForm";
+import { PublishPanel } from "@/components/decks/PublishPanel";
 
 export const revalidate = 0;
 
@@ -27,7 +28,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
   const deck = await prisma.deck.findFirst({
     where: { id, ownerId: userId },
-    select: { id: true, title: true, description: true, tags: true, shareToken: true, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
+    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
   });
   if (!deck) notFound();
 
@@ -87,6 +88,11 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
       <section className="mt-6" aria-labelledby="det-h">
         <h2 id="det-h" className="font-display text-base font-bold text-ink">Deck details</h2>
         <Card className="mt-2"><DeckForm deck={{ id, title: deck.title, description: deck.description, tags: deck.tags }} /></Card>
+      </section>
+
+      <section className="mt-6" aria-labelledby="pub-h">
+        <h2 id="pub-h" className="sr-only">Public library</h2>
+        <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} /></Card>
       </section>
 
       <section className="mt-6" aria-labelledby="share-h">

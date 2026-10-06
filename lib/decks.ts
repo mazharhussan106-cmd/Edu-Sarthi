@@ -121,15 +121,15 @@ export async function deleteDeck(userId: string, id: string): Promise<boolean> {
   return true;
 }
 
-/// Copies a link-shared deck into the user's own account as a private deck.
+/// Copies a deck the caller may read (by link or from the library) into the user's own account as a private deck.
 /// Files are copied before the transaction — they are slow and not atomic —
 /// so the transaction only holds the cheap row inserts.
-export async function copySharedDeck(userId: string, token: string): Promise<{ id: string } | { error: string }> {
+export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Promise<{ id: string } | { error: string }> {
   const source = await prisma.deck.findFirst({
-    where: { shareToken: token, visibility: "LINK" },
+    where,
     select: { id: true, title: true, description: true, tags: true, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
   });
-  if (!source) return { error: "This link no longer works. Ask the owner to share it again." };
+  if (!source) return { error: "This deck is no longer available. Go back and pick another." };
   if ((await prisma.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) {
     return { error: `You have ${DECK_LIMITS.decksPerUser} decks already. Delete one you no longer need, then copy again.` };
   }

@@ -13,7 +13,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { callApi } from "@/components/decks/deckClient";
 
-export function CopyDeckButton({ token, signedIn }: { token: string; signedIn: boolean }) {
+/// A link copy sends the share token; a library copy sends the deck id.
+export function CopyDeckButton({ token, deckId, signedIn }: { token?: string; deckId?: string; signedIn: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +30,7 @@ export function CopyDeckButton({ token, signedIn }: { token: string; signedIn: b
   async function copy() {
     setBusy(true);
     setError(null);
-    const res = await callApi<{ id: string }>("/api/decks", { action: "copy", token });
+    const res = await callApi<{ id: string }>("/api/decks", token ? { action: "copy", token } : { action: "copyPublic", deckId });
     if (!res.ok) {
       setBusy(false);
       return setError(res.error);

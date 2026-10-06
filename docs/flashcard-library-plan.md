@@ -1,6 +1,8 @@
 # Flashcard Library — plan
 
-Status: **plan only, nothing built yet.** Approve phase by phase.
+Status: **Phases 1–4 are built and pushed. Phase 5 (Institute) is not built — it waits until after the first public release.**
+
+Before any of it works on the live site, run GitHub → Actions → **Database setup** → Run workflow. It adds the new tables and columns (all additive, no data is removed).
 
 ## Goal
 
@@ -23,7 +25,7 @@ revises cards with the spaced-repetition ladder that already exists.
 | Audio / images | Uploaded to Supabase Storage with size limits. |
 | Revision | Keep the current ladder (Day 1·3·7·15·30·60) and Known/Unknown + Hard/Medium/Easy. SM-2 is a possible later step, not part of this work. |
 | Institute | Planned, **not built** until after publish. Phase 1 only leaves a nullable column for it. |
-| Licence / credit | Undecided — decide later. No licence field in Phase 1. |
+| Licence / credit | Undecided — decide later. Library pages show no owner name until then. |
 
 ## What exists today (so we extend, not rebuild)
 
@@ -38,56 +40,53 @@ revises cards with the spaced-repetition ladder that already exists.
 
 ## Phases
 
-Each phase is one migration at most and is tested locally before pushing.
+### Phase 1 — Decks and ownership — DONE
 
-### Phase 1 — Decks and ownership (schema)
+- `Deck` model (owner, title, description, tags, visibility, share token, review status, reject reason, `instituteId` reserved and unused) and nullable `Word.deckId` / `Word.ownerId`.
+- Built-in cards keep `deckId = null`, so every student's existing progress is untouched.
 
-- New `Deck`: `id`, `ownerId`, `title`, `description`, `tags`,
-  `visibility` (`PRIVATE` | `LINK` | `PUBLIC`), `shareToken` (unique, nullable),
-  `status` (`DRAFT` | `PENDING_REVIEW` | `APPROVED` | `REJECTED`),
-  `rejectReason`, `reviewedById`, `reviewedAt`, `instituteId` (nullable,
-  unused for now), timestamps.
-- `Word` gets nullable `deckId` and `ownerId`.
-- **Data loss:** none. The migration only adds tables and nullable columns.
-  Existing cards keep `deckId = null` and are treated as the official built-in
-  deck, so every student's current progress is untouched.
-- A user reads a deck only if they own it, hold its share link, or it is
-  `PUBLIC` + `APPROVED`. Every query is scoped by the current user.
+### Phase 2 — Make your own deck — DONE
 
-### Phase 2 — Make your own deck (student)
+- My decks (`/decks`): create, rename, delete; limits of 20 decks per user and 500 cards per deck.
+- Cards: front, back, example, Markdown notes, picture (2 MB), audio record or upload (60 s). Media uploads on Save; files are cleaned up on card, deck and account delete.
+- Study your own decks on the existing Day 1·3·7·15·30·60 ladder.
+- Share by link (`/d/<token>`): view-only, works signed out, revocable; "Copy to my decks" makes a private copy (files are copied too).
+- Fixed: the built-in session, search, practice page and teacher dossier no longer see student-made cards.
 
-- "My decks" page: create, rename, delete a deck.
-- Card editor: front, back, optional image, optional audio recording,
-  Markdown/code in the body. Shared Zod schema client and server.
-- Private by default. "Share by link" generates a `shareToken`; viewers of the
-  link get a read-only deck and a "Copy to my decks" button.
-- Revision of own and copied decks reuses `CardState` and the ladder.
-- Limits: image ≈ 2 MB, audio ≈ 60 s. Loading states everywhere; built for slow phones.
+### Phase 3 — Public library and admin review — DONE
 
-### Phase 3 — Public library and admin review
+- Submit a deck (minimum 3 cards). It waits in the admin queue; nothing is public until approved.
+- Admin review page (`/admin/decks`): read every card, approve, or reject with a reason the owner sees. Every decision is logged.
+- Library (`/library`): search, tags, copy to my decks.
+- Report button. Three open reports pull a deck back to review on their own; admin can dismiss or take it down (link stops, reason shown to owner).
+- Editing a published deck sends it back to review.
 
-- "Make public" moves the deck to `PENDING_REVIEW`.
-- Admin console gets a review queue (alongside `content`): preview the deck,
-  approve, or reject with a reason the owner can read.
-- Every approve/reject writes an `AdminLog` row.
-- Library page: browse, search, tag filter, copy to my decks, **report** button
-  (reports go to the same admin queue). Like counts come later, not now.
-- Editing an approved public deck sends it back to `PENDING_REVIEW`, or the
-  review would be meaningless.
+### Phase 4 — Teacher decks — DONE
 
-### Phase 4 — Teacher decks (video, audio, audit section)
+- Teachers and admins get two extra card sections: a video link (YouTube or Google Drive only, stored as our own rebuilt embed address) and a Teacher's guide ("what to listen for"). Students never see these fields, and a student editing a copied teacher card cannot erase them.
+- Admin verifies a teacher (Users page, with a reason). An unverified teacher can build decks but cannot publish. Changing the role clears verification.
+- "Verified teacher" badge in the library.
+- Decks live in the shared shell, so teachers keep teacher navigation.
 
-- Teachers get the extra card sections: video (YouTube/Drive link, embed
-  only), audio upload, audit section.
-- Admin verifies a teacher before their decks can be published; a teacher deck
-  still goes through the Phase 3 queue.
-- Student cards never show these sections.
+### Added after Phase 4 — DONE
 
-### Phase 5 — Institute (plan only, do **not** build yet)
+- Likes (one per person) and sorting: Newest, Most liked, Most copied.
+- The owner is emailed when a deck is approved, rejected or taken down (needs `SENDGRID_API_KEY` in production); status badges on My decks.
+- Admin overview tile: decks to review and reported.
+- Learner recordings on a verified teacher's published deck: the student records on a card, the recording goes only to that deck's teacher (`Submission.assignedTeacherId`), who audits it with the usual rubric. The teacher's deck page shows waiting and audited counts.
 
-- Separate Institute area with its own admin and teachers, limited to that
-  institute. Will use `Deck.instituteId` and a new `Institute` model.
+### Phase 5 — Institute — NOT BUILT (plan only)
+
+- Separate Institute area with its own admin and teachers, limited to that institute. Will use `Deck.instituteId` and a new `Institute` model.
 - Built after the first public release.
+
+## Known gaps and things to watch
+
+- If a deck's teacher is suspended or demoted, recordings already assigned to them stay assigned; an admin reassigns them from Dispatch.
+- Abandoned uploads can leave orphan files in the bucket; a cleanup job is not built.
+- No in-app notifications (email and the status on My decks only); no per-card remarks (⭐❤️❓) in own decks; no search inside a deck.
+- None of the new screens have been opened in a browser or against the real Supabase bucket and SendGrid yet — do a full round by hand before announcing it.
+- Licence and credit for public decks are undecided; add a `LICENSE` file and a content policy before calling the library open source.
 
 ## Risks
 
@@ -111,4 +110,4 @@ Each phase is one migration at most and is tested locally before pushing.
 
 ## Next step
 
-Approve Phase 1. I will list the exact files and the migration, then build it.
+Run Database setup, test a full round on the live site (student deck → submit → admin approve → library → copy; teacher verify → deck with video → learner records → teacher audits), then decide the licence. Phase 5 after that.

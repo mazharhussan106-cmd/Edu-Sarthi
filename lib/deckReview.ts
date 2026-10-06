@@ -21,9 +21,14 @@ type Result = { ok: true } | { error: string };
 export async function publishDeck(userId: string, id: string): Promise<Result> {
   const deck = await prisma.deck.findFirst({
     where: { id, ownerId: userId },
-    select: { status: true, visibility: true, description: true, _count: { select: { cards: true } } },
+    select: { status: true, visibility: true, description: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true } } },
   });
   if (!deck) return { error: "That deck no longer exists." };
+  // A teacher's deck carries their name's weight in the library, so an admin
+  // vouches for the teacher first. Students and admins are not held to this.
+  if (deck.owner.role === "TEACHER" && !deck.owner.teacherVerifiedAt) {
+    return { error: "An admin needs to verify your teacher account before you can publish. Ask them to verify you, then submit again." };
+  }
   if (deck.visibility === "PUBLIC" && deck.status !== "REJECTED") return { error: "This deck is already waiting for review or published." };
   if (deck._count.cards < DECK_LIMITS.minCardsToPublish) {
     return { error: `Add at least ${DECK_LIMITS.minCardsToPublish} cards before submitting — it is the minimum for the public library.` };

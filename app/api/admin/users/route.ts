@@ -16,6 +16,7 @@ import { generatePublicId } from "@/lib/publicId";
 const reason = z.string().trim().min(3, "Give a reason — it goes in the admin log").max(300);
 const schema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("role"), userId: z.string().min(1), role: z.enum(["STUDENT", "TEACHER", "ADMIN"]), reason }),
+  z.object({ action: z.literal("verifyTeacher"), userId: z.string().min(1), on: z.boolean(), reason }),
   z.object({ action: z.literal("suspend"), userId: z.string().min(1), reason }),
   z.object({ action: z.literal("unsuspend"), userId: z.string().min(1), reason }),
 ]);
@@ -47,13 +48,22 @@ export async function POST(req: Request) {
     }
   }
 
+  if (a.action === "verifyTeacher") {
+    if (target.role !== "TEACHER") return NextResponse.json({ error: "Only a teacher account can be verified. Change the role first." }, { status: 400 });
+    await prisma.user.update({ where: { id: target.id }, data: { teacherVerifiedAt: a.on ? new Date() : null } });
+    await logAdmin(admin.id, a.on ? "Verified teacher" : "Removed teacher verification", "user", target.id, { email: target.email, reason: a.reason });
+    return NextResponse.json({ ok: true });
+  }
+
   if (a.action === "role") {
     if (a.role === target.role) return NextResponse.json({ ok: true });
     await prisma.user.update({
       where: { id: target.id },
       // A student-facing ID is needed if the account is (or becomes) a
       // student, and older rows may not have one yet.
-      data: { role: a.role, publicId: target.publicId ?? generatePublicId() },
+      // Verification belongs to the teacher role; leaving it clears it, so a
+      // later return to teaching needs a fresh look.
+      data: { role: a.role, publicId: target.publicId ?? generatePublicId(), ...(a.role === "TEACHER" ? {} : { teacherVerifiedAt: null }) },
     });
     await logAdmin(admin.id, `Changed role ${target.role} → ${a.role}`, "user", target.id, { email: target.email, reason: a.reason });
     return NextResponse.json({ ok: true });

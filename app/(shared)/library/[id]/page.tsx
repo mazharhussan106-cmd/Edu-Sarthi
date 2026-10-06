@@ -10,8 +10,7 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CARD_SELECT, cardText } from "@/lib/decks";
-import { resolveMediaUrl } from "@/lib/storage";
+import { CARD_SELECT, faceCard } from "@/lib/decks";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
@@ -24,19 +23,11 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
   const [{ id }, session] = await Promise.all([params, auth()]);
   const deck = await prisma.deck.findFirst({
     where: { id, visibility: "PUBLIC", status: "APPROVED" },
-    select: { title: true, description: true, tags: true, ownerId: true, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
+    select: { title: true, description: true, tags: true, ownerId: true, owner: { select: { role: true, teacherVerifiedAt: true } }, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
   });
   if (!deck) notFound();
 
-  const cards = await Promise.all(
-    deck.cards.map(async (c) => ({
-      id: c.id,
-      front: c.text,
-      ...cardText(c),
-      imageSrc: c.imageUrl ? await resolveMediaUrl(c.imageUrl) : null,
-      audioSrc: c.audioUrl ? await resolveMediaUrl(c.audioUrl) : null,
-    })),
-  );
+  const cards = await Promise.all(deck.cards.map(faceCard));
   const own = deck.ownerId === session?.user?.id;
 
   return (
@@ -46,6 +37,7 @@ export default async function LibraryDeckPage({ params }: { params: Promise<{ id
       {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{cards.length} cards</span>
+        {deck.owner.role === "TEACHER" && deck.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}
         {deck.tags.map((t) => <Link key={t} href={`/library?tag=${encodeURIComponent(t)}`}><Badge>{t}</Badge></Link>)}
       </div>
       <div className="mt-4 flex flex-wrap items-start gap-3">

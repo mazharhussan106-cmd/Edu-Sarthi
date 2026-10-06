@@ -11,8 +11,7 @@ import type { Metadata } from "next";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CARD_SELECT, cardText } from "@/lib/decks";
-import { resolveMediaUrl } from "@/lib/storage";
+import { CARD_SELECT, faceCard } from "@/lib/decks";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
@@ -30,15 +29,7 @@ export default async function SharedDeckPage({ params }: { params: Promise<{ tok
   });
   if (!deck) notFound();
 
-  const cards = await Promise.all(
-    deck.cards.map(async (c) => ({
-      id: c.id,
-      front: c.text,
-      ...cardText(c),
-      imageSrc: c.imageUrl ? await resolveMediaUrl(c.imageUrl) : null,
-      audioSrc: c.audioUrl ? await resolveMediaUrl(c.audioUrl) : null,
-    })),
-  );
+  const cards = await Promise.all(deck.cards.map(faceCard));
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-8 pt-4 sm:px-6 sm:pt-8">

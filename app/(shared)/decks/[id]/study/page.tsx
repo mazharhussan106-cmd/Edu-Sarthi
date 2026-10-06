@@ -10,8 +10,7 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CARD_SELECT, cardText, deckStudyCounts, nextDeckCardId } from "@/lib/decks";
-import { resolveMediaUrl } from "@/lib/storage";
+import { CARD_SELECT, deckStudyCounts, faceCard, nextDeckCardId } from "@/lib/decks";
 import { Card } from "@/components/ui/Card";
 import { StudyCard } from "@/components/decks/StudyCard";
 
@@ -40,12 +39,7 @@ export default async function StudyPage({ params }: { params: Promise<{ id: stri
           <StudyCard
             key={word.id}
             wordId={word.id}
-            card={{
-              front: word.text,
-              ...cardText(word),
-              imageSrc: word.imageUrl ? await resolveMediaUrl(word.imageUrl) : null,
-              audioSrc: word.audioUrl ? await resolveMediaUrl(word.audioUrl) : null,
-            }}
+            card={await faceCard(word)}
           />
         ) : (
           <Card className="text-center">

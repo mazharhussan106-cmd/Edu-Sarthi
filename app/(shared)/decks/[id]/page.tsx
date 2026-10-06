@@ -10,9 +10,8 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CARD_SELECT, cardText, deckStudyCounts } from "@/lib/decks";
+import { CARD_SELECT, deckStudyCounts, faceCard, isStaff } from "@/lib/decks";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
-import { resolveMediaUrl } from "@/lib/storage";
 import { Card } from "@/components/ui/Card";
 import { CardEditor } from "@/components/decks/CardEditor";
 import { CardRow } from "@/components/decks/CardRow";
@@ -32,17 +31,15 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
   });
   if (!deck) notFound();
 
-  const [counts, cards] = await Promise.all([
+  const [counts, staff, cards] = await Promise.all([
     deckStudyCounts(userId, id),
+    isStaff(userId),
     Promise.all(
       deck.cards.map(async (c) => ({
-        id: c.id,
-        front: c.text,
-        ...cardText(c),
+        ...(await faceCard(c)),
         imageKey: c.imageUrl,
         audioKey: c.audioUrl,
-        imageSrc: c.imageUrl ? await resolveMediaUrl(c.imageUrl) : null,
-        audioSrc: c.audioUrl ? await resolveMediaUrl(c.audioUrl) : null,
+        videoUrl: c.videoUrl ?? "",
       })),
     ),
   ]);
@@ -71,14 +68,14 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
         <ul className="mt-2 flex flex-col gap-2">
           {cards.map((c) => (
             <li key={c.id}>
-              <Card className="p-3"><CardRow deckId={id} card={c} /></Card>
+              <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} /></Card>
             </li>
           ))}
         </ul>
         {counts.total < DECK_LIMITS.cardsPerDeck ? (
           <Card className="mt-3">
             <h3 className="font-display text-sm font-bold text-ink">Add a card</h3>
-            <div className="mt-3"><CardEditor deckId={id} /></div>
+            <div className="mt-3"><CardEditor deckId={id} staff={staff} /></div>
           </Card>
         ) : (
           <p className="mt-3 text-sm text-ink-muted">This deck has {DECK_LIMITS.cardsPerDeck} cards, the most allowed. Start a new deck for more.</p>

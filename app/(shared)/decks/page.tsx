@@ -16,7 +16,9 @@ import { DeckForm } from "@/components/decks/DeckForm";
 export const revalidate = 0;
 
 export default async function DecksPage() {
-  const userId = (await auth())!.user.id;
+  const session = await auth();
+  const userId = session!.user.id;
+  const staff = session!.user.role !== "STUDENT";
   const decks = await prisma.deck.findMany({
     where: { ownerId: userId },
     orderBy: { createdAt: "desc" },
@@ -39,9 +41,9 @@ export default async function DecksPage() {
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-display text-xl font-bold text-ink">My decks</h1>
-        <Link href="/flashcards" className="text-sm font-medium text-accent hover:underline">← Word cards</Link>
+        {staff ? null : <Link href="/flashcards" className="text-sm font-medium text-accent hover:underline">← Word cards</Link>}
       </div>
-      <p className="mt-1 text-sm text-ink-muted">Make your own cards. Decks are private until you share a link.</p>
+      <p className="mt-1 text-sm text-ink-muted">Make your own cards. Decks are private until you share a link or submit one to the library.</p>
 
       <ul className="mt-4 flex flex-col gap-2">
         {decks.length === 0 ? (

@@ -6,16 +6,21 @@
 // exists — otherwise a client could point a card at someone else's recording
 // or at a file whose upload never finished.
 //
+// Video and the teacher's guide are staff-only. For a student the submitted
+// values are ignored and a card's existing ones are kept — so a student editing
+// a copied teacher card cannot erase its video, and cannot add one.
+//
 // It deliberately does NOT issue upload URLs or decide the deck's sharing.
 
 import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { newCardCode, ownDeck, readJson, wordData } from "@/lib/decks";
+import { cardText, isStaff, newCardCode, ownDeck, readJson, wordData } from "@/lib/decks";
 import { sendBackIfPublished } from "@/lib/deckReview";
 import { DECK_LIMITS, cardActionSchema } from "@/lib/deckSchemas";
 import { objectExists, removeObjects } from "@/lib/storage";
+import { parseVideoUrl } from "@/lib/video";
 
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
 
@@ -45,8 +50,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ ok: true });
   }
 
-  const current = a.action === "edit" ? await prisma.word.findFirst({ where: { id: a.cardId, ...mine }, select: { imageUrl: true, audioUrl: true } }) : null;
+  const current = a.action === "edit" ? await prisma.word.findFirst({ where: { id: a.cardId, ...mine }, select: { imageUrl: true, audioUrl: true, videoUrl: true, details: true } }) : null;
   if (a.action === "edit" && !current) return fail("That card no longer exists.", 404);
+
+  // Staff-only sections: staff's input (rebuilt as our own embed address), or
+  // for everyone else the card's current values, or nothing for a new card.
+  const staff = await isStaff(userId);
+  const kept = current ? cardText(current) : { audit: "" };
+  const extras = staff
+    ? { videoUrl: (a.videoUrl && parseVideoUrl(a.videoUrl)) || "", audit: a.audit }
+    : { videoUrl: current?.videoUrl ?? "", audit: kept.audit };
 
   if ((await badKey(userId, a.imageKey, current?.imageUrl ?? null)) || (await badKey(userId, a.audioKey, current?.audioUrl ?? null))) {
     return fail("A picture or recording did not finish uploading. Add it again and save.", 400);
@@ -58,14 +71,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
     const last = await prisma.word.findFirst({ where: mine, orderBy: { serial: "desc" }, select: { serial: true } });
     const card = await prisma.word.create({
-      data: { ...wordData(a), code: newCardCode(), serial: (last?.serial ?? 0) + 1, kind: "WORD", deckId, ownerId: userId },
+      data: { ...wordData({ ...a, ...extras }), code: newCardCode(), serial: (last?.serial ?? 0) + 1, kind: "WORD", deckId, ownerId: userId },
       select: { id: true },
     });
     await sendBackIfPublished(deckId);
     return NextResponse.json({ ok: true, id: card.id });
   }
 
-  await prisma.word.updateMany({ where: { id: a.cardId, ...mine }, data: wordData(a) });
+  await prisma.word.updateMany({ where: { id: a.cardId, ...mine }, data: wordData({ ...a, ...extras }) });
   // Files the card no longer points at are removed after the row is saved.
   const dropped = [
     current!.imageUrl && current!.imageUrl !== a.imageKey ? current!.imageUrl : null,

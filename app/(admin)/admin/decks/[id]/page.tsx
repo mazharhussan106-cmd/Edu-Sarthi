@@ -10,9 +10,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
-import { CARD_SELECT, cardText } from "@/lib/decks";
+import { CARD_SELECT, faceCard } from "@/lib/decks";
 import { REPORT_REASONS } from "@/lib/deckSchemas";
-import { resolveMediaUrl } from "@/lib/storage";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
@@ -34,15 +33,7 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
   // Admins review what was submitted or reported, not any private deck whose id they hold.
   if (!deck || (deck.visibility !== "PUBLIC" && deck.reports.length === 0)) notFound();
 
-  const cards = await Promise.all(
-    deck.cards.map(async (c) => ({
-      id: c.id,
-      front: c.text,
-      ...cardText(c),
-      imageSrc: c.imageUrl ? await resolveMediaUrl(c.imageUrl) : null,
-      audioSrc: c.audioUrl ? await resolveMediaUrl(c.audioUrl) : null,
-    })),
-  );
+  const cards = await Promise.all(deck.cards.map(faceCard));
   const pending = deck.visibility === "PUBLIC" && deck.status === "PENDING_REVIEW";
   const published = deck.visibility === "PUBLIC" && deck.status === "APPROVED";
 

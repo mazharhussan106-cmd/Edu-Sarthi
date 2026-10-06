@@ -70,6 +70,7 @@ export default async function UsersPage({
         emailVerified: true,
         suspendedAt: true,
         suspendReason: true,
+        teacherVerifiedAt: true,
         createdAt: true,
         _count: { select: { submissions: true, reviewsGiven: true } },
         submissions: {
@@ -177,7 +178,23 @@ export default async function UsersPage({
                       {u.role === "STUDENT" ? `${u._count.submissions} sent` : `${u._count.reviewsGiven} audits`}
                     </td>
                     <td className="px-3 py-2.5">
-                      {self ? <Badge variant="accent">You · {u.role.toLowerCase()}</Badge> : <RoleForm userId={u.id} role={u.role} />}
+                      {self ? (
+                        <Badge variant="accent">You · {u.role.toLowerCase()}</Badge>
+                      ) : (
+                        <span className="flex flex-col items-start gap-1.5">
+                          <RoleForm userId={u.id} role={u.role} />
+                          {u.role === "TEACHER" ? (
+                            u.teacherVerifiedAt ? (
+                              <span className="flex items-center gap-1.5">
+                                <Badge variant="success">Verified teacher</Badge>
+                                <ActionButton url="/api/admin/users" body={{ action: "verifyTeacher", userId: u.id, on: false }} label="Remove" variant="ghost" askReason />
+                              </span>
+                            ) : (
+                              <ActionButton url="/api/admin/users" body={{ action: "verifyTeacher", userId: u.id, on: true }} label="Verify teacher" askReason />
+                            )
+                          ) : null}
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-2.5">
                       <div className="flex justify-end">

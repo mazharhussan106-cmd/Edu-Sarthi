@@ -58,25 +58,28 @@ enum Theme {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id                String    @id @default(cuid())
   /// What teachers see instead of the student's name, e.g. "STU-7K3Q9P".
   /// Nullable so rows created before this column existed stay valid; the
   /// backfill script fills them in.
-  publicId      String?   @unique
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  phone         String?   @unique
-  phoneVerified DateTime?
-  passwordHash  String?
-  role          Role      @default(STUDENT)
+  publicId          String?   @unique
+  name              String?
+  email             String?   @unique
+  emailVerified     DateTime?
+  phone             String?   @unique
+  phoneVerified     DateTime?
+  passwordHash      String?
+  role              Role      @default(STUDENT)
   /// Set by an admin. A suspended account cannot sign in, and any session it
   /// already has is turned away at the next page load.
-  suspendedAt   DateTime?
-  suspendReason String?
-  isGuest       Boolean   @default(false)
-  theme         Theme     @default(LIGHT)
-  preferences   Json?
+  suspendedAt       DateTime?
+  suspendReason     String?
+  /// Set by an admin once a teacher is vouched for. Only verified teachers can
+  /// submit decks to the public library; it is cleared if the role changes.
+  teacherVerifiedAt DateTime?
+  isGuest           Boolean   @default(false)
+  theme             Theme     @default(LIGHT)
+  preferences       Json?
 
   // Student side
   submissions Submission[] @relation("StudentSubmissions")

@@ -31,7 +31,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     },
     orderBy: { reviewedAt: "desc" },
     take: 30,
-    select: { id: true, title: true, description: true, tags: true, _count: { select: { cards: true } } },
+    select: { id: true, title: true, description: true, tags: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true } } },
   });
 
   return (
@@ -70,7 +70,10 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
                     <span className="block truncate font-display font-bold text-ink">{d.title}</span>
                     {d.description ? <span className="block truncate text-xs text-ink-muted">{d.description}</span> : null}
                   </span>
-                  <span className="shrink-0 font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
+                  <span className="flex shrink-0 flex-col items-end gap-1">
+                    <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
+                    {d.owner.role === "TEACHER" && d.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}
+                  </span>
                 </div>
                 {d.tags.length ? <div className="mt-2 flex flex-wrap gap-1">{d.tags.map((t) => <Badge key={t}>{t}</Badge>)}</div> : null}
               </Card>

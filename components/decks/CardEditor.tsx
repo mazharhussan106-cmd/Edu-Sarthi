@@ -28,17 +28,25 @@ export type EditableCard = {
   audioKey: string | null;
   imageSrc: string | null;
   audioSrc: string | null;
+  /// Embed address already stored on the card ("" when none).
+  videoUrl: string;
+  videoSrc: string | null;
+  audit: string;
 };
 
 type Slot = { file: File | null; keep: boolean };
 
-export function CardEditor({ deckId, card, onDone }: { deckId: string; card?: EditableCard; onDone?: () => void }) {
+/// `staff` shows the teacher-only sections. The server enforces it too — the
+/// flag only decides what the form offers.
+export function CardEditor({ deckId, card, staff, onDone }: { deckId: string; card?: EditableCard; staff: boolean; onDone?: () => void }) {
   const router = useRouter();
   const uid = useId();
   const [front, setFront] = useState(card?.front ?? "");
   const [back, setBack] = useState(card?.back ?? "");
   const [example, setExample] = useState(card?.example ?? "");
   const [body, setBody] = useState(card?.body ?? "");
+  const [videoUrl, setVideoUrl] = useState(card?.videoUrl ?? "");
+  const [audit, setAudit] = useState(card?.audit ?? "");
   const [image, setImage] = useState<Slot>({ file: null, keep: Boolean(card?.imageKey) });
   const [audio, setAudio] = useState<Slot>({ file: null, keep: Boolean(card?.audioKey) });
   const [busy, setBusy] = useState(false);
@@ -55,7 +63,7 @@ export function CardEditor({ deckId, card, onDone }: { deckId: string; card?: Ed
     e.preventDefault();
     setError(null);
     // Checked before any upload, so a missing field does not cost a 2 MB PUT.
-    const draft = { front, back, example, body, imageKey: null, audioKey: null };
+    const draft = { front, back, example, body, imageKey: null, audioKey: null, videoUrl: staff ? videoUrl : "", audit: staff ? audit : "" };
     const early = cardActionSchema.safeParse(card ? { action: "edit", cardId: card.id, ...draft } : { action: "add", ...draft });
     if (!early.success) return setError(early.error.issues[0]?.message ?? "Check the fields and try again.");
 
@@ -80,6 +88,8 @@ export function CardEditor({ deckId, card, onDone }: { deckId: string; card?: Ed
     setBack("");
     setExample("");
     setBody("");
+    setVideoUrl("");
+    setAudit("");
     setImage({ file: null, keep: false });
     setAudio({ file: null, keep: false });
     setRound((r) => r + 1);
@@ -111,6 +121,19 @@ export function CardEditor({ deckId, card, onDone }: { deckId: string; card?: Ed
         <legend className="text-xs font-medium text-ink-muted">Pronunciation or speaking (optional, up to 60 seconds)</legend>
         <MediaField key={`a${round}`} kind="AUDIO" existingSrc={card?.audioSrc ?? null} disabled={busy} onChange={setAudio} />
       </fieldset>
+      {staff ? (
+        <>
+          <div>
+            <Label htmlFor={`${uid}-video`}>Video link (YouTube or Google Drive)</Label>
+            <Input id={`${uid}-video`} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} maxLength={300} placeholder="https://youtu.be/…" inputMode="url" />
+            <p className="mt-1 text-xs text-ink-muted">For a Drive file, set sharing to “Anyone with the link” first, or learners will see a locked player.</p>
+          </div>
+          <div>
+            <Label htmlFor={`${uid}-audit`}>Teacher’s guide — what to listen for (optional)</Label>
+            <textarea id={`${uid}-audit`} value={audit} onChange={(e) => setAudit(e.target.value)} maxLength={1000} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none" />
+          </div>
+        </>
+      ) : null}
       <div className="flex flex-wrap items-center gap-2">
         <Button type="submit" disabled={busy}>{busy ? "Saving…" : card ? "Save card" : "Add card"}</Button>
         {card ? <Button variant="ghost" disabled={busy} onClick={onDone}>Cancel</Button> : null}

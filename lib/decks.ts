@@ -12,7 +12,7 @@ import { randomBytes } from "crypto";
 import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { copyObject, removeObjects } from "@/lib/storage";
+import { copyObject, removeObjects, resolveMediaUrl } from "@/lib/storage";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 
 export type CardFields = {
@@ -22,6 +22,10 @@ export type CardFields = {
   body: string;
   imageKey: string | null;
   audioKey: string | null;
+  /// Embed address from lib/video, or "".
+  videoUrl: string;
+  /// Teacher's guide: what to listen for. "" for student cards.
+  audit: string;
 };
 
 /// Student-made cards carry a "U-" code so they can never collide with the
@@ -38,9 +42,10 @@ export function newShareToken(): string {
 export function wordData(c: CardFields) {
   return {
     text: c.front,
-    details: { meaning: c.back, example: c.example, body: c.body } satisfies Prisma.InputJsonObject,
+    details: { meaning: c.back, example: c.example, body: c.body, audit: c.audit } satisfies Prisma.InputJsonObject,
     imageUrl: c.imageKey,
     audioUrl: c.audioKey,
+    videoUrl: c.videoUrl || null,
   };
 }
 
@@ -52,6 +57,7 @@ export const CARD_SELECT = {
   details: true,
   imageUrl: true,
   audioUrl: true,
+  videoUrl: true,
 } satisfies Prisma.WordSelect;
 
 export type StoredCard = Prisma.WordGetPayload<{ select: typeof CARD_SELECT }>;
@@ -60,7 +66,7 @@ export type StoredCard = Prisma.WordGetPayload<{ select: typeof CARD_SELECT }>;
 export function cardText(card: Pick<StoredCard, "details">) {
   const d = card.details && typeof card.details === "object" ? (card.details as Record<string, unknown>) : {};
   const str = (k: string) => (typeof d[k] === "string" ? (d[k] as string) : "");
-  return { back: str("meaning"), example: str("example"), body: str("body") };
+  return { back: str("meaning"), example: str("example"), body: str("body"), audit: str("audit") };
 }
 
 export async function ownDeck(userId: string, id: string) {
@@ -159,6 +165,7 @@ export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Pr
           details: (c.details ?? {}) as Prisma.InputJsonObject,
           imageUrl: imageKey,
           audioUrl: audioKey,
+          videoUrl: c.videoUrl,
         })),
       });
       return created;
@@ -176,4 +183,23 @@ export async function readJson(req: Request): Promise<unknown> {
   } catch {
     return null;
   }
+}
+
+/// Staff accounts may use the teacher-only card sections (video, teacher's
+/// guide). Read from the database, not the JWT: a demotion applies at once.
+export async function isStaff(userId: string): Promise<boolean> {
+  const u = await prisma.user.findUnique({ where: { id: userId }, select: { role: true, suspendedAt: true } });
+  return !!u && !u.suspendedAt && (u.role === "TEACHER" || u.role === "ADMIN");
+}
+
+/// A stored card as the card faces show it: media keys resolved to signed URLs.
+export async function faceCard(c: StoredCard) {
+  return {
+    id: c.id,
+    front: c.text,
+    ...cardText(c),
+    videoSrc: c.videoUrl,
+    imageSrc: c.imageUrl ? await resolveMediaUrl(c.imageUrl) : null,
+    audioSrc: c.audioUrl ? await resolveMediaUrl(c.audioUrl) : null,
+  };
 }

@@ -8,6 +8,8 @@
 
 import { z } from "zod";
 
+import { parseVideoUrl } from "@/lib/video";
+
 export const DECK_LIMITS = {
   decksPerUser: 20,
   cardsPerDeck: 500,
@@ -69,6 +71,16 @@ const cardFields = {
   body: z.string().trim().max(2000, "Keep the extra notes under 2000 characters").default(""),
   imageKey: z.string().min(1).nullable().default(null),
   audioKey: z.string().min(1).nullable().default(null),
+  /// Teacher-only (the route ignores it for students). A YouTube or Drive
+  /// link, or empty; the route stores the rebuilt embed address.
+  videoUrl: z
+    .string()
+    .trim()
+    .max(300, "That link is too long")
+    .default("")
+    .refine((v) => v === "" || parseVideoUrl(v) !== null, "Paste a YouTube or Google Drive video link, or leave it empty"),
+  /// Teacher-only: what to listen for when checking a learner's spoken answer.
+  audit: z.string().trim().max(1000, "Keep the teacher’s guide under 1000 characters").default(""),
 };
 
 export const cardActionSchema = z.discriminatedUnion("action", [

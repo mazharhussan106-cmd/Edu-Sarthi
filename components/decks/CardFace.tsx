@@ -14,6 +14,10 @@ export type FaceCard = {
   body: string;
   imageSrc: string | null;
   audioSrc: string | null;
+  /// Our own rebuilt embed address (lib/video), never pasted text.
+  videoSrc: string | null;
+  /// Teacher's guide. Empty for student cards.
+  audit: string;
 };
 
 export function CardFront({ card }: { card: FaceCard }) {
@@ -23,6 +27,19 @@ export function CardFront({ card }: { card: FaceCard }) {
       {card.imageSrc ? (
         // eslint-disable-next-line @next/next/no-img-element -- signed storage URL, not optimisable by next/image
         <img src={card.imageSrc} alt="" className="max-h-56 rounded-lg border border-border object-contain" loading="lazy" />
+      ) : null}
+      {card.videoSrc ? (
+        <iframe
+          src={card.videoSrc}
+          title="Video for this card"
+          loading="lazy"
+          allowFullScreen
+          // No scripts from other origins beyond what the player needs, and no
+          // top-level navigation: a card is content, not a way to leave the site.
+          sandbox="allow-scripts allow-same-origin allow-presentation"
+          referrerPolicy="strict-origin-when-cross-origin"
+          className="aspect-video w-full max-w-md rounded-lg border border-border"
+        />
       ) : null}
       {card.audioSrc ? <audio controls preload="none" src={card.audioSrc} className="w-full max-w-sm" aria-label="Listen" /> : null}
     </div>
@@ -35,6 +52,12 @@ export function CardBack({ card }: { card: FaceCard }) {
       <p className="text-lg font-medium text-ink">{card.back}</p>
       {card.example ? <p className="text-sm italic text-ink-muted">“{card.example}”</p> : null}
       {card.body ? <CardMarkdown source={card.body} /> : null}
+      {card.audit ? (
+        <div className="rounded-lg border border-border bg-paper-dim p-3">
+          <p className="text-xs font-medium text-ink-muted">Teacher’s guide — what to listen for</p>
+          <div className="mt-1"><CardMarkdown source={card.audit} /></div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -14,7 +14,7 @@ import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CardEditor, type EditableCard } from "@/components/decks/CardEditor";
 import { callApi } from "@/components/decks/deckClient";
 
-export function CardRow({ deckId, card }: { deckId: string; card: EditableCard }) {
+export function CardRow({ deckId, card, staff }: { deckId: string; card: EditableCard; staff: boolean }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [open, setOpen] = useState(false);
@@ -30,9 +30,9 @@ export function CardRow({ deckId, card }: { deckId: string; card: EditableCard }
     router.refresh();
   }
 
-  if (editing) return <CardEditor deckId={deckId} card={card} onDone={() => setEditing(false)} />;
+  if (editing) return <CardEditor deckId={deckId} card={card} staff={staff} onDone={() => setEditing(false)} />;
 
-  const face = { front: card.front, back: card.back, example: card.example, body: card.body, imageSrc: card.imageSrc, audioSrc: card.audioSrc };
+  const face = card;
   return (
     <div>
       <div className="flex items-start justify-between gap-3">

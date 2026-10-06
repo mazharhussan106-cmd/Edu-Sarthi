@@ -94,6 +94,15 @@ Defaults chosen because they were not decided (easy to change): one institute pe
 - None of the new screens have been opened in a browser or against the real Supabase bucket and SendGrid yet — do a full round by hand before announcing it.
 - Licence and credit for public decks are undecided; add a `LICENSE` file and a content policy before calling the library open source.
 
+## Backlog — chosen by the owner, to start after the live test
+
+1. **Orphan upload cleanup** — remove pictures and recordings that were uploaded but never attached to a saved card (a scheduled job, like the existing retention cron).
+2. **In-app notifications** — a bell for deck approved / rejected / taken down and institute decisions, in addition to email, so phone-signup users see them too.
+3. **Licence and credit** — creator credit and a licence (for example CC BY-SA) on public decks, a `LICENSE` file and a content policy.
+4. **Institute recordings** — learner recordings on institute decks, routed to that institute's teachers only, as verified teachers' library decks already do.
+
+Order agreed: live test first, then fix whatever breaks, then these.
+
 ## Risks
 
 - **Moderation.** Public user content invites abuse; hence review-before-public

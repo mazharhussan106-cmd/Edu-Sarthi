@@ -184,6 +184,8 @@ Build order is the table order: the tools an FDE meets first on a customer machi
 | 13 RAG (40) | Built, audited, delivered in chat |
 | 14 AI evaluation (30) | Built, audited, delivered in chat |
 | 15 Jupyter Notebook (25) | Built, audited, delivered in chat |
-| 16 | Not started yet: REQ |
+| 16 Requirements and customer work (30) | Built, audited, delivered in chat |
+
+All 16 decks are built (about 700 cards in total, plus the earlier GitHub, Power BI, API Integration, Supabase, Python and SQL decks).
 
 Finished decks are delivered in the chat as an Excel workbook, two Anki files and a preview page. The card source text files live only in the chat session's scratch folder, so they are not in the repository yet. Code in cards is never run by the audit for non-Python decks.

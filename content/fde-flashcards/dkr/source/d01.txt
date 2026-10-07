@@ -1,0 +1,773 @@
+deck.title: Docker – Beginner to Advanced Flashcards
+deck.subject: Docker
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: dockerfile
+type: topic56
+
+@DKR-001
+topic: 01 Basics
+level: Beginner
+term: Containers vs virtual machines
+cue: Which two ways of isolating software differ in that one shares the host's kernel and the other runs a whole guest operating system?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Virtual machines gave isolation but were heavy, so containers arrived as a lighter way to package an application with its dependencies on top of a shared operating system kernel.
+pro_tip: Choose a container for packaging one application, and a virtual machine when you need a different kernel or strong isolation.
+memory_story: A virtual machine is a whole separate house, and a container is a flat in a shared building.
+visual: Stacked boxes on one host, one set with a full operating system each and another set sharing a single base.
+emotion: The relief of an app that runs the same everywhere.
+definition: A container packages an application and its dependencies and runs as an isolated process sharing the host kernel, while a virtual machine runs a full guest operating system on virtual hardware.
+explanation: Containers start in seconds and use little memory, because there is no guest operating system to boot. Virtual machines have stronger isolation and can run different operating systems, but they use more resources. Containers rely on Linux features such as namespaces and cgroups. On Windows and macOS, Docker Desktop runs containers inside a lightweight virtual machine.
+simple_explain: A container is a packaged app that runs as an isolated process on the host. It is lighter and faster than a virtual machine, but it shares the host's kernel.
+analogy: A virtual machine is a separate house, and a container is a flat in a shared building.
+formula_rule: VM = own operating system. Container = shared kernel, isolated process.
+example_1: Running a web app in a container that starts in a second or two.
+example_2: Running a full Windows machine in a virtual machine on a Linux host.
+example_3: Docker Desktop on a laptop using a small virtual machine to host Linux containers.
+related: images and containers, Docker Engine, Linux namespaces, cloud
+word_family: container, virtual machine, kernel, isolation, hypervisor
+where_used: Packaging apps | Cloud deployments | Customer environments
+mini_conversation: A: Why not just use a virtual machine for each app? | B: Containers start faster and use far less memory since they share the kernel.
+misconception: ✗ A container is a tiny virtual machine with its own operating system → ✓ A container is an isolated process that shares the host's kernel
+contrast: Container vs virtual machine: a container shares the kernel and is lightweight, a virtual machine has its own operating system and is heavier.
+avoid: Do not treat containers as a strong security boundary on their own.
+memory_trick: Containers share the kernel and virtual machines do not.
+real_project: Packaging a customer integration as a container so it runs the same on any server.
+real_interview: An interviewer may ask: What is the difference between a container and a virtual machine?
+real_daily: It is like a flat in a shared building versus a separate house.
+mcq_question: What do containers on the same host share?
+mcq_options: A) A guest operating system each B) Nothing at all C) The host kernel D) A hypervisor only
+mcq_answer: C
+mcq_why: Containers are isolated processes running on the same host kernel.
+fill_blank: A virtual machine runs a full guest ____ system → operating
+apply: Which option starts faster and uses less memory for one app? → A container
+explain_task: Explain containers versus virtual machines in three lines.
+own_task: List two cases where you would pick a virtual machine instead of a container.
+
+@DKR-002
+topic: 01 Basics
+level: Beginner
+term: Images vs containers
+cue: Which is the read-only template with your app and its files, and which is the running instance created from it?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: To start the same app many times in the same way, Docker separates a fixed package, the image, from the live running copy, the container.
+pro_tip: Think of one image as many possible containers, each with its own writable layer.
+memory_story: An image is a recipe plus ingredients packed in a box, and a container is the dish cooked from it.
+visual: One image box with several containers coming out of it, each with its own scratch layer on top.
+emotion: The clarity of seeing the build and run steps as separate.
+definition: A Docker image is a read-only, layered template containing an application and its dependencies, and a container is a running instance of an image with a writable layer on top.
+explanation: Images are built from a Dockerfile and stored in layers that can be shared. When you run an image, Docker adds a thin writable layer and starts the process. Changes made inside a container live in that layer and disappear when the container is removed, unless they are stored in a volume. Many containers can run from one image.
+simple_explain: Build once to get an image, then run it as many times as you like to get containers. Deleting a container does not delete the image.
+analogy: An image is a recipe with ingredients packed in a box, and a container is the dish cooked from it.
+formula_rule: Dockerfile → build → image → run → container
+example_1: The nginx image used to start three separate web server containers.
+example_2: A container that writes a file, which is gone after the container is removed.
+example_3: Rebuilding an image after a code change and starting a new container from it.
+related: Dockerfile, registries, volumes, docker run
+word_family: image, container, layer, tag, instance
+where_used: Building and shipping apps | Running services | Testing
+mini_conversation: A: I removed the container, did I lose the image? | B: No, the image stays and you can start a new container from it.
+misconception: ✗ Changes I make inside a running container are saved in the image → ✓ Changes live in the container's writable layer, and the image stays unchanged
+contrast: Image vs container: an image is the fixed template, a container is a running copy of it.
+avoid: Do not store important data only inside a container.
+memory_trick: An image is built and a container is run.
+real_project: Building one image of an integration service and running it in test and production.
+real_interview: An interviewer may ask: What is the difference between a Docker image and a container?
+real_daily: It is like a recipe in a box versus the dish cooked from it.
+mcq_question: What is a container?
+mcq_options: A) A running instance of an image B) A registry C) A network D) A file format
+mcq_answer: A
+mcq_why: A container is created by running an image.
+fill_blank: A container adds a writable ____ on top of the image layers → layer
+apply: How do you get a second copy of the same app running? → Start another container from the same image
+explain_task: Explain images and containers in three lines.
+own_task: Write what happens to data inside a container after it is removed.
+
+@DKR-003
+topic: 01 Basics
+level: Beginner
+term: Docker Engine and the docker CLI
+cue: Which background service builds and runs containers, and which command talks to it?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: Docker uses a client and server design, so the command you type only sends requests to a background service that does the real work.
+pro_tip: If docker commands say they cannot connect, check whether the daemon is running and whether your user may access it.
+memory_story: The docker command is the waiter taking your order, and the daemon is the kitchen that cooks.
+visual: A terminal sending a request through a socket to a service that manages containers.
+emotion: The comfort of understanding what happens behind each command.
+definition: Docker Engine is the daemon (dockerd) that builds, runs and manages containers, and the docker CLI is the client that sends it commands through an API.
+explanation: The daemon manages images, containers, networks and volumes, and uses lower-level runtimes such as containerd to start containers. The CLI talks to it over a Unix socket on Linux, usually /var/run/docker.sock. Access to that socket is equal to root access on the host, so treat it carefully. Docker Desktop bundles the engine and CLI for Windows and macOS.
+simple_explain: You type docker commands, and the daemon does the work. If the daemon is not running or you lack access, the commands fail.
+analogy: The docker command is the waiter, and the daemon is the kitchen that cooks.
+formula_rule: docker CLI → API → Docker daemon → containerd → container
+example_1: docker ps asking the daemon to list running containers.
+example_2: A permission denied error on the Docker socket for a user not in the docker group.
+example_3: Docker Desktop starting the engine in the background on a laptop.
+related: images and containers, docker run, security, Docker Desktop
+word_family: daemon, dockerd, CLI, socket, containerd
+where_used: Every Docker task | Troubleshooting | Remote Docker hosts
+mini_conversation: A: Docker says it cannot connect to the daemon. | B: Check that the service is running and that your user has access to the socket.
+misconception: ✗ The docker command itself runs the containers → ✓ The docker CLI only sends requests, and the daemon runs the containers
+contrast: CLI vs daemon: the CLI is the client you type into, the daemon is the service that does the work.
+avoid: Do not mount the Docker socket into containers without understanding the risk.
+memory_trick: The CLI asks and the daemon acts.
+real_project: Fixing a permission problem so a deployment user could use the Docker socket.
+real_interview: An interviewer may ask: What happens when you run a docker command?
+real_daily: It is like a waiter taking an order to the kitchen.
+mcq_question: Which component actually runs containers?
+mcq_options: A) The Dockerfile B) The docker CLI C) The registry D) The Docker daemon
+mcq_answer: D
+mcq_why: The daemon builds and runs containers, and the CLI only sends requests.
+fill_blank: The Docker background service is called the ____ → daemon
+apply: Docker cannot connect to the daemon. What do you check first? → Whether the daemon is running and your user has access
+explain_task: Explain the Docker CLI and daemon in three lines.
+own_task: Find out how docker is installed on your machine and where its socket is.
+
+@DKR-004
+topic: 01 Basics
+level: Beginner
+term: Registries and Docker Hub
+cue: Where are images stored and shared so that other machines can pull them?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Images must reach servers and teammates, so they are pushed to a registry, a storage and distribution service, of which Docker Hub is the best known.
+pro_tip: Use a private registry for company images, and log in with docker login before pushing.
+memory_story: A registry is a library of image boxes that any machine can borrow from.
+visual: Machines pulling image boxes from a shared shelf in the cloud.
+emotion: The ease of fetching a ready-made image with one command.
+definition: A registry is a service that stores and distributes container images, such as Docker Hub, GitHub Container Registry, Amazon ECR or a private registry.
+explanation: Image names include the registry, the repository and a tag, such as ghcr.io/acme/api:1.2. When no registry is given, Docker Hub is used. Public images can be pulled without logging in, and private ones need credentials. Pushing needs the image to be tagged with the registry and repository name first.
+simple_explain: A registry is where images live. You pull from it to run images and push to it to share your own.
+analogy: It is like a library of image boxes that any machine can borrow.
+formula_rule: registry/repository:tag
+example_1: docker pull nginx fetches the nginx image from Docker Hub.
+example_2: ghcr.io/acme/api:1.2 names an image in GitHub Container Registry.
+example_3: A company running its own private registry for internal images.
+related: tags and digests, docker pull and push, CI/CD, security
+word_family: registry, repository, tag, Docker Hub, pull, push
+where_used: Sharing images | CI/CD pipelines | Production deployments
+mini_conversation: A: How does the server get our image? | B: CI pushes it to the registry and the server pulls it from there.
+misconception: ✗ Docker Hub is the only place to store Docker images → ✓ Many registries exist, including cloud provider registries and private ones
+contrast: Registry vs repository: the registry is the whole service, a repository holds the versions of one image.
+avoid: Do not push images that contain secrets to a public registry.
+memory_trick: A registry stores images to pull and push.
+real_project: Pushing build artefacts to a private registry that customer servers can pull from.
+real_interview: An interviewer may ask: What is a container registry?
+real_daily: It is like a library of boxes that any machine can borrow.
+mcq_question: Which registry does Docker use when an image name has no registry?
+mcq_options: A) None B) Docker Hub C) A local folder D) GitHub only
+mcq_answer: B
+mcq_why: Docker Hub is the default registry.
+fill_blank: An image name has the form registry/repository: ____ → tag
+apply: How does a server get a new image version? → It pulls the image from the registry
+explain_task: Explain registries in three lines.
+own_task: Write the full name of an image in a private registry.
+
+@DKR-005
+type: code56
+topic: 01 Basics
+level: Beginner
+term: Image tags and digests
+cue: Which two ways name a specific image version, one friendly and changeable, the other exact and fixed?
+kind: Concept
+frequency: Very high
+importance: 5
+origin: People need readable version names, but names can be moved to new content, so images also have a content digest that never changes.
+pro_tip: Pin production images to a version tag or digest, and never rely on latest.
+memory_story: A tag is a name tag you can move between people, and a digest is a fingerprint that stays with one person.
+visual: A tag pointing to an image today and to another tomorrow, and a digest fixed on one image.
+emotion: The calm of knowing exactly which build is running.
+meaning: A tag is a movable label such as 1.27 or latest, and a digest is a fixed SHA-256 hash of the image content.
+code: docker pull nginx:1.27¶docker pull nginx:latest¶docker pull nginx@sha256:3b9f...¶docker images --digests
+output: The image of the 1.27 tag, the image that latest points to today, the image with exactly that content hash, and a list of local images with their digests.
+explanation: latest is only a default tag name, and it does not mean the newest build. A tag can be moved by the publisher to point to new content, so the same tag can give different images over time. A digest identifies content exactly, so pulling by digest always gives the same image. Many teams tag with a version and the commit id.
+simple_explain: Use tags to read versions and digests to be exact. If you need the same image every time, pin a specific tag or a digest.
+analogy: A tag is a name badge that can be moved, and a digest is a fingerprint.
+syntax: image:tag  |  image@sha256:digest
+anatomy: image = repository name | :tag = movable label | @sha256 = fixed content hash
+example_1: python:3.12-slim
+example_2: myapp:1.4.2
+example_3: myapp:git-3f2a9c1
+variation: docker tag myapp:1.4.2 myapp:stable   // add another tag to an image¶docker inspect --format '{{.Id}}' myapp   // show the image id
+used_with: docker pull, docker tag, CI/CD
+related: registries, docker tag, CI/CD
+alternatives: Pinning by digest in deployment files
+where_used: Production deployments | CI/CD | Reproducible builds
+mini_conversation: A: Production suddenly behaves differently without a deployment. | B: The image used the latest tag, which may now point to a new build.
+misconception: ✗ The latest tag always means the newest version → ✓ latest is just a default tag name and may be old or moved at any time
+confused_with: Tag vs digest: a tag can move, a digest cannot.
+avoid: Do not deploy production using the latest tag.
+wrong_code: docker pull myapp   # in production
+right_code: docker pull myapp:1.4.2
+memory_trick: Tags move, digests do not.
+real_project: Pinning every production image to a version tag with the commit id.
+real_interview: An interviewer may ask: Why avoid the latest tag in production?
+real_daily: It is like a name badge that can be moved versus a fingerprint.
+mcq_question: What does a digest identify?
+mcq_options: A) The exact image content B) The newest version C) The container name D) The registry
+mcq_answer: A
+mcq_why: A digest is a hash of the image content.
+fill_blank: A tag such as latest is only a ____ name → default
+hindi_to_task: Pull the python image with the 3.12-slim tag.
+task_answer: docker pull python:3.12-slim
+own_task: Write the tag you would use for release 2.0 built from commit abc123.
+practice_question: Which one never changes for a given image: a tag or a digest?
+practice_answer: A digest
+
+@DKR-006
+type: code56
+topic: 02 Dockerfile
+level: Beginner
+term: FROM (base image)
+cue: Which Dockerfile instruction chooses the image that your image starts from?
+kind: Dockerfile instruction
+frequency: Very high
+importance: 5
+origin: Every image is built on another, so a Dockerfile begins by naming the base that provides the operating system files and tools.
+pro_tip: Choose a small, official base image with a pinned version, such as a slim or alpine variant when suitable.
+memory_story: FROM picks the foundation on which the rest of the house is built.
+visual: A stack of layers with the base at the bottom.
+emotion: The satisfaction of choosing a lean, safe foundation.
+meaning: FROM sets the base image for the following build instructions. Every Dockerfile needs it, and it comes first apart from ARG, comments and parser directives.
+code: FROM python:3.12-slim¶WORKDIR /app¶COPY . .
+output: The build starts from the slim Python 3.12 image, and later instructions add layers on top.
+explanation: The base image decides the size and the packages available. Official images are maintained and scanned. Alpine images are tiny but use a different C library, which can cause compatibility problems, and slim variants are a common middle path. FROM scratch starts from an empty image, which suits static binaries. A multi-stage build uses several FROM lines.
+simple_explain: Start every Dockerfile with FROM and a pinned base image. A smaller base means a smaller, safer image.
+analogy: It is like choosing the foundation on which the rest of the house is built.
+syntax: FROM image[:tag] [AS name]
+anatomy: FROM = base image | :tag = version | AS = name for a build stage
+example_1: FROM node:20-alpine
+example_2: FROM ubuntu:24.04
+example_3: FROM scratch
+variation: FROM --platform=linux/amd64 image   // choose a platform¶FROM base AS build   // name a stage for multi-stage builds
+used_with: multi-stage builds, tags, WORKDIR
+related: image tags, multi-stage builds, security
+alternatives: Building from a distroless image for a minimal runtime
+where_used: Every Dockerfile | Image size tuning | Security
+mini_conversation: A: Our image is 1 GB for a small script. | B: Try a slim base image instead of the full one.
+misconception: ✗ The base image does not matter for the final size → ✓ The base image is the biggest part of many images, so choose it carefully
+confused_with: FROM vs COPY --from: FROM sets a base, COPY --from copies files from another stage.
+avoid: Do not use an unpinned latest base image.
+wrong_code: FROM python
+right_code: FROM python:3.12-slim
+memory_trick: FROM comes first, except for ARG and comments.
+real_project: Moving a service to a slim base to cut the image size and download time.
+real_interview: An interviewer may ask: How do you choose a base image?
+real_daily: It is like choosing the foundation of a house.
+mcq_question: Which instruction sets the base image?
+mcq_options: A) RUN B) COPY C) CMD D) FROM
+mcq_answer: D
+mcq_why: FROM names the image to build on.
+fill_blank: A Dockerfile normally begins with the instruction ____ → FROM
+hindi_to_task: Start a Dockerfile from the node image version 20 with the alpine variant.
+task_answer: FROM node:20-alpine
+own_task: Compare the sizes of three base images for the same language.
+practice_question: What does FROM scratch mean?
+practice_answer: Starting from an empty image with no base system.
+
+@DKR-007
+type: code56
+topic: 02 Dockerfile
+level: Beginner
+term: RUN
+cue: Which Dockerfile instruction executes a command while the image is being built and saves the result as a layer?
+kind: Dockerfile instruction
+frequency: Very high
+importance: 5
+origin: Images need software installed and files prepared, so RUN executes commands at build time and keeps the changes in a layer.
+pro_tip: Chain related commands with && in one RUN, and clean caches in the same line, to keep layers small.
+memory_story: RUN is a worker who does a job during construction and leaves the result in the walls.
+visual: A command running and a new layer appearing in the stack.
+emotion: The thrill of the first successful build.
+meaning: RUN runs a command during the build and commits its results as a new image layer.
+code: RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*¶RUN pip install --no-cache-dir -r requirements.txt
+output: curl is installed and the package lists are removed in one layer, and the Python packages are installed without a cache.
+explanation: Each RUN creates a layer, and files deleted in a later layer still exist in earlier ones, so cleaning must happen in the same RUN. RUN happens at build time, whereas CMD and ENTRYPOINT define what happens when the container starts. There is a shell form and an exec form with a JSON array.
+simple_explain: Use RUN to install things while building. Chain commands and clean up in the same line so the layer stays small.
+analogy: It is like a worker who does a job during construction and leaves the result in the walls.
+syntax: RUN command  |  RUN ["executable", "arg"]
+anatomy: RUN = build-time command | && = chain commands | rm in the same line = no leftover files
+example_1: RUN npm ci
+example_2: RUN mkdir -p /data
+example_3: RUN useradd -m app
+variation: RUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt   // BuildKit cache mount
+used_with: apt, pip, npm, layers
+related: layers and cache, CMD vs ENTRYPOINT, multi-stage builds
+alternatives: Pre-built base images with the tools included
+where_used: Installing packages | Preparing folders | Building code
+mini_conversation: A: Our image is huge even though we delete the downloads. | B: Delete them in the same RUN, or the earlier layer keeps them.
+misconception: ✗ Deleting files in a later RUN reduces the image size → ✓ Files stay in earlier layers, so clean up in the same RUN that created them
+confused_with: RUN vs CMD: RUN executes at build time, CMD runs when the container starts.
+avoid: Do not run apt-get update in its own RUN line.
+wrong_code: RUN apt-get update¶RUN apt-get install -y curl
+right_code: RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+memory_trick: RUN is for build time.
+real_project: Installing a customer's required tools while building an image.
+real_interview: An interviewer may ask: What is the difference between RUN and CMD?
+real_daily: It is like a worker who leaves the result in the walls.
+mcq_question: When does RUN execute?
+mcq_options: A) When it stops B) During the image build C) When it is pushed D) When the container starts
+mcq_answer: B
+mcq_why: RUN executes at build time.
+fill_blank: Each RUN instruction creates a new image ____ → layer
+hindi_to_task: Write a RUN line that installs the Python packages from requirements.txt without a cache.
+task_answer: RUN pip install --no-cache-dir -r requirements.txt
+own_task: Combine three RUN lines into one and compare image sizes.
+practice_question: Why should cleanup happen in the same RUN?
+practice_answer: Because files deleted in a later layer still exist in the earlier layer.
+
+@DKR-008
+type: code56
+topic: 02 Dockerfile
+level: Beginner
+term: COPY vs ADD
+cue: Which two instructions put files from your machine into the image, and which one should you usually choose?
+kind: Dockerfile instruction
+frequency: Very high
+importance: 5
+origin: Images need your code inside them, so Docker offers COPY for plain copying and ADD with extra features such as unpacking archives.
+pro_tip: Prefer COPY, and use ADD only when you need its archive extraction.
+memory_story: COPY is a plain photocopier, and ADD is a photocopier with surprising extras.
+visual: Files from the build folder landing inside the image.
+emotion: The calm of knowing your copy does exactly what you meant.
+meaning: COPY copies files from the build context into the image, and ADD does the same and can also extract local archives and fetch URLs.
+code: COPY package.json package-lock.json ./¶RUN npm ci¶COPY . .¶ADD release.tar.gz /opt/app/
+output: The dependency files are copied first, dependencies are installed, then the rest of the code is copied, and the archive is unpacked into /opt/app.
+explanation: Only files inside the build context can be copied. Copying the dependency list first lets Docker reuse the cached install layer when only your code changes. COPY --chown sets the owner, and COPY --from copies from another build stage. ADD with a URL is discouraged, because it does not verify the content, and curl in a RUN line is clearer.
+simple_explain: Use COPY for normal files. Copy dependency files first, then install, then copy the rest of the code, to make the best use of the cache.
+analogy: COPY is a plain photocopier, and ADD is one with surprising extras.
+syntax: COPY [--chown=user:group] source dest
+anatomy: COPY = plain copy | ADD = copy plus extract | --from = copy from another stage | --chown = set owner
+example_1: COPY app.py /app/app.py
+example_2: COPY --chown=app:app . /app
+example_3: COPY --from=build /out/app /usr/local/bin/app
+variation: COPY --chmod=755 script.sh /usr/local/bin/   // set permissions while copying
+used_with: build context, .dockerignore, layers
+related: layers and cache, .dockerignore, multi-stage builds
+alternatives: Bind mounts during development
+where_used: Adding code | Adding config | Multi-stage builds
+mini_conversation: A: Every build reinstalls all dependencies. | B: Copy the dependency file first so that layer stays cached.
+misconception: ✗ ADD is just a better COPY and should be the default → ✓ ADD has surprising extra behaviours, so COPY is the clearer default
+confused_with: COPY vs ADD: COPY only copies, ADD can also unpack archives and fetch URLs.
+avoid: Do not copy secrets or .git into the image.
+wrong_code: COPY ../shared /app/shared
+right_code: COPY shared /app/shared
+memory_trick: Reach for COPY first, ADD only when needed.
+real_project: Reordering COPY lines so dependency installs were cached between builds.
+real_interview: An interviewer may ask: What is the difference between COPY and ADD?
+real_daily: It is like a plain photocopier versus one with surprising extras.
+mcq_question: Which instruction is the safer default for adding files?
+mcq_options: A) ADD B) FROM C) COPY D) RUN
+mcq_answer: C
+mcq_why: COPY has simple, predictable behaviour.
+fill_blank: To pull files out of an earlier stage, COPY takes the flag --____=build → from
+hindi_to_task: Copy requirements.txt into the /app folder of the image.
+task_answer: COPY requirements.txt /app/
+own_task: Write a COPY order that keeps dependency installs cached.
+practice_question: Which files can COPY use as sources?
+practice_answer: Only files inside the build context.
+
+@DKR-009
+type: code56
+topic: 02 Dockerfile
+level: Beginner
+term: WORKDIR
+cue: Which instruction sets the folder in which later instructions and the container's main command run?
+kind: Dockerfile instruction
+frequency: Very high
+importance: 4
+origin: Typing long absolute paths in every line is error-prone, so WORKDIR sets a working folder for the following instructions.
+pro_tip: Use WORKDIR instead of RUN cd, since cd does not persist between instructions.
+memory_story: WORKDIR moves the worker to the right desk before the next jobs begin.
+visual: A path set once and used by all later lines.
+emotion: The tidiness of short, clear lines.
+meaning: WORKDIR sets the working directory for RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow, and creates the folder if it is missing.
+code: WORKDIR /app¶COPY . .¶RUN npm ci¶CMD ["node", "server.js"]
+output: Files are copied into /app, dependencies are installed there, and the server starts from /app.
+explanation: A relative path in COPY refers to the folder set by WORKDIR. WORKDIR can appear several times, and relative paths build on the previous one. The folder is created automatically if it does not exist. RUN cd /app only affects that one RUN line, so it cannot be used to set the folder for later lines.
+simple_explain: Set WORKDIR once near the top and use short relative paths after that.
+analogy: It is like moving the worker to the right desk before the next jobs begin.
+syntax: WORKDIR /path
+anatomy: WORKDIR = set the folder | the path is created if missing | later relative paths use it
+example_1: WORKDIR /usr/src/app
+example_2: WORKDIR /app/src
+example_3: WORKDIR /home/app/project
+variation: docker run -w /other image   // override the folder at run time
+used_with: COPY, RUN, CMD
+related: COPY vs ADD, CMD vs ENTRYPOINT
+alternatives: Using absolute paths in every instruction
+where_used: Every application image | Cleaner Dockerfiles | Running commands
+mini_conversation: A: My script cannot find files after RUN cd. | B: cd only lasts for that line, so use WORKDIR.
+misconception: ✗ RUN cd /app changes the folder for the following instructions → ✓ Each RUN starts fresh, and only WORKDIR changes the folder for later lines
+confused_with: WORKDIR vs RUN cd: WORKDIR persists, cd does not.
+avoid: Do not rely on RUN cd to set the folder.
+wrong_code: RUN cd /app¶COPY . .
+right_code: WORKDIR /app¶COPY . .
+memory_trick: WORKDIR sets the desk for all later lines.
+real_project: Setting a clear application folder in all service images.
+real_interview: An interviewer may ask: Why use WORKDIR instead of cd?
+real_daily: It is like moving a worker to the right desk.
+mcq_question: Why does RUN cd not affect later instructions?
+mcq_options: A) cd is not installed B) It only works on Windows C) Docker blocks it D) Each RUN starts in a fresh shell
+mcq_answer: D
+mcq_why: A directory change lasts only for that one instruction.
+fill_blank: WORKDIR creates the folder if it does not ____ → exist
+hindi_to_task: Set the working folder to /srv/app.
+task_answer: WORKDIR /srv/app
+own_task: Rewrite a Dockerfile that uses cd so that it uses WORKDIR.
+practice_question: What happens if the WORKDIR folder does not exist?
+practice_answer: Docker creates it.
+
+@DKR-010
+type: code56
+topic: 02 Dockerfile
+level: Intermediate
+term: CMD vs ENTRYPOINT
+cue: Which two instructions define what the container runs at start, and which one is easily replaced by arguments to docker run?
+kind: Dockerfile instruction
+frequency: Very high
+importance: 5
+origin: A container needs a default command, and sometimes a fixed program with changeable arguments, so Docker has CMD for defaults and ENTRYPOINT for the fixed part.
+pro_tip: Use the exec form with a JSON array so the program receives signals and shuts down cleanly.
+memory_story: ENTRYPOINT is the fixed engine of the machine, and CMD is the default setting that you can turn.
+visual: A fixed program name followed by default arguments that can be replaced.
+emotion: The clarity of knowing how a container starts.
+meaning: CMD sets the default command or arguments that docker run can replace, and ENTRYPOINT sets the program that always runs.
+code: ENTRYPOINT ["python", "app.py"]¶CMD ["--port", "8000"]¶# docker run myapp --port 9000   replaces only CMD
+output: By default the container runs python app.py --port 8000, and with the extra argument it runs python app.py --port 9000.
+explanation: If both are given, CMD supplies default arguments to ENTRYPOINT. Only the last CMD in a Dockerfile counts. The exec form (JSON array) runs the program directly as process 1, which receives stop signals, while the shell form wraps it in a shell, which may not pass signals on. ENTRYPOINT can be overridden with --entrypoint.
+simple_explain: Use CMD for the normal start command. Use ENTRYPOINT when the image is a tool, and let arguments from docker run change its options.
+analogy: ENTRYPOINT is the fixed engine of the machine, and CMD is a default setting that you can turn.
+syntax: ENTRYPOINT ["program"]  |  CMD ["arg1", "arg2"]
+anatomy: ENTRYPOINT = fixed program | CMD = default command or arguments | exec form = JSON array
+example_1: CMD ["nginx", "-g", "daemon off;"]
+example_2: ENTRYPOINT ["curl"]
+example_3: CMD ["python", "app.py"]
+variation: docker run --entrypoint sh image   // replace the entrypoint for debugging¶CMD python app.py   // shell form, avoid for services
+used_with: docker run, signals, health checks
+related: RUN, docker run, debugging containers
+alternatives: A small start script as the entrypoint
+where_used: Every image | CLI tool images | Services
+mini_conversation: A: My container ignores stop signals and takes ten seconds to stop. | B: Use the exec form so the program is the main process.
+misconception: ✗ CMD and RUN do the same job → ✓ RUN executes at build time and CMD defines what runs at container start
+confused_with: CMD vs ENTRYPOINT: CMD is replaceable by arguments, ENTRYPOINT is the fixed program.
+avoid: Do not use the shell form for the main process of a service.
+wrong_code: CMD python app.py
+right_code: CMD ["python", "app.py"]
+memory_trick: Entrypoint is fixed and CMD is the default.
+real_project: Making a tool image where users pass arguments after the image name.
+real_interview: An interviewer may ask: What is the difference between CMD and ENTRYPOINT?
+real_daily: It is like a fixed engine and a default setting you can turn.
+mcq_question: Which one is replaced by arguments given to docker run?
+mcq_options: A) CMD B) FROM C) WORKDIR D) ENTRYPOINT
+mcq_answer: A
+mcq_why: Arguments after the image name replace CMD.
+fill_blank: The ____ form of CMD uses a JSON array → exec
+hindi_to_task: Write a CMD that runs node server.js in the exec form.
+task_answer: CMD ["node", "server.js"]
+own_task: Create an image whose entrypoint is a tool and whose CMD is a default option.
+practice_question: Why use the exec form for services?
+practice_answer: So the program is the main process and receives stop signals.
+
+@DKR-011
+type: code56
+topic: 02 Dockerfile
+level: Intermediate
+term: ENV and ARG
+cue: Which two instructions set variables, one available while the container runs and one only while building?
+kind: Dockerfile instruction
+frequency: Very high
+importance: 5
+origin: Images need settings such as versions and modes, so ARG supplies values at build time and ENV keeps values in the running container.
+pro_tip: Never put secrets in ENV or ARG, since both can be read from the image.
+memory_story: ARG is a note used only while building, and ENV is a note that stays on the finished product.
+visual: A build argument disappearing after the build and an environment variable staying in the container.
+emotion: The caution of knowing what is stored in the image.
+meaning: ARG defines a variable available only during the build, and ENV defines an environment variable that is also available when the container runs.
+code: ARG APP_VERSION=1.0¶ENV APP_ENV=production¶ENV PORT=8000¶RUN echo "Building $APP_VERSION"¶# docker build --build-arg APP_VERSION=2.1 .
+output: The build uses version 2.1 when the argument is given, and the container starts with APP_ENV and PORT already set.
+explanation: ARG values are passed with --build-arg and are not present in the running container, but they can still appear in the image history. ENV values are stored in the image and can be overridden with docker run -e. Because both can be inspected, secrets should be supplied at run time or through build secrets, never baked in.
+simple_explain: Use ARG for build settings and ENV for run settings. Neither is a safe place for passwords.
+analogy: ARG is a note used only while building, and ENV is a note that stays on the finished product.
+syntax: ARG NAME=default  |  ENV NAME=value
+anatomy: ARG = build time | ENV = build and run time | --build-arg = give an ARG value | -e = override ENV at run
+example_1: ARG NODE_VERSION=20
+example_2: ENV LOG_LEVEL=info
+example_3: docker run -e LOG_LEVEL=debug myapp
+variation: ENV PATH="/opt/tools:$PATH"   // extend PATH¶ARG before FROM   // choose the base image version
+used_with: docker build, docker run, secrets
+related: secrets, docker build, docker run options
+alternatives: Config files or environment files at run time
+where_used: Build settings | Run settings | Version pinning
+mini_conversation: A: I passed the database password as a build argument. | B: That can be read from the image history, so supply it at run time instead.
+misconception: ✗ ARG values are secret because they vanish after the build → ✓ ARG values can appear in the image history, so they are not safe for secrets
+confused_with: ARG vs ENV: ARG exists at build time, ENV also exists in the running container.
+avoid: Do not bake passwords or tokens into an image.
+wrong_code: ENV DB_PASSWORD=secret123
+right_code: docker run -e DB_PASSWORD="$DB_PASSWORD" myapp
+memory_trick: ARG is for the build, ENV is for the run.
+real_project: Passing a version at build time and a log level at run time.
+real_interview: An interviewer may ask: What is the difference between ARG and ENV?
+real_daily: It is like a build note and a note left on the product.
+mcq_question: Which variable is available only during the build?
+mcq_options: A) Both B) Neither C) ARG D) ENV
+mcq_answer: C
+mcq_why: ARG values exist at build time only.
+fill_blank: You give a value at build time with docker build --build-____ and a name=value pair → arg
+hindi_to_task: Define an environment variable LOG_LEVEL with the value info.
+task_answer: ENV LOG_LEVEL=info
+own_task: Write which settings in your app belong in ARG and which in ENV.
+practice_question: Can ARG values be read after the build?
+practice_answer: They can appear in the image history, so they are not safe for secrets.
+
+@DKR-012
+type: code56
+topic: 02 Dockerfile
+level: Beginner
+term: EXPOSE
+cue: Which instruction documents the port an app listens on, but does not actually open it to the outside?
+kind: Dockerfile instruction
+frequency: High
+importance: 4
+origin: People reading an image need to know which port it uses, so EXPOSE records it, while publishing a port is a separate choice made at run time.
+pro_tip: Always publish ports with -p when you run the container, since EXPOSE alone does nothing for outside access.
+memory_story: EXPOSE is a sign on the door saying where the shop entrance is, and -p is what actually opens the door.
+visual: A port label on an image, and a separate mapping at run time.
+emotion: The relief of understanding why a port is not reachable.
+meaning: EXPOSE documents the port a container listens on, and -p publishes a port to the host.
+code: EXPOSE 8000¶# docker run -p 8080:8000 myapp¶# docker run -P myapp
+output: The image records port 8000, then -p maps host port 8080 to container port 8000, and -P publishes exposed ports to random host ports.
+explanation: EXPOSE is only metadata. Without -p or -P, nothing from the host can reach the container's port, apart from other containers on the same network. The application must also listen on 0.0.0.0 inside the container, since listening only on 127.0.0.1 inside the container is not reachable from outside it.
+simple_explain: EXPOSE tells readers which port the app uses. To reach it from your machine, you must publish it with -p.
+analogy: EXPOSE is a sign saying where the entrance is, and -p opens the door.
+syntax: EXPOSE port  |  docker run -p hostPort:containerPort
+anatomy: EXPOSE = documentation | -p = publish a port | -P = publish all exposed ports to random ports
+example_1: EXPOSE 80
+example_2: docker run -p 3000:3000 web
+example_3: docker run -p 127.0.0.1:5432:5432 db
+variation: EXPOSE 8000/udp   // a UDP port¶docker port container   // show published ports
+used_with: docker run, port mapping, networks
+related: port mapping, networks, docker run options
+alternatives: Compose ports setting
+where_used: Web services | Databases | Debugging connectivity
+mini_conversation: A: I exposed the port but cannot reach the app. | B: EXPOSE does not publish, so add -p when running.
+misconception: ✗ EXPOSE opens the port to the host → ✓ EXPOSE only documents the port, and -p publishes it
+confused_with: EXPOSE vs -p: EXPOSE documents, -p publishes.
+avoid: Do not make the app listen only on 127.0.0.1 inside the container.
+wrong_code: docker run myapp   # expecting port 8000 on the host
+right_code: docker run -p 8000:8000 myapp
+memory_trick: EXPOSE is a sign and -p is the door.
+real_project: Publishing a service port to localhost only for a database container.
+real_interview: An interviewer may ask: Does EXPOSE publish a port?
+real_daily: It is like a sign that tells where the entrance is.
+mcq_question: What does -p 8080:80 do?
+mcq_options: A) Maps 80 to 8080 on the container B) Maps host port 8080 to container port 80 C) Exposes UDP only D) Deletes a port
+mcq_answer: B
+mcq_why: The host port comes first and the container port second.
+fill_blank: EXPOSE only documents a port, and ____ publishes it → -p
+hindi_to_task: Run the image web and map host port 8080 to container port 80.
+task_answer: docker run -p 8080:80 web
+own_task: Run a web container and open it in a browser through a published port.
+practice_question: Which address must an app listen on inside a container to be reachable from outside?
+practice_answer: 0.0.0.0
+
+@DKR-013
+type: topic56
+topic: 02 Dockerfile
+level: Intermediate
+term: Layers and the build cache
+cue: Why does changing one early line of a Dockerfile make Docker rebuild everything after it, and how do you order lines to avoid that?
+category: Build concept
+frequency: Very high
+importance: 5
+origin: To avoid repeating unchanged work, Docker saves each instruction's result as a layer and reuses it when the instruction and its inputs have not changed.
+pro_tip: Put the instructions that change rarely, such as installing dependencies, before those that change often, such as copying your code.
+memory_story: Layers are floors of a building, and if you change a lower floor, every floor above has to be rebuilt.
+visual: A stack of layers where everything above a changed layer is marked as rebuilt.
+emotion: The joy of a build that finishes in seconds thanks to the cache.
+definition: Each Dockerfile instruction creates a layer, and Docker reuses a cached layer when the instruction and its inputs are unchanged, but rebuilds all later layers once one layer changes.
+explanation: For COPY, the cache checks the content of the files. Once any layer is rebuilt, all layers after it are rebuilt too. The usual pattern is to copy only the dependency list, install dependencies, and then copy the application code, so code edits do not reinstall dependencies. Layers are also shared between images, which saves disk space and download time.
+simple_explain: Order the Dockerfile from least to most frequently changing. Then Docker reuses the slow steps and rebuilds only what changed.
+analogy: Layers are floors of a building, and changing a lower floor means rebuilding all floors above.
+formula_rule: Rarely changing first, often changing last
+example_1: Copying package.json and running npm ci before copying the source code.
+example_2: Using --no-cache to force a full rebuild.
+example_3: Two images sharing the same base layers on disk.
+related: COPY, RUN, multi-stage builds, BuildKit
+word_family: layer, cache, rebuild, invalidation
+where_used: Faster builds | CI pipelines | Image size
+mini_conversation: A: Every small code change reinstalls all dependencies. | B: Copy the dependency file and install before you copy the code.
+misconception: ✗ Docker always rebuilds the whole image on each build → ✓ Docker reuses cached layers until the first changed instruction, and rebuilds only from there
+contrast: Cached vs rebuilt layer: a cached layer is reused unchanged, a rebuilt layer runs its instruction again.
+avoid: Do not put COPY . . before the dependency installation.
+memory_trick: Put stable steps first, changing steps last.
+real_project: Reordering a Dockerfile to cut the build time of a service from minutes to seconds.
+real_interview: An interviewer may ask: How do you speed up Docker builds?
+real_daily: It is like floors of a building where changing a lower floor means rebuilding all above.
+mcq_question: What happens to later layers when an early layer changes?
+mcq_options: A) They are merged B) They are deleted forever C) They are rebuilt D) They are kept
+mcq_answer: C
+mcq_why: A changed layer invalidates all layers after it.
+fill_blank: Instructions that change rarely should come ____ in the Dockerfile → first
+apply: How do you keep dependency installs cached when code changes? → Copy the dependency file and install before copying the code
+explain_task: Explain layers and the cache in three lines.
+own_task: Reorder a sample Dockerfile to make better use of the cache.
+
+@DKR-014
+type: code56
+topic: 02 Dockerfile
+level: Beginner
+term: .dockerignore
+cue: Which file lists things that must not be sent to the Docker build, such as node_modules, .git and secrets?
+kind: Configuration file
+frequency: Very high
+importance: 4
+origin: When you build, the whole folder is sent to the daemon, so a file that lists what to leave out keeps builds fast and keeps secrets out of images.
+pro_tip: Add .git, node_modules, .env and build output to .dockerignore in every project.
+memory_story: .dockerignore is the packing list of things to leave at home before the trip.
+visual: A folder with some items crossed out before being sent to the build.
+emotion: The relief of a build context that is small and clean.
+meaning: .dockerignore lists files and folders excluded from the build context, so COPY and ADD cannot add them.
+code: .git¶**/node_modules¶.env¶**/*.log¶dist/¶Dockerfile¶docker-compose.yml
+output: These files are not sent to the daemon, so they cannot be copied into the image and do not slow down the build.
+explanation: The build context is everything in the folder you pass to docker build. Large folders such as node_modules make the context slow to send, and files such as .env could end up in the image by a careless COPY . . line. Patterns work like .gitignore with a few differences. Excluding files also stops needless cache invalidation when they change.
+simple_explain: Put a .dockerignore next to the Dockerfile and list what to skip. Builds become faster and safer.
+analogy: It is like a packing list of things to leave at home before a trip.
+syntax: one pattern per line, like .gitignore
+anatomy: .git = version control data | node_modules = dependencies | .env = secrets | *.log = log files
+example_1: node_modules
+example_2: **/*.pyc
+example_3: !important.log
+variation: # comment   // comment line¶!pattern   // re-include a file
+used_with: COPY, build context, secrets
+related: COPY vs ADD, security, layers and cache
+alternatives: Building from a clean subfolder
+where_used: Every project | CI builds | Keeping secrets out of images
+mini_conversation: A: The build uploads a gigabyte of context. | B: Add node_modules and .git to .dockerignore.
+misconception: ✗ .dockerignore only affects docker run → ✓ It affects the build context, so COPY and ADD cannot see the ignored files
+confused_with: .dockerignore vs .gitignore: one limits the Docker build context, the other limits what Git tracks.
+avoid: Do not leave .env files out of .dockerignore.
+wrong_code: COPY . .   # with no .dockerignore, copying .env too
+right_code: COPY . .   # with .env listed in .dockerignore
+memory_trick: Ignore what the image must not see.
+real_project: Excluding the git folder and environment files from every service image.
+real_interview: An interviewer may ask: What is the build context?
+real_daily: It is like a packing list of things to leave at home.
+mcq_question: What does .dockerignore control?
+mcq_options: A) Which files enter the build context B) Which ports open C) Which users log in D) Which registry is used
+mcq_answer: A
+mcq_why: It excludes files from what is sent to the build.
+fill_blank: The folder you pass to docker build is called the build ____ → context
+hindi_to_task: Write two .dockerignore lines to exclude node_modules and .env.
+task_answer: node_modules¶.env
+own_task: Create a .dockerignore for a project and compare the context sizes.
+practice_question: Why exclude .env files from the build context?
+practice_answer: So secrets cannot be copied into the image by accident.
+
+@DKR-015
+type: code56
+topic: 02 Dockerfile
+level: Advanced
+term: Multi-stage builds
+cue: How do you build with heavy tools in one stage and copy only the finished result into a small final image?
+kind: Dockerfile technique
+frequency: Very high
+importance: 5
+origin: Compilers and build tools make images big and risky, so Docker lets you use several stages and keep only the final stage in the shipped image.
+pro_tip: Name your stages with AS, and copy only the artefacts you need with COPY --from.
+memory_story: A multi-stage build is a workshop where you build the product, and only the finished product goes into the shop box.
+visual: A large build stage on the left and a small runtime stage on the right with an arrow carrying one file.
+emotion: The satisfaction of a tiny, clean final image.
+meaning: A multi-stage Dockerfile has several FROM stages, and the final image contains only what is copied from earlier stages.
+code: FROM node:20 AS build¶WORKDIR /app¶COPY package*.json ./¶RUN npm ci¶COPY . .¶RUN npm run build¶FROM nginx:1.27-alpine¶COPY --from=build /app/dist /usr/share/nginx/html
+output: The final image is a small nginx image holding only the built site, without Node.js, source code or dependencies.
+explanation: Each FROM starts a new stage, and only the last stage becomes the image unless you choose another with --target. Files are moved between stages with COPY --from. This keeps compilers, test tools and source code out of the final image, which makes it smaller and reduces the attack surface. You can also stop at a stage for testing.
+simple_explain: Build in one stage, copy the result into a clean small stage, and ship that. The final image has none of the build tools.
+analogy: It is a workshop where the product is built, and only the finished product goes into the shop box.
+syntax: FROM base AS name ... FROM runtime ... COPY --from=name src dest
+anatomy: AS = name a stage | COPY --from = take files from a stage | --target = build up to a stage
+example_1: COPY --from=build /app/dist /usr/share/nginx/html
+example_2: docker build --target build -t myapp:test .
+example_3: FROM golang:1.22 AS builder ... FROM scratch
+variation: COPY --from=nginx:latest /etc/nginx/nginx.conf /tmp/   // copy from an external image¶FROM base AS test   // a stage used only for tests
+used_with: COPY --from, small base images, CI
+related: FROM, layers and cache, security
+alternatives: Distroless runtime images
+where_used: Compiled languages | Front-end builds | Slim production images
+mini_conversation: A: Our image contains compilers and is huge. | B: Use a multi-stage build and copy only the built output.
+misconception: ✗ All stages end up in the final image → ✓ Only the last stage, or the one chosen with --target, becomes the image
+confused_with: Multi-stage vs one big image: multi-stage keeps build tools out of the final image.
+avoid: Do not copy the whole build stage into the final one.
+wrong_code: COPY --from=build /app /app
+right_code: COPY --from=build /app/dist /usr/share/nginx/html
+memory_trick: Build in one stage, ship from another.
+real_project: Shrinking a service image by compiling in one stage and running in another.
+real_interview: An interviewer may ask: Why use multi-stage builds?
+real_daily: It is like a workshop where only the finished product goes into the box.
+mcq_question: Which part of a multi-stage Dockerfile becomes the final image?
+mcq_options: A) The base image only B) The last stage C) Every stage D) The first stage
+mcq_answer: B
+mcq_why: The final image is built from the last stage unless another target is chosen.
+fill_blank: COPY --from copies files from an earlier ____ → stage
+hindi_to_task: Copy the folder /app/dist from the build stage into /usr/share/nginx/html.
+task_answer: COPY --from=build /app/dist /usr/share/nginx/html
+own_task: Convert a single-stage Dockerfile into two stages and compare the sizes.
+practice_question: Which option builds only up to a named stage?
+practice_answer: --target
+
+@DKR-016
+type: code56
+topic: 02 Dockerfile
+level: Intermediate
+term: Running as a non-root user
+cue: Which instruction makes the container's main process run as an ordinary user instead of root?
+kind: Dockerfile instruction
+frequency: High
+importance: 5
+origin: By default containers run as root, which makes an escape or a bug more dangerous, so a good image creates an ordinary user and switches to it.
+pro_tip: Give the files the app needs to that user with COPY --chown, and switch with USER near the end.
+memory_story: Running as root is leaving the master key with every visitor, and USER hands them only a normal key.
+visual: A process with a normal badge instead of an administrator badge.
+emotion: The comfort of lowering the risk with two lines.
+meaning: USER sets the user for later instructions and for the running container, so the process does not run as root.
+code: RUN groupadd -r app && useradd -r -g app app¶COPY --chown=app:app . /app¶USER app¶CMD ["python", "app.py"]
+output: The container's main process runs as the user app, without root privileges.
+explanation: Root inside a container is still powerful on the shared kernel, so limiting privileges reduces damage from a compromise. A non-root user cannot bind to ports below 1024 in many setups, so use a higher port. Files must be readable by that user. Some official images already provide a user, such as node. You can also set the user at run time with --user.
+simple_explain: Create a normal user, give it the files, and switch with USER before CMD. Use ports above 1024.
+analogy: Running as root is leaving the master key with every visitor, and USER hands over a normal key.
+syntax: USER name[:group]
+anatomy: USER = switch user | useradd = create the user | --chown = give files to the user
+example_1: USER node
+example_2: USER 10001
+example_3: docker run --user 1000:1000 image
+variation: USER 10001:10001   // numeric ids work well with orchestrators¶readOnlyRootFilesystem in Kubernetes   // a further hardening step
+used_with: COPY --chown, ports, security scanning
+related: security, secrets, Kubernetes security
+alternatives: Rootless Docker for the whole daemon
+where_used: Production images | Security reviews | Orchestrated clusters
+mini_conversation: A: Our scanner complains that containers run as root. | B: Add a non-root user and switch to it with USER.
+misconception: ✗ Root inside a container is harmless because of isolation → ✓ Root in a container is still a risk, so run as a normal user
+confused_with: USER vs sudo: USER sets who the process runs as, sudo is for temporary elevation.
+avoid: Do not leave application containers running as root.
+wrong_code: CMD ["python", "app.py"]   # as root by default
+right_code: USER app¶CMD ["python", "app.py"]
+memory_trick: Add a user, then switch to it.
+real_project: Making all service images run as a normal user to pass a security review.
+real_interview: An interviewer may ask: Why should containers not run as root?
+real_daily: It is like giving visitors a normal key instead of the master key.
+mcq_question: Which instruction makes later steps run as an unprivileged account?
+mcq_options: A) FROM B) EXPOSE C) RUN D) USER
+mcq_answer: D
+mcq_why: USER sets the user that later instructions and the container run as.
+fill_blank: By default a container's process runs as ____ → root
+hindi_to_task: Switch to the user app before the start command.
+task_answer: USER app
+own_task: Add a non-root user to a Dockerfile and test that the app still works.
+practice_question: Which option sets the user at run time?
+practice_answer: --user

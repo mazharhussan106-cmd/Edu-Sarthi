@@ -1,0 +1,246 @@
+
+@REQ-009
+topic: 02 Discovery
+level: Intermediate
+term: Scoping
+cue: How do you decide what is in and out of a project?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Projects without clear boundaries grow without limit, and every new request quietly adds time and risk.
+pro_tip: Write down what is out of scope as clearly as what is in scope.
+memory_story: Scoping is drawing the fence before you start digging the garden.
+visual: A fence around a list of included tasks, with other tasks outside it.
+emotion: The relief of knowing where the work ends.
+definition: Scoping is agreeing and writing down what will be delivered, what will not, the assumptions behind it, and what the customer must provide.
+explanation: A scope statement lists goals, deliverables, exclusions, dependencies, responsibilities of both sides and acceptance rules. It protects both parties from vague expectations. Review it with the customer and have it confirmed in writing. When new requests appear, compare them with the scope and handle them as a change request instead of absorbing them silently.
+simple_explain: Write down what you will do, what you will not, and what you need from the customer.
+analogy: Scoping is drawing the fence before you start digging the garden.
+formula_rule: In, out, assumptions, dependencies, acceptance.
+example_1: Including a data import but excluding a custom dashboard.
+example_2: Stating that the customer provides test accounts.
+example_3: Listing what counts as done for the integration.
+related: MVP, success criteria, change requests, estimating
+word_family: scope, exclusion, deliverable, dependency, boundary
+where_used: Proposals | Kick-off | Contracts
+mini_conversation: A: Can you also add reporting for finance? | B: That is outside our agreed scope, so let us raise it as a change.
+misconception: ✗ A flexible scope keeps the customer happier → ✓ An unclear scope usually causes disputes and delays
+contrast: In scope vs out of scope: agreed work versus requests needing a change.
+avoid: Do not accept extra work verbally without recording it.
+memory_trick: Draw the fence before you dig.
+real_project: A written exclusion list kept an integration project on time when new asks arrived.
+real_interview: An interviewer may ask: How do you stop scope creep?
+real_daily: It is like agreeing the shopping list before entering the shop.
+mcq_question: What should a scope statement include besides deliverables?
+mcq_options: A) Passwords B) Exclusions and assumptions C) Personal opinions D) Jokes
+mcq_answer: B
+mcq_why: Boundaries and assumptions prevent later disputes.
+fill_blank: Gradual unplanned growth of the work is called scope ____ → creep
+apply: A customer adds a new report halfway through. What do you do? → Compare it with the scope and raise a change request
+explain_task: Explain why exclusions matter in a scope.
+own_task: Write a five-line scope with two exclusions for a data import project.
+
+@REQ-010
+topic: 02 Discovery
+level: Intermediate
+term: MVP
+cue: What is the smallest useful version you can deliver and learn from?
+category: Core concept
+frequency: High
+importance: 4
+origin: Large plans fail on unproven assumptions, so teams ship a small working version first to test the idea with real use.
+pro_tip: Choose the thinnest slice that still solves one real problem end to end.
+memory_story: An MVP is a first bicycle that already rolls, not a half-built car.
+visual: A thin slice cut through a layered cake showing every layer.
+emotion: The excitement of getting something real into hands quickly.
+definition: A minimum viable product is the smallest version of a solution that delivers real value to real users and teaches you whether the idea is right.
+explanation: An MVP is a complete thin slice, not a broken full version. It should cover one important workflow from start to finish, be usable by real people, and have a clear question it tests. Agree with the customer what is deliberately left out and when the next step will be decided. In customer work, an MVP often means a pilot with one team.
+simple_explain: Build the smallest thing that really works and learn from using it.
+analogy: An MVP is a first bicycle that already rolls, not a half-built car.
+formula_rule: One workflow, end to end, real users, a question to answer.
+example_1: A pilot with one support team before a company-wide rollout.
+example_2: Automating one weekly report before the whole reporting suite.
+example_3: A prototype that uses a sample of the data.
+related: scoping, success criteria, prioritising, demos
+word_family: MVP, pilot, thin slice, prototype, iteration
+where_used: Proposals | Pilots | Product work
+mini_conversation: A: Should we build all five reports first? | B: Start with the one that saves the most time and learn from it.
+misconception: ✗ An MVP is a low-quality product → ✓ It is a small but complete and useful version
+contrast: MVP vs prototype: a usable first version versus a model for testing an idea.
+avoid: Do not call a half-working demo an MVP.
+memory_trick: Small, whole, useful, and tested by real users.
+real_project: A one-team pilot proved value and unlocked budget for the full rollout.
+real_interview: An interviewer may ask: What would you include in an MVP?
+real_daily: It is like opening one stall before building the whole market.
+mcq_question: What describes a good MVP?
+mcq_options: A) A small complete workflow B) A broken demo C) A giant plan D) A slide deck only
+mcq_answer: A
+mcq_why: It delivers real value end to end on a small scale.
+fill_blank: A small trial with one team before a wider rollout is a ____ → pilot
+apply: A customer wants five reports at once. How do you start? → Deliver one report end to end as a pilot
+explain_task: Explain an MVP in plain words.
+own_task: Choose one workflow from a project you know and define its MVP in four lines.
+
+@REQ-011
+topic: 02 Discovery
+level: Intermediate
+term: Success criteria
+cue: How do you agree in advance what done means?
+category: Core concept
+frequency: High
+importance: 5
+origin: Disagreements at the end of a project usually come from different pictures of done, so the picture must be agreed at the start.
+pro_tip: Write each criterion so that two people could check it and reach the same answer.
+memory_story: Success criteria are the finish line painted on the track before the race.
+visual: A checklist where each line has a clear tick or cross.
+emotion: The relief of an unarguable finish line.
+definition: Success criteria are specific, testable conditions that must be true for the customer to accept the work as complete.
+explanation: Each criterion should be measurable, such as the import completes in under ten minutes for a given file, rather than vague, such as fast. Link them to the customer's goal and to the acceptance step. Agree who checks them and how. Change them only through a written, agreed update. They differ from success measures in that they judge a delivery, while measures judge the long-term outcome.
+simple_explain: Write clear checks that everyone agrees mean the work is finished.
+analogy: Success criteria are the finish line painted on the track before the race.
+formula_rule: Specific, testable, agreed, checked by someone named.
+example_1: The import handles a file of one hundred thousand rows.
+example_2: Three named users can log in with single sign-on.
+example_3: The report matches the finance team's manual total.
+related: success measures, acceptance criteria, scoping, MVP
+word_family: criteria, testable, acceptance, done, checkpoint
+where_used: Contracts | Kick-off | Handover
+mini_conversation: A: Is the integration done? | B: Check it against the criteria we agreed in the scope.
+misconception: ✗ Everyone naturally agrees on what done means → ✓ Without written criteria, people often disagree at the end
+contrast: Success criteria vs success measures: judging a delivery versus judging a long-term outcome.
+avoid: Do not use vague words like fast, easy or better as criteria.
+memory_trick: Paint the finish line before the race starts.
+real_project: Written criteria for an import let both teams accept the work in one meeting.
+real_interview: An interviewer may ask: How do you define done for a customer project?
+real_daily: It is like agreeing the exact photo of a finished room before painting.
+mcq_question: Which success criterion is best?
+mcq_options: A) The import feels smooth B) The import is good C) The import finishes under ten minutes for the sample file D) The import is fast
+mcq_answer: C
+mcq_why: It can be tested with a clear pass or fail.
+fill_blank: A condition that two people could check and agree on is ____ → testable
+apply: A customer wants the tool to be fast. What do you write down? → A measurable time for a defined task
+explain_task: Explain how success criteria prevent disputes.
+own_task: Rewrite three vague goals as testable success criteria.
+
+@REQ-012
+topic: 03 Requirements
+level: Beginner
+term: User stories
+cue: Which short format captures a need from the user's point of view?
+category: Format
+frequency: Very high
+importance: 5
+origin: Long requirement documents were often misread, so short stories keep the user and the reason at the centre.
+pro_tip: Always include the why, because it lets the team choose a better solution.
+memory_story: A user story is a sticky note that says who, what and why in one line.
+visual: A sticky note with as a, I want and so that lines.
+emotion: The empathy of seeing through the user's eyes.
+definition: A user story is a short description of a need in the form as a type of user, I want a capability, so that I get a benefit.
+explanation: The format keeps the focus on who needs something and why. Stories should be small enough to finish in one iteration and independent enough to be reordered. Details are added through acceptance criteria and conversation. A story is a promise to discuss, not a full specification. Avoid writing technical tasks as stories.
+simple_explain: Say who needs what, and why, in one sentence.
+analogy: A user story is a sticky note that says who, what and why in one line.
+formula_rule: As a who, I want what, so that why.
+example_1: As an analyst, I want to export the report so that I can share it with finance.
+example_2: As an admin, I want to reset a password so that users are not locked out.
+example_3: As a manager, I want a weekly summary so that I can spot delays.
+related: acceptance criteria, prioritising, estimating, change requests
+word_family: story, persona, benefit, backlog, iteration
+where_used: Backlogs | Planning | Workshops
+mini_conversation: A: Add a filter to the page. | B: Who needs it and why, so we can write the story.
+misconception: ✗ A user story is a complete specification → ✓ It starts a conversation that needs detail added
+contrast: User story vs task: a user need versus a piece of technical work.
+avoid: Do not write stories with no user and no reason.
+memory_trick: Who, what, why on one note.
+real_project: Rewriting requests as stories showed that two requests had the same real need.
+real_interview: An interviewer may ask: How do you write a good user story?
+real_daily: It is like a note that says who wants what and why before shopping.
+mcq_question: Which part of a user story states the benefit?
+mcq_options: A) As a B) The title C) I want D) So that
+mcq_answer: D
+mcq_why: The so that clause gives the reason.
+fill_blank: A story begins with As a ____ → user
+apply: A customer says Add an export button. How do you reshape it? → As an analyst, I want to export so that I can share results
+explain_task: Explain the three parts of a user story.
+own_task: Write three user stories for a weekly reporting tool.
+
+@REQ-013
+topic: 03 Requirements
+level: Beginner
+term: Acceptance criteria
+cue: Which checks decide whether a story is really finished?
+category: Format
+frequency: Very high
+importance: 5
+origin: A story alone leaves room for different readings, so acceptance criteria state the exact conditions for done.
+pro_tip: Write criteria as examples, such as given, when and then, so they can be tested directly.
+memory_story: Acceptance criteria are the exam questions the story must pass.
+visual: A story card with a checklist of passing conditions below it.
+emotion: The comfort of knowing exactly what passing looks like.
+definition: Acceptance criteria are the specific, testable conditions that a story must meet to be accepted, often written as given a situation, when an action, then a result.
+explanation: Criteria cover the main path, important edge cases and errors. Each should be a clear pass or fail. Writing them before building avoids debate afterwards and gives testers something concrete. Keep them about behaviour the user sees, not about the internal design.
+simple_explain: List the exact conditions that must pass for the story to count as done.
+analogy: Acceptance criteria are the exam questions the story must pass.
+formula_rule: Given, when, then.
+example_1: Given a file with errors, when imported, then a clear error list is shown.
+example_2: Given a valid file, when imported, then all rows appear in the table.
+example_3: Given no permission, when exporting, then access is refused with a message.
+related: user stories, success criteria, estimating, change requests
+word_family: criteria, given when then, pass, edge case, behaviour
+where_used: Backlogs | Testing | Sign-off
+mini_conversation: A: How do we know the export story is done? | B: Check each acceptance criterion on the card.
+misconception: ✗ Acceptance criteria describe how to build it → ✓ They describe what the user sees when it works
+contrast: Acceptance criteria vs success criteria: one story's checks versus the project's overall conditions.
+avoid: Do not leave stories without any testable condition.
+memory_trick: Given, when, then, pass or fail.
+real_project: Criteria with edge cases caught a missing error message before the customer test.
+real_interview: An interviewer may ask: What are acceptance criteria and who writes them?
+real_daily: It is like a checklist of what a finished room must have.
+mcq_question: Which format is common for acceptance criteria?
+mcq_options: A) Start, stop, wait B) Given, when, then C) Hope, try, see D) Maybe, perhaps, later
+mcq_answer: B
+mcq_why: It states a situation, an action and an expected result.
+fill_blank: Each criterion should give a clear pass or ____ → fail
+apply: A story says users can import files. What do you add? → Criteria for valid files, errors and edge cases
+explain_task: Explain how criteria make testing easier.
+own_task: Write four acceptance criteria for a password reset story.
+
+@REQ-014
+topic: 03 Requirements
+level: Intermediate
+term: Prioritising with MoSCoW
+cue: Which method sorts requirements into must, should, could and will not?
+category: Technique
+frequency: High
+importance: 4
+origin: When everything is urgent, nothing is, so teams need a shared way to rank requests against limited time.
+pro_tip: Keep the Must group small, and test it by asking what happens if it is missing.
+memory_story: MoSCoW is a packing list that says what must go in the bag and what can stay at home.
+visual: Four boxes labelled must, should, could and will not.
+emotion: The relief of an honest ranking.
+definition: MoSCoW sorts requirements into Must have, Should have, Could have and Will not have this time, so the team agrees what is essential for the deadline.
+explanation: Must items are needed for the release to work or be legal. Should items are important but there are workarounds. Could items are nice to have if time allows. Will not items are agreed as out for now, and are not rejected forever. Review the groups with the customer, and be ready to move items when time or facts change.
+simple_explain: Sort every request into must, should, could or will not for this release.
+analogy: MoSCoW is a packing list that says what must go in the bag and what can stay at home.
+formula_rule: Must, Should, Could, Will not.
+example_1: Login is a Must for a secure tool.
+example_2: An export to spreadsheet is a Should.
+example_3: A dark theme is a Could.
+related: scoping, MVP, estimating, change requests
+word_family: priority, must, should, could, trade-off
+where_used: Planning | Workshops | Release decisions
+mini_conversation: A: Everything is a must. | B: Ask what breaks if each item is missing.
+misconception: ✗ Everything can be a Must → ✓ If everything is a Must, nothing is prioritised
+contrast: Must vs Should: the release fails without it versus important but has a workaround.
+avoid: Do not let every item become a Must.
+memory_trick: Ask what breaks if it is missing.
+real_project: A MoSCoW session cut a long list to a short Must group and saved time.
+real_interview: An interviewer may ask: How do you prioritise customer requests?
+real_daily: It is like deciding what goes in a small suitcase.
+mcq_question: Which group is for items agreed as out for this release?
+mcq_options: A) Will not have B) Could have C) Must have D) Should have
+mcq_answer: A
+mcq_why: It records what is deliberately left out for now.
+fill_blank: Items needed for the release to work are the ____ group → must
+apply: Everything on a list is called urgent. What do you ask for each item? → What breaks if it is missing
+explain_task: Explain the four MoSCoW groups.
+own_task: Sort ten imagined requests into the four groups and defend your Must list.

@@ -1,0 +1,381 @@
+
+@SUP-007
+type: topic56
+topic: 02 Database
+level: Beginner
+term: Tables, rows and columns
+cue: In a Supabase database, what do you call the grid that stores data in columns for each field and rows for each record?
+category: Database concept
+frequency: Very high
+importance: 5
+origin: Relational databases organise data in tables because a grid of rows and columns is easy to search, sort and link to other tables.
+pro_tip: Give each table a clear plural name, such as todos or profiles, and keep one kind of thing per table.
+memory_story: A table is a spreadsheet where each column has a strict type and each row is one record.
+visual: A grid with headers across the top and each line below holding one record.
+emotion: The tidiness of seeing data in a neat grid.
+definition: A table stores records as rows, and each column holds one kind of value for those records, such as a title or a date.
+explanation: You can create tables in the Table Editor with clicks or in the SQL Editor with SQL. Each column has a name and a data type, and may have rules such as not null or a default value. Supabase shows the table through its API automatically.
+simple_explain: A table is like a spreadsheet. Each column is a field such as title, and each row is one item, such as one to-do.
+analogy: It is like a spreadsheet with strict column types.
+formula_rule: Table = columns (fields) + rows (records)
+example_1: A todos table with the columns id, title and done.
+example_2: A profiles table with one row for each user.
+example_3: A products table with name, price and stock columns.
+related: data types, primary key, SQL Editor, Table Editor
+word_family: table, row, column, record, field
+where_used: Every Supabase app | Data modelling | Admin screens
+mini_conversation: A: Where do I store my tasks? | B: Make a todos table with a title column and a done column.
+misconception: ✗ A table can hold any shape of data in any row → ✓ Every row follows the table's column structure and types
+contrast: Row vs column: a row is one record, a column is one field across all records.
+avoid: Do not put unrelated data into one giant table.
+memory_trick: Columns are fields, rows are records.
+real_project: Designing tables for students, lessons and progress in a learning app.
+real_interview: An interviewer may ask: What is the difference between a row and a column?
+real_daily: It is like a spreadsheet with strict column types.
+mcq_question: What does one row in a table represent?
+mcq_options: A) One field name B) One database C) One record D) One user key
+mcq_answer: C
+mcq_why: A row stores one complete record.
+fill_blank: Each ____ in a table has a name and a data type → column
+apply: How would you store tasks with a title and a done status? → Make a todos table with a title column and a done column
+explain_task: Explain tables, rows and columns in three lines.
+own_task: Sketch a table for a library with five columns.
+
+@SUP-008
+type: topic56
+topic: 02 Database
+level: Beginner
+term: Common Postgres data types
+cue: Which types such as text, integer, boolean, timestamptz, uuid and jsonb decide what each column may hold?
+category: Database concept
+frequency: Very high
+importance: 4
+origin: A database must know whether a column holds words, numbers or times so it can store them efficiently and compare them correctly.
+pro_tip: Use timestamptz for times so they carry a timezone, and uuid for ids that must be hard to guess.
+memory_story: Data types are the labelled shelves in a store, each built for one kind of goods.
+visual: Shelves labelled text, number, date and true or false.
+emotion: The relief of a database that rejects bad values early.
+definition: A data type defines the kind of value a column accepts, such as text, whole numbers, true or false, dates with time zones, unique ids or JSON.
+explanation: Common types are text for words, integer and bigint for whole numbers, numeric for exact decimals, boolean for true or false, timestamptz for date and time with timezone, uuid for unique identifiers, and jsonb for flexible JSON data. Choosing the right type enables sorting, maths and validation.
+simple_explain: Pick a type for each column so Postgres knows what it holds. Words go in text, yes or no in boolean, and time in timestamptz.
+analogy: Types are shelves in a store, each built for one kind of goods.
+formula_rule: words = text, whole numbers = integer, yes or no = boolean, date and time = timestamptz, unique id = uuid, flexible data = jsonb
+example_1: A title column of type text.
+example_2: A created_at column of type timestamptz.
+example_3: A settings column of type jsonb that stores a JSON object.
+related: tables and columns, primary key, constraints
+word_family: text, integer, boolean, timestamptz, uuid, jsonb
+where_used: Creating tables | Validating data | Choosing ids
+mini_conversation: A: Which type should I use for created time? | B: Use timestamptz so the time keeps its timezone.
+misconception: ✗ Storing every value as text is simpler and just as good → ✓ Proper types allow correct sorting, maths and validation, and save space
+contrast: timestamp vs timestamptz: timestamptz keeps timezone information, plain timestamp does not.
+avoid: Do not store dates as text.
+memory_trick: Pick the type that fits the value.
+real_project: Using uuid for user ids, timestamptz for times and jsonb for flexible settings.
+real_interview: An interviewer may ask: When would you use jsonb in Postgres?
+real_daily: It is like shelves in a store, each built for one kind of goods.
+mcq_question: Which type is best for a yes or no column?
+mcq_options: A) uuid B) text C) jsonb D) boolean
+mcq_answer: D
+mcq_why: boolean stores true or false.
+fill_blank: A column holding unique identifiers often uses the ____ type → uuid
+apply: Which type fits a date and time with timezone? → timestamptz
+explain_task: Explain data types in three lines.
+own_task: Choose a type for each column of a table for events.
+
+@SUP-009
+type: topic56
+topic: 02 Database
+level: Beginner
+term: Primary key and foreign key
+cue: Which column uniquely identifies each row, and which column points to a row in another table?
+category: Database concept
+frequency: Very high
+importance: 5
+origin: Rows need unique identities and tables need reliable links, so relational databases use primary keys to identify rows and foreign keys to connect them.
+pro_tip: Give every table a primary key, and add a foreign key wherever one table refers to another.
+memory_story: A primary key is a person's national ID number, and a foreign key is that number written on another form to refer to them.
+visual: One table with an id column and another with a column linking back to it by a line.
+emotion: The confidence of data that cannot point to something missing.
+definition: A primary key is a column whose value uniquely identifies each row, and a foreign key is a column that refers to the primary key of another table.
+explanation: A primary key must be unique and not null. A foreign key enforces that the referenced row exists, so you cannot add a todo for a user that is not in the table. You can choose what happens on delete, such as cascade, which removes dependent rows, or restrict.
+simple_explain: The primary key names each row. A foreign key says which row of another table this one belongs to, and the database keeps that link valid.
+analogy: A primary key is a national ID number, and a foreign key is that number written on another form.
+formula_rule: todos.user_id (foreign key) → profiles.id (primary key)
+example_1: profiles.id as the primary key of the profiles table.
+example_2: todos.user_id referencing profiles.id.
+example_3: A foreign key with on delete cascade that removes a user's todos when the user is deleted.
+related: tables and columns, joins, constraints, Auth users
+word_family: primary key, foreign key, reference, cascade, constraint
+where_used: Data modelling | Joins | Integrity rules
+mini_conversation: A: Can a todo exist for a user that does not exist? | B: Not with a foreign key, since the database checks the user exists.
+misconception: ✗ A foreign key only labels the relationship and does not enforce it → ✓ A foreign key makes the database reject rows that refer to a missing row
+contrast: Primary vs foreign key: the primary key identifies a row, the foreign key refers to another table's row.
+avoid: Do not leave out foreign keys when tables are clearly related.
+memory_trick: A primary key identifies and a foreign key refers.
+real_project: Linking each lesson row to its course through a foreign key.
+real_interview: An interviewer may ask: What happens if you delete a row that other rows reference?
+real_daily: It is like an ID number written on another form to refer to a person.
+mcq_question: Which key refers to a row in another table?
+mcq_options: A) Anon key B) Service key C) Foreign key D) Primary key
+mcq_answer: C
+mcq_why: A foreign key points to the primary key of another table.
+fill_blank: A column that uniquely identifies each row is the ____ key → primary
+apply: How do you stop todos from pointing to missing users? → Add a foreign key to the users or profiles table
+explain_task: Explain primary and foreign keys in three lines.
+own_task: Design the keys for tables of courses and lessons.
+
+@SUP-010
+type: code56
+topic: 02 Database
+level: Beginner
+term: SQL Editor (create table)
+cue: Which dashboard tool lets you run SQL, such as a statement that creates a new table with its columns?
+kind: Dashboard tool
+frequency: Very high
+importance: 5
+origin: Clicking through a form is slow for repeatable work, so the dashboard includes an editor where you can run SQL directly against your database.
+pro_tip: Save useful queries in the SQL Editor, and move important changes into migration files.
+memory_story: The SQL Editor is the workshop bench where you speak to the database in its own language.
+visual: A code panel with a query on top and a result grid beneath it.
+emotion: The satisfaction of a table appearing after one statement.
+meaning: The SQL Editor runs SQL statements against your project's database, such as create table, insert and select.
+code: create table todos (¶  id bigint generated always as identity primary key,¶  title text not null,¶  done boolean default false,¶  created_at timestamptz default now()¶);
+output: Success. No rows returned, and the todos table now appears in the Table Editor.
+explanation: Each column has a name, a type and optional rules such as primary key, not null and default. Identity columns generate numbers automatically, and now() fills in the current time. After running it, the table is available through the API, though you should enable Row Level Security before using it from a browser.
+simple_explain: Write the create table statement, run it, and the table exists. List each column with its type and any rules.
+analogy: It is like a workshop bench where you speak to the database in its own language.
+syntax: create table name (column type rules, ...);
+anatomy: create table = make a table | column type = each field | primary key, not null, default = rules
+example_1: create table todos (id bigint generated always as identity primary key, title text not null);
+example_2: create table profiles (id uuid primary key, full_name text);
+example_3: alter table todos add column due_date date;
+variation: insert into todos (title) values ('Buy milk');   // add a row¶select * from todos;   // read rows
+used_with: Table Editor, migrations, RLS, data types
+related: tables and columns, data types, migrations
+alternatives: The Table Editor with clicks
+where_used: Setting up tables | Quick experiments | Learning SQL
+mini_conversation: A: How do I create the todos table quickly? | B: Open the SQL Editor and run a create table statement.
+misconception: ✗ A table made in the SQL Editor is automatically protected by Row Level Security → ✓ Tables created with SQL do not have RLS enabled by default, so you must enable it yourself
+confused_with: SQL Editor vs Table Editor: the SQL Editor runs statements, the Table Editor is a spreadsheet-like view of the data.
+avoid: Do not leave a new table without RLS if the browser will access it.
+wrong_code: create todos (id, title);
+right_code: create table todos (id bigint generated always as identity primary key, title text not null);
+memory_trick: create table, then name, then columns.
+real_project: Creating the base tables of a new app in the SQL Editor and saving them as migrations.
+real_interview: An interviewer may ask: How would you create a table in Supabase?
+real_daily: It is like speaking to the database at a workshop bench.
+mcq_question: Which statement creates a new table?
+mcq_options: A) new rows B) create table C) open table D) select table
+mcq_answer: B
+mcq_why: create table defines a new table.
+fill_blank: create ____ todos (id bigint primary key); → table
+hindi_to_task: Add a due_date column of type date to the todos table.
+task_answer: alter table todos add column due_date date;
+own_task: Create a table for notes with a title and a body.
+practice_question: What does default now() do for a created_at column?
+practice_answer: It fills in the current time when a row is inserted.
+
+@SUP-011
+type: code56
+topic: 02 Database
+level: Intermediate
+term: Joins and relationships in queries
+cue: How do you read related data from two tables in one query, such as each todo with its owner's name?
+kind: SQL concept
+frequency: Very high
+importance: 5
+origin: Related data lives in separate tables to avoid repetition, so queries need a way to bring matching rows together.
+pro_tip: In supabase-js you can pull related rows by naming the related table inside select, if a foreign key links them.
+memory_story: A join matches rows from two tables like pairing forms by ID number.
+visual: Two tables with lines joining matching ids and a combined result below.
+emotion: The pleasure of seeing names beside their records.
+meaning: A join combines rows from two tables by matching a column, usually a foreign key to a primary key.
+code: select todos.title, profiles.full_name¶from todos¶join profiles on profiles.id = todos.user_id;
+output: A result with each todo title next to the full name of its owner.
+explanation: join returns only rows that match in both tables, and left join keeps all rows from the first table. With a foreign key in place, the Supabase API lets you request related data without writing SQL, by listing the related table in select.
+simple_explain: Tell the database which columns match, and it pairs the rows. Then you can pick columns from both tables.
+analogy: It is like pairing forms by their ID numbers.
+syntax: select ... from a join b on a.col = b.col
+anatomy: join = combine tables | on = the matching condition | left join = keep all rows from the first table
+example_1: select todos.title, profiles.full_name from todos join profiles on profiles.id = todos.user_id;
+example_2: select * from todos left join profiles on profiles.id = todos.user_id;
+example_3: await supabase.from("todos").select("title, profiles(full_name)");
+variation: left join   // keep todos without a matching profile¶select title, profiles(full_name)   // the supabase-js form of a join
+used_with: foreign keys, select, supabase-js
+related: primary and foreign key, REST API, select
+alternatives: Two separate queries combined in code
+where_used: Lists with owner names | Reports | Detail pages
+mini_conversation: A: I need each todo with its owner's name. | B: Join todos to profiles on the user id, or select the related table in supabase-js.
+misconception: ✗ A join copies the data into a new permanent table → ✓ A join only combines rows in the result of a query and stores nothing new
+confused_with: join vs left join: join keeps only matches, left join keeps all rows from the first table.
+avoid: Do not forget the on condition, or you get every combination of rows.
+wrong_code: select title, full_name from todos join profiles;
+right_code: select todos.title, profiles.full_name from todos join profiles on profiles.id = todos.user_id;
+memory_trick: A join needs an on condition.
+real_project: Showing each lesson with its course name in a list.
+real_interview: An interviewer may ask: What is the difference between an inner join and a left join?
+real_daily: It is like pairing forms by their ID numbers.
+mcq_question: Which keyword states how the two tables match in a join?
+mcq_options: A) where only B) group C) limit D) on
+mcq_answer: D
+mcq_why: The on clause gives the matching condition.
+fill_blank: select * from todos left ____ profiles on profiles.id = todos.user_id; → join
+hindi_to_task: Select todo titles together with the profile full names using supabase-js.
+task_answer: await supabase.from("todos").select("title, profiles(full_name)");
+own_task: Write a query that lists each lesson with its course title.
+practice_question: What does a left join keep that a plain join does not?
+practice_answer: Rows from the first table that have no match in the second.
+
+@SUP-012
+type: code56
+topic: 02 Database
+level: Intermediate
+term: Indexes
+cue: Which database structure speeds up lookups on a column so queries do not scan the whole table?
+kind: SQL concept
+frequency: High
+importance: 4
+origin: Scanning every row to find matches gets slow as tables grow, so databases keep a sorted structure that lets them jump straight to the right rows.
+pro_tip: Index the columns you filter or join on often, such as foreign keys and user ids used in policies.
+memory_story: An index is the index at the back of a book that lets you jump to a page instead of reading every page.
+visual: A sorted list of values pointing to row locations.
+emotion: The thrill of a slow query becoming instant.
+meaning: An index is a data structure on one or more columns that lets Postgres find rows quickly without reading the entire table.
+code: create index todos_user_id_idx on todos (user_id);
+output: Index created, and queries that filter by user_id become much faster on large tables.
+explanation: Postgres automatically indexes primary keys and unique constraints, but not foreign key columns. Indexes make reads faster and writes slightly slower, and they take space, so add them where queries need them. Row Level Security policies that check user_id also benefit from an index on that column.
+simple_explain: Add an index on a column you search or join by. Reads get faster, and the cost is a little extra work on writes.
+analogy: It is like the index at the back of a book that lets you jump to a page.
+syntax: create index name on table (column);
+anatomy: create index = make an index | name = index name | table (column) = what it covers
+example_1: create index todos_user_id_idx on todos (user_id);
+example_2: create index lessons_course_id_idx on lessons (course_id);
+example_3: create unique index profiles_email_idx on profiles (email);
+variation: create index on todos (user_id, created_at);   // multi-column index¶drop index todos_user_id_idx;   // remove one
+used_with: foreign keys, RLS policies, EXPLAIN
+related: performance, EXPLAIN, Row Level Security
+alternatives: Rewriting the query to need less data
+where_used: Large tables | Slow queries | RLS-heavy tables
+mini_conversation: A: Fetching a user's todos is slow now. | B: Add an index on the user_id column.
+misconception: ✗ Postgres automatically indexes every foreign key column → ✓ Primary keys and unique constraints are indexed, but foreign key columns usually need an index you create
+confused_with: Primary key vs index: a primary key is a rule that also creates an index, an index alone only speeds up lookups.
+avoid: Do not add indexes to every column.
+wrong_code: create index on todos;
+right_code: create index todos_user_id_idx on todos (user_id);
+memory_trick: Index the columns you search by.
+real_project: Adding an index on user_id so policy checks stay fast on a large table.
+real_interview: An interviewer may ask: When is an index useful and when does it hurt?
+real_daily: It is like the index at the back of a book.
+mcq_question: What is the main benefit of an index?
+mcq_options: A) Faster lookups B) Smaller tables C) Stronger passwords D) More columns
+mcq_answer: A
+mcq_why: An index lets the database find rows without scanning everything.
+fill_blank: create ____ todos_user_id_idx on todos (user_id); → index
+hindi_to_task: Create an index on the course_id column of lessons.
+task_answer: create index lessons_course_id_idx on lessons (course_id);
+own_task: Choose two columns of your tables that deserve an index and say why.
+practice_question: Which columns does Postgres index automatically?
+practice_answer: Primary keys and columns with unique constraints.
+
+@SUP-013
+type: code56
+topic: 02 Database
+level: Intermediate
+term: Views
+cue: Which database object is a saved query that you can read from like a table?
+kind: SQL concept
+frequency: Medium
+importance: 3
+origin: Complex queries are used again and again, so databases let you save a query under a name and treat the result as a virtual table.
+pro_tip: Create views with security_invoker on, so Row Level Security of the underlying tables still applies to the caller.
+memory_story: A view is a window cut into your tables that always shows the latest result of a saved question.
+visual: A table-like frame showing rows that come from a stored query.
+emotion: The convenience of a saved question you can ask again.
+meaning: A view is a saved query that behaves like a read-only table and is recalculated whenever you read from it.
+code: create view open_todos with (security_invoker = true) as¶select id, title, user_id¶from todos¶where done = false;
+output: A view called open_todos that lists only the todos that are not done.
+explanation: A view stores no data of its own, only the query. By default a Postgres view runs with the permissions of its owner, so it can bypass Row Level Security of the tables it reads from. Setting security_invoker to true, available in recent Postgres versions, makes it run with the caller's permissions so the policies still apply.
+simple_explain: A view is a saved query with a name. Read from it like a table, and make it security invoker so your RLS rules are not skipped.
+analogy: It is like a window cut into your tables that always shows the latest result of a saved question.
+syntax: create view name as select ...;
+anatomy: create view = save the query | with (security_invoker = true) = use the caller's rights | as select = the query
+example_1: create view open_todos as select * from todos where done = false;
+example_2: select * from open_todos;
+example_3: create view course_summary as select course_id, count(*) as lessons from lessons group by course_id;
+variation: create or replace view ...   // change an existing view¶drop view open_todos;   // remove it
+used_with: security_invoker, RLS, joins
+related: tables, Row Level Security, joins
+alternatives: A materialized view that stores the result
+where_used: Reports | Simplifying queries | Exposing a limited set of columns
+mini_conversation: A: My view shows rows that RLS should hide. | B: Views run as their owner by default, so turn on security invoker.
+misconception: ✗ A view always respects the Row Level Security of its tables → ✓ By default a view runs with its owner's rights and can bypass RLS unless security_invoker is on
+confused_with: View vs table: a view stores a query, a table stores data.
+avoid: Do not expose a view to the API without checking whether it bypasses RLS.
+wrong_code: create view open_todos as select * from todos where done = false;
+right_code: create view open_todos with (security_invoker = true) as select * from todos where done = false;
+memory_trick: Views need security invoker to respect RLS.
+real_project: Exposing a read-only summary view of lesson counts, with security invoker on.
+real_interview: An interviewer may ask: Can a view bypass Row Level Security?
+real_daily: It is like a window onto a saved question.
+mcq_question: What does a view store?
+mcq_options: A) A copy of all rows B) A password C) A saved query D) A file
+mcq_answer: C
+mcq_why: A view stores only the query, and the rows are produced when you read it.
+fill_blank: Setting security_____ to true makes a view use the caller's rights → invoker
+hindi_to_task: Create a view of the todos that are done.
+task_answer: create view done_todos with (security_invoker = true) as select * from todos where done = true;
+own_task: Write a view that shows each course with its lesson count.
+practice_question: Why can a default view bypass RLS?
+practice_answer: Because it runs with the permissions of the view's owner.
+
+@SUP-014
+type: code56
+topic: 02 Database
+level: Intermediate
+term: Migrations and the Supabase CLI
+cue: How do you track and replay database changes as files so every environment gets the same structure?
+kind: Workflow
+frequency: High
+importance: 5
+origin: Changing a production database by hand is risky and untraceable, so teams keep every schema change as a versioned file that can be applied in order anywhere.
+pro_tip: Commit migration files to git, and apply them to each environment instead of editing tables by hand in production.
+memory_story: Migrations are recipe cards for building the database, applied in order on any kitchen.
+visual: A folder of dated SQL files applied one after another.
+emotion: The confidence of reproducing your database anywhere.
+meaning: A migration is a versioned SQL file describing a schema change, and the Supabase CLI creates, tracks and applies them.
+code: supabase migration new create_todos¶# edit supabase/migrations/<timestamp>_create_todos.sql¶supabase db push
+output: A new SQL file is created in supabase/migrations, and db push applies unapplied migrations to the linked project.
+explanation: The CLI keeps migration files in the supabase/migrations folder with timestamps. supabase db diff can generate a migration from changes made in the local database. supabase db push applies pending migrations to the linked remote project. Keeping migrations in git gives you history and repeatable setups.
+simple_explain: Write each change as a SQL file, commit it, and push it to the project with the CLI. Every environment then has the same structure.
+analogy: It is like recipe cards for building the database, applied in order in any kitchen.
+syntax: supabase migration new <name>  |  supabase db push
+anatomy: migration new = create a file | db push = apply to the remote | db diff = generate a migration from changes
+example_1: supabase migration new add_due_date_to_todos
+example_2: supabase db diff -f add_profiles
+example_3: supabase db push
+variation: supabase db reset   // rebuild the local database from migrations¶supabase link   // connect the CLI to a project
+used_with: git, local development, SQL Editor
+related: SQL Editor, local development, environments
+alternatives: Prisma Migrate or another migration tool
+where_used: Team projects | Production changes | Reproducible environments
+mini_conversation: A: How do I apply the same table changes to production? | B: Put them in a migration file and run supabase db push.
+misconception: ✗ Editing tables by hand in the dashboard is just as safe as migrations → ✓ Manual edits are not recorded, so environments drift apart, and migrations keep changes repeatable
+confused_with: Migration vs SQL Editor query: a migration is a saved, ordered change, an editor query is a one-off.
+avoid: Do not edit applied migration files, add a new one instead.
+wrong_code: supabase push migration
+right_code: supabase db push
+memory_trick: Every change gets its own file.
+real_project: Storing every table change as a migration and applying it to staging and production.
+real_interview: An interviewer may ask: How do you keep database schemas in sync across environments?
+real_daily: It is like recipe cards applied in order.
+mcq_question: Where are Supabase migration files kept?
+mcq_options: A) public B) supabase/migrations C) node_modules D) .git/HEAD
+mcq_answer: B
+mcq_why: The CLI stores migration SQL files in supabase/migrations.
+fill_blank: supabase db ____ applies pending migrations to the remote project → push
+hindi_to_task: Create a new migration called add_notes_table.
+task_answer: supabase migration new add_notes_table
+own_task: Write the commands to create a migration and apply it to your project.
+practice_question: Which command generates a migration from changes made in the local database?
+practice_answer: supabase db diff

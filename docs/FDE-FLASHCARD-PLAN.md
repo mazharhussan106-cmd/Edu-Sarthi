@@ -188,7 +188,7 @@ Build order is the table order: the tools an FDE meets first on a customer machi
 
 All 16 decks are built (656 cards in total, plus the earlier GitHub, Power BI, API Integration, Supabase, Python and SQL decks).
 
-Finished decks are delivered in the chat as an Excel workbook, two Anki files and a preview page. The card source text files live only in the chat session's scratch folder, so they are not in the repository yet. Code in cards is never run by the audit for non-Python decks.
+Finished decks are delivered in the chat as an Excel workbook, two Anki files and a preview page. The card source text, the final workbooks and the build tools are saved in `content/fde-flashcards/` (see its README). Code in cards is never run by the audit for non-Python decks.
 
 ## Audit, 7 Oct 2026
 

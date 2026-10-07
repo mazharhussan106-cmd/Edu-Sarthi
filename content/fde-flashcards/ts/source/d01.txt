@@ -1,0 +1,464 @@
+deck.title: JavaScript and TypeScript – Beginner to Advanced Flashcards
+deck.subject: JavaScript, Node.js, TypeScript and React basics
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: javascript
+type: code56
+
+@TS-001
+topic: 01 JavaScript Core
+level: Beginner
+term: let, const and var
+cue: Which three keywords declare variables, and which one should you reach for first?
+kind: Declaration keyword
+frequency: Very high
+importance: 5
+origin: Early JavaScript had only var, which caused surprising bugs, so let and const were added to give clearer rules about scope and change.
+pro_tip: Default to const, and use let only when the value must change.
+memory_story: Const is a name tag glued to one person, let is a tag you may move, and var is a tag that floats around the whole function.
+visual: Three labelled boxes, one sealed, one changeable and one leaking outside its room.
+emotion: The relief of bugs disappearing once variables stay in their blocks.
+meaning: const declares a binding that cannot be reassigned, let declares a block-scoped binding that can be reassigned, and var declares a function-scoped binding that is hoisted.
+code: const apiUrl = "https://api.example.com";¶let retries = 0;¶retries += 1;¶if (true) { var leaked = "visible"; let hidden = "blocked"; }¶console.log(leaked);
+output: visible
+explanation: A const binding cannot point to a new value, but an object stored in it can still be changed. let and const live only inside the braces where they are written. var ignores blocks, so a value declared inside an if statement is visible outside it. Variables from let and const exist in a temporal dead zone before their line, and reading them there throws an error.
+simple_explain: Use const by default, let when you must reassign, and avoid var in new code.
+analogy: Const is a name tag glued to one person, let is a tag you may move, and var is a tag that floats around the whole room.
+syntax: const name = value; | let name = value;
+anatomy: const = fixed binding | let = changeable binding | block = the braces that limit scope
+example_1: const taxRate = 0.18;
+example_2: let counter = 0; counter++;
+example_3: for (let i = 0; i < 3; i++) { console.log(i); }
+variation: const user = { name: "Asha" }; user.name = "Ravi";   // allowed, the object itself changes
+used_with: loops, functions, modules
+related: scope, closures, hoisting, objects
+alternatives: Object.freeze to block changes inside an object
+where_used: Every JavaScript file | Loops | Configuration
+mini_conversation: A: Why did my variable still exist after the if block? | B: You used var, which ignores block scope, so switch to let or const.
+misconception: ✗ const makes the value completely unchangeable → ✓ const only stops reassignment, and objects inside it can still change
+confused_with: let vs var: let is block scoped, var is function scoped.
+avoid: Do not use var in new code.
+wrong_code: const total = 0;¶total = total + 5;
+right_code: let total = 0;¶total = total + 5;
+memory_trick: Const first, let when needed, never var.
+real_project: Replacing var with const and let removed a loop bug in a customer script.
+real_interview: An interviewer may ask: What is the difference between let, const and var?
+real_daily: It is like a name tag that is either glued, movable or loose.
+mcq_question: Which keyword should you use for a value that never changes?
+mcq_options: A) let B) var C) function D) const
+mcq_answer: D
+mcq_why: const prevents reassignment and signals intent.
+fill_blank: A variable declared inside braces with let is limited to that ____ → block
+hindi_to_task: Declare a fixed value called maxUsers with the value 100.
+task_answer: const maxUsers = 100;
+own_task: Rewrite a loop that uses var so it uses let instead.
+practice_question: Can you change a property of an object stored in a const?
+practice_answer: Yes, only reassigning the binding itself is blocked.
+
+@TS-002
+type: code56
+topic: 01 JavaScript Core
+level: Beginner
+term: Data types
+cue: Which kinds of values does JavaScript have, and how do you check them?
+kind: Language concept
+frequency: Very high
+importance: 5
+origin: Programs need to treat numbers, text and collections differently, so JavaScript defines a small set of built-in types.
+pro_tip: Remember that arrays and null both report as objects with typeof, so use Array.isArray and a null check.
+memory_story: Types are the different containers in a kitchen, such as a jar, a bottle and a box, each meant for one kind of thing.
+visual: A shelf of labelled containers holding a number, a word, a list and an empty slot.
+emotion: The comfort of knowing what kind of value you hold.
+meaning: JavaScript has primitive types such as string, number, boolean, null, undefined, bigint and symbol, plus objects including arrays and functions.
+code: console.log(typeof "hi");¶console.log(typeof 42);¶console.log(typeof [1, 2]);¶console.log(typeof null);¶console.log(Array.isArray([1, 2]));
+output: string¶number¶object¶object¶true
+explanation: Primitives are immutable and compared by value. Objects are compared by reference, so two equal-looking objects are different. All numbers are floating point, which gives results such as 0.1 plus 0.2 not equal to 0.3. undefined means no value was given, while null is an intentional empty value. typeof null returning object is an old mistake that was never fixed.
+simple_explain: There are a few primitive types and everything else is an object. Check carefully, because typeof is not always enough.
+analogy: Types are different kitchen containers, each meant for one kind of thing.
+syntax: typeof value | Array.isArray(value)
+anatomy: typeof = type name as text | Array.isArray = real array check | null = intentional empty
+example_1: typeof true
+example_2: typeof undefined
+example_3: typeof function() {}
+variation: Number.isInteger(5)   // check for whole numbers
+used_with: conditions, validation, TypeScript
+related: truthiness, equality, objects, TypeScript types
+alternatives: TypeScript for compile-time checks
+where_used: Validation | Parsing data | Debugging
+mini_conversation: A: Why does typeof null say object? | B: It is a historic bug, so check for null explicitly.
+misconception: ✗ typeof tells you if something is an array → ✓ Arrays report as object, so you need Array.isArray
+confused_with: null vs undefined: null is a deliberate empty value, undefined means nothing was assigned.
+avoid: Do not use typeof alone to detect null or arrays.
+wrong_code: if (typeof items === "array") { }
+right_code: if (Array.isArray(items)) { }
+memory_trick: Null and arrays both pretend to be objects.
+real_project: Adding an Array.isArray check stopped a crash when an API returned null.
+real_interview: An interviewer may ask: Why does typeof null return object?
+real_daily: It is like checking which container holds what.
+mcq_question: Which check correctly detects an array?
+mcq_options: A) typeof equals array B) Array.isArray C) instanceof number D) isList
+mcq_answer: B
+mcq_why: typeof reports arrays as object.
+fill_blank: A value that has not been assigned is ____ → undefined
+hindi_to_task: Check whether the variable data is an array.
+task_answer: Array.isArray(data)
+own_task: Write a function that returns the type of any value including null and arrays.
+practice_question: Are two objects with the same content equal with the strict equality operator?
+practice_answer: No, objects are compared by reference.
+
+@TS-003
+type: code56
+topic: 01 JavaScript Core
+level: Beginner
+term: Functions and arrow functions
+cue: Which two syntaxes define reusable blocks of code, and how do they differ?
+kind: Language concept
+frequency: Very high
+importance: 5
+origin: Repeating code is wasteful, so functions let you name a task and reuse it, and arrow functions arrived to make short ones lighter.
+pro_tip: Use arrow functions for short callbacks, and normal functions when you need your own this.
+memory_story: A function is a recipe card, and an arrow function is a short sticky-note version of it.
+visual: A box with inputs going in and a result coming out.
+emotion: The satisfaction of replacing ten repeated lines with one call.
+meaning: A function groups code that takes parameters and returns a value, and an arrow function is a shorter syntax that does not have its own this.
+code: function add(a, b) { return a + b; }¶const multiply = (a, b) => a * b;¶const square = x => x * x;¶console.log(add(2, 3), multiply(2, 3), square(4));
+output: 5 6 16
+explanation: A function declaration is hoisted, so it can be called before its line. An arrow function assigned to a const is not. A single expression after the arrow is returned automatically, while braces need an explicit return. Default parameters give a fallback value. Arrow functions take this from the surrounding code, which suits callbacks but not object methods.
+simple_explain: Use functions to name and reuse logic, and arrows for short callbacks.
+analogy: A function is a recipe card, and an arrow function is a sticky-note version.
+syntax: function name(params) { return value; } | const name = (params) => value;
+anatomy: params = inputs | return = output | => = arrow
+example_1: const greet = (name = "friend") => `Hello ${name}`;
+example_2: [1, 2, 3].map(n => n * 2);
+example_3: function total(...nums) { return nums.reduce((a, b) => a + b, 0); }
+variation: (() => console.log("run now"))();   // immediately invoked arrow
+used_with: array methods, callbacks, promises
+related: scope, closures, this, array methods
+alternatives: Methods on classes
+where_used: Callbacks | Utilities | Event handlers
+mini_conversation: A: My arrow function returns undefined. | B: With braces you must write return, or remove the braces.
+misconception: ✗ Arrow functions are just shorter normal functions → ✓ They also do not have their own this or arguments
+confused_with: Declaration vs arrow: declarations are hoisted and have their own this, arrows are not hoisted and inherit this.
+avoid: Do not use arrow functions as object methods that need this.
+wrong_code: const double = x => { x * 2 };
+right_code: const double = x => x * 2;
+memory_trick: Braces need return, no braces returns itself.
+real_project: Converting repeated loops into small arrow callbacks shortened a data cleaning script.
+real_interview: An interviewer may ask: How do arrow functions differ from regular functions?
+real_daily: It is like a recipe card versus a sticky note.
+mcq_question: What does an arrow function with braces and no return give back?
+mcq_options: A) An error always B) null C) undefined D) The last expression
+mcq_answer: C
+mcq_why: Without return the function gives back undefined.
+fill_blank: A value used when an argument is missing is a ____ parameter → default
+hindi_to_task: Write an arrow function that doubles a number.
+task_answer: const double = n => n * 2;
+own_task: Write an arrow function with a default parameter and call it twice.
+practice_question: Is an arrow function stored in a const hoisted like a declaration?
+practice_answer: No, it exists only after its line runs.
+
+@TS-004
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: Scope
+cue: Which rules decide where a variable can be read?
+kind: Language concept
+frequency: Very high
+importance: 5
+origin: Large programs reuse names, so JavaScript limits where each name is visible and looks outward when a name is missing.
+pro_tip: Keep variables in the smallest scope that works.
+memory_story: Scope is a set of rooms, where you can see things in your room and in rooms around it, but not inside other private rooms.
+visual: Nested boxes with inner boxes able to see outward but not the reverse.
+emotion: The ease of tracing where a value comes from.
+meaning: Scope is the region of code where a variable is accessible, and inner scopes can read outer ones through the scope chain.
+code: const level = "global";¶function outer() {¶  const inner = "outer value";¶  function show() { console.log(level, inner); }¶  show();¶}¶outer();¶// console.log(inner) would throw an error
+output: global outer value
+explanation: Global scope is outermost, function scope is created by each function, and block scope by braces with let and const. When a name is used, JavaScript looks in the current scope and then outward. Inner variables with the same name shadow outer ones. Too many globals risk clashes, so modules are used.
+simple_explain: A variable is visible inside its own scope and in scopes nested within it.
+analogy: Scope is a set of rooms, and you can see your room and the rooms around it, but not other private ones.
+syntax: { let x = 1; }   // x exists only inside the braces
+anatomy: global = everywhere | function = inside the function | block = inside braces | chain = lookup path
+example_1: function f() { const a = 1; }
+example_2: { const b = 2; }
+example_3: const c = 3; function g() { return c; }
+variation: const x = 1; { const x = 2; }   // shadowing inside a block
+used_with: closures, modules, functions
+related: let const var, closures, hoisting, modules
+alternatives: Modules to avoid globals
+where_used: Every program | Debugging | Library design
+mini_conversation: A: Why is my variable not defined outside the function? | B: It lives only in the function scope, so return it instead.
+misconception: ✗ Variables declared in a function are available everywhere → ✓ They exist only inside that function
+confused_with: Scope vs context: scope is where a name is visible, context is what this refers to.
+avoid: Do not create accidental globals by skipping declarations.
+wrong_code: function setup() { count = 5; }
+right_code: function setup() { const count = 5; return count; }
+memory_trick: Look inside first, then outward.
+real_project: Moving a shared value into a module fixed a global name clash in two scripts.
+real_interview: An interviewer may ask: What is the scope chain?
+real_daily: It is like looking in your own room before others.
+mcq_question: Where does JavaScript look first for a variable?
+mcq_options: A) The current scope B) The browser C) The next file D) The global scope only
+mcq_answer: A
+mcq_why: Lookup starts locally and moves outward.
+fill_blank: An inner variable hiding an outer one with the same name is called ____ → shadowing
+hindi_to_task: Return a value computed inside a function so it can be used outside.
+task_answer: function calc() { const r = 2 * 3; return r; }
+own_task: Write code where an inner variable shadows an outer one and explain the output.
+practice_question: What happens when you read a variable that was declared inside another function?
+practice_answer: It throws a reference error.
+
+@TS-005
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: Closures
+cue: Which feature lets a function remember variables from where it was created?
+kind: Language concept
+frequency: High
+importance: 5
+origin: Functions are passed around as values, so they needed a way to keep access to the variables they were created with.
+pro_tip: Use closures to keep private state without classes.
+memory_story: A closure is a backpack that a function carries, holding the variables from its home.
+visual: A small function with a backpack of variables attached.
+emotion: The aha moment when a counter keeps its value.
+meaning: A closure is a function together with the variables from the scope in which it was defined, which stay available even after that scope has finished.
+code: function makeCounter() {¶  let count = 0;¶  return () => ++count;¶}¶const next = makeCounter();¶console.log(next(), next(), next());
+output: 1 2 3
+explanation: makeCounter finishes running, but the returned function still holds count. Each call to makeCounter creates a separate count. Closures power callbacks, event handlers, partial application and private data. A common trap is creating closures in a loop with var, where all share one variable, which let avoids.
+simple_explain: A function keeps access to the variables around it where it was made.
+analogy: A closure is a backpack that a function carries, holding variables from its home.
+syntax: function outer() { let x; return function inner() { use(x); }; }
+anatomy: outer = creates the scope | inner = the closure | x = captured variable
+example_1: const add = a => b => a + b;
+example_2: setTimeout(() => console.log(id), 100);
+example_3: button.addEventListener("click", () => count++);
+variation: const makeAdder = n => x => x + n;   // partial application with a closure
+used_with: callbacks, event handlers, factories
+related: scope, functions, callbacks, modules
+alternatives: Classes with private fields
+where_used: Counters | Event handlers | Private state
+mini_conversation: A: How does the counter remember its value? | B: The returned function keeps a closure over count.
+misconception: ✗ Variables vanish when their function returns → ✓ A closure keeps them alive as long as the inner function exists
+confused_with: Closure vs global: a closure holds private state, a global is open to everyone.
+avoid: Do not capture a var loop variable inside callbacks.
+wrong_code: for (var i = 0; i < 3; i++) { setTimeout(() => console.log(i), 0); }
+right_code: for (let i = 0; i < 3; i++) { setTimeout(() => console.log(i), 0); }
+memory_trick: A function carries its home variables along.
+real_project: Using a closure to keep retry counts private in an API client.
+real_interview: An interviewer may ask: What is a closure and why is it useful?
+real_daily: It is like a backpack of things from home.
+mcq_question: What does a closure keep?
+mcq_options: A) A copy of the whole program B) Access to variables of its creation scope C) The network D) The browser window
+mcq_answer: B
+mcq_why: It retains the scope where it was defined.
+fill_blank: A function returned from another function keeps its outer variables through a ____ → closure
+hindi_to_task: Write a function that returns another function adding a fixed number.
+task_answer: const makeAdder = n => x => x + n;
+own_task: Build a counter with increment and reset functions that share private state.
+practice_question: Why does the loop with var print the same number three times?
+practice_answer: All callbacks share one variable.
+
+@TS-006
+type: code56
+topic: 01 JavaScript Core
+level: Advanced
+term: this
+cue: Which keyword refers to the object a function is working on, and why does it change?
+kind: Language concept
+frequency: High
+importance: 4
+origin: Methods need to refer to their own object, so this was introduced and decided by how a function is called, not where it is written.
+pro_tip: Use arrow functions inside methods to keep the outer this, and bind when passing methods around.
+memory_story: This is a pointing finger that points at whoever called the function.
+visual: A function with an arrow pointing to the object left of the dot.
+emotion: The clarity when you finally see why a method lost its object.
+meaning: this is set at call time, and for a method call it is the object before the dot, while arrow functions take this from the surrounding code.
+code: const user = {¶  name: "Asha",¶  hello() { return "Hi " + this.name; },¶  later() { return [1].map(() => this.name); }¶};¶console.log(user.hello(), user.later());¶const f = user.hello;¶// f() would lose this
+output: Hi Asha [ 'Asha' ]
+explanation: Calling user.hello sets this to user. Detaching the method and calling it alone loses the object, which gives undefined or an error in strict mode. bind, call and apply set this explicitly. Arrow functions never have their own this, so they keep the outer one. In classes, methods passed as callbacks often need binding.
+simple_explain: Look at how the function is called, because that decides this.
+analogy: This is a pointing finger that points at whoever called the function.
+syntax: obj.method() | fn.bind(obj) | fn.call(obj, arg)
+anatomy: obj.method() = this is obj | bind = fixed this | arrow = outer this
+example_1: const bound = user.hello.bind(user);
+example_2: user.hello.call({ name: "Ravi" });
+example_3: button.addEventListener("click", () => this.save());
+variation: fn.apply(obj, [a, b])   // call with an array of arguments
+used_with: classes, event handlers, callbacks
+related: functions, closures, classes, scope
+alternatives: Arrow functions | Closures instead of this
+where_used: Methods | Classes | Event handlers
+mini_conversation: A: My method says this is undefined in the callback. | B: The call lost its object, so bind it or use an arrow function.
+misconception: ✗ this always refers to the object where the function is written → ✓ It depends on how the function is called
+confused_with: bind vs call: bind returns a new function, call runs the function now.
+avoid: Do not pass a method as a callback without binding.
+wrong_code: setTimeout(user.hello, 100);
+right_code: setTimeout(user.hello.bind(user), 100);
+memory_trick: This follows the caller, not the writer.
+real_project: Binding a class method fixed a lost context bug in an event handler.
+real_interview: An interviewer may ask: What determines the value of this?
+real_daily: It is like a finger pointing at the caller.
+mcq_question: What decides the value of this in a normal function?
+mcq_options: A) How the function is called B) The file name C) Where it is written D) The variable name
+mcq_answer: A
+mcq_why: The call site sets this.
+fill_blank: A method that fixes this permanently is called ____ → bind
+hindi_to_task: Make user.hello run with the correct this when used later.
+task_answer: const f = user.hello.bind(user);
+own_task: Show how an arrow function inside a method keeps this.
+practice_question: Do arrow functions have their own this?
+practice_answer: No, they use the outer this.
+
+@TS-007
+type: code56
+topic: 01 JavaScript Core
+level: Beginner
+term: Array methods: map, filter and reduce
+cue: Which three methods transform, select and combine items in an array?
+kind: Array method
+frequency: Very high
+importance: 5
+origin: Writing loops by hand for every task is long, so arrays gained methods that express the intent of each common job.
+pro_tip: Chain them in the order select, transform, combine to keep code readable.
+memory_story: Map reshapes every item, filter keeps some, and reduce squeezes everything into one value.
+visual: A row of boxes going through a funnel and a squeezer.
+emotion: The satisfaction of replacing a loop with one clear line.
+meaning: map returns a new array by transforming each item, filter returns a new array of items that pass a test, and reduce combines all items into a single value.
+code: const prices = [100, 250, 40];¶const withTax = prices.map(p => p * 1.18);¶const big = prices.filter(p => p > 50);¶const total = prices.reduce((sum, p) => sum + p, 0);¶console.log(withTax, big, total);
+output: [ 118, 295, 47.199999999999996 ] [ 100, 250 ] 390
+explanation: None of the three changes the original array. map always returns an array of the same length, filter returns the same or fewer items, and reduce returns anything you build. reduce needs a starting value to behave well on empty arrays. forEach runs code for each item but returns nothing. Floating point results may need rounding.
+simple_explain: map changes each item, filter picks items, reduce builds one result.
+analogy: Map reshapes every item, filter keeps some, and reduce squeezes everything into one value.
+syntax: arr.map(fn) | arr.filter(fn) | arr.reduce((acc, x) => ..., start)
+anatomy: map = same length | filter = keeps matches | reduce = accumulator and start value
+example_1: ["a", "b"].map(s => s.toUpperCase());
+example_2: users.filter(u => u.active);
+example_3: nums.reduce((max, n) => Math.max(max, n), -Infinity);
+variation: Object.fromEntries(arr.map(x => [x.id, x]));   // map into an object
+used_with: arrow functions, objects, chaining
+related: functions, destructuring, loops, objects
+alternatives: for loops | for of
+where_used: Data cleaning | UI lists | Reports
+mini_conversation: A: Why does reduce fail on an empty array? | B: You forgot the starting value, so add zero as the second argument.
+misconception: ✗ map changes the original array → ✓ It returns a new array and leaves the original untouched
+confused_with: map vs forEach: map returns a new array, forEach returns nothing.
+avoid: Do not use map only for side effects.
+wrong_code: const names = users.forEach(u => u.name);
+right_code: const names = users.map(u => u.name);
+memory_trick: Map reshapes, filter selects, reduce combines.
+real_project: Replacing nested loops with chained filter and map made a report script shorter.
+real_interview: An interviewer may ask: What is the difference between map and forEach?
+real_daily: It is like reshaping, picking and combining items.
+mcq_question: Which method returns a single combined value?
+mcq_options: A) map B) push C) reduce D) filter
+mcq_answer: C
+mcq_why: reduce accumulates items into one result.
+fill_blank: The method that keeps only items passing a test is ____ → filter
+hindi_to_task: Get the names from an array of user objects.
+task_answer: users.map(u => u.name)
+own_task: Chain filter and map to list the names of active users.
+practice_question: Does filter change the original array?
+practice_answer: No, it returns a new array.
+
+@TS-008
+type: code56
+topic: 01 JavaScript Core
+level: Beginner
+term: Objects
+cue: Which structure stores named values and how do you read and change them?
+kind: Data structure
+frequency: Very high
+importance: 5
+origin: Real things have several named properties, so objects group related values under keys.
+pro_tip: Use dot notation for fixed names and bracket notation for names stored in variables.
+memory_story: An object is a form with labelled fields, each holding one answer.
+visual: A card with labels on the left and values on the right.
+emotion: The ease of grouping related data in one place.
+meaning: An object is a collection of key and value pairs, where values can be any type including functions and other objects.
+code: const user = { name: "Asha", age: 28, skills: ["sql", "js"] };¶user.age = 29;¶user["city"] = "Pune";¶delete user.skills;¶console.log(user, Object.keys(user));
+output: { name: 'Asha', age: 29, city: 'Pune' } [ 'name', 'age', 'city' ]
+explanation: Keys are strings or symbols. Dot access reads fixed names, and bracket access accepts any expression. Object.keys, values and entries list the contents for loops. Assigning an object to another variable copies the reference, not the object. Use spread to make a shallow copy, and structuredClone for a deep copy.
+simple_explain: Objects hold labelled values, and copies share the same object unless you clone.
+analogy: An object is a form with labelled fields.
+syntax: const obj = { key: value }; obj.key; obj["key"];
+anatomy: key = label | value = data | dot = fixed access | bracket = dynamic access
+example_1: Object.entries(user).forEach(([k, v]) => console.log(k, v));
+example_2: const copy = { ...user };
+example_3: const field = "name"; user[field];
+variation: const deep = structuredClone(user);   // independent deep copy
+used_with: arrays, JSON, destructuring
+related: destructuring and spread, JSON, arrays, classes
+alternatives: Map | classes
+where_used: Configuration | API data | State
+mini_conversation: A: I changed the copy and the original changed too. | B: Both names point to one object, so clone it first.
+misconception: ✗ Assigning an object to a new variable copies it → ✓ It copies only the reference to the same object
+confused_with: Dot vs bracket: dot uses a fixed name, bracket uses any expression.
+avoid: Do not mutate shared objects without meaning to.
+wrong_code: const b = a; b.name = "x";   // also changes a
+right_code: const b = { ...a }; b.name = "x";
+memory_trick: Equals shares the object, spread copies it.
+real_project: Cloning a configuration object stopped one tenant's settings leaking into another.
+real_interview: An interviewer may ask: How do you copy an object in JavaScript?
+real_daily: It is like a form with labelled fields.
+mcq_question: Which creates a shallow copy of an object?
+mcq_options: A) The equals sign B) The delete keyword C) Object.keys D) The spread syntax
+mcq_answer: D
+mcq_why: Spread copies top-level properties into a new object.
+fill_blank: A copy that duplicates nested objects as well is a ____ copy → deep
+hindi_to_task: Add a field called email to the user object.
+task_answer: user.email = "a@example.com";
+own_task: List all keys and values of an object using a loop.
+practice_question: What does assigning an object to another variable copy?
+practice_answer: Only the reference.
+
+@TS-009
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: Destructuring and spread
+cue: Which syntax unpacks values from arrays and objects and expands them into new ones?
+kind: Syntax feature
+frequency: Very high
+importance: 5
+origin: Pulling values out one at a time was noisy, so shorthand syntax was added to unpack and combine data in one line.
+pro_tip: Use destructuring in function parameters to name what a function needs.
+memory_story: Destructuring is unpacking a suitcase onto shelves, and spread is tipping one suitcase into another.
+visual: A box opening into separate labelled items.
+emotion: The pleasure of short, readable code.
+meaning: Destructuring pulls values out of arrays or objects into variables, and spread expands an array or object into another.
+code: const user = { name: "Asha", age: 28, city: "Pune" };¶const { name, age: years, country = "IN" } = user;¶const [first, ...rest] = [1, 2, 3, 4];¶const merged = { ...user, age: 29 };¶console.log(name, years, country, first, rest, merged);
+output: Asha 28 IN 1 [ 2, 3, 4 ] { name: 'Asha', age: 29, city: 'Pune' }
+explanation: In object destructuring, names must match the keys, and a colon renames them. An equals sign gives a default. Array destructuring goes by position. The rest syntax collects what remains. Spread creates shallow copies, and later keys override earlier ones, which is handy for updates.
+simple_explain: Destructure to take values out, and spread to copy and combine.
+analogy: Destructuring is unpacking a suitcase onto shelves, and spread is tipping one suitcase into another.
+syntax: const { a, b: c = 1 } = obj; const [x, ...rest] = arr; const copy = { ...obj };
+anatomy: { } = by name | [ ] = by position | ... = rest or spread | = value = default
+example_1: function show({ name, age }) { return name + age; }
+example_2: [a, b] = [b, a];   // swap two existing let variables
+example_3: const all = [...list1, ...list2];
+variation: const { data: { id } } = response;   // nested destructuring
+used_with: function parameters, props, immutable updates
+related: objects, arrays, React props, function parameters
+alternatives: Object.assign | concat
+where_used: React props | API responses | State updates
+mini_conversation: A: How do I update one field without changing the rest? | B: Spread the old object and override that field.
+misconception: ✗ Spread makes a deep copy → ✓ It copies only the first level, so nested objects are still shared
+confused_with: Rest vs spread: rest collects values together, spread expands them.
+avoid: Do not rely on spread for nested copies.
+wrong_code: const { fullName } = user;   // key does not exist
+right_code: const { name: fullName } = user;
+memory_trick: A colon renames it, an equals sign defaults it.
+real_project: Using spread to update one setting in a state object without touching others.
+real_interview: An interviewer may ask: What is the difference between rest and spread?
+real_daily: It is like unpacking a suitcase onto shelves.
+mcq_question: Which part gives a default value in destructuring?
+mcq_options: A) A colon B) A dot C) A semicolon D) An equals sign
+mcq_answer: D
+mcq_why: The equals sign supplies a fallback when the value is undefined.
+fill_blank: The three-dot syntax that gathers the remaining items is ____ → rest
+hindi_to_task: Copy the user object but set age to 30.
+task_answer: const next = { ...user, age: 30 };
+own_task: Write a function that takes an object and uses destructuring in its parameter.
+practice_question: Does spread copy nested objects deeply?
+practice_answer: No, only the first level.

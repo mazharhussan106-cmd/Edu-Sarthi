@@ -1,0 +1,372 @@
+
+@SUP-045
+type: topic56
+topic: 08 Production and advanced
+level: Advanced
+term: Connection pooling (transaction vs session mode)
+cue: Why do serverless apps connect to Supabase through a pooler, and how do the transaction and session modes differ?
+category: Production concept
+frequency: High
+importance: 5
+origin: Each Postgres connection is expensive and the number is limited, so a pooler sits in front of the database and shares a small set of real connections among many clients.
+pro_tip: Use transaction mode for serverless and short-lived connections, and a direct or session connection for migrations and long-lived sessions.
+memory_story: A pooler is a receptionist who shares a few phone lines among many callers.
+visual: Many app connections funnelling into a few database connections.
+emotion: The relief of an app that does not crash under too many connections.
+definition: Connection pooling reuses a small number of database connections for many clients, and in transaction mode a connection is held only for the length of one transaction, while session mode holds it for a whole client session.
+explanation: Supabase provides a pooler, so apps do not open too many direct connections. Transaction mode, commonly on port 6543, suits serverless functions because connections are returned after each transaction, but it does not support some session features such as prepared statements. Session mode, commonly on port 5432 through the pooler, keeps one connection per client and has a limit on clients. The direct connection goes straight to the database, and depends on IPv6 unless you add IPv4 support, so copy the exact strings from your dashboard.
+simple_explain: Do not let every serverless function open its own database connection. Connect through the pooler in transaction mode, and use the direct or session string only for tasks like migrations.
+analogy: A pooler is a receptionist who shares a few phone lines among many callers.
+formula_rule: Serverless app → pooler (transaction mode) → database. Migrations → direct or session connection.
+example_1: A Next.js app on serverless hosting using the transaction pooler string.
+example_2: A migration command using the direct connection string.
+example_3: Too many connections errors disappearing after switching to the pooler.
+related: Prisma and Supabase, connection strings, serverless, migrations
+word_family: pooler, transaction mode, session mode, direct connection, port
+where_used: Serverless hosting | ORMs such as Prisma | High-traffic apps
+mini_conversation: A: Our app runs out of connections on serverless. | B: Switch to the transaction pooler connection string.
+misconception: ✗ Every app should connect directly to the database for the best speed → ✓ Serverless and high-traffic apps should use the pooler to avoid exhausting connections
+contrast: Transaction vs session mode: transaction mode shares connections per transaction, session mode holds one per client session.
+avoid: Do not run migrations through the transaction pooler.
+memory_trick: A pooler shares a few lines among many callers.
+real_project: Using the transaction pooler for runtime and the session or direct string for migrations.
+real_interview: An interviewer may ask: Why use a connection pooler with serverless?
+real_daily: It is like a receptionist who shares a few phone lines among many callers.
+mcq_question: Which mode suits serverless functions?
+mcq_options: A) No pooling B) Session mode only C) Transaction mode D) Read-only mode
+mcq_answer: C
+mcq_why: Transaction mode releases connections after each transaction, which suits short-lived functions.
+fill_blank: A pooler shares a few real ____ among many clients → connections
+apply: Migrations fail through the transaction pooler. What should you use? → The direct or session connection string
+explain_task: Explain pooling and its two modes in three lines.
+own_task: Write which connection string you would use for runtime and for migrations.
+
+@SUP-046
+type: topic56
+topic: 08 Production and advanced
+level: Intermediate
+term: Backups and recovery
+cue: What protects you if data is deleted by mistake, and how can you take your own copy of the database?
+category: Production concept
+frequency: Medium
+importance: 4
+origin: Mistakes and failures happen, so production databases need copies from which they can be restored, and relying on only one copy is risky.
+pro_tip: Check what backups your plan includes, and also keep your own regular dumps for important data.
+memory_story: Backups are spare keys kept in a safe place, which you hope never to need.
+visual: A clock face with saved copies at earlier times.
+emotion: The calm of knowing a mistake can be undone.
+definition: Backups are saved copies of the database that let you restore it after data loss, and Supabase offers automatic backups on some plans, and optional point-in-time recovery.
+explanation: What is included depends on your plan, so check the dashboard and current documentation. Point-in-time recovery lets you restore to a chosen moment, as an add-on. You can also take your own dump with the CLI, such as supabase db dump, and keep it elsewhere. Test a restore before you need it, because an untested backup is only a hope.
+simple_explain: Know what your plan backs up, keep your own dumps for important data, and practise restoring them.
+analogy: It is like spare keys kept in a safe place.
+formula_rule: Plan backups + your own dumps + tested restores
+example_1: Daily backups on a paid plan.
+example_2: Taking a dump with the CLI before a risky migration.
+example_3: Restoring to a new project to check that a backup works.
+related: migrations, local development, production
+word_family: backup, restore, dump, point-in-time recovery
+where_used: Production projects | Before big changes | Disaster recovery
+mini_conversation: A: Someone deleted a table by mistake. | B: Check the backups, and restore from the latest copy or point in time.
+misconception: ✗ Backups are only needed after something goes wrong → ✓ Backups must be set up and tested beforehand, because they cannot be created after data is lost
+contrast: Backup vs migration: a backup saves the data, a migration records the structure changes.
+avoid: Do not assume every plan includes the backups you need.
+memory_trick: Test the restore before you need it.
+real_project: Dumping the database before running a risky migration.
+real_interview: An interviewer may ask: How would you recover from accidental data deletion?
+real_daily: It is like spare keys in a safe place.
+mcq_question: What should you do to be sure a backup works?
+mcq_options: A) Test a restore B) Rename it C) Compress it twice D) Delete it
+mcq_answer: A
+mcq_why: An untested backup may fail when you need it.
+fill_blank: Restoring to a chosen moment is called point-in-time ____ → recovery
+apply: What should you do before a risky migration? → Take a fresh backup or dump
+explain_task: Explain backups in three lines.
+own_task: Write your backup plan for a small production app.
+
+@SUP-047
+type: code56
+topic: 08 Production and advanced
+level: Intermediate
+term: Local development with the CLI
+cue: How do you run a copy of Supabase on your own computer so you can build and test safely?
+kind: Workflow
+frequency: High
+importance: 4
+origin: Experimenting against a live project is risky, so the CLI starts the whole Supabase stack locally in containers.
+pro_tip: Develop and test migrations locally first, then push them to the remote project.
+memory_story: Local development is a rehearsal stage with the same set as the real theatre.
+visual: A laptop running a database, auth and storage in containers.
+emotion: The freedom to break things without consequences.
+meaning: supabase start runs a local copy of the Supabase stack so you can develop without touching the live project.
+code: supabase init¶supabase start¶supabase db reset¶supabase stop
+output: A local database, API and dashboard start on your computer, and the CLI prints their addresses and local keys.
+explanation: The CLI needs a container runtime such as Docker. supabase init creates the supabase folder, start launches the services, db reset rebuilds the local database from your migrations and seed file, and stop shuts everything down. The local keys are separate from the real project, so nothing live is affected.
+simple_explain: Install the CLI and Docker, then init and start. You get a private copy of Supabase to experiment on, and migrations tested there can be pushed to production.
+analogy: It is like a rehearsal stage with the same set as the real theatre.
+syntax: supabase init  |  supabase start  |  supabase stop
+anatomy: init = create the folder | start = launch the local stack | db reset = rebuild from migrations
+example_1: supabase start
+example_2: supabase db reset
+example_3: supabase stop
+variation: supabase status   // show local URLs and keys¶supabase link   // connect to a remote project
+used_with: Docker, migrations, seed files, supabase db push
+related: migrations, backups, environments
+alternatives: A separate development project in the cloud
+where_used: Daily development | Testing migrations | Teams
+mini_conversation: A: I do not want to test on the live project. | B: Run supabase start and work against the local copy.
+misconception: ✗ The local Supabase uses the same keys as my live project → ✓ Local services have their own keys and data, so they are separate from production
+confused_with: supabase start vs supabase link: start runs a local stack, link connects the CLI to a remote project.
+avoid: Do not paste local keys into production settings.
+wrong_code: supabase run local
+right_code: supabase start
+memory_trick: Start the stage, then rehearse.
+real_project: Testing a new migration locally before pushing it to production.
+real_interview: An interviewer may ask: How do you develop against Supabase without touching production?
+real_daily: It is like a rehearsal stage with the same set.
+mcq_question: Which command starts the local Supabase stack?
+mcq_options: A) supabase run B) supabase start C) supabase push D) supabase deploy
+mcq_answer: B
+mcq_why: supabase start launches the local services.
+fill_blank: supabase db ____ rebuilds the local database from migrations → reset
+hindi_to_task: Start the local stack and then stop it.
+task_answer: supabase start && supabase stop
+own_task: Write the commands to set up a local project from scratch.
+practice_question: Which tool does the local stack need to run its services?
+practice_answer: A container runtime such as Docker.
+
+@SUP-048
+type: code56
+topic: 08 Production and advanced
+level: Advanced
+term: pgvector (AI embeddings and similarity search)
+cue: Which Postgres extension lets you store embeddings and search for the most similar items by meaning?
+kind: Postgres extension
+frequency: Medium
+importance: 4
+origin: AI apps turn text into lists of numbers called embeddings, and finding similar ones needs a database that can store and compare them, which pgvector adds to Postgres.
+pro_tip: Make the vector size match the embedding model, and add an index when the table grows.
+memory_story: Each text becomes a point on a map, and similarity search finds the nearest points.
+visual: Dots on a map with a query dot and its nearest neighbours highlighted.
+emotion: The thrill of search that understands meaning rather than exact words.
+meaning: pgvector adds a vector column type and distance operators to Postgres, so you can store embeddings and find the nearest ones.
+code: create extension if not exists vector;¶create table documents (¶  id bigint generated always as identity primary key,¶  content text,¶  embedding vector(1536)¶);¶select id, content from documents¶order by embedding <=> '[0.1, 0.2, ...]'::vector limit 5;
+output: The five documents whose embeddings are closest in meaning to the query embedding.
+explanation: The number in vector(1536) is the embedding size, which must match your model. The operator <=> is cosine distance, and others measure Euclidean distance or inner product. You create the embeddings with a model outside the database, store them, and search with a query embedding. For larger tables, add an HNSW or IVFFlat index, and wrap the search in a function you call with rpc.
+simple_explain: Turn text into embeddings with a model, store them in a vector column, and order by distance to the query embedding to get the closest matches.
+analogy: It is like placing each text as a dot on a map and finding the dots nearest to your question.
+syntax: embedding vector(n)  |  order by embedding <=> query_embedding
+anatomy: vector(n) = n numbers per item | <=> = cosine distance | limit = how many results
+example_1: create extension if not exists vector;
+example_2: alter table documents add column embedding vector(1536);
+example_3: create index on documents using hnsw (embedding vector_cosine_ops);
+variation: <->   // Euclidean distance¶<#>   // negative inner product
+used_with: embeddings, rpc, HNSW index, AI models
+related: RPC, indexes, SQL functions
+alternatives: A dedicated vector database
+where_used: Semantic search | Chat with your documents | Recommendations
+mini_conversation: A: How do we search lesson notes by meaning? | B: Store embeddings with pgvector and order by distance to the query's embedding.
+misconception: ✗ pgvector creates embeddings from text by itself → ✓ pgvector only stores and compares vectors, and a separate model creates the embeddings
+confused_with: Embedding model vs pgvector: the model creates the vectors, pgvector stores and searches them.
+avoid: Do not mix embeddings of different sizes in one column.
+wrong_code: embedding vector order by <=> query limit 5;
+right_code: select id, content from documents order by embedding <=> query_embedding limit 5;
+memory_trick: Smaller distance means closer meaning.
+real_project: Searching lesson notes by meaning using stored embeddings.
+real_interview: An interviewer may ask: How would you add semantic search to Postgres?
+real_daily: It is like finding the dots nearest to your question on a map.
+mcq_question: What does the number in vector(1536) set?
+mcq_options: A) The password length B) The number of rows C) The table limit D) The embedding size
+mcq_answer: D
+mcq_why: It is the number of values in each embedding.
+fill_blank: create extension if not exists ____; → vector
+hindi_to_task: Add a vector column of size 768 named embedding.
+task_answer: alter table documents add column embedding vector(768);
+own_task: Design a table that stores notes and their embeddings.
+practice_question: Which operator measures cosine distance?
+practice_answer: <=>
+
+@SUP-049
+type: code56
+topic: 08 Production and advanced
+level: Advanced
+term: Query performance with EXPLAIN
+cue: Which Postgres command shows how a query will run and whether it scans the whole table or uses an index?
+kind: SQL command
+frequency: Medium
+importance: 4
+origin: Slow queries are hard to fix by guessing, so Postgres can describe the plan it uses and the time each step takes.
+pro_tip: Look for Seq Scan on large tables, which often signals a missing index.
+memory_story: EXPLAIN is asking the driver to describe the route before and after the journey.
+visual: A query plan tree with steps and timings.
+emotion: The satisfaction of finding exactly why a query is slow.
+meaning: EXPLAIN shows a query's execution plan, and EXPLAIN ANALYZE also runs it and reports real timings.
+code: explain analyze select * from todos where user_id = '2f1c9b8e-0000-4000-8000-000000000000';
+output: A plan such as Seq Scan on todos with a long execution time, or Index Scan using todos_user_id_idx once an index exists.
+explanation: A Seq Scan reads every row, and an Index Scan jumps to matching rows. ANALYZE executes the query for real, so be careful with statements that change data. In Supabase you can run it in the SQL Editor. After adding an index, run it again to confirm the plan changed and the time dropped.
+simple_explain: Put explain analyze before your query to see how it runs. If you see a sequential scan on a big table, an index may help.
+analogy: It is like asking the driver to describe the route before and after the journey.
+syntax: explain analyze <query>;
+anatomy: explain = show the plan | analyze = also run it and time it
+example_1: explain select * from todos where done = false;
+example_2: explain analyze select * from todos where user_id = 'some-id';
+example_3: create index todos_done_idx on todos (done);
+variation: explain (analyze, buffers) ...   // more detail¶Seq Scan vs Index Scan   // the first thing to look for
+used_with: indexes, SQL Editor, RLS policies
+related: indexes, Row Level Security, performance
+alternatives: The query performance tools in the dashboard
+where_used: Slow queries | Index tuning | Policy performance
+mini_conversation: A: This list takes seconds to load. | B: Run explain analyze, and if it shows a sequential scan, add an index.
+misconception: ✗ EXPLAIN ANALYZE only describes the query without running it → ✓ EXPLAIN ANALYZE actually runs the query, so avoid it on statements that change data
+confused_with: EXPLAIN vs EXPLAIN ANALYZE: explain shows the estimated plan, analyze runs it and shows real timings.
+avoid: Do not use explain analyze on an unsafe delete.
+wrong_code: explain todos where user_id = 'some-id';
+right_code: explain analyze select * from todos where user_id = 'some-id';
+memory_trick: Look for Seq Scan on big tables.
+real_project: Finding a missing index by reading the plan of a slow policy-filtered query.
+real_interview: An interviewer may ask: How do you investigate a slow query?
+real_daily: It is like asking the driver to describe the route.
+mcq_question: What does a Seq Scan on a large table often suggest?
+mcq_options: A) A faster query B) Too many columns C) A wrong password D) A missing index
+mcq_answer: D
+mcq_why: A sequential scan reads every row, so an index may help.
+fill_blank: explain ____ runs the query and reports timings → analyze
+hindi_to_task: Show the execution plan and timings for selecting all rows from todos.
+task_answer: explain analyze select * from todos;
+own_task: Run explain analyze on one of your queries and write what the plan shows.
+practice_question: Which scan type suggests an index is being used?
+practice_answer: Index Scan
+
+@SUP-050
+type: topic56
+topic: 08 Production and advanced
+level: Advanced
+term: Security checklist before launch
+cue: Which key checks should you make before putting a Supabase app in front of real users?
+category: Production practice
+frequency: High
+importance: 5
+origin: Because the browser talks to the database directly, a few missed settings can expose data, so teams review a standard list before going live.
+pro_tip: Run through the list in the dashboard's security and performance advisors, and fix every warning about tables without RLS.
+memory_story: A launch checklist is a pilot's pre-flight list, boring but life-saving.
+visual: A list with ticks beside RLS, keys, storage and auth settings.
+emotion: The confidence of launching with nothing forgotten.
+definition: A pre-launch security checklist confirms that RLS is on with correct policies, secret keys stay on servers, storage and auth are configured safely, and backups and monitoring exist.
+explanation: Check that every exposed table has RLS and tested policies. Check that the service role key is only in server code and not in any bundle. Review private buckets and storage policies, the allowed redirect URLs, email confirmation settings and password rules. Use separate projects for development and production, enable backups, and review the advisors and logs. Rotate any key that has ever leaked.
+simple_explain: Before launch, check RLS on every table, keep the service role key on the server, protect storage, set auth redirects, and make sure backups exist.
+analogy: It is like a pilot's pre-flight list, which is boring but life-saving.
+formula_rule: RLS + keys + storage + auth settings + backups + monitoring
+example_1: Finding a table without RLS using the security advisor.
+example_2: Removing the service role key from a front-end environment file.
+example_3: Limiting the redirect URLs to the real site address.
+related: Row Level Security, keys, storage policies, backups
+word_family: advisor, audit, RLS, secrets, monitoring
+where_used: Before launch | Security reviews | Team handovers
+mini_conversation: A: Are we ready to launch? | B: First check RLS on every table, the keys, storage policies and backups.
+misconception: ✗ Security can be added after launch when users arrive → ✓ Exposed tables without RLS are open from the start, so security must be checked before launch
+contrast: Development vs production settings: development can be relaxed, production needs RLS, restricted redirects and backups.
+avoid: Do not launch with test policies such as using true on private tables.
+memory_trick: Check RLS, keys, storage, auth and backups.
+real_project: Reviewing every table and bucket before opening an app to students.
+real_interview: An interviewer may ask: What do you check before launching a Supabase app?
+real_daily: It is like a pilot's pre-flight list.
+mcq_question: Which item must never be in browser code?
+mcq_options: A) The project URL B) The page title C) The service role key D) The client key
+mcq_answer: C
+mcq_why: The service role key bypasses RLS and must stay on servers.
+fill_blank: Every exposed table should have ____ enabled → RLS
+apply: What should you check for private files before launch? → That buckets are private and storage policies are correct
+explain_task: Explain the pre-launch checklist in three lines.
+own_task: Write your own five-point launch checklist for a Supabase app.
+
+@SUP-051
+type: code56
+topic: 09 Prisma with Supabase
+level: Advanced
+term: Prisma connection strings for Supabase
+cue: Which two connection strings does Prisma need for Supabase, one for runtime queries and one for migrations?
+kind: Configuration
+frequency: High
+importance: 5
+origin: Prisma needs a pooled connection for serverless runtime queries but a direct or session one for migrations, so it supports two URLs in its datasource.
+pro_tip: Put DATABASE_URL in the .env file that Prisma reads, and copy both strings from the dashboard's connect panel.
+memory_story: One string is the busy front door for queries, and the other is the staff entrance for migrations.
+visual: Two lines in an env file feeding two fields in the Prisma datasource.
+emotion: The relief of migrations that finally run without errors.
+meaning: DATABASE_URL points at the transaction pooler for queries, and DIRECT_URL points at a direct or session connection for migrations.
+code: # .env¶DATABASE_URL="postgresql://postgres.PROJECTREF:PASSWORD@aws-0-region.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"¶DIRECT_URL="postgresql://postgres.PROJECTREF:PASSWORD@aws-0-region.pooler.supabase.com:5432/postgres"¶// schema.prisma¶datasource db {¶  provider  = "postgresql"¶  url       = env("DATABASE_URL")¶  directUrl = env("DIRECT_URL")¶}
+output: Prisma uses the pooled URL for queries and the direct URL when running migrations.
+explanation: The pooled URL goes through the transaction pooler on port 6543, with pgbouncer=true so Prisma avoids prepared statements, and connection_limit=1 to prevent too many connections in serverless functions. The direct URL is used by Prisma Migrate. Prisma reads .env, not .env.local. Copy exact strings from your dashboard, because hosts and formats can differ and the direct host may not resolve on IPv4 networks.
+simple_explain: Use the pooler string for everyday queries and the other string for migrations. Both go in the env file Prisma reads, and the schema file points at them.
+analogy: One string is the busy front door for queries, and the other is the staff entrance for migrations.
+syntax: datasource db { url = env("DATABASE_URL") directUrl = env("DIRECT_URL") }
+anatomy: DATABASE_URL = pooled, for queries | DIRECT_URL = for migrations | pgbouncer=true = no prepared statements | connection_limit=1 = one connection per instance
+example_1: DATABASE_URL with port 6543 and pgbouncer=true
+example_2: DIRECT_URL with port 5432
+example_3: A missing DATABASE_URL error caused by putting it in .env.local
+variation: ?pgbouncer=true&connection_limit=1   // the usual pooled options
+used_with: Prisma Migrate, transaction pooler, env files
+related: connection pooling, Prisma and RLS, environment variables
+alternatives: supabase-js for data access instead of an ORM
+where_used: Next.js and Prisma projects | Serverless hosting | Migrations
+mini_conversation: A: Prisma cannot find DATABASE_URL. | B: Prisma reads the .env file, not .env.local, so move it there.
+misconception: ✗ Prisma CLI reads environment variables from .env.local → ✓ The Prisma CLI reads .env, so DATABASE_URL must be in that file
+confused_with: DATABASE_URL vs DIRECT_URL: the first is pooled for queries, the second is direct for migrations.
+avoid: Do not run migrations through the pooled transaction URL.
+wrong_code: DATABASE_URL="postgresql://postgres:PASSWORD@db.PROJECTREF.supabase.co:5432/postgres"  # used for serverless queries
+right_code: DATABASE_URL="postgresql://postgres.PROJECTREF:PASSWORD@aws-0-region.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"
+memory_trick: Pooled for queries, direct for migrations.
+real_project: Setting both URLs so Prisma Migrate and serverless queries both work.
+real_interview: An interviewer may ask: Why does Prisma need two URLs with Supabase?
+real_daily: It is like a front door for visitors and a staff entrance for workers.
+mcq_question: Which string should Prisma Migrate use?
+mcq_options: A) The anon key B) DIRECT_URL C) The project URL D) DATABASE_URL pooled
+mcq_answer: B
+mcq_why: Migrations need a direct or session connection, not the transaction pooler.
+fill_blank: The pooled string usually adds pgbouncer=true and connection_limit=____ → 1
+hindi_to_task: Point the Prisma datasource at the two environment variables.
+task_answer: datasource db { provider = "postgresql" url = env("DATABASE_URL") directUrl = env("DIRECT_URL") }
+own_task: Write the two env lines with placeholders for your project.
+practice_question: Which file does Prisma read for environment variables?
+practice_answer: .env
+
+@SUP-052
+type: topic56
+topic: 09 Prisma with Supabase
+level: Advanced
+term: Prisma, RLS and who is allowed what
+cue: When Prisma talks to Supabase with a database connection, which security layer does it skip, and what must you do instead?
+category: Security concept
+frequency: High
+importance: 5
+origin: Row Level Security depends on the token a client sends, but an ORM connects as a database user, so the database cannot tell which app user is asking.
+pro_tip: Scope every Prisma query by the signed-in user, for example with where id and userId, and do not rely on RLS for ORM access.
+memory_story: Using an ORM is entering through the staff entrance, where the guards at the visitor doors do not check you.
+visual: A direct database connection passing around the row-level guards.
+emotion: The responsibility of checking access in your own code.
+definition: Prisma connects as a database role that normally bypasses RLS, so authorisation for Prisma queries must be enforced in your own application code.
+explanation: With supabase-js and a user session, policies decide what each request can see. With Prisma through the connection string, the database sees only the database user, typically the postgres role, which bypasses RLS. So you must filter by the current user in every query, check permissions in server code, and keep RLS enabled anyway as protection for any direct API access to the same tables.
+simple_explain: Policies protect requests made with user tokens. Prisma does not use user tokens, so check the user in your own server code and filter every query by that user.
+analogy: It is like entering through a staff entrance where the guards at the visitor doors do not check you.
+formula_rule: supabase-js with a user token = RLS applies. Prisma with a connection string = your code must authorise.
+example_1: A Prisma query using where id and userId so users reach only their rows.
+example_2: Keeping RLS on, so a leaked client key cannot read the tables.
+example_3: A server action that checks the signed-in user before any Prisma call.
+related: bypassing RLS, connection strings, Row Level Security, server-side auth
+word_family: ORM, bypass, authorisation, scope, userId
+where_used: Next.js with Prisma | Server actions | API routes
+mini_conversation: A: We enabled RLS but Prisma still reads every row. | B: Prisma connects as a role that bypasses RLS, so scope each query by the user in code.
+misconception: ✗ Enabling RLS automatically protects data used through Prisma → ✓ Prisma usually bypasses RLS, so authorisation must be coded into each query
+contrast: RLS vs query scoping: RLS is enforced by the database for token-based requests, scoping is enforced in your code for ORM requests.
+avoid: Do not fetch a record by id alone and then compare the user afterwards.
+memory_trick: ORM means you must authorise.
+real_project: Scoping every Prisma query by the signed-in user's id in a learning platform.
+real_interview: An interviewer may ask: Does RLS protect queries made through an ORM?
+real_daily: It is like entering by a staff entrance where visitor guards do not check you.
+mcq_question: Why does RLS not stop a Prisma query?
+mcq_options: A) Prisma connects as a role that bypasses RLS B) Prisma uses the anon key C) RLS only works on views D) Prisma encrypts rows
+mcq_answer: A
+mcq_why: The database role used by the connection string bypasses policies.
+fill_blank: Every Prisma query should be ____ by the current user → scoped
+apply: How do you protect rows when using Prisma? → Filter every query by the signed-in user in your own code
+explain_task: Explain why RLS does not protect Prisma queries in three lines.
+own_task: Write a Prisma query that fetches a note only if it belongs to the current user.

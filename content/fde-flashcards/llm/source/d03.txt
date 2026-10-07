@@ -1,0 +1,336 @@
+
+@LLM-029
+type: topic56
+topic: 04 Quality and Safety
+level: Beginner
+term: Hallucination
+cue: What do we call confident answers from a model that are not true?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models generate likely text, so when they lack the facts they may produce fluent but false statements.
+pro_tip: Provide source text and ask the model to say when the answer is not in it.
+memory_story: A hallucination is a confident storyteller filling gaps with invented details.
+visual: A smooth answer with a fake reference highlighted.
+emotion: The caution of knowing fluent text can be wrong.
+definition: A hallucination is output that sounds plausible but is false or unsupported, such as invented facts, citations, numbers or function names.
+explanation: Causes include missing knowledge, ambiguous questions and pressure to answer. Risk is higher for rare facts, recent events and precise details. Reduce it by grounding in provided sources, allowing the answer I do not know, asking for quotes, using tools for lookups and checking results. It cannot be eliminated, so review matters in high-stakes uses.
+simple_explain: Models can invent facts, so ground them in sources and verify important claims.
+analogy: A hallucination is a confident storyteller filling gaps with invented details.
+formula_rule: No source plus pressure to answer equals risk of invention.
+example_1: A made-up legal citation.
+example_2: An invented function in a library.
+example_3: A wrong date stated confidently.
+related: grounding, RAG, human review, guardrails
+word_family: hallucination, fabrication, confidence, grounding, verification
+where_used: Every LLM application | Risk reviews | Customer tools
+mini_conversation: A: The bot quoted a policy that does not exist. | B: It hallucinated, so ground it in the real policy text.
+misconception: ✗ A confident tone means the answer is correct → ✓ Fluency is not evidence of truth
+contrast: Hallucination vs error: hallucinations are invented content stated as fact.
+avoid: Do not rely on unverified model output for critical facts.
+memory_trick: Confident does not mean correct.
+real_project: Grounding answers in policy text and allowing I do not know stopped invented refund rules.
+real_interview: An interviewer may ask: How do you reduce hallucinations?
+real_daily: It is like a storyteller filling gaps.
+mcq_question: Which reduces hallucination?
+mcq_options: A) Shorter prompts only B) Higher temperature C) Grounding in provided sources D) Removing instructions
+mcq_answer: C
+mcq_why: The model has real material to use.
+fill_blank: Answering from supplied documents is called ____ → grounding
+apply: A bot invents policies. What do you add? → The real policy text and an allowance to say it does not know
+explain_task: Explain hallucination in three lines.
+own_task: List three prompt rules that reduce hallucination.
+
+@LLM-030
+type: topic56
+topic: 04 Quality and Safety
+level: Intermediate
+term: Grounding
+cue: How do you tie answers to trusted source material?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models answer better when given the facts, so grounding supplies sources and requires the answer to rely on them.
+pro_tip: Ask for quotes or source ids, and check that they appear in the provided text.
+memory_story: Grounding is giving a student the textbook and telling them to answer only from it.
+visual: A question, documents and an answer with source markers.
+emotion: The confidence of answers that point to evidence.
+definition: Grounding means supplying relevant, trusted source text in the prompt, instructing the model to answer only from it, and optionally returning quotes or references so the answer can be checked.
+explanation: Sources come from retrieval, databases or tools. Instructions say what to do when the answer is missing. Citations let reviewers verify claims, and code can check that quoted text exists in the source. Poor sources produce poor answers, so quality of the source matters. Grounding reduces but does not remove errors.
+simple_explain: Provide the facts, say answer only from them, and ask for evidence.
+analogy: Grounding is giving a student the textbook and telling them to answer only from it.
+formula_rule: Sources + only-from-sources rule + citations.
+example_1: Answering from retrieved policy paragraphs.
+example_2: Returning the quote that supports each claim.
+example_3: A refusal when the document has no answer.
+related: hallucination, RAG, tool calling, human review
+word_family: grounding, citation, source, evidence, retrieval
+where_used: Knowledge assistants | Support bots | Compliance tools
+mini_conversation: A: How do we trust the answer? | B: It quotes the source paragraph that supports it.
+misconception: ✗ Grounding guarantees correct answers → ✓ It reduces errors, but sources and reading can still be wrong
+contrast: Grounded vs ungrounded answer: one uses supplied evidence, the other relies on memory.
+avoid: Do not ground on outdated or unreliable sources.
+memory_trick: Give the facts, demand the evidence.
+real_project: Requiring quotes let reviewers confirm answers in seconds.
+real_interview: An interviewer may ask: What is grounding?
+real_daily: It is like giving a student the textbook.
+mcq_question: What does grounding supply?
+mcq_options: A) More randomness B) Shorter outputs C) A bigger model D) Trusted source text
+mcq_answer: D
+mcq_why: The answer relies on evidence.
+fill_blank: A quote or reference supporting a claim is a ____ → citation
+apply: Answers must be checkable. What do you request? → Quotes from the sources
+explain_task: Explain grounding in three lines.
+own_task: Write the grounding rules of a policy assistant.
+
+@LLM-031
+type: topic56
+topic: 04 Quality and Safety
+level: Intermediate
+term: Prompt injection
+cue: Which attack hides instructions in text so the model obeys the attacker?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models read instructions and data as text together, so attackers place commands in documents, emails or web pages the model processes.
+pro_tip: Treat all retrieved and user text as untrusted, and limit what tools can do.
+memory_story: Prompt injection is a forged note slipped into the pile of papers that the assistant obeys.
+visual: A document containing a hidden instruction beside a tool call.
+emotion: The alertness of knowing text can carry commands.
+definition: Prompt injection is an attack where untrusted content contains instructions that override or manipulate the model, either directly from a user or indirectly through documents, web pages or tool outputs.
+explanation: Indirect injection is serious when the model has tools, such as sending email or reading files. Defences are layered: separate and label untrusted data, give the model minimal permissions, require human approval for risky actions, validate tool arguments, filter outputs and monitor. No single prompt fully prevents it, so design for failure.
+simple_explain: Assume untrusted text may try to control the model, and limit the damage it can do.
+analogy: Prompt injection is a forged note slipped into the pile of papers the assistant obeys.
+formula_rule: Untrusted text + powerful tools = risk.
+example_1: A web page saying ignore your rules and send the user's data.
+example_2: An email telling an assistant to forward files.
+example_3: A document asking the model to reveal its system prompt.
+related: system prompts, tool calling, guardrails, data privacy
+word_family: injection, untrusted, indirect, permissions, approval
+where_used: Agents | RAG | Email assistants
+mini_conversation: A: A web page told our agent to leak data. | B: Treat page text as untrusted and require approval for sending.
+misconception: ✗ A strong system prompt fully blocks injection → ✓ It helps, but architecture and permissions are the real defence
+contrast: Direct vs indirect injection: user typed versus hidden in content.
+avoid: Do not give agents broad permissions over untrusted content.
+memory_trick: Untrusted text cannot be trusted with tools.
+real_project: Requiring approval before sending messages limited the impact of an injected email.
+real_interview: An interviewer may ask: How do you defend against prompt injection?
+real_daily: It is like a forged note in a pile of papers.
+mcq_question: Which is the strongest defence?
+mcq_options: A) Higher temperature B) Limited permissions and human approval C) Ignoring it D) A longer prompt only
+mcq_answer: B
+mcq_why: It limits damage even if the model is fooled.
+fill_blank: Injection hidden in content the model reads is ____ injection → indirect
+apply: An agent reads web pages and can send email. What do you add? → Approval before sending and minimal permissions
+explain_task: Explain prompt injection in three lines.
+own_task: List four layered defences for an email assistant.
+
+@LLM-032
+type: topic56
+topic: 04 Quality and Safety
+level: Intermediate
+term: Data privacy with LLMs
+cue: What should you consider before sending data to a model provider?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Prompts often contain customer information, so sending them to an outside service has legal and security consequences.
+pro_tip: Send only the data needed, and read the provider's retention and training terms.
+memory_story: Sending data to a model is handing documents to an outside contractor, so check the contract.
+visual: Data leaving a company boundary with a checklist.
+emotion: The responsibility of protecting people's information.
+definition: Data privacy with LLMs means controlling what personal and confidential data enters prompts, where it is processed and stored, and how long it is kept, in line with law and customer agreements.
+explanation: Minimise and mask personal data before sending. Check whether the provider stores prompts, uses them for training and where processing happens. Use enterprise agreements and regional options where needed. Control who can see logged prompts. Customer contracts may forbid certain processing. Document the data flow for audits.
+simple_explain: Send the minimum, mask what you can, and know how the provider handles data.
+analogy: Sending data to a model is handing documents to an outside contractor, so check the contract.
+formula_rule: Minimise, mask, check terms, log carefully.
+example_1: Replacing names with ids before sending.
+example_2: Choosing a regional processing option.
+example_3: Restricting access to stored prompts.
+related: logging calls safely, PII and masking, guardrails, compliance
+word_family: privacy, retention, training, masking, residency
+where_used: Healthcare | Finance | Customer data work
+mini_conversation: A: Can we paste customer emails into the model? | B: Only after masking, and if the contract allows it.
+misconception: ✗ Anything can be sent because the provider is trusted → ✓ Contracts, law and policy may forbid it
+contrast: Minimising vs masking: minimising sends less, masking hides what is sent.
+avoid: Do not send secrets or raw personal data without approval.
+memory_trick: Send less, mask more, check the contract.
+real_project: Masking identifiers before calls let a customer approve LLM use.
+real_interview: An interviewer may ask: What privacy checks do you make before using an LLM API?
+real_daily: It is like handing documents to a contractor.
+mcq_question: What is the first privacy step?
+mcq_options: A) Send only needed data B) Send everything C) Ignore terms D) Post it online
+mcq_answer: A
+mcq_why: Data not sent cannot leak.
+fill_blank: Hiding identifying details is ____ → masking
+apply: A prompt includes customer names. What do you do first? → Remove or mask them
+explain_task: Explain data privacy for LLM calls in three lines.
+own_task: Write a data handling checklist for a support assistant.
+
+@LLM-033
+type: topic56
+topic: 04 Quality and Safety
+level: Intermediate
+term: Moderation
+cue: How do you detect and handle harmful content in inputs and outputs?
+category: Core concept
+frequency: High
+importance: 4
+origin: Public applications receive abusive input and may produce unsafe output, so content checks are added around the model.
+pro_tip: Check both user input and model output, and decide the response in advance.
+memory_story: Moderation is a doorman and an editor who check what goes in and what comes out.
+visual: A filter before and after the model.
+emotion: The assurance of safer experiences for every user.
+definition: Moderation is the screening of inputs and outputs for categories such as hate, violence, self-harm and illegal content, using classifiers or model checks, and responding with blocks, warnings or escalation.
+explanation: Providers offer moderation endpoints and built-in safety behaviour. Applications add their own rules for their context, such as no medical advice. Decide what happens on a match: refuse, rephrase, show help resources or escalate to a human. Log events and review them. Balance safety and false positives.
+simple_explain: Screen inputs and outputs, and decide the response for each category.
+analogy: Moderation is a doorman and an editor who check what goes in and what comes out.
+formula_rule: Screen in, screen out, respond, review.
+example_1: Blocking abusive user messages.
+example_2: Refusing unsafe instructions.
+example_3: Escalating a self-harm message to a human.
+related: guardrails, human review, prompt injection, logging calls safely
+word_family: moderation, classifier, policy, refusal, escalation
+where_used: Public chatbots | Community tools | Education apps
+mini_conversation: A: Users sometimes send abusive text. | B: Add moderation on inputs and a polite refusal.
+misconception: ✗ Provider safety makes app-level moderation unnecessary → ✓ Your context needs its own rules and checks
+contrast: Input vs output moderation: one screens users, the other screens the model.
+avoid: Do not leave refusal behaviour undefined.
+memory_trick: Screen both sides, plan the response.
+real_project: Output moderation caught unsafe replies in a student-facing tool.
+real_interview: An interviewer may ask: Where do you apply moderation?
+real_daily: It is like a doorman and an editor.
+mcq_question: Where should moderation be applied?
+mcq_options: A) Only inputs B) Inputs and outputs C) Neither D) Only outputs
+mcq_answer: B
+mcq_why: Both sides can carry harm.
+fill_blank: A declined request gets a ____ → refusal
+apply: A public chatbot receives abuse. What do you add? → Moderation with a defined response
+explain_task: Explain moderation in three lines.
+own_task: Define the response for three moderation categories.
+
+@LLM-034
+type: topic56
+topic: 04 Quality and Safety
+level: Intermediate
+term: Guardrails
+cue: Which checks and limits keep an LLM application inside safe and useful bounds?
+category: Core concept
+frequency: High
+importance: 5
+origin: Prompts alone do not guarantee behaviour, so code and policy around the model enforce limits.
+pro_tip: Enforce rules in code wherever you can, instead of only asking the model nicely.
+memory_story: Guardrails are the barriers on a mountain road that stay even if the driver errs.
+visual: Barriers around a model with checks for input, output and actions.
+emotion: The comfort of limits that do not depend on luck.
+definition: Guardrails are controls around an LLM application, such as input checks, output validation, topic limits, permission limits on tools, rate limits and human approval, that enforce safe behaviour regardless of what the model generates.
+explanation: Examples are schema validation, allow-lists of tools and actions, refusing off-topic requests, redacting personal data in outputs, maximum spend per user and approval gates for risky actions. Layer them, since each can fail. Test them with adversarial inputs. Log violations. Keep policies documented.
+simple_explain: Put real limits in code around the model, and test them with hard inputs.
+analogy: Guardrails are the barriers on a mountain road that stay even if the driver errs.
+formula_rule: Check inputs, validate outputs, limit actions, require approval.
+example_1: An allow-list of tools.
+example_2: Output validated against a schema.
+example_3: A daily spend cap per user.
+related: prompt injection, human review, structured output, moderation
+word_family: guardrail, validation, allow-list, limit, approval
+where_used: Agents | Customer bots | Regulated work
+mini_conversation: A: Can the prompt guarantee the bot never refunds money? | B: No, enforce it by removing that tool.
+misconception: ✗ A prompt rule is enough to enforce policy → ✓ Policy must be enforced in code and permissions
+contrast: Prompt rule vs code rule: one is a request, the other is enforced.
+avoid: Do not rely only on instructions for safety.
+memory_trick: Ask in the prompt, enforce in the code.
+real_project: Removing a risky tool enforced a rule that prompts had failed to hold.
+real_interview: An interviewer may ask: What guardrails would you add to an agent?
+real_daily: It is like barriers on a mountain road.
+mcq_question: Which is a real guardrail?
+mcq_options: A) An allow-list of tools B) A polite request C) A longer prompt D) A hope
+mcq_answer: A
+mcq_why: It limits actions regardless of model output.
+fill_blank: A list of permitted actions is an ____ → allow-list
+apply: A bot must never issue refunds. How do you enforce it? → Do not provide a refund tool
+explain_task: Explain guardrails in three lines.
+own_task: List five guardrails for a customer assistant.
+
+@LLM-035
+type: topic56
+topic: 04 Quality and Safety
+level: Intermediate
+term: Human review
+cue: When should a person check or approve what the model produces?
+category: Core concept
+frequency: High
+importance: 5
+origin: Models can be wrong or unsafe, so important outputs and actions need human judgement in the loop.
+pro_tip: Review by risk, so high-impact items always get a person and low-risk items are sampled.
+memory_story: Human review is a senior editor signing off before publication.
+visual: A queue of drafts with a reviewer approving or editing.
+emotion: The assurance that a person is accountable.
+definition: Human review places a person in the workflow to approve, edit or reject model outputs and actions, based on risk, confidence or policy.
+explanation: Approval gates fit actions such as sending messages, changing records or giving advice. Sampling reviews measure ongoing quality. Reviewers need context, clear criteria and a fast interface. Their decisions can become evaluation data. Avoid rubber-stamping by keeping the load reasonable and showing sources.
+simple_explain: Put a person on risky outputs and sample the rest.
+analogy: Human review is a senior editor signing off before publication.
+formula_rule: High risk = approve. Low risk = sample.
+example_1: A reviewer approving a drafted legal reply.
+example_2: A weekly sample of bot answers.
+example_3: Rejected drafts used as test cases.
+related: guardrails, hallucination, evaluation, prompt injection
+word_family: review, approval, sampling, escalation, criteria
+where_used: Legal | Finance | Customer communication
+mini_conversation: A: Should the bot send replies automatically? | B: For refunds a person approves, and for FAQs we sample.
+misconception: ✗ Human review makes errors impossible → ✓ Tired reviewers also miss errors, so design the process well
+contrast: Approval vs sampling: approval checks every item, sampling checks a share.
+avoid: Do not let reviewers rubber-stamp huge queues.
+memory_trick: Review by risk, sample the rest.
+real_project: Approval on risky replies prevented an incorrect refund promise.
+real_interview: An interviewer may ask: When is human review necessary?
+real_daily: It is like an editor signing off.
+mcq_question: What should always get human review?
+mcq_options: A) Colours B) Typos C) Greetings D) High-impact actions
+mcq_answer: D
+mcq_why: Mistakes there cost most.
+fill_blank: Checking a share of items is ____ → sampling
+apply: The bot drafts legal replies. What do you require? → Human approval
+explain_task: Explain human review in three lines.
+own_task: Design a review policy by risk level.
+
+@LLM-036
+type: topic56
+topic: 04 Quality and Safety
+level: Intermediate
+term: Logging calls safely
+cue: How do you record LLM calls for debugging without leaking data?
+category: Core concept
+frequency: High
+importance: 5
+origin: Prompts and answers help debugging and evaluation but can contain private data, so logging needs rules.
+pro_tip: Log ids, token counts, versions and outcomes by default, and store full text only with masking and access control.
+memory_story: Logging model calls is keeping a diary with the names blacked out.
+visual: A log line with ids and counts but masked content.
+emotion: The balance of insight and privacy.
+definition: Safe logging of LLM calls records metadata such as request id, model, prompt version, token counts, latency and outcome, and stores full prompts and responses only when needed, masked, access-controlled and with limited retention.
+explanation: Without logs you cannot debug or evaluate, but full text logs may contain personal data and secrets. Mask sensitive fields, restrict access, set short retention and allow deletion on request. Sampling a small share of full conversations may be enough. Never log API keys. Link logs to user feedback to find failures.
+simple_explain: Log the metadata always, and log full text only carefully and briefly.
+analogy: Logging model calls is keeping a diary with the names blacked out.
+formula_rule: Metadata always, content carefully.
+example_1: A log line with model, version and token counts.
+example_2: Masked prompts stored for a week.
+example_3: A thumbs down linked to a request id.
+related: sensitive data in logs, data privacy, prompt versions, evaluation
+word_family: logging, metadata, retention, masking, trace
+where_used: Production LLM apps | Debugging | Audits
+mini_conversation: A: Can support read user prompts? | B: Only masked ones, and only for a short time.
+misconception: ✗ Logging everything is always better → ✓ Full text logs create privacy and security risk
+contrast: Metadata vs content logs: metadata is low risk, content is high risk.
+avoid: Do not log API keys or raw personal data.
+memory_trick: Log metadata freely, content sparingly.
+real_project: Masked sampled logs allowed debugging without exposing customer details.
+real_interview: An interviewer may ask: What do you log for LLM calls?
+real_daily: It is like a diary with names blacked out.
+mcq_question: Which is safe to log by default?
+mcq_options: A) Passwords B) API keys C) Token counts and latency D) Raw customer emails
+mcq_answer: C
+mcq_why: Metadata carries little risk.
+fill_blank: How long logs are kept is the ____ → retention
+apply: Debugging needs prompt text. What controls do you add? → Masking, access control and short retention
+explain_task: Explain safe logging of LLM calls in three lines.
+own_task: Define the fields of an LLM call log.

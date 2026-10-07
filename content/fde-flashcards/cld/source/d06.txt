@@ -1,0 +1,492 @@
+
+@CLD-039
+topic: 07 Operations
+level: Beginner
+term: Monitoring (CloudWatch)
+cue: Which service collects metrics and alarms so you know how your resources are doing?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: You cannot fix what you cannot see, so clouds record numbers about every resource and let you alert on them.
+pro_tip: Alarm on symptoms users feel, such as errors and latency, as well as on CPU.
+memory_story: Monitoring is the dashboard of a car, with warning lights for trouble.
+visual: A graph with a threshold line and an alarm bell.
+emotion: The reassurance of being told before users complain.
+definition: Cloud monitoring, such as AWS CloudWatch, collects metrics, logs and events from resources and triggers alarms and actions when thresholds are crossed.
+explanation: Services publish metrics such as CPU, requests and errors automatically. You can add custom metrics from your own code. Alarms watch a metric and notify people or run automatic actions. Dashboards bring graphs together. Memory use often needs an agent to be reported. Azure Monitor and Google Cloud Monitoring are equivalents.
+simple_explain: Watch metrics on a dashboard and set alarms that notify the right people.
+analogy: It is the dashboard of a car with warning lights.
+formula_rule: Metric + threshold + action = alarm.
+example_1: An alarm when error rate passes 5 percent.
+example_2: A dashboard showing requests and latency.
+example_3: An alarm that triggers scaling out.
+related: logging, auto scaling, health checks, alerts
+word_family: metric, alarm, dashboard, threshold, agent
+where_used: Operations | Incident response | Capacity planning
+mini_conversation: A: How did we find out the API was failing? | B: An error-rate alarm sent a message.
+misconception: ✗ Monitoring only needs CPU graphs → ✓ User-facing symptoms such as errors and latency matter more
+contrast: Metrics vs logs: metrics are numbers over time, logs are detailed event records.
+avoid: Do not create alarms that nobody reads or acts on.
+memory_trick: Alarm on what users actually feel.
+real_project: Adding error-rate alarms so outages were caught before customers reported them.
+real_interview: An interviewer may ask: What would you monitor on a web service?
+real_daily: It is like the dashboard lights in a car.
+mcq_question: What triggers an alarm?
+mcq_options: A) A tag change B) A region change C) A metric crossing a threshold D) A new user
+mcq_answer: C
+mcq_why: Alarms watch a metric against a condition.
+fill_blank: A graph screen that gathers key metrics is a ____ → dashboard
+apply: You want to be told when errors rise. What do you create? → An alarm
+explain_task: Explain cloud monitoring in three lines.
+own_task: List three metrics and thresholds for a web API.
+
+@CLD-040
+topic: 07 Operations
+level: Intermediate
+term: Cloud logging
+cue: How do you collect and search logs from many cloud resources in one place?
+category: Core concept
+frequency: High
+importance: 4
+origin: Logs scattered over many servers are useless in an incident, so services ship them to one searchable place.
+pro_tip: Log in a structured format and never write secrets into logs.
+memory_story: Central logging is a single library where every machine files its diary.
+visual: Many sources flowing into one search box.
+emotion: The speed of finding one error among millions of lines.
+definition: Cloud logging collects log records from applications and services into a central store where they can be searched, kept for a chosen time and used for alerts.
+explanation: Services and agents send logs to a log service, grouped by source. You search with queries and can turn patterns into metrics and alarms. Retention controls cost and compliance. Audit logs, such as CloudTrail, record who did what in the account and are vital for security. Logs may contain personal data, so access must be limited.
+simple_explain: Send every log to one place, keep it for a set time, and search it during incidents.
+analogy: It is a library where every machine files its diary.
+formula_rule: Collect → store → search → alert.
+example_1: Searching for all errors in the last hour.
+example_2: An audit log showing who deleted a bucket.
+example_3: A metric built from a log pattern.
+related: monitoring, audit trail, retention, observability
+word_family: log group, retention, query, audit trail, structured
+where_used: Debugging | Security | Compliance
+mini_conversation: A: Who changed the security group? | B: The audit log shows the user and time.
+misconception: ✗ More logs always make debugging easier → ✓ Noisy or unstructured logs hide the useful lines and cost money
+contrast: Application log vs audit log: one records app behaviour, the other records account actions.
+avoid: Do not log passwords, tokens or personal data.
+memory_trick: One library, structured diaries, no secrets.
+real_project: Using the audit log to find who changed a firewall rule before an outage.
+real_interview: An interviewer may ask: How do you find out who changed a cloud setting?
+real_daily: It is like a library where every machine files its diary.
+mcq_question: Which log shows who performed an action in the account?
+mcq_options: A) The audit log B) A disk log C) A DNS record D) A web server log
+mcq_answer: A
+mcq_why: Audit logs record account activity.
+fill_blank: How long logs are kept is the ____ setting → retention
+apply: You must find who deleted a bucket. Where do you look? → The audit log
+explain_task: Explain central logging in three lines.
+own_task: Write what a good log line should contain.
+
+@CLD-041
+topic: 07 Operations
+level: Intermediate
+term: Infrastructure as code
+cue: Which practice defines cloud resources in files so they can be reviewed and repeated?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Clicking through consoles gave inconsistent environments, so resources were described in code that tools apply automatically.
+pro_tip: Keep the code in Git, review changes like any other code, and avoid manual console edits.
+memory_story: Infrastructure as code is a recipe card instead of cooking from memory.
+visual: A file of resource definitions producing a diagram of servers.
+emotion: The confidence of rebuilding an environment from scratch.
+definition: Infrastructure as code describes cloud resources in files, using tools such as CloudFormation or Terraform, and applies them to create, change or remove the resources.
+explanation: You write the desired state, and the tool plans the changes. A plan shows what will be created, changed or destroyed before anything happens. State files record what exists, and must be stored safely and shared. The same code can build dev, test and production. Drift happens when someone changes resources by hand. Terraform works across clouds, and CloudFormation is AWS only.
+simple_explain: Write the desired setup in code, review the plan, apply it, and keep it in Git.
+analogy: It is a recipe card instead of cooking from memory.
+formula_rule: Code → plan → apply → state.
+example_1: A Terraform file creating a bucket and a role.
+example_2: The same code deployed to test and production.
+example_3: A plan showing one resource will be replaced.
+related: version control, CI/CD, tagging, drift
+word_family: Terraform, CloudFormation, plan, state, drift
+where_used: Environments | Repeatable setups | Reviews
+mini_conversation: A: Someone edited the firewall by hand. | B: That is drift, so apply the code to restore it.
+misconception: ✗ A console change is faster, so it is fine to skip the code → ✓ Manual changes drift and cannot be repeated or reviewed
+contrast: Terraform vs CloudFormation: Terraform works across clouds, CloudFormation is AWS only.
+avoid: Do not store state files or secrets in a public repository.
+memory_trick: Code, plan, apply, never click ad hoc.
+real_project: Rebuilding a customer test environment from code in minutes after a failure.
+real_interview: An interviewer may ask: What is configuration drift?
+real_daily: It is like cooking from a recipe card.
+mcq_question: What does a plan show?
+mcq_options: A) Logs B) Billing C) What will change before it is applied D) Users
+mcq_answer: C
+mcq_why: A plan previews creates, updates and deletions.
+fill_blank: Changes made by hand outside the code cause ____ → drift
+apply: You must create the same setup in test and production. What do you use? → Infrastructure as code
+explain_task: Explain infrastructure as code in three lines.
+own_task: List the steps from writing code to a deployed resource.
+
+@CLD-042
+topic: 07 Operations
+level: Beginner
+term: Tagging
+cue: Which labels help you find, group and charge for cloud resources?
+category: Core concept
+frequency: High
+importance: 4
+origin: Accounts fill with resources nobody remembers, so key-value labels were added to show owners, purpose and cost centre.
+pro_tip: Agree a small set of required tags and enforce them in code.
+memory_story: Tags are name stickers on every box in a warehouse.
+visual: Resources with coloured labels such as owner and environment.
+emotion: The ease of knowing who owns a mystery server.
+definition: Tags are key-value labels attached to cloud resources, used to identify owners, environments and cost centres and to filter and report on them.
+explanation: Typical tags are owner, environment, project and cost centre. Cost reports can be split by tag, so each team sees its own spend. Policies can require tags or automate actions on them. Tags are not secret, so they must not hold sensitive values. Consistent naming matters, since Environment and environment are different keys.
+simple_explain: Label everything with owner and environment, and use the labels for cost and cleanup.
+analogy: Tags are name stickers on every box in a warehouse.
+formula_rule: Owner + environment + project on every resource.
+example_1: A tag Owner=data-team on a bucket.
+example_2: A cost report grouped by project tag.
+example_3: A cleanup job deleting resources tagged temporary.
+related: cost alerts, cleanup, infrastructure as code, governance
+word_family: tag, label, key, value, cost allocation
+where_used: Cost reports | Ownership | Cleanup
+mini_conversation: A: Who owns this server and who pays for it? | B: Check its Owner tag.
+misconception: ✗ Tags are a safe place to put secrets → ✓ Tags are visible to many people and must hold only non-sensitive labels
+contrast: Tag vs name: a name identifies one resource, tags describe groups of them.
+avoid: Do not use inconsistent tag keys across teams.
+memory_trick: Tag every box with an owner.
+real_project: Adding required tags so the monthly bill could be split by customer project.
+real_interview: An interviewer may ask: How do you track cost per team?
+real_daily: It is like name stickers on every box.
+mcq_question: What are tags made of?
+mcq_options: A) Passwords B) Key-value pairs C) Routes D) Images
+mcq_answer: B
+mcq_why: Each tag has a key and a value.
+fill_blank: A common tag that names who is responsible is ____ → Owner
+apply: You need the bill split by project. What do you use? → Tags
+explain_task: Explain tagging in three lines.
+own_task: Define five required tags for your account.
+
+@CLD-043
+topic: 07 Operations
+level: Beginner
+term: Budgets and cost alerts
+cue: Which settings warn you before the bill grows beyond what you planned?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Surprise bills hurt new users, so providers added budgets that send warnings as spending approaches a limit.
+pro_tip: Set a budget alert on day one of any new account.
+memory_story: A budget alert is a smoke detector for money.
+visual: A bar of spending approaching a dashed budget line.
+emotion: The relief of an early warning instead of a shock.
+definition: Budgets and cost alerts track spending against a limit you set and send notifications when actual or forecast cost crosses chosen thresholds.
+explanation: You create a budget for the account or for tags, and set alerts at levels such as 50, 80 and 100 percent. Forecast alerts warn before the money is spent. Anomaly detection flags unusual jumps. Alerts only notify, so they do not stop resources unless you add an automatic action. Cost explorer tools show where the money goes.
+simple_explain: Set a monthly budget with alerts, and check the cost report regularly.
+analogy: It is a smoke detector for money.
+formula_rule: Budget + thresholds + notification = early warning.
+example_1: An email at 80 percent of a monthly budget.
+example_2: A forecast alert predicting overspend.
+example_3: A report showing storage as the largest cost.
+related: pay-as-you-go, tagging, cleanup, spot instances
+word_family: budget, forecast, anomaly, threshold, cost explorer
+where_used: New accounts | Finance reviews | Experiments
+mini_conversation: A: The bill doubled. | B: A forgotten service was running, and the alert came too late because none was set.
+misconception: ✗ A budget alert stops spending automatically → ✓ It only notifies unless you add an action
+contrast: Actual vs forecast alert: actual fires after spending, forecast fires before.
+avoid: Do not run experiments in an account with no alerts.
+memory_trick: Set the alert before the first launch.
+real_project: Creating budgets with alerts for a customer proof of concept account.
+real_interview: An interviewer may ask: How do you prevent surprise cloud bills?
+real_daily: It is like a smoke detector for money.
+mcq_question: Does a basic budget alert stop resources?
+mcq_options: A) No, it only notifies B) It deletes them C) Only on weekends D) Yes, always
+mcq_answer: A
+mcq_why: Stopping needs an extra automated action.
+fill_blank: An alert that predicts overspend is a ____ alert → forecast
+apply: You are starting a new account. What do you set first? → A budget alert
+explain_task: Explain cost alerts in three lines.
+own_task: Choose three alert thresholds for a monthly budget.
+
+@CLD-044
+topic: 07 Operations
+level: Intermediate
+term: Secrets and KMS
+cue: Which services store secrets and manage encryption keys for you?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Secrets placed in code or config files leak easily, so clouds provide vaults and key services with access control and audit trails.
+pro_tip: Fetch secrets at run time from a secrets manager, and encrypt data with managed keys.
+memory_story: A secrets manager is a bank vault with a logbook of every visit.
+visual: An app asking a vault for a password at start-up.
+emotion: The peace of no passwords in the code.
+definition: A secrets manager stores and rotates credentials with access control, and a key management service creates and controls encryption keys used to protect data.
+explanation: Applications read secrets through their role at run time, so nothing is stored in code. Rotation can be automated for supported databases. A key service holds keys that never leave it, and services use them to encrypt data at rest. Access to keys is controlled by policy and logged. Azure Key Vault and Google Secret Manager are equivalents.
+simple_explain: Keep secrets in a vault, give apps a role to read them, and encrypt data with managed keys.
+analogy: It is a bank vault with a logbook of every visit.
+formula_rule: Secret in vault + role to read + audit log.
+example_1: An app reading a database password from a secrets manager.
+example_2: A bucket encrypted with a managed key.
+example_3: Automatic password rotation every thirty days.
+related: access keys, IAM roles, encryption, shared responsibility
+word_family: vault, KMS, rotation, encryption at rest, envelope
+where_used: Applications | Databases | Compliance
+mini_conversation: A: Where is the database password stored? | B: In the secrets manager, read through a role.
+misconception: ✗ Environment variables in a repository are a fine place for secrets → ✓ Secrets belong in a vault, not in files that others can read
+contrast: Secrets manager vs KMS: one stores credentials, the other manages encryption keys.
+avoid: Do not hard-code credentials in source code.
+memory_trick: Vault the secret, role reads, log records.
+real_project: Moving database passwords from config files to a secrets manager with rotation.
+real_interview: An interviewer may ask: How do you handle secrets in the cloud?
+real_daily: It is like a bank vault with a visitors' book.
+mcq_question: Where should an app get its database password at run time?
+mcq_options: A) A public file B) The source code C) An email D) A secrets manager
+mcq_answer: D
+mcq_why: A vault controls and logs who reads the secret.
+fill_blank: Changing a secret on a schedule is called ____ → rotation
+apply: A password sits in a config file in Git. What should you do? → Move it to a secrets manager
+explain_task: Explain secrets management in three lines.
+own_task: List what an app needs in order to read a secret safely.
+
+@CLD-045
+topic: 07 Operations
+level: Advanced
+term: Disaster recovery and multi-region
+cue: Which plans let a service continue or recover after a whole region fails?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Rare large failures still happen, so teams plan how to restore service when a whole region is unavailable.
+pro_tip: Choose the cheapest strategy that meets your agreed recovery time and data loss limits.
+memory_story: Disaster recovery is a fire drill that is practised before the fire.
+visual: Two regions with data copying from the active one to the standby.
+emotion: The confidence of a plan that was rehearsed.
+definition: Disaster recovery is a set of plans and setups that restore a service after a major failure, ranging from backup and restore to active-active across regions.
+explanation: The main strategies, from cheapest to fastest, are backup and restore, pilot light, warm standby and multi-site active-active. Each trades cost against recovery time and data loss. Data must be replicated or backed up to the second region. Failover can be controlled through DNS. Regular drills prove it works. Many systems only need zone-level resilience rather than region-level.
+simple_explain: Decide how much downtime and data loss you can accept, then pick the matching strategy and rehearse it.
+analogy: It is a fire drill practised before the fire.
+formula_rule: Faster recovery costs more. Match it to RPO and RTO.
+example_1: Nightly backups copied to another region.
+example_2: A small standby copy of the database running in a second region.
+example_3: Traffic switched by DNS to the standby region.
+related: backups, regions, DNS, RPO and RTO
+word_family: failover, standby, active-active, pilot light, drill
+where_used: Critical systems | Compliance | Risk planning
+mini_conversation: A: What if the whole region goes down? | B: We fail over to the standby region within an hour.
+misconception: ✗ Multi-zone setups protect against a full region outage → ✓ Zones are inside one region, so you need another region for that
+contrast: Multi-zone vs multi-region: zones survive a building failure, regions survive a wider outage.
+avoid: Do not claim a recovery time that you have never tested.
+memory_trick: Faster recovery always costs more money.
+real_project: Running a twice-a-year failover drill that exposed a missing permission.
+real_interview: An interviewer may ask: How would you design disaster recovery for a database?
+real_daily: It is like practising a fire drill.
+mcq_question: Which strategy usually has the slowest recovery but lowest cost?
+mcq_options: A) Two data centres B) Backup and restore C) Active-active D) Warm standby
+mcq_answer: B
+mcq_why: Everything must be rebuilt after the failure.
+fill_blank: Moving traffic to the backup site is called ____ → failover
+apply: A customer allows four hours of downtime on a tight budget. Which strategy? → Backup and restore
+explain_task: Explain disaster recovery options in three lines.
+own_task: Pick a strategy for a customer needing a one-hour recovery.
+
+@CLD-046
+topic: 07 Operations
+level: Intermediate
+term: Cloud CLI and SDKs
+cue: Which tools let you control the cloud from a terminal or from code?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: Clicking in a console does not scale, so command-line tools and libraries expose the same actions for scripts and programs.
+pro_tip: Use named profiles and check which account you are in before running any command.
+memory_story: The console is the shop window, and the CLI is the staff door to the same stock.
+visual: A terminal command creating a resource that appears in the console.
+emotion: The power of one command doing ten clicks.
+definition: A cloud CLI, such as the AWS CLI, and SDKs such as boto3 let you call the cloud's APIs from a terminal or from your own programs.
+explanation: The CLI is configured with credentials or a profile and a default region. Commands follow a pattern of service, action and options. Output can be filtered with query options and formatted as JSON. SDKs offer the same actions in languages such as Python or JavaScript. Always confirm the active identity with a whoami command before changes.
+simple_explain: Use the CLI for quick tasks and scripts, and SDKs inside programs. Check who you are first.
+analogy: The console is the shop window, and the CLI is the staff door to the same stock.
+formula_rule: Service + action + options, with the right profile and region.
+example_1: aws s3 ls to list buckets.
+example_2: aws sts get-caller-identity to see who you are.
+example_3: A Python script using boto3 to upload a file.
+related: IAM, access keys, temporary credentials, infrastructure as code
+word_family: CLI, SDK, profile, region, API
+where_used: Automation | Scripts | Daily operations
+mini_conversation: A: Which account is this command running in? | B: Run get-caller-identity to confirm.
+misconception: ✗ The CLI has different powers from the console → ✓ Both call the same APIs under the same permissions
+contrast: CLI vs SDK: the CLI is for terminals and scripts, the SDK is for use inside code.
+avoid: Do not run destructive commands without checking the active profile.
+memory_trick: Check who you are before you act.
+real_project: Scripting a bucket audit with the CLI across all of a customer's regions.
+real_interview: An interviewer may ask: How do you confirm which account you are using?
+real_daily: It is like using the staff door to the same stock.
+mcq_question: Which command shows the identity in use?
+mcq_options: A) aws logs tail B) aws ec2 stop C) aws s3 mb D) aws sts get-caller-identity
+mcq_answer: D
+mcq_why: It prints the account and identity of the current credentials.
+fill_blank: A named set of credentials and region settings is a ____ → profile
+apply: You are about to delete a resource. What do you check first? → The active account and profile
+explain_task: Explain the CLI and SDK in three lines.
+own_task: Write three CLI commands you would use on day one.
+
+@CLD-047
+topic: 08 Choosing and Mapping
+level: Intermediate
+term: AWS, Azure and GCP service map
+cue: Which names in Azure and Google Cloud match the main AWS services?
+category: Reference
+frequency: High
+importance: 4
+origin: Customers use different clouds, so engineers need to translate the same idea between vendors quickly.
+pro_tip: Learn the idea first, then the vendor name, since the ideas repeat across clouds.
+memory_story: It is a phrasebook for the same conversation in three languages.
+visual: A three-column table of matching services from three vendors.
+emotion: The confidence of understanding any cloud's console.
+definition: A service map pairs equivalent cloud services across vendors, such as EC2, Azure Virtual Machines and Compute Engine, which all provide virtual machines.
+explanation: Compute is EC2, Azure Virtual Machines and Compute Engine. Object storage is S3, Blob Storage and Cloud Storage. Functions are Lambda, Azure Functions and Cloud Functions. Managed SQL is RDS, Azure SQL and Cloud SQL. Identity is IAM, Entra ID with role assignments, and Cloud IAM. Equivalents are close but not identical, so check details before promising a feature.
+simple_explain: The ideas are the same everywhere, and only the names and small details change.
+analogy: It is a phrasebook for the same conversation in three languages.
+formula_rule: Same idea, different name, check the details.
+example_1: S3, Blob Storage and Cloud Storage all store objects.
+example_2: Lambda, Azure Functions and Cloud Functions all run code on events.
+example_3: AWS VPC, Azure Virtual Network and Google VPC are the network equivalents.
+related: object storage, serverless functions, VPC, IAM
+word_family: equivalent, vendor, mapping, service, portability
+where_used: Customer meetings | Migrations | Multi-cloud work
+mini_conversation: A: The customer uses Azure, what is the S3 equivalent? | B: Blob Storage.
+misconception: ✗ Equivalent services behave exactly the same → ✓ They are similar, but limits, features and prices differ
+contrast: AWS vs Azure naming: the ideas match, but the names and some behaviours differ.
+avoid: Do not promise an exact feature match without reading the documentation.
+memory_trick: Learn the idea, then translate the name.
+real_project: Translating an AWS design into Azure names for a customer on another vendor.
+real_interview: An interviewer may ask: What is the Azure equivalent of S3?
+real_daily: It is like a phrasebook for three languages.
+mcq_question: Which service is Azure's equivalent of S3?
+mcq_options: A) Blob Storage B) Functions C) Key Vault D) Virtual Machines
+mcq_answer: A
+mcq_why: Blob Storage is Azure's object storage.
+fill_blank: Google's bucket service for files is named Cloud ____ → Storage
+apply: A customer uses GCP and asks for the Lambda equivalent. What do you say? → Cloud Functions
+explain_task: Explain how to translate between clouds in three lines.
+own_task: Make a table of five AWS services with their Azure and GCP names.
+
+@CLD-048
+topic: 08 Choosing and Mapping
+level: Intermediate
+term: Choosing a cloud
+cue: Which questions help decide between AWS, Azure and Google Cloud for a customer?
+category: Reference
+frequency: Medium
+importance: 4
+origin: No cloud is best for everyone, so the decision should follow the customer's needs, skills and existing contracts.
+pro_tip: Use what the customer already runs unless there is a strong reason to change.
+memory_story: Choosing a cloud is like choosing a car by the roads you drive on, not the advertisement.
+visual: A decision list with skills, services, rules and cost.
+emotion: The clarity of a decision that rests on facts.
+definition: Choosing a cloud means comparing vendors on the customer's existing systems, skills, required services, data rules, regions and total cost.
+explanation: Ask what the customer already uses, such as Microsoft licences or Google Workspace. Check which required services and regions exist and whether data rules are met. Consider team skills, support and cost over time. Avoid deep lock-in by using open standards where reasonable, but do not over-engineer for portability. Many customers use more than one cloud.
+simple_explain: Start from the customer's reality, then compare services, rules, skills and cost.
+analogy: It is like choosing a car by the roads you drive on.
+formula_rule: Needs + skills + rules + cost decide, not brand.
+example_1: A Microsoft-heavy company choosing Azure.
+example_2: A data analytics team choosing a cloud for its warehouse service.
+example_3: A customer needing a region that only one vendor offers.
+related: service map, regions, cloud vs on-premises, cost
+word_family: vendor, lock-in, portability, multi-cloud, requirements
+where_used: Proposals | Architecture talks | Migrations
+mini_conversation: A: Which cloud should we recommend? | B: Start from what they already run and what they must keep in-country.
+misconception: ✗ One vendor is simply the best for everyone → ✓ The right choice depends on needs, skills, rules and existing systems
+contrast: Lock-in vs portability: lock-in eases use of unique features, portability eases moving later.
+avoid: Do not choose a vendor only because you know it best.
+memory_trick: Fit the customer, not the brand.
+real_project: Recommending the cloud a customer already used, to reuse their team's skills.
+real_interview: An interviewer may ask: How would you advise a customer on choosing a cloud?
+real_daily: It is like choosing a car by the roads you drive.
+mcq_question: What should drive the choice of cloud?
+mcq_options: A) Personal preference B) Random choice C) The customer's needs and context D) The newest logo
+mcq_answer: C
+mcq_why: Needs, skills, rules and cost decide.
+fill_blank: Using more than one vendor is called ____-cloud → multi
+apply: A company is built on Microsoft tools. Which cloud is a natural start? → Azure
+explain_task: Explain how to choose a cloud in three lines.
+own_task: Write five questions to ask a customer before recommending a cloud.
+
+@CLD-049
+topic: 08 Choosing and Mapping
+level: Beginner
+term: Cleaning up resources
+cue: Which habit stops forgotten cloud resources from billing you and creating risk?
+category: Practice
+frequency: Very high
+importance: 5
+origin: Experiments leave behind servers, disks and addresses that keep costing money, so cleanup became a routine step.
+pro_tip: Tag temporary resources and delete them with a script when the work ends.
+memory_story: Cleanup is turning off the lights and locking up after a workshop.
+visual: A checklist of items being crossed off as they are deleted.
+emotion: The tidy satisfaction of a clean account.
+definition: Cleaning up means deleting or stopping resources you no longer need, including the less obvious ones such as disks, snapshots, addresses and load balancers.
+explanation: Stopping a server does not stop disk or address charges. Orphaned items stay behind when the main resource is deleted. Infrastructure as code can destroy a whole environment in one step. Tags help find temporary items. Review the billing report and the resource list in every region, since resources in unused regions are easy to forget.
+simple_explain: Tag temporary things, destroy them with code, and check every region and the bill.
+analogy: It is like turning off the lights and locking up after a workshop.
+formula_rule: Create with a tag, destroy with the same code.
+example_1: Deleting an unattached disk left after a server was removed.
+example_2: Running a destroy command on a test environment.
+example_3: Finding a forgotten server in another region on the bill.
+related: tagging, cost alerts, infrastructure as code, pay-as-you-go
+word_family: cleanup, orphan, destroy, idle, forgotten
+where_used: Demos | Training | Cost control
+mini_conversation: A: The demo is over. | B: Destroy the stack and check the bill for leftovers.
+misconception: ✗ Stopping a server removes every cost → ✓ Disks, addresses and snapshots may keep billing
+contrast: Stop vs delete: stopping pauses compute, deleting removes the resource and its cost.
+avoid: Do not leave test resources with open access running.
+memory_trick: Tag it, track it, tear it down.
+real_project: Destroying a customer demo environment with code and finding no leftover charges.
+real_interview: An interviewer may ask: What do you check after finishing a proof of concept?
+real_daily: It is like locking up after a workshop.
+mcq_question: Which item may still cost money after you stop a server?
+mcq_options: A) Its attached disk B) Its colour C) Its tag D) Its name
+mcq_answer: A
+mcq_why: Stopped servers still keep their storage volumes.
+fill_blank: Items left behind with no owner are called ____ resources → orphaned
+apply: A demo ended. What is the safest way to remove everything? → Destroy it with the infrastructure code
+explain_task: Explain cloud cleanup in three lines.
+own_task: Write a cleanup checklist for a demo account.
+
+@CLD-050
+topic: 08 Choosing and Mapping
+level: Intermediate
+term: Choosing between functions, containers and virtual machines
+cue: Which questions decide whether to run code on a function, a container service or a virtual machine?
+category: Reference
+frequency: High
+importance: 4
+origin: Cloud offers several ways to run code, so teams need a simple method to pick the right one for each job.
+pro_tip: Start with the most managed option that fits, and move down only when you need more control.
+memory_story: It is choosing between a taxi, a rented car and owning a car.
+visual: A ladder from functions to containers to virtual machines, with control growing downward.
+emotion: The ease of a clear rule of thumb.
+definition: Functions suit short event-driven tasks, container services suit long-running packaged apps, and virtual machines suit workloads that need full control of the operating system.
+explanation: Functions have time limits and stateless design but need no servers. Containers give portability and steady services with moderate effort. Virtual machines give maximum control but need patching and sizing. Consider run time, traffic pattern, state, skills and cost. Spiky, short jobs favour functions, steady services favour containers, and legacy or special software favours virtual machines.
+simple_explain: Use the most managed option that fits the job, and move toward more control only when needed.
+analogy: It is choosing between a taxi, a rented car and owning a car.
+formula_rule: More control means more work. Pick the least you need.
+example_1: A nightly cleanup as a function.
+example_2: A web API as a container service.
+example_3: Licensed legacy software on a virtual machine.
+related: serverless functions, container services, virtual machines, cost
+word_family: function, container, virtual machine, control, managed
+where_used: Architecture decisions | Customer designs | Migrations
+mini_conversation: A: Should we use a server for this small task? | B: A function is simpler if it finishes quickly.
+misconception: ✗ Virtual machines are always the safest default → ✓ A more managed option often costs less effort and fits better
+contrast: Function vs container: a function is short and event-driven, a container service runs steadily.
+avoid: Do not use functions for jobs that run longer than their limit.
+memory_trick: Least control that works wins.
+real_project: Choosing containers for a steady API and functions for its nightly cleanup jobs.
+real_interview: An interviewer may ask: How do you decide between functions and containers?
+real_daily: It is like choosing between a taxi and a rented car.
+mcq_question: Which suits a long-running web service with steady traffic?
+mcq_options: A) A bucket B) A function with a short limit C) A container service D) A queue
+mcq_answer: C
+mcq_why: Containers run steadily without function time limits.
+fill_blank: Functions are best for short, ____ tasks → event-driven
+apply: Legacy licensed software needs full OS control. Which option? → A virtual machine
+explain_task: Explain how to choose a compute option in three lines.
+own_task: Choose a compute option for three jobs and explain why.

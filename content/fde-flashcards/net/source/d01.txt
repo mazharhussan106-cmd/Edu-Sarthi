@@ -1,0 +1,498 @@
+deck.title: Networking Basics – Beginner to Advanced Flashcards
+deck.subject: Computer networking
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: bash
+type: topic56
+
+@NET-001
+topic: 01 Models
+level: Beginner
+term: OSI and TCP/IP layers
+cue: Which layered models describe how data travels from an application down to the wire and back?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Networks involve many different jobs, so engineers split them into layers where each layer does one task and relies on the one below.
+pro_tip: Use the layers to place a problem, such as cable at layer one or a web error at layer seven.
+memory_story: The layers are like a postal chain, with the letter, the envelope, the sorting office and the truck each doing one job.
+visual: A stack of boxes from application at the top down to physical at the bottom.
+emotion: The clarity of knowing where in the stack a problem lives.
+definition: The OSI model has seven layers and the TCP/IP model has four, and both describe how application data is wrapped step by step for sending and unwrapped on arrival.
+explanation: OSI layers from the bottom are physical, data link, network, transport, session, presentation and application. TCP/IP groups them into link, internet, transport and application. Ethernet and Wi-Fi sit low, IP at the network layer, TCP and UDP at the transport layer, and HTTP and DNS at the application layer. Each layer adds its own header, which is called encapsulation.
+simple_explain: Data moves down the layers when sent, picking up headers, and up the layers when received, losing them.
+analogy: The layers are a postal chain where the letter, the envelope, the sorting office and the truck each do one job.
+formula_rule: Application data + header at each layer = encapsulation.
+example_1: HTTP at the application layer carrying a web page request.
+example_2: TCP at the transport layer splitting the data into numbered segments.
+example_3: IP at the network layer adding source and destination addresses.
+related: packets and frames, TCP vs UDP, routers and switches, troubleshooting method
+word_family: layer, encapsulation, header, protocol, stack
+where_used: Troubleshooting | Interviews | Network design
+mini_conversation: A: Is the cable the problem or the website? | B: Check the lower layers first, then work upward.
+misconception: ✗ The OSI model is how the internet is actually built → ✓ OSI is a teaching reference, and the internet follows the simpler TCP/IP model
+contrast: OSI vs TCP/IP: OSI has seven layers for teaching, TCP/IP has four and matches real protocols.
+avoid: Do not memorise layers without linking each to a real protocol.
+memory_trick: Please do not throw sausage pizza away.
+real_project: Using the layers to prove that a customer outage was a DNS problem, not a cable fault.
+real_interview: An interviewer may ask: At which layer does a router work?
+real_daily: It is like a postal chain with one job per step.
+mcq_question: At which OSI layer does IP work?
+mcq_options: A) Session layer B) Application layer C) Physical layer D) Network layer
+mcq_answer: D
+mcq_why: IP handles addressing and routing at the network layer.
+fill_blank: Adding a header at each layer is called ____ → encapsulation
+apply: A web page fails but pings work. Which layers are likely fine? → The lower layers
+explain_task: Explain the layered model in three lines.
+own_task: Match five common protocols to their layers in the stack.
+
+@NET-002
+topic: 01 Models
+level: Beginner
+term: Packets and frames
+cue: Which units carry data at the network and link layers?
+category: Core concept
+frequency: High
+importance: 4
+origin: Sending a big file in one piece would block the line and lose everything on error, so data is cut into small labelled units.
+pro_tip: Think of a packet as the letter and a frame as the envelope for one hop.
+memory_story: A packet is a letter with its address, and a frame is the local delivery bag it rides in for one stretch.
+visual: A packet nested inside a frame with headers on both.
+emotion: The satisfaction of understanding what actually crosses the wire.
+definition: A packet is a unit of data with IP addresses at the network layer, and a frame is the link-layer wrapper that carries a packet across one local network.
+explanation: A packet keeps its source and destination IP addresses from end to end. A frame has MAC addresses and is rebuilt at every hop. Frames have a size limit called the MTU. Large data is split into many packets and reassembled at the destination. Lost packets may be retransmitted by TCP.
+simple_explain: Packets travel end to end, and each hop puts them into a fresh frame.
+analogy: A packet is a letter with its address, and a frame is the local delivery bag it rides in for one stretch.
+formula_rule: Packet = end-to-end address. Frame = hop-by-hop address.
+example_1: A web request split into several packets.
+example_2: A router stripping the old frame and building a new one.
+example_3: A frame limited to 1500 bytes of payload.
+related: OSI layers, MAC and ARP, MTU, routers
+word_family: packet, frame, header, payload, MTU
+where_used: Packet captures | Troubleshooting | Performance work
+mini_conversation: A: Does the destination IP change at each router? | B: No, but the frame addresses do.
+misconception: ✗ Packets and frames are two names for the same thing → ✓ They belong to different layers and carry different addresses
+contrast: Packet vs frame: packets use IP addresses across networks, frames use MAC addresses on one link.
+avoid: Do not say frame when you mean a routed IP packet.
+memory_trick: Packets go the distance, frames go one hop.
+real_project: Reading a capture to confirm packets arrived intact but frames were dropped by a switch.
+real_interview: An interviewer may ask: What changes at each router hop?
+real_daily: It is like a letter put into a new local bag at each stop.
+mcq_question: Which address changes at each hop?
+mcq_options: A) The source IP B) The MAC address in the frame C) The domain name D) The destination IP
+mcq_answer: B
+mcq_why: Frames are rebuilt for every link.
+fill_blank: The largest frame payload allowed is the ____ → MTU
+apply: A packet crosses three routers. What stays the same end to end? → The IP addresses
+explain_task: Explain packets and frames in three lines.
+own_task: List what is inside a packet and what is inside a frame.
+
+@NET-003
+topic: 01 Models
+level: Beginner
+term: Client and server
+cue: Which two roles describe who asks for a service and who provides it?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Shared resources needed a central provider, so the pattern of clients that ask and servers that answer became the basis of most networking.
+pro_tip: One machine can act as both client and server at different times.
+memory_story: The client is the diner who orders, and the server is the kitchen that cooks and replies.
+visual: An arrow of request from a browser to a server and a response back.
+emotion: The comfort of a simple pattern behind complex systems.
+definition: A client starts a request for a service, and a server listens on a port and responds to requests.
+explanation: A web browser is a client and a web server is the server. The server listens on a known port, such as 443 for HTTPS. The client picks a temporary port for its side of the connection. A database server is a client of a storage system, so roles depend on the conversation. Services in the cloud usually run as servers behind load balancers.
+simple_explain: Clients ask, servers answer, and servers wait on known ports.
+analogy: The client is the diner who orders, and the server is the kitchen that cooks and replies.
+formula_rule: Client = initiates. Server = listens and responds.
+example_1: A browser requesting a web page from a web server.
+example_2: An app server acting as a client of a database.
+example_3: A script calling an API as a client.
+related: ports, TCP handshake, HTTP, load balancers
+word_family: client, server, request, response, listen
+where_used: Every networked application | API work | Debugging
+mini_conversation: A: Which side opens the connection? | B: The client does, and the server just listens.
+misconception: ✗ A server is always a powerful dedicated machine → ✓ A server is any program that listens and answers, even on a laptop
+contrast: Client vs server: the client starts, the server waits.
+avoid: Do not assume the same machine plays only one role.
+memory_trick: Clients knock, servers listen at the door.
+real_project: Mapping which services acted as clients to find missing firewall rules.
+real_interview: An interviewer may ask: Can one machine be a client and a server?
+real_daily: It is like a diner ordering from a kitchen.
+mcq_question: Which side listens on a known port?
+mcq_options: A) The router B) The client C) The server D) The switch
+mcq_answer: C
+mcq_why: Servers wait for incoming connections.
+fill_blank: A program that waits for requests is said to ____ on a port → listen
+apply: An app calls a payment API. Which role is the app? → Client
+explain_task: Explain client and server in three lines.
+own_task: Give two examples where one program plays both roles.
+
+@NET-004
+topic: 01 Models
+level: Beginner
+term: Latency vs bandwidth
+cue: Which two measures describe how fast a network feels and how much it can carry?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: People said the network was slow without saying why, so two separate measures were named for delay and capacity.
+pro_tip: For chatty small requests latency matters most, and for large downloads bandwidth matters most.
+memory_story: Latency is how long the pipe takes to deliver a drop, and bandwidth is how wide the pipe is.
+visual: A pipe showing its length as delay and its width as capacity.
+emotion: The insight of knowing why a fast line can still feel slow.
+definition: Latency is the time a packet takes to travel from source to destination, and bandwidth is the maximum amount of data that can be sent per second.
+explanation: Latency is measured in milliseconds and is limited by distance and processing delays. Bandwidth is measured in megabits or gigabits per second. A satellite link may have high bandwidth but high latency. Throughput is the speed you actually achieve, which can be below bandwidth. Many small requests suffer from latency, which is why connections are reused.
+simple_explain: Latency is delay, bandwidth is capacity, and real speed is throughput.
+analogy: Latency is how long the pipe takes to deliver a drop, and bandwidth is how wide the pipe is.
+formula_rule: Transfer time ≈ latency + data size ÷ bandwidth.
+example_1: A video call sensitive to delay.
+example_2: A large file download limited by bandwidth.
+example_3: An API making many small calls, slowed by latency.
+related: ping, TCP, CDN, MTU
+word_family: latency, bandwidth, throughput, jitter, round trip
+where_used: Performance tuning | Customer complaints | Capacity planning
+mini_conversation: A: The line is one gigabit but the app is slow. | B: Latency to the server may be high.
+misconception: ✗ More bandwidth always makes an application faster → ✓ If latency is the bottleneck, extra bandwidth does not help
+contrast: Latency vs throughput: latency is delay per packet, throughput is data moved per second.
+avoid: Do not blame bandwidth before measuring latency.
+memory_trick: Delay is distance, capacity is width.
+real_project: Showing a customer that a distant region caused slow calls and moving the service closer.
+real_interview: An interviewer may ask: Why can a fast link still feel slow?
+real_daily: It is like a long thin pipe versus a short wide one.
+mcq_question: Which measure is in milliseconds?
+mcq_options: A) Latency B) Bandwidth C) Storage D) Capacity
+mcq_answer: A
+mcq_why: Latency is a time delay.
+fill_blank: The real speed you achieve is called ____ → throughput
+apply: Many tiny API calls are slow across continents. What is the cause? → High latency
+explain_task: Explain latency versus bandwidth in three lines.
+own_task: Give one case where latency matters and one where bandwidth matters.
+
+@NET-005
+topic: 02 Addressing
+level: Beginner
+term: IPv4
+cue: Which addressing scheme uses four numbers separated by dots?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Every device needs a unique address to be found, so a numeric scheme of 32 bits was defined for the early internet.
+pro_tip: Learn to read the dotted form and know that each number runs from 0 to 255.
+memory_story: An IPv4 address is a street address with four parts that narrow down to one house.
+visual: Four boxes of numbers separated by dots.
+emotion: The familiarity of recognising 192.168.1.1 at a glance.
+definition: An IPv4 address is a 32-bit number written as four decimal values from 0 to 255, such as 203.0.113.10, identifying a network interface.
+explanation: There are about four billion possible addresses, which is not enough for every device, so address sharing through NAT and private ranges is used. An address has a network part and a host part, separated by the subnet mask. Special ranges exist for loopback, private use and broadcast. Public addresses are assigned by registries and providers.
+simple_explain: IPv4 gives each interface a four-part number, and a mask says which part is the network.
+analogy: An IPv4 address is a street address with four parts that narrow down to one house.
+formula_rule: 32 bits = 4 numbers of 8 bits each.
+example_1: 192.168.1.20 on a home network.
+example_2: 127.0.0.1 as the loopback address.
+example_3: 8.8.8.8 as a public DNS server.
+related: IPv6, subnets and CIDR, private vs public IPs, NAT
+word_family: address, octet, mask, loopback, broadcast
+where_used: Configuration | Troubleshooting | Cloud networking
+mini_conversation: A: What is the server's IP? | B: It is 10.0.2.15 inside the VPC.
+misconception: ✗ An IP address identifies a person or a computer forever → ✓ It identifies an interface at a point in time and can change
+contrast: IPv4 vs IPv6: IPv4 has 32 bits and runs short, IPv6 has 128 bits.
+avoid: Do not hard-code addresses that may change.
+memory_trick: Four numbers, each up to two fifty-five.
+real_project: Fixing a clash where two devices were given the same IPv4 address.
+real_interview: An interviewer may ask: How many bits is an IPv4 address?
+real_daily: It is like a street address with four parts.
+mcq_question: What is the highest value in one IPv4 part?
+mcq_options: A) 999 B) 256 C) 100 D) 255
+mcq_answer: D
+mcq_why: Each part is 8 bits, so it runs from 0 to 255.
+fill_blank: The address 127.0.0.1 is the ____ address → loopback
+apply: Which address always means this machine itself? → 127.0.0.1
+explain_task: Explain IPv4 in three lines.
+own_task: Write three valid IPv4 addresses and say what each is for.
+
+@NET-006
+topic: 02 Addressing
+level: Intermediate
+term: IPv6
+cue: Which newer addressing scheme was created because IPv4 addresses ran short?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: The pool of IPv4 addresses was nearly used up, so a far larger 128-bit scheme was designed to give every device its own address.
+pro_tip: Learn the shortening rules, because full addresses are long.
+memory_story: IPv6 is a city so large that every grain of sand can have its own street number.
+visual: Eight groups of hex digits separated by colons.
+emotion: The calm of an address space that will not run out.
+definition: IPv6 uses 128-bit addresses written as eight groups of hexadecimal digits separated by colons, such as 2001:db8::1.
+explanation: Leading zeros in a group can be dropped, and one run of zero groups can be replaced by a double colon. IPv6 removes the need for NAT in most cases and includes features such as stateless address configuration. Many networks run both IPv4 and IPv6, which is called dual stack. Firewalls must be configured for both.
+simple_explain: IPv6 gives huge address space, written in hex with colons, and often runs beside IPv4.
+analogy: IPv6 is a city so big that every grain of sand can have a street number.
+formula_rule: 128 bits = 8 groups of 16 bits, with zero compression.
+example_1: 2001:db8::1 as a shortened address.
+example_2: ::1 as the loopback address.
+example_3: A dual stack server reachable over both versions.
+related: IPv4, subnets and CIDR, DNS record types, firewalls
+word_family: IPv6, hexadecimal, dual stack, prefix, compression
+where_used: Modern networks | Cloud | Mobile networks
+mini_conversation: A: Why does the site work on mobile but not at the office? | B: The office network may have no IPv6 routes.
+misconception: ✗ IPv6 is just IPv4 with longer numbers → ✓ It changes address configuration, header design and NAT needs
+contrast: IPv4 vs IPv6: dotted decimal and 32 bits versus hex with colons and 128 bits.
+avoid: Do not leave IPv6 open in firewalls while only securing IPv4.
+memory_trick: Colons mean six, dots mean four.
+real_project: Finding that a firewall blocked only IPv4 while IPv6 traffic passed freely.
+real_interview: An interviewer may ask: What is dual stack?
+real_daily: It is like a city with a street number for every grain of sand.
+mcq_question: How many bits does an IPv6 address have?
+mcq_options: A) 128 B) 32 C) 256 D) 64
+mcq_answer: A
+mcq_why: IPv6 addresses are 128 bits long.
+fill_blank: Running IPv4 and IPv6 together is called dual ____ → stack
+apply: A firewall rule covers only IPv4. What risk exists? → IPv6 traffic may bypass it
+explain_task: Explain IPv6 in three lines.
+own_task: Shorten this long IPv6 address using the two compression rules: 2001:0db8:0000:0000:0000:0000:0000:0001.
+
+@NET-007
+topic: 02 Addressing
+level: Intermediate
+term: Subnets and CIDR
+cue: Which notation says how many bits of an address identify the network?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Fixed address classes wasted space, so a flexible prefix length was introduced to size networks exactly.
+pro_tip: Memorise that /24 holds 256 addresses and each step down in prefix doubles the size.
+memory_story: CIDR is a ruler that slides the line between the network part and the host part.
+visual: A 32-bit strip with a line after the first 24 bits.
+emotion: The confidence of reading 10.0.0.0/16 and knowing its size.
+definition: CIDR notation writes an address followed by a slash and the number of network bits, so 10.0.1.0/24 means the first 24 bits are the network and 8 bits are for hosts.
+explanation: A /24 has 256 addresses, a /16 has 65,536, and a /32 is a single address. The remaining bits are for hosts, with two addresses normally reserved for the network and broadcast. A subnet mask such as 255.255.255.0 is the same as /24. Subnetting splits a larger block into smaller blocks for separate networks. Overlapping ranges cause routing problems.
+simple_explain: The slash number tells how many bits are the network, and the rest are for hosts.
+analogy: CIDR is a ruler that slides the line between network and host.
+formula_rule: Addresses in a block = 2 to the power of (32 − prefix).
+example_1: 192.168.1.0/24 holding 256 addresses.
+example_2: 10.0.0.0/16 split into 256 networks of /24.
+example_3: 203.0.113.5/32 for one host.
+related: IPv4, route tables, VPC, NAT
+word_family: CIDR, prefix, mask, host bits, block
+where_used: Cloud networks | Firewalls | Routing
+mini_conversation: A: How big is a /20? | B: 4,096 addresses, since 12 bits are for hosts.
+misconception: ✗ A /24 has 254 usable addresses in every cloud → ✓ Clouds may reserve extra addresses in each subnet
+contrast: /16 vs /24: a /16 is a much larger network, with 65,536 addresses against 256.
+avoid: Do not choose overlapping ranges for networks you may connect.
+memory_trick: Smaller slash number means a bigger network.
+real_project: Re-planning address ranges so two customer networks could be linked without overlap.
+real_interview: An interviewer may ask: How many addresses are in a /26?
+real_daily: It is like a ruler that slides the line.
+mcq_question: How many addresses are in a /24?
+mcq_options: A) 24 B) 1024 C) 256 D) 65536
+mcq_answer: C
+mcq_why: Eight host bits give two to the power of eight.
+fill_blank: The mask 255.255.255.0 is the same as slash ____ → 24
+apply: You need about 1,000 addresses. Which prefix fits? → /22
+explain_task: Explain CIDR in three lines.
+own_task: Work out the number of addresses in /28 and /20.
+
+@NET-008
+topic: 02 Addressing
+level: Beginner
+term: Private vs public IP addresses
+cue: Which ranges are used inside local networks and which are reachable on the internet?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: There were too few public addresses, so private ranges were reserved that anyone could reuse inside their own networks.
+pro_tip: Know the three private ranges by heart, as they appear in every network design.
+memory_story: Private addresses are internal extension numbers, and public ones are the main phone number.
+visual: A home network with 192.168 addresses behind one public address.
+emotion: The ease of recognising a private address on sight.
+definition: Private addresses, such as 10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16, are not routed on the public internet, while public addresses are globally unique and reachable.
+explanation: Many organisations reuse the same private ranges, which is fine because they never meet on the internet. To reach the internet, private hosts go through NAT, which maps them to a public address. Public addresses are assigned by providers. Link-local addresses starting with 169.254 appear when a device cannot get an address automatically.
+simple_explain: Use private ranges inside, share one public address outside, and let NAT translate.
+analogy: Private addresses are internal extension numbers, and the public one is the main phone number.
+formula_rule: 10/8, 172.16/12, 192.168/16 = private ranges.
+example_1: 192.168.1.5 on a laptop at home.
+example_2: 10.0.2.8 on a cloud server.
+example_3: 169.254.12.3 showing a failed address request.
+related: NAT, DHCP, subnets and CIDR, VPC
+word_family: private, public, RFC 1918, link-local, routable
+where_used: Network design | Cloud | Troubleshooting
+mini_conversation: A: Can I reach 10.0.2.8 from home? | B: No, it is private and only works inside the network.
+misconception: ✗ Every device on the internet has its own unique public address → ✓ Most devices sit behind NAT and share one
+contrast: Private vs public: private addresses are reused locally, public ones are globally unique.
+avoid: Do not publish services on private addresses and expect outside access.
+memory_trick: Ten, one seventy-two, one ninety-two are private.
+real_project: Explaining to a customer why their private address could not be reached from our side.
+real_interview: An interviewer may ask: What are the private IPv4 ranges?
+real_daily: It is like internal extension numbers.
+mcq_question: Which address is private?
+mcq_options: A) 203.0.113.5 B) 192.168.1.10 C) 8.8.8.8 D) 1.1.1.1
+mcq_answer: B
+mcq_why: 192.168.0.0/16 is a private range.
+fill_blank: Addresses starting with 169.254 are ____ addresses → link-local
+apply: A device shows 169.254.x.x. What likely failed? → Automatic address assignment
+explain_task: Explain private and public addresses in three lines.
+own_task: List the three private ranges and one example in each.
+
+@NET-009
+topic: 02 Addressing
+level: Beginner
+term: Ports
+cue: Which numbers let one machine run many network services at once?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: One address hosts many services, so a second number was added to tell which program should receive each connection.
+pro_tip: Memorise the common ones such as 22, 53, 80, 443 and 5432.
+memory_story: The IP address is the building, and the port is the apartment number.
+visual: A single server with several numbered doors along one wall.
+emotion: The ease of reading a connection as address plus port.
+definition: A port is a 16-bit number that identifies a specific service or connection endpoint on a host, from 0 to 65535.
+explanation: Well-known ports below 1024 are assigned to standard services, such as 80 for HTTP and 443 for HTTPS. Servers listen on a fixed port, and clients use a random high port for their side. A connection is identified by source address and port plus destination address and port. Firewalls filter by port. Two services cannot listen on the same address and port.
+simple_explain: Address finds the machine, port finds the service.
+analogy: The IP address is the building, and the port is the apartment number.
+formula_rule: Connection = source IP:port + destination IP:port.
+example_1: Port 443 for HTTPS.
+example_2: Port 22 for SSH.
+example_3: Port 5432 for PostgreSQL.
+related: client and server, TCP vs UDP, firewalls, NAT
+word_family: port, listen, well-known, socket, ephemeral
+where_used: Firewalls | Troubleshooting | Deployment
+mini_conversation: A: Port 8080 is already in use. | B: Another service is listening there, so choose a different port.
+misconception: ✗ Ports are physical connectors → ✓ They are software numbers, not hardware sockets
+contrast: Port vs address: the address finds the host, the port finds the program.
+avoid: Do not open more ports than a service needs.
+memory_trick: Address is the building, port is the flat.
+real_project: Finding which process held port 5432 and blocking a database start.
+real_interview: An interviewer may ask: What is the default port for HTTPS?
+real_daily: It is like an apartment number inside a building.
+mcq_question: What is the standard port for HTTPS?
+mcq_options: A) 22 B) 443 C) 53 D) 80
+mcq_answer: B
+mcq_why: HTTPS uses port 443 by default.
+fill_blank: The number of ports on one address goes up to ____ → 65535
+apply: A service fails with address already in use. What is the cause? → Another program listens on that port
+explain_task: Explain ports in three lines.
+own_task: List five common ports and their services.
+
+@NET-010
+topic: 02 Addressing
+level: Intermediate
+term: NAT
+cue: Which technique lets many private devices share one public address?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Public IPv4 addresses ran short, so routers learned to rewrite addresses so a whole network could share one.
+pro_tip: Remember that NAT allows outgoing connections easily, but incoming ones need a port forward.
+memory_story: NAT is a receptionist who makes calls under the company number and routes replies back to the right desk.
+visual: Many private addresses on one side mapped to one public address on the other.
+emotion: The aha moment of understanding why home devices share an address.
+definition: Network address translation rewrites source or destination addresses and ports as packets pass through a router, usually mapping private addresses to a public one.
+explanation: When a private host connects out, the router replaces its address with the public address and remembers the mapping in a table, using different source ports to tell connections apart. Replies are translated back. Unsolicited incoming traffic has no mapping, so it is dropped unless a port forward is set. NAT can complicate peer-to-peer and some protocols.
+simple_explain: The router swaps private addresses for its public one, and remembers who asked for what.
+analogy: NAT is a receptionist who makes calls under the company number and routes replies to the right desk.
+formula_rule: Private IP:port ↔ public IP:port in a translation table.
+example_1: A home router sharing one address between a phone and a laptop.
+example_2: A cloud NAT gateway giving private servers outbound access.
+example_3: A port forward sending outside port 8080 to an inside server.
+related: private vs public IPs, ports, firewalls, route tables
+word_family: NAT, translation, port forward, masquerade, table
+where_used: Home routers | Cloud gateways | Firewalls
+mini_conversation: A: Why can I not connect to my laptop from outside? | B: NAT blocks unsolicited incoming connections.
+misconception: ✗ NAT is a security feature that replaces a firewall → ✓ It hides addresses but is not a complete protection
+contrast: NAT vs port forwarding: NAT handles outgoing sharing, port forwarding maps one incoming port to a host.
+avoid: Do not treat NAT as security on its own.
+memory_trick: NAT swaps addresses and remembers the swap.
+real_project: Adding a NAT gateway so private servers could fetch updates safely.
+real_interview: An interviewer may ask: How does NAT let many devices share one IP?
+real_daily: It is like a receptionist using the company number.
+mcq_question: What does NAT keep in its table?
+mcq_options: A) Web pages B) Passwords C) Address and port mappings D) Logs only
+mcq_answer: C
+mcq_why: It tracks which private connection each translated one belongs to.
+fill_blank: Sending an outside port to an inside host is a port ____ → forward
+apply: Private servers need updates but no inbound access. What do you use? → NAT
+explain_task: Explain NAT in three lines.
+own_task: Draw a NAT table for two laptops visiting the same site.
+
+@NET-011
+topic: 02 Addressing
+level: Beginner
+term: DHCP
+cue: Which service gives devices their network settings automatically?
+category: Core concept
+frequency: High
+importance: 4
+origin: Typing addresses by hand on every device was slow and error-prone, so a service was created to hand them out on request.
+pro_tip: Reserve fixed addresses for servers in DHCP instead of setting them by hand.
+memory_story: DHCP is the hotel clerk who gives each guest a room number and the house rules.
+visual: A device asking for an address and receiving a lease.
+emotion: The ease of plugging in and being online.
+definition: The Dynamic Host Configuration Protocol automatically leases an IP address, subnet mask, gateway and DNS servers to devices when they join a network.
+explanation: A new device broadcasts a request, the server offers an address, the device requests it, and the server acknowledges, often remembered as discover, offer, request and acknowledge. The address is leased for a time and renewed. A reservation always gives the same address to the same device. If no server answers, the device may take a 169.254 address.
+simple_explain: Devices ask for settings on joining, and DHCP lends them an address for a while.
+analogy: DHCP is a hotel clerk who gives each guest a room number and the house rules.
+formula_rule: Discover → Offer → Request → Acknowledge.
+example_1: A phone receiving 192.168.1.23 on home Wi-Fi.
+example_2: A server given a reserved address.
+example_3: A lease expiring and being renewed.
+related: IPv4, private addresses, DNS, ARP
+word_family: lease, scope, reservation, gateway, offer
+where_used: Offices | Home networks | Cloud networks
+mini_conversation: A: My laptop has a 169.254 address. | B: It could not reach the DHCP server.
+misconception: ✗ Devices always keep the same address from DHCP → ✓ Addresses are leased and may change unless reserved
+contrast: Static vs DHCP address: static is typed in by hand, DHCP is leased automatically.
+avoid: Do not give two devices the same static address inside a DHCP range.
+memory_trick: Discover, offer, request, acknowledge, in that order.
+real_project: Reserving addresses for printers so they stopped changing between days.
+real_interview: An interviewer may ask: What are the four DHCP steps?
+real_daily: It is like a hotel clerk giving room numbers.
+mcq_question: What does DHCP provide?
+mcq_options: A) IP address, gateway and DNS settings B) Passwords C) Web pages D) Email
+mcq_answer: A
+mcq_why: It supplies the configuration a device needs to join.
+fill_blank: Time an address is held is called a ____ → lease
+apply: A server must keep the same address. What do you set in DHCP? → A reservation
+explain_task: Explain DHCP in three lines.
+own_task: List the four DHCP steps in order.
+
+@NET-012
+topic: 02 Addressing
+level: Intermediate
+term: MAC addresses and ARP
+cue: Which address works on the local link and which protocol links it to an IP address?
+category: Core concept
+frequency: High
+importance: 4
+origin: On a local network frames need a hardware address, so devices use ARP to find the one that matches a given IP.
+pro_tip: If two devices cannot talk on one subnet, check the ARP table.
+memory_story: ARP is shouting who has this IP and waiting for the owner to shout back their hardware name.
+visual: A broadcast question and a unicast answer between two devices.
+emotion: The satisfaction of watching the table fill as devices talk.
+definition: A MAC address is a 48-bit hardware address of a network interface used on the local link, and ARP finds the MAC address that belongs to a given IPv4 address.
+explanation: A device wanting to reach a local IP broadcasts an ARP request, and the owner replies with its MAC. The answer is cached in the ARP table for a while. To reach a remote network, a device sends frames to the gateway's MAC. Attackers can forge ARP replies, which is called ARP spoofing. IPv6 uses neighbour discovery instead.
+simple_explain: ARP turns an IP address into the MAC address needed on the local link.
+analogy: ARP is shouting who has this IP and waiting for the owner to answer with their hardware name.
+formula_rule: IP says who, MAC says which card, ARP links them.
+example_1: arp -a showing IP and MAC pairs.
+example_2: A device sending to the gateway's MAC for outside traffic.
+example_3: A duplicate IP showing two MACs for one address.
+related: packets and frames, switches, DHCP, IPv6
+word_family: MAC, ARP, cache, broadcast, neighbour
+where_used: Switching | Troubleshooting | Security
+mini_conversation: A: Two devices claim the same IP. | B: Check the ARP table for two MACs.
+misconception: ✗ MAC addresses are used across the internet → ✓ They only matter on the local link, and change at each hop
+contrast: MAC vs IP: MAC identifies an interface locally, IP identifies it across networks.
+avoid: Do not trust MAC filtering as strong security.
+memory_trick: ARP asks who has this IP.
+real_project: Finding a duplicate IP by spotting two MAC addresses in the ARP table.
+real_interview: An interviewer may ask: What does ARP do?
+real_daily: It is like shouting who has this address.
+mcq_question: What does ARP map?
+mcq_options: A) Ports to services B) Users to roles C) Names to IP addresses D) IP addresses to MAC addresses
+mcq_answer: D
+mcq_why: ARP resolves a local IP to a hardware address.
+fill_blank: A MAC address has ____ bits → 48
+apply: Two hosts on one subnet cannot talk. What table do you check? → The ARP table
+explain_task: Explain ARP in three lines.
+own_task: Write what the ARP table shows after pinging a neighbour.

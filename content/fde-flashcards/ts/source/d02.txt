@@ -1,0 +1,408 @@
+
+@TS-010
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: ES modules
+cue: Which syntax splits code into files that import and export what they share?
+kind: Language concept
+frequency: Very high
+importance: 5
+origin: Big programs in one file became unmanageable, so the language gained a standard way to split code into modules.
+pro_tip: Prefer named exports, because they are easier to find and refactor.
+memory_story: A module is a toolbox that shows only the tools you choose to export.
+visual: Two files joined by an arrow labelled import.
+emotion: The tidy feeling of small, focused files.
+meaning: A module is a file with its own scope that shares values using export and receives them using import.
+code: // math.js¶export const PI = 3.14159;¶export function area(r) { return PI * r * r; }¶export default function describe() { return "circle tools"; }¶// app.js¶import describe, { area, PI as pi } from "./math.js";¶console.log(describe(), area(2), pi);
+output: circle tools 12.56636 3.14159
+explanation: Each module has its own scope, so top-level variables are not global. Named exports are imported with braces and must match the names. A default export can be imported under any name. Import paths for local files need the extension in the browser and in native Node ES modules. Modules run once and are cached, and imports are live bindings.
+simple_explain: Export what others need, import it by name, and keep everything else private.
+analogy: A module is a toolbox that shows only the tools you choose.
+syntax: export const x; export default f; import f, { x } from "./file.js";
+anatomy: export = share | import = receive | default = one main export | as = rename
+example_1: export { area, PI };
+example_2: import * as math from "./math.js";
+example_3: const mod = await import("./heavy.js");
+variation: export * from "./helpers.js";   // re-export everything
+used_with: bundlers, Node, TypeScript
+related: scope, ES modules vs CommonJS, package.json, TypeScript
+alternatives: CommonJS require
+where_used: Every modern project | Libraries | Frontend apps
+mini_conversation: A: Why does my import say the export does not exist? | B: Named imports must match exactly, and default ones have no braces.
+misconception: ✗ Default and named exports are imported the same way → ✓ Named ones need braces, and a default one does not
+confused_with: Named vs default export: a file may have many named exports but only one default.
+avoid: Do not mix up braces for default imports.
+wrong_code: import { describe } from "./math.js";
+right_code: import describe from "./math.js";
+memory_trick: Braces for named, bare for default.
+real_project: Splitting a large script into modules made each part testable.
+real_interview: An interviewer may ask: What is the difference between a default and a named export?
+real_daily: It is like a toolbox that shows only chosen tools.
+mcq_question: How do you import a named export?
+mcq_options: A) With parentheses B) With braces around the name C) With quotes only D) Without any name
+mcq_answer: B
+mcq_why: Named exports use the braces form.
+fill_blank: A module can have only one ____ export → default
+hindi_to_task: Export a function called add from a file.
+task_answer: export function add(a, b) { return a + b; }
+own_task: Create two files where one imports a helper from the other.
+practice_question: Are top-level variables in a module global?
+practice_answer: No, each module has its own scope.
+
+@TS-011
+type: code56
+topic: 01 JavaScript Core
+level: Beginner
+term: Template strings
+cue: Which backtick syntax lets you embed values and expressions inside text?
+kind: Syntax feature
+frequency: Very high
+importance: 4
+origin: Joining text with plus signs is messy, so template literals allow values to be placed inside the text directly.
+pro_tip: Use template strings for any text that mixes variables, and for multi-line text.
+memory_story: A template string is a form letter with blanks that fill themselves in.
+visual: A line of text with highlighted placeholders.
+emotion: The joy of messages that read like plain sentences.
+meaning: A template literal is text written between backticks that can include expressions inside dollar-brace placeholders and can span several lines.
+code: const name = "Asha";¶const items = 3;¶const msg = `Hello ${name},¶you have ${items} item${items === 1 ? "" : "s"}.`;¶console.log(msg);
+output: Hello Asha,¶you have 3 items.
+explanation: Any expression can go inside the placeholder, including calls and conditionals. Line breaks inside the backticks stay in the text. Regular quotes cannot do this. Tagged templates run a function on the pieces and are used by some libraries. Never build database queries by pasting user input into a template, because that invites injection.
+simple_explain: Use backticks and dollar braces to put values in text.
+analogy: A template string is a form letter with blanks that fill themselves in.
+syntax: `text ${expression} text`
+anatomy: backticks = template | ${ } = placeholder | expression = any code that gives a value
+example_1: `Total: ${price * qty}`
+example_2: `${user.name.toUpperCase()}`
+example_3: `Line one¶Line two`
+variation: String.raw`C:\new\folder`   // keeps backslashes as written
+used_with: logging, messages, HTML
+related: data types, functions, strings, security
+alternatives: String concatenation | format functions
+where_used: Messages | Logging | URLs
+mini_conversation: A: My message shows the placeholder text, not the value. | B: You used quotes, so switch to backticks.
+misconception: ✗ Quotes and backticks work the same for inserting variables → ✓ Only backticks evaluate placeholders
+confused_with: Template string vs concatenation: one embeds values, the other joins pieces with plus.
+avoid: Do not paste user input into query strings with templates.
+wrong_code: const s = "Hello ${name}";
+right_code: const s = `Hello ${name}`;
+memory_trick: Backticks fill blanks, quotes stay literal.
+real_project: Replacing string joins with templates cleaned up log messages in a service.
+real_interview: An interviewer may ask: What is a template literal?
+real_daily: It is like a form letter with blanks.
+mcq_question: Which characters create a template literal?
+mcq_options: A) Backticks B) Single quotes C) Slashes D) Double quotes
+mcq_answer: A
+mcq_why: Only backticks support placeholders.
+fill_blank: Expressions in a template go inside dollar and ____ → braces
+hindi_to_task: Write a greeting using the variable name in a template string.
+task_answer: const g = `Hello ${name}`;
+own_task: Build a message that shows a plural word depending on a count.
+practice_question: Can a template string span multiple lines?
+practice_answer: Yes, line breaks inside backticks are kept.
+
+@TS-012
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: Equality
+cue: Which two comparison operators exist, and why should you prefer one?
+kind: Operator
+frequency: Very high
+importance: 5
+origin: The loose operator converts types before comparing, which caused surprising results, so a strict version was added.
+pro_tip: Always use the strict operator unless you have a clear reason not to.
+memory_story: Strict equality is a customs officer who checks both the item and its type, and loose equality just glances.
+visual: Two values being compared with a type label on each.
+emotion: The safety of comparisons that behave the same way every time.
+meaning: Strict equality compares value and type without conversion, while loose equality converts types first, which can give surprising results.
+code: console.log(5 === "5");¶console.log(5 == "5");¶console.log(0 == false);¶console.log(null == undefined);¶console.log(NaN === NaN);¶console.log(Object.is(NaN, NaN));
+output: false¶true¶true¶true¶false¶true
+explanation: Loose equality follows complicated conversion rules that few people remember. Strict equality has simple rules, except that NaN is never equal to itself. Object.is handles that case. Objects are compared by reference with both operators. null equals undefined only under loose equality, and checking value == null is one accepted use of it.
+simple_explain: Use three equals signs, and treat two equals signs as a risk.
+analogy: Strict equality is a customs officer who checks the item and its type, and loose equality just glances.
+syntax: a === b | a !== b | Object.is(a, b)
+anatomy: === = strict | == = loose | Object.is = special cases
+example_1: "1" === 1
+example_2: [] == false
+example_3: value == null   // null or undefined
+variation: Number.isNaN(x)   // the safe NaN check
+used_with: conditions, validation, tests
+related: data types, truthiness, objects, conditions
+alternatives: Object.is | Number.isNaN
+where_used: Conditions | Validation | Tests
+mini_conversation: A: Why does zero equal false here? | B: You used loose equality, so switch to strict.
+misconception: ✗ Two equals signs are just a shorter way of writing three → ✓ They convert types first and give different results
+confused_with: == vs ===: loose converts types, strict does not.
+avoid: Do not compare with NaN using an equality operator.
+wrong_code: if (value == NaN) { }
+right_code: if (Number.isNaN(value)) { }
+memory_trick: Three signs check type too.
+real_project: Switching to strict equality removed a bug where an empty string matched zero.
+real_interview: An interviewer may ask: What is the difference between double and triple equals?
+real_daily: It is like a customs officer who checks type too.
+mcq_question: What does the strict operator check?
+mcq_options: A) Value only B) Neither C) Value and type D) Type only
+mcq_answer: C
+mcq_why: No conversion happens with strict equality.
+fill_blank: A value that is not equal even to itself is ____ → NaN
+hindi_to_task: Compare a and b with the strict operator.
+task_answer: a === b
+own_task: Predict the results of five loose comparisons and check them.
+practice_question: Are two different objects with identical content strictly equal?
+practice_answer: No, they have different references.
+
+@TS-013
+type: code56
+topic: 01 JavaScript Core
+level: Beginner
+term: Truthiness
+cue: Which values count as false in a condition, and which as true?
+kind: Language concept
+frequency: Very high
+importance: 5
+origin: Conditions accept any value, so the language defines which values behave like false and treats all others as true.
+pro_tip: Remember the short list of falsy values and treat everything else as truthy.
+memory_story: Falsy values are the empty things, such as zero, nothing, empty text and not-a-number.
+visual: A short list of falsy values beside a long list of truthy ones.
+emotion: The ease of writing short conditions.
+meaning: Falsy values are false, 0, -0, 0n, empty string, null, undefined and NaN, and every other value is truthy, including empty arrays and objects.
+code: const values = [0, "", null, undefined, NaN, [], {}, "0", "false"];¶values.forEach(v => console.log(Boolean(v)));
+output: false¶false¶false¶false¶false¶true¶true¶true¶true
+explanation: A condition such as if (name) is true for any non-empty text. Empty arrays and objects are truthy, which surprises many people, so check length for arrays. The strings "0" and "false" are truthy because they are non-empty. Double negation converts a value to a boolean, and the nullish operator is better when zero or empty text are valid values.
+simple_explain: Only a short list of empty values are falsy, and everything else is truthy.
+analogy: Falsy values are the empty things, such as zero, nothing and empty text.
+syntax: if (value) { } | Boolean(value) | !!value
+anatomy: falsy = the eight false-like values | truthy = everything else
+example_1: if (items.length) { }
+example_2: const ok = !!user;
+example_3: const name = input || "anonymous";
+variation: const port = config.port ?? 3000;   // only null and undefined fall back
+used_with: conditions, defaults, validation
+related: equality, optional chaining, data types, conditions
+alternatives: Explicit comparisons
+where_used: Conditions | Defaults | Validation
+mini_conversation: A: My check treats zero as missing. | B: Zero is falsy, so test for null or undefined instead.
+misconception: ✗ An empty array is falsy → ✓ Empty arrays and objects are truthy, so check their length
+confused_with: || vs ??: the first falls back on any falsy value, the second only on null or undefined.
+avoid: Do not use a plain truthy check when zero is a valid value.
+wrong_code: if (list) { console.log("has items"); }
+right_code: if (list.length > 0) { console.log("has items"); }
+memory_trick: Zero, empty, null, undefined and NaN fail.
+real_project: Fixing a discount of zero that was ignored because of a truthy check.
+real_interview: An interviewer may ask: Which values are falsy in JavaScript?
+real_daily: It is like a list of empty things.
+mcq_question: Which value is truthy?
+mcq_options: A) An empty array B) null C) Zero D) An empty string
+mcq_answer: A
+mcq_why: Arrays are objects and are always truthy.
+fill_blank: A value that behaves as false in a condition is called ____ → falsy
+hindi_to_task: Check that a list has at least one item.
+task_answer: if (list.length > 0) { }
+own_task: List all eight falsy values from memory and test them.
+practice_question: Is the string "false" truthy?
+practice_answer: Yes, any non-empty string is truthy.
+
+@TS-014
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: Error handling basics
+cue: Which statements let your code react to failures instead of crashing?
+kind: Language concept
+frequency: Very high
+importance: 5
+origin: Things fail at run time, such as bad input or missing files, so the language lets you throw and catch errors.
+pro_tip: Throw Error objects, not strings, so you get a stack trace.
+memory_story: Try is the safety net under the trapeze, and catch is the person who catches the fall.
+visual: A try block with an arrow jumping to a catch block on failure.
+emotion: The confidence of code that fails gracefully.
+meaning: try runs code that may fail, catch handles a thrown error, finally runs either way, and throw raises an error.
+code: function parse(text) {¶  try {¶    return JSON.parse(text);¶  } catch (err) {¶    console.error("Bad JSON:", err.message);¶    return null;¶  } finally {¶    console.log("done");¶  }¶}¶console.log(parse("{oops"));
+output: Bad JSON: <a SyntaxError message that varies by Node version>¶done¶null
+explanation: Errors have a name, a message and a stack. Throwing an Error object records where it happened. catch receives whatever was thrown. finally is used for cleanup such as closing a file. Catching too broadly hides bugs, so handle only what you can fix and rethrow the rest. Promises need their own handling.
+simple_explain: Wrap risky code in try, handle problems in catch, and clean up in finally.
+analogy: Try is the safety net under the trapeze, and catch is the person who catches the fall.
+syntax: try { } catch (err) { } finally { } | throw new Error("message")
+anatomy: try = risky code | catch = handler | finally = always runs | throw = raise error
+example_1: throw new Error("Missing id");
+example_2: if (!(err instanceof TypeError)) throw err;
+example_3: class ApiError extends Error { }
+variation: new Error("failed", { cause: original })   // keep the original reason
+used_with: JSON.parse, fetch, async code
+related: JSON, promises, async and await, logging
+alternatives: Result objects | Validation before use
+where_used: Parsing | API calls | Input handling
+mini_conversation: A: The script crashes on bad input. | B: Wrap the parse call in try and catch, and return a clear message.
+misconception: ✗ catch blocks should swallow every error silently → ✓ Hidden errors make bugs hard to find, so log or rethrow what you cannot handle
+confused_with: catch vs finally: catch handles an error, finally runs regardless.
+avoid: Do not leave a catch block empty.
+wrong_code: try { risky(); } catch (e) { }
+right_code: try { risky(); } catch (e) { console.error(e); throw e; }
+memory_trick: Handle what you can, rethrow the rest.
+real_project: Adding try and catch around JSON parsing stopped a nightly job from crashing.
+real_interview: An interviewer may ask: When does finally run?
+real_daily: It is like a safety net under a trapeze.
+mcq_question: Which block always runs after try?
+mcq_options: A) catch B) return C) finally D) throw
+mcq_answer: C
+mcq_why: finally runs whether or not an error occurred.
+fill_blank: Errors are raised with the keyword ____ → throw
+hindi_to_task: Throw an error with the message Missing id.
+task_answer: throw new Error("Missing id");
+own_task: Write a function that catches a parse error and returns a default.
+practice_question: Why throw an Error object instead of a string?
+practice_answer: It carries a stack trace.
+
+@TS-015
+type: code56
+topic: 01 JavaScript Core
+level: Beginner
+term: JSON
+cue: Which text format moves data between programs, and which two methods convert it?
+kind: Data format
+frequency: Very high
+importance: 5
+origin: Programs needed a simple text format to exchange data, and JavaScript object syntax turned out to be ideal.
+pro_tip: Always wrap JSON.parse in a try block when the text comes from outside.
+memory_story: JSON is a shipping box for data, where stringify packs it and parse unpacks it.
+visual: An object turning into text and back again.
+emotion: The ease of sending structured data anywhere.
+meaning: JSON is a text format for data, JSON.stringify turns a value into JSON text, and JSON.parse turns JSON text back into a value.
+code: const user = { name: "Asha", age: 28, tags: ["a", "b"] };¶const text = JSON.stringify(user);¶const back = JSON.parse(text);¶console.log(text);¶console.log(back.tags[1]);¶console.log(JSON.stringify(user, null, 2).split("\n").length);
+output: {"name":"Asha","age":28,"tags":["a","b"]}¶b¶8
+explanation: JSON keys and strings must use double quotes, and it has no comments or trailing commas. It supports objects, arrays, strings, numbers, booleans and null. Functions, undefined and symbols are dropped, and dates become strings. The third argument of stringify adds indentation. parse throws an error on invalid text.
+simple_explain: Stringify to send or save, parse to read it back.
+analogy: JSON is a shipping box for data, where stringify packs and parse unpacks.
+syntax: JSON.stringify(value, replacer, space) | JSON.parse(text)
+anatomy: stringify = value to text | parse = text to value | space = indent
+example_1: JSON.stringify({ ok: true })
+example_2: JSON.parse("[1, 2, 3]")
+example_3: JSON.stringify(new Date())
+variation: JSON.parse(text, (k, v) => v)   // a reviver to transform values
+used_with: fetch, files, APIs
+related: objects, error handling, fetch, Node file system
+alternatives: YAML | CSV
+where_used: APIs | Config files | Storage
+mini_conversation: A: Why does parse fail on my file? | B: JSON needs double quotes and no trailing commas.
+misconception: ✗ JSON.stringify keeps functions and dates as they are → ✓ Functions are dropped and dates become strings
+confused_with: JSON vs object: JSON is text, an object is a live value in memory.
+avoid: Do not parse untrusted text without a try block.
+wrong_code: JSON.parse("{'a': 1}")
+right_code: JSON.parse('{"a": 1}')
+memory_trick: Double quotes only, no trailing commas.
+real_project: Logging payloads as JSON made API errors searchable in the log tool.
+real_interview: An interviewer may ask: What does JSON.stringify do with undefined values?
+real_daily: It is like packing and unpacking a box.
+mcq_question: Which quotes does JSON require for keys?
+mcq_options: A) No quotes B) Double quotes C) Single quotes D) Backticks
+mcq_answer: B
+mcq_why: The format allows only double-quoted strings.
+fill_blank: Turning a value into JSON text is called ____ → stringify
+hindi_to_task: Convert the object user to a JSON string.
+task_answer: JSON.stringify(user)
+own_task: Write a function that safely parses text and returns null on failure.
+practice_question: What happens to a function inside an object when stringified?
+practice_answer: It is dropped.
+
+@TS-016
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: Optional chaining and nullish coalescing
+cue: Which two operators safely read nested values and supply defaults?
+kind: Operator
+frequency: High
+importance: 5
+origin: Deep objects from APIs often miss fields, so shorthand operators were added to avoid long chains of existence checks.
+pro_tip: Use the nullish operator for defaults, because zero and empty text stay valid.
+memory_story: Optional chaining is asking politely before opening each drawer, and nullish coalescing is the spare item if the drawer is empty.
+visual: A path through nested boxes that stops safely at an empty one.
+emotion: The relief of no more cannot read property errors.
+meaning: Optional chaining stops and returns undefined if a value in the chain is null or undefined, and nullish coalescing gives a fallback only for null or undefined.
+code: const user = { profile: { city: "Pune" }, score: 0 };¶console.log(user.profile?.city);¶console.log(user.address?.street);¶console.log(user.score ?? 10);¶console.log(user.score || 10);¶console.log(user.getName?.());
+output: Pune¶undefined¶0¶10¶undefined
+explanation: Without optional chaining, reading a property of undefined throws an error. The question dot form also works for calls and array indexes. The nullish operator differs from the or operator, which treats zero and empty text as missing. Combining them gives safe reads with defaults.
+simple_explain: Use ?. to read safely and ?? to set a default that respects zero.
+analogy: Optional chaining is asking politely before opening each drawer.
+syntax: obj?.prop | obj?.[key] | fn?.() | value ?? fallback
+anatomy: ?. = stop if missing | ?? = default for null or undefined
+example_1: const city = order?.customer?.address?.city ?? "unknown";
+example_2: items?.[0]
+example_3: callback?.(result)
+variation: settings.retries ??= 3;   // assign only if null or undefined
+used_with: API data, configuration, destructuring
+related: truthiness, objects, error handling, TypeScript
+alternatives: Long and chains | lodash get
+where_used: API responses | Configuration | Optional callbacks
+mini_conversation: A: The page crashes when a user has no address. | B: Use optional chaining to read the street.
+misconception: ✗ The or operator and the nullish operator are the same → ✓ The or operator also replaces zero and empty text
+confused_with: ?? vs ||: ?? checks only null and undefined, || checks every falsy value.
+avoid: Do not chain optional access on values that must exist.
+wrong_code: const limit = config.limit || 10;   // wrong when limit is 0
+right_code: const limit = config.limit ?? 10;
+memory_trick: Double question mark spares the zero.
+real_project: Optional chaining removed crashes from half-filled customer records.
+real_interview: An interviewer may ask: When would you use nullish coalescing instead of or?
+real_daily: It is like asking before opening each drawer.
+mcq_question: When does optional chaining return undefined?
+mcq_options: A) Always B) Only for arrays C) Never D) When a link in the chain is null or undefined
+mcq_answer: D
+mcq_why: It stops safely at a missing value.
+fill_blank: A fallback only for null or undefined uses the operator ____ → ??
+hindi_to_task: Read the city safely from user.address.
+task_answer: user.address?.city
+own_task: Write a safe read with a default for a deeply nested field.
+practice_question: What does 0 ?? 5 return?
+practice_answer: 0
+
+@TS-017
+type: code56
+topic: 01 JavaScript Core
+level: Intermediate
+term: Map and Set
+cue: Which built-in collections store key-value pairs and unique values?
+kind: Data structure
+frequency: Medium
+importance: 4
+origin: Plain objects have limits as dictionaries, and arrays allow duplicates, so Map and Set were added.
+pro_tip: Use Set to remove duplicates in one line.
+memory_story: A Map is a labelled locker room with any key as a label, and a Set is a guest list that never repeats a name.
+visual: A grid of keyed boxes beside a bag of unique items.
+emotion: The satisfaction of deduplicating data in one line.
+meaning: A Map stores key and value pairs where keys can be any type and order is kept, and a Set stores unique values.
+code: const seen = new Set([1, 2, 2, 3, 3]);¶console.log([...seen], seen.size);¶const lookup = new Map();¶lookup.set("a", 1).set(42, "answer");¶console.log(lookup.get(42), lookup.has("a"), lookup.size);
+output: [ 1, 2, 3 ] 3¶answer true 2
+explanation: Maps accept any key, including objects, and keep insertion order. Sets compare values with the same-value-zero rule, so each value appears once. Both have size and iterate in insertion order. Looking up in a Set or Map is fast even for large collections. WeakMap and WeakSet hold keys without blocking garbage collection.
+simple_explain: Set removes duplicates, Map is a flexible dictionary.
+analogy: A Map is a locker room with any label, and a Set is a guest list that never repeats a name.
+syntax: new Map() | new Set(iterable)
+anatomy: set/get/has/delete = Map methods | add/has/delete = Set methods | size = count
+example_1: const unique = [...new Set(emails)];
+example_2: const counts = new Map(); counts.set(word, (counts.get(word) ?? 0) + 1);
+example_3: for (const [k, v] of lookup) { }
+variation: new Map(Object.entries(obj))   // build a Map from an object
+used_with: arrays, loops, caching
+related: objects, arrays, array methods, caching
+alternatives: Plain objects | arrays with includes
+where_used: Deduplication | Counting | Caches
+mini_conversation: A: How do I remove duplicate IDs from a list? | B: Pass it through a Set and spread it back.
+misconception: ✗ Plain objects are always the best dictionary → ✓ Maps allow any key type and keep a reliable size and order
+confused_with: Map vs object: Map accepts any key and has size, objects use string keys.
+avoid: Do not use a Set for items that need ordering by value.
+wrong_code: const unique = list.filter(x => list.indexOf(x));
+right_code: const unique = [...new Set(list)];
+memory_trick: Set keeps one, Map keeps pairs.
+real_project: Using a Set removed duplicate customer ids from a large import in seconds.
+real_interview: An interviewer may ask: How would you remove duplicates from an array?
+real_daily: It is like a guest list that never repeats a name.
+mcq_question: Which collection keeps only unique values?
+mcq_options: A) Set B) Map C) Array D) Object
+mcq_answer: A
+mcq_why: A Set ignores values that are already present.
+fill_blank: A collection of key and value pairs with any key type is a ____ → Map
+hindi_to_task: Remove duplicates from the array ids.
+task_answer: const unique = [...new Set(ids)];
+own_task: Count word frequencies in a list using a Map.
+practice_question: Which has a size property, an object or a Map?
+practice_answer: A Map has size, and objects do not.

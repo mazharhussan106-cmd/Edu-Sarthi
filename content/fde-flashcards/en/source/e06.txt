@@ -1,0 +1,459 @@
+
+@GIT-036
+topic: 05 Advanced Git
+level: Advanced
+term: git rebase
+cue: How do you replay your branch's commits on top of another branch's latest work without creating a merge commit?
+kind: Git command
+frequency: High
+importance: 4
+origin: A merge adds a joining commit and can tangle the history of long-lived branches, so rebase rewrites your commits onto a new base to keep history in one straight line.
+pro_tip: Rebase only a branch that is yours alone and has not been pushed.
+memory_story: Rebase picks up your commits and sets them down again on fresh ground.
+visual: Train carriages are lifted off one track and coupled to the front of another.
+emotion: The satisfaction of a neat, straight history.
+meaning: git rebase replays the commits of the current branch on top of another branch.
+code: git switch feature/login¶git rebase main
+output: Successfully rebased and updated refs/heads/feature/login.
+explanation: Rebase rebuilds each commit on the new base with a new hash. The history looks straight but the hashes change. Rebasing a pushed branch needs a force push, so do it only on private branches.
+simple_explain: Rebase makes your feature branch look as if you had started your work after main's latest code. The history is clean, but your commits are rewritten.
+analogy: It is like copying your own pages to the end of a newer book.
+syntax: git rebase <base-branch>
+anatomy: git rebase = command | <base-branch> = the branch to place your commits on
+example_1: git rebase main
+example_2: git rebase --continue
+example_3: git rebase --onto main old-base feature
+variation: git rebase --abort   # stop¶git pull --rebase   # pull with rebase
+used_with: --continue, --abort, git pull --rebase
+related: git merge, git rebase -i, git reflog
+alternatives: git merge
+word_family: git rebase, git merge, git cherry-pick, git reflog, git pull
+where_used: Updating a feature branch from main | Keeping history clean | Before a PR
+mini_conversation: A: My branch has fallen behind main. | B: Run git rebase main and your commits will sit on top of main.
+misconception: ✗ Rebase and merge give the same result → ✓ Rebase straightens history but changes the commit hashes, while merge keeps the original commits
+confused_with: rebase vs merge: merge joins histories, rebase rewrites commits on a new base.
+avoid: Do not rebase a shared or already pushed branch.
+wrong_code: git rebase feature main --push
+right_code: git rebase main
+memory_trick: Rebase means setting a new base.
+real_project: Rebasing a feature branch onto the latest main before the PR so the history stays straight.
+real_interview: An interviewer may ask: What is the golden rule of rebase?
+real_daily: It is like copying your own pages to the end of a new book.
+mcq_question: On which kind of branch should you not rebase?
+mcq_options: A) Only your own local branch B) A newly made branch C) A branch shared with others D) A branch before it is pushed
+mcq_answer: C
+mcq_why: Rebasing a shared branch changes commit hashes and troubles other people.
+fill_blank: git ____ main → rebase
+hindi_to_task: Rebase the current branch onto main.
+task_answer: git rebase main
+own_task: Make a test branch, add a commit on main, rebase the branch, and look at git log --graph.
+practice_question: Why do the hashes of commits change after a rebase?
+practice_answer: Because the commits are rebuilt on a new base.
+
+@GIT-037
+topic: 05 Advanced Git
+level: Advanced
+term: git rebase -i (interactive rebase)
+cue: Which rebase lets you combine several small commits, reword messages, or reorder them?
+kind: Git command
+frequency: Medium
+importance: 4
+origin: History needs tidying before you send a PR, so interactive rebase opens an editor where you give each commit an instruction such as pick, squash or reword.
+pro_tip: Tidy history only on your own private branch, and remember git reflog as your safety net.
+memory_story: Interactive rebase is an editor table where you write beside each commit what should happen to it.
+visual: A list where pick, squash or reword is written beside each commit.
+emotion: The pride of handing over a polished history.
+meaning: git rebase -i lets you pick, squash, reword, drop or reorder commits in an editor.
+code: git rebase -i HEAD~3
+output: pick 3f2a9c1 Add form¶squash 8b7d1e2 Fix typo¶reword 5c3a2f0 wip
+explanation: In the editor you write pick, reword, squash, fixup or drop beside each commit. squash joins a commit into the previous one, fixup does so without its message, reword changes the message, and drop removes the commit. The hashes change, so use it only on private branches.
+simple_explain: With interactive rebase you tidy your history before a PR: join small fix typo commits into the main one and write a good message.
+analogy: It is like editing a rough draft into a final copy.
+syntax: git rebase -i <commit>
+anatomy: git rebase -i = interactive | <commit> = the point after which commits are edited | pick/squash/reword = instructions
+example_1: git rebase -i HEAD~3
+example_2: git rebase -i main
+example_3: git rebase -i --autosquash main
+variation: git commit --fixup <hash>   # for autosquash later¶git rebase --continue
+used_with: HEAD~N, squash, fixup, reword
+related: git rebase, git commit --amend, git reflog
+alternatives: Squash and merge on GitHub
+word_family: git rebase -i, squash, fixup, reword, drop
+where_used: Tidying before a PR | Joining small fix commits | Improving commit messages
+mini_conversation: A: My PR has eight tiny fix commits. | B: Squash them into one or two clean commits with git rebase -i.
+misconception: ✗ Interactive rebase loses commits forever → ✓ The old commits stay in git reflog for a while, and git rebase --abort can stop it midway
+confused_with: squash vs fixup: squash also merges the message, fixup throws its message away.
+avoid: Do not use interactive rebase on a shared branch.
+wrong_code: git rebase -i squash HEAD~3
+right_code: git rebase -i HEAD~3
+memory_trick: Interactive means I Edit the todo list.
+real_project: Squashing fix typo commits before a PR to leave a clean history.
+real_interview: An interviewer may ask: What is the difference between squash and fixup?
+real_daily: It is like editing a rough draft into the final copy.
+mcq_question: Which instruction joins a commit into the previous one but drops its message?
+mcq_options: A) reword B) fixup C) drop D) pick
+mcq_answer: B
+mcq_why: fixup joins the commit and discards its message, while squash keeps it.
+fill_blank: git rebase ____ HEAD~3 → -i
+hindi_to_task: Open the last four commits in interactive rebase.
+task_answer: git rebase -i HEAD~4
+own_task: Make three small commits on a test branch and squash them into one with interactive rebase.
+practice_question: What is the command to stop a rebase midway?
+practice_answer: git rebase --abort
+
+@GIT-038
+topic: 05 Advanced Git
+level: Advanced
+term: git cherry-pick
+cue: How do you bring just one commit from another branch into your current branch?
+kind: Git command
+frequency: Medium
+importance: 4
+origin: Sometimes you need only one bug-fix commit on another branch, not the whole branch, so cherry-pick selects that one commit and brings it over.
+pro_tip: Cherry-pick is very handy for bringing a hotfix to a release branch.
+memory_story: You do not take the whole basket, only one chosen cherry.
+visual: A single red cherry is plucked from a branch and dropped into your basket.
+emotion: The convenience of taking exactly the work you need.
+meaning: git cherry-pick applies one commit onto the current branch as a new commit.
+code: git switch release/1.2¶git cherry-pick 8b7d1e2
+output: [release/1.2 c9b12a3] Fix refund rounding¶ 1 file changed, 2 insertions(+)
+explanation: Cherry-pick applies that commit's change to the current branch as a new commit with a different hash. If there is a conflict, you resolve it and run git cherry-pick --continue.
+simple_explain: When you do not want to merge a whole branch but need a single fix, cherry-pick lifts that one commit and puts it on your branch.
+analogy: It is like taking just one sweet from someone else's plate.
+syntax: git cherry-pick <commit>
+anatomy: git cherry-pick = command | <commit> = the commit to bring
+example_1: git cherry-pick 8b7d1e2
+example_2: git cherry-pick a1b2c3d e4f5a6b
+example_3: git cherry-pick -x 8b7d1e2
+variation: git cherry-pick -x <hash>   # record the original hash in the message¶git cherry-pick --abort
+used_with: -x, --continue, --abort
+related: git merge, git rebase, git revert
+alternatives: git merge (the whole branch)
+word_family: git cherry-pick, git merge, git rebase, git revert, git log
+where_used: Hotfix backports | One fix to another release | Moving a commit made on the wrong branch
+mini_conversation: A: This bug fix is needed on the release branch too. | B: Take the commit hash from main and cherry-pick it onto release.
+misconception: ✗ Cherry-pick moves the commit and removes it from the old branch → ✓ Cherry-pick makes a copy, and the commit stays on the old branch with a new hash created
+confused_with: cherry-pick vs merge: cherry-pick copies one commit, merge joins a whole branch's history.
+avoid: Do not cherry-pick the same commit onto many branches again and again, it creates duplicates.
+wrong_code: git cherry-pick main
+right_code: git cherry-pick 8b7d1e2
+memory_trick: Cherry-pick means pick one commit and copy it.
+real_project: Cherry-picking a production hotfix onto the release branch.
+real_interview: An interviewer may ask: What is the difference between cherry-pick and merge?
+real_daily: It is like taking one sweet from someone's plate.
+mcq_question: After a cherry-pick, what is the hash of the new commit like?
+mcq_options: A) Empty B) The branch name C) The same as the old one D) A new one
+mcq_answer: D
+mcq_why: A cherry-pick makes a new commit, so the hash is different.
+fill_blank: git ____ 8b7d1e2 → cherry-pick
+hindi_to_task: Bring commit a1b2c3d onto the current branch.
+task_answer: git cherry-pick a1b2c3d
+own_task: Make a commit on one branch and bring it to another with cherry-pick.
+practice_question: What command do you run after resolving a conflict in a cherry-pick?
+practice_answer: git cherry-pick --continue
+
+@GIT-039
+topic: 05 Advanced Git
+level: Advanced
+term: git reflog
+cue: What is Git's hidden record that helps you find commits lost after a reset or rebase?
+kind: Git command
+frequency: Medium
+importance: 5
+origin: Git writes every movement of HEAD into a separate record, so even a commit removed from a branch can be found for a while, and that record is called the reflog.
+pro_tip: If something seems lost, do not panic, look at git reflog first.
+memory_story: The reflog is a CCTV record that shows every move HEAD made, even for a lost commit.
+visual: A long list showing a date and an action beside every step HEAD took.
+emotion: The relief of getting back something you thought was lost.
+meaning: git reflog shows a local record of every change made to HEAD and branches.
+code: git reflog¶git reset --hard HEAD@{2}
+output: 9d2c3b1 HEAD@{0}: reset: moving to HEAD~1¶8b7d1e2 HEAD@{1}: commit: Fix refund rounding
+explanation: The reflog is local and lasts for some months by default. After a reset or rebase you can find the hash of the lost commit and bring it back with a branch or a reset. It does not exist on the remote.
+simple_explain: The reflog records HEAD's whole journey on your laptop. If a commit seems lost, find its hash here and bring it back.
+analogy: It is like CCTV footage where you can see who moved what and where.
+syntax: git reflog [show] [<ref>]
+anatomy: git reflog = command | HEAD@{N} = where HEAD was N steps ago
+example_1: git reflog
+example_2: git branch recover 8b7d1e2
+example_3: git reset --hard HEAD@{1}
+variation: git reflog show feature/login   # one branch's record¶git reflog expire --expire=now --all   # clean up
+used_with: git reset, git branch, HEAD@{N}
+related: git reset, git rebase, git log
+alternatives: Nothing, it is Git's best safety net
+word_family: git reflog, git reset, git rebase, git branch, git log
+where_used: A reset or rebase mistake | A branch deleted by accident | Looking for a lost commit
+mini_conversation: A: I ran reset --hard and lost a commit. | B: Look at git reflog, find the hash, and run git branch recover with it.
+misconception: ✗ After reset --hard the commit is gone forever → ✓ The commit can be found in git reflog for a while and brought back with a branch or reset
+confused_with: git reflog vs git log: log shows the commit history, reflog shows the moves of HEAD, including lost commits.
+avoid: Do not treat the reflog as a long-term backup, it gets cleaned eventually.
+wrong_code: git reflog --recover 8b7d1e2
+right_code: git branch recover 8b7d1e2
+memory_trick: Reflog is the record of the route.
+real_project: Getting back a commit lost in a rebase mistake through the reflog.
+real_interview: An interviewer may ask: How would you find a commit lost after reset --hard?
+real_daily: It is like watching CCTV footage to see where something went.
+mcq_question: Which command helps you find the hash of a commit lost after reset --hard?
+mcq_options: A) git status B) git diff C) git reflog D) git remote
+mcq_answer: C
+mcq_why: The reflog shows every earlier position of HEAD.
+fill_blank: To look for a lost commit, check git ____ → reflog
+hindi_to_task: Show the last steps of HEAD.
+task_answer: git reflog
+own_task: Make a test commit, run reset --hard, and recover it with the reflog.
+practice_question: Does the reflog also exist on the remote?
+practice_answer: No, it exists only in your local repository.
+
+@GIT-040
+topic: 05 Advanced Git
+level: Advanced
+term: git bisect
+cue: How do you find, with a binary search, which commit among many introduced a bug?
+kind: Git command
+frequency: Low
+importance: 3
+origin: Finding when a bug appeared among thousands of commits is slow work, so bisect repeatedly tests the middle commit between a good and a bad one and finds the culprit in few steps.
+pro_tip: Run git bisect run with a test script and it finds the commit automatically.
+memory_story: Bisect is a halving game where you keep checking the commit in the middle to narrow the path.
+visual: A long list where half the list is dropped each time and the middle commit is visited.
+emotion: The thrill of finally finding the root of a bug.
+meaning: git bisect uses binary search between a good and a bad commit to find the commit that introduced a bug.
+code: git bisect start¶git bisect bad¶git bisect good v1.0¶git bisect reset
+output: Bisecting: 6 revisions left to test after this (roughly 3 steps)
+explanation: You mark one commit bad (now) and one good (old). Git checks out the middle commit, you test and mark it good or bad, and in a few steps the culprit commit appears. With git bisect run a script does it all.
+simple_explain: Bisect needs only about ten steps to find a bug in 1000 commits, because each time half of the commits are ruled out.
+analogy: It is like guessing a number where each guess cuts the range in half.
+syntax: git bisect start|good|bad|reset|run
+anatomy: start = begin | bad/good = mark a commit | reset = go back | run = use a script
+example_1: git bisect start HEAD v1.0
+example_2: git bisect good
+example_3: git bisect run npm test
+variation: git bisect skip   # skip this commit¶git bisect log   # the record so far
+used_with: good, bad, run, reset
+related: git log, git blame, git checkout
+alternatives: git blame, checking commits one by one by hand
+word_family: git bisect, git blame, git log, git checkout, git reset
+where_used: Finding a regression | Projects with long history | Tracing a flaky bug
+mini_conversation: A: This bug came in somewhere in 500 commits. | B: Mark a good and a bad commit with git bisect, and it will be found in nine steps.
+misconception: ✗ git bisect checks every commit one by one → ✓ Bisect uses a binary search, so even 1000 commits need only about 10 steps
+confused_with: git bisect vs git blame: bisect tells you which commit brought the bug, blame tells you who last wrote each line.
+avoid: Do not forget to run git bisect reset when you finish.
+wrong_code: git bisect find bad
+right_code: git bisect bad
+memory_trick: Bisect means check the middle commit.
+real_project: Using git bisect run to catch the commit that broke a test.
+real_interview: An interviewer may ask: How does git bisect work?
+real_daily: It is like a number guessing game where each guess halves the range.
+mcq_question: Which algorithm makes bisect fast?
+mcq_options: A) Binary search B) Random guess C) Bubble sort D) Linear search
+mcq_answer: A
+mcq_why: Half the candidates are ruled out at each step.
+fill_blank: To finish bisecting, run git bisect ____ → reset
+hindi_to_task: Start a bisect.
+task_answer: git bisect start
+own_task: Write down the steps to find an old bug in a small repo with bisect.
+practice_question: Roughly how many steps does bisect take for 1000 commits?
+practice_answer: About 10 steps.
+
+@GIT-041
+topic: 05 Advanced Git
+level: Intermediate
+term: git tag
+cue: What do you do to give a particular commit, such as release v1.0, a permanent name?
+kind: Git command
+frequency: Medium
+importance: 4
+origin: A branch keeps moving while a release stops at one fixed point, so Git tags put a permanent label like v1.0.0 on a commit.
+pro_tip: Keep versions in semantic versioning form: MAJOR.MINOR.PATCH, such as v2.1.4.
+memory_story: A tag is a permanent stamp on a commit that never moves forward.
+visual: A red sticky label with v1.0 written on it is stuck on one page of a book.
+emotion: The comfort of a clear marker for a release.
+meaning: git tag puts a permanent name, usually a release version, on a commit.
+code: git tag -a v1.0.0 -m "First release"¶git push origin v1.0.0
+output: To https://github.com/asha/notes.git¶ * [new tag]         v1.0.0 -> v1.0.0
+explanation: A lightweight tag is just a name. An annotated tag (-a) also has a message, date and tagger, and is better for releases. Tags are not pushed automatically, you push them separately.
+simple_explain: A tag says this commit is version 1.0.0. Branches keep moving, but the tag stays on the same commit forever.
+analogy: It is like a red sticker that stays on one page of a book.
+syntax: git tag [-a] <name> [-m "<message>"]
+anatomy: git tag = command | -a = annotated | <name> = version name | -m = message
+example_1: git tag v1.0.0
+example_2: git tag -a v1.1.0 -m "Add search"
+example_3: git push origin --tags
+variation: git tag -d v1.0.0   # delete¶git tag -l "v1.*"   # list
+used_with: git push origin <tag>, --tags, -a, semantic versioning
+related: GitHub Releases, git log, semantic versioning
+alternatives: Creating the tag together with a GitHub Release
+word_family: git tag, release, version, git push, semver
+where_used: Software releases | Rollback points | Package versions
+mini_conversation: A: Which commit is version 1.0? | B: Look at the v1.0.0 tag, it sits on that very commit.
+misconception: ✗ git push also sends tags to the remote automatically → ✓ Tags must be pushed separately with git push origin v1.0.0 or git push --tags
+confused_with: tag vs branch: a tag is fixed to one commit, a branch moves forward with new commits.
+avoid: Do not change a tag after pushing it, make a new version tag.
+wrong_code: git tag v1.0.0 -push
+right_code: git push origin v1.0.0
+memory_trick: Tag means a Tiny label that stays.
+real_project: Tagging each release commit as vX.Y.Z and then creating a GitHub Release.
+real_interview: An interviewer may ask: What is the difference between a lightweight and an annotated tag?
+real_daily: It is like sticking a red sticker on a page of a book.
+mcq_question: Which flag creates an annotated tag?
+mcq_options: A) -d B) -l C) -a D) -r
+mcq_answer: C
+mcq_why: -a creates an annotated tag with a message and date.
+fill_blank: git tag ____ v1.0.0 -m "First release" → -a
+hindi_to_task: Make a v2.0.0 tag and push it to origin.
+task_answer: git tag v2.0.0 && git push origin v2.0.0
+own_task: Put a v0.1.0 tag on your repo and look at it on GitHub.
+practice_question: What command pushes all your local tags at once?
+practice_answer: git push --tags
+
+@GIT-042
+topic: 05 Advanced Git
+level: Advanced
+term: git push --force-with-lease
+cue: How do you push safely after a rebase or amend has changed your history?
+kind: Git command
+frequency: Medium
+importance: 4
+origin: A plain --force can wipe out other people's commits without looking, so Git added --force-with-lease, which forces only if the remote is what you last saw.
+pro_tip: For any force push, always use --force-with-lease and never plain --force.
+memory_story: A lease is a safe lock that opens only if nobody has changed anything in between.
+visual: A safe that opens only if the contents are exactly as you left them.
+emotion: Confidence that other people's work stays safe while you force.
+meaning: git push --force-with-lease overwrites the remote branch only if it holds no unexpected new commits.
+code: git rebase main¶git push --force-with-lease origin feature/login
+output: + 3f2a9c1...9d2c3b1 feature/login -> feature/login (forced update)
+explanation: After a rebase or amend your local history differs from the remote, so a normal push is rejected. --force-with-lease overwrites the remote only if it is still what you saw at your last fetch, and otherwise stops.
+simple_explain: A force push overwrites history. The lease version first checks that nobody pushed in the meantime, so other people's commits are not wiped out.
+analogy: It is like a safe that opens only if the contents are as you left them.
+syntax: git push --force-with-lease <remote> <branch>
+anatomy: --force-with-lease = safe force | <remote> = origin | <branch> = branch name
+example_1: git push --force-with-lease
+example_2: git push --force-with-lease origin feature/login
+example_3: git push --force-with-lease=feature/login:3f2a9c1
+variation: git push -f   # short for --force, dangerous
+used_with: git rebase, git commit --amend, git fetch
+related: git rebase, git commit --amend, git push
+alternatives: Making a new branch and a new PR
+word_family: git push, --force, --force-with-lease, git rebase, git amend
+where_used: After a rebase | After an amend | Cleaning a PR branch
+mini_conversation: A: My push is rejected after the rebase. | B: If the branch is yours alone, push with --force-with-lease, not --force.
+misconception: ✗ --force and --force-with-lease are equally safe → ✓ --force overwrites without checking, while --force-with-lease overwrites only if the remote has no unexpected commits
+confused_with: --force vs --force-with-lease: force writes without checking, lease checks the remote first.
+avoid: Do not force push to main or a shared branch.
+wrong_code: git push --force-with-lease=true --push-all
+right_code: git push --force-with-lease origin feature/login
+memory_trick: Lease means Look before you overwrite.
+real_project: Updating a PR branch with --force-with-lease after a rebase.
+real_interview: An interviewer may ask: Why is force-with-lease better than force?
+real_daily: It is like a safe that opens only if the contents are as you left them.
+mcq_question: Which push option stops when it finds an unexpected new commit on the remote?
+mcq_options: A) -f B) --force C) --no-verify D) --force-with-lease
+mcq_answer: D
+mcq_why: The lease checks that the remote is what you last saw.
+fill_blank: git push ____ origin feature/login → --force-with-lease
+hindi_to_task: Safely push feature/login after a rebase.
+task_answer: git push --force-with-lease origin feature/login
+own_task: Amend a commit on a test branch and push it with --force-with-lease.
+practice_question: When should you never force push?
+practice_answer: On main or on a branch shared with others.
+
+@GIT-043
+topic: 05 Advanced Git
+level: Advanced
+term: git worktree
+cue: How do you open two branches of one repository in separate folders at the same time without cloning again?
+kind: Git command
+frequency: Low
+importance: 3
+origin: Switching branches changes your files and interrupts work, so worktree opens another branch in a separate folder using the same .git, and no new clone is needed.
+pro_tip: Keep a separate worktree for main for reviews or hotfixes without pausing your own work.
+memory_story: Two counters of one shop open at the same time, both using the same warehouse.
+visual: Two folders of the same repo sit side by side, each showing a different branch.
+emotion: The freedom to look at another branch without stopping your work.
+meaning: git worktree opens another branch of the same repository in a separate folder.
+code: git worktree add ../notes-hotfix hotfix/refund¶git worktree list
+output: /home/asha/notes         3f2a9c1 [main]¶/home/asha/notes-hotfix  8b7d1e2 [hotfix/refund]
+explanation: Each worktree has its own folder and files but all share one .git history. A branch can be open in only one worktree at a time. When the work is done, remove it with git worktree remove.
+simple_explain: Instead of stashing or switching, open the other branch in a new folder. Both stay open together and share one history.
+analogy: It is like two counters opened in one shop sharing the same warehouse.
+syntax: git worktree add <path> <branch>
+anatomy: git worktree add = new worktree | <path> = the new folder | <branch> = which branch opens there
+example_1: git worktree add ../notes-review feature/login
+example_2: git worktree add -b hotfix/x ../notes-hotfix main
+example_3: git worktree remove ../notes-review
+variation: git worktree list   # all the folders¶git worktree prune   # remove stale ones
+used_with: git branch, git switch, git stash
+related: git switch, git stash, git clone
+alternatives: A second clone or git stash
+word_family: git worktree, git switch, git stash, git branch, git clone
+where_used: Reviewing a teammate's branch | Not pausing a feature during a hotfix | Running two versions together
+mini_conversation: A: I want to review while keeping my own work open. | B: Open the review in a separate folder with git worktree add.
+misconception: ✗ git worktree add makes a full new clone of the repo → ✓ A worktree gives another folder but shares one .git and history, so it takes little space
+confused_with: git worktree vs git clone: a worktree shares the .git, a clone is a whole new copy.
+avoid: Do not delete a worktree folder by hand, use git worktree remove.
+wrong_code: git worktree open ../notes-hotfix
+right_code: git worktree add ../notes-hotfix hotfix/refund
+memory_trick: Worktree means one repo and many workspaces.
+real_project: Keeping your feature branch running in its own folder while you work on a hotfix.
+real_interview: An interviewer may ask: When is git worktree better than a clone?
+real_daily: It is like two counters in one shop that share a warehouse.
+mcq_question: Which command opens two branches in separate folders at the same time?
+mcq_options: A) git worktree add B) git bisect C) git stash D) git clone
+mcq_answer: A
+mcq_why: A worktree opens another branch in a new folder without cloning again.
+fill_blank: git ____ add ../review feature/login → worktree
+hindi_to_task: Open the hotfix/x branch in the folder ../hotfix.
+task_answer: git worktree add ../hotfix hotfix/x
+own_task: Open two worktrees for two branches in a test repo and look at git worktree list.
+practice_question: What is the clean way to remove a worktree?
+practice_answer: git worktree remove <path>
+
+@GIT-044
+topic: 05 Advanced Git
+level: Intermediate
+term: git blame
+cue: How do you see who wrote each line of a file and in which commit?
+kind: Git command
+frequency: Medium
+importance: 3
+origin: An old line is often hard to understand and the writer may be unknown, so blame shows beside every line its commit, author and date.
+pro_tip: Use blame not to blame anyone but to learn the reason behind a line from its commit message.
+memory_story: Blame is an attendance register that notes beside each line which commit wrote it.
+visual: Each line of a file has a short hash, a name and a date beside it.
+emotion: The thrill of solving the mystery of an old line.
+meaning: git blame shows the author and commit for each line of a file.
+code: git blame -L 10,15 src/app.js
+output: 8b7d1e2 (Asha 2026-09-12 10:03) function total(cart) {¶3f2a9c1 (Ravi 2026-08-30 17:21)   return sum(cart);
+explanation: Each line shows the commit hash, author and date. -L picks a range of lines. Run git show on that hash to see the full commit and its message.
+simple_explain: Blame lets you learn when and why a particular line was written. Then git show with that hash gives you the full reason.
+analogy: It is like seeing the writer's name and date beside every sentence of a book.
+syntax: git blame [-L <start>,<end>] <file>
+anatomy: git blame = command | -L = range of lines | <file> = file name
+example_1: git blame src/app.js
+example_2: git blame -L 20,40 src/app.js
+example_3: git blame -w -C src/app.js
+variation: git blame -w   # ignore whitespace¶git blame -C   # detect copied lines
+used_with: -L, -w, -C, git show
+related: git log, git show, git bisect
+alternatives: The Blame button on GitHub
+word_family: git blame, git log, git show, git bisect, git diff
+where_used: The reason for an old line | Source of a bug | Understanding code
+mini_conversation: A: Why was this odd line written? | B: Run git blame to find the commit and read its message.
+misconception: ✗ git blame tells you whose fault the mistake is → ✓ Blame only shows who wrote a line and when, and the commit message is where you learn the reason
+confused_with: git blame vs git log: blame shows the last commit for each line, log shows the whole commit history.
+avoid: Do not use blame as a tool to blame people.
+wrong_code: git blame file.js --line 10
+right_code: git blame -L 10,10 file.js
+memory_trick: Blame tells who wrote the line.
+real_project: Finding the commit behind a buggy line and understanding its reason.
+real_interview: An interviewer may ask: How would you find out when and why a line changed?
+real_daily: It is like seeing the writer's name beside every sentence of a book.
+mcq_question: What does the -L flag do in blame?
+mcq_options: A) Shows the log B) Chooses a range of lines C) Makes a branch D) Locks the file
+mcq_answer: B
+mcq_why: -L start,end shows only those lines.
+fill_blank: git blame ____ 10,20 file.js → -L
+hindi_to_task: Show the blame of lines 5 to 8 of file.js.
+task_answer: git blame -L 5,8 file.js
+own_task: Run git blame on a file in your project and read the commit message of one line.
+practice_question: What command shows the full commit after blame gives you a hash?
+practice_answer: git show <hash>

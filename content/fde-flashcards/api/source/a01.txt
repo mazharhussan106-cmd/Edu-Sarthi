@@ -1,0 +1,293 @@
+deck.title: API Integration – Beginner to Advanced Flashcards
+deck.subject: API Integration
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: javascript
+type: topic56
+
+@API-001
+topic: 01 Basics
+level: Beginner
+term: API (Application Programming Interface)
+cue: What is the agreed doorway that lets one piece of software ask another for data or actions?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Programs written by different teams needed a safe, documented way to talk to each other without sharing their inner code, so interfaces were defined.
+pro_tip: Think of every API as a contract: it lists what you can ask for and what you will get back.
+memory_story: An API is the waiter in a restaurant who carries your order to the kitchen and brings the food back without you entering the kitchen.
+visual: A waiter stands between a table of customers and a closed kitchen door, passing notes and plates.
+emotion: The relief of using powerful features without needing to understand how they work inside.
+definition: An API is a set of rules that lets one program request data or actions from another program in a defined way.
+explanation: The provider decides which requests are allowed and in what format, and your program follows those rules. For example, a weather API accepts a city name and returns the temperature. You never see the provider's code or database, only the request and the response.
+simple_explain: An API is how two programs talk. You send a request in the agreed format, and the other program sends back an answer, while its inner workings stay hidden.
+analogy: It works like a waiter who takes your order to the kitchen and brings back the food.
+formula_rule: Request (in the agreed format) → API → Response (data or result)
+example_1: A weather app asks a weather API for today's temperature in a city.
+example_2: A shopping site asks a payment API to charge a card.
+example_3: A website asks a maps API to show a location on a map.
+related: client, server, endpoint, REST
+word_family: interface, contract, request, response, provider
+where_used: Web and mobile apps | Payments and maps | Connecting company systems
+mini_conversation: A: How does our app get the weather data? | B: It calls the weather provider's API with a city name and receives the temperature back.
+misconception: ✗ An API gives you direct access to the other system's database → ✓ An API exposes only the specific requests the provider allows, and the database stays hidden behind it
+contrast: API vs database: a database stores the data, an API is the controlled doorway for asking for it.
+avoid: Do not assume an API will accept anything, always read its documentation first.
+memory_trick: An API is the waiter between you and the kitchen.
+real_project: Connecting a shop's website to a payment API so customers can pay by card.
+real_interview: An interviewer may ask: What is an API and why do we use one?
+real_daily: It is like ordering through a waiter instead of walking into the kitchen.
+mcq_question: What is the main purpose of an API?
+mcq_options: A) To store files B) To design web pages C) To speed up the internet D) To let programs communicate in a defined way
+mcq_answer: D
+mcq_why: An API defines how one program can request data or actions from another.
+fill_blank: A program sends a ____ to an API and gets a response back → request
+apply: Which kind of rules must you follow when calling an API? → The provider's documented request format
+explain_task: Explain what an API is to a friend in three lines.
+own_task: List three apps on your phone and write which APIs they might call.
+
+@API-002
+topic: 01 Basics
+level: Beginner
+term: Client and server
+cue: In an API call, which side asks for something and which side answers?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Networked software splits the work so one side focuses on asking and showing results, while the other side keeps the data and rules in one trusted place.
+pro_tip: When debugging, first decide whether the problem is in what the client sent or in what the server returned.
+memory_story: The client is the customer placing an order and the server is the kitchen that prepares it.
+visual: A phone on the left sends an arrow to a computer in a data centre on the right, and an arrow comes back.
+emotion: The clarity of knowing which side to inspect when something goes wrong.
+definition: The client is the program that sends a request, and the server is the program that receives it and sends back a response.
+explanation: A browser, a mobile app or your own script can be the client. The server is a program running somewhere that listens for requests, applies its rules, and responds. The same program can be a client to one API and a server to another.
+simple_explain: The client asks, and the server answers. Your app is usually the client when it calls someone else's API.
+analogy: The client is the customer ordering food and the server is the kitchen preparing it.
+formula_rule: Client sends request → Server sends response
+example_1: A mobile app (client) asks a server for the list of products.
+example_2: A script (client) asks a weather server for tomorrow's forecast.
+example_3: A backend service is a server for the website and a client of a payment API.
+related: API, request, response, HTTP
+word_family: client, server, request, response, host
+where_used: Every web and mobile app | Microservices | API debugging
+mini_conversation: A: The data is not showing in the app. | B: Check whether the client sent the request correctly or whether the server returned an error.
+misconception: ✗ A client must be a person using a browser → ✓ A client is any program that sends a request, including scripts and other servers
+contrast: Client vs server: the client starts the request, the server listens and responds.
+avoid: Do not trust anything that comes from the client without checking it on the server.
+memory_trick: The client asks and the server answers.
+real_project: Building a mobile app that acts as a client of the company's order server.
+real_interview: An interviewer may ask: What is the difference between a client and a server?
+real_daily: It is like a customer ordering and a kitchen cooking.
+mcq_question: Which side usually starts an API conversation?
+mcq_options: A) The server B) The database C) The client D) The router
+mcq_answer: C
+mcq_why: The client sends the first request, and the server responds.
+fill_blank: The program that answers an API request is called the ____ → server
+apply: Your script calls a weather API. Which role does your script play? → The client
+explain_task: Explain the client and server roles in three lines.
+own_task: Write down the client and server in one app you use daily.
+
+@API-003
+topic: 01 Basics
+level: Beginner
+term: Request and response cycle
+cue: What are the steps from the moment a client sends a call to the moment it receives an answer?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Web communication was designed as a simple conversation, so every call is a question followed by an answer, which makes it easy to reason about and debug.
+pro_tip: Always read both halves: look at what you sent and at what came back.
+memory_story: It is like a letter and a reply, where the reply refers to the same letter.
+visual: An arrow from client to server labelled request and a return arrow labelled response with a status.
+emotion: The calm of seeing a clear question and answer instead of a mystery.
+definition: The request and response cycle is the exchange in which a client sends a request and the server returns one response.
+explanation: A request has a method, a URL, headers and sometimes a body. The server processes it and returns a response with a status code, headers and usually a body. Each pair is independent, and the server does not remember earlier requests unless you send identifying information again.
+simple_explain: You send a request with what you want, and the server replies with a status and, usually, data. Then the conversation for that call is over.
+analogy: It is like sending a letter and getting one reply that refers to it.
+formula_rule: Request = method + URL + headers + body. Response = status + headers + body.
+example_1: A GET request for a user, answered with status 200 and the user's data.
+example_2: A POST request that creates an order, answered with status 201.
+example_3: A request with a wrong URL, answered with status 404.
+related: HTTP methods, status codes, headers, body
+word_family: request, response, status, header, body
+where_used: Every API call | Debugging | Reading API documentation
+mini_conversation: A: What happens when I call the API? | B: You send a request, the server processes it, and returns a response with a status and data.
+misconception: ✗ The server remembers my previous requests automatically → ✓ Each HTTP request is independent, and the client must send identity such as a token each time
+contrast: Request vs response: the request asks, the response answers with a status.
+avoid: Do not ignore the status code and read only the body.
+memory_trick: One request earns one response.
+real_project: Logging both the request and the response to find why a call failed.
+real_interview: An interviewer may ask: What does an HTTP request contain?
+real_daily: It is like a letter and its reply.
+mcq_question: What does a response always include?
+mcq_options: A) A password B) A status code C) A cookie banner D) A database
+mcq_answer: B
+mcq_why: Every HTTP response carries a status code.
+fill_blank: A request has a method, a URL, headers and sometimes a ____ → body
+apply: A call returns 404. Which half of the cycle tells you this? → The response status
+explain_task: Explain the request and response cycle in three lines.
+own_task: Pick one API call and write what its request and response contain.
+
+@API-004
+topic: 01 Basics
+level: Beginner
+term: REST
+cue: Which popular style of web API treats data as resources with URLs and uses standard HTTP methods on them?
+category: API style
+frequency: Very high
+importance: 5
+origin: REST was described in Roy Fielding's doctoral work in 2000 as a way to build scalable web services on top of the web's existing HTTP rules.
+pro_tip: In REST, name URLs with nouns like /users and let the HTTP method be the verb.
+memory_story: REST is a library where every book has an address and the librarian understands the words get, add, change and remove.
+visual: A set of URLs such as /users and /users/42 each with arrows labelled GET, POST and DELETE.
+emotion: The comfort of a predictable pattern for every resource.
+definition: REST is an API style where resources are identified by URLs and manipulated with standard HTTP methods, with each request being stateless.
+explanation: A REST API groups data into resources such as users or orders, gives each a URL, and uses GET, POST, PUT, PATCH and DELETE to read, create, replace, update and remove. Each request carries all information needed, so the server keeps no session between calls. Responses are commonly JSON.
+simple_explain: In REST, think of resources and actions. GET /users lists users and POST /users creates one, and every call is independent.
+analogy: It is like a library where each book has an address and the librarian understands get, add, change and remove.
+formula_rule: Resource (URL) + HTTP method (action) = one clear operation
+example_1: GET /users returns a list of users.
+example_2: POST /users creates a new user.
+example_3: DELETE /users/42 removes the user with id 42.
+related: HTTP methods, endpoint, JSON, stateless
+word_family: resource, endpoint, stateless, CRUD, URL
+where_used: Most web APIs | Mobile backends | Public developer platforms
+mini_conversation: A: How should I name my endpoint to list orders? | B: Use a noun, GET /orders, and let the method say what to do.
+misconception: ✗ Any API that uses HTTP is a REST API → ✓ REST is a specific style with resources, standard methods and stateless requests, and many APIs only partly follow it
+contrast: REST vs RPC style: REST models resources with URLs, RPC style calls named actions such as /getUser.
+avoid: Do not put verbs in URLs, such as /createUser, when a method can express it.
+memory_trick: REST means resources plus standard methods.
+real_project: Designing a REST API with /products and /orders for an online shop.
+real_interview: An interviewer may ask: What makes an API RESTful?
+real_daily: It is like a library where every book has an address and a clear set of actions.
+mcq_question: In REST, which part of a request usually names the resource?
+mcq_options: A) The URL B) The response C) The status code D) The cookie
+mcq_answer: A
+mcq_why: The URL identifies the resource, and the method gives the action.
+fill_blank: In REST, DELETE /users/42 removes the ____ with id 42 → user
+apply: How would you create a new product in a REST API? → Send POST to the products endpoint
+explain_task: Explain REST in three lines.
+own_task: Design three REST URLs and methods for a library app.
+
+@API-005
+topic: 01 Basics
+level: Beginner
+term: Endpoint and base URL
+cue: Which address do you call to reach one specific function of an API, and which shared part comes before it?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A service offers many functions, so each one needs its own address under a common root, which is how endpoints and a base URL came about.
+pro_tip: Store the base URL in one place so switching between test and live servers is a single change.
+memory_story: The base URL is the street name and each endpoint is a house number on that street.
+visual: A long URL split into a base part and a path part, with the path highlighted.
+emotion: The satisfaction of finding exactly the right address for your request.
+definition: A base URL is the common starting address of an API, and an endpoint is a specific path under it that performs one function.
+explanation: If the base URL is https://api.example.com/v1, then the endpoint /users gives https://api.example.com/v1/users. The method you use on the endpoint decides the action. Different environments, such as sandbox and production, usually have different base URLs.
+simple_explain: The base URL is the shared start of every address. An endpoint is the rest, pointing to one thing like users or orders.
+analogy: It is like a street name and the house numbers on it.
+formula_rule: Full URL = base URL + endpoint path (+ query)
+example_1: Base https://api.example.com/v1 plus /users gives the users endpoint.
+example_2: The same base with /orders/17 points to one order.
+example_3: A sandbox base URL used for testing and a production one for live use.
+related: REST, URL parts, versioning, environment
+word_family: base URL, endpoint, path, route, environment
+where_used: Every API call | Configuration | Switching test and live
+mini_conversation: A: Where do I send the request to list orders? | B: To the orders endpoint under the base URL from the docs.
+misconception: ✗ An endpoint is the whole server → ✓ An endpoint is one specific address, and a server usually offers many
+contrast: Base URL vs endpoint: the base URL is common to all calls, the endpoint is specific to one function.
+avoid: Do not hard-code the base URL in many places.
+memory_trick: Base is the street, endpoint is the house.
+real_project: Putting the base URL in a configuration file so the app can switch to the production server.
+real_interview: An interviewer may ask: What is the difference between a base URL and an endpoint?
+real_daily: It is like a street name and the house numbers on it.
+mcq_question: Which is an endpoint under the base https://api.example.com/v1?
+mcq_options: A) JSON B) https://api.example.com C) HTTP D) /users
+mcq_answer: D
+mcq_why: An endpoint is a path such as /users that sits under the base URL.
+fill_blank: The full address is the base URL plus the endpoint ____ → path
+apply: How do you make switching between test and live easy? → Keep the base URL in one configuration value
+explain_task: Explain base URL and endpoint in three lines.
+own_task: Write the full URL for a users endpoint on a sample base URL.
+
+@API-006
+topic: 01 Basics
+level: Intermediate
+term: API vs SDK vs webhook
+cue: Which three things differ as the doorway, the ready-made toolkit that wraps it, and the call that arrives by itself?
+category: Core concept
+frequency: High
+importance: 4
+origin: Calling an API by hand is repetitive and some events need pushing to you, so providers also offer libraries and event notifications.
+pro_tip: Use the provider's SDK when it exists, and fall back to raw API calls when you need full control.
+memory_story: The API is the door, the SDK is a handy key set, and the webhook is a doorbell that rings when something happens.
+visual: A door, a key ring beside it, and a bell connected to a message.
+emotion: The ease of choosing the right tool for the job.
+definition: An API is the interface you call, an SDK is a library that wraps the API in your language, and a webhook is a call the provider makes to your URL when an event happens.
+explanation: With an API you send requests yourself. An SDK gives ready-made functions that build requests and parse responses for you. A webhook flips the direction: the provider sends an HTTP request to an address you give it when something occurs, such as a payment completing.
+simple_explain: The API is the door, the SDK is a toolkit that opens it for you, and a webhook is the provider knocking on your door when something happens.
+analogy: The API is a door, the SDK is a handy key set, and the webhook is a doorbell that rings by itself.
+formula_rule: API = you call them. SDK = library that calls for you. Webhook = they call you.
+example_1: Calling a payments API with plain HTTP requests.
+example_2: Using the payments provider's JavaScript SDK to create a charge.
+example_3: Receiving a webhook when a payment succeeds.
+related: REST, webhook, library, polling
+word_family: API, SDK, webhook, library, callback
+where_used: Payments | Messaging | Integrations with third-party services
+mini_conversation: A: Do I need the SDK to use this service? | B: No, you can call the API directly, but the SDK saves time.
+misconception: ✗ A webhook is the same as an API call you make → ✓ A webhook is a request the provider sends to you when an event occurs
+contrast: API vs webhook: with an API you ask, with a webhook you are told.
+avoid: Do not use an outdated SDK without checking its version.
+memory_trick: API you call, webhook calls you.
+real_project: Using an SDK to send emails and a webhook to track delivery events.
+real_interview: An interviewer may ask: What is the difference between polling an API and using a webhook?
+real_daily: It is like knocking on a door versus having the doorbell ring.
+mcq_question: Which of these is called by the provider when an event happens?
+mcq_options: A) API B) SDK C) Webhook D) Endpoint
+mcq_answer: C
+mcq_why: A webhook is the provider calling your URL.
+fill_blank: A library that wraps an API in your language is called an ____ → SDK
+apply: How do you get told when a payment completes? → Use a webhook
+explain_task: Explain API, SDK and webhook in three lines.
+own_task: Write which of the three you would use for sending an email and for knowing it was delivered.
+
+@API-007
+topic: 01 Basics
+level: Beginner
+term: Public, private and partner APIs
+cue: Which three audiences decide how open an API is, from anyone on the internet to only a company's own teams?
+category: API types
+frequency: Medium
+importance: 3
+origin: Not every API should be open to the world, so providers choose who may use it depending on their business and security needs.
+pro_tip: Check the access level early, since partner and private APIs need agreements and credentials.
+memory_story: A public API is a shop open to everyone, a partner API is a members-only club, and a private API is the staff room.
+visual: Three doors: one wide open, one with a guest list, and one marked staff only.
+emotion: The clarity of knowing whether you are even allowed to call an API.
+definition: A public API is open to any developer, a partner API is shared with selected business partners, and a private API is used only inside one organisation.
+explanation: Public APIs usually require signing up for a key and follow published terms. Partner APIs need an agreement and credentials. Private or internal APIs connect a company's own systems and are not exposed outside. The access level affects documentation, support and stability promises.
+simple_explain: Public means anyone can sign up and use it. Partner means invited businesses only. Private means just your own company's systems.
+analogy: It is like a public shop, a members-only club and a staff room.
+formula_rule: Public = anyone with an account. Partner = invited. Private = internal only.
+example_1: A public weather API that anyone can use with a free key.
+example_2: A partner API shared with an airline's travel agents.
+example_3: A private API between a company's billing and orders systems.
+related: API key, authentication, rate limiting, documentation
+word_family: public, partner, private, internal, open API
+where_used: Choosing which API to use | Planning integrations | Security design
+mini_conversation: A: Can I use this company's API? | B: Check whether it is public, or whether you need partner access.
+misconception: ✗ A public API means no authentication is needed → ✓ Public APIs usually still need an API key or token so the provider can identify and limit users
+contrast: Public vs private API: public is open to outside developers, private is for internal systems only.
+avoid: Do not expose a private API to the internet without strong security.
+memory_trick: Public for all, partner for a few, private for us.
+real_project: Using a partner API to get shipping rates from a courier company.
+real_interview: An interviewer may ask: What are the types of APIs by access level?
+real_daily: It is like a public shop, a members club and a staff room.
+mcq_question: Which API is used only inside one organisation?
+mcq_options: A) Open B) Private C) Public D) Partner
+mcq_answer: B
+mcq_why: A private or internal API is not available outside the company.
+fill_blank: An API shared only with chosen business partners is a ____ API → partner
+apply: You need data from a company's internal system. Which API type is it likely to be? → A private API
+explain_task: Explain the three API access levels in three lines.
+own_task: List one example of each API type from apps you know.

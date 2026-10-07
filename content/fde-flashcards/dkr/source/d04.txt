@@ -1,0 +1,357 @@
+
+@DKR-033
+type: code56
+topic: 05 Docker Compose
+level: Intermediate
+term: The Compose file
+cue: Which file describes a whole multi-container application in one place?
+kind: Compose concept
+frequency: Very high
+importance: 5
+origin: Typing several long docker run commands is error-prone, so Compose lets you write the whole setup once as a file.
+pro_tip: Keep the file in version control so everyone starts the same stack.
+memory_story: The Compose file is a seating plan for every container at the party.
+visual: A YAML file with services listed under one heading.
+emotion: The comfort of starting a whole stack with one command.
+meaning: A Compose file, usually compose.yaml, declares the services, networks and volumes of an application in YAML.
+code: services:¶  web:¶    build: .¶    ports:¶      - "8080:8000"¶  db:¶    image: postgres:16¶    environment:¶      POSTGRES_PASSWORD: example
+output: Compose knows two services, builds web from the local Dockerfile, and pulls the postgres image for db.
+explanation: Each key under services becomes a container. The file name compose.yaml is the modern default, and docker-compose.yml still works. Indentation matters, as YAML uses spaces and not tabs. Compose creates a default network so services reach each other by service name.
+simple_explain: Write the stack once in compose.yaml, then start it with docker compose up.
+analogy: It is like a seating plan that places every guest in one go.
+syntax: services: name: image or build, ports, environment
+anatomy: services = containers | image = ready image | build = from Dockerfile | ports = published ports
+example_1: image: redis:7
+example_2: build: ./api
+example_3: restart: unless-stopped
+variation: docker compose -f other.yaml up   // use a different file
+used_with: docker compose up, Dockerfile, .env files
+related: Compose commands, depends_on and health checks, env files
+alternatives: Several docker run commands | Kubernetes manifests
+where_used: Local stacks | Test setups | Small deployments
+mini_conversation: A: Setting up the app takes ten commands. | B: Put it in a Compose file and run one.
+misconception: ✗ Compose is only for production clusters → ✓ It is mostly used to define and run multi-container apps on one host
+confused_with: Compose file vs Dockerfile: Compose describes many containers, a Dockerfile builds one image.
+avoid: Do not use tabs, YAML needs spaces.
+wrong_code: services:¶	web:¶	  image: nginx
+right_code: services:¶  web:¶    image: nginx
+memory_trick: Services are the containers in one file.
+real_project: Replacing a README of setup commands with one compose.yaml for new developers.
+real_interview: An interviewer may ask: What problem does Docker Compose solve?
+real_daily: It is like one seating plan for a whole party.
+mcq_question: What does each entry under services become?
+mcq_options: A) A volume B) A registry C) An image tag D) A container
+mcq_answer: D
+mcq_why: Every service is run as one or more containers.
+fill_blank: Compose files are written in the ____ format → YAML
+hindi_to_task: Define a service called cache using the redis 7 image.
+task_answer: services:¶  cache:¶    image: redis:7
+own_task: Add a restart policy to a service in a Compose file.
+practice_question: Why are tabs a problem in Compose files?
+practice_answer: YAML requires spaces for indentation.
+
+@DKR-034
+type: code56
+topic: 05 Docker Compose
+level: Intermediate
+term: Compose commands
+cue: Which commands start, stop and inspect a Compose stack?
+kind: CLI command
+frequency: Very high
+importance: 5
+origin: Once a stack is defined, you need verbs to bring it up and down, and Compose wraps the lifecycle in a few commands.
+pro_tip: Use docker compose down -v only when you truly want to erase the stack data.
+memory_story: Up opens the shop, and down closes it and sweeps the floor.
+visual: Several services starting together in one terminal window.
+emotion: The confidence of rebuilding everything from scratch in seconds.
+meaning: docker compose up creates and starts the stack, down stops and removes it, and ps, logs and exec work per service.
+code: docker compose up -d --build¶docker compose ps¶docker compose logs -f web¶docker compose down
+output: Images are built, services start in the background, their state is listed, web logs stream, and everything is removed at the end.
+explanation: up builds missing images and starts services. --build forces a rebuild. down removes containers and networks but keeps named volumes unless you add -v. restart restarts a service, and pull downloads new images. Commands take a service name to act on just one.
+simple_explain: up starts it, down removes it, logs and exec help you debug.
+analogy: It is like opening and closing a shop with one key.
+syntax: docker compose up|down|ps|logs|exec [service]
+anatomy: up = create and start | down = stop and remove | ps = list | logs = output | exec = run inside
+example_1: docker compose up
+example_2: docker compose exec db psql -U postgres
+example_3: docker compose restart web
+variation: docker compose up -d --scale worker=3   // run three copies of a service
+used_with: compose.yaml, docker logs, CI
+related: The Compose file, env files, profiles
+alternatives: docker run for single containers
+where_used: Daily development | CI tests | Demos
+mini_conversation: A: How do I rebuild after changing code? | B: Run docker compose up --build.
+misconception: ✗ docker compose down deletes the database data → ✓ Named volumes are kept unless you add -v
+confused_with: compose stop vs down: stop stops the containers but keeps them, down removes them and the network.
+avoid: Do not run down -v on a stack holding data you need.
+wrong_code: docker compose start -d
+right_code: docker compose up -d
+memory_trick: Up creates, down removes, stop only stops.
+real_project: Using compose up --build in CI to run integration tests then down.
+real_interview: An interviewer may ask: What is the difference between stop and down?
+real_daily: It is like opening and closing a shop with one key.
+mcq_question: What does docker compose down keep by default?
+mcq_options: A) Named volumes B) The network C) Running services D) Containers
+mcq_answer: A
+mcq_why: Volumes are removed only with the -v flag.
+fill_blank: The flag ____ runs the stack in the background → -d
+hindi_to_task: Start the stack in the background and rebuild images.
+task_answer: docker compose up -d --build
+own_task: Show the last 50 lines of logs for the service api.
+practice_question: Which flag makes down delete volumes too?
+practice_answer: -v
+
+@DKR-035
+type: code56
+topic: 05 Docker Compose
+level: Intermediate
+term: Networks and volumes in Compose
+cue: How do you declare shared storage and private networks in a Compose file?
+kind: Compose concept
+frequency: High
+importance: 4
+origin: Real stacks need persistent data and separated traffic, so Compose has top-level sections for volumes and networks.
+pro_tip: Put the database on a private network that the public proxy cannot reach.
+memory_story: Top-level sections are the shared rooms that every service can be given keys to.
+visual: Services attached to named networks and storage.
+emotion: The tidy feeling of clear boundaries.
+meaning: Top-level volumes and networks sections declare named resources that services then attach to by name.
+code: services:¶  db:¶    image: postgres:16¶    environment:¶      POSTGRES_PASSWORD: example¶    volumes:¶      - pgdata:/var/lib/postgresql/data¶    networks: [backend]¶volumes:¶  pgdata:¶networks:¶  backend:
+output: Compose creates the pgdata volume and the backend network, and attaches db to both.
+explanation: Without a networks section Compose makes one default network. Declaring several lets you separate public and private traffic. A volume named at the top level survives down unless you remove it. A bind mount is written as a path directly under a service.
+simple_explain: Declare volumes and networks at the bottom, then list them under each service.
+analogy: It is like shared rooms that services receive keys to.
+syntax: services: name: volumes: [vol:/path] networks: [net] then top-level volumes: and networks:
+anatomy: volumes = storage | networks = private links | service lists = which ones it uses
+example_1: volumes: [./src:/app/src]
+example_2: networks: [frontend, backend]
+example_3: external: true   // reuse a volume created outside
+variation: networks: backend: internal: true   // no outside access
+used_with: depends_on, bridge networks, volumes
+related: volumes, bridge networks, depends_on and health checks
+alternatives: Default network only
+where_used: Databases | Multi-tier apps | Isolation
+mini_conversation: A: Can the proxy reach the database? | B: Not if they share no network.
+misconception: ✗ Every service in a Compose file needs its own network → ✓ All services share a default network unless you declare more
+confused_with: Service volume list vs top-level volumes: one attaches, the other declares.
+avoid: Do not forget to declare a named volume at the top level.
+wrong_code: services:¶  db:¶    volumes: [pgdata:/data]
+right_code: services:¶  db:¶    volumes: [pgdata:/data]¶volumes:¶  pgdata:
+memory_trick: Declare at the bottom, use at the top.
+real_project: Isolating the database on an internal network behind the API.
+real_interview: An interviewer may ask: How do you keep a database private in Compose?
+real_daily: It is like giving keys only to the services that need a room.
+mcq_question: Where is a named volume declared in Compose?
+mcq_options: A) In .dockerignore B) Inside the Dockerfile C) In the top-level volumes section D) In the image tag
+mcq_answer: C
+mcq_why: Named volumes need a top-level declaration.
+fill_blank: A network that blocks outside access is marked ____ → internal
+hindi_to_task: Attach a service to a network named backend.
+task_answer: networks: [backend]
+own_task: Declare a volume called uploads and mount it in the api service.
+practice_question: What survives docker compose down?
+practice_answer: Named volumes, unless -v is used.
+
+@DKR-036
+type: code56
+topic: 05 Docker Compose
+level: Advanced
+term: depends_on and health checks
+cue: How do you make one service wait until another is truly ready?
+kind: Compose concept
+frequency: High
+importance: 5
+origin: A started container is not always a ready one, so Compose can wait for a health check rather than just a start.
+pro_tip: Pair condition service_healthy with a real health check, never rely on start order alone.
+memory_story: Depends_on is a waiter who holds the dish until the kitchen says it is ready.
+visual: An arrow from web to db with a green check.
+emotion: The relief of no more random start-up crashes.
+meaning: depends_on sets start order, and with condition service_healthy it waits until the dependency passes its health check.
+code: services:¶  db:¶    image: postgres:16¶    environment:¶      POSTGRES_PASSWORD: example¶    healthcheck:¶      test: ["CMD-SHELL", "pg_isready -U postgres"]¶      interval: 5s¶      retries: 10¶  api:¶    build: .¶    depends_on:¶      db:¶        condition: service_healthy
+output: The api container starts only after pg_isready reports that the database accepts connections.
+explanation: Plain depends_on only waits for the container to start, which may be long before the database is ready. A healthcheck defines a command that Docker runs repeatedly. Only when it succeeds is the service marked healthy. Your app should still retry connections, because a database can restart later.
+simple_explain: Add a healthcheck to the dependency, then wait for service_healthy.
+analogy: It is like a waiter holding a dish until the kitchen says it is ready.
+syntax: depends_on: service: condition: service_healthy
+anatomy: depends_on = order | condition = what to wait for | healthcheck = readiness test
+example_1: condition: service_started
+example_2: condition: service_completed_successfully
+example_3: healthcheck: test: ["CMD", "curl", "-f", "http://localhost/health"]
+variation: start_period: 30s   // grace time before failures count
+used_with: healthchecks, restart policies, migrations
+related: HEALTHCHECK, Compose commands, debugging a failing container
+alternatives: Retry logic in the app | Wait scripts
+where_used: Databases | Migrations | Slow services
+mini_conversation: A: The API crashes because the database is not ready. | B: Wait for the health check.
+misconception: ✗ depends_on waits until the dependency is ready → ✓ By default it only waits until the container has started
+confused_with: service_started vs service_healthy: started means running, healthy means passing its check.
+avoid: Do not depend on start order alone for readiness.
+wrong_code: depends_on: [db]
+right_code: depends_on:¶  db:¶    condition: service_healthy
+memory_trick: Started is not the same as ready.
+real_project: Making migrations wait for Postgres to pass pg_isready.
+real_interview: An interviewer may ask: Why does depends_on not guarantee readiness?
+real_daily: It is like a waiter waiting for the kitchen's signal.
+mcq_question: What does plain depends_on wait for?
+mcq_options: A) The database to be healthy B) The container to start C) The image to be pushed D) The app to be ready
+mcq_answer: B
+mcq_why: Without a condition only the start is awaited.
+fill_blank: To wait for a passing check you use condition: service_____ → healthy
+hindi_to_task: Make api wait until db is healthy.
+task_answer: depends_on:¶  db:¶    condition: service_healthy
+own_task: Write a health check for a web service using curl.
+practice_question: Why should the app still retry its database connection?
+practice_answer: The database can restart or become unavailable later.
+
+@DKR-037
+type: code56
+topic: 05 Docker Compose
+level: Intermediate
+term: Environment and env files
+cue: How do you pass settings and secrets into Compose services without hard-coding them?
+kind: Compose concept
+frequency: Very high
+importance: 5
+origin: Settings change per environment, so Compose reads variables from the shell and from env files rather than from the YAML itself.
+pro_tip: Commit a .env.example, never the real .env file.
+memory_story: An env file is a sealed envelope of settings handed to each container at start.
+visual: A .env file feeding values into a service.
+emotion: The calm of keeping passwords out of the repository.
+meaning: Compose passes variables to containers through environment and env_file, and substitutes ${VAR} values in the YAML from the shell or a .env file.
+code: services:¶  api:¶    image: myapi:1.0¶    env_file: [.env.api]¶    environment:¶      LOG_LEVEL: ${LOG_LEVEL:-info}
+output: Variables from .env.api are loaded, and LOG_LEVEL falls back to info if it is not set.
+explanation: A file named .env next to the compose file is used for substitution in the YAML. env_file loads variables into the container itself. The syntax ${VAR:-default} supplies a default, and ${VAR:?error} fails if it is missing. Values in environment override those from env_file.
+simple_explain: Keep settings in an env file, reference them with ${NAME}, and ignore the file in Git.
+analogy: It is like a sealed envelope of settings given to each container.
+syntax: env_file: [file] | environment: KEY: value | ${VAR:-default}
+anatomy: env_file = load file | environment = inline | ${VAR:-x} = default value
+example_1: DATABASE_URL=postgres://db:5432/app
+example_2: ${PORT:-8000}
+example_3: ${API_KEY:?API_KEY is required}
+variation: docker compose --env-file prod.env up   // choose another env file
+used_with: .gitignore, secrets, CI variables
+related: ENV and ARG, secrets, override files
+alternatives: Docker secrets | Secret managers
+where_used: Configuration | Database URLs | Per-environment settings
+mini_conversation: A: Where do I put the database password? | B: In an ignored env file, not the YAML.
+misconception: ✗ An env file is secure storage → ✓ It is plain text, so keep it out of Git and image layers
+confused_with: .env substitution vs env_file: one fills the YAML, the other feeds the container.
+avoid: Do not commit .env files with real secrets.
+wrong_code: environment:¶  PASSWORD: hunter2
+right_code: environment:¶  PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+memory_trick: Commit the example, ignore the real one.
+real_project: Using a committed .env.example so new developers knew every needed variable.
+real_interview: An interviewer may ask: How do you keep secrets out of a Compose file?
+real_daily: It is like handing each person a sealed envelope.
+mcq_question: What does ${VAR:-info} do?
+mcq_options: A) Uses info if VAR is unset B) Prints VAR C) Fails if VAR is unset D) Always uses info
+mcq_answer: A
+mcq_why: The part after the colon dash is the default.
+fill_blank: Variables from a file are loaded into a container with ____ → env_file
+hindi_to_task: Load variables from .env.api into a service.
+task_answer: env_file: [.env.api]
+own_task: Make Compose fail clearly if API_KEY is not set.
+practice_question: Which wins, environment or env_file?
+practice_answer: environment overrides env_file.
+
+@DKR-038
+type: code56
+topic: 05 Docker Compose
+level: Intermediate
+term: Compose profiles
+cue: How do you keep optional services from starting every time?
+kind: Compose concept
+frequency: Medium
+importance: 3
+origin: Stacks include helpers like debuggers and admin tools that you rarely need, so profiles let you switch them on only when asked.
+pro_tip: Put admin tools and test helpers in a profile so the default stack stays small.
+memory_story: Profiles are optional extra guests who come only when invited.
+visual: A service with a profile tag, skipped by default.
+emotion: The lightness of a stack that starts fast.
+meaning: A service with a profiles list starts only when that profile is activated, while services without profiles always start.
+code: services:¶  api:¶    build: .¶  adminer:¶    image: adminer¶    profiles: [tools]
+output: docker compose up starts only api, and docker compose --profile tools up also starts adminer.
+explanation: Services without a profile are always started. Activating a profile with --profile or the COMPOSE_PROFILES variable adds its services. This avoids separate files for small differences. A service named explicitly on the command line starts even if it has a profile.
+simple_explain: Tag optional services with a profile and start them only when needed.
+analogy: It is like optional guests who attend only by invitation.
+syntax: profiles: [name] | docker compose --profile name up
+anatomy: profiles = tags | --profile = activate | COMPOSE_PROFILES = environment way
+example_1: profiles: [debug]
+example_2: COMPOSE_PROFILES=tools docker compose up
+example_3: docker compose run adminer
+variation: docker compose --profile tools --profile debug up   // activate two profiles
+used_with: Compose commands, override files, test helpers
+related: The Compose file, Compose commands, override files
+alternatives: Separate Compose files
+where_used: Admin tools | Debug services | Test jobs
+mini_conversation: A: Why does the stack start database admin tools? | B: Move them into a profile.
+misconception: ✗ Services with a profile always start → ✓ They start only when the profile is activated or the service is named
+confused_with: Profiles vs override files: profiles toggle services, overrides change settings.
+avoid: Do not put essential services behind a profile.
+wrong_code: profile: tools
+right_code: profiles: [tools]
+memory_trick: Profile means optional, invite only.
+real_project: Hiding a database admin UI behind a tools profile in the dev stack.
+real_interview: An interviewer may ask: How do you make a service optional in Compose?
+real_daily: It is like guests who come only by invitation.
+mcq_question: Which command-line option switches on a group of optional services?
+mcq_options: A) --tags B) --only C) --profile D) --enable
+mcq_answer: C
+mcq_why: --profile name activates that group of services.
+fill_blank: Optional services get a ____ list in the file → profiles
+hindi_to_task: Put the service adminer behind a profile named tools.
+task_answer: profiles: [tools]
+own_task: Start the stack with the debug profile active.
+practice_question: Do services without a profile start by default?
+practice_answer: Yes, they always start.
+
+@DKR-039
+type: code56
+topic: 05 Docker Compose
+level: Advanced
+term: Override files
+cue: How do you change a Compose stack for development or production without copying the whole file?
+kind: Compose concept
+frequency: Medium
+importance: 4
+origin: Different environments need small changes, so Compose can merge several files on top of one base file.
+pro_tip: Keep shared settings in compose.yaml and differences in small override files.
+memory_story: An override file is a transparent sheet laid over the base drawing.
+visual: Two files merging into one resulting setup.
+emotion: The neatness of a base file that stays unchanged.
+meaning: Compose merges multiple files in order, and settings in later files override or extend those in earlier ones.
+code: docker compose -f compose.yaml -f compose.dev.yaml up¶docker compose -f compose.yaml -f compose.prod.yaml config
+output: The first command starts the merged development stack, and the second prints the final merged configuration for production.
+explanation: A file named compose.override.yaml is merged automatically with compose.yaml. Lists such as ports are combined, while single values like image are replaced. The config command shows the final result, which is the safest way to check what will run. Use it before deploying.
+simple_explain: Put the common part in the base file and the differences in an override.
+analogy: It is like laying a transparent sheet over a base drawing.
+syntax: docker compose -f base.yaml -f override.yaml up
+anatomy: -f = file | later file wins | config = show merged result
+example_1: docker compose config
+example_2: docker compose -f compose.yaml -f compose.test.yaml run tests
+example_3: docker compose config --services
+variation: COMPOSE_FILE=compose.yaml:compose.dev.yaml   // set files through a variable
+used_with: env files, profiles, CI
+related: The Compose file, env files, Compose profiles
+alternatives: Profiles | Separate full files
+where_used: Dev versus prod | Test stacks | CI
+mini_conversation: A: Dev needs a bind mount but prod does not. | B: Add it in a dev override file.
+misconception: ✗ Override files must repeat the whole base file → ✓ They contain only the parts that differ
+confused_with: Override files vs profiles: overrides change values, profiles select services.
+avoid: Do not guess the merged result, print it with config.
+wrong_code: docker compose -f compose.dev.yaml -f compose.yaml up
+right_code: docker compose -f compose.yaml -f compose.dev.yaml up
+memory_trick: Base first, override last, last wins.
+real_project: Adding bind mounts and debug ports only in a dev override file.
+real_interview: An interviewer may ask: How do you manage dev and prod differences?
+real_daily: It is like laying a transparent sheet over a base drawing.
+mcq_question: Which command shows the final merged configuration?
+mcq_options: A) docker compose logs B) docker compose config C) docker compose ps D) docker compose top
+mcq_answer: B
+mcq_why: config prints the merged and resolved file.
+fill_blank: When files conflict, the ____ file listed wins → last
+hindi_to_task: Start a stack using compose.yaml and compose.dev.yaml together.
+task_answer: docker compose -f compose.yaml -f compose.dev.yaml up
+own_task: Print only the service names from the merged configuration.
+practice_question: What file name is merged automatically with compose.yaml?
+practice_answer: compose.override.yaml

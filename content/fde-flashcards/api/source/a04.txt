@@ -1,0 +1,348 @@
+
+@API-028
+type: code56
+topic: 05 Making calls
+level: Beginner
+term: curl
+cue: Which command-line tool lets you send an HTTP request from the terminal to test an API quickly?
+kind: Command-line tool
+frequency: Very high
+importance: 5
+origin: Developers needed a quick way to try web requests without writing a program, so curl was created as a small command-line tool that transfers data over many protocols.
+pro_tip: Add -i to see the response headers and status line, which is very useful when debugging.
+memory_story: curl is a pocket telephone that dials any web address directly from your terminal.
+visual: A terminal window with a short command and a JSON response printed beneath it.
+emotion: The satisfaction of seeing a real API answer after one line of typing.
+meaning: curl is a command-line tool that sends HTTP requests and prints the response.
+code: curl -i https://api.example.com/v1/users/42 -H "Accept: application/json"
+output: HTTP/2 200¶content-type: application/json¶¶{"id": 42, "name": "Asha"}
+explanation: By default curl sends a GET request. You can set the method with -X, add headers with -H, send a body with -d, and show response headers with -i. Many API documentation pages give examples as curl commands, which you can paste into a terminal to try.
+simple_explain: Type curl and a URL to make a request. Add -H for headers, -d for a body and -i to see the status and headers.
+analogy: It is like a pocket telephone that dials any web address from your terminal.
+syntax: curl [options] <url>
+anatomy: -X = method | -H = header | -d = request body | -i = show response headers
+example_1: curl https://api.example.com/v1/users
+example_2: curl -X POST https://api.example.com/v1/users -H "Content-Type: application/json" -d '{"name": "Asha"}'
+example_3: curl -i -H "Authorization: Bearer $TOKEN" https://api.example.com/v1/me
+variation: curl -s URL   // silent, hide the progress bar¶curl -v URL   // verbose, show the whole conversation
+used_with: -X, -H, -d, -i, -v
+related: fetch, API client tools, HTTP methods
+alternatives: Postman or a similar API client
+where_used: Testing endpoints | API documentation | Quick debugging
+mini_conversation: A: Does the endpoint work before I code against it? | B: Try it with curl first, and look at the status and body.
+misconception: ✗ curl is only for downloading files → ✓ curl can send any kind of HTTP request, including POST requests with headers and a body
+confused_with: curl vs fetch: curl runs in the terminal, fetch runs inside JavaScript code.
+avoid: Do not paste real tokens into commands that are saved in a shared history.
+wrong_code: curl -X POST https://api.example.com/v1/users -d {"name": "Asha"}
+right_code: curl -X POST https://api.example.com/v1/users -H "Content-Type: application/json" -d '{"name": "Asha"}'
+memory_trick: curl calls a URL from the terminal.
+real_project: Testing a new endpoint with curl before writing any code for it.
+real_interview: An interviewer may ask: How do you test an API from the command line?
+real_daily: It is like a pocket telephone that dials any web address.
+mcq_question: Which curl option adds a header to the request?
+mcq_options: A) -s B) -H C) -d D) -i
+mcq_answer: B
+mcq_why: -H adds a request header, while -d sends a body.
+fill_blank: The curl option that shows the response headers is -____ → i
+hindi_to_task: Send a GET request to /v1/users with the Accept header set to JSON.
+task_answer: curl https://api.example.com/v1/users -H "Accept: application/json"
+own_task: Run a curl request against a public test API and read its status.
+practice_question: What method does curl use when you give no -X option?
+practice_answer: GET
+
+@API-029
+type: topic56
+topic: 05 Making calls
+level: Beginner
+term: API client tools (Postman and similar)
+cue: Which kind of graphical tool lets you build, send and save API requests without writing code?
+category: Developer tool
+frequency: High
+importance: 3
+origin: Typing long commands is slow for exploring an API, so graphical tools appeared that let you fill in forms for the URL, headers and body and see the response clearly.
+pro_tip: Save requests in a collection and use environment variables for the base URL and tokens, so switching between test and live is one click.
+memory_story: An API client is a workbench where every request is a labelled tool you can pick up and reuse.
+visual: A window with a URL bar, tabs for headers and body, and a formatted response below.
+emotion: The comfort of exploring an API visually before coding.
+definition: An API client is a graphical tool, such as Postman, Insomnia or Bruno, in which you compose requests, send them and inspect responses.
+explanation: You choose the method, enter the URL, add headers, params and a body, and press send. The tool shows status, time, headers and a formatted body. Collections save related requests, and variables let one set of requests work against different environments. Many tools can also export code in several languages.
+simple_explain: An API client is a point-and-click way to try an API. You fill in the request, send it and read the answer, and you can save it for later.
+analogy: It is like a workbench where every request is a labelled tool you can reuse.
+formula_rule: Build request → send → read status and body → save in a collection
+example_1: Testing a login request and reading the returned token.
+example_2: Saving ten requests in a collection for a project.
+example_3: Switching an environment variable from test to live.
+related: curl, fetch, environments, API documentation
+word_family: collection, environment, variable, request, response
+where_used: Exploring new APIs | Team testing | Sharing examples
+mini_conversation: A: I want to try this API before coding. | B: Use an API client, fill in the request and look at the response.
+misconception: ✗ API clients replace the need to understand HTTP → ✓ The tool only helps you send requests, and you still need to understand methods, headers and status codes
+contrast: API client vs curl: an API client is graphical and saves requests, curl is a quick terminal command.
+avoid: Do not share a collection that contains real secrets.
+memory_trick: An API client is a workbench for requests.
+real_project: Keeping a shared collection of the team's API calls with test environments.
+real_interview: An interviewer may ask: How do you explore and test an API before coding?
+real_daily: It is like a workbench with labelled tools.
+mcq_question: What is the main benefit of an API client tool?
+mcq_options: A) Storing databases B) Hosting a website C) Writing DAX D) Building and testing requests without writing code
+mcq_answer: D
+mcq_why: It lets you compose, send and inspect requests visually.
+fill_blank: Related saved requests in Postman are grouped into a ____ → collection
+apply: How can one set of requests work for test and live servers? → Use environment variables for the base URL and tokens
+explain_task: Explain API client tools in three lines.
+own_task: List five requests you would save in a collection for a to-do API.
+
+@API-030
+type: code56
+topic: 05 Making calls
+level: Beginner
+term: fetch (making a GET request in JavaScript)
+cue: Which built-in JavaScript function sends an HTTP request and returns a promise for the response?
+kind: JavaScript function
+frequency: Very high
+importance: 5
+origin: Browsers used XMLHttpRequest for network calls, which was clumsy, so the fetch function was introduced with a cleaner promise-based design.
+pro_tip: Use async and await so the code reads from top to bottom like normal steps.
+memory_story: fetch is a courier you send to an address, and it comes back with a parcel to open.
+visual: A function call arrow leaving a script and returning with a response object.
+emotion: The thrill of your own code pulling live data from the internet.
+meaning: fetch sends an HTTP request and returns a promise that resolves to a Response object.
+code: const res = await fetch("https://api.example.com/v1/users/42");¶const user = await res.json();¶console.log(user.name);
+output: Asha
+explanation: fetch takes a URL and an optional settings object. Without settings it sends a GET request. It resolves with a Response, which has status, headers and methods such as json() and text() that read the body. Both steps are asynchronous, so each uses await.
+simple_explain: Call fetch with a URL, wait for the response, then call res.json() to read the data. Use await so the code waits for each step.
+analogy: It is like sending a courier to an address and waiting for the parcel to come back.
+syntax: const res = await fetch(url, options)
+anatomy: fetch = send the request | url = where to send | options = method, headers, body | await = wait for the answer
+example_1: const res = await fetch("https://api.example.com/v1/users");
+example_2: const res = await fetch(url, { method: "DELETE" });
+example_3: const text = await (await fetch(url)).text();
+variation: fetch(url).then(res => res.json())   // promise chain style¶await fetch(url, { headers: { Accept: "application/json" } })
+used_with: await, res.json(), headers, async functions
+related: curl, response handling, Promise, error handling
+alternatives: axios or another HTTP library
+where_used: Web front ends | Node.js scripts | Calling any REST API
+mini_conversation: A: How do I get data from an API in JavaScript? | B: Use fetch with the URL, await it, and then read res.json().
+misconception: ✗ fetch returns the data directly → ✓ fetch returns a promise for a Response object, and you must read the body with res.json() or res.text()
+confused_with: fetch vs res.json(): fetch gets the response, res.json() reads and parses its body.
+avoid: Do not forget await, or you will be holding a promise instead of the data.
+wrong_code: const user = await fetch("https://api.example.com/v1/users/42");
+right_code: const res = await fetch("https://api.example.com/v1/users/42"); const user = await res.json();
+memory_trick: fetch fetches the response, json reads it.
+real_project: Loading a list of products from an API and showing it on a page.
+real_interview: An interviewer may ask: What does fetch return?
+real_daily: It is like sending a courier and waiting for the parcel.
+mcq_question: What does fetch return?
+mcq_options: A) A string B) The JSON data directly C) A promise for a Response D) A boolean
+mcq_answer: C
+mcq_why: fetch gives a promise that resolves to a Response object.
+fill_blank: const res = ____ fetch(url); → await
+hindi_to_task: Fetch the user at /v1/users/7 and print the name.
+task_answer: const res = await fetch("https://api.example.com/v1/users/7"); const user = await res.json(); console.log(user.name);
+own_task: Write a short script that fetches a public API and prints one field.
+practice_question: What method of the response reads the body as JSON?
+practice_answer: res.json()
+
+@API-031
+type: code56
+topic: 05 Making calls
+level: Beginner
+term: Sending query parameters (URLSearchParams)
+cue: Which built-in helper builds a correctly encoded query string for you from an object of values?
+kind: JavaScript technique
+frequency: High
+importance: 4
+origin: Gluing query strings together by hand breaks on spaces and special characters, so JavaScript added a helper that encodes them safely.
+pro_tip: Build query strings with URLSearchParams instead of concatenating text yourself.
+memory_story: URLSearchParams is a careful packer that boxes every option so nothing breaks in transit.
+visual: An object of options turning into a neat string after a question mark.
+emotion: The relief of never worrying about spaces and symbols in URLs again.
+meaning: URLSearchParams turns a set of key and value pairs into a properly encoded query string.
+code: const params = new URLSearchParams({ city: "New Delhi", units: "metric" });¶const url = "https://api.example.com/v1/weather?" + params.toString();¶console.log(url);
+output: https://api.example.com/v1/weather?city=New+Delhi&units=metric
+explanation: URLSearchParams encodes spaces and special characters, so values such as New Delhi or a & symbol do not break the URL. You can also use the URL class and its searchParams property. It makes code shorter and prevents bugs from missing encoding.
+simple_explain: Give URLSearchParams an object and it creates the part after the question mark, with correct encoding. Then add it to your URL.
+analogy: It is like a careful packer who boxes every option so nothing breaks in transit.
+syntax: new URLSearchParams(object).toString()
+anatomy: new URLSearchParams = create the helper | object = key and value pairs | toString() = get the query string
+example_1: new URLSearchParams({ page: 2, limit: 10 }).toString()
+example_2: const url = new URL("https://api.example.com/v1/orders"); url.searchParams.set("status", "paid");
+example_3: params.append("tag", "a&b")
+variation: url.searchParams.append("tag", "new")   // add a repeated key¶url.toString()   // the full URL
+used_with: URL, fetch, pagination, filtering
+related: URL parts, pagination, fetch
+alternatives: encodeURIComponent for single values
+where_used: Filtering | Pagination | Search endpoints
+mini_conversation: A: My search with a space in it breaks the URL. | B: Build the query with URLSearchParams so it is encoded.
+misconception: ✗ Spaces and symbols can be put directly into a URL → ✓ Special characters must be encoded, and URLSearchParams does that for you
+confused_with: URLSearchParams vs encodeURIComponent: the first builds a whole query string, the second encodes one value.
+avoid: Do not build query strings by joining text with ampersands.
+wrong_code: const url = "https://api.example.com/v1/weather?city=" + "New Delhi";
+right_code: const url = "https://api.example.com/v1/weather?" + new URLSearchParams({ city: "New Delhi" });
+memory_trick: URLSearchParams packs your options safely for you.
+real_project: Building search and filter URLs for a product list.
+real_interview: An interviewer may ask: Why should query strings be encoded?
+real_daily: It is like a careful packer who boxes every option.
+mcq_question: Which tool builds an encoded query string from an object?
+mcq_options: A) URLSearchParams B) Date.now C) Math.random D) JSON.parse
+mcq_answer: A
+mcq_why: URLSearchParams encodes pairs into a query string.
+fill_blank: new URLSearchParams({ page: 2 }).____() gives the query string → toString
+hindi_to_task: Build the query string for page 3 and limit 20.
+task_answer: new URLSearchParams({ page: 3, limit: 20 }).toString()
+own_task: Build a URL with a search term that contains a space.
+practice_question: What does URLSearchParams do with a space in a value?
+practice_answer: It encodes it, usually as a plus sign or percent code.
+
+@API-032
+type: code56
+topic: 05 Making calls
+level: Intermediate
+term: Sending a JSON body (POST with fetch)
+cue: How do you create a record by sending JSON data with fetch?
+kind: JavaScript technique
+frequency: Very high
+importance: 5
+origin: Creating or updating data needs a body and the right headers, so fetch accepts an options object where you set the method, headers and body.
+pro_tip: Always use JSON.stringify for the body and set the Content-Type header, or the server will not understand it.
+memory_story: Sending JSON is putting a typed letter into an envelope and writing on it what language it is in.
+visual: An object turned into text, placed in a request marked with a JSON label.
+emotion: The pleasure of seeing a new record appear after your call.
+meaning: To send JSON with fetch, set method to POST, add a JSON Content-Type header, and pass JSON.stringify of your object as the body.
+code: const res = await fetch("https://api.example.com/v1/users", {¶  method: "POST",¶  headers: { "Content-Type": "application/json" },¶  body: JSON.stringify({ name: "Asha", email: "asha@example.com" })¶});¶console.log(res.status);
+output: 201
+explanation: fetch sends a GET request unless you set a different method. The body must be a string, so objects need JSON.stringify. Without the Content-Type header the server may not treat the body as JSON. A successful create usually returns 201 and often the created record.
+simple_explain: Set the method to POST, add the JSON header, and stringify your object into the body. Then read the response status.
+analogy: It is like putting a typed letter into an envelope and marking the language on it.
+syntax: fetch(url, { method, headers, body: JSON.stringify(data) })
+anatomy: method = POST | headers = Content-Type | body = text version of your data
+example_1: fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(user) })
+example_2: fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) })
+example_3: fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(product) })
+variation: const created = await res.json();   // read the new record¶headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
+used_with: JSON.stringify, Content-Type, status 201, Authorization
+related: request body, HTTP methods, Content-Type
+alternatives: A library such as axios that stringifies for you
+where_used: Creating records | Updating profiles | Submitting forms to APIs
+mini_conversation: A: The server says my body is empty. | B: Did you stringify the object and set the JSON content type?
+misconception: ✗ You can pass a JavaScript object directly as the fetch body → ✓ The body must be a string or similar, so use JSON.stringify for JSON
+confused_with: JSON.stringify vs JSON.parse: stringify prepares data to send, parse reads data received.
+avoid: Do not forget the Content-Type header.
+wrong_code: fetch(url, { method: "POST", body: { name: "Asha" } })
+right_code: fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "Asha" }) })
+memory_trick: Stringify the body and label it JSON.
+real_project: Creating an order from a form by posting the items as JSON.
+real_interview: An interviewer may ask: How do you send JSON in a POST request with fetch?
+real_daily: It is like putting a typed letter in an envelope and marking its language.
+mcq_question: What must you do to an object before sending it as a JSON body?
+mcq_options: A) Use Math.round B) Use JSON.stringify C) Use JSON.parse D) Delete its keys
+mcq_answer: B
+mcq_why: The body must be text, so the object is converted with JSON.stringify.
+fill_blank: body: JSON.____({ name: "Asha" }) → stringify
+hindi_to_task: Post a new product with the name Pen to /v1/products.
+task_answer: fetch("https://api.example.com/v1/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "Pen" }) })
+own_task: Write a fetch call that creates a to-do item.
+practice_question: What status code do you usually expect after a successful create?
+practice_answer: 201 Created
+
+@API-033
+type: code56
+topic: 05 Making calls
+level: Intermediate
+term: Checking the response (res.ok and res.status)
+cue: Why must you check the response status yourself, since fetch does not fail on a 404 or a 500?
+kind: JavaScript technique
+frequency: Very high
+importance: 5
+origin: fetch treats any answer from the server as success at the network level, so only broken connections reject, and it leaves status checking to the developer.
+pro_tip: Check res.ok before parsing, and read the error body for the provider's message.
+memory_story: fetch tells you the parcel arrived, but you must open it to see whether it holds the goods or a complaint.
+visual: A response with a red 404 label that still arrives without any error being thrown.
+emotion: The relief of catching errors that would otherwise stay hidden.
+meaning: res.ok is true when the status is between 200 and 299, and you must check it because fetch resolves even for error statuses.
+code: const res = await fetch("https://api.example.com/v1/users/999");¶if (!res.ok) {¶  throw new Error(`Request failed with status ${res.status}`);¶}¶const user = await res.json();
+output: An Error with the message Request failed with status 404 if the user does not exist.
+explanation: fetch rejects only on network failures such as no connection. A 404 or 500 still resolves normally, so without a check your code would try to parse an error body as if it were data. Check res.ok, then read the status and body to decide what to do.
+simple_explain: After every fetch, check res.ok. If it is false, handle the error before using the data.
+analogy: It is like noticing that the parcel arrived but holds a complaint instead of the goods.
+syntax: if (!res.ok) { ... }
+anatomy: res.ok = true for 200 to 299 | res.status = the exact number | res.statusText = the short text
+example_1: if (!res.ok) throw new Error(res.status);
+example_2: if (res.status === 404) return null;
+example_3: const err = await res.json(); console.error(err.message);
+variation: if (res.status === 401) refreshToken();   // handle a specific status¶const body = await res.text();   // read an error body as text
+used_with: fetch, try and catch, status codes, error handling
+related: status codes, error handling, fetch
+alternatives: axios, which rejects on error statuses by default
+where_used: Every real API client | Error handling | Retries
+mini_conversation: A: My code crashes parsing the response. | B: The status was probably 500, so check res.ok before calling res.json().
+misconception: ✗ fetch throws an error when the server returns 404 or 500 → ✓ fetch only rejects on network failures, and you must check res.ok yourself
+confused_with: res.ok vs res.status: ok is a true or false check, status is the exact number.
+avoid: Do not call res.json() before checking whether the call succeeded.
+wrong_code: const user = await (await fetch(url)).json();
+right_code: const res = await fetch(url); if (!res.ok) throw new Error(res.status); const user = await res.json();
+memory_trick: fetch fails on the network, not on the status.
+real_project: Wrapping fetch in a helper that throws an error for any non-2xx response.
+real_interview: An interviewer may ask: Does fetch reject on a 404?
+real_daily: It is like noticing a parcel arrived but holds a complaint.
+mcq_question: When does fetch reject its promise?
+mcq_options: A) On every 500 B) Never C) On every 404 D) On a network failure
+mcq_answer: D
+mcq_why: fetch rejects only when the request cannot be completed, such as no connection.
+fill_blank: res.____ is true for statuses from 200 to 299 → ok
+hindi_to_task: Throw an error if the response is not successful.
+task_answer: if (!res.ok) { throw new Error(`Failed: ${res.status}`); }
+own_task: Write a helper function that throws an error on a non-2xx response.
+practice_question: What does res.ok return for a 404 response?
+practice_answer: false
+
+@API-034
+type: code56
+topic: 05 Making calls
+level: Intermediate
+term: Setting headers in a request
+cue: How do you attach headers such as Authorization and Accept to a fetch call?
+kind: JavaScript technique
+frequency: High
+importance: 4
+origin: Authentication and content details travel in headers, so fetch lets you pass a headers object as part of its options.
+pro_tip: Create one function that builds the common headers, and reuse it for every request.
+memory_story: Setting headers is writing the labels on the parcel before it leaves.
+visual: A small table of names and values attached to an outgoing request.
+emotion: The satisfaction of a request that is accepted at last.
+meaning: Headers are passed in the headers field of the fetch options as an object of names and values.
+code: const res = await fetch("https://api.example.com/v1/orders", {¶  headers: {¶    Authorization: `Bearer ${token}`,¶    Accept: "application/json"¶  }¶});
+output: The server receives both headers with the request and uses them to authenticate and choose the response format.
+explanation: Header names are case-insensitive, but it is common to write them in the form shown in the documentation. You can also build a Headers object and set values with its set method. Do not send headers that the browser controls itself, such as Host.
+simple_explain: Put a headers object inside the options of fetch. Each key is a header name and each value is its text.
+analogy: It is like writing labels on a parcel before it leaves.
+syntax: fetch(url, { headers: { Name: "value" } })
+anatomy: headers = the options field | Name = header name | "value" = header value
+example_1: headers: { Accept: "application/json" }
+example_2: headers: { "Accept-Language": "en" }
+example_3: headers: { "Content-Type": "application/json", "X-Request-Id": id }
+variation: const h = new Headers(); h.set("Accept", "application/json");¶headers: { ...baseHeaders, "X-Extra": "1" }   // merge with a shared set
+used_with: Authorization, Content-Type, Accept, Bearer token
+related: headers, authentication, Content-Type
+alternatives: A library setting default headers once
+where_used: Authentication | Content negotiation | Tracing requests
+mini_conversation: A: The server says I am not authorised. | B: Add the Authorization header to the fetch options.
+misconception: ✗ Headers can be placed anywhere in the fetch call → ✓ Headers belong in the headers field of the options object
+confused_with: headers vs body: headers describe the request, the body carries the data.
+avoid: Do not put a header name with a space or colon inside the key.
+wrong_code: fetch(url, { Authorization: token })
+right_code: fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+memory_trick: Headers go in the headers field.
+real_project: Building one function that adds the token and accept headers to every request.
+real_interview: An interviewer may ask: How do you pass an authorisation header with fetch?
+real_daily: It is like writing labels on a parcel before it leaves.
+mcq_question: Where do headers go in a fetch call?
+mcq_options: A) In the status line B) In the URL fragment C) In the headers field of the options D) In the response
+mcq_answer: C
+mcq_why: The options object has a headers field for them.
+fill_blank: fetch(url, { ____: { Accept: "application/json" } }) → headers
+hindi_to_task: Send the Accept header with the value application/json.
+task_answer: fetch(url, { headers: { Accept: "application/json" } })
+own_task: Write a helper that returns the standard headers for authenticated calls.
+practice_question: Are header names case-sensitive?
+practice_answer: No, header names are case-insensitive.

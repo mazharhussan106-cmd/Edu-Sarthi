@@ -1,0 +1,429 @@
+
+@API-043
+type: topic56
+topic: 07 Webhooks and async
+level: Intermediate
+term: Webhook
+cue: What is it called when a service sends an HTTP request to your URL by itself as soon as an event happens?
+category: Integration pattern
+frequency: High
+importance: 5
+origin: Asking a service again and again whether something has happened is wasteful, so providers reverse the direction and call you when the event occurs.
+pro_tip: Respond with a 2xx quickly and do the heavy work afterwards, or the provider may think delivery failed and retry.
+memory_story: A webhook is a doorbell: instead of checking the door every minute, you hear a ring when someone arrives.
+visual: A provider sending an arrow to your server's URL the moment a payment succeeds.
+emotion: The ease of being told instead of constantly asking.
+definition: A webhook is an HTTP request that a provider sends to a URL you registered whenever a chosen event happens.
+explanation: You give the provider a public HTTPS URL and choose the events, such as payment succeeded. When an event occurs, the provider sends a POST with a JSON body describing it. Your server verifies it, processes it and returns a 2xx status. If you fail or time out, many providers retry.
+simple_explain: Instead of you asking whether something happened, the provider calls your URL when it does. Your job is to receive, verify and reply quickly.
+analogy: It is like a doorbell that rings when someone arrives, instead of you checking the door every minute.
+formula_rule: Event happens → provider POSTs to your URL → you verify, process and return 2xx
+example_1: A payment provider notifying your server that a payment succeeded.
+example_2: A code hosting service notifying a build server about a new commit.
+example_3: A messaging service notifying you that an email was delivered.
+related: polling, signature verification, idempotency, API vs SDK vs webhook
+word_family: webhook, event, callback, endpoint, delivery
+where_used: Payments | Messaging | Continuous integration
+mini_conversation: A: How do we know when a payment completes? | B: Register a webhook and the provider will call our URL.
+misconception: ✗ A webhook is a request your app sends to ask for new data → ✓ A webhook is a request the provider sends to your URL when an event occurs
+contrast: Webhook vs polling: a webhook pushes events to you, polling means you keep asking.
+avoid: Do not do slow work before replying to a webhook.
+memory_trick: A webhook rings your bell when it happens.
+real_project: Marking an order paid when a payment webhook arrives.
+real_interview: An interviewer may ask: What is a webhook and how is it different from polling?
+real_daily: It is like a doorbell that rings when someone arrives.
+mcq_question: Who sends the request in a webhook?
+mcq_options: A) The user B) The browser C) The database D) The provider
+mcq_answer: D
+mcq_why: A webhook is the provider calling your registered URL.
+fill_blank: You return a ____ status quickly to confirm receipt of a webhook → 2xx
+apply: How do you learn that a payment succeeded without asking repeatedly? → Register a webhook for the payment event
+explain_task: Explain a webhook in three lines.
+own_task: Write the steps your server follows when a webhook arrives.
+
+@API-044
+type: code56
+topic: 07 Webhooks and async
+level: Advanced
+term: Verifying webhook signatures
+cue: How do you check that a webhook really came from the provider and was not forged or changed on the way?
+kind: Security technique
+frequency: High
+importance: 5
+origin: A webhook URL is public, so anyone could post fake events to it, and providers therefore sign each delivery with a shared secret that only they and you know.
+pro_tip: Compute the signature from the raw request body, and compare with a timing-safe function.
+memory_story: A signature is a wax seal that only the real sender could have pressed.
+visual: A message with a stamped seal being compared with a seal you recalculate yourself.
+emotion: The confidence of knowing an event is genuine before acting on it.
+meaning: Signature verification recalculates a keyed hash of the raw body and compares it to the signature header sent by the provider.
+code: import crypto from "node:crypto";¶function isValid(rawBody, signature, secret) {¶  const expected = Buffer.from(crypto.createHmac("sha256", secret).update(rawBody).digest("hex"));¶  const given = Buffer.from(signature);¶  return expected.length === given.length && crypto.timingSafeEqual(expected, given);¶}
+output: true when the signature matches the body and the secret, and false when the body was changed or forged.
+explanation: The provider computes an HMAC of the body with the shared secret and sends it in a header. You repeat the calculation on the exact raw bytes you received, since parsed or re-encoded JSON can differ, and compare. Many providers also include a timestamp to reject old, replayed deliveries. The exact header and format come from each provider's documentation.
+simple_explain: The sender signs the message with a secret. You sign what you received with the same secret and compare. If the two signatures differ, reject the request.
+analogy: It is like a wax seal that only the real sender could have pressed.
+syntax: crypto.createHmac("sha256", secret).update(rawBody).digest("hex")
+anatomy: createHmac = keyed hash | secret = shared secret | update = the raw body | digest = the resulting signature
+example_1: Comparing the computed HMAC with the signature header.
+example_2: Rejecting a delivery whose timestamp is more than five minutes old.
+example_3: Using timingSafeEqual to avoid timing attacks.
+variation: Some providers sign a timestamp together with the body¶Some use public-key signatures instead of a shared secret
+used_with: HMAC, raw body, timestamps, HTTPS
+related: webhook, idempotency, secrets, HTTPS
+alternatives: A provider SDK helper that verifies for you
+where_used: Payment webhooks | Source control webhooks | Any public callback URL
+mini_conversation: A: Anyone could post fake payment events to our URL. | B: Verify the provider's signature using the shared secret before trusting the event.
+misconception: ✗ Parsing the JSON first and then verifying the signature is fine → ✓ Verify against the exact raw body, because re-encoding the parsed JSON can change the bytes
+confused_with: Signature verification vs authentication token: a signature proves the message is genuine and unaltered, a token proves who is calling.
+avoid: Do not trust an event before verifying its signature.
+wrong_code: const body = JSON.stringify(req.body); const expected = hmac(body);
+right_code: const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+memory_trick: Sign it, compare it, then trust it.
+real_project: Verifying each payment webhook before marking an order paid.
+real_interview: An interviewer may ask: How do you secure a webhook endpoint?
+real_daily: It is like checking the wax seal on a letter.
+mcq_question: What do you compute the signature from?
+mcq_options: A) The response B) The URL only C) The exact raw body D) The parsed object
+mcq_answer: C
+mcq_why: Only the exact raw bytes give the same signature as the sender.
+fill_blank: Webhook signatures are usually an ____ of the body with a shared secret → HMAC
+hindi_to_task: Compute a sha256 HMAC of the raw body with a secret.
+task_answer: crypto.createHmac("sha256", secret).update(rawBody).digest("hex")
+own_task: Write the steps to verify a webhook before processing it.
+practice_question: Why compare signatures with a timing-safe function?
+practice_answer: To avoid leaking information through how long the comparison takes.
+
+@API-045
+type: topic56
+topic: 07 Webhooks and async
+level: Intermediate
+term: Polling vs webhooks
+cue: Which two ways let you learn that something has changed, by repeatedly asking or by being told?
+category: Integration pattern
+frequency: High
+importance: 4
+origin: Systems need to find out when work is finished or data changes, and there are two basic ways to do it: ask repeatedly, or let the other side call you.
+pro_tip: Use webhooks when the provider offers them, and use polling with sensible intervals as a fallback.
+memory_story: Polling is checking your mailbox every hour, and a webhook is the postman ringing your bell.
+visual: A clock with repeated arrows to a server beside a single arrow arriving once.
+emotion: The efficiency of not wasting calls on empty answers.
+definition: Polling means your app repeatedly asks the API whether something has changed, while a webhook means the provider tells your app when it happens.
+explanation: Polling is simple and works without a public URL, but it wastes requests and delays updates by up to the polling interval. Webhooks are timely and efficient, but need a public, secured endpoint and careful handling of retries. Many integrations combine both, using a webhook for speed and a periodic poll to catch anything missed.
+simple_explain: Polling asks every so often. A webhook tells you the moment it happens. Webhooks are more efficient, and polling is a good backup.
+analogy: Polling is checking your mailbox every hour, and a webhook is the postman ringing your bell.
+formula_rule: Polling = you ask repeatedly. Webhook = they tell you.
+example_1: Checking a job status every ten seconds until it says done.
+example_2: Getting a webhook the moment a report is ready.
+example_3: Using a webhook plus a nightly poll to catch missed events.
+related: webhook, rate limiting, retries, long-running tasks
+word_family: polling, interval, push, pull, event
+where_used: Long-running jobs | Payments | Syncing data
+mini_conversation: A: Our app calls the status endpoint every second. | B: Switch to a webhook, or at least poll less often.
+misconception: ✗ Polling is always better because it is simpler → ✓ Polling wastes requests and delays updates, so webhooks are usually more efficient when available
+contrast: Polling vs webhook: polling pulls on a schedule, a webhook pushes on an event.
+avoid: Do not poll every second without a limit.
+memory_trick: Polling pulls the news, webhooks push it.
+real_project: Using a webhook for payments and a nightly poll to reconcile anything missed.
+real_interview: An interviewer may ask: When would you choose polling over webhooks?
+real_daily: It is like checking your mailbox versus the postman ringing the bell.
+mcq_question: Which approach delivers an event the moment it happens?
+mcq_options: A) Polling every hour B) Webhook C) Cron job D) Manual refresh
+mcq_answer: B
+mcq_why: A webhook is sent by the provider as soon as the event occurs.
+fill_blank: Repeatedly asking an API whether something changed is called ____ → polling
+apply: A job takes minutes and has no webhook. What can you do? → Poll its status at sensible intervals with a limit
+explain_task: Explain polling and webhooks in three lines.
+own_task: Write when you would use both together.
+
+@API-046
+type: topic56
+topic: 07 Webhooks and async
+level: Advanced
+term: Idempotent webhook handling
+cue: How do you make sure a webhook that arrives twice is processed only once?
+category: Reliability practice
+frequency: High
+importance: 5
+origin: Providers retry deliveries when they do not get a quick 2xx, so the same event can arrive more than once, and handlers must cope without repeating the action.
+pro_tip: Store the event id before or while processing, and ignore any event whose id you have already seen.
+memory_story: It is like a doorman with a guest list who ticks each name once and turns away repeats.
+visual: A list of event ids with a tick beside each one that has been handled.
+emotion: The peace of knowing a retry will not charge or ship twice.
+definition: Idempotent webhook handling means processing each event only once, even if the provider delivers it several times.
+explanation: Each webhook has a unique event id. Your handler records that id in a database, usually in the same transaction as the work, and skips events whose id is already stored. Reply with 2xx quickly, put heavy work on a queue, and do not depend on the order of events, since delivery order is not guaranteed.
+simple_explain: Save the id of every event you process. If the same id arrives again, reply OK and do nothing, so retries never cause duplicates.
+analogy: It is like a doorman who ticks each name once and turns away repeats.
+formula_rule: Receive event → already seen its id? → skip. Otherwise process and record the id.
+example_1: Ignoring a second delivery of the event with id evt_123.
+example_2: Marking an order paid only if it is not already paid.
+example_3: Putting the work on a queue and replying 200 straight away.
+related: webhook, idempotency, retries, queues
+word_family: event id, deduplication, retry, queue, at-least-once
+where_used: Payments | Order systems | Notification systems
+mini_conversation: A: Customers got two confirmation emails. | B: The webhook was delivered twice, so deduplicate by event id.
+misconception: ✗ A webhook is delivered exactly once → ✓ Providers usually guarantee at least once, so duplicates can happen and must be handled
+contrast: At-least-once vs exactly-once: at-least-once may repeat events, so your handler must deduplicate.
+avoid: Do not assume events arrive in order or only once.
+memory_trick: Record the id, skip the repeats.
+real_project: Storing processed event ids so retried payment webhooks never double-ship an order.
+real_interview: An interviewer may ask: How do you handle duplicate webhook deliveries?
+real_daily: It is like a doorman ticking each name once.
+mcq_question: How do you detect a duplicate webhook?
+mcq_options: A) Compare the time B) Check the URL C) Check whether its event id is already stored D) Count the headers
+mcq_answer: C
+mcq_why: A stored event id shows the event was already processed.
+fill_blank: Providers usually guarantee delivery at ____ once → least
+apply: The same payment event arrives twice. What should your handler do? → Recognise the stored event id and skip processing
+explain_task: Explain idempotent webhook handling in three lines.
+own_task: Write a table design that stores processed webhook event ids.
+
+@API-047
+type: topic56
+topic: 08 Design and advanced
+level: Intermediate
+term: OpenAPI and Swagger
+cue: Which standard file format describes every endpoint of a REST API so that tools can create docs, mocks and client code from it?
+category: API documentation
+frequency: High
+importance: 4
+origin: Hand-written API docs drifted away from the real API, so a machine-readable description was standardised that tools could read to generate consistent documentation.
+pro_tip: Treat the OpenAPI file as the single source of truth, and generate docs and clients from it.
+memory_story: An OpenAPI file is the blueprint of a building that every contractor can read.
+visual: A YAML file on one side and an interactive documentation page generated from it on the other.
+emotion: The satisfaction of docs that always match the API.
+definition: OpenAPI is a standard, machine-readable format, in YAML or JSON, that describes an API's endpoints, parameters, request bodies, responses and authentication.
+explanation: Tools such as Swagger UI turn an OpenAPI file into interactive documentation in which you can try calls. Other tools generate client libraries, server stubs, tests and mock servers. The format was previously called the Swagger specification, and Swagger now names a set of tools around it.
+simple_explain: OpenAPI is a blueprint of your API written in a file. Tools read it to show docs, make test calls and even generate code.
+analogy: It is like a blueprint of a building that every contractor can read.
+formula_rule: OpenAPI file → docs, mocks, client code and tests
+example_1: Swagger UI showing an interactive page for the API.
+example_2: Generating a client library in several languages from one file.
+example_3: Running a mock server from the described responses.
+related: API documentation, mocking, REST, testing
+word_family: OpenAPI, Swagger, specification, schema, YAML
+where_used: API documentation | Code generation | Contract testing
+mini_conversation: A: Our docs are always out of date. | B: Describe the API in OpenAPI and generate the docs from it.
+misconception: ✗ Swagger and OpenAPI are completely different things → ✓ OpenAPI is the specification, and Swagger is the family of tools that grew from it
+contrast: OpenAPI vs Swagger UI: OpenAPI is the description format, Swagger UI is a tool that displays it.
+avoid: Do not let the documentation and the real API drift apart.
+memory_trick: OpenAPI is the blueprint file.
+real_project: Publishing an OpenAPI file so partners can generate their own clients.
+real_interview: An interviewer may ask: What is OpenAPI used for?
+real_daily: It is like a blueprint every contractor can read.
+mcq_question: What does an OpenAPI file describe?
+mcq_options: A) A network cable B) A database C) A web page design D) An API's endpoints and formats
+mcq_answer: D
+mcq_why: It lists endpoints, parameters, bodies, responses and security.
+fill_blank: The tool that shows interactive docs from an OpenAPI file is Swagger ____ → UI
+apply: How can docs always match the API? → Generate them from one OpenAPI file
+explain_task: Explain OpenAPI in three lines.
+own_task: Write the details you would put in an OpenAPI entry for a get user endpoint.
+
+@API-048
+type: topic56
+topic: 08 Design and advanced
+level: Advanced
+term: GraphQL vs REST
+cue: Which query-based style lets the client choose exactly which fields it wants from one single endpoint?
+category: API style
+frequency: High
+importance: 4
+origin: Mobile apps wasted data and made many round trips with fixed REST responses, so Facebook created GraphQL, which lets a client ask for exactly the fields it needs.
+pro_tip: Choose GraphQL when clients need flexible data shapes, and REST when simple resources and caching matter more.
+memory_story: REST is a set menu, and GraphQL is ordering exactly the dishes and portions you want.
+visual: One request listing the wanted fields, and a response containing exactly those fields.
+emotion: The efficiency of getting precisely what you asked for.
+definition: GraphQL is a query language for APIs in which the client sends a query naming the fields it wants to a single endpoint, and the server returns exactly that shape.
+explanation: A REST API has many endpoints with fixed responses, which can cause over-fetching (extra fields) or under-fetching (needing several calls). GraphQL uses one endpoint, a typed schema, and queries and mutations. It reduces round trips, but caching and rate limiting are harder, and complex queries need protection.
+simple_explain: With REST you call different URLs and take what comes back. With GraphQL you send one query that lists the fields you want, and you get only those.
+analogy: REST is a set menu, and GraphQL is ordering exactly the dishes you want.
+formula_rule: REST = many endpoints, fixed shapes. GraphQL = one endpoint, client chooses fields.
+example_1: A query that asks for a user's name and the titles of their last three orders in one call.
+example_2: A mutation that changes a record.
+example_3: A REST app making three calls to build one screen.
+related: REST, over-fetching, schema, API design
+word_family: GraphQL, query, mutation, schema, over-fetching
+where_used: Mobile apps | Complex data graphs | Front-end driven products
+mini_conversation: A: Our app needs three REST calls for one screen. | B: GraphQL could fetch the exact fields in one query.
+misconception: ✗ GraphQL always replaces REST and is better → ✓ GraphQL suits flexible queries, while REST stays simpler and caches well, so the choice depends on needs
+contrast: GraphQL vs REST: GraphQL has one endpoint and flexible queries, REST has many endpoints with fixed responses.
+avoid: Do not allow unlimited deeply nested queries on a public GraphQL API.
+memory_trick: GraphQL asks for exactly the fields you want.
+real_project: Using GraphQL so a mobile screen loads a user and their orders in one request.
+real_interview: An interviewer may ask: What problems does GraphQL solve compared with REST?
+real_daily: It is like ordering exact dishes instead of a set menu.
+mcq_question: How many endpoints does a typical GraphQL API expose?
+mcq_options: A) One B) One per field C) None D) One per resource
+mcq_answer: A
+mcq_why: GraphQL commonly uses a single endpoint for all queries.
+fill_blank: Getting more fields than you need is called over-____ → fetching
+apply: A screen needs data from three REST endpoints. What could reduce the calls? → A single GraphQL query
+explain_task: Explain GraphQL versus REST in three lines.
+own_task: Write which of your apps would suit GraphQL and why.
+
+@API-049
+type: topic56
+topic: 08 Design and advanced
+level: Advanced
+term: gRPC
+cue: Which fast, binary protocol built on HTTP/2 and Protocol Buffers is often used between internal services?
+category: API style
+frequency: Medium
+importance: 3
+origin: Services inside a company needed faster, strongly typed calls than text-based JSON over HTTP, so Google built gRPC on top of HTTP/2 and Protocol Buffers.
+pro_tip: Use gRPC between internal services where speed and strict contracts matter, and REST for public APIs.
+memory_story: gRPC is a private express lane between services, with a strictly typed language on both ends.
+visual: Two services joined by a fast pipe carrying compact binary messages.
+emotion: The satisfaction of a tight, fast contract between services.
+definition: gRPC is a remote procedure call framework that sends compact binary messages defined in Protocol Buffers over HTTP/2.
+explanation: You define services and messages in a .proto file, and tools generate client and server code in many languages. Messages are small and fast to encode, and HTTP/2 allows streaming in both directions. Browsers cannot call gRPC directly without a gateway, so it is mostly used for internal service-to-service calls.
+simple_explain: gRPC calls functions on another service using small binary messages and a shared definition file. It is very fast, but less friendly for browsers than REST.
+analogy: It is like a private express lane between two buildings with a strict language on both ends.
+formula_rule: .proto file → generated client and server code → fast binary calls over HTTP/2
+example_1: A microservice calling another microservice through generated gRPC code.
+example_2: A streaming call that sends updates continuously.
+example_3: A .proto file defining a GetUser call and its messages.
+related: REST, HTTP/2, microservices, API gateway
+word_family: gRPC, Protocol Buffers, proto, HTTP/2, streaming
+where_used: Microservices | High-performance systems | Streaming data
+mini_conversation: A: Our internal calls are slow with JSON. | B: Consider gRPC with Protocol Buffers for service-to-service traffic.
+misconception: ✗ gRPC works directly from any web browser → ✓ Browsers need a gateway or a special web version to call gRPC services
+contrast: gRPC vs REST: gRPC is binary, fast and strictly typed, REST is text-based, simple and browser-friendly.
+avoid: Do not use gRPC for a public API that browsers must call directly.
+memory_trick: gRPC is fast, binary and typed.
+real_project: Using gRPC between an orders service and an inventory service.
+real_interview: An interviewer may ask: When would you choose gRPC over REST?
+real_daily: It is like a private express lane between two buildings.
+mcq_question: What format does gRPC use for messages?
+mcq_options: A) CSV B) Protocol Buffers C) XML D) HTML
+mcq_answer: B
+mcq_why: gRPC messages are defined and encoded with Protocol Buffers.
+fill_blank: gRPC runs on top of HTTP/____ → 2
+apply: Two internal services need fast, strictly typed calls. What could you use? → gRPC
+explain_task: Explain gRPC in three lines.
+own_task: Write which of your service calls would benefit from gRPC.
+
+@API-050
+type: topic56
+topic: 08 Design and advanced
+level: Advanced
+term: API gateway
+cue: Which single entry point sits in front of many services and handles authentication, rate limiting and routing for them?
+category: Architecture
+frequency: Medium
+importance: 3
+origin: With many backend services, each one repeating login checks and limits became messy, so a gateway was placed in front to handle these shared concerns in one place.
+pro_tip: Put cross-cutting rules such as authentication, throttling and logging in the gateway, and keep business logic in the services.
+memory_story: An API gateway is a reception desk that checks visitors and sends them to the right office.
+visual: One door at the front leading to several services behind it.
+emotion: The orderliness of one place that controls access.
+definition: An API gateway is a server that acts as the single entry point for clients and routes requests to backend services while applying shared rules.
+explanation: A gateway can authenticate callers, apply rate limits, route requests to the right service, combine responses, cache, and log traffic. Clients only know one address, while services behind it can change. Cloud providers and open-source tools offer gateways.
+simple_explain: The gateway is the front desk. It checks who you are, applies limits and sends the request to the right service behind it.
+analogy: It is like a reception desk that checks visitors and directs them to the right office.
+formula_rule: Client → gateway (auth, limits, routing) → services
+example_1: A gateway checking tokens before any request reaches the services.
+example_2: A gateway sending /orders to the orders service and /users to the users service.
+example_3: A gateway applying a per-key rate limit.
+related: rate limiting, authentication, microservices, routing
+word_family: gateway, routing, throttling, proxy, entry point
+where_used: Microservices | Public API platforms | Enterprise integration
+mini_conversation: A: Every service repeats the same token check. | B: Move authentication into an API gateway in front of them.
+misconception: ✗ An API gateway replaces the need for any security in services → ✓ A gateway handles shared checks, but services still need their own protection in depth
+contrast: Gateway vs load balancer: a gateway understands and manages API calls, a load balancer mainly spreads traffic across servers.
+avoid: Do not put heavy business logic in the gateway.
+memory_trick: A gateway is the front desk for all services.
+real_project: Using a gateway to apply authentication and rate limits to all internal services.
+real_interview: An interviewer may ask: What does an API gateway do?
+real_daily: It is like a reception desk that directs visitors.
+mcq_question: What is the role of an API gateway?
+mcq_options: A) A chart tool B) A programming language C) A single entry point that routes and protects requests D) A database
+mcq_answer: C
+mcq_why: A gateway routes requests and applies shared rules such as authentication.
+fill_blank: A gateway can ____ requests to the right backend service → route
+apply: Where would you put token checking for ten services? → In an API gateway in front of them
+explain_task: Explain an API gateway in three lines.
+own_task: List three rules you would put in a gateway.
+
+@API-051
+type: topic56
+topic: 08 Design and advanced
+level: Intermediate
+term: CORS
+cue: Which browser security rule decides whether a web page from one origin may call an API on another origin?
+category: Browser security
+frequency: Very high
+importance: 5
+origin: Browsers block pages from reading responses from other sites by default, to protect users, so servers must explicitly allow trusted origins using CORS headers.
+pro_tip: Fix a CORS error on the server by allowing the right origin, and not on the client.
+memory_story: CORS is a building guard who lets a visitor read a file only if the owner has said that visitor may.
+visual: A browser blocking a response until the server sends a header that names the page's origin.
+emotion: The frustration of a red error turning into understanding.
+definition: CORS (Cross-Origin Resource Sharing) is a browser mechanism in which the server uses headers such as Access-Control-Allow-Origin to say which other origins may read its responses.
+explanation: An origin is the scheme, host and port. When a page on one origin calls an API on another, the browser checks the response headers. For some requests it first sends a preflight OPTIONS request. CORS applies only to browsers, so curl and servers are not affected, and the fix is a server configuration.
+simple_explain: The browser asks the API server, may this page read your answer? If the server does not say yes in its headers, the browser blocks it, even though the call reached the server.
+analogy: It is like a guard who lets a visitor read a file only if the owner has approved that visitor.
+formula_rule: Browser, other origin → preflight OPTIONS → server sends Access-Control-Allow-Origin → allowed
+example_1: A page on app.example.com calling api.example.com and being blocked.
+example_2: The server adding Access-Control-Allow-Origin for the trusted site.
+example_3: A preflight OPTIONS request before a call with a custom header.
+related: headers, browser security, same-origin policy, preflight
+word_family: origin, preflight, Access-Control-Allow-Origin, same-origin policy
+where_used: Front-end apps | Browser-based API calls | API configuration
+mini_conversation: A: The call works in curl but fails in the browser with a CORS error. | B: CORS only applies in browsers, so allow your site's origin on the server.
+misconception: ✗ A CORS error means the API server is down → ✓ The server received the call, but the browser blocked the response because the headers did not allow your origin
+contrast: CORS vs authentication: CORS controls which sites may read responses in a browser, authentication controls who may use the API.
+avoid: Do not set Access-Control-Allow-Origin to everything for an API that handles private data.
+memory_trick: CORS lives in the browser, the fix lives on the server.
+real_project: Allowing a company web app's origin on the API after a CORS error.
+real_interview: An interviewer may ask: What is CORS and how do you fix a CORS error?
+real_daily: It is like a guard who lets a visitor read a file only with the owner's approval.
+mcq_question: Where is a CORS error fixed?
+mcq_options: A) In the server's response headers B) In the database C) In the user's browser settings only D) In the DNS
+mcq_answer: A
+mcq_why: The server must send headers that allow the requesting origin.
+fill_blank: A request that checks permission before the real call is called a ____ → preflight
+apply: A call works in curl but fails in the browser. What is likely the cause? → A CORS restriction on the server
+explain_task: Explain CORS in three lines.
+own_task: Write which origins you would allow for a company API.
+
+@API-052
+type: topic56
+topic: 08 Design and advanced
+level: Intermediate
+term: API testing and mocking
+cue: Which practices let you check that an integration works, without always calling the real service?
+category: Quality practice
+frequency: High
+importance: 4
+origin: Calling real APIs in every test is slow, costly and unreliable, so developers use sandboxes, test modes and fake responses to check their code safely.
+pro_tip: Mock the API in unit tests, and run a few real tests against the provider's sandbox before going live.
+memory_story: Mocking is rehearsing with an actor who plays the API, so the real show is never at risk.
+visual: A test run that returns prepared responses instead of calling the internet.
+emotion: The confidence of tests that are fast and repeatable.
+definition: API testing checks that requests and responses behave correctly, and mocking replaces the real API with controlled fake responses so tests are fast and reliable.
+explanation: Unit tests use mocks or stubs for success, errors, timeouts and odd data. Integration tests call the provider's sandbox or test mode, which behaves like production without real money or data. Contract tests check that your assumptions about the API still match. Mock servers can be generated from an OpenAPI file.
+simple_explain: In everyday tests, fake the API with prepared answers. Before launch, test against the provider's sandbox to see real behaviour.
+analogy: It is like rehearsing with an actor who plays the API, so the real show is never at risk.
+formula_rule: Unit tests with mocks, integration tests in a sandbox, contract tests for changes
+example_1: A mock that returns a 500 error to test the retry logic.
+example_2: A test in the provider's sandbox using test card numbers.
+example_3: A mock server generated from an OpenAPI file.
+related: error handling, OpenAPI, sandbox, retries
+word_family: mock, stub, sandbox, test mode, contract test
+where_used: Automated testing | Development without internet | Payments and messaging
+mini_conversation: A: Our tests fail whenever the provider is slow. | B: Mock the API in unit tests and keep a few sandbox tests.
+misconception: ✗ Tests should always call the real production API → ✓ Use mocks or a sandbox so tests are fast, safe and repeatable
+contrast: Mock vs sandbox: a mock is a fake you control inside your tests, a sandbox is the provider's safe test environment.
+avoid: Do not run tests that move real money or data.
+memory_trick: Mock to practise, sandbox to prove.
+real_project: Testing payment failures with mocks and a final check in the provider's sandbox.
+real_interview: An interviewer may ask: How do you test code that calls an external API?
+real_daily: It is like rehearsing with an actor who plays the API.
+mcq_question: Why use mocks when testing API calls?
+mcq_options: A) They make the API faster B) They encrypt data C) They remove the need for code D) Tests become fast and repeatable
+mcq_answer: D
+mcq_why: Mocks give controlled responses without the real service.
+fill_blank: A provider's safe test environment is called a ____ → sandbox
+apply: How can you test how your app handles a 500 error? → Use a mock that returns a 500 response
+explain_task: Explain API testing and mocking in three lines.
+own_task: List four responses you would mock to test an integration.

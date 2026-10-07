@@ -1,0 +1,345 @@
+
+@OBS-006
+type: topic56
+topic: 02 Logging
+level: Beginner
+term: Log levels
+cue: Which severity labels sort log messages from detailed to critical?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Not every message is equally important, so levels let you keep detail when debugging and quiet when running.
+pro_tip: Run production at info, and turn debug on only for short investigations.
+memory_story: Log levels are volume knobs from whisper to alarm.
+visual: A ladder from debug at the bottom to critical at the top.
+emotion: The ease of choosing how loud the system is.
+definition: Log levels are severity labels, typically debug, info, warning, error and critical, used to filter which messages are recorded or shown.
+explanation: Debug is for developers and is very verbose. Info records normal milestones. Warning flags something odd that is not yet a failure. Error means an operation failed. Critical means the service may not continue. Setting a minimum level controls volume and cost. Errors should include context and a next step.
+simple_explain: Use levels consistently, run at info, and raise detail only when needed.
+analogy: Log levels are volume knobs from whisper to alarm.
+formula_rule: debug < info < warning < error < critical.
+example_1: Info: order 1042 created.
+example_2: Warning: retrying payment call, attempt two.
+example_3: Error: payment failed for order 1042 with timeout.
+related: structured logs, sampling, log volume, alerts
+word_family: debug, info, warning, error, critical
+where_used: Every application | Production tuning | Debugging
+mini_conversation: A: The logs are huge. | B: Production is at debug, so raise it to info.
+misconception: ✗ Logging everything at debug is the safest choice → ✓ It floods storage and hides important lines
+contrast: Warning vs error: a warning is odd but working, an error is a failed operation.
+avoid: Do not log expected conditions as errors.
+memory_trick: Info for normal, error for failed.
+real_project: Moving noisy messages to debug cut log costs sharply.
+real_interview: An interviewer may ask: What log level would you use for a retry?
+real_daily: It is like a volume knob.
+mcq_question: Which level suits a failed operation?
+mcq_options: A) Info B) Error C) Trace D) Debug
+mcq_answer: B
+mcq_why: Error marks failures.
+fill_blank: In Python logging, the level below info that is used for detailed diagnostics is ____ → debug
+apply: Production logs are too noisy. What do you adjust? → The minimum level
+explain_task: Explain log levels in three lines.
+own_task: Pick a level for five different events.
+
+@OBS-007
+type: code56
+topic: 02 Logging
+level: Intermediate
+term: Structured logs
+cue: Which logging style writes events as key-value fields so they can be searched?
+kind: Logging practice
+frequency: Very high
+importance: 5
+origin: Free-text lines are hard to search, so structured logs record each event as fields such as JSON.
+pro_tip: Use consistent field names across services.
+memory_story: A structured log is a form with labelled fields instead of a rambling note.
+visual: A JSON line with fields for time, level, message and order id.
+emotion: The pleasure of filtering logs by one field.
+meaning: Structured logging writes each event as machine-readable fields, usually JSON, with a timestamp, level, message and context such as ids.
+code: import json, logging, sys¶logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")¶log = logging.getLogger("orders")¶log.info(json.dumps({"ts": "2026-10-07T10:15:02Z", "level": "info", "msg": "order created", "order_id": 1042, "customer_id": 77, "duration_ms": 184, "request_id": "r-9f2"}))
+output: One JSON line with fields that tools can filter, group and chart.
+explanation: With fields, you can search for all errors for one customer or chart durations. Use stable names and types, include a request id, and keep messages short and constant so they group well. Libraries add the fields automatically. Do not include secrets or whole payloads. Write to standard output and let the platform collect.
+simple_explain: Log JSON with consistent fields, and keep the message text constant.
+analogy: A structured log is a form with labelled fields instead of a rambling note.
+syntax: log.info(json.dumps({field: value}))
+anatomy: ts = time | level = severity | msg = constant text | ids = context
+example_1: {"level":"error","msg":"payment failed","order_id":1042}
+example_2: {"msg":"login","user_id":7,"ip":"203.0.113.5"}
+example_3: logger.bind(request_id=rid).info("done")
+variation: structlog or pino   // libraries that do this for you
+used_with: central logging, correlation ids, searching logs
+related: correlation ids, central logging, searching logs, sensitive data
+alternatives: Plain text logs with a fixed format
+where_used: Services | Pipelines | Containers
+mini_conversation: A: How do I find all errors for one customer? | B: Filter structured logs by customer_id.
+misconception: ✗ Structured logs are only for big companies → ✓ Any service benefits from searchable fields
+confused_with: Structured vs plain logs: fields versus free text.
+avoid: Do not build messages with variable text in the main message field.
+wrong_code: log.info(f"order {order_id} created for {customer_id}")
+right_code: log.info(json.dumps({"msg": "order created", "order_id": order_id, "customer_id": customer_id}))
+memory_trick: Keep the message constant, put variables in fields.
+real_project: Switching to JSON logs let support filter an incident by customer in seconds.
+real_interview: An interviewer may ask: Why use structured logging?
+real_daily: It is like a form with labelled fields.
+mcq_question: Which format is most common for structured logs?
+mcq_options: A) Free text B) Audio C) Images D) JSON
+mcq_answer: D
+mcq_why: JSON is easy for tools to parse.
+fill_blank: Keep the message constant and put variable data in ____ → fields
+hindi_to_task: Log an order created event with its id as a field.
+task_answer: log.info(json.dumps({"msg": "order created", "order_id": 1042}))
+own_task: Design the standard fields for all logs in a team.
+practice_question: Why keep the message text constant?
+practice_answer: So identical events group together.
+
+@OBS-008
+type: topic56
+topic: 02 Logging
+level: Intermediate
+term: Correlation ids
+cue: Which identifiers tie together all log lines from one request across services?
+category: Core concept
+frequency: High
+importance: 5
+origin: A single request touches many services, so a shared id is passed along and logged to join the pieces.
+pro_tip: Generate the id at the edge and pass it in a header to every downstream call.
+memory_story: A correlation id is a luggage tag that follows one bag through every airport.
+visual: One id appearing in logs of three different services.
+emotion: The relief of following one request end to end.
+definition: A correlation or request id is a unique value created when a request enters the system and included in every log line and downstream call about that request.
+explanation: Use an incoming id when present and create one otherwise, then add it to a context so logging includes it automatically. Pass it in an HTTP header such as X-Request-ID. Show it in error responses so users can quote it to support. Distributed tracing generalises this with trace ids.
+simple_explain: Create an id at the edge, pass it everywhere, and log it in every line.
+analogy: A correlation id is a luggage tag that follows one bag through every airport.
+formula_rule: One request, one id, in every log and call.
+example_1: Header X-Request-ID set by the gateway.
+example_2: A support ticket quoting the id shown in an error page.
+example_3: A search for the id returning lines from three services.
+related: structured logs, spans and traces, propagation, central logging
+word_family: request id, trace id, header, context, edge
+where_used: Microservices | Support | Debugging
+mini_conversation: A: Which log lines belong to this failed order? | B: Search by its request id.
+misconception: ✗ Timestamps are enough to match lines from different services → ✓ Clocks and concurrency make matching by time unreliable
+contrast: Correlation id vs trace id: the first is a simple tag, the second is part of full tracing.
+avoid: Do not forget to forward the id on every downstream call.
+memory_trick: Create once, forward always, log everywhere.
+real_project: Adding request ids to every service made incident investigations much faster.
+real_interview: An interviewer may ask: How do you follow one request across services?
+real_daily: It is like a luggage tag.
+mcq_question: Where should a correlation id be created?
+mcq_options: A) At the edge when the request arrives B) In the logs after the fact C) By the user D) At the database
+mcq_answer: A
+mcq_why: Creating it early lets every later step share it.
+fill_blank: The id is usually passed in an HTTP ____ → header
+apply: A user reports an error. What helps support find the logs? → The request id shown on the error page
+explain_task: Explain correlation ids in three lines.
+own_task: Describe how the id travels through three services.
+
+@OBS-009
+type: topic56
+topic: 02 Logging
+level: Intermediate
+term: Central logging
+cue: How do you collect logs from many machines into one searchable place?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Logs on individual servers vanish with the server and are hard to search, so they are shipped to a central store.
+pro_tip: Write logs to standard output and let an agent ship them.
+memory_story: Central logging is one library where every machine files its diary.
+visual: Many sources sending lines to one search page.
+emotion: The comfort of searching everything at once.
+definition: Central logging uses agents or the platform to ship logs from all services to a shared system such as Loki, Elasticsearch or a cloud log service, where they are indexed and searched.
+explanation: Containers write to standard output, and a collector such as Fluent Bit or the cloud agent forwards the lines with labels like service, host and environment. Central stores keep logs after servers disappear and support queries, dashboards and alerts. Plan retention, access control and cost. Buffering avoids losing logs during outages.
+simple_explain: Send every log to one place with labels, and search there.
+analogy: Central logging is one library where every machine files its diary.
+formula_rule: App → stdout → agent → central store → search.
+example_1: Fluent Bit shipping container logs.
+example_2: A query for errors in the checkout service.
+example_3: An alert on a log pattern.
+related: retention, searching logs, log pipelines, cost of telemetry
+word_family: agent, collector, index, label, store
+where_used: Platforms | Kubernetes | Incident response
+mini_conversation: A: The pod was replaced and its logs are gone. | B: Ship logs centrally so they outlive pods.
+misconception: ✗ Logs on the server are safe enough → ✓ They disappear with the machine and cannot be searched across services
+contrast: Local vs central logs: local ones are lost with the host, central ones persist.
+avoid: Do not keep the only copy of logs on one host.
+memory_trick: Print to stdout, ship to the centre.
+real_project: Central logs let a team investigate a crash of a pod that no longer existed.
+real_interview: An interviewer may ask: How do you collect logs from containers?
+real_daily: It is like one library for many diaries.
+mcq_question: Where should containers write logs?
+mcq_options: A) A local file only B) Email C) The database D) Standard output
+mcq_answer: D
+mcq_why: Platforms collect standard output easily.
+fill_blank: A program that forwards logs is a log ____ → agent
+apply: Pods are replaced and logs vanish. What do you add? → Central log shipping
+explain_task: Explain central logging in three lines.
+own_task: List the labels each log line should carry.
+
+@OBS-010
+type: topic56
+topic: 02 Logging
+level: Intermediate
+term: Retention
+cue: How long should you keep logs and why does it matter?
+category: Core concept
+frequency: High
+importance: 4
+origin: Logs cost storage and may hold personal data, so keeping them forever is wasteful and risky.
+pro_tip: Keep recent logs searchable and archive older ones cheaply for audits.
+memory_story: Retention is a shelf life label on each batch of logs.
+visual: Logs aging from hot storage to cold archive and then deletion.
+emotion: The tidiness of logs with a clear lifetime.
+definition: Retention is the period for which logs are kept before they are archived or deleted, set by operational need, cost and legal rules.
+explanation: Recent logs are needed for debugging, perhaps seven to thirty days. Audit and security logs may need months or years. Tiered storage moves old logs to cheap archives. Personal data in logs must follow privacy rules and deletion requests. Retention should be written down per log type.
+simple_explain: Choose how long each log type is kept, archive old ones cheaply, and delete on schedule.
+analogy: Retention is a shelf life label on each batch of logs.
+formula_rule: Need + law + cost = retention period.
+example_1: Application logs kept for fourteen days.
+example_2: Audit logs kept for one year in archive.
+example_3: A lifecycle rule deleting old log files.
+related: central logging, sensitive data in logs, cost of telemetry, compliance
+word_family: retention, archive, tier, lifecycle, deletion
+where_used: Compliance | Cost control | Security
+mini_conversation: A: How far back can we search? | B: Fourteen days hot, then archived for a year.
+misconception: ✗ Keeping logs forever is safest → ✓ It costs money and keeps personal data longer than needed
+contrast: Hot vs archive: hot is quick to search, archive is cheap and slow.
+avoid: Do not keep sensitive logs longer than allowed.
+memory_trick: Every log type needs a shelf life.
+real_project: Tiering old logs to archive cut the monthly logging bill.
+real_interview: An interviewer may ask: How do you decide log retention?
+real_daily: It is like a shelf life label.
+mcq_question: What drives retention choices?
+mcq_options: A) Random choice B) Need, law and cost C) Colour D) Server name
+mcq_answer: B
+mcq_why: All three limit how long logs are kept.
+fill_blank: Cheap slow storage for old logs is an ____ → archive
+apply: Audit rules require one year of records. What do you set up? → Archive retention for one year
+explain_task: Explain log retention in three lines.
+own_task: Set retention for application, audit and debug logs.
+
+@OBS-011
+type: topic56
+topic: 02 Logging
+level: Intermediate
+term: Sensitive data in logs
+cue: Which information must never be written to logs?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Logs are widely accessible and kept long, so secrets and personal data in them become a common source of leaks.
+pro_tip: Redact at the source and review log output for secrets in code review.
+memory_story: Logs are a diary many people can read, so never write passwords in it.
+visual: A log line with a masked token.
+emotion: The responsibility of keeping private data private.
+definition: Sensitive data in logs includes passwords, tokens, keys, payment details and personal information, which should be excluded, masked or hashed before logging.
+explanation: Common leaks are request bodies, headers with authorisation tokens, connection strings and error dumps. Use allow-lists of fields to log rather than dumping objects. Mask values, keeping only a few characters if needed. Scrub in the log pipeline as a second layer. Access to logs should be controlled, and leaks treated as incidents.
+simple_explain: Log only chosen safe fields, and mask or exclude anything private.
+analogy: Logs are a diary many people can read, so never write passwords in it.
+formula_rule: Allow-list the fields, mask the rest.
+example_1: Masking a token as abcd****.
+example_2: Not logging the Authorization header.
+example_3: A pipeline rule removing card numbers.
+related: structured logs, retention, PII and masking, security
+word_family: redact, mask, secret, PII, scrub
+where_used: Every service | Compliance | Reviews
+mini_conversation: A: The log shows a customer's token. | B: Revoke it, then add masking at the source.
+misconception: ✗ Logs are internal, so secrets in them are fine → ✓ Many people and tools can read logs, so leaks spread
+contrast: Masking vs removing: masking keeps a trace, removing drops the value.
+avoid: Do not log whole request objects.
+memory_trick: Never log what you would not shout.
+real_project: Finding tokens in logs led to a masking rule and revoked credentials.
+real_interview: An interviewer may ask: What should not be logged?
+real_daily: It is like not writing passwords in a shared diary.
+mcq_question: Which should not be logged?
+mcq_options: A) Passwords and tokens B) Log levels C) Order ids D) Durations
+mcq_answer: A
+mcq_why: Secrets leak through logs.
+fill_blank: Hiding part of a value is called ____ → masking
+apply: A log contains a live token. What is your first action? → Revoke the token
+explain_task: Explain what to keep out of logs in three lines.
+own_task: List five common fields that need masking before logging.
+
+@OBS-012
+type: topic56
+topic: 02 Logging
+level: Advanced
+term: Log sampling
+cue: How can you keep useful logs while cutting volume of repetitive ones?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: High-traffic services produce huge volumes of similar lines, so sampling keeps a share of them to control cost.
+pro_tip: Always keep errors and slow requests, and sample the routine successes.
+memory_story: Sampling is reading every tenth letter of a repetitive newsletter but all urgent ones.
+visual: A funnel passing all errors and a fraction of normal lines.
+emotion: The relief of a lower bill without losing key evidence.
+definition: Log sampling records only a fraction of routine events, while keeping all important ones such as errors, so volume and cost drop but problems stay visible.
+explanation: Head sampling decides at the start, while tail sampling decides after seeing the result, so errors are kept. Rate limiting stops one noisy message flooding. Sampling hurts exact counts, so use metrics for counts. Record the sampling rate in the event if you must estimate totals.
+simple_explain: Keep all errors and a fraction of the routine lines.
+analogy: Sampling is reading every tenth letter of a repetitive newsletter but all the urgent ones.
+formula_rule: Keep important always, sample routine.
+example_1: Logging one in a hundred successful health checks.
+example_2: Keeping every error with full detail.
+example_3: Rate limiting a repeated warning.
+related: log levels, cost of telemetry, log pipelines, metrics
+word_family: sampling, rate limit, head, tail, volume
+where_used: High-traffic systems | Cost control | Tracing
+mini_conversation: A: Health check logs are half our volume. | B: Sample them heavily and keep the errors.
+misconception: ✗ Sampled logs give exact counts → ✓ Use metrics for counts, since sampling loses events
+contrast: Head vs tail sampling: head decides early, tail decides after the outcome.
+avoid: Never sample the error events you need.
+memory_trick: Sample the boring, keep the broken.
+real_project: Sampling health check logs cut log volume noticeably for the team.
+real_interview: An interviewer may ask: Why not sample errors?
+real_daily: It is like reading every tenth letter of a newsletter.
+mcq_question: Which events should always be kept?
+mcq_options: A) Duplicate info lines B) Health check successes C) Errors D) Debug noise
+mcq_answer: C
+mcq_why: Errors carry the evidence you need.
+fill_blank: Counting exact events should use ____ not logs → metrics
+apply: Routine success lines flood storage. What do you do? → Sample them and keep errors
+explain_task: Explain log sampling in three lines.
+own_task: Define a sampling rule for an API.
+
+@OBS-013
+type: topic56
+topic: 02 Logging
+level: Beginner
+term: Searching logs
+cue: How do you find the relevant lines among millions?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Finding one failure in huge logs needs a method, so teams filter by time, service and fields before reading text.
+pro_tip: Narrow by time window and service first, then by id or error text.
+memory_story: Searching logs is like using a library catalogue before reading the shelf.
+visual: A search bar with filters for time, service and level.
+emotion: The satisfaction of finding the one line that explains it all.
+definition: Searching logs means filtering by time range, service, level and fields, then following ids and reading nearby lines to understand the sequence of events.
+explanation: Start from the time of the symptom, such as the alert or a deployment. Filter to the affected service and level error, then group by message to see the main failure. Follow request ids to other services. Look before and after the first error, since the cause often comes earlier. Save useful queries for reuse.
+simple_explain: Filter by time and service, find the first error, and follow the ids.
+analogy: Searching logs is like using a library catalogue before reading the shelf.
+formula_rule: Time + service + level + id.
+example_1: Errors in checkout between 10:10 and 10:20.
+example_2: All lines for request id r-9f2.
+example_3: Counting errors grouped by message.
+related: structured logs, correlation ids, central logging, debugging
+word_family: query, filter, window, grep, group
+where_used: Incident response | Debugging | Support
+mini_conversation: A: Where do I start in the logs? | B: Start at the alert time and find the first error.
+misconception: ✗ The last error line is always the cause → ✓ The first error often points to the real cause
+contrast: First error vs last error: the first usually leads to the cause, the last is often a symptom.
+avoid: Do not search without a time window.
+memory_trick: Narrow by time, find the first error.
+real_project: Searching from the first error found a bad config behind a flood of later failures.
+real_interview: An interviewer may ask: How do you investigate an error in logs?
+real_daily: It is like a library catalogue before the shelf.
+mcq_question: What should you narrow first when searching logs?
+mcq_options: A) The file size B) The time window C) The font D) The colour
+mcq_answer: B
+mcq_why: A time window cuts the data most.
+fill_blank: The first error in a sequence often shows the ____ → cause
+apply: Hundreds of errors appear. Where do you look first? → At the earliest one
+explain_task: Explain how to search logs in three lines.
+own_task: Write a search plan for a spike in errors at 10:15.

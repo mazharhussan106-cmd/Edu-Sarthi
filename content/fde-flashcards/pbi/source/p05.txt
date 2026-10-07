@@ -1,0 +1,252 @@
+
+@PBI-043
+type: topic56
+topic: 05 Visuals and design
+level: Beginner
+term: Choosing the right chart
+cue: Which chart suits a trend over time, a comparison of categories, a part of a whole, and a relationship between two numbers?
+category: Visual design
+frequency: Very high
+importance: 5
+origin: A wrong chart can hide the message, so data visualisation guidance matches each question with the chart type that answers it best.
+pro_tip: Decide the question first, then pick the chart that answers it, and not the other way round.
+memory_story: Each chart is a tool in a toolbox, and you pick the one that fits the job.
+visual: A line chart for time, a bar chart for comparison, a donut for share and a scatter plot for relationships.
+emotion: The pride of a chart that explains itself without a long speech.
+definition: Choosing the right chart means matching the question you want to answer with the visual type that shows it most clearly.
+explanation: Use a line chart for trends over time, a bar or column chart to compare categories, a stacked or donut chart sparingly for parts of a whole, a scatter plot for the relationship between two numbers, a card for one key number, and a table or matrix for exact values. Maps suit location data.
+simple_explain: Ask what the reader should learn. For change over time use a line, to compare items use bars, and for one big number use a card.
+analogy: It is like picking the right tool from a toolbox for each job.
+formula_rule: Trend = line, Compare = bar, Single number = card, Relationship = scatter, Exact values = table
+example_1: A line chart of monthly sales shows the trend through the year.
+example_2: A bar chart compares sales by region.
+example_3: A scatter plot shows whether discounts relate to profit.
+related: visual, slicer, conditional formatting, report page
+word_family: line, bar, column, donut, scatter, card, matrix
+where_used: Report design | Presentations | Dashboards
+mini_conversation: A: Which chart should I use for sales by month? | B: A line chart, because it shows the trend over time clearly.
+misconception: ✗ A pie chart is the best choice for comparing many categories → ✓ Bars compare many categories more clearly, and pie or donut charts work only for a few parts of a whole
+contrast: Line vs bar: a line shows change over time, a bar compares separate categories.
+avoid: Do not use 3D effects or too many colours, they hide the message.
+memory_trick: Time uses line, categories use bars.
+real_project: Replacing a crowded pie chart with a sorted bar chart that made the ranking obvious.
+real_interview: An interviewer may ask: How do you choose the right visual for a question?
+real_daily: It is like choosing the right tool from a toolbox.
+mcq_question: Which visual is best for showing a trend over months?
+mcq_options: A) Pie chart B) Table C) Line chart D) Card
+mcq_answer: C
+mcq_why: A line chart shows how a value changes over time.
+fill_blank: To show one key number clearly you can use a ____ visual → card
+apply: Which chart would you choose to compare sales across ten regions? → A sorted bar chart
+explain_task: Explain in three lines how you pick a chart.
+own_task: Write which chart you would use for five different business questions.
+
+@PBI-044
+type: topic56
+topic: 05 Visuals and design
+level: Beginner
+term: Slicers
+cue: Which on-page visual lets viewers click to filter the other visuals, such as choosing a year or a region?
+category: Interactive filter
+frequency: Very high
+importance: 4
+origin: Readers want to explore their own slice of the data, so Power BI added a visual whose only job is to filter other visuals.
+pro_tip: Keep slicers few and clearly labelled, and place them in the same spot on every page.
+memory_story: A slicer is a set of buttons on a remote that choose what the screen shows.
+visual: A list of years or a date range bar with some options highlighted next to a chart that updates.
+emotion: The fun of clicking an option and watching the whole page respond.
+definition: A slicer is a visual with clickable options that filters the other visuals on a page, or on several pages when synced.
+explanation: You create a slicer from the Visualizations pane and put a field in it. It can show a list, a dropdown, tiles or a date range. Sync slicers lets one choice apply across pages. A slicer filters through relationships, so fields from related tables work.
+simple_explain: Add a slicer for Year and click 2025, and every visual on the page shows only 2025. It is a filter the reader controls.
+analogy: It is like the channel buttons on a remote control.
+formula_rule: Slicer + field → click an option → other visuals filter
+example_1: A Year slicer that filters all charts on the page.
+example_2: A Region dropdown slicer that lets managers see their own region.
+example_3: A date range slicer that selects a custom period.
+related: filters pane, relationships, bookmarks, sync slicers
+word_family: slicer, filter, dropdown, date range, sync
+where_used: Interactive reports | Dashboards | Self-service exploration
+mini_conversation: A: Managers want to see only their own region. | B: Add a Region slicer so they can pick it themselves.
+misconception: ✗ A slicer filters only the visual next to it → ✓ A slicer filters all visuals on its page, and with synced slicers it can filter other pages too
+contrast: Slicer vs filter pane: a slicer is visible on the page for viewers, the filter pane is a side panel with filters.
+avoid: Do not add ten slicers to one page.
+memory_trick: A slicer slices the data for you.
+real_project: Adding Year and Region slicers so executives can explore their own view.
+real_interview: An interviewer may ask: What is the difference between a slicer and a filter?
+real_daily: It is like the buttons on a remote that choose the channel.
+mcq_question: What does a slicer do?
+mcq_options: A) Changes a theme B) Filters other visuals C) Deletes data D) Adds a new table
+mcq_answer: B
+mcq_why: A slicer filters the other visuals on its page.
+fill_blank: To make one slicer apply across several pages, use ____ slicers → sync
+apply: Managers want to pick their own region. Which visual do you add? → A Region slicer
+explain_task: Explain what a slicer is in three lines.
+own_task: Add a slicer for a field in a report and write what changes when you click.
+
+@PBI-045
+type: topic56
+topic: 05 Visuals and design
+level: Intermediate
+term: Filters pane (visual, page, report level)
+cue: Which three scopes of filters in the Filters pane decide whether a filter affects one visual, one page or the whole report?
+category: Filtering
+frequency: High
+importance: 4
+origin: Some filters should apply everywhere while others only to a single chart, so the Filters pane offers different scopes.
+pro_tip: Put a filter at the widest level that makes sense, and use visual-level filters only for exceptions.
+memory_story: Filters have three sizes like boxes: a small box for one visual, a medium box for a page, and a large box for the whole report.
+visual: A side pane with three groups: Filters on this visual, on this page and on all pages.
+emotion: The satisfaction of controlling exactly what each page shows.
+definition: Visual-level filters affect one visual, page-level filters affect all visuals on a page, and report-level filters affect every page.
+explanation: In the Filters pane you drop fields into the visual, page or all pages section. Basic, Advanced and Top N filter types are available. These filters are applied by the author and viewers can change them unless you lock or hide them.
+simple_explain: Choose how wide the filter should be. One chart, one page, or the whole report. Authors set them, and viewers can see them in the pane.
+analogy: It is like three sizes of boxes: one for a single item, one for a shelf and one for the whole room.
+formula_rule: Visual < Page < Report
+example_1: A visual-level Top 5 filter on a single bar chart.
+example_2: A page-level filter that limits one page to the current year.
+example_3: A report-level filter that excludes test data from every page.
+related: slicer, relationships, drillthrough, bookmarks
+word_family: filter, scope, visual, page, report, Top N
+where_used: Limiting data | Excluding test records | Showing the top few items
+mini_conversation: A: I want to exclude test orders from every page. | B: Add a report-level filter on the Order Type column.
+misconception: ✗ A filter placed on one visual also affects the other visuals on the page → ✓ A visual-level filter affects only that visual, and a page-level filter is needed for all visuals on the page
+contrast: Slicer vs filters pane: a slicer is a visible on-page control, the pane is a side panel often set up by the author.
+avoid: Do not hide important filters in the pane without telling users.
+memory_trick: Visual is smallest, report is widest.
+real_project: Using a report-level filter to remove test data from every page.
+real_interview: An interviewer may ask: What are the filter levels in Power BI?
+real_daily: It is like three box sizes, for one item, one shelf, or a whole room.
+mcq_question: Which filter level affects every page in the report?
+mcq_options: A) Cell level B) Visual level C) Page level D) Report level
+mcq_answer: D
+mcq_why: A report-level filter applies to all pages.
+fill_blank: The filter scope between visual level and report level is called ____ level → page
+apply: How do you limit one chart to the top five items? → Use a Top N filter at the visual level
+explain_task: Explain the three filter levels in three lines.
+own_task: Write one example of a visual, page and report filter for a sales report.
+
+@PBI-046
+type: topic56
+topic: 05 Visuals and design
+level: Intermediate
+term: Drill down and drill through
+cue: Which two navigation features let users move deeper inside one visual or jump to a detail page for one item?
+category: Navigation
+frequency: High
+importance: 4
+origin: Users want an overview first and detail on demand, so Power BI offers drill down inside a visual and drill through to a separate detail page.
+pro_tip: Build one detail page, enable drill through on it, and let users right-click any item to land there.
+memory_story: Drill down digs deeper in the same hole, and drill through takes a tunnel to another room.
+visual: A chart splitting from years into months, and a separate page opened for one customer.
+emotion: The delight of clicking an overview number and seeing the detail behind it.
+definition: Drill down moves through the levels of a hierarchy inside one visual, and drill through opens a detail page filtered to the selected item.
+explanation: Drill down needs a hierarchy such as Year, Quarter, Month on the visual's axis, and you use the drill arrows to go deeper. For drill through, you create a page, drop a field into its Drill through section, and users right-click an item and choose Drill through to open that page filtered for it.
+simple_explain: Drill down goes from year to month in the same chart. Drill through takes you to another page showing everything about the one item you clicked.
+analogy: Drill down digs deeper in the same hole, and drill through is a tunnel to another room.
+formula_rule: Drill down = inside the visual (hierarchy). Drill through = to another page (filtered).
+example_1: Clicking down from Year to Quarter to Month in a column chart.
+example_2: Right-clicking a customer and drilling through to a Customer Detail page.
+example_3: Drilling through from a product bar to a page listing its orders.
+related: hierarchy, bookmarks, filters pane, tooltips
+word_family: drill down, drill up, drill through, hierarchy
+where_used: Executive overviews | Detail pages | Exploring anomalies
+mini_conversation: A: I want to see details for the customer I clicked. | B: Set up a drill-through page for Customer and right-click the item to open it.
+misconception: ✗ Drill down and drill through are the same → ✓ Drill down moves within one visual, while drill through goes to a different page filtered to the selected item
+contrast: Drill down vs drill through: drill down stays in the visual, drill through changes the page.
+avoid: Do not forget to add the field to the drill-through section of the page.
+memory_trick: Down digs in, through goes to another room.
+real_project: Building a Customer Detail drill-through page reached from every customer visual.
+real_interview: An interviewer may ask: What is the difference between drill down and drill through?
+real_daily: It is like digging deeper in the same hole versus taking a tunnel to another room.
+mcq_question: Which feature opens a different report page filtered to the selected item?
+mcq_options: A) Drill through B) Theme C) Slicer D) Drill down
+mcq_answer: A
+mcq_why: Drill through jumps to a detail page filtered for the item.
+fill_blank: Moving from Year to Month in one chart is called drill ____ → down
+apply: How do users reach a detail page for one customer? → Set up a drill-through page and right-click the customer
+explain_task: Explain the difference between drill down and drill through in three lines.
+own_task: Plan a drill-through page for products and list what it should show.
+
+@PBI-047
+type: topic56
+topic: 05 Visuals and design
+level: Intermediate
+term: Bookmarks and tooltips
+cue: Which two features save a view of a page for navigation and show extra detail when hovering over a data point?
+category: Interactivity
+frequency: Medium
+importance: 3
+origin: Reports need guided navigation and quick context without clutter, so Power BI added bookmarks to remember a state and tooltips to reveal detail on hover.
+pro_tip: Use bookmarks with buttons to build simple navigation menus or toggles between views.
+memory_story: A bookmark holds your place in a book, and a tooltip is a small note that pops up when you point at a word.
+visual: A button that switches between a chart view and a table view, and a small card popping up over a bar.
+emotion: The polish of a report that guides and informs without crowding the page.
+definition: A bookmark saves the current state of a page, such as filters and visibility, and a tooltip shows extra information when the pointer hovers over a data point.
+explanation: A bookmark captures filters, slicer selections and which visuals are visible, and can be linked to a button so clicking it restores that view. A report page tooltip is a small page designed to show more detail, and you assign it to a visual so it appears on hover.
+simple_explain: Bookmarks remember a view so a button can jump to it. Tooltips pop up a mini chart or text when you hover, so the main page stays clean.
+analogy: A bookmark holds your place in a book, and a tooltip is a note that pops up when you point.
+formula_rule: Bookmark = saved view for buttons. Tooltip = pop-up detail on hover.
+example_1: A button that toggles between a chart and a table using two bookmarks.
+example_2: A navigation bar of buttons that jump to different bookmarked views.
+example_3: A tooltip page that shows a trend line when hovering over a bar.
+related: buttons, drill through, selection pane, report page
+word_family: bookmark, tooltip, button, selection pane
+where_used: Navigation menus | View toggles | Hover detail
+mini_conversation: A: Can I let users switch between a chart and a table? | B: Make two bookmarks and link each to a button.
+misconception: ✗ A bookmark saves only the page you are on → ✓ A bookmark saves the state of the page, including filters, slicers and which visuals are shown
+contrast: Bookmark vs tooltip: a bookmark restores a saved view on click, a tooltip shows detail on hover.
+avoid: Do not create many bookmarks without clear names.
+memory_trick: Bookmark saves the view, tooltip shows on hover.
+real_project: Building a toggle between a chart and a table using bookmarks and buttons.
+real_interview: An interviewer may ask: What do bookmarks capture?
+real_daily: It is like holding your place in a book and a note popping up when you point.
+mcq_question: Which feature saves slicer selections and visual visibility so a button can restore them?
+mcq_options: A) Parameter B) Bookmark C) Tooltip D) Theme
+mcq_answer: B
+mcq_why: A bookmark stores the page state that a button can restore.
+fill_blank: A small page that appears on hover over a data point is a ____ → tooltip
+apply: How would you let users toggle between a chart and a table? → Use two bookmarks linked to buttons
+explain_task: Explain bookmarks and tooltips in three lines.
+own_task: Design one bookmark toggle and one tooltip for a sales report.
+
+@PBI-048
+type: topic56
+topic: 05 Visuals and design
+level: Intermediate
+term: Conditional formatting
+cue: Which feature colours cells, bars or text automatically based on their values, such as red for low and green for high?
+category: Visual formatting
+frequency: Medium
+importance: 3
+origin: People spot patterns faster with colour than with numbers, so Power BI lets formatting follow the data.
+pro_tip: Use colour sparingly and consistently, and make sure it can be read by colour-blind viewers.
+memory_story: Conditional formatting is traffic lights for your numbers.
+visual: A table where low values are red, medium are amber and high are green, beside small data bars.
+emotion: The satisfaction of seeing trouble spots jump out at once.
+definition: Conditional formatting changes the colour, data bars or icons of a visual according to the values or rules you set.
+explanation: Open the formatting options for a field in a table, matrix or other visual, choose Conditional formatting, and pick background colour, font colour, data bars or icons. You can base it on a colour scale, rules or a field value such as a measure that returns a colour.
+simple_explain: Set a rule such as red below 5000 and green above 10000, and the cells colour themselves. It makes the important numbers stand out.
+analogy: It is like traffic lights for your numbers.
+formula_rule: Pick a field → Conditional formatting → choose colours, bars or icons by a rule
+example_1: A background colour scale from red to green on a sales column.
+example_2: Data bars inside table cells.
+example_3: A rule that turns negative growth red.
+related: visual, themes, accessibility, measures
+word_family: conditional formatting, colour scale, rules, data bars, icons
+where_used: Tables and matrices | KPI colouring | Spotting exceptions
+mini_conversation: A: How can I make low sales stand out? | B: Use conditional formatting to turn them red.
+misconception: ✗ Colours must be set by hand for each cell → ✓ Conditional formatting colours cells automatically from rules or values
+contrast: Conditional formatting vs a theme: formatting reacts to the data, a theme sets the overall look.
+avoid: Do not rely on red and green alone, some viewers cannot tell them apart.
+memory_trick: Colour follows the value automatically.
+real_project: Colouring a margin column red or green against a target.
+real_interview: An interviewer may ask: How do you highlight values above a target in a table?
+real_daily: It is like traffic lights that change with the situation.
+mcq_question: Which option automatically colours cells based on their values?
+mcq_options: A) Bookmark B) Gateway C) Conditional formatting D) Parameter
+mcq_answer: C
+mcq_why: Conditional formatting applies colours from rules or values.
+fill_blank: A background that changes from red to green with the value uses a colour ____ → scale
+apply: How do you highlight negative growth in red? → Set a conditional formatting rule on the growth column
+explain_task: Explain conditional formatting in three lines.
+own_task: Colour a sales column red below a target and green above it.

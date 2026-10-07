@@ -1,0 +1,451 @@
+
+@CLD-015
+topic: 03 Compute
+level: Beginner
+term: Instance types
+cue: Which choice sets how much CPU, memory and network a virtual machine gets?
+category: Core concept
+frequency: High
+importance: 4
+origin: Workloads need different mixes of power, so providers sell families of machine sizes instead of one standard server.
+pro_tip: Start small, measure real usage, and then resize to fit.
+memory_story: Instance types are clothing sizes, and each family is a different style.
+visual: A size chart with small, medium and large boxes.
+emotion: The satisfaction of a size that fits the load.
+definition: An instance type is a named size and family of virtual machine that defines its CPU, memory, storage and network capacity.
+explanation: Names such as t3.micro or m5.large show a family and a size. General purpose families balance CPU and memory, compute optimised ones favour CPU, memory optimised ones favour RAM, and some have GPUs. Burstable types give a baseline with short bursts. Choosing too large wastes money, and too small causes slowness. Monitoring shows when to resize.
+simple_explain: Pick the family for the type of work and the size for the amount of work, then adjust with data.
+analogy: Instance types are clothing sizes, with each family a different style.
+formula_rule: Family = kind of workload. Size = amount of capacity.
+example_1: A small burstable type for a light test service.
+example_2: A memory optimised type for a large in-memory cache.
+example_3: A GPU type for training a model.
+related: virtual machines, auto scaling, monitoring, cost alerts
+word_family: family, size, vCPU, memory, burstable
+where_used: Capacity planning | Cost control | Performance tuning
+mini_conversation: A: The server is slow. | B: Check CPU and memory, then choose a larger type if needed.
+misconception: ✗ A bigger instance always solves performance problems → ✓ The bottleneck may be elsewhere, such as a database or code
+contrast: Compute optimised vs memory optimised: one favours CPU, the other favours RAM.
+avoid: Do not pick a very large type without measuring.
+memory_trick: Measure first, then size the machine.
+real_project: Cutting cost by moving an idle service to a smaller instance type.
+real_interview: An interviewer may ask: How do you choose an instance type?
+real_daily: It is like picking a clothing size that fits.
+mcq_question: Which type suits a large in-memory cache?
+mcq_options: A) Burstable only B) GPU C) Memory optimised D) Compute optimised
+mcq_answer: C
+mcq_why: A cache needs a lot of RAM.
+fill_blank: A type that gives a baseline with short bursts is called ____ → burstable
+apply: A job needs a lot of CPU and little RAM. Which family fits? → Compute optimised
+explain_task: Explain how to choose an instance type in three lines.
+own_task: Write which metrics you would watch before resizing.
+
+@CLD-016
+topic: 03 Compute
+level: Beginner
+term: Key pairs and SSH access
+cue: Which pair of files lets you log in to a Linux virtual machine safely?
+category: Core concept
+frequency: High
+importance: 4
+origin: Passwords on public servers get guessed, so providers use a public and private key pair for remote login.
+pro_tip: Protect the private key file and never share it.
+memory_story: The server holds a lock, and only your private key opens it.
+visual: A lock icon on the server and a key on your laptop.
+emotion: The trust of a lock only you can open.
+definition: A key pair is a public key stored on the server and a private key you keep, which together let you authenticate over SSH without a password.
+explanation: When you launch the instance you choose a key pair. The public half is placed on the server. You connect with the private half, usually a file ending in .pem, with permissions set so only you can read it. If the private key is lost, you cannot log in with it again. Many teams now prefer session managers that need no open SSH port.
+simple_explain: Keep the private key secret, give the server the public key, and connect with ssh.
+analogy: The server holds a lock, and only your private key opens it.
+formula_rule: Public key on server + private key with you = login.
+example_1: ssh -i mykey.pem ec2-user@server-address
+example_2: Setting chmod 400 on the key file.
+example_3: Using a session manager so no port 22 is open.
+related: security groups, virtual machines, bastion hosts, SSH tunnels
+word_family: key pair, public key, private key, SSH, pem
+where_used: Server access | Troubleshooting | Automation
+mini_conversation: A: SSH says permissions are too open. | B: Run chmod 400 on the key file.
+misconception: ✗ The public key must be kept secret → ✓ The public key may be shared, and only the private key is secret
+contrast: Public vs private key: the public key is placed on the server, the private key stays with you.
+avoid: Do not email or commit a private key.
+memory_trick: Public key locks, private key opens.
+real_project: Replacing shared key files with a session manager to remove open SSH ports.
+real_interview: An interviewer may ask: How does SSH key authentication work?
+real_daily: It is like a lock that only your key opens.
+mcq_question: Which key must be kept secret?
+mcq_options: A) Both are public B) The private key C) Neither D) The public key
+mcq_answer: B
+mcq_why: Anyone with the private key can log in.
+fill_blank: Restrict the key file with the command ____ 400 → chmod
+apply: SSH says your key file permissions are too open. What command fixes it? → chmod 400
+explain_task: Explain key pairs in three lines.
+own_task: Write the command that logs in with a key file.
+
+@CLD-017
+topic: 03 Compute
+level: Intermediate
+term: Auto scaling
+cue: Which feature adds or removes servers automatically as demand changes?
+category: Core concept
+frequency: High
+importance: 4
+origin: Traffic rises and falls, so fixed server counts either waste money or fail under load, and clouds added automatic scaling.
+pro_tip: Scale on a metric that reflects real load, and always set minimum and maximum limits.
+memory_story: Auto scaling is a restaurant that opens more tables when the crowd arrives.
+visual: A line of servers growing and shrinking with a traffic graph.
+emotion: The calm of a site that survives a traffic spike.
+definition: Auto scaling automatically changes the number of running instances based on rules or metrics, within minimum and maximum limits.
+explanation: A group launches copies from a template, and a load balancer spreads traffic across them. Policies can follow a target such as 50 percent CPU, or a schedule. Scaling out adds servers and scaling in removes them. A cool-down avoids flapping. Stateless apps scale easily, since any server can handle any request.
+simple_explain: Set a minimum, a maximum and a target metric, and the cloud adds or removes servers for you.
+analogy: It is like a restaurant that opens more tables when the crowd arrives.
+formula_rule: Metric above target → scale out. Metric below target → scale in.
+example_1: Adding servers when CPU passes 60 percent.
+example_2: Scaling out before office hours on a schedule.
+example_3: Scaling in at night to save cost.
+related: load balancers, instance types, machine images, monitoring
+word_family: scale out, scale in, group, policy, cool-down
+where_used: Web apps | APIs | Batch workers
+mini_conversation: A: Traffic doubles every afternoon. | B: Use auto scaling with a schedule and a CPU target.
+misconception: ✗ Auto scaling fixes any slow application → ✓ It only helps if the bottleneck is server capacity and the app can run in parallel
+contrast: Scale out vs scale up: out adds more servers, up makes one server bigger.
+avoid: Do not scale without a maximum limit.
+memory_trick: Out adds more, up makes bigger.
+real_project: Adding a CPU target policy so the API handled the evening peak without manual work.
+real_interview: An interviewer may ask: What is the difference between scaling out and scaling up?
+real_daily: It is like a restaurant opening more tables for a crowd.
+mcq_question: What does scaling out mean?
+mcq_options: A) Deleting servers B) Making one server bigger C) Moving regions D) Adding more servers
+mcq_answer: D
+mcq_why: Scaling out increases the number of instances.
+fill_blank: Always set a minimum and a ____ number of instances → maximum
+apply: Traffic peaks every evening. What feature adds servers automatically? → Auto scaling
+explain_task: Explain auto scaling in three lines.
+own_task: Choose a metric and target for scaling a web API.
+
+@CLD-018
+topic: 03 Compute
+level: Intermediate
+term: Serverless functions (Lambda)
+cue: Which service runs your code on demand without you managing any server?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Running a server for small, occasional jobs wasted effort and money, so providers offered code that runs only when triggered.
+pro_tip: Keep functions short and stateless, and set a sensible timeout and memory size.
+memory_story: A function is a taxi called only when needed, with no car to own.
+visual: An event arrow triggering a small function box.
+emotion: The ease of deploying code with no server to patch.
+definition: A serverless function, such as AWS Lambda, runs your code in response to events, scales automatically, and bills only for the time it runs.
+explanation: You upload code and choose a trigger such as an HTTP request, a file upload or a schedule. The provider runs it in a short-lived environment. There are limits on run time and memory, and a first call may be slower, which is called a cold start. State must be kept elsewhere, such as in a database. Azure uses Functions, and GCP uses Cloud Functions or Cloud Run functions.
+simple_explain: Upload code, pick a trigger, and pay only while it runs. Keep it short and stateless.
+analogy: It is like a taxi called only when needed, with no car to own.
+formula_rule: Event → function runs → result, billed per run.
+example_1: A function that resizes an image after upload.
+example_2: A function that runs every night to clean old files.
+example_3: An API endpoint backed by one function.
+related: containers, queues, API gateways, cold start
+word_family: function, trigger, event, cold start, serverless
+where_used: Event processing | Small APIs | Scheduled jobs
+mini_conversation: A: We run a server just for one nightly job. | B: Use a scheduled function instead.
+misconception: ✗ Serverless means there are no servers → ✓ Servers exist, but the provider manages them for you
+contrast: Function vs virtual machine: a function runs on demand, a virtual machine runs until stopped.
+avoid: Do not use a function for a long job that exceeds its time limit.
+memory_trick: Serverless still has servers, just not yours.
+real_project: Replacing a nightly cron server with a scheduled function that cleaned old files.
+real_interview: An interviewer may ask: What is a cold start?
+real_daily: It is like calling a taxi only when you need one.
+mcq_question: What is a cold start?
+mcq_options: A) A billing plan B) A broken function C) A slower first run while the environment starts D) A type of storage
+mcq_answer: C
+mcq_why: The first invocation may wait for the environment to prepare.
+fill_blank: Functions are started by an event called a ____ → trigger
+apply: A small job runs once a night. What fits best? → A scheduled function
+explain_task: Explain serverless functions in three lines.
+own_task: List two jobs that suit functions and one that does not.
+
+@CLD-019
+topic: 03 Compute
+level: Intermediate
+term: Container services (ECS and Fargate)
+cue: Which services run your Docker containers without you building the cluster by hand?
+category: Core concept
+frequency: High
+importance: 4
+origin: Teams packaged apps in containers and needed somewhere to run them at scale, so providers built managed container platforms.
+pro_tip: Choose the serverless container option unless you need control over the machines.
+memory_story: ECS is a shipping port that organises containers, and Fargate is the crane crew you do not hire.
+visual: Containers placed onto a managed platform with no visible servers.
+emotion: The relief of running containers with no cluster upkeep.
+definition: Managed container services such as AWS ECS run containers from your images, and the Fargate option runs them without you managing the underlying servers.
+explanation: You describe a task with an image, CPU, memory and ports, and the service runs and restarts it. A service keeps a desired number of copies and connects to a load balancer. With the server-based option you manage the machines, and with Fargate you do not. Azure has Container Apps, and GCP has Cloud Run. Kubernetes services such as EKS cover larger needs.
+simple_explain: Give the service your container image and sizes, and it runs and restarts it for you.
+analogy: ECS is a port that organises containers, and Fargate is a crane crew you do not hire.
+formula_rule: Image + CPU and memory + count = a running containerised service.
+example_1: Running an API image as a service with two copies.
+example_2: A scheduled container task for a nightly job.
+example_3: Pulling the image from a private registry.
+related: Docker, Kubernetes, load balancers, registries
+word_family: task, service, cluster, Fargate, container
+where_used: Web services | Batch jobs | Microservices
+mini_conversation: A: Do we manage servers for the containers? | B: Not with Fargate, the provider does it.
+misconception: ✗ Container services require you to manage Kubernetes → ✓ Services such as ECS and Cloud Run run containers without it
+contrast: Fargate vs server-based: Fargate hides the machines, the other option leaves them to you.
+avoid: Do not run containers without health checks and logging.
+memory_trick: Fargate means no machines to manage.
+real_project: Moving a container API to a managed service so patching the hosts was no longer needed.
+real_interview: An interviewer may ask: When would you choose containers over functions?
+real_daily: It is like a port crew that handles the containers for you.
+mcq_question: What does Fargate remove from your work?
+mcq_options: A) Managing the servers B) Writing the image C) Tagging D) Paying
+mcq_answer: A
+mcq_why: Fargate runs containers on infrastructure the provider manages.
+fill_blank: A task is described by an image, CPU and ____ → memory
+apply: You want to run a container API without managing servers. What option? → Fargate
+explain_task: Explain managed container services in three lines.
+own_task: Write what a task definition needs to contain.
+
+@CLD-020
+topic: 04 Storage
+level: Beginner
+term: Object storage (S3)
+cue: Which kind of storage holds files as objects in buckets and is reached over an API?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Applications needed cheap, huge and durable storage for files, so providers built storage that scales without disks to manage.
+pro_tip: Treat object storage as the default place for files, backups and data lake data.
+memory_story: S3 is an endless warehouse with labelled boxes and no shelves to organise.
+visual: Buckets holding objects with keys and metadata.
+emotion: The ease of never running out of space.
+definition: Object storage, such as AWS S3, stores data as objects, each with a key and metadata, inside buckets, and is accessed through an HTTP API.
+explanation: Objects are written and read whole, not edited in place. Folders are only name prefixes. It offers very high durability and nearly unlimited size, and a single object can be many gigabytes. It is good for backups, media, logs and data lakes, but not for a database file system. Azure calls it Blob Storage, and GCP calls it Cloud Storage.
+simple_explain: Put files as objects in buckets and fetch them by key over HTTP.
+analogy: It is an endless warehouse with labelled boxes.
+formula_rule: Bucket + key = one object.
+example_1: Storing nightly backups in a bucket.
+example_2: Serving images for a website.
+example_3: Keeping raw data files for later analysis.
+related: bucket policies, storage classes, presigned URLs, data lakes
+word_family: bucket, object, key, prefix, durability
+where_used: Backups | Media | Data lakes
+mini_conversation: A: Where should uploads go? | B: Into an object storage bucket, not the server disk.
+misconception: ✗ Object storage works like a normal file system → ✓ Objects are written whole, and folders are only name prefixes
+contrast: Object vs block storage: objects are whole files over an API, blocks are raw disks for servers.
+avoid: Do not store a database on object storage.
+memory_trick: Bucket plus key finds the object.
+real_project: Moving user uploads from a server disk to a bucket so servers became stateless.
+real_interview: An interviewer may ask: When would you use object storage?
+real_daily: It is like an endless warehouse with labelled boxes.
+mcq_question: What identifies an object inside a bucket?
+mcq_options: A) Its tag only B) Its key C) Its server D) Its colour
+mcq_answer: B
+mcq_why: The key is the object's name within the bucket.
+fill_blank: Folders in object storage are really name ____ → prefixes
+apply: You need cheap, durable storage for backups. What fits? → Object storage
+explain_task: Explain object storage in three lines.
+own_task: List three file types you would store in a bucket.
+
+@CLD-021
+topic: 04 Storage
+level: Intermediate
+term: Buckets and policies
+cue: How do you decide who can read or write the objects in a bucket?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Public buckets caused many data leaks, so access controls were added and made private by default.
+pro_tip: Keep buckets private and turn on the account-wide block on public access.
+memory_story: A bucket policy is the sign on the warehouse door saying who may enter.
+visual: A bucket with a padlock and a policy note.
+emotion: The worry removed when a bucket is confirmed private.
+definition: A bucket policy is a resource-based document attached to a bucket that allows or denies actions on it, working together with IAM policies and public access settings.
+explanation: New buckets are private. Access is allowed only if the identity policy or the bucket policy permits it, and no deny applies. The block public access setting overrides policies that would expose data. Encryption at rest should be on. Versioning keeps older copies, and logging records who accessed what.
+simple_explain: Keep buckets private, grant access through policies, and use block public access as a safety net.
+analogy: A bucket policy is the sign on a warehouse door saying who may enter.
+formula_rule: Private by default + explicit allow + block public access on.
+example_1: A policy allowing one role to read a single prefix.
+example_2: Block public access stopping an accidental public policy.
+example_3: Versioning restoring a deleted object.
+related: IAM policies, least privilege, presigned URLs, encryption
+word_family: policy, public access, encryption, versioning, ACL
+where_used: Data security | Audits | Static hosting
+mini_conversation: A: Why can anyone download this file? | B: The bucket policy allowed public reads.
+misconception: ✗ A bucket is safe because nobody knows its name → ✓ Names can be found, so only access settings protect it
+contrast: Bucket policy vs IAM policy: one is attached to the bucket, the other to the identity.
+avoid: Do not make a bucket public for convenience.
+memory_trick: Private first, then allow by name.
+real_project: Turning on block public access after finding a public bucket in an audit.
+real_interview: An interviewer may ask: How do you secure a storage bucket?
+real_daily: It is like a sign on a warehouse door.
+mcq_question: What does block public access do?
+mcq_options: A) Prevents public exposure even if a policy allows it B) Makes files faster C) Encrypts the files D) Deletes the bucket
+mcq_answer: A
+mcq_why: It overrides settings that would make data public.
+fill_blank: Keeping older copies of an object is done with ____ → versioning
+apply: A bucket is found public by mistake. What is the first safe step? → Turn on block public access
+explain_task: Explain how to secure a bucket in three lines.
+own_task: List four settings to check on a new bucket.
+
+@CLD-022
+topic: 04 Storage
+level: Intermediate
+term: Storage classes
+cue: Which setting trades access speed for cheaper storage of rarely used data?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Data you rarely read does not need premium speed, so providers sell cheaper tiers with retrieval fees or delays.
+pro_tip: Use lifecycle rules to move old data to cheaper classes automatically.
+memory_story: Storage classes are hot, warm and cold shelves in a warehouse.
+visual: Three shelves labelled hot, cool and archive with falling prices.
+emotion: The pleasure of a smaller bill for old data.
+definition: Storage classes are tiers of object storage with different price, access speed and retrieval conditions, from frequent access to deep archive.
+explanation: Standard suits frequently used data. Infrequent access tiers cost less to store but charge to read. Archive tiers are the cheapest but may take minutes to hours to retrieve. Lifecycle rules move or delete objects by age. Intelligent tiering can move data automatically. Azure uses hot, cool and archive tiers.
+simple_explain: Keep hot data in standard, move old data to cheaper tiers with lifecycle rules.
+analogy: It is like hot, warm and cold shelves in a warehouse.
+formula_rule: Cheaper to store means slower or costlier to read.
+example_1: Logs older than 30 days moved to infrequent access.
+example_2: Compliance records archived for seven years.
+example_3: A rule deleting temporary files after a week.
+related: object storage, cost alerts, backups, lifecycle rules
+word_family: tier, archive, lifecycle, retrieval, standard
+where_used: Cost control | Compliance | Backups
+mini_conversation: A: Storage costs keep growing. | B: Add a lifecycle rule to move old data to cheaper tiers.
+misconception: ✗ Archive tiers are instantly available → ✓ Retrieval may take minutes to hours and may cost extra
+contrast: Standard vs archive: standard is fast and pricier to store, archive is cheap but slow to read.
+avoid: Do not archive data you need to read often.
+memory_trick: Cheap to keep means costly or slow to fetch.
+real_project: Adding a lifecycle rule that moved old logs to a cheaper tier and cut storage cost.
+real_interview: An interviewer may ask: How do you reduce storage cost over time?
+real_daily: It is like moving old boxes to the cold shelf.
+mcq_question: What do lifecycle rules do?
+mcq_options: A) Encrypt buckets B) Move or delete objects by age C) Block ports D) Create users
+mcq_answer: B
+mcq_why: They automate transitions and expiry.
+fill_blank: The cheapest tier for rarely read data is called ____ → archive
+apply: Logs older than 30 days are rarely read. What should you set up? → A lifecycle rule
+explain_task: Explain storage classes in three lines.
+own_task: Write a lifecycle plan for logs over one year.
+
+@CLD-023
+topic: 04 Storage
+level: Intermediate
+term: Presigned URLs
+cue: Which link gives temporary access to one private object without making it public?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Users needed to upload or download a private file without receiving credentials, so time-limited signed links were created.
+pro_tip: Keep the expiry short and limit the link to one object and one action.
+memory_story: A presigned URL is a visitor pass that works for one door until noon.
+visual: A long link with a signature and an expiry time.
+emotion: The ease of sharing a private file safely.
+definition: A presigned URL is a link signed with your credentials that grants temporary permission to read or write one specific object.
+explanation: Your server creates the link and gives it to the user. Anyone with the link can use it until it expires, so treat it like a password. It carries the permissions of the identity that signed it. It is common for browser uploads that go straight to storage instead of through your server. Azure uses shared access signatures, and GCP uses signed URLs.
+simple_explain: Make a signed link that expires soon, and give it to the person who needs one object.
+analogy: It is like a visitor pass that works for one door until noon.
+formula_rule: One object + one action + short expiry.
+example_1: A link letting a user download a private invoice for ten minutes.
+example_2: A browser uploading a photo directly to a bucket.
+example_3: A report shared with a customer for one day.
+related: object storage, IAM, bucket policies, temporary credentials
+word_family: signed URL, expiry, signature, upload, download
+where_used: File uploads | Private downloads | Sharing reports
+mini_conversation: A: Should we make the invoices bucket public? | B: No, generate presigned links instead.
+misconception: ✗ A presigned URL is safe to share forever → ✓ It works for anyone holding it until it expires
+contrast: Presigned URL vs public object: a presigned link expires and is limited, a public object is open to all.
+avoid: Do not create links with very long expiry times.
+memory_trick: Signed, short, single, and then it dies.
+real_project: Letting customers upload files straight to a bucket with a five-minute presigned link.
+real_interview: An interviewer may ask: How do you share a private file safely?
+real_daily: It is like a visitor pass for one door until noon.
+mcq_question: Who can use a presigned URL?
+mcq_options: A) Nobody B) Only admins C) Only the creator D) Anyone holding it, until it expires
+mcq_answer: D
+mcq_why: The signature carries the permission.
+fill_blank: A presigned link works only until its ____ → expiry
+apply: A customer must download one private file. What do you give them? → A presigned URL
+explain_task: Explain presigned URLs in three lines.
+own_task: Decide a sensible expiry for an invoice download link.
+
+@CLD-024
+topic: 04 Storage
+level: Intermediate
+term: Block storage
+cue: Which storage acts like a raw disk attached to one virtual machine?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Servers and databases need fast disks they can format and use directly, so clouds offer network disks that attach to instances.
+pro_tip: Take regular snapshots of important volumes.
+memory_story: Block storage is a hard drive you plug into one computer.
+visual: A disk icon attached to one server.
+emotion: The comfort of a disk that outlives the server.
+definition: Block storage, such as AWS EBS, provides raw network-attached disk volumes that attach to a virtual machine and are formatted with a file system.
+explanation: A volume lives independently of an instance, so data survives a stop. It is usually attached to one instance in one zone. Types differ in speed and price, from general purpose to high input and output. Snapshots save a copy to object storage, which can restore the volume or copy it to another zone. Azure calls it Managed Disks, and GCP calls it Persistent Disk.
+simple_explain: A block volume is a network disk for one server. Snapshot it to back it up.
+analogy: It is a hard drive you plug into one computer.
+formula_rule: One volume → one instance, in one zone, with snapshots for safety.
+example_1: A database server using a fast volume for its data.
+example_2: A snapshot used to rebuild a server.
+example_3: Resizing a volume as data grows.
+related: virtual machines, snapshots, file storage, object storage
+word_family: volume, snapshot, disk, attach, IOPS
+where_used: Databases | Operating system disks | Servers
+mini_conversation: A: The server was rebuilt and the data is gone. | B: It should live on a separate volume with snapshots.
+misconception: ✗ Block volumes can be shared by many servers freely → ✓ A standard volume attaches to one instance in one zone
+contrast: Block vs object storage: block is a disk for a server, object is files over an API.
+avoid: Do not keep important data only on an instance's temporary disk.
+memory_trick: Block is a drive, object is a bucket.
+real_project: Taking nightly snapshots of the database volume to allow quick rebuilds.
+real_interview: An interviewer may ask: What is the difference between block and object storage?
+real_daily: It is like a hard drive plugged into one computer.
+mcq_question: What is a snapshot?
+mcq_options: A) A user B) A new server C) A saved copy of a volume D) A network rule
+mcq_answer: C
+mcq_why: Snapshots store a point-in-time copy of a volume.
+fill_blank: A disk volume is usually tied to one availability ____ → zone
+apply: A database server needs a fast, attachable disk. Which storage? → Block storage
+explain_task: Explain block storage in three lines.
+own_task: Write how you would back up a data volume.
+
+@CLD-025
+topic: 04 Storage
+level: Intermediate
+term: File storage
+cue: Which storage offers a shared folder that many servers can open at once?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Some applications expect a normal shared file system, so clouds offer managed network file shares.
+pro_tip: Use file storage only when many machines truly need the same folder, since object storage is cheaper.
+memory_story: File storage is a shared network drive in the office.
+visual: Several servers connected to one shared folder.
+emotion: The convenience of one folder for the whole team.
+definition: File storage, such as AWS EFS or FSx, provides a managed shared file system that multiple instances can mount at the same time over the network.
+explanation: It supports normal file operations, folders and permissions, using standard protocols such as NFS or SMB. It grows automatically and spans zones, which suits shared content. It costs more than object storage and is slower than a local disk. Azure Files and GCP Filestore are the equivalents.
+simple_explain: Use it when several servers need the same files as a normal folder.
+analogy: It is a shared network drive in the office.
+formula_rule: Many servers + one shared folder = file storage.
+example_1: Several web servers sharing uploaded media.
+example_2: A shared home folder for a team of researchers.
+example_3: A legacy app that requires a shared mount.
+related: block storage, object storage, virtual machines, NFS
+word_family: file system, share, mount, NFS, SMB
+where_used: Shared content | Legacy applications | Team folders
+mini_conversation: A: Three servers must see the same folder. | B: Use managed file storage.
+misconception: ✗ File storage is the best choice for all files → ✓ Object storage is usually cheaper and more scalable
+contrast: File vs block storage: file is shared by many servers, block is attached to one.
+avoid: Do not use shared file storage for data that fits object storage.
+memory_trick: Shared drive means file storage.
+real_project: Sharing uploaded images between three web servers using a managed file share.
+real_interview: An interviewer may ask: When would you choose file storage?
+real_daily: It is like a shared drive in the office.
+mcq_question: Which storage lets many servers mount the same folder?
+mcq_options: A) A snapshot B) Archive tier C) Block storage D) File storage
+mcq_answer: D
+mcq_why: File storage is a shared network file system.
+fill_blank: A common protocol for Linux file shares is ____ → NFS
+apply: Several servers need one shared folder. What do you pick? → File storage
+explain_task: Explain when to use file storage in three lines.
+own_task: Compare file and object storage for a media site in two lines.

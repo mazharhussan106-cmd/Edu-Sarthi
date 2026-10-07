@@ -1,0 +1,408 @@
+
+@DKR-025
+type: code56
+topic: 04 Storage and Networking
+level: Intermediate
+term: Volumes
+cue: Which Docker storage keeps data alive after the container is deleted?
+kind: Storage concept
+frequency: Very high
+importance: 5
+origin: A container's own writable layer vanishes with it, so Docker added volumes as storage that lives outside any one container.
+pro_tip: Use a named volume for databases, and never rely on the container layer for data you need.
+memory_story: A volume is a safe deposit box that stays at the bank when the clerk leaves.
+visual: A container connected to a separate drum that remains after removal.
+emotion: The relief of seeing your data survive a rebuild.
+meaning: A volume is storage managed by Docker and mounted into a container, and it persists independently of the container.
+code: docker volume create pgdata¶docker run -d -e POSTGRES_PASSWORD=example -v pgdata:/var/lib/postgresql/data postgres:16¶docker volume ls
+output: The volume is created, mounted in the database folder, and listed after the container is removed too.
+explanation: Docker stores volume contents in its own area on the host, so you do not manage paths. Removing the container leaves the volume. Several containers can share one volume. docker volume rm deletes it permanently, and docker volume prune removes unused ones.
+simple_explain: Mount a named volume at the folder where an app saves data, and the data outlives the container.
+analogy: It is like a safe deposit box that stays when the clerk changes.
+syntax: docker run -v volume_name:/path/in/container image
+anatomy: volume_name = Docker managed storage | /path = mount point inside | docker volume = manage them
+example_1: docker volume create appdata
+example_2: docker run -v appdata:/data alpine ls /data
+example_3: docker volume inspect appdata
+variation: docker run --mount type=volume,src=appdata,dst=/data alpine   // the longer, explicit form
+used_with: docker run, Compose volumes, backups
+related: bind mounts, tmpfs, Compose networks and volumes
+alternatives: Bind mounts | Cloud databases
+where_used: Databases | Uploads | Persistent state
+mini_conversation: A: My database is empty after redeploy. | B: Mount a named volume on its data folder.
+misconception: ✗ Data written inside a container is permanent → ✓ It is lost when the container is removed unless stored in a volume
+confused_with: Volume vs bind mount: a volume is managed by Docker, a bind mount is a host path you pick.
+avoid: Do not delete volumes without checking for needed data.
+wrong_code: docker run -v /var/lib/postgresql/data postgres:16
+right_code: docker run -v pgdata:/var/lib/postgresql/data postgres:16
+memory_trick: Name before the colon makes it persist.
+real_project: Keeping the Postgres data in a named volume across container upgrades.
+real_interview: An interviewer may ask: How do you persist data in Docker?
+real_daily: It is like keeping valuables in a bank box, not your desk.
+mcq_question: What happens to a named volume when its container is removed?
+mcq_options: A) It becomes read-only B) It moves into the image C) It stays until deleted D) It is deleted at once
+mcq_answer: C
+mcq_why: Volumes live independently of containers.
+fill_blank: A named volume is attached with the flag ____ → -v
+hindi_to_task: Create a volume called appdata.
+task_answer: docker volume create appdata
+own_task: Run alpine with the volume appdata mounted at /data.
+practice_question: How do you list all volumes?
+practice_answer: docker volume ls
+
+@DKR-026
+type: code56
+topic: 04 Storage and Networking
+level: Intermediate
+term: Bind mounts
+cue: Which mount links a real folder on your computer into a container?
+kind: Storage concept
+frequency: High
+importance: 4
+origin: During development you want edits on your machine to appear in the container at once, so Docker can mount a host folder directly.
+pro_tip: Use a bind mount for live code in development, and a volume for real data.
+memory_story: A bind mount is a window cut straight into your own folder.
+visual: One folder shown in two places at the same time.
+emotion: The joy of saving a file and seeing the container update.
+meaning: A bind mount maps an exact host path into a container, so both see the same files.
+code: docker run --rm -v "$(pwd)":/app -w /app node:22 node index.js
+output: The container runs index.js from your current folder, and edits on the host appear immediately inside.
+explanation: The host path must be absolute in the short -v form, which is why $(pwd) is used. Changes are shared both ways, so a container can modify your files. Add :ro to make it read-only. File ownership may differ between host and container, which can cause permission errors on Linux.
+simple_explain: A bind mount shares one real host folder with the container. Great for development.
+analogy: It is like a window that shows your own desk inside another room.
+syntax: docker run -v /host/path:/container/path[:ro] image
+anatomy: /host/path = real folder | /container/path = where it appears | :ro = read only
+example_1: docker run -v "$(pwd)":/site -p 8080:80 nginx
+example_2: docker run -v "$(pwd)"/conf:/etc/app:ro myapp
+example_3: docker run --mount type=bind,src="$(pwd)",dst=/app myapp
+variation: volumes: ["./src:/app/src"]   // relative paths work in Compose files
+used_with: docker run, Compose, hot reload tools
+related: volumes, tmpfs, docker run
+alternatives: Named volumes | docker cp for one-off copies
+where_used: Local development | Config files | Live reload
+mini_conversation: A: My changes do not show up. | B: Bind mount the source folder so edits appear live.
+misconception: ✗ Bind mounts and volumes are the same thing → ✓ A bind mount uses a host path you choose, a volume is managed by Docker
+confused_with: Bind mount vs volume: bind uses your path, volume uses Docker's storage.
+avoid: Do not bind mount sensitive host folders read-write.
+wrong_code: docker run -v app:/app myapp
+right_code: docker run -v "$(pwd)":/app myapp
+memory_trick: A slash path means a real host folder.
+real_project: Mounting source code so the dev server reloaded on every save.
+real_interview: An interviewer may ask: When would you choose a bind mount?
+real_daily: It is like a window showing your own desk elsewhere.
+mcq_question: Which suffix makes a bind mount read-only?
+mcq_options: A) :ls B) :ro C) :tmp D) :rw
+mcq_answer: B
+mcq_why: The ro option stands for read only.
+fill_blank: A bind mount maps a folder from the ____ into the container → host
+hindi_to_task: Mount the current folder to /app in a node container.
+task_answer: docker run -v "$(pwd)":/app node:22
+own_task: Mount a config folder as read-only into a container.
+practice_question: Why can a bind mount be risky?
+practice_answer: The container can change or delete real files on your host.
+
+@DKR-027
+type: code56
+topic: 04 Storage and Networking
+level: Intermediate
+term: tmpfs mounts
+cue: Which mount keeps data only in memory and never writes it to disk?
+kind: Storage concept
+frequency: Medium
+importance: 3
+origin: Some data such as temporary secrets should never touch disk, so Docker offers a memory-only mount.
+pro_tip: Use tmpfs for scratch files and sensitive temporary data.
+memory_story: Tmpfs is a whiteboard that is wiped the moment the lights go off.
+visual: A box inside RAM that disappears at stop.
+emotion: The confidence of knowing nothing is left behind.
+meaning: A tmpfs mount stores data in the host memory, and it is deleted when the container stops.
+code: docker run --rm --tmpfs /scratch:rw,size=64m alpine sh -c "echo hi > /scratch/a && ls /scratch"
+output: The file a is created and listed, and it disappears once the container exits.
+explanation: Data lives in RAM, so it is fast but limited by the size you set. Nothing persists after stop or restart. It works on Linux containers only. It pairs well with a read-only root file system, where the app still needs one writable scratch folder.
+simple_explain: tmpfs is temporary memory storage that vanishes at stop.
+analogy: It is like a whiteboard that clears itself when the room closes.
+syntax: docker run --tmpfs /path[:options] image
+anatomy: /path = mount point | size= = memory cap | rw = writable
+example_1: docker run --tmpfs /tmp alpine
+example_2: docker run --tmpfs /run:size=16m alpine
+example_3: docker run --read-only --tmpfs /tmp alpine
+variation: docker run --mount type=tmpfs,dst=/tmp alpine   // the explicit form
+used_with: read-only containers, security hardening
+related: volumes, bind mounts, security and operations
+alternatives: Volumes | Writable container layer
+where_used: Temp files | Sensitive data | Hardened containers
+mini_conversation: A: My app needs to write temp files but the root is read-only. | B: Add a tmpfs at /tmp.
+misconception: ✗ tmpfs data survives a container restart → ✓ It is erased every time the container stops
+confused_with: tmpfs vs volume: tmpfs is memory and temporary, a volume is disk and lasting.
+avoid: Do not store anything you need to keep in tmpfs.
+wrong_code: docker run -v tmp:/scratch alpine
+right_code: docker run --tmpfs /scratch alpine
+memory_trick: Tmp in the name means temporary memory.
+real_project: Giving a read-only API container a small tmpfs for its temp files.
+real_interview: An interviewer may ask: Where would tmpfs help security?
+real_daily: It is like writing on a whiteboard that clears itself.
+mcq_question: Where does tmpfs keep its data?
+mcq_options: A) In host memory B) In a volume C) On a network drive D) In the image
+mcq_answer: A
+mcq_why: The data is in RAM and is lost on stop.
+fill_blank: The flag ____ sets a memory-only mount → --tmpfs
+hindi_to_task: Give an alpine container a memory-only /tmp.
+task_answer: docker run --tmpfs /tmp alpine
+own_task: Combine a read-only root with a tmpfs temp folder.
+practice_question: What happens to tmpfs data when the container stops?
+practice_answer: It is erased.
+
+@DKR-028
+type: code56
+topic: 04 Storage and Networking
+level: Intermediate
+term: Bridge networks
+cue: Which Docker network lets containers on one host talk to each other by name?
+kind: Networking concept
+frequency: Very high
+importance: 5
+origin: Containers need to reach each other privately, so Docker creates virtual networks that connect them without exposing everything.
+pro_tip: Create your own bridge network, because it gives containers name-based discovery.
+memory_story: A user-defined bridge is a private office hallway with name plates on every door.
+visual: Several containers joined by one virtual switch.
+emotion: The ease of calling a database simply by its name.
+meaning: A bridge network is a virtual switch on the host, and containers attached to the same user-defined bridge can reach one another by name.
+code: docker network create appnet¶docker run -d --name db --network appnet -e POSTGRES_PASSWORD=example postgres:16¶docker run --rm --network appnet alpine ping -c 1 db
+output: The network is created, db starts on it, and the ping from the second container resolves db and replies.
+explanation: The default bridge does not give name lookup, but a user-defined bridge does. Containers on different networks cannot talk unless connected to both. docker network connect adds a running container to another network. Nothing is reachable from outside until you publish ports.
+simple_explain: Put related containers on one custom network and use their names as addresses.
+analogy: It is like an office hallway where every door has a name plate.
+syntax: docker network create name | docker run --network name image
+anatomy: create = new network | --network = attach | name = DNS name for the container
+example_1: docker network ls
+example_2: docker network inspect appnet
+example_3: docker network connect appnet web
+variation: docker network create --internal backend   // no outside access
+used_with: container DNS, port mapping, Compose networks
+related: container DNS, port mapping, host network
+alternatives: Host network | Compose default network
+where_used: Multi-container apps | Isolation | Local stacks
+mini_conversation: A: My app cannot find the db host. | B: Put both on one user-defined network.
+misconception: ✗ All containers can always reach each other by name → ✓ Name lookup works only on a user-defined network they share
+confused_with: Default bridge vs user-defined bridge: only the second gives DNS names.
+avoid: Do not rely on IP addresses that change between runs.
+wrong_code: docker run --link db myapp   # deprecated
+right_code: docker run --network appnet myapp
+memory_trick: Custom network, custom names, easy calls.
+real_project: Putting the API and database on a private network away from the proxy.
+real_interview: An interviewer may ask: How do two containers talk to each other?
+real_daily: It is like an office hallway with name plates.
+mcq_question: Which network type gives containers name-based lookup?
+mcq_options: A) The none driver B) No network C) The default bridge D) A user-defined bridge
+mcq_answer: D
+mcq_why: Only user-defined bridges provide built-in DNS by name.
+fill_blank: A new network is made with docker network ____ followed by a name → create
+hindi_to_task: Create a network named appnet.
+task_answer: docker network create appnet
+own_task: Attach a running container named web to appnet.
+practice_question: Can two containers on different networks talk?
+practice_answer: Not unless one is connected to both.
+
+@DKR-029
+type: code56
+topic: 04 Storage and Networking
+level: Beginner
+term: Port mapping
+cue: Which option lets people outside the container reach a service inside it?
+kind: Networking concept
+frequency: Very high
+importance: 5
+origin: Containers are isolated by default, so a port on the host must be linked to a port in the container to be reachable.
+pro_tip: Bind to 127.0.0.1 for local-only access, so the service is not exposed to the network.
+memory_story: Port mapping is a doorbell on the host wired to a room inside.
+visual: Host port 8080 pointing to container port 80.
+emotion: The satisfaction of the browser finally loading the page.
+meaning: Port mapping publishes a container port on a host port so traffic to the host reaches the container.
+code: docker run -d -p 127.0.0.1:8080:80 --name site nginx
+output: Visiting localhost on port 8080 shows the nginx page, but other computers cannot reach it.
+explanation: The format is host port first, then container port. Without a host address Docker listens on every interface, which can expose a service. -P publishes all exposed ports on random host ports. docker port shows the active mappings. Two containers cannot use the same host port.
+simple_explain: -p host:container opens a door from the host to the container.
+analogy: It is like a doorbell outside connected to a room inside.
+syntax: docker run -p [host_ip:]host_port:container_port image
+anatomy: host_ip = which address | host_port = outside number | container_port = inside number
+example_1: docker run -p 3000:3000 myapp
+example_2: docker run -p 5433:5432 postgres:16
+example_3: docker port site
+variation: docker run -P nginx   // publish exposed ports on random host ports
+used_with: EXPOSE, docker ps, firewalls
+related: EXPOSE, bridge networks, network troubleshooting
+alternatives: Reverse proxy | Host network
+where_used: Local testing | Web services | Databases in development
+mini_conversation: A: Port 5432 is already in use. | B: Map a different host port such as 5433.
+misconception: ✗ EXPOSE in the Dockerfile opens the port on the host → ✓ Only -p or ports in Compose publishes it
+confused_with: -p vs EXPOSE: -p publishes to the host, EXPOSE only documents.
+avoid: Do not publish database ports on all interfaces in production.
+wrong_code: docker run -p 80:8080 nginx
+right_code: docker run -p 8080:80 nginx
+memory_trick: Host number first, container number second.
+real_project: Mapping the API to a free host port to avoid a clash with Postgres.
+real_interview: An interviewer may ask: How do you expose a container service?
+real_daily: It is like a doorbell outside wired to a room inside.
+mcq_question: In -p 8080:80, which number is the container port?
+mcq_options: A) Neither B) 80 C) 8080 D) Both
+mcq_answer: B
+mcq_why: The format is host port, then container port.
+fill_blank: To restrict a port to this machine, bind it to ____ → 127.0.0.1
+hindi_to_task: Map host port 3000 to container port 3000.
+task_answer: docker run -p 3000:3000 myapp
+own_task: Publish nginx port 80 on host 9090, local only.
+practice_question: Which command shows the active port mappings of a container?
+practice_answer: docker port container
+
+@DKR-030
+type: code56
+topic: 04 Storage and Networking
+level: Intermediate
+term: Container DNS
+cue: How does one container find another by simply using its name?
+kind: Networking concept
+frequency: High
+importance: 4
+origin: Container addresses change on every start, so Docker runs a small DNS service that turns names into current addresses.
+pro_tip: Use the service name as the host in connection strings, never a fixed IP address.
+memory_story: Docker keeps a live phone book so you dial names, not changing numbers.
+visual: A name turning into an address inside a network.
+emotion: The comfort of config that never needs updating.
+meaning: Docker provides an embedded DNS server on user-defined networks that resolves container and service names to their current IP addresses.
+code: docker exec api getent hosts db¶docker exec api sh -c "nc -zv db 5432"
+output: The first command prints the address of db, and the second reports that port 5432 is open.
+explanation: The built-in resolver listens at 127.0.0.11 inside the container. It answers for container names, aliases and Compose service names on the shared network. A network alias gives extra names. If the name fails, the containers are probably on different networks.
+simple_explain: Use the container or service name as the hostname, and Docker finds the address.
+analogy: It is like a live phone book that updates itself.
+syntax: DB_HOST=db   // a container name used as the host
+anatomy: name = container or service | 127.0.0.11 = built-in resolver | alias = extra name
+example_1: DATABASE_URL=postgres://user:pw@db:5432/app
+example_2: docker run --network-alias cache --network appnet redis
+example_3: docker exec api nslookup db
+variation: docker run --dns 1.1.1.1 myapp   // choose an external resolver
+used_with: bridge networks, Compose, connection strings
+related: bridge networks, Compose networks and volumes, network troubleshooting
+alternatives: Hard-coded IPs, which are fragile
+where_used: App to database links | Microservices | Compose
+mini_conversation: A: What host do I use for Postgres? | B: Use its service name, such as db.
+misconception: ✗ localhost inside a container reaches other containers → ✓ localhost is that container itself, so use the other container's name
+confused_with: Container DNS vs host DNS: one resolves container names, the other resolves the internet.
+avoid: Do not use localhost to reach a different container.
+wrong_code: DATABASE_URL=postgres://user:pw@localhost:5432/app
+right_code: DATABASE_URL=postgres://user:pw@db:5432/app
+memory_trick: Localhost means me, so use their name.
+real_project: Switching connection strings from localhost to the service name fixed the API.
+real_interview: An interviewer may ask: Why does localhost fail between containers?
+real_daily: It is like dialing a name from a live phone book.
+mcq_question: What does localhost mean inside a container?
+mcq_options: A) That same container B) The host machine C) The database container D) The registry
+mcq_answer: A
+mcq_why: Each container has its own network namespace.
+fill_blank: The built-in resolver address inside containers is ____ → 127.0.0.11
+hindi_to_task: Check how the api container resolves the name db.
+task_answer: docker exec api getent hosts db
+own_task: Give a Redis container the extra name cache on appnet.
+practice_question: What usually causes a name lookup to fail?
+practice_answer: The containers are on different networks, or the default bridge is used.
+
+@DKR-031
+type: code56
+topic: 04 Storage and Networking
+level: Advanced
+term: Host and none networks
+cue: Which network modes remove isolation, or all networking, from a container?
+kind: Networking concept
+frequency: Medium
+importance: 3
+origin: Some workloads need raw host speed or total isolation, so Docker offers modes beyond the bridge.
+pro_tip: Use host mode only when you truly need it, since it removes port isolation.
+memory_story: Host mode removes the walls, and none mode removes the doors.
+visual: One container sharing the host's network card, another with no network.
+emotion: The caution of knowing you removed a safety layer.
+meaning: Host mode shares the host's network stack directly, and none mode gives the container only a loopback interface.
+code: docker run -d --network host nginx¶docker run --rm --network none alpine ip addr
+output: Nginx listens directly on host port 80, and the second container shows only the loopback interface.
+explanation: With host mode, -p is ignored because there is no separate network, and port clashes with the host are possible. It works fully on Linux, with limits on Docker Desktop. None mode suits jobs that must have no network access, such as an offline batch tool.
+simple_explain: host = share the host network, none = no network at all.
+analogy: It is like a room with no walls versus a room with no doors.
+syntax: docker run --network host|none image
+anatomy: host = host stack | none = loopback only | bridge = default isolated
+example_1: docker run --network host myapp
+example_2: docker run --network none alpine
+example_3: docker network inspect bridge
+variation: docker run --network container:web alpine   // share another container's network
+used_with: performance tuning, isolation, security
+related: bridge networks, port mapping, security and operations
+alternatives: Bridge network with -p
+where_used: Monitoring agents | Offline jobs | Performance tests
+mini_conversation: A: Do I need -p with host networking? | B: No, host mode ignores it.
+misconception: ✗ Host networking is the safe default → ✓ It removes isolation, so use it only when necessary
+confused_with: Host network vs bridge: host shares the machine network, bridge isolates it.
+avoid: Do not run untrusted images on the host network.
+wrong_code: docker run --network host -p 80:80 nginx
+right_code: docker run --network host nginx
+memory_trick: Host drops walls, none drops doors.
+real_project: Running a metrics agent on the host network to read machine interfaces.
+real_interview: An interviewer may ask: When would you use the none network?
+real_daily: It is like a room with no walls or no doors.
+mcq_question: What does the none network give a container?
+mcq_options: A) A public IP B) Full host access C) A VPN D) Only a loopback interface
+mcq_answer: D
+mcq_why: Only the internal loopback is available.
+fill_blank: To share the machine's own network stack you pass --network followed by ____ → host
+hindi_to_task: Run nginx sharing the host network.
+task_answer: docker run --network host nginx
+own_task: Run alpine with no network at all.
+practice_question: Why is -p ignored in host mode?
+practice_answer: There is no separate container network to map from.
+
+@DKR-032
+type: code56
+topic: 04 Storage and Networking
+level: Advanced
+term: Network troubleshooting
+cue: Which steps do you take when one container cannot reach another?
+kind: Debugging skill
+frequency: High
+importance: 5
+origin: Connection failures are the most common Docker problem, so a repeatable checklist saves hours of guessing.
+pro_tip: Test from inside the failing container, because that is the view that matters.
+memory_story: Trace the call from the caller's phone, not from your own.
+visual: A checklist moving from name to network to port.
+emotion: The relief of finding the single wrong word.
+meaning: Network troubleshooting is checking, in order, the name, the shared network, the listening port and the target process.
+code: docker network inspect appnet¶docker exec api getent hosts db¶docker exec api sh -c "nc -zv db 5432"¶docker logs db --tail 20
+output: You see both containers on appnet, the name resolves, the port answers, and the database log shows it is ready.
+explanation: Start with the name, then check both containers share a network. Next test the port from inside the caller. Then read the target's logs, since it may still be starting. Also check that the service listens on 0.0.0.0, not only 127.0.0.1, and that the right port number is used.
+simple_explain: Check name, network, port, then the target's logs, all from inside the caller.
+analogy: It is like tracing a phone call from the caller's own phone.
+syntax: docker exec caller nc -zv target port
+anatomy: network inspect = who is connected | getent = name check | nc -zv = port check | logs = target state
+example_1: docker exec api ping -c 1 db
+example_2: docker exec api cat /etc/resolv.conf
+example_3: docker exec db ss -ltn
+variation: docker run --rm --network appnet nicolaka/netshoot   // a toolbox container for debugging
+used_with: docker exec, docker logs, bridge networks
+related: container DNS, port mapping, debugging a failing container
+alternatives: A netshoot toolbox container
+where_used: Connection errors | Compose stacks | Production incidents
+mini_conversation: A: The API says connection refused. | B: Check that the database listens on 0.0.0.0 and is on the same network.
+misconception: ✗ Connection refused always means a firewall → ✓ It often means nothing is listening, or the service binds only to localhost
+confused_with: Refused vs timeout: refused means nobody is listening, timeout means traffic is blocked or lost.
+avoid: Do not guess the cause before testing from inside the caller.
+wrong_code: DB_HOST=127.0.0.1
+right_code: DB_HOST=db
+memory_trick: Name, network, port, then logs.
+real_project: Finding that the service listened only on localhost, then binding it to all addresses.
+real_interview: An interviewer may ask: How do you debug a connection refused error?
+real_daily: It is like tracing a phone call from the caller's side.
+mcq_question: Where should you test connectivity from?
+mcq_options: A) From the registry B) Only from your laptop C) Inside the calling container D) From the image build
+mcq_answer: C
+mcq_why: The caller's own view decides whether it can connect.
+fill_blank: A server inside a container should listen on 0.0.0.0 rather than ____ → 127.0.0.1
+hindi_to_task: Check whether the api container can reach db on port 5432.
+task_answer: docker exec api sh -c "nc -zv db 5432"
+own_task: List every container attached to the network appnet.
+practice_question: What does connection refused usually mean?
+practice_answer: Nothing is listening on that port or address.

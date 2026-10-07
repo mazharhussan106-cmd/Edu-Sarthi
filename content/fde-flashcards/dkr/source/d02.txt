@@ -1,0 +1,408 @@
+
+@DKR-017
+type: code56
+topic: 03 Docker CLI
+level: Beginner
+term: docker run
+cue: Which command creates a new container from an image and starts it?
+kind: CLI command
+frequency: Very high
+importance: 5
+origin: An image does nothing until it is started, so one command was needed to create and start a container in a single step.
+pro_tip: Add --rm for throwaway containers so they clean themselves up when they stop.
+memory_story: Pressing run is pressing the power button on a sealed box you just unpacked.
+visual: An image turning into a running container with a name and a port.
+emotion: The thrill of seeing your first service answer in seconds.
+meaning: docker run creates a container from an image, starts it, and optionally attaches your terminal to it.
+code: docker run -d --name web -p 8080:80 nginx:1.27
+output: A long container ID is printed, and nginx is now reachable at http://localhost:8080.
+explanation: -d runs the container in the background. --name gives a readable name instead of a random one. -p publishes a container port on the host. Everything after the image name is the command and its arguments. If the image is missing locally, Docker pulls it first.
+simple_explain: docker run = create + start. Use -d for background, --name for a label, -p for ports.
+analogy: It is like unpacking a boxed appliance and plugging it in at once.
+syntax: docker run [options] image [command] [args]
+anatomy: -d = background | --name = label | -p host:container = publish port | --rm = remove on exit | -it = interactive terminal
+example_1: docker run --rm hello-world
+example_2: docker run -it --rm alpine sh
+example_3: docker run -d -e POSTGRES_PASSWORD=secret postgres:16
+variation: docker run --restart unless-stopped -d myapp   // restart after crashes and reboots
+used_with: docker ps, docker logs, docker stop
+related: docker ps, docker exec, port mapping
+alternatives: docker compose up | docker create followed by docker start
+where_used: Local testing | Quick tools | One-off jobs
+mini_conversation: A: The page does not load. | B: You forgot -p, so no host port points at the container.
+misconception: ✗ Running docker run twice just restarts the same container → ✓ Each docker run creates a brand new container
+confused_with: docker run vs docker start: run creates a new container, start restarts an existing one.
+avoid: Do not use unnamed, never-removed containers for everyday testing.
+wrong_code: docker run nginx -d
+right_code: docker run -d nginx
+memory_trick: Options go before the image, command after.
+real_project: Starting a local Postgres container so the team could test migrations.
+real_interview: An interviewer may ask: What does docker run do step by step?
+real_daily: It is like unpacking an appliance and switching it on at once.
+mcq_question: Where do the docker run options such as -d belong?
+mcq_options: A) Before the image name B) In a separate file C) After the image name D) After the container ID
+mcq_answer: A
+mcq_why: Anything after the image name is passed to the container as its command.
+fill_blank: Use the flag ____ to remove the container automatically when it exits → --rm
+hindi_to_task: Run nginx in the background on host port 8080.
+task_answer: docker run -d -p 8080:80 nginx
+own_task: Start a throwaway alpine shell that deletes itself on exit.
+practice_question: What does -p 8080:80 mean?
+practice_answer: Host port 8080 forwards to container port 80.
+
+@DKR-018
+type: code56
+topic: 03 Docker CLI
+level: Beginner
+term: docker ps
+cue: Which command lists containers so you can see what is running or has stopped?
+kind: CLI command
+frequency: Very high
+importance: 5
+origin: After starting several containers you need a quick list of them, so Docker gave a ps command, borrowed from Linux process listing.
+pro_tip: Use docker ps -a to also see stopped containers when something vanished.
+memory_story: ps is the attendance sheet that names every container in the room.
+visual: A table of IDs, images, status and ports.
+emotion: The relief of finding the missing container in the list.
+meaning: docker ps lists running containers, and with -a it also lists stopped ones.
+code: docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+output: A table shows each container's name, status such as Up 3 minutes or Exited (1), and its ports.
+explanation: Without options only running containers appear. -a adds stopped containers, which is where a crashed container hides. -q prints only IDs, useful for scripting. --filter narrows the list, for example by status or name. --format controls columns using a Go template.
+simple_explain: docker ps shows running containers, docker ps -a shows all of them.
+analogy: It is like the attendance sheet in a classroom.
+syntax: docker ps [-a] [-q] [--filter key=value] [--format template]
+anatomy: -a = include stopped | -q = IDs only | --filter = narrow | --format = custom columns
+example_1: docker ps
+example_2: docker ps --filter status=exited
+example_3: docker ps -q
+variation: docker container ls -a   // the longer, equivalent form
+used_with: docker logs, docker rm, docker stop
+related: docker logs, docker stop and rm, docker run
+alternatives: docker compose ps | docker stats
+where_used: Checking health | Finding crashed containers | Scripts
+mini_conversation: A: My container disappeared. | B: Run docker ps -a, it probably exited.
+misconception: ✗ A container missing from docker ps was deleted → ✓ It may simply have stopped, so check with -a
+confused_with: docker ps vs docker images: ps lists containers, images lists templates.
+avoid: Do not assume a container is gone before checking with -a.
+wrong_code: docker ps --stopped
+right_code: docker ps --filter status=exited
+memory_trick: Add dash a to see all of them.
+real_project: Checking which containers crashed after a deploy by listing exited ones.
+real_interview: An interviewer may ask: How do you find a stopped container?
+real_daily: It is like checking the full attendance sheet, including absentees.
+mcq_question: Which option also shows stopped containers?
+mcq_options: A) -q B) -f C) -d D) -a
+mcq_answer: D
+mcq_why: -a means all containers, not only running ones.
+fill_blank: To list only container IDs you add the flag ____ → -q
+hindi_to_task: Show all containers including stopped ones.
+task_answer: docker ps -a
+own_task: List only the IDs of exited containers.
+practice_question: What does docker ps -q print?
+practice_answer: Only the container IDs, one per line.
+
+@DKR-019
+type: code56
+topic: 03 Docker CLI
+level: Beginner
+term: docker logs
+cue: Which command shows what a container has printed to its output?
+kind: CLI command
+frequency: Very high
+importance: 5
+origin: Containers run in the background with no terminal, so Docker stores their output and lets you read it later with logs.
+pro_tip: Use -f to follow new lines and --tail to avoid flooding your screen.
+memory_story: Logs are the container's diary that you read when it misbehaves.
+visual: Lines of text scrolling from a running service.
+emotion: The satisfaction of spotting the real error line.
+meaning: docker logs prints the standard output and standard error that a container has written.
+code: docker logs -f --tail 100 --since 10m web
+output: The last 100 lines are shown, then new lines keep appearing as the container writes them.
+explanation: Docker captures what the main process writes to stdout and stderr. A service that writes only to a file inside the container shows nothing here. --since limits by time, and -t adds timestamps. Logs live as long as the container, so removing it removes them unless a log driver ships them elsewhere.
+simple_explain: docker logs name shows output, -f follows it, --tail limits the lines.
+analogy: It is like reading a diary the container wrote while you were away.
+syntax: docker logs [-f] [--tail N] [--since time] [-t] container
+anatomy: -f = follow | --tail N = last N lines | --since = recent only | -t = timestamps
+example_1: docker logs web
+example_2: docker logs --tail 50 web
+example_3: docker logs -t --since 1h web
+variation: docker compose logs -f api   // follow one Compose service
+used_with: docker ps, docker exec, log drivers
+related: docker ps, docker exec, logging and monitoring
+alternatives: Central log tools | docker compose logs
+where_used: Debugging | Checking startup | Incident response
+mini_conversation: A: The container exits at once. | B: Check docker logs to read its last error.
+misconception: ✗ docker logs shows every file inside the container → ✓ It shows only what the main process sent to stdout and stderr
+confused_with: docker logs vs docker exec: logs reads past output, exec runs a new command.
+avoid: Do not write application logs only to a file inside the container.
+wrong_code: docker logs web --follow-all
+right_code: docker logs -f web
+memory_trick: Follow flag keeps the diary open.
+real_project: Reading startup logs to find a missing environment variable in staging.
+real_interview: An interviewer may ask: How do you debug a container that exits immediately?
+real_daily: It is like reading the diary of someone who left the room.
+mcq_question: What does docker logs read from?
+mcq_options: A) The host system journal only B) The standard output and error of the main process C) The image layers D) Every file in the container
+mcq_answer: B
+mcq_why: Docker records the main process output streams.
+fill_blank: The flag ____ keeps streaming new lines as they appear → -f
+hindi_to_task: Show the last 20 lines of the container named api.
+task_answer: docker logs --tail 20 api
+own_task: Follow the logs of web with timestamps.
+practice_question: Why can docker logs be empty for a working service?
+practice_answer: The service may write only to a file instead of stdout and stderr.
+
+@DKR-020
+type: code56
+topic: 03 Docker CLI
+level: Beginner
+term: docker exec
+cue: Which command runs an extra command inside a container that is already running?
+kind: CLI command
+frequency: Very high
+importance: 5
+origin: When a live container misbehaves you want to look inside it, so Docker lets you start a second process in its environment.
+pro_tip: Use exec for inspecting, but fix the cause in the Dockerfile rather than patching a live container.
+memory_story: Exec is a side door into a room where the main process keeps working.
+visual: A terminal opening inside a running container.
+emotion: The calm of finally seeing the file system the app sees.
+meaning: docker exec runs a new command inside a running container, often an interactive shell.
+code: docker exec -it web sh
+output: A shell prompt opens inside the container, and typing exit returns you to the host.
+explanation: exec needs a running container, and it starts an additional process without touching the main one. -i keeps input open and -t gives a terminal, so -it is needed for a shell. Slim images may have sh but not bash. Changes made inside are lost when the container is replaced.
+simple_explain: docker exec -it name sh opens a shell inside a running container.
+analogy: It is like walking through a side door into a room that stays busy.
+syntax: docker exec [-it] [-u user] [-w dir] container command
+anatomy: -i = keep input open | -t = terminal | -u = run as user | -w = working folder
+example_1: docker exec web ls /app
+example_2: docker exec -u root -it web sh
+example_3: docker exec db psql -U postgres -c "select 1"
+variation: docker exec -e DEBUG=1 web env   // pass a variable to this one command
+used_with: docker ps, docker logs, docker cp
+related: docker run, docker logs, debugging a failing container
+alternatives: docker run for a new container | docker compose exec
+where_used: Debugging | Running migrations | Database access
+mini_conversation: A: How do I check the config inside? | B: Open a shell with docker exec -it.
+misconception: ✗ docker exec starts a new container → ✓ It runs an extra process in the existing running container
+confused_with: docker exec vs docker run: exec uses a running container, run makes a new one.
+avoid: Do not hot-fix production containers by hand through exec.
+wrong_code: docker exec web sh
+right_code: docker exec -it web sh
+memory_trick: Interactive shell needs both i and t.
+real_project: Opening a shell in the API container to check mounted config files.
+real_interview: An interviewer may ask: How would you inspect a running container?
+real_daily: It is like entering through a side door without stopping the work.
+mcq_question: Which flags give you an interactive shell with exec?
+mcq_options: A) -rm B) -p C) -it D) -d
+mcq_answer: C
+mcq_why: -i keeps input open and -t allocates a terminal.
+fill_blank: docker exec only works on a ____ container → running
+hindi_to_task: Open a shell in the running container called api.
+task_answer: docker exec -it api sh
+own_task: List the files in /app inside the web container without a shell.
+practice_question: Why might docker exec web bash fail on a small image?
+practice_answer: Slim images often have sh but not bash.
+
+@DKR-021
+type: code56
+topic: 03 Docker CLI
+level: Beginner
+term: docker stop and docker rm
+cue: Which commands stop a container and then delete it?
+kind: CLI command
+frequency: Very high
+importance: 4
+origin: Containers pile up as you test, so Docker separates stopping a process from deleting its leftover container.
+pro_tip: docker rm -f stops and removes in one step when you are sure.
+memory_story: Stop turns off the machine, and rm carries the machine away.
+visual: A container going from Up to Exited to gone.
+emotion: The tidy feeling of an empty container list.
+meaning: docker stop sends a polite stop signal and then kills after a timeout, and docker rm deletes a stopped container.
+code: docker stop web¶docker rm web¶docker rm -f old-api
+output: The names are echoed back, web is gone, and old-api is force removed even if it was running.
+explanation: stop sends SIGTERM and waits, 10 seconds by default, before SIGKILL. A stopped container still exists and keeps its writable layer until it is removed. rm refuses to delete a running container unless you add -f. Named volumes always survive rm, and -v removes only anonymous volumes.
+simple_explain: stop shuts it down gracefully, rm deletes it, rm -f does both quickly.
+analogy: It is like powering a machine off and then carrying it out of the room.
+syntax: docker stop [-t seconds] container | docker rm [-f] [-v] container
+anatomy: stop = graceful shutdown | -t = wait time | rm = delete | -f = force | -v = remove anonymous volumes
+example_1: docker stop web
+example_2: docker rm -f web
+example_3: docker rm $(docker ps -aq --filter status=exited)
+variation: docker container prune   // remove all stopped containers
+used_with: docker ps, docker run, docker volume
+related: docker ps, volumes, docker prune
+alternatives: docker run --rm | docker compose down
+where_used: Cleanup | Redeploys | Local development
+mini_conversation: A: The name is already in use. | B: Remove the old container with docker rm first.
+misconception: ✗ docker stop deletes the container → ✓ It only stops it, and the container remains until removed
+confused_with: docker stop vs docker kill: stop is graceful, kill is immediate.
+avoid: Do not remove a database container without checking where its data lives.
+wrong_code: docker rm web
+right_code: docker stop web && docker rm web
+memory_trick: Stop first, then remove, or force it.
+real_project: Cleaning exited test containers before each local integration run.
+real_interview: An interviewer may ask: What signal does docker stop send?
+real_daily: It is like switching a machine off before carrying it out.
+mcq_question: What does docker rm refuse to do by default?
+mcq_options: A) Delete a named image B) Print its name C) Delete a running container D) Delete a stopped container
+mcq_answer: C
+mcq_why: A running container must be stopped or forced with -f.
+fill_blank: docker stop first sends the signal ____ before force killing → SIGTERM
+hindi_to_task: Force remove the container called old-api.
+task_answer: docker rm -f old-api
+own_task: Remove every exited container with one command.
+practice_question: Does removing a container delete its named volumes?
+practice_answer: No, named volumes survive unless you delete them explicitly.
+
+@DKR-022
+type: code56
+topic: 03 Docker CLI
+level: Beginner
+term: docker images
+cue: Which command lists the images stored on your machine and how big they are?
+kind: CLI command
+frequency: High
+importance: 4
+origin: Images accumulate with every pull and build, so you need a list to know what is stored and what can be removed.
+pro_tip: Check sizes here when an image feels too big, then look at layers with docker history.
+memory_story: Images is the shelf list of every template you own.
+visual: A table of repository, tag, ID and size.
+emotion: The shock of seeing a one gigabyte image for a tiny app.
+meaning: docker images lists local images with repository, tag, image ID, age and size.
+code: docker images¶docker image rm nginx:1.25¶docker history myapp:1.0
+output: The table lists images, nginx 1.25 is deleted, and the history shows each layer with its size.
+explanation: An image can have several tags pointing at one ID. Removing a tag only deletes the image when no other tag or container uses it. Untagged leftovers show as dangling entries with none as the name. docker history reveals which instruction added the weight.
+simple_explain: docker images lists them, docker image rm deletes one, docker history shows layer sizes.
+analogy: It is like the inventory list of all templates on the shelf.
+syntax: docker images [-a] [--filter dangling=true] | docker image rm image
+anatomy: REPOSITORY = name | TAG = version label | IMAGE ID = fingerprint | SIZE = disk space
+example_1: docker images
+example_2: docker images --filter dangling=true
+example_3: docker image prune
+variation: docker image ls --format "{{.Repository}}:{{.Tag}} {{.Size}}"   // custom output
+used_with: docker pull, docker build, docker history
+related: image tags and digests, layers and cache, docker prune
+alternatives: docker system df
+where_used: Disk cleanup | Size checks | Build review
+mini_conversation: A: My disk is full. | B: List images and remove the unused big ones.
+misconception: ✗ Removing an image removes running containers made from it → ✓ A used image cannot be removed until its containers are gone
+confused_with: docker images vs docker ps: images are templates, ps shows running instances.
+avoid: Do not delete images blindly without checking which containers use them.
+wrong_code: docker rm nginx:1.25
+right_code: docker image rm nginx:1.25
+memory_trick: Images lists templates, rm needs image first.
+real_project: Finding a bloated base image by comparing sizes in the local list.
+real_interview: An interviewer may ask: What is a dangling image?
+real_daily: It is like checking which tools sit unused on a shelf.
+mcq_question: Which command shows the size added by each layer?
+mcq_options: A) docker logs B) docker ps C) docker top D) docker history
+mcq_answer: D
+mcq_why: History lists every layer with the instruction and size.
+fill_blank: An image without any tag is called a ____ image → dangling
+hindi_to_task: Delete the local image nginx:1.25.
+task_answer: docker image rm nginx:1.25
+own_task: Write a command that shows only the dangling images.
+practice_question: What does docker image prune remove by default?
+practice_answer: Dangling images that have no tag.
+
+@DKR-023
+type: code56
+topic: 03 Docker CLI
+level: Intermediate
+term: docker pull and docker push
+cue: Which commands download an image from a registry and upload yours to one?
+kind: CLI command
+frequency: High
+importance: 5
+origin: Images must travel between machines, so Docker uses pull to download and push to upload through a registry.
+pro_tip: Log in with docker login first, and tag the image with the registry name before pushing.
+memory_story: Pull drags an image to you, and push shoves yours to the shared shelf.
+visual: Arrows between a laptop and a registry cloud.
+emotion: The pride of seeing your image appear in the registry.
+meaning: docker pull downloads an image from a registry, and docker push uploads a tagged local image to one.
+code: docker login ghcr.io¶docker tag myapp:1.0 ghcr.io/acme/myapp:1.0¶docker push ghcr.io/acme/myapp:1.0¶docker pull ghcr.io/acme/myapp:1.0
+output: Login succeeds, layers are uploaded, and the pull on another machine downloads the same layers.
+explanation: The image name carries the registry host and repository, so a push goes where the name says. Only layers the registry lacks are uploaded. Pulling a tag fetches whatever it points to now, while a digest is fixed. CI systems usually log in with a short-lived token rather than a password.
+simple_explain: Tag with the registry name, login, push. Pull on any machine to get it back.
+analogy: It is like uploading a file to a shared drive and downloading it elsewhere.
+syntax: docker pull registry/repo:tag | docker push registry/repo:tag
+anatomy: registry = server host | repo = path | tag = version | login = authenticate first
+example_1: docker pull python:3.12-slim
+example_2: docker push acme/api:2.1
+example_3: docker pull ghcr.io/acme/api@sha256:abc123
+variation: docker pull --platform linux/arm64 alpine   // choose a CPU type
+used_with: docker login, docker tag, registries
+related: registries and Docker Hub, image tags and digests, docker tag and build
+alternatives: docker save and docker load for offline moves
+where_used: CI pipelines | Deployments | Sharing images
+mini_conversation: A: Push says denied. | B: Log in and tag the image with your registry namespace.
+misconception: ✗ docker push uploads the whole image every time → ✓ Only layers that the registry does not already have are uploaded
+confused_with: docker pull vs docker run: pull only downloads, run also starts a container.
+avoid: Do not push images that contain secrets or credentials.
+wrong_code: docker push myapp:1.0
+right_code: docker push ghcr.io/acme/myapp:1.0
+memory_trick: Name decides where the push goes.
+real_project: Pushing each CI build to the registry tagged with the commit hash.
+real_interview: An interviewer may ask: Why does a push fail with denied?
+real_daily: It is like uploading to a shared drive using the right folder path.
+mcq_question: What decides which registry a push goes to?
+mcq_options: A) The registry host in the image name B) The container name C) The current folder D) The host port
+mcq_answer: A
+mcq_why: The name prefix selects the registry and repository.
+fill_blank: Before pushing to a private registry you must first ____ → login
+hindi_to_task: Download the image python 3.12-slim.
+task_answer: docker pull python:3.12-slim
+own_task: Push myapp:1.0 to ghcr.io under the acme account.
+practice_question: Why is a pull by digest safer than by tag?
+practice_answer: A digest always points to the same exact content.
+
+@DKR-024
+type: code56
+topic: 03 Docker CLI
+level: Intermediate
+term: docker build and docker tag
+cue: Which commands turn a Dockerfile into an image and give that image a name?
+kind: CLI command
+frequency: Very high
+importance: 5
+origin: A Dockerfile is only instructions, so Docker needs a command that executes them and stores the result as an image.
+pro_tip: Always pass a name with -t, and build from the folder that holds your source.
+memory_story: Build is the oven that bakes the recipe, and tag is the label on the box.
+visual: Steps scrolling by and an image appearing in the list.
+emotion: The pleasure of a build finishing without errors.
+meaning: docker build reads a Dockerfile and a build context to create an image, and docker tag adds another name to an existing image.
+code: docker build -t myapp:1.0 -f Dockerfile .¶docker tag myapp:1.0 myapp:latest
+output: Each step runs, the image myapp:1.0 is created, and a second tag latest points at the same image.
+explanation: The final dot is the build context, the folder sent to Docker, and COPY can only use files inside it. -f picks a Dockerfile with another name. --build-arg passes ARG values and --no-cache ignores the cache. Tagging does not copy data, it adds a name to the same image ID.
+simple_explain: docker build -t name . builds an image from the Dockerfile in this folder.
+analogy: It is like baking from a recipe and then sticking labels on the box.
+syntax: docker build [-t name:tag] [-f file] [--build-arg K=V] context
+anatomy: -t = name and tag | -f = Dockerfile path | context = folder sent to Docker | --no-cache = rebuild all
+example_1: docker build -t api:dev .
+example_2: docker build --build-arg NODE_VERSION=22 -t web .
+example_3: docker build --no-cache -t api:clean .
+variation: docker buildx build --platform linux/amd64 -t api .   // build for a chosen CPU
+used_with: Dockerfile, .dockerignore, registries
+related: layers and cache, .dockerignore, BuildKit
+alternatives: docker compose build | CI build actions
+where_used: Local builds | CI pipelines | Releases
+mini_conversation: A: Docker says it cannot find my file. | B: The path is outside the build context.
+misconception: ✗ The dot at the end of docker build is optional → ✓ It sets the build context and is required
+confused_with: docker build vs docker run: build makes the image, run starts a container from it.
+avoid: Do not build from a huge folder without a .dockerignore.
+wrong_code: docker build -t myapp
+right_code: docker build -t myapp .
+memory_trick: Dot at the end means this folder.
+real_project: Building an image tagged with the Git commit so every release is traceable.
+real_interview: An interviewer may ask: What is the build context?
+real_daily: It is like baking from a recipe in the kitchen you stand in.
+mcq_question: What does the trailing dot in docker build mean?
+mcq_options: A) Use the latest tag B) The current folder is the build context C) Build everything on disk D) Skip the cache
+mcq_answer: B
+mcq_why: The last argument is the context folder sent to Docker.
+fill_blank: The flag ____ gives the built image a name and tag → -t
+hindi_to_task: Build an image named api with tag dev from this folder.
+task_answer: docker build -t api:dev .
+own_task: Add the tag latest to the existing image api:dev.
+practice_question: Does docker tag copy the image data?
+practice_answer: No, it only adds another name to the same image.

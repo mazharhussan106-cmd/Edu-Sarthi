@@ -1,0 +1,456 @@
+
+@RAG-015
+type: topic56
+topic: 03 Retrieval
+level: Beginner
+term: Vector search
+cue: How do you find chunks whose meaning is closest to the question?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Keyword search misses synonyms, so the question and chunks are compared as vectors in a meaning space.
+pro_tip: Combine vector search with metadata filters and keyword search for best results.
+memory_story: Vector search is finding the nearest neighbours of your question on the map of meaning.
+visual: A query point with the nearest chunk points circled.
+emotion: The delight of finding the right passage with different words.
+definition: Vector search embeds the query, then finds the stored vectors nearest to it by a distance or similarity measure, returning the most similar chunks.
+explanation: Exact nearest neighbour search compares with every vector, which is slow at scale, so approximate indexes speed it up with a small accuracy trade-off. Results depend on embedding quality, chunk quality and the query wording. Vector search can miss exact terms such as codes and names, which is why hybrid search exists.
+simple_explain: Embed the question, find the nearest vectors, and return their chunks.
+analogy: Vector search is finding the nearest neighbours of your question on the map of meaning.
+formula_rule: Query vector → nearest chunk vectors.
+example_1: A question about refunds matching a chunk about returns.
+example_2: Searching with paraphrased wording.
+example_3: Missing an exact product code.
+related: embeddings, cosine similarity, pgvector, hybrid search
+word_family: vector search, nearest neighbour, similarity, approximate, index
+where_used: RAG | Semantic search | Recommendations
+mini_conversation: A: Search misses the exact error code. | B: Add keyword search, since vectors blur exact strings.
+misconception: ✗ Vector search always beats keyword search → ✓ Each has strengths, so combine them
+contrast: Vector vs keyword search: meaning versus exact terms.
+avoid: Do not rely on vectors alone for codes and names.
+memory_trick: Vectors for meaning, keywords for exact.
+real_project: Adding vector search let users find answers phrased differently from the documents.
+real_interview: An interviewer may ask: What are the limits of vector search?
+real_daily: It is like finding nearest neighbours on a map.
+mcq_question: What does vector search compare?
+mcq_options: A) File names B) Passwords C) Fonts D) Embedding vectors
+mcq_answer: D
+mcq_why: Meaning is encoded in vectors.
+fill_blank: Fast search that trades a little accuracy is ____ → approximate
+apply: Users search with different words than the documents. What helps? → Vector search
+explain_task: Explain vector search in three lines.
+own_task: List two strengths and two weaknesses of vector search.
+
+@RAG-016
+type: topic56
+topic: 03 Retrieval
+level: Intermediate
+term: Cosine similarity
+cue: Which measure tells how close in direction two vectors are?
+category: Core concept
+frequency: High
+importance: 4
+origin: Meaning is in the direction of an embedding more than its length, so the angle between vectors is used to compare them.
+pro_tip: Use the distance type that the embedding model recommends.
+memory_story: Cosine similarity asks whether two arrows point the same way.
+visual: Two arrows with a small angle between them.
+emotion: The comfort of a simple measure.
+definition: Cosine similarity is the cosine of the angle between two vectors, ranging from minus one to one, where values near one mean very similar direction and meaning.
+explanation: Cosine distance is one minus the similarity, so smaller is closer. For normalised vectors, cosine similarity equals the dot product, and Euclidean distance orders results the same way. Databases offer operators for each. The score values are relative, so thresholds need tuning, and scores differ across models.
+simple_explain: Closer direction means closer meaning, and scores should be tuned per model.
+analogy: Cosine similarity asks whether two arrows point the same way.
+formula_rule: cosine similarity = dot product ÷ (length × length).
+example_1: A similarity of 0.85 for related text.
+example_2: A similarity of 0.2 for unrelated text.
+example_3: Normalised vectors using the dot product.
+related: vector search, embeddings, pgvector, top-k
+word_family: cosine, dot product, distance, normalise, threshold
+where_used: Retrieval | Clustering | Deduplication
+mini_conversation: A: What similarity score means relevant? | B: It depends on the model, so tune a threshold on examples.
+misconception: ✗ A fixed score such as 0.8 means relevant for every model → ✓ Score scales differ, so thresholds need tuning
+contrast: Cosine vs Euclidean: angle versus straight-line distance.
+avoid: Do not copy thresholds between models.
+memory_trick: Same direction means same meaning.
+real_project: Tuning a similarity threshold on examples removed weak matches from answers.
+real_interview: An interviewer may ask: What is cosine similarity?
+real_daily: It is like asking whether two arrows point the same way.
+mcq_question: What does a cosine similarity near one mean?
+mcq_options: A) Different language B) Very similar direction C) Opposite meaning D) No data
+mcq_answer: B
+mcq_why: Vectors point the same way.
+fill_blank: Cosine distance equals one minus the ____ → similarity
+apply: You need to drop weak matches. What do you tune? → A similarity threshold
+explain_task: Explain cosine similarity in three lines.
+own_task: Describe how to pick a score threshold.
+
+@RAG-017
+type: code56
+topic: 03 Retrieval
+level: Intermediate
+term: pgvector
+cue: Which PostgreSQL extension stores vectors and searches them with SQL?
+kind: Tool
+frequency: High
+importance: 5
+origin: Teams already using PostgreSQL wanted vector search without a new database, so an extension adds a vector type and operators.
+pro_tip: Starting with pgvector keeps data, filters and permissions in one database.
+memory_story: pgvector gives your normal database a drawer for map coordinates.
+visual: A table with a vector column and a nearest-neighbour query.
+emotion: The convenience of one database for everything.
+meaning: pgvector adds a vector column type and distance operators to PostgreSQL, so similarity search, filters and joins can be done in SQL.
+code: CREATE EXTENSION IF NOT EXISTS vector;¶CREATE TABLE chunks (id BIGSERIAL PRIMARY KEY, tenant_id TEXT, content TEXT, embedding vector(1024));¶-- nearest five by cosine distance¶SELECT id, content, 1 - (embedding <=> :query_vec) AS similarity¶FROM chunks¶WHERE tenant_id = :tenant¶ORDER BY embedding <=> :query_vec¶LIMIT 5;
+output: The five chunks closest in meaning to the query, with their similarity scores, within one tenant.
+explanation: The operator for cosine distance is the angle brackets with an equals form. Other operators give Euclidean and inner product distance. Without an index, search scans all rows, which is fine for small tables. Combined with WHERE clauses, you get filtered search. It is easy for small and medium collections, and large ones may need tuning or a dedicated engine.
+simple_explain: Add a vector column, order by distance to the query vector, and limit the results.
+analogy: pgvector gives your normal database a drawer for map coordinates.
+syntax: ORDER BY embedding <=> :query LIMIT k
+anatomy: vector(N) = column | <=> = cosine distance | LIMIT = top-k | WHERE = filters
+example_1: SELECT ... ORDER BY embedding <-> :q LIMIT 3;
+example_2: SELECT ... WHERE lang = 'en' ORDER BY embedding <=> :q LIMIT 5;
+example_3: SELECT count(*) FROM chunks WHERE embedding IS NULL;
+variation: managed vector databases   // an alternative at large scale
+used_with: PostgreSQL, Supabase, filters
+related: vector search, indexes (HNSW), filters, Supabase
+alternatives: Dedicated vector databases
+where_used: Small and medium RAG | Supabase projects | Prototypes
+mini_conversation: A: Do we need a separate vector database? | B: Start with pgvector in our existing database.
+misconception: ✗ pgvector cannot be used in production → ✓ It works well for many production workloads with proper indexes
+confused_with: <=> vs <->: cosine distance versus Euclidean distance.
+avoid: Do not search a large table without an index.
+wrong_code: SELECT * FROM chunks ORDER BY embedding LIMIT 5;
+right_code: SELECT * FROM chunks ORDER BY embedding <=> :q LIMIT 5;
+memory_trick: Order by distance, limit to k.
+real_project: pgvector in the existing database kept filters and permissions simple.
+real_interview: An interviewer may ask: Why use pgvector?
+real_daily: It is like a drawer for map coordinates.
+mcq_question: Which clause returns the top results?
+mcq_options: A) HAVING only B) DROP C) ORDER BY distance with LIMIT D) GROUP BY only
+mcq_answer: C
+mcq_why: Nearest first, then cut to k.
+fill_blank: Before using vector columns you must run CREATE ____ IF NOT EXISTS vector → EXTENSION
+hindi_to_task: Get the five nearest chunks to a query vector.
+task_answer: SELECT * FROM chunks ORDER BY embedding <=> :q LIMIT 5;
+own_task: Write a filtered similarity query for one tenant.
+practice_question: What happens without an index?
+practice_answer: The database scans every row.
+
+@RAG-018
+type: code56
+topic: 03 Retrieval
+level: Advanced
+term: Vector indexes: HNSW
+cue: Which index makes nearest neighbour search fast on large collections?
+kind: Index
+frequency: High
+importance: 4
+origin: Scanning millions of vectors is slow, so graph-based indexes find close neighbours quickly with small accuracy loss.
+pro_tip: Build the index after loading bulk data, and tune search width for recall.
+memory_story: HNSW is a road network with highways on top and local streets below, so you reach the neighbourhood fast.
+visual: Layers of a graph from sparse top to dense bottom.
+emotion: The thrill of fast searches on big data.
+meaning: HNSW is a graph index that connects each vector to near neighbours across layers, so search can jump quickly to the right region, and pgvector offers it with parameters for build effort and search effort.
+code: CREATE INDEX chunks_embedding_hnsw¶  ON chunks USING hnsw (embedding vector_cosine_ops)¶  WITH (m = 16, ef_construction = 64);¶SET hnsw.ef_search = 100;¶SELECT id FROM chunks ORDER BY embedding <=> :q LIMIT 10;
+output: The query uses the graph index and returns approximate nearest neighbours quickly.
+explanation: m sets connections per node and ef_construction sets build effort, trading build time and memory for recall. ef_search sets search effort at query time. The operator class must match the distance used. Results are approximate, so measure recall against exact search. IVFFlat is another index with different trade-offs. Filters can reduce recall, so test them.
+simple_explain: Create an HNSW index with the right operator class, and tune effort to balance speed and recall.
+analogy: HNSW is a road network with highways on top and local streets below.
+syntax: CREATE INDEX ... USING hnsw (embedding vector_cosine_ops)
+anatomy: m = connections | ef_construction = build effort | ef_search = query effort | ops = distance type
+example_1: SET hnsw.ef_search = 200;
+example_2: vector_l2_ops for Euclidean distance
+example_3: A recall test against exact search
+variation: IVFFlat index   // clusters vectors, needs training data
+used_with: pgvector, tuning, filters
+related: pgvector, vector search, top-k, filters
+alternatives: IVFFlat | exact search for small tables
+where_used: Large collections | Production RAG | Search tuning
+mini_conversation: A: Queries take seconds on a million rows. | B: Add an HNSW index with the cosine operator class.
+misconception: ✗ An ANN index returns exactly the true nearest neighbours → ✓ It returns approximate results, with recall to be measured
+confused_with: Exact search vs ANN index: exact checks all rows, ANN trades a little accuracy for speed.
+avoid: Do not use an operator class that differs from your query operator.
+wrong_code: USING hnsw (embedding vector_l2_ops)   -- but queries use <=>
+right_code: USING hnsw (embedding vector_cosine_ops)
+memory_trick: Index operator must match query operator.
+real_project: An HNSW index made search much faster on a large corpus.
+real_interview: An interviewer may ask: What does HNSW trade off?
+real_daily: It is like highways over local streets.
+mcq_question: What must match between index and query?
+mcq_options: A) The distance operator B) The column colour C) The table name D) The user
+mcq_answer: A
+mcq_why: Otherwise the index is not used.
+fill_blank: A larger ef_search usually raises ____ → recall
+hindi_to_task: Create an HNSW index for cosine search.
+task_answer: CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops);
+own_task: Plan how to measure the recall of an index.
+practice_question: Why can an ANN index return slightly different results from exact search?
+practice_answer: It is approximate, trading a little accuracy for speed.
+
+@RAG-019
+type: topic56
+topic: 03 Retrieval
+level: Beginner
+term: Top-k
+cue: How many chunks should you retrieve and pass to the model?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Too few chunks miss evidence and too many add noise and cost, so the number retrieved is a tuned setting.
+pro_tip: Retrieve more candidates, then rerank down to a few for the prompt.
+memory_story: Top-k is the number of library books you carry home.
+visual: A ranked list cut off after k items.
+emotion: The balance between enough and too much.
+definition: Top-k is the number of highest-scoring chunks returned by retrieval, and it affects recall, noise, cost and latency of the final answer.
+explanation: A small k may miss the needed chunk. A large k adds irrelevant text, raises tokens and can distract the model. A common pattern retrieves twenty to fifty candidates, reranks and keeps three to ten. Tune k with retrieval tests. Use score thresholds to avoid weak matches, and allow fewer results when little is relevant.
+simple_explain: Retrieve generously, rerank, and pass only a few good chunks.
+analogy: Top-k is the number of library books you carry home.
+formula_rule: Larger k = more recall, more noise and cost.
+example_1: Retrieve 30, rerank, keep 5.
+example_2: A threshold dropping weak matches.
+example_3: A question with only one relevant chunk.
+related: reranking, evaluating retrieval, context limits, cost and latency
+word_family: top-k, candidates, threshold, recall, noise
+where_used: Tuning | Cost control | Evaluation
+mini_conversation: A: The model gets confused by too much context. | B: Reduce k or add reranking.
+misconception: ✗ A larger k is always safer → ✓ More chunks can distract the model and raise cost
+contrast: Retrieved candidates vs final chunks: the first is wide, the second is trimmed.
+avoid: Do not choose k without testing.
+memory_trick: Fetch wide first, then keep few.
+real_project: Reranking from thirty to five improved answers and cut token use.
+real_interview: An interviewer may ask: How do you choose k?
+real_daily: It is like deciding how many books to carry home.
+mcq_question: What does a larger k risk?
+mcq_options: A) Faster answers B) Fewer tokens C) Better privacy D) Noise and cost
+mcq_answer: D
+mcq_why: More irrelevant text enters the prompt.
+fill_blank: A minimum score for results is a ____ → threshold
+apply: The prompt is stuffed with weak chunks. What do you do? → Rerank and keep fewer
+explain_task: Explain top-k in three lines.
+own_task: Design a small test that helps you choose k.
+
+@RAG-020
+type: code56
+topic: 03 Retrieval
+level: Intermediate
+term: Retrieval filters
+cue: How do you restrict search to the right customer, language, product or time?
+kind: Retrieval step
+frequency: Very high
+importance: 5
+origin: Similar text exists in many contexts, so filters ensure only allowed and relevant chunks are searched.
+pro_tip: Apply filters inside the query, never after retrieval.
+memory_story: Filters are the shelf labels that stop you searching the wrong aisle.
+visual: A query going through filter gates before ranking.
+emotion: The safety of searching only what is allowed.
+meaning: Metadata filters add conditions on fields such as tenant, language, product, version and date to the retrieval query, so only matching chunks compete.
+code: SELECT id, content¶FROM chunks¶WHERE tenant_id = :tenant¶  AND lang = :lang¶  AND (product = :product OR product IS NULL)¶  AND updated_at >= :min_date¶ORDER BY embedding <=> :q¶LIMIT 20;
+output: The twenty nearest chunks among those that the user may see in the right language and product.
+explanation: Filtering after retrieval can return too few or zero results, because the top results may all be disallowed, and it risks leaking data in logs. Filtering in the query is safer. Strong filters can lower recall in approximate indexes, so test. Derive filters from the user's session, not from the model.
+simple_explain: Put permission and relevance filters in the retrieval query itself.
+analogy: Filters are the shelf labels that stop you searching the wrong aisle.
+syntax: WHERE tenant_id = :tenant AND lang = :lang
+anatomy: tenant = permission | lang = language | product = scope | date = freshness
+example_1: WHERE doc_version = 'v3'
+example_2: WHERE access_group = ANY(:groups)
+example_3: WHERE updated_at > now() - interval '2 years'
+variation: partitioned tables per tenant   // stronger isolation
+used_with: metadata, access control, pgvector
+related: metadata, access control, hybrid search, vector indexes
+alternatives: Separate indexes per tenant
+where_used: Multi-tenant RAG | Enterprise search | Compliance
+mini_conversation: A: Results often contain another customer's data. | B: Filter by tenant inside the query.
+misconception: ✗ Filtering the results after retrieval is equivalent → ✓ It can return too few results and may leak data
+confused_with: Pre-filter vs post-filter: before ranking versus after.
+avoid: Do not take permission filters from model output.
+wrong_code: results = search(q); results = [r for r in results if r.tenant == t]
+right_code: WHERE tenant_id = :tenant ORDER BY embedding <=> :q
+memory_trick: Filter in the query, not after.
+real_project: Moving the tenant filter into the query ended empty results for small customers.
+real_interview: An interviewer may ask: Why filter before ranking?
+real_daily: It is like labels on library shelves.
+mcq_question: Where should permission filters be applied?
+mcq_options: A) Nowhere B) In the retrieval query C) In the prompt only D) After the model answers
+mcq_answer: B
+mcq_why: Disallowed data must never be retrieved.
+fill_blank: Applying conditions before ranking is ____ filtering → pre
+hindi_to_task: Restrict a search to one tenant and one language.
+task_answer: WHERE tenant_id = :tenant AND lang = :lang
+own_task: Write filters for a multi-language product help centre.
+practice_question: Why apply filters inside the query?
+practice_answer: Post-filtering can return too few results and may leak data.
+
+@RAG-021
+type: code56
+topic: 03 Retrieval
+level: Advanced
+term: Hybrid search
+cue: How do you combine keyword and vector search for better recall?
+kind: Retrieval step
+frequency: High
+importance: 5
+origin: Vectors miss exact terms and keywords miss meaning, so combining both gives more reliable retrieval.
+pro_tip: Merge ranked lists with reciprocal rank fusion, which needs no score scaling.
+memory_story: Hybrid search is asking both a librarian who knows meanings and one who knows exact titles.
+visual: Two separate ranked lists merging into one final list.
+emotion: The satisfaction of finding both exact and meaning matches.
+meaning: Hybrid search runs full-text keyword search and vector search separately, then fuses their ranked results into one list, often with reciprocal rank fusion.
+code: WITH kw AS (¶  SELECT id, ROW_NUMBER() OVER (ORDER BY ts_rank(tsv, plainto_tsquery('english', :q)) DESC) AS r¶  FROM chunks WHERE tsv @@ plainto_tsquery('english', :q) ORDER BY r LIMIT 30¶), vec AS (¶  SELECT id, ROW_NUMBER() OVER (ORDER BY embedding <=> :qv) AS r¶  FROM chunks ORDER BY embedding <=> :qv LIMIT 30¶)¶SELECT id, SUM(1.0 / (60 + r)) AS score¶FROM (SELECT * FROM kw UNION ALL SELECT * FROM vec) x¶GROUP BY id ORDER BY score DESC LIMIT 10;
+output: One merged list where chunks found by both methods rise to the top.
+explanation: Keyword search with full-text indexes or BM25 handles exact words, codes and names. Vector search handles paraphrase. Reciprocal rank fusion adds one over rank plus a constant from each list, so scores do not need to be compared. Weights can favour one side. Test on your questions, since gains vary.
+simple_explain: Run both searches and then merge the lists by rank.
+analogy: Hybrid search is asking a librarian who knows meanings and one who knows exact titles.
+syntax: score = sum(1 / (k + rank))
+anatomy: keyword list = exact terms | vector list = meaning | fusion = combined rank
+example_1: An error code found by keywords.
+example_2: A paraphrased question found by vectors.
+example_3: A chunk found by both ranking first.
+variation: weighted fusion   // favour vector or keyword results
+used_with: full-text search, pgvector, reranking
+related: vector search, reranking, query rewriting, evaluating retrieval
+alternatives: Vector only | keyword only
+where_used: Enterprise search | Technical docs | Support
+mini_conversation: A: Searching for error E1042 finds nothing useful. | B: Add keyword search through hybrid retrieval.
+misconception: ✗ Hybrid search always beats either alone → ✓ It usually helps, but should be tested
+confused_with: Hybrid search vs reranking: one merges candidate lists, the other reorders them.
+avoid: Do not combine raw scores from different systems.
+wrong_code: score = vector_score + keyword_score
+right_code: score = SUM(1.0 / (60 + rank))
+memory_trick: Merge by rank, not by raw score.
+real_project: Hybrid retrieval fixed misses on product codes in a technical support index.
+real_interview: An interviewer may ask: Why use hybrid search?
+real_daily: It is like asking two librarians.
+mcq_question: Which method merges ranked lists without scaling scores?
+mcq_options: A) Raw score addition B) Reciprocal rank fusion C) Alphabetical order D) Random pick
+mcq_answer: B
+mcq_why: It uses ranks only.
+fill_blank: A classic keyword ranking function is ____ → BM25
+hindi_to_task: Merge two ranked lists by reciprocal rank.
+task_answer: SUM(1.0 / (60 + rank))
+own_task: Compare hybrid and vector-only results on five questions.
+practice_question: Why not add raw scores?
+practice_answer: Scores from different systems have different scales.
+
+@RAG-022
+type: topic56
+topic: 03 Retrieval
+level: Advanced
+term: Reranking
+cue: How do you reorder retrieved candidates with a stronger relevance model?
+category: Core concept
+frequency: High
+importance: 5
+origin: Fast retrieval is approximate, so a slower, more accurate model rescores a short list to put the best chunks first.
+pro_tip: Rerank twenty to fifty candidates down to a handful for the prompt.
+memory_story: Reranking is a careful judge re-scoring the shortlist from the quick first round.
+visual: A long candidate list passing through a model and coming out reordered.
+emotion: The satisfaction of the best evidence rising to the top.
+definition: Reranking applies a cross-encoder or a model-based scorer to each query and candidate pair, producing a more accurate relevance score than vector similarity, and reorders the shortlist.
+explanation: First-stage retrieval is fast but coarse. A reranker reads the query and chunk together, so it judges relevance better, but costs more per pair, so it runs on a small set. It adds latency, so measure the trade-off. Rerankers can be hosted models or LLM-based scorers. Gains show in retrieval metrics and answer quality.
+simple_explain: Retrieve many cheaply, then rescore a shortlist with a better model.
+analogy: Reranking is a careful judge re-scoring the shortlist from the quick first round.
+formula_rule: Cheap wide search, then accurate narrow ranking.
+example_1: Thirty candidates reranked to five.
+example_2: A cross-encoder scoring query and chunk together.
+example_3: A noticeable latency increase that should be measured.
+related: top-k, hybrid search, evaluating retrieval, cost and latency
+word_family: reranker, cross-encoder, shortlist, relevance, latency
+where_used: Quality tuning | Enterprise search | Support
+mini_conversation: A: The right chunk is retrieved but ranks tenth. | B: Add a reranker to bring it to the top.
+misconception: ✗ Reranking replaces the first retrieval stage → ✓ It refines a shortlist that retrieval must first provide
+contrast: Retrieval vs reranking: retrieval finds candidates, reranking orders them.
+avoid: Do not rerank huge candidate sets.
+memory_trick: Retrieve wide first, then rerank narrow.
+real_project: A reranker moved the correct chunk into the top three for many failing questions.
+real_interview: An interviewer may ask: What does a reranker add?
+real_daily: It is like a judge re-scoring a shortlist.
+mcq_question: What does reranking improve?
+mcq_options: A) The file size B) The embeddings C) The prompt length only D) The order of candidates
+mcq_answer: D
+mcq_why: Better scoring puts the best first.
+fill_blank: A model that reads query and chunk together is a ____ → cross-encoder
+apply: The correct chunk is retrieved but ranked low. What do you add? → A reranker
+explain_task: Explain reranking in three lines.
+own_task: Plan a test of retrieval with and without reranking.
+
+@RAG-023
+type: topic56
+topic: 03 Retrieval
+level: Advanced
+term: Query rewriting
+cue: How do you turn a messy question into a better search query?
+category: Core concept
+frequency: High
+importance: 4
+origin: Users ask short, vague or follow-up questions, so the system rewrites them into standalone, specific queries for retrieval.
+pro_tip: Rewrite follow-up questions using chat history so they stand alone.
+memory_story: Query rewriting is a librarian who clarifies your question before searching.
+visual: A vague question becoming a precise search phrase.
+emotion: The relief of better results from the same user words.
+definition: Query rewriting uses a model or rules to transform the user's question into one or more clearer queries, for example resolving pronouns from the conversation, expanding abbreviations or adding key terms.
+explanation: A follow-up such as what about the price needs the earlier topic, so the rewriter makes a full question. Expansions add synonyms or product names. Rewriting adds cost and can drift from the user's intent, so keep the original too and evaluate the effect. HyDE writes a hypothetical answer to search with.
+simple_explain: Make the question standalone and specific before searching.
+analogy: Query rewriting is a librarian who clarifies your question before searching.
+formula_rule: Resolve context, expand terms, search.
+example_1: What about the price? becomes What is the price of the pro plan?
+example_2: Expanding SSO to single sign-on.
+example_3: Searching with both the original and rewritten query.
+related: multi-query, hybrid search, chat memory, evaluating retrieval
+word_family: rewrite, expansion, standalone, HyDE, intent
+where_used: Chat RAG | Search | Support
+mini_conversation: A: The follow-up question finds nothing. | B: Rewrite it with the chat context.
+misconception: ✗ Rewriting always improves results → ✓ It can drift from intent, so test it
+contrast: Rewriting vs filtering: one changes the query, the other restricts the data.
+avoid: Do not discard the original question.
+memory_trick: Make it standalone, keep the original too.
+real_project: Rewriting follow-up questions fixed failures in a multi-turn support bot.
+real_interview: An interviewer may ask: Why rewrite queries in a chat RAG?
+real_daily: It is like a librarian clarifying your question.
+mcq_question: Which problem does rewriting solve in chats?
+mcq_options: A) Slow disks B) Large files C) Follow-ups that depend on earlier turns D) Wrong fonts
+mcq_answer: C
+mcq_why: The rewritten query stands alone.
+fill_blank: A question that makes sense without the chat history is ____ → standalone
+apply: A follow-up question returns nothing. What do you add? → Query rewriting with chat context
+explain_task: Explain query rewriting in three lines.
+own_task: Rewrite three follow-up questions into standalone ones.
+
+@RAG-024
+type: topic56
+topic: 03 Retrieval
+level: Advanced
+term: Multi-query retrieval
+cue: How can several versions of a question improve recall?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: One phrasing may miss relevant text, so several variants are searched and merged.
+pro_tip: Limit variants to a few, and deduplicate the merged results.
+memory_story: Multi-query is asking the same thing three ways to catch more answers.
+visual: Several query variants feeding one merged result list.
+emotion: The assurance of fewer misses on hard questions.
+definition: Multi-query retrieval generates several rephrasings or sub-questions of the user's question, retrieves for each, and merges and deduplicates the results.
+explanation: Variants capture different wording and aspects. Complex questions can be split into sub-questions, each retrieved separately, then answered together. Results are merged with rank fusion. Costs rise with the number of queries and the generation step, and latency increases unless run in parallel. Measure the recall gain.
+simple_explain: Search with a few variants and merge the results.
+analogy: Multi-query is asking the same thing three ways to catch more answers.
+formula_rule: Variants + retrieval each + merge + deduplicate.
+example_1: Three rephrasings of a refund question.
+example_2: A comparison question split into two lookups.
+example_3: Results merged by reciprocal rank fusion.
+related: query rewriting, hybrid search, reranking, cost and latency
+word_family: multi-query, sub-question, merge, deduplicate, fusion
+where_used: Complex questions | Research tools | Support
+mini_conversation: A: Complex questions miss half the evidence. | B: Split them into sub-questions and retrieve for each.
+misconception: ✗ More query variants always help → ✓ They add cost and noise beyond a few
+contrast: Multi-query vs rewriting: many variants versus one improved query.
+avoid: Do not run many variants serially.
+memory_trick: A few variants, merged and deduplicated.
+real_project: Splitting comparison questions raised answer completeness in a product assistant.
+real_interview: An interviewer may ask: When is multi-query retrieval useful?
+real_daily: It is like asking the same thing three ways.
+mcq_question: What must be done with merged results?
+mcq_options: A) Deduplicate them B) Hide them C) Sort alphabetically only D) Double them
+mcq_answer: A
+mcq_why: The same chunk can appear several times.
+fill_blank: A smaller question derived from a big one is a ____-question → sub
+apply: A question compares two products. How do you retrieve? → Retrieve for each product separately
+explain_task: Explain multi-query retrieval in three lines.
+own_task: Split one complex question into three clear sub-questions.

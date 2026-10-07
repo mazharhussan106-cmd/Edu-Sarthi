@@ -1,0 +1,480 @@
+
+@OBS-014
+type: topic56
+topic: 03 Metrics
+level: Beginner
+term: Counters, gauges and histograms
+cue: Which three metric types record totals, current values and distributions?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Different quantities behave differently, so metric systems define types that fit them.
+pro_tip: Use counters for events, gauges for levels, and histograms for durations.
+memory_story: A counter is an odometer, a gauge is a fuel level, and a histogram is a bar chart of trip lengths.
+visual: Three small graphs: a rising line, a wobbling line and a set of bars.
+emotion: The clarity of choosing the right metric type.
+definition: A counter only increases and counts events, a gauge goes up and down to show a current value, and a histogram counts observations in buckets to show a distribution.
+explanation: Counters are read as rates, such as requests per second. Gauges show things like memory in use or queue length. Histograms capture latency spread, allowing percentiles. Resets of counters on restart are handled by rate functions. Choosing the wrong type gives misleading graphs.
+simple_explain: Count events with counters, show levels with gauges, and measure spread with histograms.
+analogy: A counter is an odometer, a gauge is a fuel level, and a histogram is a bar chart of trip lengths.
+formula_rule: Counter = total, gauge = now, histogram = spread.
+example_1: http_requests_total as a counter.
+example_2: queue_length as a gauge.
+example_3: request_duration_seconds as a histogram.
+related: Prometheus basics, percentiles, RED and USE methods, cardinality
+word_family: counter, gauge, histogram, bucket, rate
+where_used: Instrumentation | Dashboards | Alerts
+mini_conversation: A: Should request time be a gauge? | B: No, use a histogram so we can see percentiles.
+misconception: ✗ A gauge is fine for counting requests → ✓ A counter survives sampling gaps and works with rates
+contrast: Counter vs gauge: a counter only rises, a gauge goes both ways.
+avoid: Do not use gauges for event counts.
+memory_trick: Count with counters, level with gauges.
+real_project: Switching latency to a histogram revealed slow tail requests hidden by averages.
+real_interview: An interviewer may ask: When do you use a histogram?
+real_daily: It is like an odometer, a fuel gauge and a bar chart.
+mcq_question: Which type only goes up?
+mcq_options: A) Counter B) Summary only C) Gauge D) Histogram
+mcq_answer: A
+mcq_why: Counters accumulate events.
+fill_blank: A metric that rises and falls is a ____ → gauge
+apply: You want to track memory in use. Which type? → A gauge
+explain_task: Explain the three metric types in three lines.
+own_task: Choose a type for five different measurements.
+
+@OBS-015
+type: code56
+topic: 03 Metrics
+level: Intermediate
+term: Prometheus basics
+cue: Which system scrapes metrics from services and lets you query them?
+kind: Tool
+frequency: Very high
+importance: 5
+origin: Teams needed an open way to collect time series metrics, so Prometheus pulls them from endpoints and stores them for querying.
+pro_tip: Expose metrics on a /metrics endpoint and label them sparingly.
+memory_story: Prometheus is a collector that visits each service on a schedule and copies its meter readings.
+visual: A server fetching numbers from several targets into a time series store.
+emotion: The satisfaction of a query returning exactly the rate you wanted.
+meaning: Prometheus scrapes metrics from HTTP endpoints at intervals, stores them as labelled time series, and offers the query language PromQL and alert rules.
+code: # prometheus.yml¶scrape_configs:¶  - job_name: web¶    scrape_interval: 15s¶    static_configs:¶      - targets: ["web:8080"]¶# PromQL¶rate(http_requests_total{job="web", status=~"5.."}[5m])¶sum by (route) (rate(http_requests_total[5m]))¶histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))
+output: The queries give the per-second rate of server errors, the rate by route, and the 95th percentile latency over five minutes.
+explanation: Each metric has a name and labels, such as status and route. rate turns a counter into a per-second value over a window. sum by groups series. histogram_quantile estimates percentiles from buckets. Alertmanager handles routing of alerts. Prometheus pulls, so targets must be reachable, and short jobs use a push gateway.
+simple_explain: Expose /metrics, scrape it, and query rates with PromQL.
+analogy: Prometheus is a collector that visits each service on a schedule and copies its meter readings.
+syntax: rate(metric{label="x"}[5m]) | sum by (label) (...)
+anatomy: scrape = pull | label = dimension | rate = per-second change | [5m] = window
+example_1: up{job="web"}
+example_2: avg_over_time(process_resident_memory_bytes[1h])
+example_3: increase(http_requests_total[1h])
+variation: remote write to a long-term store   // keep metrics for months
+used_with: Grafana, Alertmanager, exporters
+related: counters gauges histograms, Grafana basics, percentiles, cardinality
+alternatives: Cloud monitoring services | OpenTelemetry metrics
+where_used: Kubernetes | Services | Alerting
+mini_conversation: A: How do I see the error rate? | B: Use rate on the counter filtered to 5xx.
+misconception: ✗ Prometheus stores logs → ✓ It stores numeric time series only
+confused_with: rate vs increase: rate is per second, increase is the total over the window.
+avoid: Do not apply rate to a gauge.
+wrong_code: rate(memory_in_use_bytes[5m])
+right_code: rate(http_requests_total[5m])
+memory_trick: Rate is for counters only.
+real_project: A rate query on the error counter drove a page when errors passed five percent.
+real_interview: An interviewer may ask: What does rate do in PromQL?
+real_daily: It is like a collector copying meter readings.
+mcq_question: What does Prometheus do to collect metrics?
+mcq_options: A) Waits for logs B) Prints reports C) Scrapes endpoints on a schedule D) Reads emails
+mcq_answer: C
+mcq_why: It pulls from targets.
+fill_blank: The query language of Prometheus is ____ → PromQL
+hindi_to_task: Query the request rate over five minutes.
+task_answer: rate(http_requests_total[5m])
+own_task: Write a query for the error ratio of requests.
+practice_question: Which metric type is rate meant for?
+practice_answer: Counters.
+
+@OBS-016
+type: topic56
+topic: 03 Metrics
+level: Beginner
+term: Grafana basics
+cue: Which tool draws dashboards from many data sources?
+category: Tool
+frequency: Very high
+importance: 4
+origin: Raw query results are hard to read, so Grafana turns them into shareable panels from sources such as Prometheus and Loki.
+pro_tip: Use variables so one dashboard works for every service.
+memory_story: Grafana is the painter who turns numbers from many stores into pictures.
+visual: A dashboard with panels connected to data sources.
+emotion: The pleasure of a clear, shareable picture.
+definition: Grafana is a visualisation tool that connects to data sources, runs queries, and shows the results as panels on dashboards, with variables, alerting and sharing.
+explanation: You add a data source, create a dashboard with panels, and write a query in each. Variables create dropdowns, such as environment and service. Panels support graphs, tables, gauges and heat maps. Dashboards are stored as JSON and can be versioned. Alert rules can use the same queries as panels.
+simple_explain: Connect a source, write queries in panels, add variables, and share.
+analogy: Grafana is the painter who turns numbers from many stores into pictures.
+formula_rule: Data source + query + panel + variable.
+example_1: A latency panel from Prometheus.
+example_2: A logs panel from Loki.
+example_3: A service dropdown variable.
+related: dashboards, Prometheus basics, RED and USE methods, alerts
+word_family: panel, data source, variable, provisioning, JSON
+where_used: Monitoring | Reviews | Incident rooms
+mini_conversation: A: Do we need a dashboard per service? | B: No, use a variable for the service name.
+misconception: ✗ Grafana stores the metrics → ✓ It only displays data from other sources
+contrast: Grafana vs Prometheus: Grafana shows, Prometheus collects and stores.
+avoid: Do not edit production dashboards only in the interface without version control.
+memory_trick: Grafana only shows, Prometheus collects and stores.
+real_project: Provisioning dashboards from files kept them identical in every environment.
+real_interview: An interviewer may ask: What is the relationship between Grafana and Prometheus?
+real_daily: It is like a painter for numbers.
+mcq_question: What does Grafana do?
+mcq_options: A) Builds images B) Stores logs only C) Schedules jobs D) Visualises data from sources
+mcq_answer: D
+mcq_why: It displays query results as panels.
+fill_blank: A dropdown that changes a dashboard's queries is a ____ → variable
+apply: One dashboard must serve many services. What do you add? → A variable
+explain_task: Explain Grafana in three lines.
+own_task: Plan the panels of a service dashboard.
+
+@OBS-017
+type: topic56
+topic: 03 Metrics
+level: Intermediate
+term: RED and USE methods
+cue: Which two checklists tell you which metrics to watch for services and resources?
+category: Core concept
+frequency: High
+importance: 5
+origin: Teams needed a standard starting set of metrics, so two simple methods were named for services and for resources.
+pro_tip: Use RED for request-driven services and USE for machines and queues.
+memory_story: RED watches the customers' experience, and USE watches the machinery.
+visual: Two checklists side by side, one for requests and one for resources.
+emotion: The relief of knowing exactly what to measure first.
+definition: The RED method tracks rate, errors and duration for services, and the USE method tracks utilisation, saturation and errors for resources.
+explanation: For an API, rate is requests per second, errors are failed requests, and duration is latency. For a disk, CPU or queue, utilisation is how busy it is, saturation is how much work is waiting, and errors are failures. RED shows user impact, and USE helps find the bottleneck. Together they cover most problems.
+simple_explain: Use RED for services and USE for machines and queues.
+analogy: RED watches the customers' experience, and USE watches the machinery.
+formula_rule: RED = rate, errors, duration. USE = utilisation, saturation, errors.
+example_1: Requests per second, error ratio and p95 latency of an API.
+example_2: CPU utilisation, run queue length and hardware errors.
+example_3: Queue depth as saturation.
+related: dashboards, percentiles, saturation, alerts
+word_family: RED, USE, golden signals, utilisation, saturation
+where_used: Dashboards | Alerts | Troubleshooting
+mini_conversation: A: What should this new dashboard show? | B: Start with RED for the API and USE for the database host.
+misconception: ✗ CPU utilisation alone shows whether a service is healthy → ✓ Users feel errors and latency, so measure RED too
+contrast: RED vs USE: RED is about requests, USE is about resources.
+avoid: Do not alert on resource use without checking user impact.
+memory_trick: RED for requests, USE for resources.
+real_project: Building dashboards from RED and USE gave every team the same starting view.
+real_interview: An interviewer may ask: What are the RED and USE methods?
+real_daily: It is like watching customers and machinery.
+mcq_question: What does the D in RED stand for?
+mcq_options: A) Depth B) Delay only C) Duration D) Disk
+mcq_answer: C
+mcq_why: Duration means request latency.
+fill_blank: Work waiting for a resource is called ____ → saturation
+apply: You monitor a database server's disk. Which method? → USE
+explain_task: Explain RED and USE in three lines.
+own_task: List the RED metrics for a checkout API.
+
+@OBS-018
+type: topic56
+topic: 03 Metrics
+level: Advanced
+term: Cardinality
+cue: Which property of labels can make metrics systems slow and expensive?
+category: Core concept
+frequency: High
+importance: 5
+origin: Each unique label combination creates a new time series, so labels with many values multiply storage and memory.
+pro_tip: Never use user ids, request ids or raw URLs as metric labels.
+memory_story: Cardinality is the number of different name tags, and too many tags clog the cloakroom.
+visual: A small number of series growing into a huge number.
+emotion: The caution of seeing how labels multiply.
+definition: Cardinality is the number of distinct time series a metric produces, equal to the number of unique label value combinations, and high cardinality strains storage and queries.
+explanation: A metric with labels for route, status and method may have dozens of series. Adding a user id label creates one per user, which can reach millions. Use bounded labels such as route templates, not raw paths. Put high-detail data in logs or traces instead. Monitor series counts and set limits.
+simple_explain: Keep label values few and bounded, and put unique ids in logs and traces.
+analogy: Cardinality is the number of different name tags, and too many tags clog the cloakroom.
+formula_rule: Series = product of label value counts.
+example_1: Labels route, method and status giving a few hundred series.
+example_2: A user_id label creating millions of series.
+example_3: Using /users/:id instead of /users/42.
+related: counters gauges histograms, Prometheus basics, cost of telemetry, structured logs
+word_family: cardinality, label, series, bounded, explosion
+where_used: Metrics design | Cost control | Troubleshooting
+mini_conversation: A: Prometheus is running out of memory. | B: A high-cardinality label is probably creating too many series.
+misconception: ✗ More labels always make metrics more useful → ✓ Unbounded labels can break the metrics system
+contrast: High vs low cardinality: few label values versus many unique ones.
+avoid: Do not label metrics with user ids.
+memory_trick: Bounded labels only, ids go to logs.
+real_project: Removing a user id label brought a metrics server back from constant crashes.
+real_interview: An interviewer may ask: Why is high cardinality a problem?
+real_daily: It is like too many name tags in a cloakroom.
+mcq_question: Which label is a bad idea for a metric?
+mcq_options: A) HTTP method B) User id C) Status class D) Service name
+mcq_answer: B
+mcq_why: It creates unbounded series.
+fill_blank: Each unique label combination makes a new time ____ → series
+apply: Memory use explodes after adding a label. What do you check? → The label's cardinality
+explain_task: Explain cardinality in three lines.
+own_task: Rewrite a metric label list to avoid high cardinality.
+
+@OBS-019
+type: topic56
+topic: 03 Metrics
+level: Intermediate
+term: Percentiles
+cue: Why do p95 and p99 describe latency better than the average?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Averages hide slow outliers that real users suffer, so percentiles describe how bad the slower requests are.
+pro_tip: Watch p95 and p99 together with the median.
+memory_story: The average is the typical meal time, and p99 is how long the unluckiest diner waits.
+visual: A latency distribution with markers at the median, p95 and p99.
+emotion: The realisation that averages can hide pain.
+definition: A percentile is the value below which a given percent of observations fall, so the p95 latency means ninety-five percent of requests were faster than that value.
+explanation: The median, p50, shows typical latency. p95 and p99 show the slow tail that affects many users, especially when a page makes many calls. Percentiles cannot be averaged across servers, and must be computed from histograms or raw data. Service goals are often written as percentiles.
+simple_explain: Use p50, p95 and p99 instead of the mean to see slow requests.
+analogy: The average is the typical meal time, and p99 is how long the unluckiest diner waits.
+formula_rule: p95 = value that ninety-five percent of requests beat.
+example_1: Average 200 ms but p99 of 4 seconds.
+example_2: A goal that p95 stays under 300 ms.
+example_3: A histogram used to compute p99.
+related: histograms, RED and USE methods, SLIs and SLOs, tracing
+word_family: percentile, p95, p99, tail latency, median
+where_used: Performance work | SLOs | Alerts
+mini_conversation: A: The average is fine but users complain. | B: Check p99 for the slow tail.
+misconception: ✗ The average latency shows what users experience → ✓ The slow tail can hurt many users while the average looks fine
+contrast: Mean vs p99: the mean hides outliers, p99 shows them.
+avoid: Do not average percentiles across instances.
+memory_trick: Averages hide, tails tell the truth.
+real_project: Spotting a bad p99 led to a slow query that the average had hidden.
+real_interview: An interviewer may ask: Why use percentiles rather than averages?
+real_daily: It is like asking how long the unluckiest diner waits.
+mcq_question: What does p95 mean?
+mcq_options: A) The average B) Ninety-five requests C) Five percent failed D) Ninety-five percent of requests were faster
+mcq_answer: D
+mcq_why: It marks the boundary of the slowest five percent.
+fill_blank: The p50 is also called the ____ → median
+apply: The average is low but some users see delays. Which number do you check? → p99
+explain_task: Explain percentiles in three lines.
+own_task: Explain why p99 matters for a page that calls ten services.
+
+@OBS-020
+type: topic56
+topic: 03 Metrics
+level: Intermediate
+term: Saturation
+cue: Which signal shows how full a resource is and how much work is waiting?
+category: Core concept
+frequency: High
+importance: 4
+origin: Systems slow sharply as they fill, so measuring queues and waiting shows trouble before failure.
+pro_tip: Watch queue length and wait time, not only utilisation.
+memory_story: Saturation is the line at the door of a restaurant that is already full.
+visual: A resource at full use with a growing queue.
+emotion: The value of an early warning.
+definition: Saturation is the degree to which a resource has more work than it can handle, shown by queues, wait times or throttling.
+explanation: Utilisation near one hundred percent with a growing queue means saturation. Examples are CPU run queue, thread pool queue, connection pool waits and disk queue depth. Latency grows quickly once saturation starts. Alerting on saturation gives time to scale. Autoscaling often keys on it.
+simple_explain: Watch queues and waits to see overload before users do.
+analogy: Saturation is the line at the door of a restaurant that is already full.
+formula_rule: Busy and waiting = saturated.
+example_1: A growing thread pool queue.
+example_2: Connection pool wait time rising.
+example_3: Disk queue depth above the safe level.
+related: RED and USE methods, autoscaling, percentiles, alerts
+word_family: saturation, queue, wait, throttling, headroom
+where_used: Capacity planning | Alerts | Autoscaling
+mini_conversation: A: CPU is at eighty percent, is it fine? | B: Check the run queue to see whether work is waiting.
+misconception: ✗ Low utilisation always means no overload → ✓ A small pool can be saturated even when machine CPU is low
+contrast: Utilisation vs saturation: utilisation is how busy, saturation is how much waits.
+avoid: Do not watch utilisation only.
+memory_trick: Busy is use, waiting is saturation.
+real_project: Alerting on a connection pool queue gave early warning before timeouts began.
+real_interview: An interviewer may ask: How do you detect saturation?
+real_daily: It is like a line outside a full restaurant.
+mcq_question: Which shows saturation?
+mcq_options: A) A growing queue B) A low CPU C) A short log D) A green dashboard
+mcq_answer: A
+mcq_why: Waiting work signals overload.
+fill_blank: Spare capacity is called ____ → headroom
+apply: Latency rises while CPU is moderate. What do you check? → Queues and pool waits
+explain_task: Explain saturation in three lines.
+own_task: List three queues to monitor in a web service.
+
+@OBS-021
+type: topic56
+topic: 04 Tracing
+level: Intermediate
+term: Spans and traces
+cue: Which two terms describe one timed operation and the full path of a request?
+category: Core concept
+frequency: High
+importance: 5
+origin: A request crosses many services, so timed steps are linked together to show the whole journey.
+pro_tip: Name spans by operation, and attach attributes such as route and status.
+memory_story: A trace is a journey and spans are the timed legs of it.
+visual: A waterfall chart made of nested horizontal bars.
+emotion: The thrill of seeing where time went.
+definition: A span is a timed operation with a name, start, duration and attributes, and a trace is the tree of spans that belong to one request.
+explanation: The root span is the entry point, with child spans for calls to other services and databases. Each span has an id and its parent id, and all share a trace id. A waterfall view shows which step was slow. Attributes and events add context. Errors can be recorded on spans.
+simple_explain: Spans are the timed steps, and the trace is the whole request.
+analogy: A trace is a journey and spans are the timed legs of it.
+formula_rule: Trace = tree of spans sharing one trace id.
+example_1: A root span for POST /checkout.
+example_2: A child span for the payment API call.
+example_3: A database query span with its duration.
+related: OpenTelemetry, propagation, correlation ids, sampling
+word_family: span, trace, parent, attribute, waterfall
+where_used: Microservices | Performance work | Debugging
+mini_conversation: A: Which step made checkout slow? | B: The waterfall shows the payment span took two seconds.
+misconception: ✗ A trace is just a collection of logs → ✓ It is a structured tree of timed spans
+contrast: Span vs trace: a span is one step, a trace is all steps of a request.
+avoid: Do not create spans for every tiny function.
+memory_trick: Spans are legs, the trace is the trip.
+real_project: A trace waterfall found one sequential call that could run in parallel.
+real_interview: An interviewer may ask: What is a span?
+real_daily: It is like the legs of a journey.
+mcq_question: What do spans of one request share?
+mcq_options: A) A trace id B) A password C) A server D) A colour
+mcq_answer: A
+mcq_why: The trace id links them.
+fill_blank: The step that starts a trace is the ____ span → root
+apply: You want to see which call is slow inside a request. What do you use? → A trace waterfall
+explain_task: Explain spans and traces in three lines.
+own_task: Draw the spans for a checkout with three downstream calls.
+
+@OBS-022
+type: code56
+topic: 04 Tracing
+level: Intermediate
+term: OpenTelemetry
+cue: Which open standard and toolkit collects traces, metrics and logs in a vendor-neutral way?
+kind: Tool
+frequency: High
+importance: 5
+origin: Each vendor had its own agents, so OpenTelemetry created common APIs, formats and a collector.
+pro_tip: Instrument with OpenTelemetry once and choose the backend later.
+memory_story: OpenTelemetry is a universal plug that fits every monitoring socket.
+visual: Apps sending telemetry through a collector to different backends.
+emotion: The freedom of not being locked to one vendor.
+meaning: OpenTelemetry provides SDKs, a wire protocol called OTLP and a collector that receives, processes and exports telemetry to backends.
+code: from opentelemetry import trace¶tracer = trace.get_tracer("orders")¶with tracer.start_as_current_span("create_order") as span:¶    span.set_attribute("order.id", 1042)¶    try:¶        charge_card()¶    except Exception as e:¶        span.record_exception(e)¶        raise¶# environment: OTEL_EXPORTER_OTLP_ENDPOINT=http://collector:4317 OTEL_SERVICE_NAME=orders
+output: When run under opentelemetry-instrument (or with the SDK configured), a span named create_order is recorded with the order id and any exception, and sent to the collector. With the API alone and no SDK, nothing is exported.
+explanation: Auto-instrumentation libraries trace common frameworks without code changes. The collector can add attributes, drop data, sample and send to several backends. Settings come from environment variables such as the endpoint and service name. Semantic conventions standardise attribute names. Logs and metrics are also supported.
+simple_explain: Instrument with the SDK or auto-instrumentation, send OTLP to a collector, and pick any backend.
+analogy: OpenTelemetry is a universal plug that fits every monitoring socket.
+syntax: tracer.start_as_current_span("name")
+anatomy: SDK = in the app | OTLP = the protocol | collector = pipeline | backend = storage and UI
+example_1: opentelemetry-instrument python app.py
+example_2: OTEL_SERVICE_NAME=checkout
+example_3: span.set_attribute("http.route", "/orders")
+variation: collector processors for batching and sampling   // central control
+used_with: Jaeger, Tempo, Prometheus
+related: spans and traces, propagation, sampling, central logging
+alternatives: Vendor agents
+where_used: Microservices | Cloud platforms | Vendor-neutral setups
+mini_conversation: A: Can we switch monitoring vendors later? | B: Yes, with OpenTelemetry we only change the exporter.
+misconception: ✗ OpenTelemetry is a monitoring backend → ✓ It collects and exports telemetry, and you still need a backend
+confused_with: OpenTelemetry vs Prometheus: one is a telemetry standard, the other is a metrics store.
+avoid: Do not hard-code vendor-specific agents everywhere.
+wrong_code: # a proprietary agent in every service
+right_code: opentelemetry-instrument python app.py
+memory_trick: Instrument once, then export to anywhere.
+real_project: Standardising on OpenTelemetry let a customer change tracing backends without code changes.
+real_interview: An interviewer may ask: What is OTLP?
+real_daily: It is like a universal plug.
+mcq_question: What receives and forwards telemetry in OpenTelemetry?
+mcq_options: A) The compiler B) The database C) The collector D) The browser
+mcq_answer: C
+mcq_why: The collector is the pipeline.
+fill_blank: The protocol used to send telemetry is ____ → OTLP
+hindi_to_task: Name the service for telemetry using an environment variable.
+task_answer: OTEL_SERVICE_NAME=checkout
+own_task: Write the steps to add tracing to a small Python service.
+practice_question: Is OpenTelemetry a storage backend?
+practice_answer: No, it collects and exports telemetry.
+
+@OBS-023
+type: topic56
+topic: 04 Tracing
+level: Advanced
+term: Context propagation
+cue: How does a trace id travel from one service to the next?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Separate services only join one trace if the context is passed along each call.
+pro_tip: Use the standard W3C traceparent header and instrument clients and servers.
+memory_story: Propagation is passing a baton so every runner knows which race they are in.
+visual: An HTTP header carrying trace and span ids between services.
+emotion: The satisfaction of an unbroken trace.
+definition: Context propagation passes the trace id and parent span id between processes, usually in the HTTP traceparent header or message headers, so new spans attach to the same trace.
+explanation: The caller injects the context into outgoing headers, and the callee extracts it and starts a child span. Queues and background jobs need the context in message metadata. A missing hop breaks the trace into separate pieces. Libraries do this automatically when instrumented. Baggage can carry extra key-values but should be used carefully.
+simple_explain: Inject the context in calls and extract it on the other side.
+analogy: Propagation is passing a baton so every runner knows which race they are in.
+formula_rule: Inject on send, extract on receive.
+example_1: traceparent: 00-<trace id>-<span id>-01
+example_2: A message queue carrying the context in its headers.
+example_3: A gateway starting the trace.
+related: spans and traces, correlation ids, OpenTelemetry, sampling
+word_family: propagation, traceparent, inject, extract, baton
+where_used: Microservices | Queues | Gateways
+mini_conversation: A: The trace stops at the queue. | B: The message did not carry the trace context.
+misconception: ✗ Tracing works automatically across any boundary → ✓ Each boundary needs context passed through it
+contrast: Propagation vs sampling: one links spans, the other decides what to keep.
+avoid: Do not drop headers in gateways or proxies.
+memory_trick: Inject going out, extract coming in.
+real_project: Adding context to queue messages joined broken traces into whole journeys.
+real_interview: An interviewer may ask: Why would a trace break between services?
+real_daily: It is like passing a baton.
+mcq_question: Which header carries the W3C trace context?
+mcq_options: A) accept B) host C) cookie D) traceparent
+mcq_answer: D
+mcq_why: It is the standard header name.
+fill_blank: Putting context into outgoing calls is called ____ → injecting
+apply: Traces break at a message queue. What do you add? → Context in the message metadata
+explain_task: Explain context propagation in three lines.
+own_task: List the boundaries where context must be passed.
+
+@OBS-024
+type: topic56
+topic: 04 Tracing
+level: Advanced
+term: Trace sampling
+cue: How do you decide which traces to keep when volume is huge?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Storing every trace is costly, so systems keep a share and try to keep the interesting ones.
+pro_tip: Prefer tail sampling to keep all errors and slow traces.
+memory_story: Sampling traces is keeping photos of every accident and a few of normal traffic.
+visual: A funnel keeping errors and slow traces.
+emotion: The comfort of a bill under control.
+definition: Trace sampling keeps only some traces, using head sampling decided at the start or tail sampling decided after the trace completes, so errors and slow requests can be favoured.
+explanation: Head sampling is simple and cheap but cannot know the outcome. Tail sampling in a collector buffers spans and keeps traces with errors or high latency. The sampling decision must be consistent across services so traces are whole. Counts derived from sampled traces need adjusting, so use metrics for totals.
+simple_explain: Keep all errors and slow traces and a small share of normal ones.
+analogy: Sampling traces is keeping photos of every accident and a few of normal traffic.
+formula_rule: Head = decide early. Tail = decide with the outcome.
+example_1: Keeping one percent of normal traces.
+example_2: Keeping every trace with an error.
+example_3: A collector buffering spans for tail sampling.
+related: log sampling, OpenTelemetry, cost of telemetry, percentiles
+word_family: head sampling, tail sampling, rate, buffer, consistent
+where_used: High-traffic services | Cost control | Platforms
+mini_conversation: A: Tracing costs too much. | B: Use tail sampling to keep errors and slow traces only.
+misconception: ✗ Sampling traces randomly is always enough → ✓ Random sampling may drop exactly the rare errors you need
+contrast: Head vs tail sampling: head cannot see outcomes, tail can.
+avoid: Do not sample away every error.
+memory_trick: Tail sampling keeps the interesting traces.
+real_project: Tail sampling cut tracing cost while keeping every failed request.
+real_interview: An interviewer may ask: What is the difference between head and tail sampling?
+real_daily: It is like keeping photos of every accident.
+mcq_question: Which sampling can keep every error trace?
+mcq_options: A) No sampling B) Tail sampling C) Random head sampling only D) Log sampling
+mcq_answer: B
+mcq_why: It decides after seeing the outcome.
+fill_blank: Counting totals should use ____ rather than sampled traces → metrics
+apply: Tracing is expensive but errors matter most. What do you use? → Tail sampling
+explain_task: Explain trace sampling in three lines.
+own_task: Write a sampling policy for an API.

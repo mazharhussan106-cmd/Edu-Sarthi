@@ -1,0 +1,204 @@
+
+@DKR-047
+type: code56
+topic: 07 Advanced Docker
+level: Advanced
+term: BuildKit and build cache
+cue: Which modern builder makes builds faster with parallel steps and cache mounts?
+kind: Build tool
+frequency: High
+importance: 4
+origin: The classic builder ran steps one after another, so BuildKit was created to build in parallel and cache smarter.
+pro_tip: Use a cache mount for package managers so downloads survive between builds.
+memory_story: BuildKit is a kitchen where independent dishes cook at the same time.
+visual: Build stages running side by side with cache hits.
+emotion: The joy of a rebuild that takes seconds.
+meaning: BuildKit is Docker's modern build engine, which runs independent steps in parallel and supports cache mounts, secrets and better caching.
+code: RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt¶docker buildx build --cache-from type=registry,ref=acme/api:cache -t acme/api .
+output: Pip downloads are reused between builds, and layers can also be reused from a registry cache.
+explanation: BuildKit is the default builder in current Docker. Stages that do not depend on each other build in parallel. A cache mount keeps a folder across builds without adding it to the image. Exporting the cache to a registry lets CI runners, which start empty, reuse earlier work.
+simple_explain: Use cache mounts and a shared cache to make builds quick.
+analogy: It is like a kitchen cooking independent dishes at the same time.
+syntax: RUN --mount=type=cache,target=/path command
+anatomy: --mount=type=cache = persistent folder | --cache-from = import cache | --cache-to = export cache
+example_1: RUN --mount=type=cache,target=/root/.npm npm ci
+example_2: docker buildx build --cache-to type=inline -t api .
+example_3: docker buildx ls
+variation: DOCKER_BUILDKIT=1 docker build .   // enable on older versions
+used_with: multi-stage builds, CI, registries
+related: Layers and cache, multi-stage builds, Docker in CI
+alternatives: Classic builder
+where_used: CI pipelines | Large builds | Monorepos
+mini_conversation: A: CI always reinstalls everything. | B: Export and import a build cache.
+misconception: ✗ Cache mounts add data to the image → ✓ The mounted folder is kept outside the image layers
+confused_with: Layer cache vs cache mount: one reuses finished layers, the other reuses a folder during a step.
+avoid: Do not put secrets in a shared build cache.
+wrong_code: RUN pip install --cache-mount /cache -r requirements.txt
+right_code: RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
+memory_trick: Cache mount keeps downloads, not image size.
+real_project: Cutting CI build time by sharing a registry cache between runs.
+real_interview: An interviewer may ask: How do you speed up Docker builds in CI?
+real_daily: It is like a kitchen cooking many dishes at once.
+mcq_question: What does a cache mount do for the image size?
+mcq_options: A) Adds all packages B) Adds nothing to it C) Removes layers D) Doubles it
+mcq_answer: B
+mcq_why: The cache folder lives outside the final image.
+fill_blank: Independent build stages are built in ____ by BuildKit → parallel
+hindi_to_task: Install pip packages using a cache mount.
+task_answer: RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
+own_task: Build with a cache imported from a registry reference.
+practice_question: Why does CI need an exported cache?
+practice_answer: Fresh runners start empty and would rebuild every layer.
+
+@DKR-048
+type: code56
+topic: 07 Advanced Docker
+level: Advanced
+term: Multi-platform images
+cue: How do you build one image that runs on both Intel and ARM machines?
+kind: Build tool
+frequency: Medium
+importance: 4
+origin: Laptops and servers now use different CPU families, so an image needs variants for each, bundled under one tag.
+pro_tip: Test the ARM variant, because slow emulation can hide architecture bugs.
+memory_story: A multi-platform tag is one doorway that sends each visitor to the right room.
+visual: One tag pointing at several architecture builds.
+emotion: The relief of the same image working on every machine.
+meaning: A multi-platform image is a manifest list under one tag that points to separate builds for each CPU architecture.
+code: docker buildx build --platform linux/amd64,linux/arm64 -t acme/api:1.0 --push .¶docker buildx imagetools inspect acme/api:1.0
+output: Both variants are built and pushed under one tag, and inspect lists amd64 and arm64 entries.
+explanation: Docker pulls the variant matching the machine's architecture automatically. Building for a foreign CPU uses emulation, which is slow, or native builders. Multi-platform builds usually push straight to a registry, since the local image store holds one platform. Architecture errors often show as exec format error.
+simple_explain: Build with buildx for several platforms and push under one tag.
+analogy: It is like one doorway that sends visitors to the right room.
+syntax: docker buildx build --platform p1,p2 -t name --push .
+anatomy: --platform = target CPUs | --push = upload result | manifest = index of variants
+example_1: docker buildx build --platform linux/arm64 -t api:arm --load .
+example_2: docker run --platform linux/amd64 alpine uname -m
+example_3: docker buildx create --use
+variation: FROM --platform=$BUILDPLATFORM golang AS build   // build natively then cross-compile
+used_with: registries, CI, BuildKit
+related: BuildKit and build cache, registries and Docker Hub, docker pull and push
+alternatives: Separate tags per architecture
+where_used: Apple silicon teams | ARM cloud servers | Public images
+mini_conversation: A: It fails with exec format error. | B: The image was built for another CPU, so build for both.
+misconception: ✗ An image built on a laptop runs on any server → ✓ It runs only on the architecture it was built for
+confused_with: Platform vs OS: platform includes the CPU architecture, such as amd64 or arm64.
+avoid: Do not ship only an Apple silicon build to Intel servers.
+wrong_code: docker build --platform=all -t api .
+right_code: docker buildx build --platform linux/amd64,linux/arm64 -t api --push .
+memory_trick: Exec format error means wrong CPU.
+real_project: Publishing both amd64 and arm64 so developers and servers pulled the same tag.
+real_interview: An interviewer may ask: What does exec format error mean?
+real_daily: It is like one doorway leading each visitor to the right room.
+mcq_question: What does exec format error usually indicate?
+mcq_options: A) A full disk B) A missing volume C) A syntax error D) An image built for a different CPU
+mcq_answer: D
+mcq_why: The binary cannot run on that architecture.
+fill_blank: Multi-platform builds use the docker ____ command → buildx
+hindi_to_task: Build for amd64 and arm64 and push.
+task_answer: docker buildx build --platform linux/amd64,linux/arm64 -t acme/api:1.0 --push .
+own_task: Inspect which platforms a pushed tag contains.
+practice_question: What is a manifest list?
+practice_answer: An index that maps one tag to builds for several platforms.
+
+@DKR-049
+type: code56
+topic: 07 Advanced Docker
+level: Advanced
+term: Debugging a failing container
+cue: What is the step-by-step routine when a container will not start or keeps restarting?
+kind: Debugging skill
+frequency: Very high
+importance: 5
+origin: Containers fail in a few repeated ways, so a fixed routine gets you to the cause faster than guessing.
+pro_tip: Read the exit code first, then the last log lines, before changing anything.
+memory_story: Debugging is a detective checking the status, then the diary, then the room.
+visual: A flow from status to logs to shell.
+emotion: The calm of following a routine instead of panicking.
+meaning: Debugging a failing container means checking its status and exit code, reading logs, inspecting its configuration, and then entering it or running it by hand.
+code: docker ps -a¶docker logs --tail 50 api¶docker inspect --format "{{.State.ExitCode}} {{.State.Error}}" api¶docker run --rm -it --entrypoint sh myapi
+output: You see the exit status, the last error lines, the exit code, and then an interactive shell in the same image.
+explanation: Exit code 0 means a clean stop, 1 an app error, 125 to 127 a Docker or command problem, 137 a kill often for memory, and 143 a normal termination signal. Overriding the entrypoint lets you explore an image that crashes on start. Compare the environment, mounts and ports with what you expect.
+simple_explain: Status, exit code, logs, config, then a shell. Change one thing at a time.
+analogy: It is like a detective checking the status, the diary and then the room.
+syntax: docker inspect --format "{{.State.ExitCode}}" container
+anatomy: ps -a = state | logs = last output | inspect = config and exit code | --entrypoint sh = explore
+example_1: docker events --since 10m
+example_2: docker inspect api
+example_3: docker diff api
+variation: docker run --rm -it --entrypoint sh image   // explore a crashing image
+used_with: docker logs, docker exec, health checks
+related: docker logs, docker exec, resource limits
+alternatives: Interactive debugging tools
+where_used: Incidents | Failed deploys | Local testing
+mini_conversation: A: It restarts forever. | B: Read the exit code and last logs first.
+misconception: ✗ Restarting the container usually fixes the problem → ✓ It repeats the same failure until you find the cause
+confused_with: Exit 137 vs 1: 137 is usually killed, 1 is an error from the application.
+avoid: Do not change several things at once while debugging.
+wrong_code: docker restart api && docker restart api
+right_code: docker logs --tail 50 api
+memory_trick: Status, logs, inspect, shell in order.
+real_project: Finding a missing variable from the last log line of a restart loop.
+real_interview: An interviewer may ask: Walk me through debugging a crashing container.
+real_daily: It is like a detective checking the diary first.
+mcq_question: Which exit code commonly means the container was killed for memory?
+mcq_options: A) 2 B) 0 C) 126 D) 137
+mcq_answer: D
+mcq_why: 137 means killed by signal nine, often out of memory.
+fill_blank: To explore a crashing image you override its ____ with a shell → entrypoint
+hindi_to_task: Show the exit code of the stopped container api.
+task_answer: docker inspect --format "{{.State.ExitCode}}" api
+own_task: List what files changed inside the container api.
+practice_question: What does exit code 0 mean?
+practice_answer: The process finished successfully and stopped cleanly.
+
+@DKR-050
+type: code56
+topic: 07 Advanced Docker
+level: Advanced
+term: Docker in CI
+cue: How do you build, scan and push images automatically in a pipeline?
+kind: Workflow
+frequency: High
+importance: 5
+origin: Manual builds differ between people, so a pipeline builds the same image from every commit in the same way.
+pro_tip: Tag images with the Git commit so every deployed image traces back to its code.
+memory_story: A pipeline is a factory line that stamps each box with its commit number.
+visual: Commit, build, scan, push as four connected steps.
+emotion: The assurance of identical builds every time.
+meaning: Docker in CI means a pipeline that builds an image from each commit, tests and scans it, then pushes it to a registry with a traceable tag.
+code: docker build -t ghcr.io/acme/api:${GIT_SHA} .¶trivy image --exit-code 1 --severity CRITICAL ghcr.io/acme/api:${GIT_SHA}¶docker push ghcr.io/acme/api:${GIT_SHA}
+output: The image is built with the commit tag, the pipeline fails on critical findings, and a clean image is pushed.
+explanation: Log in with a short-lived token stored as a pipeline secret. Use the cache to keep builds fast. Tag with the commit and optionally with a version, and avoid relying on latest for deploys. Run tests inside the built image, so what you test is what ships. Deploy by digest or exact tag.
+simple_explain: Build once per commit, test and scan it, push with the commit tag, deploy that exact tag.
+analogy: It is like a factory line that stamps every box with its commit number.
+syntax: docker build -t registry/repo:${GIT_SHA} .
+anatomy: GIT_SHA = commit id | scan = quality gate | push = publish | deploy = use the same tag
+example_1: docker run --rm acme/api:${GIT_SHA} pytest
+example_2: echo "$TOKEN" | docker login ghcr.io -u user --password-stdin
+example_3: docker pull acme/api:${GIT_SHA}
+variation: docker buildx build --push --cache-to type=registry,ref=acme/api:cache .   // fast, cached CI build
+used_with: GitHub Actions, registries, scanning
+related: docker build and tag, image scanning, BuildKit and build cache
+alternatives: Managed build services
+where_used: GitHub Actions | GitLab CI | Release pipelines
+mini_conversation: A: Which version is running in production? | B: The tag is the commit hash, so we can trace it.
+misconception: ✗ Deploying the latest tag is the safest choice → ✓ A moving tag makes it unclear what is running, so use exact tags
+confused_with: Build in CI vs build on a laptop: CI is repeatable and recorded.
+avoid: Do not store registry passwords in the repository.
+wrong_code: docker login -u user -p mypassword
+right_code: echo "$TOKEN" | docker login ghcr.io -u user --password-stdin
+memory_trick: Commit tag makes every image traceable.
+real_project: Tagging images with the commit hash so rollbacks were one command.
+real_interview: An interviewer may ask: How do you tag images in a pipeline?
+real_daily: It is like stamping every box with its number.
+mcq_question: Which tag makes a deployed image easy to trace?
+mcq_options: A) latest B) The Git commit hash C) new D) test
+mcq_answer: B
+mcq_why: The hash points to exactly one commit.
+fill_blank: A safe login passes the token on standard input with --password-____ → stdin
+hindi_to_task: Build an image tagged with the commit hash in GIT_SHA.
+task_answer: docker build -t ghcr.io/acme/api:${GIT_SHA} .
+own_task: Write a login command that reads the token from standard input.
+practice_question: Why avoid deploying the latest tag?
+practice_answer: It changes over time, so you cannot tell what version is running.

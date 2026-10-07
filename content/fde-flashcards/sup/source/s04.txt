@@ -1,0 +1,321 @@
+
+@SUP-022
+type: topic56
+topic: 04 Auth
+level: Beginner
+term: Supabase Auth
+cue: Which built-in Supabase service handles sign-up, login, passwords, social providers and user accounts?
+category: Authentication
+frequency: Very high
+importance: 5
+origin: Almost every app needs accounts, and building secure login yourself is hard to get right, so Supabase includes an authentication service that is tied directly to the database.
+pro_tip: Users are stored in the auth.users table, so link your own profiles table to it by id.
+memory_story: Supabase Auth is the front-desk security that checks identities and hands out passes to the rest of the building.
+visual: A login form connected to a users table and a pass being handed to the app.
+emotion: The relief of not building password handling from scratch.
+definition: Supabase Auth is the service that registers users, verifies their identity by password, magic link or social provider, and issues tokens that the database and API trust.
+explanation: Users are stored in a protected auth.users table. After login, the client holds a session with an access token (a JWT) and a refresh token. The database reads the token to know who is calling, which is what lets Row Level Security policies use auth.uid(). You can enable providers and email settings in the dashboard.
+simple_explain: Auth creates and checks user accounts for you. After login your app holds a token, and the database uses it to know which user is asking.
+analogy: It is like front-desk security that checks identities and hands out passes to the rest of the building.
+formula_rule: Sign up or log in → session with a token → database knows auth.uid()
+example_1: A user signing up with email and password.
+example_2: A user logging in with a GitHub account.
+example_3: A profiles table whose id equals the user's id in auth.users.
+related: sessions and JWT, Row Level Security, OAuth, magic links
+word_family: auth.users, session, token, provider, JWT
+where_used: Any app with accounts | Per-user data | Social login
+mini_conversation: A: Where are my users stored? | B: In the auth.users table, and you link your profiles table to it.
+misconception: ✗ I should store passwords in my own table → ✓ Supabase Auth stores and hashes credentials for you in auth.users, and your tables should only reference the user id
+contrast: auth.users vs profiles: auth.users holds account and login data, your profiles table holds app-specific details.
+avoid: Do not copy passwords or secrets into your own tables.
+memory_trick: Auth gives each user an id, link to it.
+real_project: Creating a profiles table linked to auth.users for each learner.
+real_interview: An interviewer may ask: How does Supabase know which user is making a request?
+real_daily: It is like front-desk security handing out passes.
+mcq_question: Where does Supabase store registered users?
+mcq_options: A) public.profiles only B) todos C) storage.objects D) auth.users
+mcq_answer: D
+mcq_why: The auth schema holds the users table managed by Supabase Auth.
+fill_blank: After login, the client holds a session containing an access ____ → token
+apply: How do you store extra details about each user? → Create a profiles table linked to the user's id
+explain_task: Explain Supabase Auth in three lines.
+own_task: Design a profiles table that links to auth.users.
+
+@SUP-023
+type: code56
+topic: 04 Auth
+level: Beginner
+term: Email and password sign-up and login
+cue: Which supabase-js methods create an account and log a user in with an email and password?
+kind: JavaScript method
+frequency: Very high
+importance: 5
+origin: Email and password is the most familiar way to sign in, so the auth client provides simple methods for registering and signing in with it.
+pro_tip: Expect to confirm the email address by default, and handle that state in your interface.
+memory_story: signUp opens the account and signInWithPassword unlocks it on later visits.
+visual: A form sending an email and password and receiving a session.
+emotion: The pleasure of the first successful login.
+meaning: auth.signUp creates a new user, and auth.signInWithPassword logs an existing user in.
+code: const { error: signUpError } = await supabase.auth.signUp({¶  email: "asha@example.com",¶  password: "a-long-strong-password"¶});¶const { data, error } = await supabase.auth.signInWithPassword({¶  email: "asha@example.com",¶  password: "a-long-strong-password"¶});
+output: signUp creates the user, and signInWithPassword returns data.session with the access token when the credentials are correct.
+explanation: With the default settings a new user must confirm their email before they can sign in, and the confirmation email contains a link. Passwords are hashed by Supabase and never stored in plain text. Wrong credentials return an error, so check it. The session is stored by the library and refreshed automatically.
+simple_explain: Call signUp once to create the account and signInWithPassword to log in. Always check the error and handle the email confirmation step.
+analogy: It is like opening an account at a bank and then showing your card on each visit.
+syntax: supabase.auth.signUp({ email, password })  |  supabase.auth.signInWithPassword({ email, password })
+anatomy: signUp = create the account | signInWithPassword = log in | session = what you get on success
+example_1: await supabase.auth.signUp({ email, password });
+example_2: await supabase.auth.signInWithPassword({ email, password });
+example_3: await supabase.auth.signOut();
+variation: await supabase.auth.resetPasswordForEmail(email)   // start a password reset
+used_with: session, email confirmation, signOut, RLS
+related: Supabase Auth, sessions and JWT, magic link
+alternatives: Magic links or social login
+where_used: Sign-up pages | Login pages | Account recovery
+mini_conversation: A: A new user cannot log in right after signing up. | B: They may need to confirm their email first.
+misconception: ✗ signUp logs the user in with no further steps in every setup → ✓ With email confirmation on, the user must confirm their address before they can sign in
+confused_with: signUp vs signIn: signUp creates the account, signIn logs in an existing one.
+avoid: Do not ignore the error returned by the call.
+wrong_code: await supabase.auth.signIn({ email, password });
+right_code: await supabase.auth.signInWithPassword({ email, password });
+memory_trick: signUp creates the account, signIn enters it.
+real_project: Building a login page that shows a message to confirm the email.
+real_interview: An interviewer may ask: How does Supabase protect user passwords?
+real_daily: It is like opening a bank account and showing your card on each visit.
+mcq_question: Which method logs in with an email and password?
+mcq_options: A) getUser B) signInWithPassword C) signUp D) signOut
+mcq_answer: B
+mcq_why: signInWithPassword authenticates an existing user.
+fill_blank: await supabase.auth.____(); logs the user out → signOut
+hindi_to_task: Create an account with an email and password.
+task_answer: await supabase.auth.signUp({ email, password });
+own_task: Write sign-up and login functions for a form.
+practice_question: Why might a new user be unable to log in immediately?
+practice_answer: Email confirmation may be required first.
+
+@SUP-024
+type: code56
+topic: 04 Auth
+level: Intermediate
+term: Social login (OAuth providers)
+cue: How do you let users sign in with an existing account such as GitHub or Google?
+kind: JavaScript method
+frequency: High
+importance: 4
+origin: Users dislike creating yet another password, so Supabase supports signing in through trusted providers using OAuth.
+pro_tip: Add your site's redirect URLs to the allowed list in the Auth settings, or the login will be rejected.
+memory_story: Social login is showing a trusted ID from another club, so this club lets you in without a new card.
+visual: A button sending the user to a provider and returning with a session.
+emotion: The convenience of one click sign in.
+meaning: signInWithOAuth sends the user to a provider to log in and then returns them to your site with a session.
+code: await supabase.auth.signInWithOAuth({¶  provider: "github",¶  options: { redirectTo: "https://example.com/auth/callback" }¶});
+output: The browser goes to GitHub to log in, then returns to the redirect address with the user signed in.
+explanation: First enable the provider in the dashboard and paste the client id and secret from the provider. Then allow your redirect URLs in the Auth settings. Supabase handles the OAuth exchange and creates the user in auth.users. Providers include Google, GitHub, Apple and many more.
+simple_explain: Turn on a provider in the dashboard, then call signInWithOAuth with its name. The user logs in there and comes back signed in.
+analogy: It is like showing a trusted ID from another club so this club lets you in without a new card.
+syntax: supabase.auth.signInWithOAuth({ provider, options })
+anatomy: provider = which service | redirectTo = where to return | options = extra settings
+example_1: await supabase.auth.signInWithOAuth({ provider: "google" });
+example_2: await supabase.auth.signInWithOAuth({ provider: "github", options: { redirectTo } });
+example_3: A callback page that finishes the login after the redirect.
+variation: scopes: "read:user"   // extra permissions from the provider
+used_with: redirect URLs, provider settings, sessions
+related: Supabase Auth, OAuth 2.0, sessions and JWT
+alternatives: Email and password or magic links
+where_used: Sign-in pages | Consumer apps | Developer tools
+mini_conversation: A: The Google login returns an error about the redirect. | B: Add that redirect URL to the allowed list in the Auth settings.
+misconception: ✗ Social login works without any setup in the provider or dashboard → ✓ You must enable the provider, add its client id and secret, and allow your redirect URLs
+confused_with: Social login vs password login: social login delegates identity to a provider, password login stores credentials with Supabase.
+avoid: Do not commit provider secrets to code.
+wrong_code: await supabase.auth.signInWithOAuth("github");
+right_code: await supabase.auth.signInWithOAuth({ provider: "github" });
+memory_trick: Enable the provider, allow the redirect.
+real_project: Adding a Sign in with Google button that returns to the dashboard page.
+real_interview: An interviewer may ask: What do you configure to add Google login?
+real_daily: It is like showing a trusted ID from another club.
+mcq_question: What must you configure besides calling the method?
+mcq_options: A) The provider and the allowed redirect URLs B) An index C) A new table D) A bucket
+mcq_answer: A
+mcq_why: The provider must be enabled and the redirect must be allowed.
+fill_blank: The page the user returns to after login is the ____ URL → redirect
+hindi_to_task: Start a GitHub login.
+task_answer: await supabase.auth.signInWithOAuth({ provider: "github" });
+own_task: List the setup steps to add Google login.
+practice_question: Where do you enter a provider's client id and secret?
+practice_answer: In the Authentication provider settings of the dashboard.
+
+@SUP-025
+type: code56
+topic: 04 Auth
+level: Intermediate
+term: Magic links and one-time codes
+cue: How can a user log in without a password by receiving a link or code by email?
+kind: JavaScript method
+frequency: Medium
+importance: 3
+origin: Passwords are forgotten and reused, so passwordless login proves the user owns an email address by sending them a one-time link or code.
+pro_tip: Customise the email template so users know whether to click a link or type a code.
+memory_story: A magic link is a one-time key posted to your own mailbox that opens the door once.
+visual: An email containing a link, which opens the app already signed in.
+emotion: The ease of logging in with no password to remember.
+meaning: signInWithOtp sends a one-time login link or code to the user's email, and the user proves access by using it.
+code: await supabase.auth.signInWithOtp({ email: "asha@example.com" });¶// If the email contains a code instead of a link:¶await supabase.auth.verifyOtp({ email: "asha@example.com", token: "123456", type: "email" });
+output: An email is sent, and after the link is opened or the code verified, the user is signed in.
+explanation: Whether the email carries a link or a code depends on the template you configure. A link opens your redirect URL and signs the user in. With codes, you collect the digits in a form and call verifyOtp. If the user does not exist, the call can create one, depending on your settings.
+simple_explain: Ask Supabase to send a one-time link or code. The user clicks it or types it, and is logged in without any password.
+analogy: It is like a one-time key posted to your mailbox that opens the door once.
+syntax: supabase.auth.signInWithOtp({ email })  |  supabase.auth.verifyOtp({ email, token, type })
+anatomy: signInWithOtp = send the link or code | verifyOtp = check a typed code | type = the kind of token
+example_1: await supabase.auth.signInWithOtp({ email });
+example_2: await supabase.auth.verifyOtp({ email, token, type: "email" });
+example_3: await supabase.auth.signInWithOtp({ phone: "+911234567890" });
+variation: options: { shouldCreateUser: false }   // do not create new users
+used_with: email templates, redirect URLs, verifyOtp
+related: email and password, Supabase Auth, sessions
+alternatives: Passwords or social login
+where_used: Passwordless sign-in | Mobile apps | Low-friction onboarding
+mini_conversation: A: Users forget their passwords all the time. | B: Offer a magic link or a one-time code instead.
+misconception: ✗ A magic link needs the user to set a password first → ✓ A magic link or code replaces the password by proving access to the email
+confused_with: Magic link vs OTP code: a link is clicked, a code is typed and verified.
+avoid: Do not make links last for a long time.
+wrong_code: await supabase.auth.signInWithOtp(email);
+right_code: await supabase.auth.signInWithOtp({ email });
+memory_trick: One time, one email, one login.
+real_project: Letting learners log in with a link sent to their email.
+real_interview: An interviewer may ask: What are the benefits of passwordless login?
+real_daily: It is like a one-time key sent to your mailbox.
+mcq_question: What does signInWithOtp send?
+mcq_options: A) A file B) A table C) A one-time link or code D) A password
+mcq_answer: C
+mcq_why: It sends a one-time credential to the user's email or phone.
+fill_blank: A typed one-time code is checked with ____Otp → verify
+hindi_to_task: Send a magic link to asha@example.com.
+task_answer: await supabase.auth.signInWithOtp({ email: "asha@example.com" });
+own_task: Write the two steps for a code based login form.
+practice_question: Which method checks a typed code?
+practice_answer: verifyOtp
+
+@SUP-026
+type: topic56
+topic: 04 Auth
+level: Intermediate
+term: Sessions and JWT in Supabase
+cue: What does the client hold after login that proves who the user is on each request, and why does it expire?
+category: Authentication concept
+frequency: High
+importance: 4
+origin: The database needs proof of identity on every call, so Supabase gives each logged-in user a signed, short-lived token and a refresh token to renew it.
+pro_tip: Let the client library refresh sessions for you, and avoid storing tokens by hand.
+memory_story: The session is a wristband that expires, and the refresh token is how you get a new one without queuing again.
+visual: A session object holding a short-lived token and a longer-lived refresh token.
+emotion: The understanding that explains why login seems to last.
+definition: A session holds an access token (a signed JWT) that proves the user's identity, and a refresh token used to get new access tokens when the old one expires.
+explanation: The JWT contains claims such as the user id (sub) and role, and an expiry time. Supabase sends it with each request, and the database reads it to apply Row Level Security through auth.uid(). Access tokens are short-lived, often around an hour by default, and the library refreshes them automatically using the refresh token.
+simple_explain: After login you hold a session. Its token tells the database who you are, expires soon, and is renewed automatically with the refresh token.
+analogy: The session is an event wristband that expires, and the refresh token gets you a new one without queuing again.
+formula_rule: Session = access token (JWT) + refresh token
+example_1: A token whose sub claim is the user's id.
+example_2: The library renewing the token before it expires.
+example_3: A policy using auth.uid(), which is read from the token.
+related: JWT, Row Level Security, getUser vs getSession
+word_family: session, access token, refresh token, JWT, expiry
+where_used: Every logged-in request | RLS policies | Mobile and web apps
+mini_conversation: A: Why does the user stay logged in after an hour? | B: The library refreshes the access token with the refresh token.
+misconception: ✗ The access token never expires once the user logs in → ✓ Access tokens are short-lived and are renewed with the refresh token
+contrast: Access token vs refresh token: the access token proves identity on requests, the refresh token only gets new access tokens.
+avoid: Do not store or log tokens carelessly.
+memory_trick: The token expires, the refresh renews.
+real_project: Relying on the client library to keep sessions fresh in a long-running app.
+real_interview: An interviewer may ask: How does the database know who is making a request?
+real_daily: It is like an event wristband that expires.
+mcq_question: What do policies read to know the current user?
+mcq_options: A) The index B) The table name C) The browser theme D) The JWT claims through auth.uid()
+mcq_answer: D
+mcq_why: auth.uid() reads the user id from the token.
+fill_blank: A short-lived signed token is called a ____ → JWT
+apply: Why does a session need a refresh token? → To get new access tokens when the old one expires
+explain_task: Explain a session and its tokens in three lines.
+own_task: Write what happens from login to token refresh.
+
+@SUP-027
+type: topic56
+topic: 04 Auth
+level: Advanced
+term: getUser vs getSession
+cue: Which two calls read the current user, and which one should server code trust because it checks the token with the Auth server?
+category: Authentication concept
+frequency: High
+importance: 5
+origin: A session read from cookies or storage can be forged or stale, so server code needs a call that verifies the token with the Auth service.
+pro_tip: In server code, use getUser to verify the user, and use getSession only for non-security purposes.
+memory_story: getSession reads the wristband, and getUser asks the front desk whether the wristband is real.
+visual: One arrow reading local storage and another asking the Auth server for confirmation.
+emotion: The reassurance of verifying instead of assuming.
+definition: getSession returns the session stored on the client or in cookies without checking it, while getUser sends the token to the Auth server and returns the verified user.
+explanation: In the browser, getSession is convenient for reading what the library holds. On the server, the cookie data comes from the request and could be tampered with, so authorisation decisions should use getUser, which validates the token. Recent library versions even warn when you use session data on the server without verification.
+simple_explain: Use getUser on the server whenever you decide what a user may do. getSession only reads what is stored and does not prove it is genuine.
+analogy: getSession reads the wristband, and getUser asks the front desk whether the wristband is real.
+formula_rule: Server decisions → getUser (verified). Client display → getSession is fine.
+example_1: A server route calling await supabase.auth.getUser() before returning private data.
+example_2: A client component reading the session to show the user's name.
+example_3: Middleware using getUser to refresh and verify the session.
+related: sessions and JWT, server-side auth, Row Level Security
+word_family: getUser, getSession, verify, cookies, server
+where_used: Server routes | Middleware | Protected pages
+mini_conversation: A: Is it safe to trust getSession in my API route? | B: No, use getUser, which verifies the token with the Auth server.
+misconception: ✗ getSession on the server is as trustworthy as getUser → ✓ getSession does not verify the token on the server, so use getUser for security decisions
+contrast: getUser vs getSession: getUser verifies with the Auth server, getSession only reads stored data.
+avoid: Do not authorise server actions based on getSession alone.
+memory_trick: On the server, always trust getUser.
+real_project: Using getUser in middleware to protect private pages.
+real_interview: An interviewer may ask: Which call should you use to verify a user on the server?
+real_daily: It is like asking the front desk whether a wristband is real.
+mcq_question: Which call verifies the token with the Auth server?
+mcq_options: A) getSession B) getUser C) signOut D) onAuthStateChange
+mcq_answer: B
+mcq_why: getUser validates the token with the Auth service.
+fill_blank: On the server, security decisions should use ____ → getUser
+apply: A server route returns private data. Which call should check the user? → getUser
+explain_task: Explain getUser and getSession in three lines.
+own_task: Write which call you would use in middleware and why.
+
+@SUP-028
+type: topic56
+topic: 04 Auth
+level: Advanced
+term: Server-side auth with cookies (@supabase/ssr)
+cue: Which package helps frameworks with server rendering keep the Supabase session in cookies for both browser and server code?
+category: Authentication concept
+frequency: High
+importance: 4
+origin: Server-rendered apps run code on the server, which cannot read browser storage, so sessions are kept in cookies that both sides can see.
+pro_tip: Create a browser client for client components and a server client for server code, and refresh the session in middleware.
+memory_story: Cookies are the passport that travels with every request, so the server and the browser share one identity.
+visual: A cookie being sent with each request to a server that builds its own client from it.
+emotion: The satisfaction of a logged-in page that renders correctly on the server.
+definition: @supabase/ssr provides createBrowserClient and createServerClient, which store the session in cookies so server-rendered frameworks such as Next.js can read it.
+explanation: In frameworks such as Next.js, server components, route handlers and middleware need the session. The ssr package builds clients that read and write cookies. Middleware usually calls getUser on each request to refresh and verify the session and to protect routes. Each server request should create its own client, because it uses that request's cookies.
+simple_explain: Server code cannot see browser storage, so the session goes in cookies. Use the ssr helpers to build the right client for each place and refresh the session in middleware.
+analogy: Cookies are a passport that travels with every request, so the server and the browser share one identity.
+formula_rule: Cookies carry the session → server client reads them → middleware refreshes and verifies
+example_1: createBrowserClient used in a client component.
+example_2: createServerClient used in a server component with the request's cookies.
+example_3: Middleware calling getUser to protect an admin route.
+related: createClient, getUser vs getSession, Next.js, cookies
+word_family: ssr, cookies, middleware, server client, browser client
+where_used: Next.js | SvelteKit | Server-rendered apps
+mini_conversation: A: My server component thinks the user is logged out. | B: Create the server client with the request's cookies, and refresh the session in middleware.
+misconception: ✗ One global client works for every server request → ✓ Each server request needs its own client built from that request's cookies
+contrast: Browser client vs server client: the browser client uses browser cookies, the server client reads cookies from the incoming request.
+avoid: Do not share one server client between different users' requests.
+memory_trick: Cookies carry the session to the server.
+real_project: Protecting dashboard routes in Next.js with middleware and getUser.
+real_interview: An interviewer may ask: How do you handle Supabase auth in a server-rendered app?
+real_daily: It is like a passport that travels with every request.
+mcq_question: Where does @supabase/ssr keep the session?
+mcq_options: A) In cookies B) In a bucket C) In an index D) In a table
+mcq_answer: A
+mcq_why: Cookies are visible to both the browser and the server.
+fill_blank: Session refresh and route protection are often done in ____ → middleware
+apply: A server component cannot see the user. What should you check? → That the server client is built with the request's cookies
+explain_task: Explain server-side auth with cookies in three lines.
+own_task: Write which client you would use in a client component and a server component.

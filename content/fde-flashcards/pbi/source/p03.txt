@@ -1,0 +1,354 @@
+
+@PBI-020
+type: topic56
+topic: 03 Data modelling
+level: Intermediate
+term: Star schema
+cue: Which model layout puts one central table of events in the middle, surrounded by smaller descriptive tables?
+category: Modelling pattern
+frequency: Very high
+importance: 5
+origin: Wide, flat tables are slow and repeat text again and again, so analysts adopted the star shape from data warehousing, which Power BI is built to work best with.
+pro_tip: Aim for one fact table in the middle and separate dimension tables around it, joined one-to-many.
+memory_story: It looks like a star, with the big fact table at the centre and dimension tables as its points.
+visual: One large table in the centre with lines going out to four smaller tables around it.
+emotion: The relief of a model where every number filters the way you expect.
+definition: A star schema is a model with a central fact table linked to surrounding dimension tables by one-to-many relationships.
+explanation: The fact table holds events such as sales with numbers and keys. The dimension tables describe things such as products, customers and dates. Filters flow from each dimension to the fact table, which gives fast queries and simple DAX.
+simple_explain: Put the numbers in one big table, and put descriptions in small tables around it. Link them with one-to-many relationships, and your reports will be fast and easy to understand.
+analogy: It is like a wheel with a hub in the middle and spokes going out to each description.
+formula_rule: One fact table + several dimension tables, linked one-to-many
+example_1: A Sales fact table linked to Product, Customer and Date dimensions.
+example_2: A web visits fact table linked to Page, Country and Date dimensions.
+example_3: An orders fact table linked to Store and Employee dimensions.
+related: fact table, dimension table, relationships, snowflake schema
+word_family: star, snowflake, fact, dimension, hub
+where_used: Every well-built Power BI model | Data warehouses | Performance tuning
+mini_conversation: A: My single giant table is slow and repeats text everywhere. | B: Split it into a fact table and dimension tables in a star schema.
+misconception: ✗ One flat table with every column is the best model for Power BI → ✓ A star schema with separate fact and dimension tables is faster, smaller and easier to calculate on
+contrast: Star vs flat table: a star separates numbers from descriptions, a flat table repeats descriptions on every row.
+avoid: Do not link fact tables directly to each other, go through shared dimensions.
+memory_trick: Facts in the centre, dimensions at the points.
+real_project: Restructuring a flat export into Sales, Product, Customer and Date tables to speed up a report.
+real_interview: An interviewer may ask: What is a star schema and why is it recommended?
+real_daily: It is like a wheel with a hub and spokes.
+mcq_question: In a star schema, what sits in the middle?
+mcq_options: A) A dimension table B) A fact table C) A parameter D) A slicer
+mcq_answer: B
+mcq_why: The fact table is the hub, with dimension tables around it.
+fill_blank: A star schema has one central ____ table → fact
+apply: How would you reorganise one giant flat sales table? → Split it into one fact table and dimension tables
+explain_task: Explain the star schema in three lines.
+own_task: Sketch a star schema for a shop with sales, products, customers and dates.
+
+@PBI-021
+type: topic56
+topic: 03 Data modelling
+level: Beginner
+term: Fact table vs dimension table
+cue: Which kind of table holds measurable events, and which kind holds descriptions of things such as products?
+category: Modelling concept
+frequency: Very high
+importance: 5
+origin: Reporting always asks what happened and about what or whom, so models separate the events (facts) from the descriptions (dimensions).
+pro_tip: If a table has numbers you add up, it is probably a fact table, and if it has names and categories, it is probably a dimension.
+memory_story: The fact table is the receipt book of events, and a dimension is the catalogue that explains the items.
+visual: One long table of transactions beside a short table of product names and categories.
+emotion: The clarity of knowing which table each column belongs in.
+definition: A fact table stores measurable events with keys and numbers, and a dimension table stores descriptive attributes about the things in those events.
+explanation: A Sales fact table has one row per sale, with quantities, amounts and keys such as ProductID. A Product dimension has one row per product, with name, category and colour. Dimensions are usually short and wide, while facts are long and narrow.
+simple_explain: Facts are what happened, with numbers. Dimensions are the who, what, where and when that describe it.
+analogy: It is like a receipt book of purchases beside a catalogue describing every product.
+formula_rule: Fact = events and numbers (long). Dimension = descriptions (short and wide).
+example_1: A Sales table with OrderID, ProductID, Quantity and Amount is a fact table.
+example_2: A Product table with ProductID, Name and Category is a dimension table.
+example_3: A Date table with one row per day is a dimension table.
+related: star schema, relationships, keys, cardinality
+word_family: fact, dimension, key, attribute, grain
+where_used: Model design | Data warehousing | Report building
+mini_conversation: A: Should the product category live in the sales table? | B: No, keep it in a Product dimension and link it to the sales fact table.
+misconception: ✗ Dimension tables should contain the numbers you add up → ✓ Numbers you add up belong in the fact table, and dimensions hold descriptions used to slice them
+contrast: Fact vs dimension: a fact table is long with numbers, a dimension table is short and descriptive.
+avoid: Do not copy descriptive columns into the fact table.
+memory_trick: Fact is what happened, dimension is what it was about.
+real_project: Keeping product and customer details in dimension tables and sales numbers in one fact table.
+real_interview: An interviewer may ask: What is the difference between a fact table and a dimension table?
+real_daily: It is like a receipt book and a catalogue of the products on the receipts.
+mcq_question: Which of these is most likely a dimension table?
+mcq_options: A) Product list with categories B) Sales transactions C) Daily temperature readings D) Click logs
+mcq_answer: A
+mcq_why: A product list describes things, so it is a dimension.
+fill_blank: A table of events with numbers to add up is called a ____ table → fact
+apply: Where should the Category of a product be stored? → In the Product dimension table
+explain_task: Explain fact and dimension tables in three lines.
+own_task: List three columns that belong in a fact table and three that belong in a dimension.
+
+@PBI-022
+type: topic56
+topic: 03 Data modelling
+level: Beginner
+term: Relationships
+cue: Which model feature connects two tables on a shared column so that filters pass from one to the other?
+category: Modelling concept
+frequency: Very high
+importance: 5
+origin: Data is split across several tables, so Power BI needs a way to tell how they connect, and a relationship links a key column in one table to a key column in another.
+pro_tip: Check Model view after loading, because Power BI may create wrong relationships automatically.
+memory_story: A relationship is a bridge between two tables over which filters travel.
+visual: A line with a 1 at one end and a star at the other, joining two table boxes.
+emotion: The relief of numbers filtering correctly after fixing a missing link.
+definition: A relationship links a column in one table to a column in another so that filtering one table filters the other.
+explanation: A relationship is made on key columns, and usually runs from the one side of a dimension table to the many side of a fact table. Only one relationship between two tables can be active, and others stay inactive until used in a measure. Relationships replace merging tables in many cases.
+simple_explain: Draw a line between the ProductID in Sales and ProductID in Product. Now when you filter by product category, the sales numbers change too.
+analogy: It is like a bridge over which filters travel from one table to another.
+formula_rule: Dimension[Key] (one) → Fact[Key] (many)
+example_1: Product[ProductID] linked to Sales[ProductID].
+example_2: Date[Date] linked to Sales[OrderDate].
+example_3: Customer[CustomerID] linked to Sales[CustomerID].
+related: cardinality, cross-filter direction, star schema, Model view
+word_family: relationship, key, active, inactive, filter
+where_used: Every model with more than one table | Fixing wrong totals | Slicing facts by dimensions
+mini_conversation: A: My product slicer does not change the sales numbers. | B: There is no relationship between Product and Sales, so link them on ProductID.
+misconception: ✗ A relationship copies columns from one table into the other → ✓ A relationship only passes filters between tables and does not move data
+contrast: Relationship vs merge: a relationship links tables in the model, a merge physically joins them in Power Query.
+avoid: Do not leave autodetected relationships unchecked.
+memory_trick: A relationship is a bridge for filters.
+real_project: Creating a relationship between Date and Sales so that a year slicer filtered the sales numbers.
+real_interview: An interviewer may ask: What is the difference between a relationship and a merge?
+real_daily: It is like a bridge that lets traffic cross from one town to another.
+mcq_question: What does a relationship do between two tables?
+mcq_options: A) Deletes duplicates B) Copies columns C) Passes filters between them D) Changes data types
+mcq_answer: C
+mcq_why: A relationship lets a filter on one table affect the other.
+fill_blank: A relationship is created on matching ____ columns of two tables → key
+apply: A slicer on Product does not affect Sales. What is likely missing? → A relationship between Product and Sales
+explain_task: Explain what a relationship does in three lines.
+own_task: Draw the relationships you would create for Sales, Product and Date tables.
+
+@PBI-023
+type: topic56
+topic: 03 Data modelling
+level: Intermediate
+term: Cardinality (one-to-many)
+cue: Which relationship property says how many matching rows each table may have, such as one on one side and many on the other?
+category: Modelling concept
+frequency: High
+importance: 4
+origin: Tables relate in different ways, such as one product to many sales, so a relationship must declare how many rows can match on each side.
+pro_tip: Most relationships should be one-to-many from a dimension to a fact, so aim for that.
+memory_story: One product can appear on many sales lines, which is why the line has a 1 at one end and a star at the other.
+visual: A relationship line with a 1 on one end and an asterisk on the other.
+emotion: The comfort of knowing the model follows the real business shape.
+definition: Cardinality describes how many rows in one table can match rows in the other: one-to-many, many-to-one, one-to-one or many-to-many.
+explanation: One-to-many means each key appears once on the one side, such as Product, and many times on the many side, such as Sales. One-to-one is rare. Many-to-many allows repeated keys on both sides and needs care. The one side must have unique keys.
+simple_explain: Cardinality is the count rule of the link. One product, many sales is one-to-many, and it is the normal and best choice.
+analogy: It is like one teacher with many students.
+formula_rule: One side = unique keys, many side = repeated keys
+example_1: One Product row to many Sales rows.
+example_2: One Customer row to many Orders rows.
+example_3: One Date row to many Sales rows.
+related: relationships, star schema, cross-filter direction, key
+word_family: one-to-many, many-to-one, one-to-one, many-to-many, unique
+where_used: Creating relationships | Fixing duplicate key errors | Model design
+mini_conversation: A: Power BI says the one side has duplicate values. | B: The dimension key must be unique, so remove the duplicates from that table.
+misconception: ✗ The one side of a relationship may contain repeated keys → ✓ The one side needs unique keys, and duplicates there cause errors or force a many-to-many relationship
+contrast: One-to-many vs many-to-many: one-to-many has unique keys on one side, many-to-many allows repeats on both.
+avoid: Do not use many-to-many just to silence an error without understanding the data.
+memory_trick: One dimension row, many fact rows.
+real_project: Removing duplicate product keys so the Product table could be the one side of a relationship.
+real_interview: An interviewer may ask: What cardinalities does Power BI support?
+real_daily: It is like one teacher with many students.
+mcq_question: Which side of a one-to-many relationship must have unique keys?
+mcq_options: A) Neither B) The many side C) Both D) The one side
+mcq_answer: D
+mcq_why: The one side is the lookup side and needs unique keys.
+fill_blank: A product table linked to a sales table is a ____-to-many relationship → one
+apply: A relationship fails because the product table has duplicate IDs. What is the fix? → Make the product keys unique on the one side
+explain_task: Explain one-to-many in three lines.
+own_task: Write the cardinality for three relationships in a shop model.
+
+@PBI-024
+type: topic56
+topic: 03 Data modelling
+level: Intermediate
+term: Cross-filter direction
+cue: Which relationship setting decides whether filters flow in one direction or in both directions between two tables?
+category: Modelling concept
+frequency: Medium
+importance: 4
+origin: Filtering normally flows from dimension to fact, but some reports need it the other way, so the relationship carries a direction setting.
+pro_tip: Keep Single direction by default, and use Both only when you have a clear reason.
+memory_story: A single-direction road lets traffic go one way, and a both-direction road lets it flow both ways but risks jams.
+visual: A relationship line with one arrow, or with arrows pointing both ways.
+emotion: The caution of knowing a small switch can change many totals.
+definition: Cross-filter direction sets whether a filter on one table flows to the other in one direction (Single) or in both (Both).
+explanation: With Single direction, a filter on Product filters Sales but a filter on Sales does not filter Product. With Both, filters flow each way, which can be useful for some slicers but can create ambiguity, slow performance and unexpected results in larger models.
+simple_explain: Single means filters flow only from the one side to the many side. Both means they flow either way. Use Both carefully.
+analogy: It is like a one-way road versus a two-way road, and a two-way road can cause jams.
+formula_rule: Single = dimension filters fact. Both = each filters the other.
+example_1: A Category slicer filters Sales through a Single direction relationship.
+example_2: A slicer that shows only products that were sold needs a filter to flow from Sales to Product.
+example_3: A many-to-many bridge table that needs filters in both directions.
+related: relationships, cardinality, star schema, slicer
+word_family: Single, Both, direction, filter flow
+where_used: Slicer behaviour | Bridge tables | Troubleshooting ambiguity
+mini_conversation: A: My slicer shows products with no sales. | B: Filters flow only one way, so consider Both direction or filter the slicer by a measure.
+misconception: ✗ Both direction is better because filters flow everywhere → ✓ Both can create ambiguous paths and slow reports, so Single is the safer default
+contrast: Single vs Both: Single filters from the one side to the many side, Both filters in each direction.
+avoid: Do not switch every relationship to Both.
+memory_trick: Single is safer, Both is broader.
+real_project: Keeping all relationships Single and using one measure-based filter for a slicer.
+real_interview: An interviewer may ask: When would you use bi-directional filtering?
+real_daily: It is like a one-way road versus a two-way road that can cause jams.
+mcq_question: Which cross-filter direction is the usual safe default?
+mcq_options: A) None B) Single C) Both D) Random
+mcq_answer: B
+mcq_why: Single follows the star schema and avoids ambiguity.
+fill_blank: With ____ direction, a filter on the dimension filters the fact table only → Single
+apply: A slicer shows items that have no sales. What setting might change this? → Cross-filter direction set to Both
+explain_task: Explain Single and Both in three lines.
+own_task: Write one case where Both direction is useful and one risk of it.
+
+@PBI-025
+type: code56
+topic: 03 Data modelling
+level: Intermediate
+term: Date table (CALENDAR)
+cue: Which kind of table, with one row for every day, is needed so that DAX time intelligence works correctly?
+kind: DAX table function
+frequency: Very high
+importance: 5
+origin: Time functions such as year to date need an unbroken list of dates, so models include a dedicated date table rather than relying on the dates inside the fact table.
+pro_tip: Mark your table as a date table so Power BI knows to use it for time intelligence.
+memory_story: A date table is a wall calendar with every day printed, even the days with no sales.
+visual: A list of consecutive days from January 1st to December 31st with year, month and quarter columns.
+emotion: The relief of year-to-date numbers that finally add up.
+meaning: A date table is a table with one row for every day in a continuous range, built for time intelligence.
+code: Dates = CALENDAR(DATE(2023, 1, 1), DATE(2025, 12, 31))
+output: A table named Dates with one row for every day from 1 Jan 2023 to 31 Dec 2025.
+explanation: CALENDAR creates a column of continuous dates between two dates. You then add columns such as Year, Month and Quarter, create a relationship to the date column of your fact table, and use Mark as date table. The date column must have unique values with no gaps.
+simple_explain: Create a table with every date in a range and link it to your sales dates. Then time functions like year to date know which days are missing from the sales data.
+analogy: It is like a wall calendar that shows every day, even the days when nothing happened.
+syntax: CALENDAR(start_date, end_date)
+anatomy: CALENDAR = function | start_date = first day | end_date = last day
+example_1: Dates = CALENDAR(DATE(2023, 1, 1), DATE(2025, 12, 31))
+example_2: Dates = CALENDARAUTO()
+example_3: Year = YEAR(Dates[Date])
+variation: CALENDARAUTO()   // range from the dates found in the model¶Month Name = FORMAT(Dates[Date], "MMMM")   // a helper column
+used_with: Mark as date table, relationships, time intelligence, YEAR, MONTH
+related: time intelligence, relationships, TOTALYTD, calculated column
+alternatives: Build the date table in Power Query
+where_used: Any model with dates | Year to date and previous year | Calendar slicers
+mini_conversation: A: My year-to-date total skips days without sales. | B: Create a proper date table with every day and link it to the sales dates.
+misconception: ✗ The date column in the fact table is enough for time intelligence → ✓ Time intelligence needs a separate continuous date table with no missing days
+confused_with: CALENDAR vs CALENDARAUTO: CALENDAR needs the start and end dates, CALENDARAUTO finds the range from the data.
+avoid: Do not build time intelligence on a date column that has gaps.
+wrong_code: Dates = CALENDAR(2023, 2025)
+right_code: Dates = CALENDAR(DATE(2023, 1, 1), DATE(2025, 12, 31))
+memory_trick: A date table is a calendar with no missing days.
+real_project: Creating a date table with Year, Quarter and Month columns and marking it as the date table.
+real_interview: An interviewer may ask: Why do you need a separate date table in Power BI?
+real_daily: It is like a wall calendar showing every day of the year.
+mcq_question: What must be true of the date column in a date table?
+mcq_options: A) It has duplicates B) It has unique, continuous dates C) It has blanks D) It is text
+mcq_answer: B
+mcq_why: Time intelligence needs unique dates with no gaps.
+fill_blank: Dates = ____(DATE(2023, 1, 1), DATE(2025, 12, 31)) → CALENDAR
+hindi_to_task: Create a date table covering the whole of 2024.
+task_answer: Dates = CALENDAR(DATE(2024, 1, 1), DATE(2024, 12, 31))
+own_task: Build a date table and add Year and Month Name columns.
+practice_question: What does the Mark as date table option do?
+practice_answer: It tells Power BI which table and column to use for time intelligence.
+
+@PBI-026
+type: code56
+topic: 03 Data modelling
+level: Beginner
+term: Calculated column vs measure
+cue: Which is calculated row by row and stored in the table, and which is calculated on demand from the report's filters?
+kind: DAX concept
+frequency: Very high
+importance: 5
+origin: Some results belong to each row while others must change with the report's filters, so DAX provides both stored columns and flexible measures.
+pro_tip: Use a measure for totals and ratios, and a calculated column only when you need the value on each row or in a slicer.
+memory_story: A column is ink printed on each row, while a measure is a calculation done fresh each time you look.
+visual: A new column filled with values in a table beside a measure card that changes when you click a slicer.
+emotion: The clarity of knowing which tool fits which job.
+meaning: A calculated column is computed per row and stored when the model refreshes, while a measure is computed at query time from the current filters.
+code: Line Total = Sales[Quantity] * Sales[Price]¶Total Sales = SUM(Sales[Line Total])
+output: The first line adds a Line Total column to Sales, and the second creates a Total Sales measure that responds to filters.
+explanation: A calculated column uses row context and takes space in the model, since its values are stored. A measure uses filter context and is evaluated each time a visual needs it, so it takes no storage. Totals, ratios and percentages should almost always be measures.
+simple_explain: A column gives each row its own value and stays in the table. A measure gives one answer for whatever the report currently shows, and it changes as filters change.
+analogy: A column is ink on every row, and a measure is a calculation done fresh each time you look.
+syntax: ColumnName = expression (in a table)  |  MeasureName = expression (measure)
+anatomy: Calculated column = per row, stored | Measure = per filter context, calculated on demand
+example_1: Line Total = Sales[Quantity] * Sales[Price]
+example_2: Total Sales = SUM(Sales[Line Total])
+example_3: Profit Margin = DIVIDE([Total Profit], [Total Sales])
+variation: Full Name = Customer[First] & " " & Customer[Last]   // good as a column¶Average Price = AVERAGE(Sales[Price])   // good as a measure
+used_with: SUM, row context, filter context, CALCULATE
+related: row context, filter context, SUMX, CALCULATE
+alternatives: Compute the column in Power Query before loading
+where_used: Every DAX model | Totals and ratios | Row-level helper values
+mini_conversation: A: Should I make profit margin a column? | B: No, make it a measure, because a ratio must be recalculated for whatever is filtered.
+misconception: ✗ A measure is stored in the table like a column → ✓ A measure is calculated when a visual needs it and takes no stored space, while a column is stored
+confused_with: Calculated column vs measure: a column is per row and stored, a measure is per context and calculated on demand.
+avoid: Do not use a calculated column for a ratio, averaging row values gives the wrong result.
+wrong_code: Total Sales = Sales[Quantity] * Sales[Price]
+right_code: Total Sales = SUMX(Sales, Sales[Quantity] * Sales[Price])
+memory_trick: Column is stored per row, measure is worked out on demand.
+real_project: Writing totals and ratios as measures and keeping only helper values as columns.
+real_interview: An interviewer may ask: When would you use a calculated column instead of a measure?
+real_daily: It is like ink written on every row versus a calculation done each time you look.
+mcq_question: Which should a profit margin percentage normally be?
+mcq_options: A) A parameter B) A slicer C) A measure D) A calculated column
+mcq_answer: C
+mcq_why: A ratio must be recalculated from the filtered totals, which a measure does.
+fill_blank: A value stored for each row of a table is called a calculated ____ → column
+hindi_to_task: Write a measure for the total of the Amount column in the Sales table.
+task_answer: Total Amount = SUM(Sales[Amount])
+own_task: Write one column and one measure for a small sales table and explain why each is right.
+practice_question: Which one is computed when a visual is drawn, a column or a measure?
+practice_answer: A measure.
+
+@PBI-027
+type: topic56
+topic: 03 Data modelling
+level: Beginner
+term: Hierarchies
+cue: What do you build to let users drill from Year to Quarter to Month in one visual?
+category: Modelling feature
+frequency: Medium
+importance: 3
+origin: Business data has natural levels such as Year, Quarter and Month, so Power BI lets you stack fields into a hierarchy that can be drilled through level by level.
+pro_tip: Create hierarchies in the model so every report can reuse the same drill path.
+memory_story: A hierarchy is a staircase where each step takes you one level deeper.
+visual: A field list with Year above Quarter above Month, and a chart where you can click down.
+emotion: The satisfaction of clicking a bar and seeing it split into finer detail.
+definition: A hierarchy is an ordered set of fields, such as Year, Quarter and Month, that lets users drill down and up in a visual.
+explanation: You create one in the Data pane by dragging a field onto another or by using the option to create a hierarchy. In a visual that uses the hierarchy, you can use drill down buttons to move from the top level to the next. Common hierarchies are Date, Geography and Product.
+simple_explain: Stack the fields from the biggest to the smallest, and users can click down from Year to Month. It is one drill path you build once and reuse.
+analogy: It is like a staircase where each step takes you one level deeper.
+formula_rule: Year → Quarter → Month → Day
+example_1: A Date hierarchy of Year, Quarter, Month and Day.
+example_2: A Geography hierarchy of Country, State and City.
+example_3: A Product hierarchy of Category, Subcategory and Product.
+related: drill down, drill through, date table, visual
+word_family: hierarchy, level, drill, expand
+where_used: Date charts | Geographic maps | Product analysis
+mini_conversation: A: Can users click from year down to month? | B: Yes, build a Year, Quarter, Month hierarchy and use it on the axis.
+misconception: ✗ Hierarchies only work with dates → ✓ Any set of ordered fields, such as Country, State and City, can form a hierarchy
+contrast: Hierarchy vs drill through: a hierarchy goes deeper inside one visual, drill through goes to another page.
+avoid: Do not put fields in the wrong order, the top level must be the broadest.
+memory_trick: Hierarchy is a staircase from broad to fine.
+real_project: Building a Country, State and City hierarchy so users could drill into a map.
+real_interview: An interviewer may ask: What is a hierarchy in Power BI?
+real_daily: It is like a staircase where each step goes one level deeper.
+mcq_question: Which order is correct for a date hierarchy from broad to fine?
+mcq_options: A) Year, Month, Day B) Day, Year, Month C) Month, Year, Day D) Day, Month, Year
+mcq_answer: A
+mcq_why: A hierarchy starts with the broadest level and ends with the finest.
+fill_blank: A set of ordered fields that lets users drill is called a ____ → hierarchy
+apply: How can users drill from country to city on a map? → Build a Country, State, City hierarchy
+explain_task: Explain a hierarchy in three lines.
+own_task: Write the fields of a hierarchy for products in a shop.

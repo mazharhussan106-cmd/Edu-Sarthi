@@ -1,0 +1,328 @@
+
+@CLD-007
+topic: 02 Identity and Access
+level: Beginner
+term: IAM users, groups and roles
+cue: Which three identity objects decide who or what may act in your cloud account?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A cloud account holds powerful controls, so providers created identity objects to give each person and service only the access they need.
+pro_tip: Give people access through groups, and give services access through roles.
+memory_story: Users are named staff badges, groups are departments, and roles are hats anyone authorised can wear for a while.
+visual: Badges grouped into departments, with a hat passed to a service.
+emotion: The calm of knowing each person has only their own keys.
+definition: An IAM user is a long-term identity for a person or tool, a group is a set of users sharing permissions, and a role is a temporary identity that a trusted user or service can assume.
+explanation: Permissions are attached to groups and roles through policies. A role has no password or long-term key. It gives short-lived credentials to whoever assumes it, such as a server or a function. The root account should be locked away and used rarely. Azure uses users, groups and managed identities, and GCP uses accounts and service accounts.
+simple_explain: Users are people, groups share permissions, roles are temporary identities for services and trusted people.
+analogy: Users are staff badges, groups are departments, and roles are hats that authorised people wear for a while.
+formula_rule: People get groups. Services get roles. Root stays locked.
+example_1: A developer added to a read-only group for logs.
+example_2: A server using a role to read from storage with no stored key.
+example_3: A support engineer assuming an admin role for one hour.
+related: policies, least privilege, MFA, temporary credentials
+word_family: user, group, role, policy, principal
+where_used: Account setup | Security reviews | Application access
+mini_conversation: A: Where does the app keep its cloud key? | B: It does not, it uses a role.
+misconception: ✗ Everyone should use the root account for convenience → ✓ The root account is for rare tasks only and should be protected
+contrast: User vs role: a user is a long-term identity, a role is assumed temporarily.
+avoid: Do not use the root account for daily work.
+memory_trick: People use groups, services use roles.
+real_project: Replacing a stored access key in a script with a role attached to the server.
+real_interview: An interviewer may ask: When do you use a role instead of a user?
+real_daily: It is like staff badges, departments and temporary hats.
+mcq_question: What gives an application short-lived credentials without a stored key?
+mcq_options: A) The root account B) A role C) A password D) A shared file
+mcq_answer: B
+mcq_why: Roles hand out temporary credentials to trusted identities.
+fill_blank: A set of users sharing the same permissions is a ____ → group
+apply: A server needs to read storage without a stored key. What identity? → A role
+explain_task: Explain users, groups and roles in three lines.
+own_task: Design which groups a small team of four would need.
+
+@CLD-008
+topic: 02 Identity and Access
+level: Intermediate
+term: IAM policies
+cue: Which JSON documents state what an identity is allowed or denied to do?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Access had to be precise and reviewable, so permissions were written as structured documents rather than clicked into place.
+pro_tip: Start with no access and add only the actions and resources a task needs.
+memory_story: A policy is a signed permission slip naming the person, the action and the place.
+visual: A JSON document with Effect, Action and Resource lines.
+emotion: The precision of saying exactly what is allowed.
+definition: An IAM policy is a document of statements, each with an effect, actions and resources, that is attached to an identity to allow or deny access.
+explanation: By default everything is denied. A statement with Effect Allow grants the listed actions on the listed resources. An explicit Deny always wins over an Allow. Policies can be attached to users, groups or roles, and some resources have their own policies. Conditions can narrow access, for example by IP address or by time.
+simple_explain: Policies list what is allowed. Default is deny, and an explicit deny always wins.
+analogy: A policy is a signed permission slip naming who may do what and where.
+formula_rule: Default deny. Allow adds access. Explicit deny wins.
+example_1: A policy allowing s3:GetObject on one bucket only.
+example_2: A policy denying deletion of anything in production.
+example_3: A policy that works only from the office network range.
+related: least privilege, roles, S3 bucket policies, MFA
+word_family: policy, statement, effect, action, resource
+where_used: Access control | Audits | Application setup
+mini_conversation: A: I have Allow, but it still fails. | B: Another statement may deny it, and deny wins.
+misconception: ✗ An Allow in one policy overrides a Deny elsewhere → ✓ An explicit Deny always wins
+contrast: Allow vs explicit deny: allow grants access, an explicit deny blocks it even if allowed elsewhere.
+avoid: Do not use a wildcard for all actions on all resources.
+memory_trick: Default is no, deny always beats allow.
+real_project: Narrowing a wildcard policy to one bucket and two actions after a review.
+real_interview: An interviewer may ask: What happens if one policy allows and another denies?
+real_daily: It is like a permission slip that names the person and the place.
+mcq_question: What is the default access when no policy allows an action?
+mcq_options: A) Admin B) Read only C) Allowed D) Denied
+mcq_answer: D
+mcq_why: Access is denied unless something explicitly allows it.
+fill_blank: Each policy statement has an effect, actions and ____ → resources
+apply: Two policies disagree, one allows and one denies. What happens? → Access is denied
+explain_task: Explain the parts of a policy statement.
+own_task: Write in words a policy that lets a user read one bucket only.
+
+@CLD-009
+topic: 02 Identity and Access
+level: Intermediate
+term: Least privilege
+cue: Which principle says to give only the minimum access needed to do a job?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Over-powerful accounts turned small mistakes into disasters, so security teams adopted the rule of granting as little as possible.
+pro_tip: Start narrow and widen only when a real task fails, not the other way round.
+memory_story: Least privilege is handing a visitor one room key instead of the master key.
+visual: A person holding one key labelled with a single door.
+emotion: The ease of knowing a mistake cannot reach far.
+definition: Least privilege means granting each identity only the permissions it needs for its task, for only as long as it needs them.
+explanation: It limits the damage from a stolen key or a mistake. Practise it by using specific actions and resources instead of wildcards, by using roles with short sessions, and by reviewing unused permissions. Access analysers and last-used reports show what can be removed. It is a main idea in every security framework.
+simple_explain: Give the smallest permission that works, review it often, and remove what is not used.
+analogy: It is like giving a visitor one room key instead of the master key.
+formula_rule: Needed actions + needed resources + needed time, and nothing more.
+example_1: A reporting job that can only read one table.
+example_2: A deploy role limited to one service.
+example_3: A contractor given access for two weeks only.
+related: IAM policies, roles, temporary credentials, audits
+word_family: privilege, minimum, scope, wildcard, review
+where_used: Security design | Access reviews | Compliance
+mini_conversation: A: Can we just give admin to make it work? | B: No, let us find the exact permission it needs.
+misconception: ✗ Giving broad admin access saves time and does no harm → ✓ It makes any leak or mistake far more damaging
+contrast: Least privilege vs convenience: broad access is faster today but riskier tomorrow.
+avoid: Do not leave temporary broad access in place after testing.
+memory_trick: One key for one door only.
+real_project: Replacing an admin policy on a pipeline with a role scoped to one deployment.
+real_interview: An interviewer may ask: How do you apply least privilege in practice?
+real_daily: It is like giving a visitor a single room key.
+mcq_question: Which practice supports least privilege?
+mcq_options: A) Never reviewing access B) Specific actions and resources C) Sharing one admin login D) Wildcards everywhere
+mcq_answer: B
+mcq_why: Narrow permissions limit the damage of a mistake.
+fill_blank: Least privilege grants the ____ access needed → minimum
+apply: A job only reads one table. How much access does it get? → Read on that table only
+explain_task: Explain least privilege in two lines.
+own_task: Review one script you wrote and list the minimum permissions it needs.
+
+@CLD-010
+topic: 02 Identity and Access
+level: Beginner
+term: MFA
+cue: Which extra login step protects an account even if the password is stolen?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Passwords leak and get guessed, so a second proof that only the real owner has was added to logins.
+pro_tip: Turn on MFA first for the root account and every admin.
+memory_story: MFA is a second lock on the door that needs a key from your pocket.
+visual: A password box followed by a six-digit code.
+emotion: The security of a stolen password being useless.
+definition: Multi-factor authentication requires two or more proofs of identity, such as a password plus a code from an app or a hardware key.
+explanation: The factors are something you know, something you have and something you are. Hardware keys and authenticator apps are stronger than text-message codes. Cloud providers can require MFA for the console and for sensitive actions. Always store recovery options safely, since losing the device can lock you out.
+simple_explain: Use a password and a second proof. Prefer an authenticator app or hardware key over text messages.
+analogy: It is like a second lock that needs a key from your pocket.
+formula_rule: Know + have + are. Two or more of these is MFA.
+example_1: An authenticator app code needed after the password.
+example_2: A hardware key tapped to approve an admin login.
+example_3: MFA required before deleting a production database.
+related: IAM users, root account, access keys, SSO
+word_family: factor, authenticator, hardware key, one-time code, recovery
+where_used: Account security | Admin access | Compliance
+mini_conversation: A: Someone guessed the password. | B: MFA would have stopped the login.
+misconception: ✗ A long password makes MFA unnecessary → ✓ Passwords can still be phished or leaked, and MFA adds a second barrier
+contrast: Text message vs hardware key: a hardware key resists phishing better.
+avoid: Do not skip MFA on the root account.
+memory_trick: A second lock needs a second key.
+real_project: Enforcing MFA for all admin roles after a phishing attempt.
+real_interview: An interviewer may ask: Why is MFA important for cloud accounts?
+real_daily: It is like a second lock that needs a key from your pocket.
+mcq_question: Which account should always have MFA turned on?
+mcq_options: A) Only test accounts B) No account C) Only read-only users D) The root account
+mcq_answer: D
+mcq_why: The root account has unlimited power.
+fill_blank: A password plus a code is an example of ____ authentication → multi-factor
+apply: A password leaked. What would still block the login? → A second factor
+explain_task: Explain why MFA matters in three lines.
+own_task: List the safest and weakest second factors you know.
+
+@CLD-011
+topic: 02 Identity and Access
+level: Intermediate
+term: Access keys
+cue: Which long-lived credentials let a script or tool call the cloud API, and why are they risky?
+category: Core concept
+frequency: High
+importance: 5
+origin: Programs cannot type passwords, so providers issue key pairs that sign API requests.
+pro_tip: Prefer roles and temporary credentials, and rotate or delete any key you must keep.
+memory_story: An access key is a spare house key. Lose it and anyone can walk in.
+visual: A key id and a secret on a sticky note taped to a monitor.
+emotion: The dread of finding a key in a public repository.
+definition: An access key is a pair of an identifier and a secret that signs programmatic requests to the cloud, and it stays valid until rotated or deleted.
+explanation: The secret is shown only once at creation. Keys in code, chat or public repositories get stolen and abused within minutes by bots. Store them in a secrets manager, never in Git, and rotate them on a schedule. Better still, avoid them by using roles. Unused keys should be deactivated and then deleted.
+simple_explain: Keys are long-lived passwords for programs. Avoid them, protect them, rotate them, and delete the unused ones.
+analogy: An access key is a spare house key. If it is lost, anyone can walk in.
+formula_rule: Prefer role over key. If a key is unavoidable, rotate and restrict it.
+example_1: A key committed to GitHub and used by bots to mine coins.
+example_2: A script using a role instead of any key.
+example_3: A quarterly job that rotates keys and deletes unused ones.
+related: temporary credentials, secrets, IAM roles, secret scanning
+word_family: key, secret, rotation, credential, leak
+where_used: Automation | Local tools | Security reviews
+mini_conversation: A: I pushed my key by mistake. | B: Deactivate it right now and create a new one.
+misconception: ✗ Deleting a commit removes a leaked key from the world → ✓ The key must be revoked, because copies may exist
+contrast: Access key vs role credentials: keys are long-lived, role credentials expire.
+avoid: Do not commit keys to Git, even in a private repository.
+memory_trick: Leaked key means revoke first, then clean up.
+real_project: Revoking a key leaked in a repository and moving the script to a role.
+real_interview: An interviewer may ask: What do you do if an access key leaks?
+real_daily: It is like losing a spare house key.
+mcq_question: What is the first action when a key leaks?
+mcq_options: A) Delete the commit only B) Ignore it C) Deactivate the key D) Email the team only
+mcq_answer: C
+mcq_why: Revoking stops abuse immediately, since copies may exist.
+fill_blank: A key should be changed on a schedule, which is called key ____ → rotation
+apply: You find a key in a repository. What do you do first? → Revoke it
+explain_task: Explain why access keys are risky in three lines.
+own_task: List three places where keys should never be stored.
+
+@CLD-012
+topic: 02 Identity and Access
+level: Intermediate
+term: Temporary credentials
+cue: Which short-lived credentials replace permanent keys and expire on their own?
+category: Core concept
+frequency: High
+importance: 4
+origin: Permanent keys kept leaking, so providers created credentials that expire after minutes or hours.
+pro_tip: Use roles, single sign-on or workload identity so no permanent key exists at all.
+memory_story: Temporary credentials are a hotel key card that stops working at checkout.
+visual: A key card with an expiry time.
+emotion: The comfort of leaked credentials that are already dead.
+definition: Temporary credentials are short-lived access tokens, issued when an identity assumes a role, that expire automatically.
+explanation: An identity asks the security token service to assume a role and receives a key, a secret and a session token valid for a limited time. The same idea appears as managed identities in Azure and workload identity in GCP. CI systems can use OpenID Connect to get these tokens without any stored secret. A leaked token is far less dangerous because it soon expires.
+simple_explain: Ask for a role, receive credentials that expire, and keep no permanent key.
+analogy: It is like a hotel key card that stops working at checkout.
+formula_rule: Assume role → receive short-lived credentials → they expire.
+example_1: A server role giving credentials that refresh automatically.
+example_2: A pipeline using OIDC to deploy with no stored key.
+example_3: An engineer assuming an admin role for one hour.
+related: roles, access keys, SSO, OIDC in CI
+word_family: token, session, expiry, assume role, federation
+where_used: CI pipelines | Servers | Admin access
+mini_conversation: A: Do we store a key for the pipeline? | B: No, it assumes a role through OIDC.
+misconception: ✗ Temporary credentials are less secure because they are not permanent → ✓ They are safer, since they expire if stolen
+contrast: Temporary vs permanent credentials: temporary ones expire by themselves.
+avoid: Do not extend session lifetimes far beyond the need.
+memory_trick: Short life means short damage.
+real_project: Moving a deployment pipeline to temporary credentials and deleting its stored key.
+real_interview: An interviewer may ask: Why prefer temporary credentials?
+real_daily: It is like a hotel key card that expires at checkout.
+mcq_question: What is the main benefit of temporary credentials?
+mcq_options: A) A leaked token expires soon B) They cost nothing C) They skip MFA D) They never need a role
+mcq_answer: A
+mcq_why: Expiry limits how long a stolen credential works.
+fill_blank: A role gives credentials that ____ automatically → expire
+apply: A pipeline needs cloud access. How can it avoid stored keys? → Use a role through OIDC
+explain_task: Explain temporary credentials in three lines.
+own_task: Write the steps for a pipeline to get temporary credentials.
+
+@CLD-013
+topic: 03 Compute
+level: Beginner
+term: Virtual machines (EC2)
+cue: Which service rents you a virtual computer in the cloud?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Teams wanted a server in minutes instead of weeks, so providers offered virtual machines created on demand.
+pro_tip: Use a role on the instance and turn it off when it is not needed.
+memory_story: An EC2 instance is a computer rented by the hour and delivered by courier in a minute.
+visual: A server icon with CPU, memory and a disk attached.
+emotion: The thrill of a new server ready in under a minute.
+definition: A virtual machine in the cloud, such as AWS EC2, is a rented virtual computer with chosen CPU, memory, storage and operating system.
+explanation: You pick an image, an instance type and a network, then launch it. You manage the operating system, software and patches. It can be stopped, resized or terminated. Stopped instances stop compute charges, but attached disks still cost. Azure calls it a virtual machine, and GCP calls it Compute Engine.
+simple_explain: EC2 is a rented computer. You choose its size and software, and pay while it runs.
+analogy: It is like a computer rented by the hour and delivered in a minute.
+formula_rule: Image + instance type + network = a running virtual machine.
+example_1: Launching a Linux server to host a small API.
+example_2: Resizing an instance when the workload grows.
+example_3: Stopping a test server overnight to save money.
+related: images, instance types, key pairs, auto scaling
+word_family: instance, virtual machine, compute, launch, terminate
+where_used: Hosting | Batch jobs | Legacy apps
+mini_conversation: A: Can we try the app on a fresh server? | B: Launch an instance and test there.
+misconception: ✗ Stopping an instance removes all charges → ✓ Disks and addresses attached to it may still cost money
+contrast: Stop vs terminate: stop pauses the instance, terminate deletes it.
+avoid: Do not leave test instances running with open access.
+memory_trick: Stop pauses it, terminate removes it.
+real_project: Launching a small instance to host a customer demo for a week.
+real_interview: An interviewer may ask: What is the difference between stopping and terminating?
+real_daily: It is like renting a computer by the hour.
+mcq_question: What does terminating an instance do?
+mcq_options: A) Resizes it B) Copies it C) Pauses it D) Deletes it
+mcq_answer: D
+mcq_why: Terminate permanently removes the instance.
+fill_blank: Azure calls the same idea a virtual ____ → machine
+apply: You no longer need a test server at all. Stop or terminate? → Terminate
+explain_task: Explain what a cloud virtual machine is in three lines.
+own_task: List the choices needed to launch a virtual machine.
+
+@CLD-014
+topic: 03 Compute
+level: Beginner
+term: Machine images
+cue: Which stored template is used to start new virtual machines with the same software?
+category: Core concept
+frequency: High
+importance: 4
+origin: Installing software by hand on every server was slow and uneven, so a ready-made template was introduced.
+pro_tip: Prefer images that you build in an automated way over servers you configure by hand.
+memory_story: An image is a cookie cutter that makes identical machines.
+visual: One template on the left producing several identical servers on the right.
+emotion: The satisfaction of ten identical servers in minutes.
+definition: A machine image, such as an AWS AMI, is a saved template of an operating system and software used to launch new instances.
+explanation: Public images give common operating systems. You can create your own from a configured server, so new instances start already set up. Images are stored by region and must be copied to be used elsewhere. They should be updated regularly with security patches. Azure and GCP also use images.
+simple_explain: An image is a ready template for servers. Build one and launch many.
+analogy: It is a cookie cutter that makes identical machines.
+formula_rule: One image → many identical instances.
+example_1: Launching a server from an Ubuntu image.
+example_2: Baking your own image with the app preinstalled.
+example_3: Copying an image to another region.
+related: virtual machines, auto scaling, infrastructure as code
+word_family: image, template, AMI, snapshot, bake
+where_used: Scaling | Disaster recovery | Standard setups
+mini_conversation: A: New servers take an hour to set up. | B: Bake an image so they start ready.
+misconception: ✗ An image is a running server → ✓ It is only a template used to create servers
+contrast: Image vs instance: an image is a template, an instance is a running machine.
+avoid: Do not use an old image without applying security updates.
+memory_trick: Image is the template, instance is the copy.
+real_project: Creating a standard image so every new server started with the agent installed.
+real_interview: An interviewer may ask: Why create your own machine image?
+real_daily: It is like a cookie cutter for identical machines.
+mcq_question: What is an image used for?
+mcq_options: A) Launching identical instances B) Billing C) Logging in D) Monitoring
+mcq_answer: A
+mcq_why: Images are templates for new servers.
+fill_blank: A running server created from an image is an ____ → instance
+apply: You need ten identical servers quickly. What do you use? → A machine image
+explain_task: Explain what a machine image is in two lines.
+own_task: Write the steps to create a custom image from a configured server.

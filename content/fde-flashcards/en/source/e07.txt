@@ -1,0 +1,237 @@
+
+@GIT-045
+topic: 06 Security & Access
+level: Intermediate
+term: SSH key for GitHub
+cue: Which pair of keys lets you connect to GitHub securely without typing a password every time?
+kind: Authentication method
+frequency: High
+importance: 4
+origin: Typing a password again and again is tiring and risky, so SSH uses a pair of keys: you give GitHub the public key and keep the private key only for yourself.
+pro_tip: Make new keys of type ed25519 and never give your private key to anyone.
+memory_story: The public key is a lock you let GitHub fit on its door, and the private key is the key only you carry.
+visual: A lock is fixed on GitHub's door while the key stays in your pocket.
+emotion: The convenience of a secure connection with no password.
+meaning: An SSH key is a pair of keys that lets you log in to GitHub securely without a password.
+code: ssh-keygen -t ed25519 -C "asha@example.com"¶cat ~/.ssh/id_ed25519.pub¶ssh -T git@github.com
+output: Hi asha! You've successfully authenticated, but GitHub does not provide shell access.
+explanation: ssh-keygen creates a private key (id_ed25519) and a public key (id_ed25519.pub). You add the public key under SSH keys in GitHub settings and never share the private one. Then you use remote URLs like git@github.com:user/repo.git.
+simple_explain: SSH makes a pair of keys. Give the public one to GitHub and keep the private one with you. After that GitHub recognises you without a password.
+analogy: It is like giving a shop a lock while you keep the key in your own pocket.
+syntax: ssh-keygen -t ed25519 -C "<email>"
+anatomy: ssh-keygen = make keys | -t ed25519 = key type | -C = comment (your email)
+example_1: ssh-keygen -t ed25519 -C "asha@example.com"
+example_2: ssh -T git@github.com
+example_3: git clone git@github.com:asha/notes.git
+variation: ssh-add ~/.ssh/id_ed25519   # add the key to the agent¶cat ~/.ssh/id_ed25519.pub   # view the public key
+used_with: ssh-agent, ssh-keygen, remote URL, passphrase
+related: Personal Access Token, HTTPS, git remote
+alternatives: HTTPS with a token, or gh auth login
+word_family: SSH, public key, private key, passphrase, ssh-agent
+where_used: Daily push and pull | Deploying to servers | Automation
+mini_conversation: A: It asks for my password every time. | B: Make an SSH key and add the public key to GitHub.
+misconception: ✗ Both the public and the private key must be given to GitHub → ✓ You give GitHub only the public key, and the private key must never be given to anyone
+confused_with: SSH key vs Personal Access Token: an SSH key is a key pair, a token is a long secret that works with HTTPS.
+avoid: Never share or commit your private key (id_ed25519).
+wrong_code: cat ~/.ssh/id_ed25519
+right_code: cat ~/.ssh/id_ed25519.pub
+memory_trick: Public is what you Present, Private is what you Protect.
+real_project: Adding your laptop's SSH public key to GitHub so you can push without a password.
+real_interview: An interviewer may ask: What is the role of the public and private key in SSH?
+real_daily: It is like handing over a lock but keeping the key in your pocket.
+mcq_question: Which key do you add to GitHub?
+mcq_options: A) The public key B) The private key C) The passphrase D) Both
+mcq_answer: A
+mcq_why: The public key goes to GitHub and the private key stays only with you.
+fill_blank: The command to make a key is ____ -t ed25519 → ssh-keygen
+hindi_to_task: Check your SSH connection to GitHub.
+task_answer: ssh -T git@github.com
+own_task: Make an SSH key on your laptop, add the public key to GitHub, and test the connection.
+practice_question: Where do you add the public key in GitHub?
+practice_answer: In Settings, under the SSH and GPG keys section.
+
+@GIT-046
+topic: 06 Security & Access
+level: Intermediate
+term: Personal Access Token (PAT)
+cue: What long secret code replaces your password when you push over HTTPS?
+kind: Authentication method
+frequency: High
+importance: 4
+origin: GitHub stopped accepting account passwords for Git over HTTPS because a stolen password risks the whole account, while a token has limited permissions and an expiry and can be revoked anytime.
+pro_tip: Give a token the minimum permissions and set an expiry.
+memory_story: A token is a visitor pass that says where you can go and until when.
+visual: A pass hangs from a neck showing the allowed areas and an expiry date.
+emotion: Relief at giving limited access while the password stays safe.
+meaning: A personal access token is a secret code with limited permissions and expiry that is used instead of a password.
+code: git clone https://github.com/asha/private-notes.git¶Username: asha¶Password: <your token>
+output: Cloning into 'private-notes'...¶remote: Counting objects: 42, done.
+explanation: You create a token under Developer settings in GitHub, choosing its permissions (scopes) and expiry. A fine-grained token can be limited to a single repo. Keep it in a password manager or credential helper, never in code.
+simple_explain: Over HTTPS Git asks for a token, not a password. In the token you decide what it can do and how long it works, and you can cancel it anytime.
+analogy: It is like a visitor pass that says which floor you can visit and until when.
+syntax: git clone https://<token>@github.com/<user>/<repo>.git (safer way: a credential helper)
+anatomy: token = in place of the password | scopes = permissions | expiry = time limit
+example_1: Creating a fine-grained token in Developer settings that has read-write Contents on one repo only.
+example_2: git config --global credential.helper store (a helper to keep the token)
+example_3: Keeping a token as a secret on a CI server.
+variation: Fine-grained token (limited to one repo) vs classic token (broader permissions)
+used_with: HTTPS, credential helper, GitHub CLI, secrets
+related: SSH key, GitHub CLI, secrets
+alternatives: SSH key, gh auth login
+word_family: token, scope, expiry, credential helper, secret
+where_used: Git over HTTPS | Scripts and CI | API calls
+mini_conversation: A: Push says my password is wrong. | B: GitHub no longer accepts passwords, so make a personal access token and use it in its place.
+misconception: ✗ It is fine to keep a token in code or a README → ✓ A token is a secret like a password, so never keep it in code, and revoke it at once if it leaks
+confused_with: PAT vs SSH key: a PAT works over HTTPS as a token, an SSH key is a key pair.
+avoid: Do not put a token in a screenshot, a chat or a commit.
+wrong_code: git remote add origin https://asha:ghp_abc123@github.com/asha/notes.git
+right_code: git remote add origin https://github.com/asha/notes.git
+memory_trick: A token is a key with a time limit.
+real_project: Giving a CI job a read-only token for one repo.
+real_interview: An interviewer may ask: What is the difference between a fine-grained and a classic token?
+real_daily: It is like a visitor pass that fixes where you may go.
+mcq_question: A token has leaked. What is the very first step?
+mcq_options: A) Delete the repo B) Write it in the README C) Revoke it at once and make a new one D) Ignore it
+mcq_answer: C
+mcq_why: Revoking makes the old token useless immediately.
+fill_blank: If a token leaks, you ____ it → revoke
+hindi_to_task: Name a helper that keeps your token safe for git.
+task_answer: git config --global credential.helper manager
+own_task: Make a fine-grained token that can read only one repo.
+practice_question: What is the risk of giving a token too many permissions?
+practice_answer: If it leaks, an attacker can change many more repos and things.
+
+@GIT-047
+type: topic56
+topic: 06 Security & Access
+level: Advanced
+term: Leaked secret in a repository
+cue: What is the first thing to do if you accidentally commit an API key or password?
+category: Security incident
+frequency: Medium
+importance: 5
+origin: Git history keeps data forever and bots scanning public repos find keys within minutes, so after a leak the first job is to change the key.
+pro_tip: First rotate the key, and only then clean the history.
+memory_story: After a break-in you change the lock first, then work out how the thief got in.
+visual: A key whose copy has been made and a lock being changed straight away.
+emotion: Panic that turns into calm once you have a clear plan.
+definition: A leaked secret is a password, token or key that was committed by mistake and is now in the history.
+explanation: Deleting the file leaves the secret in history. The right order: revoke or rotate the secret, clean history with git filter-repo or BFG, force push, and ask others to clone again. Prevent with .gitignore and secret scanning.
+simple_explain: When a secret leaks, first change its key, then clean the history. Just removing the file does nothing because old commits still hold it.
+analogy: It is like changing the lock first when your key is stolen, and investigating later.
+formula_rule: Rotate → clean history (filter-repo) → force push → tell the team
+example_1: A developer committed a .env file holding a database password.
+example_2: An AWS key put in a public repo was used by a bot within minutes.
+example_3: A test file with a hardcoded API token went through in a PR.
+related: .gitignore, secret scanning, git filter-repo, push protection
+word_family: secret, rotate, revoke, filter-repo, BFG
+where_used: Security incidents | Public repos | CI pipelines
+mini_conversation: A: I accidentally committed an API key. | B: Revoke the key and make a new one first, then clean the history.
+misconception: ✗ Deleting the file and committing removes the secret for good → ✓ The secret stays in old commits, and the right step is to rotate the key and clean the history
+contrast: Rotate vs cleaning history: rotating makes the secret useless, cleaning history removes its traces.
+avoid: Do not relax after merely deleting the secret and making a new commit.
+memory_trick: Rotate the key first, then purge history.
+real_project: Rotating the key after a leak and turning on secret scanning.
+real_interview: An interviewer may ask: How would you handle a committed secret?
+real_daily: It is like changing the lock when your key is stolen.
+mcq_question: An API key was committed to a public repo. What is the very first step?
+mcq_options: A) Change the commit message B) Rotate or revoke the key C) Rename the repo D) Delete the file
+mcq_answer: B
+mcq_why: Rotating the key makes the old one useless at once.
+fill_blank: After a leak you first ____ the secret → rotate
+apply: How do you remove the secret from history afterwards? → Clean it with git filter-repo or BFG and force push
+explain_task: Explain in three lines why deleting the file is not enough.
+own_task: Write a checklist you will follow when a secret leaks.
+
+@GIT-048
+topic: 06 Security & Access
+level: Advanced
+term: Signed commits (GPG / SSH signing)
+cue: How does the green Verified badge get onto a commit on GitHub?
+kind: Git feature
+frequency: Low
+importance: 3
+origin: Anyone can write any author name in Git, so a digital signature was introduced to prove that the real person made a commit.
+pro_tip: Newer Git can sign commits with an SSH key, so GPG is not required.
+memory_story: A signature is the real autograph on a cheque that proves you made the commit.
+visual: A small green Verified badge glows beside a commit.
+emotion: Trust that your commit is proven to be yours.
+meaning: A signed commit carries a digital signature that proves the real author made it.
+code: git config --global gpg.format ssh¶git config --global user.signingkey ~/.ssh/id_ed25519.pub¶git config --global commit.gpgsign true
+output: (the settings are saved; every commit will now be signed)
+explanation: You set a signing key and add the same public key to GitHub as a signing key. Each commit then carries a signature and GitHub shows Verified. Branch protection can require signed commits.
+simple_explain: A signed commit carries your signature, so nobody else can send commits in your name, and GitHub shows it as Verified.
+analogy: It is like a real signature on a cheque proving you issued it.
+syntax: git commit -S -m "<message>"
+anatomy: -S = sign the commit | commit.gpgsign = always sign | user.signingkey = which key
+example_1: git commit -S -m "Fix login"
+example_2: git config --global commit.gpgsign true
+example_3: git log --show-signature -1
+variation: git tag -s v1.0.0 -m "Release"   # sign a tag¶git verify-commit HEAD
+used_with: GPG, SSH, commit.gpgsign, signingkey
+related: SSH key, branch protection, GPG
+alternatives: Vigilant mode, or signing with an SSH key alone
+word_family: signed commit, GPG, signing key, Verified, vigilant mode
+where_used: Open-source maintainers | Security-sensitive projects | Compliance
+mini_conversation: A: My commit does not show Verified. | B: Add the signing key to GitHub and set commit.gpgsign to true.
+misconception: ✗ A name and email on a commit prove who the real author is → ✓ Anyone can write a name and email, and only a signature proves the author
+confused_with: Signed commit vs SSH login: SSH login identifies a connection, signing proves a commit's authenticity.
+avoid: Do not share your private signing key with anyone.
+wrong_code: git commit --sign-it -m "Fix"
+right_code: git commit -S -m "Fix"
+memory_trick: Sign means prove it is really me.
+real_project: Requiring signed commits for every maintainer in an open-source project.
+real_interview: An interviewer may ask: Why are signed commits important?
+real_daily: It is like proving a cheque is yours by a real signature.
+mcq_question: When does GitHub show Verified on a commit?
+mcq_options: A) When it is on main B) When the PR is merged C) When the commit is big D) When the commit is signed with a valid signature
+mcq_answer: D
+mcq_why: GitHub checks the signature and then shows Verified.
+fill_blank: The flag to sign a commit is ____ → -S
+hindi_to_task: Sign the commit and save it with the message Fix login.
+task_answer: git commit -S -m "Fix login"
+own_task: Set up SSH signing on your laptop and make one signed commit.
+practice_question: How do you check the signature in git log?
+practice_answer: git log --show-signature
+
+@GIT-049
+type: topic56
+topic: 06 Security & Access
+level: Advanced
+term: Secret scanning and Dependabot
+cue: Which automatic GitHub safety tools catch leaked keys and outdated vulnerable libraries?
+category: GitHub security
+frequency: Medium
+importance: 4
+origin: People commit secrets by accident and libraries keep getting security flaws, so GitHub built automatic checks, secret scanning and Dependabot.
+pro_tip: They are on for public repos, and for private repos you turn them on in settings.
+memory_story: They are two guards: one catches stolen keys, the other warns about old unsafe libraries.
+visual: Two guards stand at a gate, one checking a list of keys and the other a list of libraries.
+emotion: Comfort that flaws are caught without hunting for them.
+definition: Secret scanning finds leaked keys, and Dependabot sends pull requests to update old or insecure libraries.
+explanation: Secret scanning looks for the key patterns of known providers, and push protection can stop a push before it happens. Dependabot alerts warn about vulnerabilities and Dependabot version updates open PRs automatically.
+simple_explain: Secret scanning tells you when you committed a key by mistake. Dependabot tells you a library is old and risky and sends a PR to update it.
+analogy: It is like a guard at the door who checks both the keys and the goods.
+formula_rule: Secret scanning = catch the leak, Dependabot = update the library
+example_1: Push protection blocks a push that holds an AWS key.
+example_2: Dependabot opens a PR with a security fix for an old library.
+example_3: Dependabot alerts tell the team about a dangerous dependency.
+related: leaked secret, dependency, PR, GitHub Advanced Security
+word_family: secret scanning, push protection, Dependabot, alert, dependency
+where_used: Security checks | Open-source maintenance | Compliance
+mini_conversation: A: Our library has become outdated. | B: Look at Dependabot's PR, it brings the new version and the fix.
+misconception: ✗ Dependabot catches all the mistakes in your code → ✓ Dependabot covers only known flaws and updates in dependencies, and does not catch logic errors in your own code
+contrast: Secret scanning vs Dependabot: one catches leaked keys, the other flaws in libraries.
+avoid: Do not merge Dependabot PRs without running tests.
+memory_trick: Two guards: one for Keys, one for Libraries.
+real_project: Turning on Dependabot version updates so libraries stay fresh.
+real_interview: An interviewer may ask: What is push protection?
+real_daily: It is like a guard checking both the keys and the goods at the gate.
+mcq_question: Which tool opens a PR to update an outdated library on its own?
+mcq_options: A) Secret scanning B) CODEOWNERS C) Dependabot D) Issues
+mcq_answer: C
+mcq_why: Dependabot opens PRs to update dependencies.
+fill_blank: The feature that stops a secret before it is pushed is called ____ → push protection
+apply: Which feature warns you about a library vulnerability? → Dependabot alerts
+explain_task: Explain the difference between secret scanning and Dependabot in three lines.
+own_task: Write two lines of config to turn on Dependabot version updates in your repo.

@@ -1,0 +1,636 @@
+
+@ETL-013
+type: code56
+topic: 03 Transform
+level: Beginner
+term: Cleaning data
+cue: Which steps fix messy values such as extra spaces, mixed cases and bad formats?
+kind: Transform step
+frequency: Very high
+importance: 5
+origin: Real data arrives with typos, stray spaces and inconsistent formats, so cleaning rules make values uniform before analysis.
+pro_tip: Clean in a staging layer and keep the raw copy untouched.
+memory_story: Cleaning is washing vegetables before cooking, and you keep the original sack in case you need it.
+visual: A column of messy values turning into a tidy one.
+emotion: The satisfaction of a column that finally groups correctly.
+meaning: Cleaning standardises text, trims whitespace, fixes formats, maps known variants and flags impossible values, without changing the raw source copy.
+code: SELECT¶  TRIM(LOWER(email)) AS email,¶  UPPER(TRIM(country_code)) AS country_code,¶  NULLIF(TRIM(phone), '') AS phone,¶  CASE WHEN status IN ('Active','active','ACTIVE') THEN 'active' ELSE LOWER(status) END AS status¶FROM raw_customers;
+output: Emails are lowercase and trimmed, country codes are uppercase, blank phones become null, and statuses are standardised.
+explanation: Typical steps are trimming, case standardisation, replacing empty strings with nulls, mapping synonyms and parsing dates. Do cleaning with rules that are written down and tested. Keep the original value in a raw table so mistakes can be undone. Do not silently drop rows, and instead route bad rows to a rejected table with a reason.
+simple_explain: Standardise values with clear rules, keep raw data safe, and quarantine what cannot be fixed.
+analogy: Cleaning is washing vegetables before cooking while keeping the original sack.
+syntax: TRIM(x) | LOWER(x) | NULLIF(x, '') | CASE WHEN ... END
+anatomy: TRIM = remove spaces | NULLIF = blank to null | CASE = map values
+example_1: SELECT REPLACE(phone, '-', '') FROM raw_customers;
+example_2: SELECT COALESCE(city, 'unknown') FROM raw_customers;
+example_3: INSERT INTO rejected_rows SELECT *, 'bad email' FROM raw_customers WHERE email NOT LIKE '%@%';
+variation: SELECT INITCAP(name) FROM raw_customers;   // capitalise words, in PostgreSQL
+used_with: staging tables, data quality checks, joins
+related: types and nulls, deduplication, data quality checks, SQL transforms
+alternatives: pandas string methods | dbt models
+where_used: Staging layers | Customer data | Reports
+mini_conversation: A: The same customer appears in three spellings. | B: Standardise case and spaces before grouping.
+misconception: ✗ Cleaning should delete every bad row → ✓ Bad rows should be quarantined with a reason, not silently lost
+confused_with: Cleaning vs validating: cleaning fixes values, validating checks them against rules.
+avoid: Do not overwrite the raw source columns.
+wrong_code: UPDATE raw_customers SET email = LOWER(email);
+right_code: INSERT INTO stg_customers SELECT LOWER(TRIM(email)) FROM raw_customers;
+memory_trick: Clean a copy, keep the raw data.
+real_project: Moving cleaning rules into a staging layer fixed duplicate customers caused by casing.
+real_interview: An interviewer may ask: How do you handle rows that cannot be cleaned?
+real_daily: It is like washing vegetables before cooking.
+mcq_question: What should happen to rows that fail cleaning rules?
+mcq_options: A) They are silently deleted B) They are ignored forever C) They go to a rejected table with a reason D) They overwrite raw data
+mcq_answer: C
+mcq_why: Quarantined rows can be reviewed and fixed.
+fill_blank: Turning blank text into a null uses the function ____ → NULLIF
+hindi_to_task: Trim and lowercase the email column.
+task_answer: SELECT TRIM(LOWER(email)) AS email FROM raw_customers;
+own_task: Write a query that standardises a status column with three spellings.
+practice_question: Why keep the raw table?
+practice_answer: So mistakes in cleaning can be reversed and replayed.
+
+@ETL-014
+type: code56
+topic: 03 Transform
+level: Beginner
+term: Types and nulls
+cue: Which two common sources of silent errors come from wrong data types and missing values?
+kind: Transform step
+frequency: Very high
+importance: 5
+origin: Text exports lose type information and systems treat missing values differently, so careful typing and null handling prevent wrong results.
+pro_tip: Cast explicitly and decide what null means for each column.
+memory_story: Types are the right containers for each ingredient, and nulls are empty containers you must never count as zero.
+visual: A column of text values being cast to numbers and dates.
+emotion: The relief of numbers that add up correctly.
+meaning: Casting converts values to proper types, and null handling decides how missing values are treated in comparisons, sums and joins.
+code: SELECT¶  CAST(order_id AS BIGINT) AS order_id,¶  CAST(total AS NUMERIC(12,2)) AS total,¶  CAST(created_at AS TIMESTAMP) AS created_at,¶  COALESCE(discount, 0) AS discount,¶  total IS NULL AS total_missing¶FROM stg_orders;
+output: Columns are typed, missing discounts become zero, and total_missing is true for rows with no total.
+explanation: Comparing with null using an equals sign never gives true, and you must use IS NULL. Sums ignore nulls, while arithmetic with null gives null. Counting a column ignores nulls but counting rows does not. Money should use exact decimal types, not floating point. Dates from text need an explicit format and a time zone.
+simple_explain: Cast on purpose, use IS NULL for nulls, and decide what missing means.
+analogy: Types are the right containers for each ingredient, and nulls are empty containers you must not count as zero.
+syntax: CAST(x AS type) | COALESCE(x, default) | x IS NULL
+anatomy: CAST = change type | COALESCE = first non-null | IS NULL = null test
+example_1: SELECT COUNT(*), COUNT(discount) FROM stg_orders;
+example_2: SELECT SUM(total) FROM stg_orders WHERE total IS NOT NULL;
+example_3: SELECT 5 + NULL;
+variation: SELECT total::numeric(12,2) FROM stg_orders;   // PostgreSQL cast shorthand
+used_with: cleaning, joins, aggregations
+related: cleaning data, aggregations, joins, schemas
+alternatives: Schema-enforced file formats
+where_used: Staging | Finance data | Reports
+mini_conversation: A: My filter on equals null returns nothing. | B: Null never equals anything, so use IS NULL.
+misconception: ✗ Null equals zero or empty text → ✓ Null means unknown, and it behaves differently in every operation
+confused_with: COUNT(*) vs COUNT(column): the first counts rows, the second skips nulls.
+avoid: Do not store money in floating point types.
+wrong_code: SELECT * FROM stg_orders WHERE discount = NULL;
+right_code: SELECT * FROM stg_orders WHERE discount IS NULL;
+memory_trick: Null is unknown, never equal to anything.
+real_project: Fixing a float column for money removed one-cent differences in a finance report.
+real_interview: An interviewer may ask: What is the difference between COUNT star and COUNT column?
+real_daily: It is like empty containers that must not be counted as zero.
+mcq_question: How do you test for a missing value?
+mcq_options: A) like null B) IS NULL C) is empty D) equals null
+mcq_answer: B
+mcq_why: Comparison with equals never matches null.
+fill_blank: The function that returns the first non-null value is ____ → COALESCE
+hindi_to_task: Find rows where discount is missing.
+task_answer: SELECT * FROM stg_orders WHERE discount IS NULL;
+own_task: Write a query that casts text columns to number and date.
+practice_question: What does 5 plus null give?
+practice_answer: Null.
+
+@ETL-015
+type: code56
+topic: 03 Transform
+level: Intermediate
+term: Joins in pipelines
+cue: How do you combine tables safely without losing or multiplying rows?
+kind: Transform step
+frequency: Very high
+importance: 5
+origin: Facts and descriptions live in different tables, so pipelines join them, and a wrong join can silently inflate or drop rows.
+pro_tip: Check row counts before and after every join.
+memory_story: A join is matching name tags to guests, and a wrong tag can duplicate a guest.
+visual: Two tables linked on a key with matching and unmatched rows.
+emotion: The caution of checking the count after each join.
+meaning: A join matches rows from two tables on a key, where inner keeps matches only, left keeps all rows of the left table, and duplicate keys multiply rows.
+code: SELECT o.order_id, o.total, c.name, c.country¶FROM stg_orders o¶LEFT JOIN dim_customers c ON c.customer_id = o.customer_id;¶SELECT COUNT(*) FROM stg_orders;¶SELECT COUNT(*) FROM (¶  SELECT o.order_id FROM stg_orders o LEFT JOIN dim_customers c ON c.customer_id = o.customer_id¶) x;
+output: Each order appears once with customer details, and both counts match, proving no row was multiplied.
+explanation: A left join keeps orders even without a customer, and the customer columns are null. If dim_customers has two rows for one id, each order appears twice. Always know the grain, meaning what one row represents, of each side. Test that keys are unique where you expect it. Anti joins find unmatched rows and help with quality checks.
+simple_explain: Know the grain of each table, test key uniqueness, and compare row counts after joining.
+analogy: A join is matching name tags to guests, and a wrong tag can duplicate a guest.
+syntax: FROM a LEFT JOIN b ON a.key = b.key
+anatomy: INNER = matches only | LEFT = keep all left rows | ON = join condition | grain = what a row means
+example_1: SELECT * FROM a INNER JOIN b ON a.id = b.a_id;
+example_2: SELECT a.* FROM a LEFT JOIN b ON a.id = b.a_id WHERE b.a_id IS NULL;
+example_3: SELECT customer_id, COUNT(*) FROM dim_customers GROUP BY 1 HAVING COUNT(*) > 1;
+variation: SELECT * FROM a CROSS JOIN b;   // every combination, use with care
+used_with: deduplication, aggregations, data quality checks
+related: deduplication, aggregations, data quality checks, SQL transforms
+alternatives: Lookups in code
+where_used: Warehouse models | Reports | Enrichment
+mini_conversation: A: Revenue doubled after adding the join. | B: The dimension has duplicate keys, so rows multiplied.
+misconception: ✗ A left join never changes the number of left rows → ✓ Duplicate keys on the right side multiply them
+confused_with: Inner vs left join: inner drops unmatched rows, left keeps them.
+avoid: Do not join on keys you have not tested for uniqueness.
+wrong_code: SELECT * FROM orders o JOIN customers c ON o.name = c.name;
+right_code: SELECT * FROM orders o JOIN customers c ON o.customer_id = c.customer_id;
+memory_trick: Count rows before and after the join.
+real_project: Finding duplicate customer keys explained why a revenue total had doubled.
+real_interview: An interviewer may ask: Why might a left join increase row count?
+real_daily: It is like matching name tags to guests.
+mcq_question: What multiplies rows in a join?
+mcq_options: A) A where clause B) A comment C) A limit D) Duplicate keys on the joined side
+mcq_answer: D
+mcq_why: Each match produces a row.
+fill_blank: What one row of a table represents is its ____ → grain
+hindi_to_task: Join orders to customers keeping all orders.
+task_answer: SELECT * FROM orders o LEFT JOIN customers c ON c.customer_id = o.customer_id;
+own_task: Write a query that finds duplicate keys in a lookup table.
+practice_question: What does a left join keep?
+practice_answer: All rows of the left table.
+
+@ETL-016
+type: code56
+topic: 03 Transform
+level: Intermediate
+term: Deduplication
+cue: How do you keep exactly one row for each real-world record?
+kind: Transform step
+frequency: Very high
+importance: 5
+origin: Retries, overlapping loads and messy sources create duplicates, so pipelines choose one winning row per key.
+pro_tip: Decide the rule for the winner first, such as the latest update.
+memory_story: Deduplication is keeping the newest copy of each form and shredding the older ones.
+visual: Several rows with one key and an arrow pointing at the latest.
+emotion: The satisfaction of a clean count.
+meaning: Deduplication keeps one row per key, often by numbering rows within each key and keeping the first by a chosen order.
+code: SELECT * FROM (¶  SELECT *,¶    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY updated_at DESC, load_id DESC) AS rn¶  FROM stg_customers¶) t¶WHERE rn = 1;
+output: One row remains for each customer, the most recently updated.
+explanation: ROW_NUMBER with PARTITION BY the key and ORDER BY the preference gives a deterministic winner. Add a tie-breaker so reruns choose the same row. DISTINCT only removes fully identical rows. Decide whether to keep the latest, the first or merge fields. Count rows before and after, and log how many were removed.
+simple_explain: Number rows within each key by a rule, and keep number one.
+analogy: Deduplication is keeping the newest copy of each form and shredding the older ones.
+syntax: ROW_NUMBER() OVER (PARTITION BY key ORDER BY rule) = 1
+anatomy: PARTITION BY = group per key | ORDER BY = winner rule | rn = 1 = keep first
+example_1: SELECT DISTINCT customer_id FROM stg_orders;
+example_2: SELECT customer_id, COUNT(*) FROM stg_customers GROUP BY 1 HAVING COUNT(*) > 1;
+example_3: DELETE FROM stg_customers WHERE ctid NOT IN (SELECT MIN(ctid) FROM stg_customers GROUP BY customer_id);
+variation: SELECT DISTINCT ON (customer_id) * FROM stg_customers ORDER BY customer_id, updated_at DESC;   // PostgreSQL shortcut
+used_with: window functions, upserts, idempotency
+related: joins, upserts, idempotency, data quality checks
+alternatives: Unique constraints | MERGE
+where_used: Staging | Customer tables | Event data
+mini_conversation: A: Two rows have the same updated time. | B: Add a tie-breaker so the winner is stable.
+misconception: ✗ DISTINCT removes all duplicates by key → ✓ It removes only rows identical in every column
+confused_with: DISTINCT vs ROW_NUMBER: DISTINCT compares whole rows, ROW_NUMBER picks by key and order.
+avoid: Do not rely on arbitrary row order.
+wrong_code: SELECT DISTINCT * FROM stg_customers;   -- keeps older versions
+right_code: SELECT * FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY updated_at DESC) rn FROM stg_customers) t WHERE rn = 1;
+memory_trick: Partition by key, order by newest, keep one.
+real_project: Replacing DISTINCT with a ranked pick removed stale customer versions from a report.
+real_interview: An interviewer may ask: How do you keep the latest row per key?
+real_daily: It is like keeping the newest form.
+mcq_question: Which function numbers rows within a key?
+mcq_options: A) ROW_NUMBER B) COUNT C) SUM D) AVG
+mcq_answer: A
+mcq_why: It gives each row a position inside its partition.
+fill_blank: A rule that settles equal sort values is a ____ → tie-breaker
+hindi_to_task: Keep the latest row for each customer.
+task_answer: SELECT * FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY updated_at DESC) rn FROM stg_customers) t WHERE rn = 1;
+own_task: Add a tie-breaker to a deduplication query.
+practice_question: Why add a tie-breaker?
+practice_answer: So reruns choose the same winning row.
+
+@ETL-017
+type: code56
+topic: 03 Transform
+level: Beginner
+term: Aggregations
+cue: How do you summarise many rows into counts, totals and averages?
+kind: Transform step
+frequency: Very high
+importance: 5
+origin: Reports need totals by group rather than raw rows, so SQL groups rows and applies summary functions.
+pro_tip: Check that the grain of the result matches what the report expects.
+memory_story: Aggregation is sorting receipts into piles and totalling each pile.
+visual: Rows collapsing into one row per group.
+emotion: The pleasure of a summary that matches the finance sheet.
+meaning: Aggregation uses GROUP BY with functions such as COUNT, SUM, AVG, MIN and MAX to collapse rows into one result per group, and HAVING filters the groups.
+code: SELECT customer_id,¶  COUNT(*) AS orders,¶  SUM(total) AS revenue,¶  AVG(total) AS avg_order¶FROM fct_orders¶WHERE status = 'paid'¶GROUP BY customer_id¶HAVING SUM(total) > 1000¶ORDER BY revenue DESC;
+output: Customers with more than 1000 in paid orders, with counts, totals and averages.
+explanation: WHERE filters rows before grouping, and HAVING filters groups after. Every selected column must be in GROUP BY or inside an aggregate. Null values are skipped by aggregates other than COUNT star. Averages of averages are wrong unless weighted. Use exact types for money, and be careful with duplicate rows from joins.
+simple_explain: Group rows, apply summary functions, and filter groups with HAVING.
+analogy: Aggregation is sorting receipts into piles and totalling each pile.
+syntax: SELECT key, SUM(x) FROM t GROUP BY key HAVING condition
+anatomy: GROUP BY = piles | SUM and COUNT = summaries | HAVING = filter piles | WHERE = filter rows
+example_1: SELECT DATE(created_at), COUNT(*) FROM fct_orders GROUP BY 1;
+example_2: SELECT country, AVG(total) FROM fct_orders GROUP BY country;
+example_3: SELECT COUNT(DISTINCT customer_id) FROM fct_orders;
+variation: SELECT country, SUM(total) FILTER (WHERE status = 'paid') FROM fct_orders GROUP BY country;   // conditional totals
+used_with: joins, dates, reports
+related: joins, date handling, SQL transforms, data quality checks
+alternatives: pandas groupby | dbt metrics
+where_used: Reports | Dashboards | Data marts
+mini_conversation: A: The average is wrong by region. | B: You averaged averages, so compute total divided by count.
+misconception: ✗ WHERE and HAVING do the same thing → ✓ WHERE filters rows before grouping, HAVING filters groups after
+confused_with: WHERE vs HAVING: one acts on rows, the other on aggregated groups.
+avoid: Do not average pre-averaged values.
+wrong_code: SELECT customer_id, total FROM fct_orders GROUP BY customer_id;
+right_code: SELECT customer_id, SUM(total) FROM fct_orders GROUP BY customer_id;
+memory_trick: Where before groups, having after.
+real_project: Correcting a weighted average fixed a dashboard that disagreed with finance.
+real_interview: An interviewer may ask: What is the difference between WHERE and HAVING?
+real_daily: It is like sorting receipts into piles.
+mcq_question: Which clause filters groups?
+mcq_options: A) LIMIT B) HAVING C) ORDER BY D) WHERE
+mcq_answer: B
+mcq_why: HAVING works on aggregated results.
+fill_blank: The clause that creates the groups is GROUP ____ → BY
+hindi_to_task: Count orders per customer.
+task_answer: SELECT customer_id, COUNT(*) FROM fct_orders GROUP BY customer_id;
+own_task: Write a daily revenue summary for paid orders.
+practice_question: Why is an average of averages risky?
+practice_answer: Groups of different sizes need weighting.
+
+@ETL-018
+type: code56
+topic: 03 Transform
+level: Intermediate
+term: Date and time handling
+cue: How do you avoid wrong results from time zones, formats and date boundaries?
+kind: Transform step
+frequency: Very high
+importance: 5
+origin: Time looks simple but hides zones, daylight saving and formats, so pipelines settle on rules to keep dates consistent.
+pro_tip: Store timestamps in UTC and convert only for display.
+memory_story: Time zones are different clocks on different walls, so choose one master clock for storage.
+visual: Clocks in several zones pointing at the same moment.
+emotion: The relief of reports that agree on what day it is.
+meaning: Date handling parses text into timestamps with a known format and zone, stores them in UTC, and truncates or converts them deliberately for reporting.
+code: SELECT¶  CAST(created_at AS TIMESTAMPTZ) AS created_utc,¶  DATE_TRUNC('day', created_at AT TIME ZONE 'Asia/Kolkata') AS day_ist,¶  created_at >= '2026-10-01' AND created_at < '2026-10-02' AS on_oct_1¶FROM stg_orders;
+output: A UTC timestamp, the local business day, and a half-open range test for one day.
+explanation: Use half-open ranges, with greater than or equal to the start and less than the next day, to avoid missing the last second. Decide which time zone defines a business day. Daylight saving makes some hours repeat or vanish. Parse dates with an explicit format, since day-month and month-day order differ. Keep both the event time and the load time. AT TIME ZONE converts a timestamptz to local wall time, so created_at must be timestamptz.
+simple_explain: Store UTC, use half-open ranges, and convert to the business zone for daily reports.
+analogy: Time zones are clocks on different walls, so choose one master clock for storage.
+syntax: ts AT TIME ZONE 'zone' | DATE_TRUNC('day', ts) | ts >= start AND ts < end
+anatomy: UTC = storage | AT TIME ZONE = convert | DATE_TRUNC = boundary | half-open range = safe filter
+example_1: SELECT TO_TIMESTAMP('01/10/2026', 'DD/MM/YYYY');
+example_2: SELECT NOW() - INTERVAL '7 days';
+example_3: SELECT EXTRACT(DOW FROM created_at) FROM stg_orders;
+variation: WHERE created_at BETWEEN '2026-10-01' AND '2026-10-01 23:59:59'   // risky, misses fractions
+used_with: aggregations, incremental loads, reports
+related: aggregations, types and nulls, incremental loads, backfills
+alternatives: Date dimension tables
+where_used: Daily reports | Event data | Backfills
+mini_conversation: A: Orders near midnight land on the wrong day. | B: Convert to the business time zone before truncating.
+misconception: ✗ BETWEEN with an end of 23:59:59 covers the whole day → ✓ It misses fractions of a second, so use a half-open range
+confused_with: Event time vs load time: event time is when it happened, load time is when we saw it.
+avoid: Do not mix local and UTC timestamps in one column.
+wrong_code: WHERE created_at BETWEEN '2026-10-01' AND '2026-10-01 23:59:59'
+right_code: WHERE created_at >= '2026-10-01' AND created_at < '2026-10-02'
+memory_trick: Start inclusive, end exclusive, store UTC.
+real_project: Switching to half-open ranges and UTC fixed missing late-night orders in a report.
+real_interview: An interviewer may ask: Why store timestamps in UTC?
+real_daily: It is like choosing one master clock.
+mcq_question: Which filter covers a whole day safely?
+mcq_options: A) Like the date B) BETWEEN with 23:59:59 C) Greater than or equal to the start and less than the next day D) Equal to the date only
+mcq_answer: C
+mcq_why: A half-open range includes every instant of the day.
+fill_blank: Timestamps are best stored in ____ → UTC
+hindi_to_task: Count orders on 1 October using a safe range.
+task_answer: SELECT COUNT(*) FROM stg_orders WHERE created_at >= '2026-10-01' AND created_at < '2026-10-02';
+own_task: Write a query that groups orders by business day in India time.
+practice_question: Why is BETWEEN with 23:59:59 risky?
+practice_answer: It misses fractions of a second at the end of the day.
+
+@ETL-019
+type: code56
+topic: 03 Transform
+level: Intermediate
+term: SQL transforms and window functions
+cue: Which SQL tools reshape data for analysis, such as CTEs and window functions?
+kind: Transform step
+frequency: High
+importance: 5
+origin: Warehouses run SQL fast, so most reshaping is written in SQL with clear steps using common table expressions and window functions.
+pro_tip: Break long queries into named CTEs that each do one thing.
+memory_story: CTEs are labelled work trays, and window functions look at neighbours without collapsing rows.
+visual: Several named steps feeding one final select.
+emotion: The calm of a long query that reads like a story.
+meaning: A CTE names an intermediate result for reuse in the same query, and a window function calculates over related rows while keeping every row.
+code: WITH paid AS (¶  SELECT * FROM fct_orders WHERE status = 'paid'¶), ranked AS (¶  SELECT customer_id, order_id, total,¶    SUM(total) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_total,¶    LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at) AS prev_total¶  FROM paid¶)¶SELECT * FROM ranked WHERE running_total > 500;
+output: Each paid order with the customer's running total and previous order amount, for running totals above 500.
+explanation: CTEs make queries readable and testable one step at a time. Window functions such as ROW_NUMBER, RANK, LAG, LEAD and running SUM use OVER with PARTITION BY and ORDER BY. They do not reduce rows like GROUP BY does. Views and models store such queries so others can reuse them.
+simple_explain: Use CTEs to name steps and window functions to compare rows without losing them.
+analogy: CTEs are labelled work trays, and window functions look at neighbours without collapsing rows.
+syntax: WITH name AS (select) | func() OVER (PARTITION BY k ORDER BY o)
+anatomy: WITH = CTE | OVER = window | PARTITION BY = groups | ORDER BY = sequence
+example_1: SELECT customer_id, RANK() OVER (ORDER BY total DESC) FROM fct_orders;
+example_2: SELECT order_id, LEAD(created_at) OVER (PARTITION BY customer_id ORDER BY created_at) FROM fct_orders;
+example_3: SELECT AVG(total) OVER (ORDER BY created_at ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) FROM fct_orders;
+variation: CREATE VIEW paid_orders AS SELECT * FROM fct_orders WHERE status = 'paid';   // reuse a step
+used_with: aggregations, deduplication, dbt models
+related: aggregations, deduplication, dbt basics, joins
+alternatives: Subqueries | pandas
+where_used: Analytics | Models | Reports
+mini_conversation: A: How do I compare each order with the previous one? | B: Use LAG over the customer in time order.
+misconception: ✗ Window functions collapse rows like GROUP BY → ✓ They keep every row and add a calculated column
+confused_with: GROUP BY vs window: GROUP BY reduces rows, a window keeps them.
+avoid: Do not nest many subqueries when CTEs would read better.
+wrong_code: SELECT customer_id, SUM(total) OVER () FROM fct_orders GROUP BY customer_id;
+right_code: SELECT customer_id, SUM(total) OVER (PARTITION BY customer_id) FROM fct_orders;
+memory_trick: Windows keep rows, groups collapse them.
+real_project: Rewriting a nested query as CTEs let reviewers test each step.
+real_interview: An interviewer may ask: What is the difference between RANK and ROW_NUMBER?
+real_daily: It is like labelled work trays.
+mcq_question: Which function reads the previous row's value?
+mcq_options: A) LAG B) SUM C) COUNT D) LEAD
+mcq_answer: A
+mcq_why: LAG looks backward in the window order.
+fill_blank: A named temporary result in a query is a ____ → CTE
+hindi_to_task: Add the previous order total next to each order.
+task_answer: SELECT *, LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at) AS prev_total FROM fct_orders;
+own_task: Write a running total per customer using a window.
+practice_question: Do window functions reduce the number of rows?
+practice_answer: No, every row is kept.
+
+@ETL-020
+type: code56
+topic: 03 Transform
+level: Intermediate
+term: dbt basics
+cue: Which tool turns SQL select statements into tested, documented warehouse models?
+kind: Tool
+frequency: High
+importance: 4
+origin: SQL transformations grew into tangled scripts, so dbt applies software habits such as version control, tests and documentation to them.
+pro_tip: Build in layers, such as staging, intermediate and marts.
+memory_story: dbt is a build system that turns your SQL recipes into tables in the right order.
+visual: A graph of models feeding each other.
+emotion: The pride of a tested, documented transformation project.
+meaning: dbt compiles SQL models, runs them in dependency order inside the warehouse, and runs tests and documentation from simple configuration files.
+code: -- models/staging/stg_orders.sql¶select order_id, customer_id, cast(total as numeric) as total¶from {{ source('shop', 'orders') }}¶-- models/marts/fct_orders.sql¶select o.*, c.country¶from {{ ref('stg_orders') }} o¶left join {{ ref('stg_customers') }} c using (customer_id)¶-- schema.yml: tests: [unique, not_null] on order_id¶-- run: dbt build
+output: Models run in dependency order, then tests check uniqueness and non-null order ids.
+explanation: ref links models and lets dbt order them, and source names raw tables. Materializations decide whether a model becomes a view, table or incremental table. Tests such as unique, not_null, relationships and accepted_values are declared in YAML. dbt docs generate documentation and lineage. dbt does the T of ELT only.
+simple_explain: Write select statements, link them with ref, add tests, and run dbt build.
+analogy: dbt is a build system that turns your SQL recipes into tables in the right order.
+syntax: {{ ref('model') }} | {{ source('schema', 'table') }} | dbt build
+anatomy: model = one select | ref = dependency | test = quality check | materialization = how it is stored
+example_1: {{ config(materialized='incremental') }}
+example_2: dbt test --select stg_orders
+example_3: dbt docs generate
+variation: dbt build --select +fct_orders   // run a model and its parents
+used_with: warehouses, Git, CI
+related: ETL vs ELT, SQL transforms, data quality checks, lineage
+alternatives: SQL scripts with an orchestrator | Dataform | SQLMesh
+where_used: Analytics engineering | Warehouse projects | Data teams
+mini_conversation: A: How do we know the model has no duplicate ids? | B: Add a unique test in the dbt schema file.
+misconception: ✗ dbt extracts and loads data too → ✓ It only transforms data that is already in the warehouse
+confused_with: ref vs source: ref points to another model, source points to a raw table.
+avoid: Do not hard-code table names that ref could manage.
+wrong_code: select * from analytics.stg_orders
+right_code: select * from {{ ref('stg_orders') }}
+memory_trick: Ref builds the order, tests keep it honest.
+real_project: Adding dbt tests caught a duplicated key before a dashboard broke.
+real_interview: An interviewer may ask: What does dbt do and not do?
+real_daily: It is like a build system for SQL recipes.
+mcq_question: Which function links one dbt model to another?
+mcq_options: A) config B) run C) source D) ref
+mcq_answer: D
+mcq_why: ref declares a dependency between models.
+fill_blank: dbt handles which letter of ELT, the ____ → T
+hindi_to_task: Reference the staging orders model from another model.
+task_answer: select * from {{ ref('stg_orders') }}
+own_task: Write a not_null and unique test for an order id.
+practice_question: Does dbt extract data from sources?
+practice_answer: No, it transforms data already in the warehouse.
+
+@ETL-021
+type: code56
+topic: 04 Load
+level: Intermediate
+term: Upserts
+cue: How do you insert new rows and update existing ones in a single step?
+kind: Load method
+frequency: Very high
+importance: 5
+origin: Reloading the same record twice must not create duplicates, so loads use an update-or-insert operation keyed on a unique id.
+pro_tip: Make sure the key has a unique constraint, or upserts will not work reliably.
+memory_story: An upsert is a clerk who updates the card if it exists and files a new one if not.
+visual: A new row either replacing a matching row or adding to the table.
+emotion: The confidence that reruns will not duplicate data.
+meaning: An upsert inserts a row if its key is new and updates the existing row if the key already exists, using INSERT ON CONFLICT or MERGE.
+code: INSERT INTO dim_customers (customer_id, name, email, updated_at)¶SELECT customer_id, name, email, updated_at FROM stg_customers¶ON CONFLICT (customer_id) DO UPDATE SET¶  name = EXCLUDED.name,¶  email = EXCLUDED.email,¶  updated_at = EXCLUDED.updated_at¶WHERE dim_customers.updated_at < EXCLUDED.updated_at;
+output: New customers are added, existing ones are updated, and older versions never overwrite newer ones.
+explanation: ON CONFLICT needs a unique index on the key. The WHERE clause protects against late older rows overwriting newer data. MERGE offers the same in warehouses, with match and not-matched branches. Deletes need separate handling. Upserts make loads idempotent, which means reruns give the same result.
+simple_explain: Key the table, upsert on the key, and only overwrite with newer data.
+analogy: An upsert is a clerk who updates the card if it exists and files a new one if not.
+syntax: INSERT ... ON CONFLICT (key) DO UPDATE SET col = EXCLUDED.col
+anatomy: ON CONFLICT = key clash | EXCLUDED = the incoming row | MERGE = warehouse form
+example_1: INSERT INTO t VALUES (1, 'a') ON CONFLICT (id) DO NOTHING;
+example_2: MERGE INTO dim_customers d USING stg_customers s ON d.customer_id = s.customer_id WHEN MATCHED THEN UPDATE SET name = s.name WHEN NOT MATCHED THEN INSERT (customer_id, name) VALUES (s.customer_id, s.name);
+example_3: CREATE UNIQUE INDEX ON dim_customers (customer_id);
+variation: REPLACE INTO t SELECT ...   // MySQL, deletes and reinserts
+used_with: idempotency, deduplication, incremental loads
+related: idempotency, deduplication, full vs incremental, schemas
+alternatives: Delete and insert by partition | truncate and load
+where_used: Dimension tables | Syncs | Reruns
+mini_conversation: A: A rerun doubled our rows. | B: Load with an upsert keyed on the id so reruns are safe.
+misconception: ✗ An upsert works without any unique key → ✓ It needs a unique constraint or merge key to know what already exists
+confused_with: Upsert vs insert: insert always adds, upsert updates when the key exists.
+avoid: Do not let older rows overwrite newer ones.
+wrong_code: INSERT INTO dim_customers SELECT * FROM stg_customers;   -- duplicates on rerun
+right_code: INSERT INTO dim_customers SELECT * FROM stg_customers ON CONFLICT (customer_id) DO NOTHING;
+memory_trick: Unique key first, then upsert.
+real_project: Switching to upserts made nightly reruns safe after a partial failure.
+real_interview: An interviewer may ask: How do you make a load idempotent?
+real_daily: It is like a clerk who updates or files new.
+mcq_question: What does an upsert need to work?
+mcq_options: A) A cursor B) A unique key C) A view D) A comment
+mcq_answer: B
+mcq_why: The key says whether a row already exists.
+fill_blank: PostgreSQL's upsert clause is ON ____ → CONFLICT
+hindi_to_task: Insert a customer and skip it if the id exists.
+task_answer: INSERT INTO dim_customers (customer_id, name) VALUES (1, 'Asha') ON CONFLICT (customer_id) DO NOTHING;
+own_task: Write an upsert that only updates when the incoming row is newer.
+practice_question: Why add a WHERE on updated_at to the upsert?
+practice_answer: To stop older late rows overwriting newer data.
+
+@ETL-022
+type: code56
+topic: 04 Load
+level: Intermediate
+term: Partitions
+cue: How do you split large tables into parts so loads and queries touch less data?
+kind: Load method
+frequency: High
+importance: 4
+origin: Scanning whole tables is slow and costly, so large tables are divided by a column, usually date, so queries read only the parts they need.
+pro_tip: Partition on the column most queries filter by, usually the event date.
+memory_story: Partitions are drawers in a filing cabinet labelled by month.
+visual: A large table divided into several date-labelled chunks.
+emotion: The thrill of a query that reads one drawer, not the whole cabinet.
+meaning: Partitioning divides a table into smaller physical pieces by a key such as date, so queries and loads can skip or replace whole pieces.
+code: CREATE TABLE fct_events (event_id BIGINT, event_date DATE, user_id BIGINT, payload JSONB)¶PARTITION BY RANGE (event_date);¶CREATE TABLE fct_events_2026_10 PARTITION OF fct_events¶  FOR VALUES FROM ('2026-10-01') TO ('2026-11-01');¶SELECT COUNT(*) FROM fct_events WHERE event_date >= '2026-10-01' AND event_date < '2026-10-02';
+output: The count reads only the October partition, and old months can be dropped cheaply.
+explanation: Partition pruning skips pieces that cannot match the filter. A load can replace one partition completely, which is a clean and idempotent way to rerun a day. Too many tiny partitions hurt performance. Warehouses use similar ideas with partition or cluster keys. Choose a key that matches the common filter.
+simple_explain: Partition by date, filter by date, and replace whole partitions on reruns.
+analogy: Partitions are drawers in a filing cabinet labelled by month.
+syntax: PARTITION BY RANGE (column)
+anatomy: partition key = date | pruning = skipped drawers | partition = one piece
+example_1: ALTER TABLE fct_events DETACH PARTITION fct_events_2025_01;
+example_2: DELETE FROM fct_events WHERE event_date = '2026-10-01'; INSERT INTO fct_events SELECT ... ;
+example_3: PARTITION BY (DATE(event_ts))   // warehouse style
+variation: CLUSTER BY customer_id   // sort data to speed up filters in some warehouses
+used_with: idempotency, backfills, file formats
+related: idempotency, backfills, Parquet, cost and performance
+alternatives: Clustering | indexes
+where_used: Event tables | Large facts | Retention
+mini_conversation: A: The query scans the whole table for one day. | B: Filter on the partition column so the engine skips the rest.
+misconception: ✗ Partitioning always makes queries faster → ✓ It helps only when queries filter on the partition key
+confused_with: Partition vs index: partitions split storage, an index speeds lookups.
+avoid: Do not create thousands of tiny partitions.
+wrong_code: SELECT * FROM fct_events WHERE DATE_TRUNC('month', event_date) = '2026-10-01';   -- may defeat pruning
+right_code: SELECT * FROM fct_events WHERE event_date >= '2026-10-01' AND event_date < '2026-10-02';
+memory_trick: Filter on the partition key to skip drawers.
+real_project: Partitioning the events table by day cut the daily report scan to a fraction.
+real_interview: An interviewer may ask: What is partition pruning?
+real_daily: It is like filing drawers labelled by month.
+mcq_question: When does partitioning help queries?
+mcq_options: A) When they filter on the partition key B) Never C) Always D) Only for inserts
+mcq_answer: A
+mcq_why: Pruning needs a filter on the key.
+fill_blank: Skipping partitions that cannot match is called partition ____ → pruning
+hindi_to_task: Count events for one day using the partition column.
+task_answer: SELECT COUNT(*) FROM fct_events WHERE event_date = '2026-10-01';
+own_task: Describe how to rerun one day by replacing its partition.
+practice_question: Why replace a partition on reruns?
+practice_answer: It makes the rerun clean and idempotent.
+
+@ETL-023
+type: topic56
+topic: 04 Load
+level: Intermediate
+term: File formats: CSV, JSON and Parquet
+cue: Which common file formats store data, and how do they differ in size, speed and types?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Data moves between systems as files, and each format trades readability against size, speed and type safety.
+pro_tip: Use Parquet for analytics storage and CSV or JSON only for exchange.
+memory_story: CSV is a plain notebook, JSON is a notebook with nested notes, and Parquet is a compressed filing cabinet organised by column.
+visual: Three file icons labelled by readability and size.
+emotion: The satisfaction of choosing a format that saves money.
+definition: CSV is a plain text table with no types, JSON is nested text with basic types, and Parquet is a compressed columnar binary format with a schema.
+explanation: CSV is easy to open but has no types, and commas, quotes and encodings cause errors. JSON handles nested data and is common for APIs, but is large and slow to scan. Parquet stores columns together, compresses well and carries a schema, so analytical queries read only the columns they need. Avro suits row-wise streaming records with schemas.
+simple_explain: Exchange with CSV or JSON, and store analytics data as Parquet.
+analogy: CSV is a plain notebook, JSON is a notebook with nested notes, and Parquet is a compressed filing cabinet.
+formula_rule: Readable = CSV and JSON. Fast and small = Parquet.
+example_1: A CSV export opened in a spreadsheet.
+example_2: A JSON API response with nested objects.
+example_3: A Parquet file read by a warehouse for one column.
+related: warehouse vs lake, partitions, schemas, cost and performance
+word_family: CSV, JSON, Parquet, Avro, columnar
+where_used: Data lakes | Exports | APIs
+mini_conversation: A: The lake bill is high and queries are slow. | B: Convert the raw CSV files into Parquet.
+misconception: ✗ CSV is a safe format for any data → ✓ It has no types, and quotes, commas and encodings often break it
+contrast: Row vs columnar: CSV stores rows, Parquet stores columns together.
+avoid: Do not store analytics data as large uncompressed CSV files.
+memory_trick: Parquet stores columns, CSV stores lines.
+real_project: Converting a lake from CSV to Parquet cut storage and query cost substantially.
+real_interview: An interviewer may ask: Why is Parquet good for analytics?
+real_daily: It is like a compressed filing cabinet.
+mcq_question: Which format stores data by column with a schema?
+mcq_options: A) JSON B) Text C) CSV D) Parquet
+mcq_answer: D
+mcq_why: Parquet is columnar and typed.
+fill_blank: Parquet is a ____ storage format → columnar
+apply: Large analytics tables need small, fast storage. Which format? → Parquet
+explain_task: Explain the three formats in three lines.
+own_task: Choose a format for an API payload, an export and a lake table.
+
+@ETL-024
+type: topic56
+topic: 04 Load
+level: Beginner
+term: Schemas
+cue: Which definitions say the names, types and rules of each column in a table?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Data without agreed structure produces errors, so schemas state what every column should be.
+pro_tip: Enforce schemas on write where possible, so bad data is stopped early.
+memory_story: A schema is the blueprint of a table that says what goes in each room.
+visual: A table header with column names, types and constraints.
+emotion: The comfort of data that has a known shape.
+definition: A schema defines the columns of a table or file, with their names, data types, nullability and constraints such as keys.
+explanation: Schema on write rejects data that does not fit when it is stored, while schema on read applies structure only when the data is queried. Constraints such as not null, unique and primary key protect quality. Schemas also describe files such as Parquet and messages in streams. Documenting meaning, not only types, helps users.
+simple_explain: Define columns and rules, and enforce them early.
+analogy: A schema is the blueprint of a table that says what goes in each room.
+formula_rule: Name + type + nullability + constraints.
+example_1: A table with a primary key and a not null email.
+example_2: A Parquet file with a typed schema.
+example_3: A stream message with a registered schema.
+related: data contracts, schema changes, types and nulls, file formats
+word_family: schema, constraint, primary key, type, nullability
+where_used: Databases | Lakes | Streams
+mini_conversation: A: Can this column be empty? | B: The schema says not null, so reject rows without it.
+misconception: ✗ A schema is only documentation → ✓ It is a set of rules that can be enforced by the system
+contrast: Schema on write vs schema on read: one checks when storing, the other when querying.
+avoid: Do not leave key columns without constraints.
+memory_trick: Define the shape, then enforce the shape.
+real_project: Adding not-null constraints stopped half-empty rows reaching the reporting tables.
+real_interview: An interviewer may ask: What is the difference between schema on write and on read?
+real_daily: It is like a blueprint for a table.
+mcq_question: Which constraint stops duplicate keys?
+mcq_options: A) A schema name B) A comment C) Primary key D) View
+mcq_answer: C
+mcq_why: A primary key enforces uniqueness.
+fill_blank: Rules that protect columns are called ____ → constraints
+apply: Rows without an email keep arriving. What do you add? → A not null constraint
+explain_task: Explain schemas in three lines.
+own_task: Write a schema for a customers table with four columns.
+
+@ETL-025
+type: topic56
+topic: 04 Load
+level: Advanced
+term: Schema changes
+cue: How do you handle sources that add, remove or change columns over time?
+category: Core concept
+frequency: High
+importance: 5
+origin: Source systems evolve, so pipelines that assume a fixed shape break unless they detect and absorb changes safely.
+pro_tip: Prefer additive changes and test for breaking ones automatically.
+memory_story: A schema change is a rebuild of one room while guests still live in the house.
+visual: A column appearing in the source and an alert in the pipeline.
+emotion: The relief of an alert before a break.
+definition: Schema evolution is the process of detecting and applying changes such as new, renamed, removed or retyped columns without breaking downstream users.
+explanation: Adding a nullable column is usually safe. Renames and removals break consumers, and type changes can lose precision. Pipelines can compare the incoming schema with the expected one and fail loudly, or evolve the target automatically for safe changes. Expand and contract migrations let old and new live together. Communicating changes through contracts avoids surprises.
+simple_explain: Detect changes, allow safe additions, and treat renames, removals and type changes as breaking.
+analogy: A schema change is rebuilding one room while guests still live in the house.
+formula_rule: Additive = usually safe. Rename, remove, retype = breaking.
+example_1: A new nullable column added by the source.
+example_2: A renamed column that fails a contract test.
+example_3: A type change from integer to text.
+related: data contracts, schemas, dbt basics, alerts
+word_family: evolution, additive, breaking, drift, migration
+where_used: Source integrations | Platform operations | Releases
+mini_conversation: A: The source added a column overnight. | B: That is additive, so the target can take it without breaking.
+misconception: ✗ All schema changes can be ignored by the pipeline → ✓ Breaking changes silently corrupt or drop data if not detected
+contrast: Additive vs breaking change: adding is usually safe, renaming or removing is not.
+avoid: Do not let the pipeline silently drop unknown columns.
+memory_trick: Add freely, rename and remove with warning.
+real_project: A schema comparison step caught a type change before it corrupted a revenue table.
+real_interview: An interviewer may ask: How do you detect schema drift?
+real_daily: It is like rebuilding one room while guests stay.
+mcq_question: Which change is usually safe?
+mcq_options: A) Removing a column B) Changing a type C) Adding a nullable column D) Renaming a column
+mcq_answer: C
+mcq_why: Consumers that ignore the new column are unaffected.
+fill_blank: A gradual difference between expected and actual schema is called ____ → drift
+apply: A source renames a column. What kind of change is it? → A breaking change
+explain_task: Explain schema changes in three lines.
+own_task: Write a rule for what the pipeline does with each kind of change.

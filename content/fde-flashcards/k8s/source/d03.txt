@@ -1,0 +1,618 @@
+
+@K8S-022
+type: code56
+topic: 04 Networking
+level: Beginner
+term: Services
+cue: Which object gives pods a stable address and load balances across them?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Pods come and go with changing IPs, so a Service provides one fixed name and address in front of a changing set of pods.
+pro_tip: Use ClusterIP for internal traffic, and expose to the outside through an Ingress or LoadBalancer.
+memory_story: A Service is a reception desk with one phone number that forwards calls to whoever is on shift.
+visual: One stable address spreading traffic to three pods.
+emotion: The relief of an address that never changes.
+meaning: A Service selects pods by label and exposes them on a stable virtual IP and DNS name, in types ClusterIP, NodePort and LoadBalancer.
+code: apiVersion: v1¶kind: Service¶metadata:¶  name: web¶spec:¶  type: ClusterIP¶  selector:¶    app: web¶  ports:¶    - port: 80¶      targetPort: 8080
+output: Traffic to web on port 80 inside the cluster reaches port 8080 of any ready pod labelled app web.
+explanation: ClusterIP is reachable only inside the cluster. NodePort opens the same port on every node. LoadBalancer asks the cloud for an external load balancer. Only ready pods receive traffic. Port is the Service port and targetPort is the container port. A headless Service, with clusterIP None, returns pod addresses directly.
+simple_explain: A Service gives a stable name and balances traffic across matching ready pods.
+analogy: A Service is a reception desk with one phone number that forwards calls to whoever is on shift.
+syntax: kind: Service / spec: type, selector, ports
+anatomy: selector = which pods | port = Service port | targetPort = container port | type = exposure
+example_1: kubectl expose deployment web --port=80 --target-port=8080
+example_2: type: LoadBalancer
+example_3: kubectl get endpointslices -l kubernetes.io/service-name=web
+variation: clusterIP: None   // headless Service
+used_with: Deployments, Ingress, DNS
+related: labels and selectors, Ingress, DNS in the cluster, probes
+alternatives: Ingress | service mesh
+where_used: Every networked app | Internal APIs | Databases
+mini_conversation: A: Requests to the Service time out. | B: Check that endpoints exist, so the selector matches ready pods.
+misconception: ✗ A Service type of NodePort is the best way to expose production apps → ✓ Ingress or a LoadBalancer is usually better
+confused_with: port vs targetPort: port is the Service side, targetPort is the container side.
+avoid: Do not point a selector at labels the pods do not have.
+wrong_code: selector: { app: web-app }
+right_code: selector: { app: web }
+memory_trick: Port is the front door, targetPort is the room.
+real_project: Checking endpoints showed that a label typo left a Service with no pods.
+real_interview: An interviewer may ask: What are the Service types?
+real_daily: It is like a reception desk with one phone number.
+mcq_question: Which Service type is reachable only inside the cluster?
+mcq_options: A) NodePort B) LoadBalancer C) ClusterIP D) Ingress
+mcq_answer: C
+mcq_why: ClusterIP is internal by default.
+fill_blank: The list of pod addresses behind a Service is its ____ → endpoints
+hindi_to_task: Expose the deployment web on port 80.
+task_answer: kubectl expose deployment web --port=80
+own_task: Write a Service sending port 80 to container port 3000.
+practice_question: Which pods receive traffic from a Service?
+practice_answer: Ready pods whose labels match the selector.
+
+@K8S-023
+type: code56
+topic: 04 Networking
+level: Intermediate
+term: Ingress
+cue: Which object routes outside HTTP traffic to Services by host and path?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: One load balancer per Service is costly, so Ingress shares one entry point and routes by rules.
+pro_tip: Install an ingress controller first, since the Ingress object alone does nothing.
+memory_story: Ingress is the building's front desk that directs visitors to the right office by name.
+visual: One entry point splitting to several Services by path.
+emotion: The tidiness of one entry for many apps.
+meaning: An Ingress defines HTTP and HTTPS routing rules by host and path, which an ingress controller such as Traefik or a cloud load balancer controller implements, often with TLS certificates.
+code: apiVersion: networking.k8s.io/v1¶kind: Ingress¶metadata:¶  name: shop¶spec:¶  ingressClassName: traefik   # use the class name of the controller you installed¶  tls:¶    - hosts: [shop.example.com]¶      secretName: shop-tls¶  rules:¶    - host: shop.example.com¶      http:¶        paths:¶          - path: /api¶            pathType: Prefix¶            backend: { service: { name: api, port: { number: 80 } } }¶          - path: /¶            pathType: Prefix¶            backend: { service: { name: web, port: { number: 80 } } }
+output: Requests to shop.example.com/api go to the api Service, and everything else goes to web, over HTTPS.
+explanation: The controller runs in the cluster and watches Ingress objects. TLS certificates are stored in Secrets and can be issued automatically with cert-manager. The Gateway API is a newer, more expressive alternative. Rules are matched by host and path. Annotations tune controller behaviour.
+simple_explain: Install a controller, then write Ingress rules from hosts and paths to Services.
+analogy: Ingress is the front desk that directs visitors to the right office by name.
+syntax: kind: Ingress / spec: rules, tls, ingressClassName
+anatomy: host = domain | path = URL part | backend = Service | tls = certificate secret
+example_1: kubectl get ingress
+example_2: cert-manager.io/cluster-issuer: letsencrypt
+example_3: pathType: Exact
+variation: kind: HTTPRoute   // the Gateway API form
+used_with: Services, TLS, cert-manager
+related: Services, DNS, HTTPS and TLS, certificates
+alternatives: Gateway API | LoadBalancer per Service
+where_used: Web apps | APIs | Multi-app clusters
+mini_conversation: A: I created an Ingress but nothing happens. | B: There is no ingress controller installed yet.
+misconception: ✗ An Ingress works without a controller → ✓ A controller must run to act on the rules
+confused_with: Ingress vs Service: Ingress routes HTTP into Services, Service balances to pods.
+avoid: Do not forget the TLS secret for HTTPS hosts.
+wrong_code: kind: Ingress   # applied with no controller installed
+right_code: # install any maintained ingress controller (for example Traefik, a cloud controller or a Gateway API implementation), then apply the Ingress
+memory_trick: Without a controller there is no routing.
+real_project: One Ingress replaced five separate cloud load balancers and cut cost.
+real_interview: An interviewer may ask: What is the difference between Ingress and a Service?
+real_daily: It is like a front desk directing visitors.
+mcq_question: What must run for Ingress rules to work?
+mcq_options: A) An ingress controller B) A DaemonSet only C) A CronJob D) A StatefulSet
+mcq_answer: A
+mcq_why: The controller implements the rules.
+fill_blank: Certificates for Ingress are stored in a ____ → Secret
+hindi_to_task: List the Ingress objects.
+task_answer: kubectl get ingress
+own_task: Write rules sending /api and / to two Services.
+practice_question: What does pathType Prefix do?
+practice_answer: It matches any path beginning with the given text.
+
+@K8S-024
+type: topic56
+topic: 04 Networking
+level: Intermediate
+term: DNS in the cluster
+cue: How do pods find Services by name inside a cluster?
+category: Core concept
+frequency: High
+importance: 4
+origin: Pod addresses change, so the cluster runs DNS that turns Service names into virtual addresses.
+pro_tip: Use the short Service name inside the same namespace and the longer form across namespaces.
+memory_story: Cluster DNS is the internal phone book that lists every Service by name.
+visual: A pod resolving api and receiving a cluster address.
+emotion: The comfort of calling services by name.
+definition: Cluster DNS, usually CoreDNS, creates names such as service.namespace.svc.cluster.local for every Service, and pods use it automatically through their resolver settings.
+explanation: Inside one namespace, api reaches the Service called api. From another namespace use api.shop or the full name. Headless Services return pod addresses, and StatefulSet pods get individual names. Search domains in resolv.conf allow short names. If lookups fail, check CoreDNS pods and network policies.
+simple_explain: Use Service names as hostnames, and add the namespace across namespaces.
+analogy: Cluster DNS is the internal phone book listing every Service by name.
+formula_rule: service.namespace.svc.cluster.local
+example_1: http://api inside the same namespace.
+example_2: http://api.shop across namespaces.
+example_3: db-0.db.shop.svc.cluster.local for a StatefulSet pod.
+related: Services, namespaces, StatefulSets, network policies
+word_family: CoreDNS, FQDN, search domain, headless, resolver
+where_used: Service calls | Debugging | Configuration
+mini_conversation: A: Can the web pod reach the api in another namespace? | B: Yes, use api.shop as the host.
+misconception: ✗ Pods must use IP addresses to find Services → ✓ Cluster DNS gives stable names
+contrast: Short name vs full name: short works within a namespace, full works anywhere.
+avoid: Do not hard-code pod IP addresses.
+memory_trick: Name, namespace, svc, cluster, local.
+real_project: Switching configs from IPs to Service names removed breakage after pod restarts.
+real_interview: An interviewer may ask: How does a pod resolve a Service name?
+real_daily: It is like an internal phone book.
+mcq_question: Which component usually provides cluster DNS?
+mcq_options: A) kubelet B) etcd C) kube-proxy D) CoreDNS
+mcq_answer: D
+mcq_why: CoreDNS serves the cluster.local names.
+fill_blank: The default cluster domain is ____ → cluster.local
+apply: A pod must call a Service in the shop namespace. Which host? → api.shop
+explain_task: Explain cluster DNS in three lines.
+own_task: Write the full DNS name of a Service called api in namespace shop.
+
+@K8S-025
+type: code56
+topic: 04 Networking
+level: Advanced
+term: Network policies
+cue: Which objects restrict which pods may talk to each other?
+kind: Resource
+frequency: High
+importance: 5
+origin: By default every pod can reach every other pod, so network policies add firewall-like rules at pod level.
+pro_tip: Start with a default deny policy per namespace, then allow only needed flows.
+memory_story: A network policy is a guest list at each pod's door.
+visual: Arrows allowed between frontend and api but blocked to the database.
+emotion: The confidence of limited blast radius.
+meaning: A NetworkPolicy selects pods and lists allowed ingress and egress traffic by pod, namespace or IP range, and it is enforced by a network plug-in that supports it.
+code: apiVersion: networking.k8s.io/v1¶kind: NetworkPolicy¶metadata:¶  name: db-allow-api¶  namespace: shop¶spec:¶  podSelector:¶    matchLabels: { app: db }¶  policyTypes: [Ingress]¶  ingress:¶    - from:¶        - podSelector:¶            matchLabels: { app: api }¶      ports:¶        - { protocol: TCP, port: 5432 }
+output: Only pods labelled app api can reach the db pods on port 5432, and other ingress is denied.
+explanation: Once a pod is selected by a policy for a direction, all traffic not allowed is denied. Policies are additive. Without a plug-in that enforces them, policies have no effect. Egress rules also need DNS allowed. A default deny policy uses an empty podSelector.
+simple_explain: Deny by default, then allow specific pods and ports.
+analogy: A network policy is a guest list at each pod's door.
+syntax: kind: NetworkPolicy / podSelector / policyTypes / ingress / egress
+anatomy: podSelector = who is protected | from and to = allowed peers | ports = allowed ports
+example_1: podSelector: {}   // all pods in the namespace
+example_2: policyTypes: [Ingress, Egress]
+example_3: ipBlock: { cidr: 10.0.0.0/16 }
+variation: namespaceSelector: { matchLabels: { team: web } }   // allow a whole namespace
+used_with: labels, namespaces, CNI plug-ins
+related: labels and selectors, namespaces, zero trust, firewalls
+alternatives: Service mesh policies | cloud security groups
+where_used: Multi-tenant clusters | Databases | Compliance
+mini_conversation: A: Any pod can reach our database. | B: Add a network policy that allows only the api.
+misconception: ✗ Network policies work on any cluster → ✓ They need a network plug-in that enforces them
+confused_with: Network policy vs security group: one is per pod inside the cluster, the other is per cloud instance.
+avoid: Do not forget to allow DNS in egress rules.
+wrong_code: podSelector: {}   # with no rules, intended as allow all
+right_code: ingress: [{ from: [{ podSelector: { matchLabels: { app: api } } }] }]
+memory_trick: Select the pod, list who may enter.
+real_project: A default deny policy limited a compromised pod's reach to nothing else.
+real_interview: An interviewer may ask: What happens to pods not selected by any policy?
+real_daily: It is like a guest list at the door.
+mcq_question: What happens to pods not selected by any policy?
+mcq_options: A) They stop B) They restart C) All traffic is denied D) All traffic is allowed
+mcq_answer: D
+mcq_why: Policies apply only to selected pods.
+fill_blank: A policy that blocks everything for selected pods is called default ____ → deny
+hindi_to_task: Select every pod in a namespace.
+task_answer: podSelector: {}
+own_task: Write a policy letting only the web pods reach the api on port 8080.
+practice_question: Why can policies have no effect?
+practice_answer: The network plug-in may not enforce them.
+
+@K8S-026
+type: topic56
+topic: 04 Networking
+level: Intermediate
+term: Ports and health endpoints
+cue: How do container ports, Service ports and health endpoints fit together?
+category: Core concept
+frequency: High
+importance: 4
+origin: Traffic passes through several port definitions, and mixing them up is a common cause of broken access.
+pro_tip: Name container ports and refer to the name in Services and probes.
+memory_story: Ports are a chain of doors, and each door must lead to the next.
+visual: A request passing Ingress, Service and container ports.
+emotion: The satisfaction of tracing a request end to end.
+definition: containerPort declares the port an app listens on, a Service port exposes it, targetPort links them, and probes check a health endpoint on the container port.
+explanation: containerPort is informational but useful for naming. The app must listen on 0.0.0.0, not only localhost, or Services cannot reach it. A named port such as http can be used in targetPort and probes. Health endpoints should be cheap and separate for liveness and readiness. Debug by port-forwarding to the pod and then the Service.
+simple_explain: Make the app listen on all addresses, then match Service targetPort and probes to that port.
+analogy: Ports are a chain of doors, and each door must lead to the next.
+formula_rule: Ingress → Service port → targetPort → containerPort.
+example_1: ports: [{ name: http, containerPort: 8080 }]
+example_2: targetPort: http
+example_3: readinessProbe on path /ready port http
+related: Services, probes, Ingress, port-forward
+word_family: containerPort, targetPort, named port, listen address, health endpoint
+where_used: Every deployment | Debugging | Probes
+mini_conversation: A: The Service cannot reach the app. | B: The app listens only on localhost, so bind to 0.0.0.0.
+misconception: ✗ Declaring containerPort opens the port → ✓ The app must actually listen, and the declaration is informational
+contrast: containerPort vs targetPort: one declares, the other routes.
+avoid: Do not bind servers to localhost in containers.
+memory_trick: Listen on all addresses, route by name.
+real_project: Binding to 0.0.0.0 fixed a Service that could never reach its pods.
+real_interview: An interviewer may ask: Why can a Service fail to reach a running pod?
+real_daily: It is like a chain of doors.
+mcq_question: Which address should containerised servers bind to?
+mcq_options: A) localhost only B) 0.0.0.0 C) 127.0.0.1 only D) 10.0.0.1
+mcq_answer: B
+mcq_why: Other pods connect from outside the container.
+fill_blank: A port given a label can be referenced by its ____ → name
+apply: A Service cannot reach a running app. What do you check first? → The address the app listens on
+explain_task: Explain how the port definitions connect in three lines.
+own_task: Name a container port and use it in a Service and a probe.
+
+@K8S-027
+type: topic56
+topic: 04 Networking
+level: Advanced
+term: Service mesh idea
+cue: Which layer adds secure, observable service-to-service traffic through sidecar proxies?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Large systems need encryption, retries and tracing between services without changing each app, so proxies handle it next to every pod.
+pro_tip: Adopt a mesh only when you need its features, since it adds complexity.
+memory_story: A mesh is a private courier service that wraps and tracks every message between offices.
+visual: Pods with small proxy sidecars connected by a control layer.
+emotion: The curiosity of seeing every call traced.
+definition: A service mesh, such as Istio or Linkerd, places proxies beside application containers to provide mutual TLS, traffic routing, retries and metrics, managed by a control plane.
+explanation: Apps call each other normally, while proxies encrypt, authenticate and measure the calls. Meshes enable canary routing, timeouts and circuit breaking by configuration. The cost is extra resources, learning effort and debugging layers. Sidecarless modes exist, such as Istio ambient mode. Many teams meet the same needs with simpler tools first.
+simple_explain: A mesh handles secure and observable service calls through proxies.
+analogy: A mesh is a private courier service that wraps and tracks every message between offices.
+formula_rule: Sidecar proxies + mesh control plane.
+example_1: Mutual TLS between all services by default.
+example_2: Sending ten percent of traffic to a new version.
+example_3: Automatic retries and timeouts.
+related: network policies, canary releases, mutual TLS, observability
+word_family: Istio, Linkerd, sidecar, mTLS, proxy
+where_used: Large microservice platforms | Zero trust | Traffic control
+mini_conversation: A: We need encrypted traffic between every service. | B: A mesh can enforce mutual TLS without changing the code.
+misconception: ✗ Every cluster needs a service mesh → ✓ Many clusters work well without one
+contrast: Mesh vs network policy: a mesh handles identity and traffic features, a policy only allows or blocks.
+avoid: Do not adopt a mesh without a clear need.
+memory_trick: Proxies beside every pod, control plane above.
+real_project: A mesh gave a customer mutual TLS and per-service metrics without code changes.
+real_interview: An interviewer may ask: What does a service mesh provide?
+real_daily: It is like a courier service that wraps every message.
+mcq_question: What does a sidecar proxy do in a mesh?
+mcq_options: A) Handles encryption and traffic features B) Stores data C) Builds images D) Schedules pods
+mcq_answer: A
+mcq_why: The proxy intercepts service calls.
+fill_blank: Encryption where both sides verify each other is mutual ____ → TLS
+apply: A customer wants encrypted traffic everywhere with no code change. What do you suggest? → A service mesh
+explain_task: Explain the service mesh idea in three lines.
+own_task: List two benefits and two costs of a mesh.
+
+@K8S-028
+type: code56
+topic: 05 Reliability
+level: Beginner
+term: Liveness and readiness probes
+cue: Which checks tell Kubernetes whether to restart a container or send it traffic?
+kind: Resource setting
+frequency: Very high
+importance: 5
+origin: A running process may be stuck or not ready yet, so probes let the kubelet test health and react.
+pro_tip: Use readiness to control traffic and liveness only to restart a truly stuck app.
+memory_story: Readiness is a green light for guests, and liveness is a pulse check that calls the doctor.
+visual: A pod with two health checks and different outcomes.
+emotion: The comfort of pods that heal and wait their turn.
+meaning: A readiness probe decides whether a pod receives traffic, a liveness probe restarts a container that fails, and a startup probe protects slow starters.
+code: containers:¶  - name: app¶    image: acme/web:1.4.2¶    readinessProbe:¶      httpGet: { path: /ready, port: 8080 }¶      periodSeconds: 5¶    livenessProbe:¶      httpGet: { path: /healthz, port: 8080 }¶      initialDelaySeconds: 20¶      periodSeconds: 10¶      failureThreshold: 3¶    startupProbe:¶      httpGet: { path: /healthz, port: 8080 }¶      failureThreshold: 30¶      periodSeconds: 2
+output: Traffic is withheld until ready passes, a stuck container is restarted after three failed liveness checks, and slow startup is tolerated.
+explanation: Failing readiness removes the pod from Service endpoints without restarting it. Failing liveness restarts the container, so a check that depends on a database can cause restart storms. Probes can be HTTP, TCP or commands. Startup probes disable the others until they succeed. Tune thresholds to avoid false failures.
+simple_explain: Ready means send traffic, live means do not restart, and startup covers slow boots.
+analogy: Readiness is a green light for guests, and liveness is a pulse check that calls the doctor.
+syntax: readinessProbe | livenessProbe | startupProbe with httpGet, tcpSocket or exec
+anatomy: periodSeconds = interval | failureThreshold = failures allowed | initialDelaySeconds = first wait
+example_1: tcpSocket: { port: 5432 }
+example_2: exec: { command: ["cat", "/tmp/healthy"] }
+example_3: timeoutSeconds: 2
+variation: grpc: { port: 9000 }   // probe a gRPC health service
+used_with: Services, rolling updates, resource limits
+related: Services, rolling updates, HEALTHCHECK in Docker, requests and limits
+alternatives: Application-level self checks
+where_used: Every production pod | Rollouts | Self-healing
+mini_conversation: A: Pods restart endlessly when the database is slow. | B: The liveness probe depends on the database, so make it check only the app itself.
+misconception: ✗ Liveness and readiness probes do the same job → ✓ Readiness controls traffic, liveness triggers restarts
+confused_with: Liveness vs readiness: restart versus route traffic.
+avoid: Do not make liveness depend on outside systems.
+wrong_code: livenessProbe: { httpGet: { path: /db-check, port: 8080 } }
+right_code: livenessProbe: { httpGet: { path: /healthz, port: 8080 } }
+memory_trick: Readiness routes traffic, liveness restarts containers.
+real_project: Separating readiness from liveness stopped restart loops during database slowness.
+real_interview: An interviewer may ask: What is the difference between liveness and readiness?
+real_daily: It is like a green light and a pulse check.
+mcq_question: What happens when readiness fails?
+mcq_options: A) The node reboots B) The container restarts C) The pod is removed from Service endpoints D) The image is deleted
+mcq_answer: C
+mcq_why: It stops receiving traffic but keeps running.
+fill_blank: The probe that protects slow starters is the ____ probe → startup
+hindi_to_task: Add a readiness check on /ready port 8080.
+task_answer: readinessProbe: { httpGet: { path: /ready, port: 8080 } }
+own_task: Write liveness and readiness probes with different paths.
+practice_question: What does a failing liveness probe cause?
+practice_answer: A container restart.
+
+@K8S-029
+type: code56
+topic: 05 Reliability
+level: Intermediate
+term: Requests and limits
+cue: Which settings reserve and cap CPU and memory for containers?
+kind: Resource setting
+frequency: Very high
+importance: 5
+origin: Pods share nodes, so the scheduler needs to know how much each needs and the kubelet needs to stop greedy ones.
+pro_tip: Set requests from measured usage, and set memory limits to protect the node.
+memory_story: A request is a reserved seat, and a limit is the cap on how much a guest may eat.
+visual: A bar showing reserved and maximum usage for a container.
+emotion: The calm of sharing a node in a predictable way.
+meaning: A request is the amount the scheduler reserves for scheduling decisions, and a limit is the maximum a container may use, with CPU throttled and memory exceeded causing an out-of-memory kill.
+code: resources:¶  requests:¶    cpu: 250m¶    memory: 256Mi¶  limits:¶    cpu: "1"¶    memory: 512Mi
+output: The scheduler places the pod on a node with 250 millicores and 256Mi free, and the container is killed if it exceeds 512Mi.
+explanation: CPU is measured in cores, where 500m is half a core. Exceeding a CPU limit slows the container, while exceeding a memory limit kills it with status OOMKilled. Pods are classed as Guaranteed, Burstable or BestEffort, which decides eviction order. Without requests, scheduling is blind. Limit ranges and quotas set defaults per namespace.
+simple_explain: Requests reserve capacity for scheduling, and limits cap usage.
+analogy: A request is a reserved seat, and a limit is the cap on how much a guest may eat.
+syntax: resources: { requests: { cpu, memory }, limits: { cpu, memory } }
+anatomy: requests = reserved | limits = maximum | m = millicores | Mi = mebibytes
+example_1: kubectl top pods
+example_2: kubectl describe pod web-1   // shows OOMKilled
+example_3: cpu: 100m
+variation: LimitRange   // default requests per namespace
+used_with: autoscaling, quotas, monitoring
+related: autoscaling, quotas, nodes, resource limits in Docker
+alternatives: Vertical pod autoscaler
+where_used: Every workload | Capacity planning | Cost control
+mini_conversation: A: The pod restarts with OOMKilled. | B: It exceeded its memory limit, so raise it or fix the leak.
+misconception: ✗ CPU limits kill containers like memory limits → ✓ CPU is throttled, and only memory overuse causes a kill
+confused_with: Request vs limit: request reserves, limit caps.
+avoid: Do not run pods without requests.
+wrong_code: resources: {}   # unknown needs
+right_code: resources: { requests: { cpu: 250m, memory: 256Mi }, limits: { memory: 512Mi } }
+memory_trick: Requests help schedule, limits help restrain usage.
+real_project: Setting requests from measured usage ended random evictions on a busy node.
+real_interview: An interviewer may ask: What happens when a container exceeds its memory limit?
+real_daily: It is like a reserved seat and a cap on eating.
+mcq_question: What happens when a container exceeds its memory limit?
+mcq_options: A) It is killed with OOMKilled B) It gets more memory C) It is throttled D) It is ignored
+mcq_answer: A
+mcq_why: Memory cannot be throttled.
+fill_blank: 500m of CPU means half a ____ → core
+hindi_to_task: Request 250 millicores and 256Mi memory.
+task_answer: resources: { requests: { cpu: 250m, memory: 256Mi } }
+own_task: Write requests and a memory limit for an API container.
+practice_question: What does OOMKilled mean?
+practice_answer: The container exceeded its memory limit and was killed.
+
+@K8S-030
+type: code56
+topic: 05 Reliability
+level: Intermediate
+term: Autoscaling
+cue: Which features add pods or nodes automatically as load changes?
+kind: Resource
+frequency: High
+importance: 4
+origin: Load varies, so Kubernetes can scale pod counts, pod sizes and node counts automatically.
+pro_tip: Set CPU requests properly, since the horizontal autoscaler uses them as the baseline.
+memory_story: Autoscaling is a restaurant opening more tables as the crowd arrives.
+visual: A graph of load with the pod count following it.
+emotion: The calm of capacity that appears automatically.
+meaning: The Horizontal Pod Autoscaler changes replica counts from metrics such as CPU, the Vertical Pod Autoscaler adjusts requests, and a cluster autoscaler adds or removes nodes.
+code: apiVersion: autoscaling/v2¶kind: HorizontalPodAutoscaler¶metadata:¶  name: web¶spec:¶  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: web }¶  minReplicas: 2¶  maxReplicas: 10¶  metrics:¶    - type: Resource¶      resource:¶        name: cpu¶        target: { type: Utilization, averageUtilization: 60 }
+output: The Deployment scales between two and ten pods to keep average CPU near sixty percent of requests.
+explanation: The metrics server must be installed. Utilisation is measured against requests, so missing requests break scaling. Scale-up is fast and scale-down is slow to avoid flapping. Custom metrics can scale on queue length. When pods cannot be scheduled, the cluster autoscaler adds nodes.
+simple_explain: Set min and max replicas and a target, and the autoscaler adjusts counts.
+analogy: Autoscaling is a restaurant opening more tables as the crowd arrives.
+syntax: kind: HorizontalPodAutoscaler / minReplicas / maxReplicas / metrics
+anatomy: HPA = more pods | VPA = bigger pods | cluster autoscaler = more nodes
+example_1: kubectl autoscale deployment web --min=2 --max=10 --cpu-percent=60
+example_2: kubectl get hpa
+example_3: type: Pods with a custom metric
+variation: behavior: { scaleDown: { stabilizationWindowSeconds: 300 } }   // slow scale-down
+used_with: requests and limits, metrics server, Deployments
+related: requests and limits, Deployments, cloud auto scaling, monitoring
+alternatives: KEDA for event-driven scaling
+where_used: Web services | Workers | Cost control
+mini_conversation: A: The HPA shows unknown metrics. | B: The metrics server or the CPU requests are missing.
+misconception: ✗ Autoscaling works without resource requests → ✓ Utilisation is a share of requests, so they are required
+confused_with: HPA vs cluster autoscaler: pods versus nodes.
+avoid: Do not set minReplicas to one for critical services.
+wrong_code: resources: {}   # HPA on CPU utilisation cannot work without CPU requests
+right_code: kubectl autoscale deployment web --min=2 --max=10 --cpu-percent=60
+memory_trick: HPA scales pods, cluster autoscaler scales nodes.
+real_project: An HPA absorbed evening traffic peaks without manual scaling.
+real_interview: An interviewer may ask: What does the HPA need to work?
+real_daily: It is like a restaurant opening more tables.
+mcq_question: Which autoscaler changes the number of pods?
+mcq_options: A) Cluster autoscaler B) VPA C) kubelet D) HPA
+mcq_answer: D
+mcq_why: The horizontal autoscaler changes replicas.
+fill_blank: The add-on that supplies CPU and memory usage numbers to the autoscaler is the ____ server → metrics
+hindi_to_task: Autoscale web between two and ten pods at sixty percent CPU.
+task_answer: kubectl autoscale deployment web --min=2 --max=10 --cpu-percent=60
+own_task: Write an HPA for a worker Deployment.
+practice_question: Why does the HPA need CPU requests?
+practice_answer: Utilisation is measured against the requested amount.
+
+@K8S-031
+type: topic56
+topic: 05 Reliability
+level: Advanced
+term: Taints and tolerations
+cue: Which pair keeps pods off certain nodes unless they explicitly accept them?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Some nodes are reserved for special work, so taints repel pods and tolerations let chosen pods in.
+pro_tip: Taint special nodes, and add tolerations only to the pods that belong there.
+memory_story: A taint is a warning sign on a room, and a toleration is a permission slip to enter.
+visual: A node with a sign and only some pods carrying permission.
+emotion: The tidiness of nodes kept for special work.
+definition: A taint on a node repels pods that do not tolerate it, and a toleration on a pod lets it be scheduled onto nodes with a matching taint.
+explanation: Effects include NoSchedule, PreferNoSchedule and NoExecute, which also evicts running pods. Tolerations only allow scheduling and do not attract pods, so pair them with node selectors or affinity to target nodes. Control plane nodes and GPU nodes are often tainted. Cloud autoscalers can apply taints to node groups.
+simple_explain: Taint to keep pods away, tolerate to allow, and use affinity to attract.
+analogy: A taint is a warning sign on a room, and a toleration is a permission slip.
+formula_rule: Taint repels, toleration permits, affinity attracts.
+example_1: kubectl taint nodes gpu-1 gpu=true:NoSchedule
+example_2: tolerations: [{ key: gpu, operator: Equal, value: "true", effect: NoSchedule }]
+example_3: NoExecute evicting existing pods.
+related: nodes, affinity, DaemonSets, requests and limits
+word_family: taint, toleration, effect, NoSchedule, eviction
+where_used: GPU nodes | Dedicated pools | Control plane
+mini_conversation: A: Why do pods avoid the GPU nodes? | B: The nodes are tainted, and pods lack a toleration.
+misconception: ✗ A toleration forces a pod onto the tainted node → ✓ It only allows it, and affinity is needed to attract
+contrast: Taint vs affinity: taints repel, affinity attracts.
+avoid: Do not rely on tolerations alone to place pods.
+memory_trick: Tolerate means may, not must.
+real_project: Tainting GPU nodes kept ordinary workloads from wasting expensive hardware.
+real_interview: An interviewer may ask: What does NoExecute do?
+real_daily: It is like a warning sign and a permission slip.
+mcq_question: What does a toleration do?
+mcq_options: A) Adds CPU B) Forces scheduling C) Allows scheduling on tainted nodes D) Deletes the taint
+mcq_answer: C
+mcq_why: It permits but does not require.
+fill_blank: The effect that also evicts running pods is ____ → NoExecute
+apply: GPU nodes should run only GPU jobs. What do you use? → A taint plus tolerations on the GPU pods
+explain_task: Explain taints and tolerations in three lines.
+own_task: Write a taint and a matching toleration for a gpu node pool.
+
+@K8S-032
+type: topic56
+topic: 05 Reliability
+level: Advanced
+term: Affinity and spreading
+cue: Which rules attract pods to certain nodes or spread them apart?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Placement matters for speed and resilience, so pods can prefer nodes, sit near partners or spread across zones.
+pro_tip: Spread replicas across zones with topology spread constraints.
+memory_story: Affinity is choosing seats near friends, and anti-affinity is choosing seats far apart.
+visual: Several replicas spread evenly over three separate zones.
+emotion: The assurance of replicas in separate failure domains.
+definition: Node affinity attracts pods to nodes by labels, pod affinity and anti-affinity place pods near or away from other pods, and topology spread constraints balance pods across zones or nodes.
+explanation: Rules can be required or preferred. Spreading replicas over zones protects against a zone failure. Hard anti-affinity can leave pods unscheduled when there are too few nodes. Simple needs can use a nodeSelector. Labels such as topology.kubernetes.io/zone identify domains.
+simple_explain: Use affinity to place pods, and spread constraints to survive zone failures.
+analogy: Affinity is choosing seats near friends, and anti-affinity is choosing seats far apart.
+formula_rule: Required = must. Preferred = try.
+example_1: nodeSelector: { storage: nvme }
+example_2: topologySpreadConstraints over topology.kubernetes.io/zone
+example_3: podAntiAffinity so replicas avoid the same node.
+related: taints and tolerations, nodes, disruption budgets, availability zones
+word_family: affinity, anti-affinity, topology, zone, spread
+where_used: High availability | Performance | Cost placement
+mini_conversation: A: All replicas landed on one node. | B: Add anti-affinity or spread constraints.
+misconception: ✗ Replicas are always spread automatically → ✓ Without rules, they may share a node or zone
+contrast: Required vs preferred: required blocks scheduling, preferred only tries.
+avoid: Do not use hard anti-affinity with too few nodes.
+memory_trick: Spread replicas across zones on purpose.
+real_project: Spread constraints kept a service alive during a zone outage.
+real_interview: An interviewer may ask: How do you spread pods across zones?
+real_daily: It is like choosing seats near or far.
+mcq_question: Which feature balances pods across zones?
+mcq_options: A) ConfigMaps B) Topology spread constraints C) Jobs D) Taints
+mcq_answer: B
+mcq_why: It spreads by a topology key such as zone.
+fill_blank: The simplest placement rule by node label is a ____ → nodeSelector
+apply: A service must survive a zone failure. What do you add? → Topology spread constraints
+explain_task: Explain affinity and spreading in three lines.
+own_task: Write a rule that spreads replicas over zones.
+
+@K8S-033
+type: code56
+topic: 05 Reliability
+level: Advanced
+term: Pod disruption budgets
+cue: Which objects limit how many pods may be down during voluntary disruptions?
+kind: Resource
+frequency: Medium
+importance: 4
+origin: Node drains and upgrades remove pods on purpose, so a budget protects availability during maintenance.
+pro_tip: Set a budget for every replicated service, but leave room for drains to progress.
+memory_story: A disruption budget is a rule that says at least two staff must stay on shift.
+visual: Three pods with at least two required to stay up.
+emotion: The comfort of maintenance that stays safe.
+meaning: A PodDisruptionBudget states the minimum available or maximum unavailable pods for a set of pods, which voluntary evictions such as drains must respect.
+code: apiVersion: policy/v1¶kind: PodDisruptionBudget¶metadata:¶  name: web¶spec:¶  minAvailable: 2¶  selector:¶    matchLabels:¶      app: web
+output: Draining a node cannot take web below two available pods.
+explanation: Budgets apply to voluntary disruptions, such as drains and upgrades, and not to crashes. A budget that equals the replica count blocks drains forever. Use maxUnavailable for easy scaling. Autoscalers respect budgets when removing nodes. Combine with spread rules to avoid all replicas on one node.
+simple_explain: Declare how many pods must stay up during maintenance.
+analogy: A disruption budget says at least two staff must stay on shift.
+syntax: kind: PodDisruptionBudget / minAvailable or maxUnavailable / selector
+anatomy: minAvailable = floor | maxUnavailable = ceiling | selector = pods protected
+example_1: maxUnavailable: 1
+example_2: kubectl get pdb
+example_3: minAvailable: 50%
+variation: unhealthyPodEvictionPolicy: AlwaysAllow   // allow evicting broken pods
+used_with: drains, upgrades, autoscaling
+related: nodes, affinity and spreading, rolling updates, upgrades
+alternatives: Manual coordination
+where_used: Node upgrades | Autoscaling | Replicated services
+mini_conversation: A: The drain hangs forever. | B: The budget requires all replicas, so lower minAvailable.
+misconception: ✗ A budget protects against crashes → ✓ It applies only to voluntary disruptions
+confused_with: PDB vs replicas: replicas provide copies, a PDB limits planned removals.
+avoid: Do not set minAvailable equal to the replica count.
+wrong_code: minAvailable: 3   # with three replicas, drains block forever
+right_code: minAvailable: 2
+memory_trick: Budgets limit planned outages only.
+real_project: A budget let node upgrades roll through without any visible outage.
+real_interview: An interviewer may ask: What does a PodDisruptionBudget protect against?
+real_daily: It is like a rule keeping staff on shift.
+mcq_question: Which events does a PDB cover?
+mcq_options: A) Voluntary disruptions such as drains B) Crashes C) Power cuts D) Bugs
+mcq_answer: A
+mcq_why: Involuntary failures bypass budgets.
+fill_blank: Draining a node is a ____ disruption → voluntary
+hindi_to_task: Keep at least two web pods available.
+task_answer: minAvailable: 2
+own_task: Write a budget that allows one web pod to be down.
+practice_question: Why can a budget block a drain forever?
+practice_answer: It may require every replica to stay up.
+
+@K8S-034
+type: code56
+topic: 05 Reliability
+level: Intermediate
+term: Resource quotas
+cue: Which objects cap total resources used in a namespace?
+kind: Resource
+frequency: Medium
+importance: 4
+origin: Shared clusters need fairness, so quotas limit what each team's namespace can consume.
+pro_tip: Pair quotas with a LimitRange so pods get default requests.
+memory_story: A quota is a household budget for a namespace.
+visual: A namespace bar filling towards its limit.
+emotion: The fairness of capacity that is shared evenly.
+meaning: A ResourceQuota limits the total CPU, memory, storage and object counts in a namespace, and rejects new objects that would exceed it.
+code: apiVersion: v1¶kind: ResourceQuota¶metadata:¶  name: team-a¶  namespace: team-a¶spec:¶  hard:¶    requests.cpu: "10"¶    requests.memory: 20Gi¶    limits.memory: 40Gi¶    pods: "50"¶    persistentvolumeclaims: "10"
+output: The namespace team-a cannot request more than ten CPUs, 20Gi memory or fifty pods in total.
+explanation: When a quota covers CPU or memory, pods must declare requests and limits, or they are rejected. A LimitRange supplies defaults. Used and hard values show in kubectl describe quota. Quotas stop one team from starving others. They cap totals, not single pods.
+simple_explain: Set a quota per namespace, and give pods default requests with a LimitRange.
+analogy: A quota is a household budget for a namespace.
+syntax: kind: ResourceQuota / spec.hard
+anatomy: hard = maximum totals | used = current | LimitRange = defaults
+example_1: kubectl describe quota -n team-a
+example_2: count/deployments.apps: "20"
+example_3: kind: LimitRange with default requests
+variation: scopeSelector for priority classes   // quotas by scope
+used_with: namespaces, requests and limits, LimitRange
+related: namespaces, requests and limits, autoscaling, cost control
+alternatives: Separate clusters
+where_used: Multi-team clusters | Cost control | Fairness
+mini_conversation: A: New pods are rejected as exceeding quota. | B: The namespace is at its limit, so raise it or free capacity.
+misconception: ✗ A quota limits each pod → ✓ It limits the namespace total
+confused_with: Quota vs limit: a quota caps a namespace, a limit caps one container.
+avoid: Do not add a compute quota without defaults for requests.
+wrong_code: hard: { requests.cpu: "10" }   # pods without requests are rejected
+right_code: # add a LimitRange with default requests too
+memory_trick: Quotas cap totals, limits cap containers.
+real_project: Quotas stopped one team's runaway job from consuming the whole cluster.
+real_interview: An interviewer may ask: What is the difference between a quota and a limit?
+real_daily: It is like a household budget.
+mcq_question: What does a ResourceQuota limit?
+mcq_options: A) One container B) Total resources in a namespace C) One image D) One node
+mcq_answer: B
+mcq_why: It caps namespace totals.
+fill_blank: Default requests for pods come from a ____ → LimitRange
+hindi_to_task: Show quota usage for the namespace team-a.
+task_answer: kubectl describe quota -n team-a
+own_task: Write a quota allowing ten pods and 8 CPUs.
+practice_question: Why can pods be rejected under a compute quota?
+practice_answer: They must declare requests and limits.

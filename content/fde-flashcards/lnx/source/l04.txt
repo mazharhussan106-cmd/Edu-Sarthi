@@ -1,0 +1,561 @@
+
+@LNX-046
+type: code56
+topic: 07 Bash scripting
+level: Beginner
+term: Shebang and running a script
+cue: Which first line tells the system which interpreter should run a script, and what must you do before you can run it directly?
+kind: Scripting basics
+frequency: Very high
+importance: 5
+origin: A file of commands needs to say which program should read it, so the first line starts with a hash and exclamation mark followed by the interpreter's path.
+pro_tip: Use #!/usr/bin/env bash so the system finds Bash wherever it is installed.
+memory_story: The shebang is the label on the envelope telling the post office which clerk should read the letter.
+visual: A script whose first line names the interpreter, then a command that runs it.
+emotion: The pride of your first script that runs.
+meaning: The shebang line names the interpreter for a script, and the file must have the execute permission to run directly.
+code: #!/usr/bin/env bash¶echo "Hello from a script"¶# save as hello.sh, then:¶chmod +x hello.sh¶./hello.sh¶bash hello.sh
+output: Hello from a script, printed both when the file is run directly and when it is passed to bash.
+explanation: Without the shebang, the system may use the wrong shell. The file needs the execute bit to run as ./hello.sh, but bash hello.sh works without it. The ./ is needed because the current folder is not in PATH. Comments start with a hash, and the first line is a special comment for the system.
+simple_explain: Start the script with a shebang, make it executable, and run it with ./name. Or run it through bash without changing permissions.
+analogy: It is like a label on an envelope that names the clerk who should read the letter.
+syntax: #!/usr/bin/env bash
+anatomy: #! = shebang | /usr/bin/env bash = find bash | chmod +x = make it executable | ./ = run from the current folder
+example_1: #!/bin/bash
+example_2: #!/usr/bin/env python3
+example_3: ./deploy.sh
+variation: bash -x script.sh   // run with trace to debug¶source script.sh   // run inside the current shell
+used_with: chmod, PATH, variables
+related: chmod, PATH, variables
+alternatives: Making a script part of a package or a Makefile
+where_used: Automation | Deployment | Setup scripts
+mini_conversation: A: Permission denied when I run ./script.sh. | B: Add the execute bit with chmod +x, or run it with bash.
+misconception: ✗ The shebang line is just a comment and does nothing → ✓ The system reads the shebang to choose the interpreter when you run the file directly
+confused_with: ./script.sh vs bash script.sh: the first needs the execute bit and uses the shebang, the second uses Bash regardless.
+avoid: Do not forget ./ when running a script in the current folder.
+wrong_code: hello.sh
+right_code: ./hello.sh
+memory_trick: The shebang names the interpreter to use.
+real_project: Writing a setup script for a customer server that starts with a shebang.
+real_interview: An interviewer may ask: What is the shebang line for?
+real_daily: It is like a label on an envelope naming the clerk who will read it.
+mcq_question: What does the first line #!/usr/bin/env bash do?
+mcq_options: A) Locks the file B) Deletes the script C) Counts lines D) Names the interpreter
+mcq_answer: D
+mcq_why: The system uses it to pick the program that runs the script.
+fill_blank: To run ./hello.sh directly, the file needs the ____ permission → execute
+hindi_to_task: Make deploy.sh executable and run it.
+task_answer: chmod +x deploy.sh && ./deploy.sh
+own_task: Write a script that prints today's date and run it both ways.
+practice_question: Why is ./ needed before a script name?
+practice_answer: Because the current folder is not in PATH.
+
+@LNX-047
+type: code56
+topic: 07 Bash scripting
+level: Beginner
+term: Variables in Bash
+cue: How do you store a value under a name in Bash, and why must you be careful with spaces and quotes?
+kind: Scripting basics
+frequency: Very high
+importance: 5
+origin: Scripts repeat values such as paths and names, so shells provide variables, with strict spacing rules inherited from the early Bourne shell.
+pro_tip: Always put double quotes around variable expansions, such as "$name", to protect spaces.
+memory_story: A variable is a labelled box, and quotes keep the contents from spilling into separate words.
+visual: A name on a box with a value inside and a dollar sign used to read it.
+emotion: The satisfaction of a script that is easy to change.
+meaning: A variable is set as name=value with no spaces around the equals sign, and read with $name.
+code: name="Asha"¶echo "Hello, $name"¶files=$(ls | wc -l)¶echo "There are $files files"¶echo "${name}_backup"
+output: Hello, Asha, then the number of files in the folder, and Asha_backup.
+explanation: There must be no spaces around the equals sign. $(...) runs a command and captures its output. Double quotes allow variables to expand, and single quotes do not. Without quotes, a value with spaces splits into separate words, which breaks many commands. Curly braces ${name} mark where the name ends.
+simple_explain: Set with name=value, read with $name, and quote it. Use $( ) to store the result of a command.
+analogy: It is like a labelled box, and quotes keep the contents together.
+syntax: name=value  |  "$name"  |  $(command)
+anatomy: name=value = assign, no spaces | $name = read | ${name} = clear boundary | $(cmd) = command result
+example_1: dir="/var/log"
+example_2: today=$(date +%F)
+example_3: echo "Backup at $today in ${dir}"
+variation: readonly PI=3.14   // a value that cannot change¶name=${1:-guest}   // default value when empty
+used_with: quotes, scripts, environment variables
+related: environment variables, conditionals, loops
+alternatives: Config files read by the script
+where_used: Scripts | Paths and names | Command results
+mini_conversation: A: My script breaks on file names with spaces. | B: Put double quotes around the variable expansions.
+misconception: ✗ Spaces around the equals sign are fine in Bash → ✓ name = value is an error, and it must be name=value with no spaces
+confused_with: Single vs double quotes: double quotes expand variables, single quotes keep text literally.
+avoid: Do not leave variable expansions unquoted.
+wrong_code: name = "Asha"
+right_code: name="Asha"
+memory_trick: No spaces around the equals sign.
+real_project: Storing a release folder name in a variable so a deployment script can reuse it.
+real_interview: An interviewer may ask: Why do you quote variables in Bash?
+real_daily: It is like a labelled box.
+mcq_question: How do you assign a variable correctly in Bash?
+mcq_options: A) Put spaces on both sides of the equals sign B) Write the name, an equals sign and the value with no spaces C) Start the name with a dollar sign when assigning D) Use the set keyword followed by spaces
+mcq_answer: B
+mcq_why: Assignment has no spaces around the equals sign and no dollar on the left.
+fill_blank: Wrapping a command in $( ) captures its ____ → output
+hindi_to_task: Store the current date in a variable called today.
+task_answer: today=$(date +%F)
+own_task: Write a script with three variables and print them in a sentence.
+practice_question: What is the difference between "$name" and '$name'?
+practice_answer: Double quotes expand the variable, single quotes keep the text as it is.
+
+@LNX-048
+type: code56
+topic: 07 Bash scripting
+level: Beginner
+term: Conditionals (if and test)
+cue: How do you make a script choose between actions, such as checking whether a file exists or a number is large?
+kind: Scripting basics
+frequency: Very high
+importance: 5
+origin: Scripts must react to different situations, so shells provide if statements that run commands depending on the result of a test.
+pro_tip: Use [[ ]] in Bash scripts, because it handles empty values and patterns more safely than [ ].
+memory_story: An if statement is a fork in the road with a signpost that tests a condition.
+visual: A test in brackets with then and else branches ending in fi.
+emotion: The power of scripts that make decisions.
+meaning: if runs commands when a test succeeds, using [[ ]] to check files, strings and numbers.
+code: if [[ -f /etc/nginx/nginx.conf ]]; then¶  echo "Config exists"¶elif [[ $count -gt 10 ]]; then¶  echo "Many files"¶else¶  echo "Missing"¶fi
+output: The first branch whose test is true is run, otherwise the else branch.
+explanation: Common file tests are -f for a file, -d for a folder and -e for existing. Numbers are compared with -eq, -ne, -lt, -gt, -le and -ge, and strings with == and !=. An if statement actually checks the exit status of a command, where zero means success. It must end with fi, and spaces around the brackets are required.
+simple_explain: Write if, a test in double brackets, then the commands, and finish with fi. Use -f to test files and -gt to compare numbers.
+analogy: It is like a fork in the road with a signpost that tests a condition.
+syntax: if [[ test ]]; then ... elif ...; else ...; fi
+anatomy: -f = file exists | -d = directory exists | -z = string empty | -gt = greater than | fi = end
+example_1: if [[ -d /var/log ]]; then echo yes; fi
+example_2: if [[ "$name" == "Asha" ]]; then echo hi; fi
+example_3: if grep -q error app.log; then echo found; fi
+variation: [[ -z "$var" ]] && echo empty   // short form with and¶[[ $a -lt $b || $c == "x" ]]   // combine tests
+used_with: variables, exit codes, loops
+related: variables, exit codes, loops
+alternatives: case statements for many choices
+where_used: Checks in scripts | Input validation | Deployments
+mini_conversation: A: How do I stop the script if the config file is missing? | B: Test with if and -f, and exit with an error in the else branch.
+misconception: ✗ if tests only true or false values like other languages → ✓ if runs a command and treats exit status zero as success
+confused_with: -eq vs ==: -eq compares numbers, == compares strings.
+avoid: Do not forget the spaces inside the brackets.
+wrong_code: if [[$count -gt 10]]; then echo big; fi
+right_code: if [[ $count -gt 10 ]]; then echo big; fi
+memory_trick: Every if ends with fi.
+real_project: Checking that a required config file exists before starting a deployment.
+real_interview: An interviewer may ask: How do you check if a file exists in Bash?
+real_daily: It is like a fork in the road with a signpost.
+mcq_question: Which test checks that a file exists and is a regular file?
+mcq_options: A) -z B) -d C) -f D) -gt
+mcq_answer: C
+mcq_why: -f is true for a regular file.
+fill_blank: Every if statement ends with ____ → fi
+hindi_to_task: Print yes if the folder /tmp exists.
+task_answer: if [[ -d /tmp ]]; then echo yes; fi
+own_task: Write a script that checks three files and reports which exist.
+practice_question: Which operator compares two numbers for equality?
+practice_answer: -eq
+
+@LNX-049
+type: code56
+topic: 07 Bash scripting
+level: Beginner
+term: Loops (for and while)
+cue: How do you repeat commands for each item in a list or until a condition changes?
+kind: Scripting basics
+frequency: Very high
+importance: 5
+origin: Doing the same thing to many files or servers by hand is tedious, so shells provide loops to repeat commands automatically.
+pro_tip: Loop over files with a glob such as *.log, and not over the output of ls, which breaks on spaces.
+memory_story: A loop is a conveyor belt that hands each item to the same worker.
+visual: A list of items going through the same step one after another.
+emotion: The thrill of automating a boring task.
+meaning: for repeats commands for each item in a list, and while repeats as long as a condition holds.
+code: for f in *.log; do¶  echo "Compressing $f"¶  gzip "$f"¶done¶while read -r host; do¶  ping -c 1 "$host"¶done < hosts.txt
+output: Each log file is compressed, then each host in hosts.txt is pinged once.
+explanation: A for loop takes a list of words, a glob, or a sequence such as {1..5}. while read -r reads a file line by line, which is the safe way to process lines. Quote variables inside the loop. break leaves a loop and continue skips to the next item. Loops can run commands on many servers, with care.
+simple_explain: Use for to go over a list of files or names. Use while read to go over the lines of a file.
+analogy: It is like a conveyor belt that hands each item to the same worker.
+syntax: for item in list; do ...; done  |  while condition; do ...; done
+anatomy: for = each item | while = while true | do and done = body | break and continue = control
+example_1: for i in {1..5}; do echo $i; done
+example_2: for host in web1 web2 web3; do ssh "$host" uptime; done
+example_3: while [[ $n -lt 3 ]]; do n=$((n+1)); done
+variation: for ((i=0; i<3; i++)); do echo $i; done   // C-style loop¶until [[ -f done.flag ]]; do sleep 5; done   // wait until something exists
+used_with: globs, variables, read, sleep
+related: variables, conditionals, xargs
+alternatives: xargs or find -exec
+where_used: Batch jobs | Server checks | File processing
+mini_conversation: A: I need to run the same check on ten servers. | B: Put the host names in a for loop and run the command for each.
+misconception: ✗ for f in $(ls) is a safe way to loop over files → ✓ It breaks on names with spaces, so loop over a glob such as *.txt instead
+confused_with: for vs while: for goes over a list, while repeats until its test fails.
+avoid: Do not loop over ls output.
+wrong_code: for f in $(ls *.log); do gzip $f; done
+right_code: for f in *.log; do gzip "$f"; done
+memory_trick: Loop over globs, not over ls.
+real_project: Running a health check against each customer host in a for loop.
+real_interview: An interviewer may ask: How do you loop over lines of a file in Bash?
+real_daily: It is like a conveyor belt that hands each item to the same worker.
+mcq_question: Which loop reads a file line by line?
+mcq_options: A) for in ls B) while read C) case D) until
+mcq_answer: B
+mcq_why: while read -r processes each line safely.
+fill_blank: A loop body ends with the keyword ____ → done
+hindi_to_task: Print the numbers one to five using a loop.
+task_answer: for i in {1..5}; do echo "$i"; done
+own_task: Write a loop that prints the size of each file in a folder.
+practice_question: Which keyword leaves a loop early?
+practice_answer: break
+
+@LNX-050
+type: code56
+topic: 07 Bash scripting
+level: Intermediate
+term: Functions and arguments
+cue: How do you group commands under a name and pass values to them, and how do scripts read their command-line arguments?
+kind: Scripting basics
+frequency: High
+importance: 4
+origin: Repeating the same block of code is error-prone, so Bash lets you name a block as a function and pass arguments to it, just as scripts receive arguments.
+pro_tip: Use local for variables inside functions so they do not leak into the rest of the script.
+memory_story: A function is a recipe card you can follow again with different ingredients.
+visual: A named block called with a value and returning a result.
+emotion: The tidiness of a script without repetition.
+meaning: A function is a named block of commands, and both functions and scripts read their arguments as $1, $2 and so on.
+code: greet() {¶  local name="$1"¶  echo "Hello, $name"¶}¶greet "Asha"¶echo "Script name: $0, first argument: $1, count: $#"¶echo "All: $@"
+output: Hello, Asha, and then the script name, its first argument, how many arguments there were, and all arguments.
+explanation: Inside a function or script, $1 is the first argument, $@ is all arguments, $# is the count and $0 is the script name. Functions return an exit status with return, and use echo to output values that you capture with $( ). Variables are global by default, so use local inside functions. Define a function before you call it.
+simple_explain: Define a function with name() { ... } and call it like a command. Read its arguments as $1, $2 and so on, the same as for scripts.
+analogy: It is like a recipe card that you can follow again with different ingredients.
+syntax: name() { commands; }  |  $1 $2 $@ $#
+anatomy: $1 = first argument | $@ = all arguments | $# = number of arguments | local = function-only variable
+example_1: backup() { cp "$1" "$1.bak"; }
+example_2: result=$(add 2 3)
+example_3: if [[ $# -lt 1 ]]; then echo "usage: $0 file"; exit 1; fi
+variation: shift   // drop the first argument and move the others down¶"${@:2}"   // all arguments from the second on
+used_with: variables, conditionals, exit codes
+related: variables, exit codes, scripts
+alternatives: Separate scripts called by name
+where_used: Reusable scripts | Command-line tools | Deployments
+mini_conversation: A: The script should accept a host name when I run it. | B: Read it from $1 and check that it was given.
+misconception: ✗ Variables set inside a function are always private to it → ✓ Variables are global by default, so use local to keep them inside the function
+confused_with: $@ vs $#: $@ is the list of arguments, $# is how many there are.
+avoid: Do not use $1 without checking that an argument was given.
+wrong_code: greet "Asha"; greet() { echo "Hi $1"; }
+right_code: greet() { echo "Hi $1"; }; greet "Asha"
+memory_trick: A function must be defined before it is called.
+real_project: Wrapping a repeated deployment step in a function that takes the target host.
+real_interview: An interviewer may ask: How does a Bash script read its arguments?
+real_daily: It is like a recipe card followed with different ingredients.
+mcq_question: Which special variable holds how many arguments were passed?
+mcq_options: A) $0 (zero) B) $@ (at sign) C) $1 (one) D) $# (hash)
+mcq_answer: D
+mcq_why: $# is the count of arguments.
+fill_blank: Inside a function, use ____ to make a variable private → local
+hindi_to_task: Write a function that prints Hello followed by its first argument.
+task_answer: hello() { echo "Hello, $1"; }
+own_task: Write a script that takes a file name argument and prints its line count.
+practice_question: What does $0 hold in a script?
+practice_answer: The name of the script.
+
+@LNX-051
+type: code56
+topic: 07 Bash scripting
+level: Intermediate
+term: Exit codes
+cue: Which number does every command return to say whether it worked, and how do you read and set it?
+kind: Scripting basics
+frequency: Very high
+importance: 5
+origin: Scripts must know whether a command succeeded, so every program returns a small number, with zero meaning success and anything else meaning a problem.
+pro_tip: Check $? straight after the command, because the next command overwrites it.
+memory_story: The exit code is the thumbs up or down that every command gives when it leaves.
+visual: A command followed by a number zero or non-zero.
+emotion: The clarity of knowing why a script failed.
+meaning: An exit code is a number returned by a command, where 0 means success and non-zero means failure, available as $?.
+code: grep -q "error" app.log¶echo "exit code: $?"¶mkdir /root/test || echo "failed"¶cp a b && echo "copied"¶exit 2
+output: The exit code of grep, a failure message only when mkdir fails, a success message only when the copy works, and the script ending with code 2.
+explanation: $? holds the status of the last command. && runs the next command only on success, and || only on failure. In if statements, the condition is the exit status. A script can end with exit followed by a number, and other tools, such as CI systems and cron, use that number to decide whether the job failed. Different numbers can mean different errors.
+simple_explain: Zero means it worked, anything else means it did not. Use && and || to react, and exit with a number so other tools know the result.
+analogy: It is like a thumbs up or thumbs down that every command gives when it leaves.
+syntax: $?  |  command1 && command2  |  command1 || command2  |  exit N
+anatomy: 0 = success | non-zero = failure | && = on success | || = on failure
+example_1: ls /missing; echo $?
+example_2: test -f config.yml || exit 1
+example_3: ./deploy.sh && echo "deployed"
+variation: set -e   // stop the script on the first error¶trap 'cleanup' EXIT   // run a function when the script ends
+used_with: if, set -e, cron, CI pipelines
+related: conditionals, set -euo pipefail, cron
+alternatives: Checking output text, which is less reliable
+where_used: Scripts | CI pipelines | Monitoring checks
+mini_conversation: A: How does the pipeline know my script failed? | B: Through its exit code, so exit with a non-zero number on errors.
+misconception: ✗ Zero means failure because it is falsy → ✓ In shells, zero means success and any other number means an error
+confused_with: && vs ||: && runs the next command on success, || runs it on failure.
+avoid: Do not ignore exit codes in deployment scripts.
+wrong_code: command; if [[ $? == 1 ]]; then echo ok; fi
+right_code: if command; then echo ok; fi
+memory_trick: Zero is good, non-zero is a problem.
+real_project: Making a deployment script exit with a non-zero code so the pipeline fails.
+real_interview: An interviewer may ask: What does exit code 0 mean?
+real_daily: It is like a thumbs up or down when a command leaves.
+mcq_question: What does an exit code of 0 mean?
+mcq_options: A) Timeout B) Warning C) Success D) Failure
+mcq_answer: C
+mcq_why: Zero means the command succeeded.
+fill_blank: The variable ____ holds the exit status of the last command → $?
+hindi_to_task: Print the exit code of the last command.
+task_answer: echo $?
+own_task: Run three commands that succeed and fail and write down their exit codes.
+practice_question: What does && do?
+practice_answer: It runs the next command only if the previous one succeeded.
+
+@LNX-052
+type: code56
+topic: 07 Bash scripting
+level: Advanced
+term: set -euo pipefail
+cue: Which line makes a Bash script stop on errors, on unset variables and on failures inside pipes?
+kind: Scripting practice
+frequency: High
+importance: 5
+origin: By default a Bash script keeps going after a failed command, which can cause harm, so strict mode options make it stop at the first problem.
+pro_tip: Put it at the top of every script, and handle expected failures with || true.
+memory_story: Strict mode is a safety rope that stops the climb at the first slip.
+visual: A script stopping at the first failing line with an error message.
+emotion: The confidence of scripts that fail loudly rather than quietly.
+meaning: set -e stops on a failed command, -u treats unset variables as errors, and -o pipefail makes a pipe fail if any part fails.
+code: #!/usr/bin/env bash¶set -euo pipefail¶cd "$DEPLOY_DIR"¶rm -rf ./build¶grep "ok" result.log | wc -l
+output: The script stops with an error if DEPLOY_DIR is not set or cd fails, so rm -rf never runs in the wrong folder. If grep finds no match on the last line, pipefail makes the pipe fail and the script stops with an error.
+explanation: Without -e, a failed cd would let rm -rf run in the wrong folder. -u catches typing mistakes in variable names. Without pipefail, only the last command of a pipe decides the status. Some commands, such as grep, return non-zero for no match, so use || true where that is acceptable. Strict mode does not replace careful checks.
+simple_explain: Add set -euo pipefail near the top. The script stops at the first error, and unset variables are caught as mistakes.
+analogy: It is like a safety rope that stops the climb at the first slip.
+syntax: set -euo pipefail
+anatomy: -e = exit on error | -u = unset variable is an error | -o pipefail = a failing pipe step fails the pipe
+example_1: set -e
+example_2: set -u
+example_3: grep -q pattern file || true
+variation: set -x   // print each command as it runs, for debugging¶trap 'echo failed at line $LINENO' ERR
+used_with: exit codes, pipes, variables
+related: exit codes, pipes, variables
+alternatives: Checking each command by hand
+where_used: Deployment scripts | CI jobs | Cron jobs
+mini_conversation: A: The script deleted the wrong folder after cd failed. | B: Use set -e and quote the variable, so it stops instead.
+misconception: ✗ A Bash script always stops on the first error → ✓ By default Bash keeps going, and set -e makes it stop
+confused_with: set -e vs set -x: -e stops on errors, -x prints commands for debugging.
+avoid: Do not use rm -rf with variables that could be empty.
+wrong_code: cd "$DIR"; rm -rf ./build
+right_code: set -euo pipefail; cd "$DIR"; rm -rf ./build
+memory_trick: e for errors, u for unset, pipefail for pipes.
+real_project: Starting every deployment script with strict mode so it fails early.
+real_interview: An interviewer may ask: What does set -euo pipefail do?
+real_daily: It is like a safety rope that stops the climb at the first slip.
+mcq_question: What does set -u do?
+mcq_options: A) Treats unset variables as errors B) Uses UTF-8 C) Updates packages D) Unlocks files
+mcq_answer: A
+mcq_why: -u stops the script when an unset variable is used.
+fill_blank: The option that makes a failing pipe step fail the whole pipe is ____ → pipefail
+hindi_to_task: Write the strict mode line for a Bash script.
+task_answer: set -euo pipefail
+own_task: Write a short script with strict mode and see where it stops on an error.
+practice_question: What does set -e do?
+practice_answer: It exits the script when a command fails.
+
+@LNX-053
+type: code56
+topic: 07 Bash scripting
+level: Intermediate
+term: Environment variables and PATH
+cue: Which variables are passed to every program you start, and which one decides where the shell looks for commands?
+kind: Shell feature
+frequency: Very high
+importance: 5
+origin: Programs need settings such as the user's home and the places to find commands, so the shell passes a set of environment variables to every program it starts.
+pro_tip: Check which command runs with which, since an unexpected PATH order can run the wrong version.
+memory_story: PATH is the list of shelves the shell searches, in order, to find the tool you named.
+visual: A colon-separated list of folders searched from left to right.
+emotion: The relief of fixing command not found.
+meaning: Environment variables are named values given to programs, and PATH is the list of folders searched for commands.
+code: echo $PATH¶export API_URL="https://example.com"¶printenv API_URL¶export PATH="$HOME/bin:$PATH"¶which python3
+output: The list of folders, the variable set for child programs, its value printed, the home bin folder searched first, and the path of the python3 that runs.
+explanation: A normal shell variable is local to the shell, and export makes it available to programs started from it. PATH folders are separated by colons and searched from left to right. Put persistent settings in startup files such as ~/.bashrc or ~/.profile. Never put secrets in the command line, since they can be seen in the process list.
+simple_explain: Use export to pass a variable to programs. PATH tells the shell where to find commands, so put your own folder in it to run your scripts by name.
+analogy: It is like a list of shelves that the shell searches in order to find the tool you named.
+syntax: export NAME=value  |  printenv  |  $PATH
+anatomy: export = pass to child programs | PATH = folders searched, separated by colons | which = show which command runs
+example_1: export EDITOR=vim
+example_2: PATH="$PATH:/opt/tools/bin"
+example_3: env | grep AWS
+variation: NAME=value command   // set a variable for one command only¶type -a python   // list all matches in PATH
+used_with: .bashrc, scripts, which
+related: variables, scripts, shell
+alternatives: A .env file loaded by a tool
+where_used: Configuration | Tools in custom folders | Containers and CI
+mini_conversation: A: It says command not found, but I installed the tool. | B: Its folder may not be in PATH, so add it or use the full path.
+misconception: ✗ Setting a variable without export passes it to programs → ✓ Without export, the variable stays inside the current shell
+confused_with: Shell variable vs environment variable: only exported variables reach child programs.
+avoid: Do not pass passwords on the command line.
+wrong_code: PATH="/opt/tools/bin"
+right_code: PATH="/opt/tools/bin:$PATH"
+memory_trick: Export shares a variable with child programs.
+real_project: Adding a customer's tools folder to PATH in a setup script.
+real_interview: An interviewer may ask: What is PATH and how is it used?
+real_daily: It is like a list of shelves searched in order.
+mcq_question: What does export do?
+mcq_options: A) Locks a variable B) Prints a variable C) Deletes a variable D) Makes a variable available to child programs
+mcq_answer: D
+mcq_why: export marks the variable for the environment of child processes.
+fill_blank: The folders in PATH are separated by a ____ → colon
+hindi_to_task: Add /opt/tools to the end of PATH.
+task_answer: export PATH="$PATH:/opt/tools"
+own_task: Find where three commands live with which and explain why.
+practice_question: Which command shows where a command comes from?
+practice_answer: which command (or type -a command)
+
+@LNX-054
+type: code56
+topic: 08 Advanced
+level: Intermediate
+term: tmux (terminal multiplexer)
+cue: Which tool keeps terminal sessions alive on a server and lets you split the screen and reattach after a disconnect?
+kind: Command
+frequency: High
+importance: 4
+origin: Remote connections drop, and long-running work should survive, so terminal multiplexers keep sessions running on the server independent of your connection.
+pro_tip: Start a named session with tmux new -s work, so you can find it again.
+memory_story: tmux is a desk that stays set up on the server, whether or not you are sitting at it.
+visual: A terminal split in panes, with a detach and reattach arrow.
+emotion: The freedom of dropped connections no longer mattering.
+meaning: tmux runs persistent terminal sessions that you can detach from, reattach to, and split into windows and panes.
+code: tmux new -s work¶tmux ls¶tmux attach -t work¶tmux kill-session -t work
+output: A new session named work, a list of sessions, a reattached session after a disconnect, and the session removed.
+explanation: Inside tmux, most commands start with the prefix Ctrl and B. After the prefix, d detaches, c creates a new window, % splits the window into left and right panes, and double quote into top and bottom panes. A session continues to run when you detach or lose your connection. screen is an older, similar tool.
+simple_explain: Start tmux, work, and detach with the prefix and d. Later reattach with tmux attach, and everything is still running.
+analogy: It is like a desk on the server that stays set up whether or not you sit at it.
+syntax: tmux new -s name  |  tmux attach -t name
+anatomy: new -s = new named session | attach -t = reattach | prefix then d = detach | ls = list
+example_1: tmux new -s deploy
+example_2: tmux attach -t deploy
+example_3: tmux ls
+variation: tmux new -d -s job 'long_command'   // start detached¶prefix then [   // scroll mode
+used_with: ssh, long jobs, nohup
+related: background jobs, ssh, screen
+alternatives: screen
+where_used: Remote servers | Long jobs | Pairing sessions
+mini_conversation: A: My SSH dropped and killed my job. | B: Run long jobs inside tmux, then reattach later.
+misconception: ✗ Closing the terminal window always ends a tmux session → ✓ A tmux session keeps running on the server when you detach or lose the connection
+confused_with: tmux vs nohup: tmux keeps an interactive session, nohup only protects one command.
+avoid: Do not leave many forgotten sessions running.
+wrong_code: tmux attach work
+right_code: tmux attach -t work
+memory_trick: Always detach and do not kill.
+real_project: Running a long data migration in tmux on a customer server.
+real_interview: An interviewer may ask: How do you keep a session alive after SSH disconnects?
+real_daily: It is like a desk that stays set up on the server.
+mcq_question: What does detaching from tmux do?
+mcq_options: A) Leaves the session running B) Ends the session C) Reboots the machine D) Deletes files
+mcq_answer: A
+mcq_why: A detached session keeps running on the server.
+fill_blank: The default tmux prefix is Ctrl and ____ → B
+hindi_to_task: Start a tmux session named work.
+task_answer: tmux new -s work
+own_task: Start a session, run a command, detach and reattach.
+practice_question: Which command lists tmux sessions?
+practice_answer: tmux ls
+
+@LNX-055
+type: code56
+topic: 08 Advanced
+level: Advanced
+term: lsof and strace
+cue: Which tools show which files and ports a process has open, and which system calls it makes?
+kind: Command
+frequency: Medium
+importance: 4
+origin: When a program misbehaves without a clear error, you can watch what it asks the kernel to do, so these tools expose open files and system calls.
+pro_tip: Use lsof -i :port to find who holds a port, and strace -f -p pid to see what a running program is doing.
+memory_story: lsof lists what a process is holding in its hands, and strace listens to every request it makes to the kernel.
+visual: A process surrounded by the files and sockets it holds.
+emotion: The detective's thrill of finding a hidden cause.
+meaning: lsof lists open files and sockets, and strace traces the system calls of a program.
+code: sudo lsof -i :8080¶lsof -p 1234¶strace -f -o trace.txt ./program¶sudo strace -p 1234
+output: The process using port 8080, the files and sockets of process 1234, a trace of every system call written to a file, and a live trace of a running process.
+explanation: On Linux, almost everything is a file, including sockets, so lsof shows files, network connections and even deleted files still held open. strace shows calls such as open, read and connect, with their results, which reveals missing files, permission errors and slow calls. strace slows the program down, so use it with care on busy systems.
+simple_explain: Use lsof to see what a process has open or who uses a port. Use strace to see which system calls a program makes and where it fails.
+analogy: lsof lists what a process holds in its hands, and strace listens to each request it makes.
+syntax: lsof [-i :port] [-p pid]  |  strace [-f] [-p pid] command
+anatomy: lsof -i = network files | -p = by process | strace -f = follow child processes | -o = write to file
+example_1: sudo lsof +D /var/log
+example_2: strace -e trace=openat ./app
+example_3: sudo lsof | grep deleted
+variation: strace -c ./app   // summary of time spent per call¶lsof -u asha   // files opened by a user
+used_with: ps, ss, grep
+related: ss, ps and top, df
+alternatives: ltrace for library calls, or a debugger
+where_used: Port conflicts | Mystery failures | Disk space held by deleted files
+mini_conversation: A: The app exits with no error message. | B: Run it under strace and look for failed open calls near the end.
+misconception: ✗ strace has no effect on the program speed → ✓ strace can slow a program a lot, so use it carefully on production systems
+confused_with: lsof vs strace: lsof shows what is open now, strace shows calls over time.
+avoid: Do not attach strace to a busy production process casually.
+wrong_code: lsof port 8080
+right_code: sudo lsof -i :8080
+memory_trick: lsof shows holdings, strace shows requests.
+real_project: Finding that a missing config file path was the cause of a silent crash.
+real_interview: An interviewer may ask: How do you find which process uses a port?
+real_daily: It is like seeing what someone holds in their hands.
+mcq_question: Which tool traces system calls?
+mcq_options: A) tar B) strace C) df D) lsof
+mcq_answer: B
+mcq_why: strace follows the system calls a process makes.
+fill_blank: The tool that traces the system calls of a program is called ____ → strace
+hindi_to_task: Show which process uses port 3000.
+task_answer: sudo lsof -i :3000
+own_task: Use strace on a simple command and find the files it opens.
+practice_question: Why can deleted files still use disk space?
+practice_answer: Because a process may still hold them open.
+
+@LNX-056
+type: code56
+topic: 08 Advanced
+level: Beginner
+term: tar and gzip
+cue: Which commands bundle many files into one archive and compress it, and unpack it again?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Moving many files is easier as one package, so tar joins them into an archive and compression tools such as gzip make it smaller.
+pro_tip: List an archive with tar -tzf before extracting, to see where the files will land.
+memory_story: tar packs a box with everything inside, and gzip squeezes the box smaller.
+visual: A folder going into one file ending in tar dot gz.
+emotion: The ease of moving a whole folder as one file.
+meaning: tar creates and extracts archives, and with -z it uses gzip compression.
+code: tar -czf backup.tar.gz project/¶tar -tzf backup.tar.gz¶tar -xzf backup.tar.gz -C /tmp/restore¶gzip file.log¶gunzip file.log.gz
+output: A compressed archive of the folder, a list of its contents, the contents extracted into a chosen folder, a single file compressed, and then decompressed.
+explanation: The flag c creates, x extracts, t lists, f names the file, z uses gzip, and v shows progress. The -C option picks the target folder for extraction. tar keeps permissions and folder structure. gzip works on single files, and tar combines files so that one compressed file holds a whole folder. Other formats include .zip with the zip and unzip commands.
+simple_explain: Use tar -czf to pack and compress, tar -tzf to look inside, and tar -xzf to unpack. Add -C to choose where it goes.
+analogy: tar packs a box with everything inside, and gzip squeezes the box smaller.
+syntax: tar -czf archive.tar.gz folder  |  tar -xzf archive.tar.gz
+anatomy: c = create | x = extract | t = list | z = gzip | f = file name | -C = target folder
+example_1: tar -czf site.tar.gz /var/www/site
+example_2: tar -xzf site.tar.gz -C /var/www
+example_3: tar -tzf site.tar.gz | head
+variation: tar -cjf a.tar.bz2 folder   // bzip2 compression¶unzip file.zip   // for zip archives
+used_with: scp, cron backups, rsync
+related: scp and rsync, cron, find
+alternatives: zip and unzip
+where_used: Backups | Moving folders | Releases
+mini_conversation: A: I need to send the whole folder to the customer. | B: Pack it with tar -czf and send the single archive.
+misconception: ✗ gzip can compress a whole folder by itself → ✓ gzip compresses single files, and tar bundles a folder into one file first
+confused_with: tar vs gzip: tar bundles files, gzip compresses a file.
+avoid: Do not extract an archive from an unknown source without listing it first.
+wrong_code: tar -xzf backup.tar.gz /tmp/restore
+right_code: tar -xzf backup.tar.gz -C /tmp/restore
+memory_trick: Create, extract and list with c, x and t.
+real_project: Archiving a release folder before copying it to a customer server.
+real_interview: An interviewer may ask: What does tar -xzf do?
+real_daily: It is like packing a box and squeezing it smaller.
+mcq_question: Which flag of tar extracts an archive?
+mcq_options: A) z B) t C) x D) c
+mcq_answer: C
+mcq_why: x stands for extract.
+fill_blank: In tar -czf, the letter z means ____ compression → gzip
+hindi_to_task: Create a compressed archive named logs.tar.gz from the folder logs.
+task_answer: tar -czf logs.tar.gz logs
+own_task: Pack a folder, list the archive, and extract it elsewhere.
+practice_question: Which flag lists the contents of an archive?
+practice_answer: t

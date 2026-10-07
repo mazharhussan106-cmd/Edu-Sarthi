@@ -1,0 +1,369 @@
+
+@NET-013
+topic: 03 Protocols
+level: Beginner
+term: TCP vs UDP
+cue: Which two transport protocols differ in reliability versus speed?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Some applications need every byte in order, and others need speed above all, so two transport protocols were defined.
+pro_tip: Choose TCP when correctness matters and UDP when late data is useless.
+memory_story: TCP is registered post with receipts, and UDP is a postcard dropped in the box.
+visual: One arrow with acknowledgements and another arrow with none.
+emotion: The clarity of knowing why video calls and downloads behave differently.
+definition: TCP is a connection-oriented protocol that delivers data reliably and in order, and UDP is a connectionless protocol that sends datagrams quickly with no guarantee.
+explanation: TCP sets up a connection, numbers bytes, acknowledges them, retransmits losses and controls congestion. UDP has no setup and no retransmission, which means low delay. Web pages, email and databases use TCP. DNS queries, streaming, voice calls and games often use UDP. HTTP/3 builds reliability on top of UDP through QUIC.
+simple_explain: TCP is safe and ordered, UDP is fast and light.
+analogy: TCP is registered post with receipts, and UDP is a postcard dropped in the box.
+formula_rule: TCP = reliable and ordered. UDP = fast and best effort.
+example_1: A file download over TCP.
+example_2: A voice call over UDP, where a late packet is useless.
+example_3: A DNS query over UDP.
+related: TCP handshake, ports, DNS, HTTP/3
+word_family: TCP, UDP, datagram, reliable, connectionless
+where_used: Application design | Troubleshooting | Firewalls
+mini_conversation: A: Why does the video call skip instead of freezing? | B: It uses UDP, so lost data is skipped.
+misconception: ✗ UDP is always worse than TCP → ✓ UDP is the right choice when speed matters more than perfect delivery
+contrast: TCP vs UDP: TCP guarantees delivery, UDP does not.
+avoid: Do not build your own reliability unless you must.
+memory_trick: TCP checks every parcel, UDP just throws.
+real_project: Explaining that a real-time feed used UDP and tolerated small losses by design.
+real_interview: An interviewer may ask: When would you choose UDP over TCP?
+real_daily: It is like registered post versus a postcard.
+mcq_question: Which protocol retransmits lost data?
+mcq_options: A) UDP B) TCP C) Both equally D) Neither
+mcq_answer: B
+mcq_why: TCP tracks and resends missing data.
+fill_blank: A protocol with no setup step is called ____ → connectionless
+apply: A live game needs the lowest delay and tolerates loss. Which protocol? → UDP
+explain_task: Explain TCP versus UDP in three lines.
+own_task: List three real applications that use each of the two protocols.
+
+@NET-014
+topic: 03 Protocols
+level: Intermediate
+term: The TCP handshake
+cue: Which three steps open a reliable TCP connection?
+category: Core concept
+frequency: High
+importance: 4
+origin: Both sides need to agree on starting numbers before reliable transfer, so a short exchange opens each connection.
+pro_tip: A hanging connect usually means the SYN got no reply, which points to a firewall or a down host.
+memory_story: It is a polite phone call that starts with hello, yes hello, and okay then.
+visual: Three arrows between client and server labelled SYN, SYN-ACK and ACK.
+emotion: The satisfaction of reading a capture and seeing it work.
+definition: The TCP handshake is a three-step exchange of SYN, SYN-ACK and ACK segments that opens a connection and agrees on sequence numbers.
+explanation: The client sends SYN, the server answers SYN-ACK, and the client confirms with ACK, after which data flows. A closed port answers with a reset, which gives connection refused. A filtered port gives no answer, so the client times out. Closing uses FIN segments. TLS adds its own handshake on top of TCP.
+simple_explain: SYN, SYN-ACK, ACK, and then data can flow.
+analogy: It is a polite phone call that starts with hello, yes hello, and okay then.
+formula_rule: SYN → SYN-ACK → ACK.
+example_1: A browser opening a connection to port 443.
+example_2: A refused connection because the port is closed.
+example_3: A timeout because a firewall dropped the SYN.
+related: TCP vs UDP, TLS, firewalls, timeouts vs refused
+word_family: SYN, ACK, handshake, reset, FIN
+where_used: Packet captures | Troubleshooting | Security
+mini_conversation: A: The connection times out. | B: The SYN may be dropped by a firewall.
+misconception: ✗ Connection refused and timeout mean the same thing → ✓ Refused means someone answered no, and timeout means nobody answered
+contrast: Reset vs timeout: a reset is an active refusal, a timeout is silence.
+avoid: Do not assume a firewall when you see a reset.
+memory_trick: SYN, SYN-ACK, ACK opens the call.
+real_project: Using a capture to prove the server never sent SYN-ACK because a firewall dropped the request.
+real_interview: An interviewer may ask: What are the three steps of the TCP handshake?
+real_daily: It is like hello, yes hello, okay.
+mcq_question: Which segment starts a TCP connection?
+mcq_options: A) FIN B) PSH C) RST D) SYN
+mcq_answer: D
+mcq_why: SYN opens the handshake.
+fill_blank: The reply to a SYN is a ____ → SYN-ACK
+apply: A client times out with no reply at all. What likely happens to the SYN? → It is dropped
+explain_task: Explain the TCP handshake in three lines.
+own_task: Draw the three steps with the flags.
+
+@NET-015
+topic: 03 Protocols
+level: Beginner
+term: DNS and record types
+cue: Which system turns names into addresses, and which records hold the answers?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: People remember names, not numbers, so a distributed directory maps names to the data computers need.
+pro_tip: When something works by IP but not by name, suspect DNS first.
+memory_story: DNS is the contacts list of the internet.
+visual: A name flowing to a resolver and an address returning.
+emotion: The relief of finding that the problem was only a DNS record.
+definition: DNS is a distributed system that resolves names into data, with record types such as A, AAAA, CNAME, MX, TXT and NS.
+explanation: A resolver asks root, top-level and authoritative servers in turn and caches the answer for its TTL. An A record holds an IPv4 address, AAAA an IPv6 address, CNAME an alias to another name, MX the mail servers and TXT free text such as verification codes. NS records name the servers that hold a zone. DNS usually uses UDP port 53, and TCP for large answers.
+simple_explain: Ask the resolver for a name, get a record back, and it is cached for the TTL.
+analogy: DNS is the contacts list of the internet.
+formula_rule: Name → resolver → authoritative server → record, cached for the TTL.
+example_1: An A record mapping app.example.com to an address.
+example_2: A CNAME pointing www to the main name.
+example_3: A TXT record proving ownership of a domain.
+related: DNS caching, dig, load balancers, email basics
+word_family: resolver, zone, record, TTL, authoritative
+where_used: Websites | Email | Troubleshooting
+mini_conversation: A: The site works by IP but not by name. | B: Check the DNS record and its cache.
+misconception: ✗ DNS changes appear instantly everywhere → ✓ Caches hold old answers until the TTL ends
+contrast: A vs CNAME: A gives an address, CNAME gives another name.
+avoid: Do not put a CNAME record on the bare domain apex. Use an A record or an alias record instead.
+memory_trick: A is address, MX is mail.
+real_project: Fixing a missing MX record that stopped a customer's email delivery.
+real_interview: An interviewer may ask: What happens when you type a URL into a browser?
+real_daily: It is like looking up a contact.
+mcq_question: Which record maps a name to an IPv4 address?
+mcq_options: A) A B) TXT C) NS D) MX
+mcq_answer: A
+mcq_why: An A record holds an IPv4 address.
+fill_blank: DNS usually uses port ____ → 53
+apply: Mail is not arriving at a domain. Which record do you check? → MX
+explain_task: Explain how DNS resolves a name in three lines.
+own_task: List five record types with their purposes.
+
+@NET-016
+topic: 03 Protocols
+level: Beginner
+term: HTTP
+cue: Which protocol do browsers and APIs use to request and send web content?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: The web needed a simple request and response language for documents, which grew into the standard way for apps to talk.
+pro_tip: Learn methods and status codes well, because they appear in every API and every log.
+memory_story: HTTP is a waiter's order slip, with a request on one side and a numbered answer on the other.
+visual: A request with method, path and headers above a response with status and body.
+emotion: The ease of reading a request and seeing exactly what was asked.
+definition: HTTP is a request and response protocol where a client sends a method, a path, headers and an optional body, and a server returns a status code, headers and a body.
+explanation: Methods include GET to read, POST to create, PUT to replace, PATCH to change and DELETE to remove. Status codes group by first digit, with 2xx success, 3xx redirects, 4xx client errors and 5xx server errors. Headers carry details such as content type and authorisation. HTTP is stateless, so each request stands alone.
+simple_explain: Send a method and path, receive a status and body, and remember each request is independent.
+analogy: HTTP is a waiter's order slip with a request on one side and a numbered answer on the other.
+formula_rule: Request = method + path + headers + body. Response = status + headers + body.
+example_1: GET /users/42 returning 200.
+example_2: POST /orders returning 201.
+example_3: A request returning 404 for a missing path.
+related: HTTPS and TLS, APIs, HTTP/2 and HTTP/3, curl
+word_family: method, status code, header, body, stateless
+where_used: Web | APIs | Integrations
+mini_conversation: A: The API returns 401. | B: The request is missing valid credentials.
+misconception: ✗ A 500 error means the client made a mistake → ✓ 5xx errors are server-side, while 4xx errors are client-side
+contrast: 4xx vs 5xx: 4xx means the request was wrong, 5xx means the server failed.
+avoid: Do not ignore status codes and parse only the body.
+memory_trick: Four for you, five for them.
+real_project: Reading status codes in logs to find that a customer app sent bad requests.
+real_interview: An interviewer may ask: What is the difference between PUT and PATCH?
+real_daily: It is like an order slip with a numbered answer.
+mcq_question: Which status code range means a server error?
+mcq_options: A) 4xx B) 3xx C) 5xx D) 2xx
+mcq_answer: C
+mcq_why: Five hundred codes indicate server failures.
+fill_blank: HTTP is ____, so each request is independent → stateless
+apply: An API returns 404. What does it mean? → The path or resource was not found
+explain_task: Explain HTTP requests and responses in three lines.
+own_task: List five status codes and their meanings.
+
+@NET-017
+topic: 03 Protocols
+level: Intermediate
+term: HTTPS and TLS
+cue: Which protocol encrypts web traffic and proves the server's identity?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Plain HTTP can be read and changed on the way, so a secure layer was added to protect privacy and integrity.
+pro_tip: Always use HTTPS, and redirect plain HTTP to it.
+memory_story: TLS is a sealed envelope with the sender's verified signature.
+visual: A padlock icon beside a web address.
+emotion: The trust that a connection is private.
+definition: HTTPS is HTTP carried inside TLS, which encrypts the data, checks it was not altered, and authenticates the server using a certificate.
+explanation: During the TLS handshake the client and server agree on a version and cipher, the server presents its certificate, and both derive shared keys. Later data is encrypted with those keys. The certificate must be valid, unexpired, issued by a trusted authority and match the host name. TLS 1.3 is faster and removes old weak options.
+simple_explain: TLS encrypts and verifies, and the certificate proves who the server is.
+analogy: TLS is a sealed envelope with the sender's verified signature.
+formula_rule: HTTPS = HTTP + TLS, with a certificate for identity.
+example_1: A browser showing a padlock for https://example.com.
+example_2: A certificate error because the date has expired.
+example_3: Redirecting port 80 to port 443.
+related: certificates, HTTP, TLS inspection, curl -v
+word_family: TLS, handshake, cipher, certificate, encryption
+where_used: Websites | APIs | Internal services
+mini_conversation: A: The browser warns about the certificate. | B: It may be expired or for a different host name.
+misconception: ✗ The padlock means the website is trustworthy → ✓ It means the connection is encrypted, not that the site is honest
+contrast: HTTP vs HTTPS: HTTPS adds encryption and server authentication.
+avoid: Do not ignore certificate warnings or disable verification in code.
+memory_trick: HTTPS is HTTP wrapped in TLS.
+real_project: Fixing an integration that failed because the server certificate had expired.
+real_interview: An interviewer may ask: What happens during a TLS handshake?
+real_daily: It is like a sealed envelope with a signature.
+mcq_question: What does the certificate prove?
+mcq_options: A) The user's password B) The IP range C) The page speed D) The server's identity
+mcq_answer: D
+mcq_why: A trusted authority signs it to vouch for the host name.
+fill_blank: HTTPS uses TCP port ____ by default → 443
+apply: A client reports a certificate name mismatch. What is wrong? → The host name does not match the certificate
+explain_task: Explain HTTPS and TLS in three lines.
+own_task: List four reasons a certificate check could fail.
+
+@NET-018
+topic: 03 Protocols
+level: Intermediate
+term: Certificates
+cue: Which documents bind a name to a public key and are signed by a trusted authority?
+category: Core concept
+frequency: High
+importance: 5
+origin: Encryption alone does not say who you are talking to, so signed certificates link a name to a key.
+pro_tip: Set renewal reminders or automate renewal, since expiry is a classic outage.
+memory_story: A certificate is a passport issued by an authority that others trust.
+visual: A document showing subject, issuer, validity dates and a signature.
+emotion: The caution of checking a passport before letting someone in.
+definition: A certificate is a signed document that links a host name to a public key, issued by a certificate authority that clients trust.
+explanation: Servers present a chain, from their own certificate through intermediate authorities to a root already trusted by the client. The name must match one in the certificate, including alternative names. Certificates expire and can be revoked. Automated authorities such as Let's Encrypt issue short-lived certificates. Internal systems may use a private authority, which clients must be told to trust.
+simple_explain: A certificate proves a name belongs to a key, and clients check the chain, name and dates.
+analogy: A certificate is a passport issued by an authority that others trust.
+formula_rule: Valid dates + trusted chain + matching name = accepted.
+example_1: A certificate for api.example.com valid for ninety days.
+example_2: A chain with a missing intermediate causing errors.
+example_3: A private authority used inside a company.
+related: HTTPS and TLS, DNS, curl -v, expiry monitoring
+word_family: certificate, authority, chain, expiry, SAN
+where_used: Websites | Mutual TLS | Internal services
+mini_conversation: A: Only some clients show errors. | B: The server may not send the intermediate certificate.
+misconception: ✗ Certificates never need attention after setup → ✓ They expire, so renewal must be tracked or automated
+contrast: Public vs private authority: public ones are trusted by default, private ones must be installed.
+avoid: Do not turn off certificate verification to make an error go away.
+memory_trick: Check dates, chain and name every time.
+real_project: Automating renewal after an expired certificate caused an outage.
+real_interview: An interviewer may ask: What is a certificate chain?
+real_daily: It is like a passport issued by a trusted office.
+mcq_question: What makes clients trust a certificate?
+mcq_options: A) A chain to a trusted authority B) A fast server C) A long name D) A big file
+mcq_answer: A
+mcq_why: Clients trust issuers already in their store.
+fill_blank: A certificate lists extra host names in the subject alternative ____ → name
+apply: Only some clients fail with a certificate error. What do you check? → That the server sends the intermediate
+explain_task: Explain certificates in three lines.
+own_task: List the checks a client makes on a certificate.
+
+@NET-019
+topic: 03 Protocols
+level: Advanced
+term: HTTP/2 and HTTP/3
+cue: Which newer versions of HTTP make web traffic faster?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: HTTP/1.1 opened many connections and waited on each reply, so newer versions send many requests together over one connection.
+pro_tip: Servers usually negotiate the best version automatically, so you rarely configure the client.
+memory_story: HTTP/2 is one motorway with many lanes, and HTTP/3 builds that motorway on a faster road base.
+visual: Several requests sharing one connection side by side.
+emotion: The pleasure of pages loading faster without any code change.
+definition: HTTP/2 multiplexes many requests over a single TCP connection with compressed headers, and HTTP/3 does the same over QUIC, which runs on UDP.
+explanation: HTTP/2 removes the need for many parallel connections and compresses headers. A single lost packet can still stall all streams on TCP. HTTP/3 uses QUIC to avoid that, and speeds up connection setup. Both require TLS in practice. Support depends on the server, client and network, since some firewalls block UDP.
+simple_explain: Newer versions send many requests in parallel on one connection and are faster.
+analogy: HTTP/2 is one motorway with many lanes, and HTTP/3 builds it on a faster road base.
+formula_rule: One connection, many streams, less waiting.
+example_1: A browser loading many files over one HTTP/2 connection.
+example_2: A curl command forcing HTTP/3.
+example_3: A firewall blocking UDP so HTTP/3 falls back.
+related: HTTP, TCP vs UDP, TLS, CDN
+word_family: multiplexing, QUIC, stream, header compression, fallback
+where_used: Websites | CDNs | Performance tuning
+mini_conversation: A: Does our site support HTTP/3? | B: Yes, if UDP 443 is open to it.
+misconception: ✗ HTTP/2 and HTTP/3 change how you write API requests → ✓ Methods and status codes stay the same, only the transport improves
+contrast: HTTP/2 vs HTTP/3: HTTP/2 runs on TCP, HTTP/3 runs on QUIC over UDP.
+avoid: Do not block UDP 443 without knowing it breaks HTTP/3.
+memory_trick: Two multiplexes on TCP, three moves to UDP.
+real_project: Enabling HTTP/3 on a CDN and seeing faster loads on mobile networks.
+real_interview: An interviewer may ask: What problem does HTTP/2 solve?
+real_daily: It is like a motorway with many lanes.
+mcq_question: Which transport does HTTP/3 use?
+mcq_options: A) FTP B) QUIC over UDP C) TCP only D) ICMP
+mcq_answer: B
+mcq_why: QUIC runs over UDP.
+fill_blank: Sending several requests on one connection is called ____ → multiplexing
+apply: HTTP/3 never connects on a restricted network. What is blocked? → UDP on port 443
+explain_task: Explain HTTP/2 and HTTP/3 in three lines.
+own_task: List two benefits and one network risk.
+
+@NET-020
+topic: 03 Protocols
+level: Intermediate
+term: WebSockets
+cue: Which protocol keeps a two-way connection open between a browser and a server?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Plain HTTP makes the client ask every time, so a persistent channel was added for chat, live prices and notifications.
+pro_tip: Plan for reconnection, since long-lived connections will drop.
+memory_story: A WebSocket is a phone line left open, where either side can speak at any time.
+visual: A long-lived two-way arrow between browser and server.
+emotion: The thrill of live updates arriving without refreshing.
+definition: A WebSocket is a long-lived, full-duplex connection started with an HTTP upgrade, over which both client and server can send messages at any time.
+explanation: The browser sends an HTTP request asking to upgrade, and the server accepts, after which the same TCP connection carries framed messages. It suits chat, dashboards and games. Proxies and load balancers must support upgrades and long timeouts. Each connection uses server resources, so scale needs planning. Secure versions use wss, which is WebSocket over TLS.
+simple_explain: Open once with an upgrade, then both sides send messages freely until closed.
+analogy: A WebSocket is a phone line left open, where either side can speak at any time.
+formula_rule: HTTP upgrade → persistent two-way channel.
+example_1: A live chat in a browser.
+example_2: A dashboard showing prices as they change.
+example_3: A load balancer closing idle sockets after sixty seconds.
+related: HTTP, TCP, load balancers, proxies
+word_family: upgrade, full-duplex, wss, frame, keep-alive
+where_used: Chat | Live dashboards | Games
+mini_conversation: A: The live feed drops every minute. | B: A proxy timeout is closing the idle socket.
+misconception: ✗ WebSockets replace HTTP completely → ✓ They begin as HTTP, and ordinary requests still use HTTP
+contrast: Polling vs WebSocket: polling asks repeatedly, a WebSocket stays open.
+avoid: Do not forget idle timeouts on proxies.
+memory_trick: Upgrade once, then talk both ways.
+real_project: Raising the load balancer idle timeout so live dashboards stopped disconnecting.
+real_interview: An interviewer may ask: When would you use WebSockets over polling?
+real_daily: It is like a phone line left open.
+mcq_question: How does a WebSocket start?
+mcq_options: A) A ping B) An ARP request C) An HTTP upgrade request D) A DNS query
+mcq_answer: C
+mcq_why: It begins as HTTP and upgrades.
+fill_blank: The secure form of a WebSocket address begins with ____ → wss
+apply: A live feed disconnects exactly after sixty seconds. What do you check? → Proxy idle timeouts
+explain_task: Explain WebSockets in three lines.
+own_task: Give two uses where WebSockets beat polling.
+
+@NET-021
+topic: 03 Protocols
+level: Intermediate
+term: SMTP and email basics
+cue: Which protocols and records move email between servers and prove it is genuine?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Email crosses many organisations, so open protocols and DNS records were defined for sending, receiving and checking it.
+pro_tip: Set SPF, DKIM and DMARC records so your mail is trusted and spoofing is harder.
+memory_story: SMTP is the postal van, and SPF, DKIM and DMARC are the seals that prove the van is yours.
+visual: A message moving between mail servers with DNS checks.
+emotion: The relief of mail landing in the inbox, not spam.
+definition: SMTP sends email between servers, IMAP or POP read it, and DNS records MX, SPF, DKIM and DMARC route and authenticate it.
+explanation: A sender's server looks up the MX record of the recipient's domain and delivers by SMTP. SPF lists servers allowed to send for the domain, DKIM signs messages with a key published in DNS, and DMARC says what to do when checks fail. Ports 25 and 587 carry SMTP. Missing records cause mail to land in spam or be rejected.
+simple_explain: SMTP delivers mail, MX says where, and SPF, DKIM and DMARC prove it is genuine.
+analogy: SMTP is the postal van, and SPF, DKIM and DMARC are seals proving it is yours.
+formula_rule: MX = where to deliver. SPF + DKIM + DMARC = who may send.
+example_1: An MX record pointing to a mail provider.
+example_2: A TXT record listing allowed senders for SPF.
+example_3: A DMARC policy rejecting failed mail.
+related: DNS and record types, TLS, ports, certificates
+word_family: SMTP, MX, SPF, DKIM, DMARC
+where_used: Notifications | Customer email | Security
+mini_conversation: A: Our invoices go to spam. | B: Check that SPF and DKIM are set for our domain.
+misconception: ✗ If an email shows our address, it was surely sent by us → ✓ The From address can be forged without SPF, DKIM and DMARC checks
+contrast: SPF vs DKIM: SPF checks the sending server, DKIM checks a signature on the message.
+avoid: Do not send bulk mail from a domain without authentication records.
+memory_trick: SPF who, DKIM signed, DMARC what then.
+real_project: Adding SPF and DKIM records so a customer's alerts stopped landing in spam.
+real_interview: An interviewer may ask: What do SPF, DKIM and DMARC do?
+real_daily: It is like a postal van with seals.
+mcq_question: Which record says where to deliver mail for a domain?
+mcq_options: A) A B) PTR C) NS D) MX
+mcq_answer: D
+mcq_why: MX records name the mail servers.
+fill_blank: Port ____ is commonly used to submit mail with authentication → 587
+apply: Alerts land in spam. Which records do you check? → SPF, DKIM and DMARC
+explain_task: Explain how email is delivered and verified in three lines.
+own_task: Write which DNS records a new sending domain needs.

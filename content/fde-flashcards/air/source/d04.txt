@@ -1,0 +1,465 @@
+
+@AIR-026
+type: topic56
+topic: 04 Operations
+level: Intermediate
+term: Deployment options
+cue: Which ways can you run Airflow, from a laptop to a managed cloud service?
+category: Core concept
+frequency: High
+importance: 4
+origin: Running Airflow takes care and effort, so there are options from local setups to fully managed services.
+pro_tip: Use a managed service or the official Helm chart for production, and containers for local development.
+memory_story: Deployment options are renting a flat, building a house, or staying in a hotel.
+visual: Three paths from a laptop setup to a managed service.
+emotion: The relief of not maintaining every component yourself.
+definition: Airflow can run locally with containers, on virtual machines or Kubernetes using the official Helm chart, or as a managed service from vendors such as Astronomer, Amazon MWAA and Google Cloud Composer.
+explanation: A local Docker Compose or standalone setup suits learning and testing. Self-managed production needs a metadata database, a scheduler, workers, a way to distribute DAG code and monitoring. Managed services handle installation, scaling and upgrades but have a cost and some limits on custom setups. Choice depends on team skills, budget and compliance needs.
+simple_explain: Use containers locally, and a managed service or Kubernetes chart for production.
+analogy: Deployment options are renting a flat, building a house or staying in a hotel.
+formula_rule: More control = more work. Managed = less work, less control.
+example_1: Docker Compose on a laptop.
+example_2: The official Helm chart on a Kubernetes cluster.
+example_3: A managed service such as MWAA or Composer.
+related: Airflow components, executors, secrets backends, upgrades
+word_family: Helm, managed service, MWAA, Composer, Astronomer
+where_used: Platform decisions | Customer setups | Cost planning
+mini_conversation: A: Who patches and upgrades Airflow for us? | B: With a managed service, the vendor does.
+misconception: ✗ Self-hosting is always cheaper → ✓ Staff time for upgrades and operations often outweighs the service cost
+contrast: Managed vs self-hosted: managed saves effort, self-hosted gives control.
+avoid: Do not run production on a single laptop-style setup.
+memory_trick: Local for learning, managed for convenience.
+real_project: Moving to a managed service freed the team from patching and scaling Airflow.
+real_interview: An interviewer may ask: How would you deploy Airflow for a customer?
+real_daily: It is like renting, building or staying in a hotel.
+mcq_question: Which option is a managed Airflow service?
+mcq_options: A) Docker Compose on a laptop B) Amazon MWAA C) A cron job D) A text file
+mcq_answer: B
+mcq_why: MWAA is a managed service from AWS.
+fill_blank: Google's managed Airflow service is called Cloud ____ → Composer
+apply: A small team has no time to run infrastructure. What option fits? → A managed service
+explain_task: Explain Airflow deployment options in three lines.
+own_task: Choose a deployment for a customer and give three reasons.
+
+@AIR-027
+type: code56
+topic: 04 Operations
+level: Beginner
+term: Logs and debugging
+cue: Where do you find out why a task failed and how do you reproduce it?
+kind: Airflow operation
+frequency: Very high
+importance: 5
+origin: Failures happen on remote workers, so every task attempt writes a log that is shown in the interface.
+pro_tip: Test a single task from the command line before running the whole DAG.
+memory_story: The task log is the black box recorder for each attempt.
+visual: A log panel with the final error lines highlighted.
+emotion: The satisfaction of finding the one line that explains everything.
+meaning: Each task attempt writes a log available in the interface and storage, and you can run single tasks or whole DAGs from the command line to reproduce problems.
+code: airflow tasks test daily_sales extract 2026-10-01¶airflow dags test daily_sales 2026-10-01¶airflow dags list-import-errors¶airflow tasks states-for-dag-run daily_sales manual__2026-10-01T00:00:00+00:00
+output: The first command runs one task without recording state, the second runs the whole DAG once, the third shows files that failed to import, and the fourth shows task states.
+explanation: Read the log from the bottom to see the final error, then look upward for context. Import errors mean the DAG file failed to parse and the DAG does not appear. tasks test runs a task for a date without a scheduler and without saving state, which is handy for debugging. Remote log storage keeps logs after workers are replaced.
+simple_explain: Read the task log from the bottom, check import errors, and reproduce with tasks test.
+analogy: The task log is the black box recorder for each attempt.
+syntax: airflow tasks test <dag_id> <task_id> <date>
+anatomy: tasks test = run one task | dags test = run one DAG | import errors = parse failures
+example_1: airflow dags list
+example_2: airflow tasks render daily_sales extract 2026-10-01
+example_3: airflow dags show daily_sales
+variation: python dag_file.py   // check that the file imports without errors
+used_with: the web UI, testing DAGs, remote logging
+related: the web UI, testing DAGs, alerts, retries and timeouts
+alternatives: The interface log viewer
+where_used: Debugging | Support | Development
+mini_conversation: A: My new DAG does not appear. | B: Run the import errors command to see the parse error.
+misconception: ✗ A DAG that is missing from the list was deleted → ✓ It may have an import error that stops it parsing
+confused_with: tasks test vs a normal run: test saves no state and ignores the schedule.
+avoid: Do not lose logs by storing them only on short-lived workers.
+wrong_code: airflow tasks run daily_sales extract   # missing date and run
+right_code: airflow tasks test daily_sales extract 2026-10-01
+memory_trick: Missing DAG, check the import errors.
+real_project: Listing import errors found a missing library that had hidden a DAG for a day.
+real_interview: An interviewer may ask: Why does my DAG not appear in the interface?
+real_daily: It is like a black box recorder for each attempt.
+mcq_question: Which command lists DAG files that failed to parse?
+mcq_options: A) airflow dags list-import-errors B) airflow tasks test C) airflow users list D) airflow dags pause
+mcq_answer: A
+mcq_why: It shows parse errors for DAG files.
+fill_blank: To run one task without saving state use airflow tasks ____ → test
+hindi_to_task: Run the extract task of daily_sales for 1 October.
+task_answer: airflow tasks test daily_sales extract 2026-10-01
+own_task: Write the steps you would follow to debug a missing DAG.
+practice_question: Does tasks test save task state?
+practice_answer: No, it runs without recording state.
+
+@AIR-028
+type: code56
+topic: 04 Operations
+level: Intermediate
+term: Testing DAGs
+cue: How do you check that DAG files load correctly and tasks behave before deploying?
+kind: Airflow operation
+frequency: High
+importance: 4
+origin: Broken DAG files can hide whole workflows, so teams test that files parse and that logic works before a release.
+pro_tip: Add a test that loads every DAG in CI and fails on import errors.
+memory_story: A DAG test is a dress rehearsal that checks the costumes before the show.
+visual: A test run loading all DAGs and counting import errors.
+emotion: The confidence of a deploy that cannot break the scheduler.
+meaning: DAG tests load the DagBag to check for import errors and structure, unit-test the Python functions, and optionally run a DAG once with dag.test.
+code: import pytest¶from airflow.models import DagBag¶@pytest.fixture(scope="session")¶def dagbag():¶    return DagBag(dag_folder="dags/", include_examples=False)¶def test_no_import_errors(dagbag):¶    assert dagbag.import_errors == {}¶def test_sales_has_tasks(dagbag):¶    dag = dagbag.get_dag("daily_sales")¶    assert {"extract", "load"} <= set(dag.task_ids)
+output: The tests pass when every DAG file imports and daily_sales has the expected tasks.
+explanation: DagBag parses the folder as the scheduler does. Tests can assert on the number of tasks, dependencies, tags and default arguments. Business logic in functions can be tested without Airflow by calling them with sample data. dag.test runs a whole DAG in one process for an integration check. Run these tests in CI on every pull request.
+simple_explain: Load all DAGs in a test, assert structure, and unit-test the functions.
+analogy: A DAG test is a dress rehearsal that checks the costumes before the show.
+syntax: DagBag(dag_folder="dags/").import_errors == {}
+anatomy: DagBag = loads DAG files | import_errors = parse problems | task_ids = structure
+example_1: assert len(dag.tasks) == 4
+example_2: assert dag.default_args["retries"] >= 1
+example_3: dag.test()
+variation: pytest tests/ -q   // run all tests in CI
+used_with: CI, pytest, unit tests
+related: logs and debugging, CI, testing pipelines, defining a DAG
+alternatives: Manual runs in a dev environment
+where_used: Pull requests | Releases | Platform teams
+mini_conversation: A: A typo in one DAG file broke everything. | B: Add a CI test that loads all DAGs.
+misconception: ✗ If the file runs in Python, the DAG is fine → ✓ It must also parse correctly inside Airflow with its settings
+confused_with: Import test vs unit test: one checks parsing, the other checks logic.
+avoid: Do not merge DAG changes without loading them in a test.
+wrong_code: # deploy without any DAG tests
+right_code: assert DagBag("dags/").import_errors == {}
+memory_trick: Load every DAG before you ship.
+real_project: A CI test that loads all DAGs blocked broken merges.
+real_interview: An interviewer may ask: How do you test Airflow DAGs?
+real_daily: It is like a dress rehearsal.
+mcq_question: What does the DagBag import_errors check find?
+mcq_options: A) Large logs B) Slow tasks C) Missing variables D) DAG files that fail to parse
+mcq_answer: D
+mcq_why: Import errors list files that could not load.
+fill_blank: The class that loads a folder of DAGs for testing is ____ → DagBag
+hindi_to_task: Assert that no DAG file has import errors.
+task_answer: assert DagBag("dags/").import_errors == {}
+own_task: Write a test that every DAG has an owner and retries set.
+practice_question: Why test DAGs in CI?
+practice_answer: To stop broken files from reaching the scheduler.
+
+@AIR-029
+type: topic56
+topic: 04 Operations
+level: Advanced
+term: Secrets backends
+cue: How can Airflow read connections and variables from a secure vault instead of its own database?
+category: Core concept
+frequency: High
+importance: 5
+origin: Credentials stored in the metadata database are a risk, so Airflow can fetch them from dedicated secret managers.
+pro_tip: Use the secrets backend of your cloud, and keep only non-sensitive settings in plain variables.
+memory_story: A secrets backend is a bank vault that the scheduler visits whenever it needs a key.
+visual: A task asking a vault for a connection at run time.
+emotion: The assurance that secrets are kept in a proper vault.
+definition: A secrets backend is a plug-in that looks up connections and variables in an external manager such as AWS Secrets Manager, Google Secret Manager or HashiCorp Vault, before checking the Airflow database.
+explanation: Configured in the Airflow settings, the backend uses a naming prefix, such as airflow/connections, to find entries. Access to the vault is by the role of the Airflow service, not stored keys. Secrets are not stored in the interface. Rotation happens in the vault and takes effect at the next lookup. Lookups happen often, so caching and permissions need care.
+simple_explain: Store secrets in a vault, let Airflow look them up with its own role, and rotate there.
+analogy: A secrets backend is a bank vault that the scheduler visits whenever it needs a key.
+formula_rule: Vault + role + naming prefix = secure lookups.
+example_1: A connection stored in AWS Secrets Manager under airflow/connections/warehouse.
+example_2: A variable stored in Vault.
+example_3: Rotating a password in the vault with no DAG change.
+related: connections and hooks, variables, credentials in pipelines, least privilege
+word_family: vault, backend, prefix, rotation, role
+where_used: Production deployments | Compliance | Multi-team platforms
+mini_conversation: A: Where is the database password stored? | B: In the secrets manager, and Airflow reads it at run time.
+misconception: ✗ The Airflow interface is a safe place to keep production passwords → ✓ A dedicated vault gives better access control and audit
+contrast: Secrets backend vs connection in the database: the first stores outside Airflow, the second inside.
+avoid: Do not give Airflow broader vault permissions than it needs.
+memory_trick: Vault holds it, role reads it.
+real_project: Moving connections to a secrets backend let a customer rotate passwords without redeploying.
+real_interview: An interviewer may ask: How do you keep credentials out of the Airflow database?
+real_daily: It is like a bank vault with a visitor logbook.
+mcq_question: Where does a secrets backend look up connections?
+mcq_options: A) The log B) The DAG file C) An external secrets manager D) The browser
+mcq_answer: C
+mcq_why: It queries a vault such as a cloud secrets service.
+fill_blank: The naming start that tells the backend where to look is a ____ → prefix
+apply: Passwords must be rotated without changing DAGs. What do you use? → A secrets backend
+explain_task: Explain secrets backends in three lines.
+own_task: List the permissions Airflow needs for a secrets backend.
+
+@AIR-030
+type: code56
+topic: 04 Operations
+level: Intermediate
+term: Airflow alerts and callbacks
+cue: How do you notify people when tasks or DAG runs fail or succeed?
+kind: Airflow setting
+frequency: Very high
+importance: 5
+origin: Pipelines run unattended, so failures must reach people through chat, email or paging systems.
+pro_tip: Send alerts with the DAG, task, date and a link to the log.
+memory_story: A failure callback is the smoke alarm wired to your phone.
+visual: A failed task sending a message with a link to its log.
+emotion: The comfort of knowing before anyone asks.
+meaning: Callbacks such as on_failure_callback and on_success_callback run a function when a task or DAG run changes state, and can send messages to chat or paging tools.
+code: def notify(context):¶    ti = context["task_instance"]¶    msg = f"Task {ti.task_id} in {ti.dag_id} failed for {context['ds']}. Log: {ti.log_url}"¶    send_to_chat(msg)¶default_args = {"on_failure_callback": notify, "retries": 2}¶with DAG("daily_sales", start_date=datetime(2026, 10, 1), schedule="@daily", catchup=False, default_args=default_args) as dag:¶    ...
+output: After the final failed attempt, a message with the DAG, task, date and log link is sent to chat.
+explanation: Callbacks receive a context dictionary. Failure callbacks fire after retries are exhausted, and a retry callback fires on retries. Email alerts also exist but need an email setup. Provider packages include notifiers for Slack and other tools. Keep callbacks small and safe, because errors inside them are hard to see. Avoid alerting on every retry. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Add a failure callback that sends a clear message with a log link.
+analogy: A failure callback is a smoke alarm wired to your phone.
+syntax: on_failure_callback=function(context)
+anatomy: context = task details | ti = task instance | log_url = link | default_args = apply to all tasks
+example_1: on_success_callback=celebrate
+example_2: DAG(..., on_failure_callback=notify)
+example_3: from airflow.providers.slack.notifications.slack import send_slack_notification
+variation: email_on_failure=True   // use email alerts
+used_with: retries, chat tools, default arguments
+related: retries and timeouts, logs and debugging, SLAs and deadlines, alerts
+alternatives: External monitoring | provider notifiers
+where_used: Production DAGs | On-call | Customer feeds
+mini_conversation: A: Nobody knew the load failed overnight. | B: Add a failure callback to the default arguments.
+misconception: ✗ A failure callback fires on each retry → ✓ It fires after the final failure, and retries have their own callback
+confused_with: on_failure vs on_retry callback: one fires at the end, the other on each retry.
+avoid: Do not send alerts without a log link.
+wrong_code: def notify(context): print("failed")
+right_code: def notify(context): send_to_chat(f"{context['ti'].task_id} failed: {context['ti'].log_url}")
+memory_trick: Every alert carries a link to the log.
+real_project: Adding failure callbacks with log links cut the time to respond to failed nightly loads.
+real_interview: An interviewer may ask: When does on_failure_callback run?
+real_daily: It is like a smoke alarm wired to your phone.
+mcq_question: When does on_failure_callback fire?
+mcq_options: A) Never B) After retries are exhausted C) On every start D) Before the DAG loads
+mcq_answer: B
+mcq_why: It runs when the task finally fails.
+fill_blank: The dictionary passed to a callback is called the ____ → context
+hindi_to_task: Add a failure callback to the default arguments.
+task_answer: default_args = {"on_failure_callback": notify}
+own_task: Write a callback that includes the DAG, task and date.
+practice_question: Why include a log link?
+practice_answer: So the responder can start debugging at once.
+
+@AIR-031
+type: topic56
+topic: 04 Operations
+level: Advanced
+term: Upgrades
+cue: How do you upgrade Airflow safely without breaking DAGs?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Airflow releases change APIs and the database schema, so upgrades need a planned process.
+pro_tip: Upgrade in a test environment first, and read the release notes for breaking changes.
+memory_story: An Airflow upgrade is a ship refit done in dry dock before returning to the sea.
+visual: A test environment upgrade followed by production.
+emotion: The calm of a rehearsed upgrade.
+definition: An Airflow upgrade moves to a newer version by backing up the metadata database, reading release notes, testing DAGs, migrating the database schema, and rolling out in stages.
+explanation: Pin versions of Airflow and providers with constraint files, so installs are repeatable. Back up the metadata database before migrating. Run the database migration command and deprecation checks. Test DAGs for import errors and behaviour in a staging copy. Provider packages upgrade separately from the core. Managed services offer version choices and upgrade procedures.
+simple_explain: Back up, test in staging, migrate the database, and roll out carefully.
+analogy: An Airflow upgrade is a ship refit done in dry dock before returning to sea.
+formula_rule: Backup + staging test + migrate + staged rollout.
+example_1: Running airflow db migrate in a staging copy.
+example_2: Pinning versions with the official constraint file.
+example_3: Fixing deprecated imports before a major upgrade.
+related: deployment options, testing DAGs, providers, version pinning
+word_family: upgrade, migration, constraint, deprecation, provider
+where_used: Platform operations | Maintenance windows | Customer environments
+mini_conversation: A: Can we upgrade straight in production? | B: No, test in staging and back up the database first.
+misconception: ✗ Upgrading Airflow only changes the web interface → ✓ It also migrates the database and can change DAG behaviour
+contrast: Core vs provider upgrade: the core is the platform, providers are separate integration packages.
+avoid: Do not upgrade production without a database backup.
+memory_trick: Backup first, staging second, production last.
+real_project: A staging upgrade exposed a removed import before the production maintenance window.
+real_interview: An interviewer may ask: How would you plan an Airflow upgrade?
+real_daily: It is like refitting a ship in dry dock.
+mcq_question: What should you do before a database migration?
+mcq_options: A) Back up the metadata database B) Turn off logs C) Delete old DAGs D) Rename the DAG folder
+mcq_answer: A
+mcq_why: A backup allows a rollback if the migration fails.
+fill_blank: Files that pin compatible package versions are called ____ files → constraint
+apply: A major upgrade is planned. Where do you test first? → In a staging copy
+explain_task: Explain a safe Airflow upgrade in three lines.
+own_task: Write an upgrade checklist with five steps.
+
+@AIR-032
+type: code56
+topic: 05 Best Practice
+level: Intermediate
+term: Idempotent tasks
+cue: Which rule ensures a task can be rerun safely without duplicating results?
+kind: Best practice
+frequency: Very high
+importance: 5
+origin: Airflow retries and reruns tasks, so each task must give the same result when repeated for the same interval.
+pro_tip: Write results with replace or upsert by the logical date.
+memory_story: An idempotent task is a light switch that stays on when pressed twice.
+visual: Two runs of the same interval leaving one clean result.
+emotion: The confidence to clear any task and rerun it.
+meaning: An idempotent task processes only its data interval and writes by replacing or upserting that slice, so a rerun gives the same final state.
+code: load = SQLExecuteQueryOperator(¶    task_id="load_day",¶    conn_id="warehouse",¶    sql="""¶    DELETE FROM fct_sales WHERE sale_date = '{{ ds }}';¶    INSERT INTO fct_sales SELECT * FROM stg_sales WHERE sale_date = '{{ ds }}';¶    """,¶)
+output: Running the task twice for the same date leaves exactly one copy of that day's rows.
+explanation: Appends without keys create duplicates on retries. Use the logical date instead of the current time. Write to temporary locations and swap them in. External side effects such as sending emails need guards or separate tracking. Idempotency makes backfills, retries and manual clears safe.
+simple_explain: Process the interval only, and replace or upsert the result.
+analogy: An idempotent task is a light switch that stays on when pressed twice.
+syntax: DELETE slice; INSERT slice using {{ ds }}
+anatomy: slice = the run's interval | logical date = repeatable input | replace = no duplicates
+example_1: INSERT ... ON CONFLICT DO UPDATE ...
+example_2: df.to_parquet(f"s3://b/sales/dt={ds}/data.parquet")
+example_3: TRUNCATE TABLE tmp; INSERT INTO tmp ...; ALTER TABLE swap
+variation: CREATE OR REPLACE TABLE daily AS SELECT ... WHERE day = '{{ ds }}';   // warehouse replace
+used_with: retries, backfills, templating
+related: retries and timeouts, catchup and backfill, templating, ETL idempotency
+alternatives: Upserts | partition overwrite
+where_used: Every production task | Backfills | Reruns
+mini_conversation: A: Clearing the task doubled the rows. | B: The task appends, so make it replace its date slice.
+misconception: ✗ Retries and clears are always safe in Airflow → ✓ They are safe only when tasks are idempotent
+confused_with: Idempotent vs atomic: idempotent means repeat-safe, atomic means all or nothing.
+avoid: Do not append without a key.
+wrong_code: sql="INSERT INTO fct_sales SELECT * FROM stg_sales"
+right_code: sql="DELETE FROM fct_sales WHERE sale_date = '{{ ds }}'; INSERT INTO fct_sales SELECT * FROM stg_sales WHERE sale_date = '{{ ds }}';"
+memory_trick: Replace the slice, never blindly append.
+real_project: Making loads idempotent let operators clear failed tasks without manual cleanup.
+real_interview: An interviewer may ask: Why do Airflow tasks need to be idempotent?
+real_daily: It is like a light switch pressed twice.
+mcq_question: What makes a rerun safe?
+mcq_options: A) Using the current time B) Deleting logs C) Appending rows D) Replacing the interval's data
+mcq_answer: D
+mcq_why: The same slice is written again with no duplicates.
+fill_blank: Using the run's ____ date makes tasks repeatable → logical
+hindi_to_task: Reload only the run's date using a template.
+task_answer: DELETE FROM fct_sales WHERE sale_date = '{{ ds }}';
+own_task: Rewrite an appending task so it is idempotent.
+practice_question: Why use the logical date instead of now?
+practice_answer: A rerun must process the same interval as the original.
+
+@AIR-033
+type: topic56
+topic: 05 Best Practice
+level: Intermediate
+term: Small tasks
+cue: Why should each task do one clear piece of work?
+category: Core concept
+frequency: High
+importance: 4
+origin: Large tasks hide failures and cost a lot to rerun, so a workflow is built from small tasks with clear boundaries.
+pro_tip: Split a task when you would want to rerun only part of it.
+memory_story: Small tasks are Lego bricks that you can replace one by one.
+visual: A long process split into short labelled boxes.
+emotion: The ease of rerunning just the broken piece.
+definition: Small tasks each perform one logical step, so failures are easy to locate, retries are cheap and parts can be reused and tested separately.
+explanation: A task that extracts, cleans and loads in one go hides where it failed and repeats everything on retry. Splitting adds some overhead per task, so avoid trivial tasks. A good boundary is where data is saved or a system changes. Clear names make the graph a readable description of the process.
+simple_explain: One task, one job, with a boundary where data is saved.
+analogy: Small tasks are Lego bricks that you can replace one by one.
+formula_rule: One task = one logical step with a saved result.
+example_1: Separate tasks for extract, transform and load.
+example_2: A retry repeating only the failed load.
+example_3: Reusing the same extract task in two DAGs.
+related: pipelines vs jobs, idempotent tasks, task groups, retries and timeouts
+word_family: task, step, boundary, granularity, retry
+where_used: DAG design | Reviews | Refactoring
+mini_conversation: A: The task failed after three hours and restarted from zero. | B: Split it so only the failing step repeats.
+misconception: ✗ More tasks are always better → ✓ Tasks that are too tiny add scheduling overhead, so choose meaningful boundaries
+contrast: Large vs small task: a large task hides failures, a small one isolates them.
+avoid: Do not combine extract, transform and load in one task.
+memory_trick: One task, one job, one clear result.
+real_project: Splitting one long script into steps made recovery much quicker.
+real_interview: An interviewer may ask: How big should an Airflow task be?
+real_daily: It is like Lego bricks you can swap.
+mcq_question: What is a good task boundary?
+mcq_options: A) Every variable B) Every line of code C) Every comment D) Where data is saved or a system changes
+mcq_answer: D
+mcq_why: Such points are natural restart positions.
+fill_blank: The size of a task's unit of work is its ____ → granularity
+apply: A task repeats three hours of work on each failure. What do you do? → Split it into smaller tasks
+explain_task: Explain why tasks should be small in three lines.
+own_task: Split a script that extracts, cleans and loads into tasks.
+
+@AIR-034
+type: code56
+topic: 05 Best Practice
+level: Intermediate
+term: No heavy work in DAG files
+cue: Why must DAG files be quick to parse, and what should they avoid at the top level?
+kind: Best practice
+frequency: Very high
+importance: 5
+origin: The scheduler parses every DAG file again and again, so slow code at the top of a file slows the whole system.
+pro_tip: Put imports of heavy libraries and any network or database calls inside the task functions.
+memory_story: A DAG file is a menu, and cooking should only happen in the kitchen when the order comes.
+visual: A short file at the top and a heavy function body deep inside a task.
+emotion: The calm of a scheduler that never lags.
+meaning: Top-level code in a DAG file runs on every parse, so it must be fast and free of network calls, database queries and heavy imports, and real work belongs inside tasks.
+code: # bad: runs on every parse¶import requests¶rows = requests.get("https://api.example.com/tables").json()¶import pandas as pd¶# good: do the work inside the task¶@task¶def list_tables():¶    import requests¶    return requests.get("https://api.example.com/tables", timeout=30).json()
+output: The good version parses instantly and calls the API only when the task runs.
+explanation: Parsing happens every thirty seconds or so for each file, by default. Slow parsing delays scheduling for all DAGs. Dynamic DAG generation from external sources makes this worse, so read static config files or use mapping. Heavy libraries can be imported inside functions. Keep the DAG folder tidy, and measure parse times in the interface.
+simple_explain: Keep the file top level light, and do real work inside tasks.
+analogy: A DAG file is a menu, and cooking should happen only in the kitchen when the order comes.
+syntax: def task(): import heavy; call_api()
+anatomy: top level = runs on every parse | task body = runs only at execution | import inside = lazy load
+example_1: import pandas as pd   # inside the function
+example_2: with open("config.yaml") as f: ...   # small static file is fine
+example_3: Variable.get("x")   # inside a task
+variation: process.expand(item=list_items())   // use mapping instead of top-level loops over data
+used_with: variables, dynamic task mapping, TaskFlow API
+related: variables, dynamic task mapping, defining a DAG, testing DAGs
+alternatives: Static generation of DAG files
+where_used: Every DAG file | Reviews | Performance tuning
+mini_conversation: A: The scheduler is slow and DAG files take a minute to parse. | B: Move the API call and heavy imports into the tasks.
+misconception: ✗ Code at the top of a DAG file runs only once → ✓ It runs on every parse, many times an hour
+confused_with: Parse time vs run time: parse time reads the file, run time executes the task.
+avoid: Do not call APIs or databases at the top level.
+wrong_code: tables = db.query("SELECT name FROM meta")   # at file top
+right_code: @task def list_tables(): return db.query("SELECT name FROM meta")
+memory_trick: Top level reads fast, task body does work.
+real_project: Moving a database call out of the file top removed minutes of scheduler lag.
+real_interview: An interviewer may ask: Why is top-level code in DAG files a problem?
+real_daily: It is like a menu versus a kitchen.
+mcq_question: When does top-level DAG code run?
+mcq_options: A) Only on failure B) Never C) On every parse D) Only once a day
+mcq_answer: C
+mcq_why: The scheduler repeatedly imports each file.
+fill_blank: Importing a library inside a function is a ____ import → lazy
+hindi_to_task: Move an API call so it runs only when the task executes.
+task_answer: @task def get(): return requests.get(url, timeout=30).json()
+own_task: Find three slow things to move out of the top of a DAG file.
+practice_question: Why can slow parsing hurt all DAGs?
+practice_answer: The scheduler spends its time parsing and delays everything else.
+
+@AIR-035
+type: topic56
+topic: 05 Best Practice
+level: Intermediate
+term: Passing data by reference
+cue: How should tasks share large data without sending it through the database?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Tasks run on different machines and XComs are small, so large data is stored once and tasks pass only a reference.
+pro_tip: Pass paths, table names and ids, and write data to shared storage.
+memory_story: Passing by reference is handing someone the locker number, not carrying the contents.
+visual: A task writing to storage and passing the location to the next task.
+emotion: The ease of moving large data cheaply.
+definition: Passing data by reference means a task writes data to shared storage, such as object storage or a table, and passes only its location or identifier to the next task.
+explanation: Big payloads in XComs slow the metadata database and may fail on size limits. Shared storage lets the next task, possibly on another machine, read the data. Use clear naming with the logical date so reruns overwrite the same location. A custom XCom backend can automate this by storing values in object storage. This design also helps retries and debugging, since the data remains inspectable.
+simple_explain: Write the data to storage and pass its path to the next task.
+analogy: Passing by reference is handing someone the locker number, not carrying the contents.
+formula_rule: Data in storage, reference in XCom.
+example_1: Returning s3://bucket/raw/dt=2026-10-01/part.parquet from the extract task.
+example_2: Passing a staging table name to the load task.
+example_3: A custom XCom backend storing large values in object storage.
+related: XCom, TaskFlow API, idempotent tasks, file formats
+word_family: reference, path, locker, XCom backend, storage
+where_used: Large data flows | Multi-worker setups | Debugging
+mini_conversation: A: The XCom is huge and tasks are failing. | B: Write the data to storage and pass the path.
+misconception: ✗ Local files are fine for passing data between tasks → ✓ Tasks may run on different machines, so use shared storage
+contrast: By value vs by reference: value sends the data itself, reference sends its location.
+avoid: Do not pass dataframes through XCom or local disk.
+memory_trick: Send the locker number, not the luggage.
+real_project: Switching to storage paths ended XCom size errors in a data cleaning DAG.
+real_interview: An interviewer may ask: How do tasks share large datasets in Airflow?
+real_daily: It is like handing over a locker number.
+mcq_question: What should a task pass to the next one for large data?
+mcq_options: A) A screenshot B) A path or identifier C) An email D) The full dataset
+mcq_answer: B
+mcq_why: References are small and the data stays in storage.
+fill_blank: A value that points to where data lives is a ____ → reference
+apply: Two tasks on different workers must share a large file. What do you do? → Write it to shared storage and pass the path
+explain_task: Explain passing data by reference in three lines.
+own_task: Design a storage path scheme that makes reruns safe.

@@ -1,0 +1,567 @@
+
+@NET-034
+type: topic56
+topic: 06 Troubleshooting
+level: Intermediate
+term: A troubleshooting method
+cue: Which step-by-step approach finds a network problem without guessing?
+category: Practice
+frequency: Very high
+importance: 5
+origin: Network faults have many possible causes, so engineers follow an ordered method that narrows them down one layer at a time.
+pro_tip: Change one thing at a time and write down what you tried.
+memory_story: Troubleshooting is a doctor's routine of symptoms, tests, diagnosis and treatment.
+visual: A flow from define the problem to test, isolate, fix and verify.
+emotion: The calm of following a routine under pressure.
+definition: A troubleshooting method defines the problem, checks the layers from the bottom up or the top down, forms a hypothesis, tests it, fixes one thing and confirms the result.
+explanation: Start with what exactly fails, for whom and since when. Check the basics first: link, address, gateway, DNS and port. Compare a working case with the failing one, such as another client or another network. Use the right tool for each layer. Record findings so a colleague can continue. Verify the fix with the original user.
+simple_explain: Define, isolate, test one idea at a time, fix, and verify.
+analogy: Troubleshooting is a doctor's routine of symptoms, tests, diagnosis and treatment.
+formula_rule: Symptom → hypothesis → test → fix → verify.
+example_1: Testing the gateway, then DNS, then the port, in that order.
+example_2: Comparing a failing laptop with a working one.
+example_3: Writing a short incident note of steps tried.
+related: OSI layers, ping, dig, curl -v
+word_family: symptom, hypothesis, isolate, verify, baseline
+where_used: Incidents | Customer support | Operations
+mini_conversation: A: Nothing works, restart everything. | B: Let us first check which layer fails.
+misconception: ✗ Changing several settings at once speeds up the fix → ✓ It hides which change helped and may cause new problems
+contrast: Top-down vs bottom-up: one starts at the application, the other at the cable.
+avoid: Do not change several things at once.
+memory_trick: One change, one test, one note.
+real_project: Following a layer checklist to show a customer that their DNS, not our service, failed.
+real_interview: An interviewer may ask: How do you troubleshoot a connectivity problem?
+real_daily: It is like a doctor working through symptoms.
+mcq_question: What is the first step in troubleshooting?
+mcq_options: A) Change settings B) Reboot everything C) Define the exact problem D) Blame the user
+mcq_answer: C
+mcq_why: A clear definition guides every later test.
+fill_blank: A guess to be tested is called a ____ → hypothesis
+apply: A site fails for one user only. What do you compare first? → A working user and the failing one
+explain_task: Explain a troubleshooting routine in three lines.
+own_task: Write a checklist of five basic network checks in order.
+
+@NET-035
+type: code56
+topic: 06 Troubleshooting
+level: Beginner
+term: ping
+cue: Which command tests whether a host replies and how long the round trip takes?
+kind: Network command
+frequency: Very high
+importance: 5
+origin: Admins needed a quick way to check that a host is alive, so a tool was built to send small echo requests and time the replies.
+pro_tip: A failed ping does not always mean the host is down, since many hosts block ICMP.
+memory_story: Ping is a sonar pulse that bounces back from the target.
+visual: A request going out and a reply coming back with a time.
+emotion: The comfort of seeing a reply in a few milliseconds.
+meaning: ping sends ICMP echo requests to a host and reports whether replies arrive, how long they take and whether any are lost.
+code: ping -c 4 8.8.8.8¶ping -c 4 example.com
+output: Four replies with times such as 12 ms are shown, followed by a summary of packet loss and average time.
+explanation: Pinging an address tests basic reachability, and pinging a name also tests DNS. Time shows latency, and loss shows an unreliable path. Firewalls often drop ICMP, so a silent host may still be up. On Windows use -n instead of -c to set the count. Ping uses ICMP and not TCP or UDP, so it does not prove that a port works.
+simple_explain: Ping an address first, then a name, to separate network problems from DNS problems.
+analogy: Ping is a sonar pulse that bounces back from the target.
+syntax: ping [-c count] host
+anatomy: -c = number of requests | host = name or address | time = round trip | loss = missing replies
+example_1: ping -c 3 192.168.1.1
+example_2: ping -c 3 localhost
+example_3: ping -c 3 google.com
+variation: ping -n 4 example.com   // Windows form
+used_with: traceroute, dig, curl
+related: traceroute, dig, timeouts vs refused, latency
+alternatives: curl or nc to test real ports
+where_used: Quick checks | Latency tests | Troubleshooting
+mini_conversation: A: Ping to the name fails but the IP works. | B: That points to a DNS problem.
+misconception: ✗ If ping fails, the server is down → ✓ ICMP may be blocked while the service works
+confused_with: ping vs curl: ping tests ICMP reachability, curl tests an actual web service.
+avoid: Do not conclude a host is down from one failed ping.
+wrong_code: ping example.com
+right_code: ping -c 4 example.com
+memory_trick: Count flag stops endless pinging on Linux.
+real_project: Showing a customer that the IP replied but the name did not, which pointed to DNS.
+real_interview: An interviewer may ask: What protocol does ping use?
+real_daily: It is like a sonar pulse.
+mcq_question: Which protocol does ping use?
+mcq_options: A) ICMP B) HTTP C) TCP D) UDP
+mcq_answer: A
+mcq_why: Ping sends ICMP echo requests.
+fill_blank: On Linux the option that limits the number of requests is ____ → -c
+hindi_to_task: Send exactly three pings to a host.
+task_answer: ping -c 3 host
+own_task: Use ping to find out whether the problem is DNS or the network.
+practice_question: Why can a working server not reply to ping?
+practice_answer: A firewall may block ICMP.
+
+@NET-036
+type: code56
+topic: 06 Troubleshooting
+level: Intermediate
+term: traceroute
+cue: Which command shows the path packets take and where they slow down or stop?
+kind: Network command
+frequency: High
+importance: 4
+origin: Knowing that a host is unreachable does not say where, so a tool was made that lists each router along the path.
+pro_tip: Look for the hop where times jump or replies stop for good.
+memory_story: Traceroute is a trail of breadcrumbs dropped at each junction.
+visual: A list of numbered hops with names and times.
+emotion: The satisfaction of seeing where the path breaks.
+meaning: traceroute sends packets with increasing time-to-live values so each router on the path reveals itself, producing a list of hops with delays.
+code: traceroute -n example.com¶sudo traceroute -T -p 443 example.com
+output: Numbered lines list each router address with three timings, and stars appear where a hop does not answer.
+explanation: Each router lowers the time-to-live by one and replies with an error when it reaches zero, which shows its address. Stars may only mean that a router ignores these probes, not that it is broken. The path can differ between runs. -n skips name lookups, and -T uses TCP, which passes firewalls more often. On Windows use tracert.
+simple_explain: Run traceroute to see each hop, and look for where delay grows or replies end.
+analogy: Traceroute is a trail of breadcrumbs dropped at each junction.
+syntax: traceroute [-n] [-T -p port] host
+anatomy: -n = no name lookup | -T = TCP probes | -p = port | hop = one router
+example_1: traceroute -n 1.1.1.1
+example_2: traceroute -m 20 example.com
+example_3: tracert example.com
+variation: mtr example.com   // a live combined ping and traceroute
+used_with: ping, mtr, firewalls
+related: ping, routers, latency, timeouts vs refused
+alternatives: mtr | Online path tools
+where_used: Path faults | Slow links | ISP reports
+mini_conversation: A: Where does the traffic stop? | B: Hop six goes silent, so check beyond it.
+misconception: ✗ A star in traceroute always marks the broken router → ✓ Many routers ignore probes while still forwarding traffic
+confused_with: traceroute vs ping: traceroute lists the path, ping tests one destination.
+avoid: Do not blame a hop for stars if later hops respond.
+wrong_code: traceroute -T -p 443 example.com   # TCP mode needs root
+right_code: sudo traceroute -T -p 443 example.com
+memory_trick: Stars alone prove nothing about a hop.
+real_project: Using traceroute to show a provider where latency jumped on the path.
+real_interview: An interviewer may ask: How does traceroute discover each hop?
+real_daily: It is like breadcrumbs at each junction.
+mcq_question: What does traceroute vary to find each hop?
+mcq_options: A) Size of the packet only B) Name C) Port D) Time to live
+mcq_answer: D
+mcq_why: Each router decrements TTL and reveals itself when it reaches zero.
+fill_blank: The Windows version of traceroute is called ____ → tracert
+hindi_to_task: Trace the path to example.com without name lookups.
+task_answer: traceroute -n example.com
+own_task: Run traceroute using TCP port 443 and describe what you see.
+practice_question: Why can a hop show only stars?
+practice_answer: The router may ignore the probes while still forwarding traffic.
+
+@NET-037
+type: code56
+topic: 06 Troubleshooting
+level: Intermediate
+term: dig
+cue: Which command queries DNS servers and shows the full answer for a name?
+kind: Network command
+frequency: Very high
+importance: 5
+origin: To check what DNS says you need to ask it directly, so a query tool was written that prints every part of the reply.
+pro_tip: Query a specific server with @ to compare what different resolvers answer.
+memory_story: Dig is a shovel that digs the full record out of DNS.
+visual: A reply with question, answer and authority sections.
+emotion: The satisfaction of seeing the exact record and TTL.
+meaning: dig sends a DNS query for a name and record type and prints the answer, the server that replied and the time it took.
+code: dig example.com A +short¶dig @8.8.8.8 example.com MX¶dig +trace example.com
+output: The first command prints only the address, the second shows mail servers from Google's resolver, and the third shows the delegation from the root down.
+explanation: The ANSWER section contains the records with their TTL. The status NOERROR means success, and NXDOMAIN means the name does not exist. +short trims the output, and +trace follows the chain of authoritative servers. Asking different resolvers reveals caching differences. On Windows, nslookup gives a similar result.
+simple_explain: Ask for the record you care about, from a chosen server, and read status and TTL.
+analogy: Dig is a shovel that digs the full record out of DNS.
+syntax: dig [@server] name [type] [+short]
+anatomy: @server = resolver to ask | name = domain | type = A, MX, TXT | +short = brief
+example_1: dig example.com TXT
+example_2: dig -x 8.8.8.8
+example_3: dig +short NS example.com
+variation: nslookup example.com   // simpler tool on Windows
+used_with: ping, curl, resolvers
+related: DNS and record types, DNS caching, ping, curl -v
+alternatives: nslookup | host
+where_used: DNS faults | Email setup | Migrations
+mini_conversation: A: Did the DNS change reach everyone? | B: Query a few resolvers with dig and compare TTL.
+misconception: ✗ NXDOMAIN means the DNS server is down → ✓ It means the name does not exist in DNS
+confused_with: dig vs nslookup: dig shows detail, nslookup is simpler.
+avoid: Do not trust only your own resolver's cached answer.
+wrong_code: dig example.com@8.8.8.8
+right_code: dig @8.8.8.8 example.com
+memory_trick: At sign comes before the name.
+real_project: Using dig against two resolvers to prove a DNS change was still cached.
+real_interview: An interviewer may ask: What does NXDOMAIN mean?
+real_daily: It is like digging the record out of a directory.
+mcq_question: Which dig modifier trims the output to the bare data?
+mcq_options: A) +trace B) +short C) +long D) +raw
+mcq_answer: B
+mcq_why: +short prints just the data.
+fill_blank: A status meaning the name does not exist is ____ → NXDOMAIN
+hindi_to_task: Look up the mail servers of example.com.
+task_answer: dig example.com MX
+own_task: Query a specific public resolver for an A record and read its TTL.
+practice_question: What does +trace do?
+practice_answer: It follows the chain of authoritative servers from the root.
+
+@NET-038
+type: code56
+topic: 06 Troubleshooting
+level: Intermediate
+term: curl -v
+cue: Which command shows the full conversation of a web request, including TLS and headers?
+kind: Network command
+frequency: Very high
+importance: 5
+origin: Browsers hide the details of a request, so a command line client was made that prints every step.
+pro_tip: Add -I to see only the response headers.
+memory_story: curl -v is a glass-walled kitchen where you see every step of the order.
+visual: Lines starting with arrows showing connection, TLS and headers.
+emotion: The satisfaction of seeing exactly why a request failed.
+meaning: curl sends an HTTP request from the command line, and the -v option prints connection details, TLS information and both request and response headers.
+code: curl -v https://example.com/health¶curl -sS -o /dev/null -w "%{http_code} %{time_total}s\n" https://example.com¶curl -I https://example.com
+output: The first shows the connection, certificate and headers, the second prints only the status code and total time, and the third shows just response headers.
+explanation: Lines beginning with an asterisk show connection and TLS steps, a greater-than sign marks request headers and a less-than sign marks response headers. Useful options are -H for headers, -X for the method, -d for a body, -k to skip certificate checks for testing only, and --resolve to test a name against a chosen address. Redirects are followed only with -L.
+simple_explain: Use -v to watch every step, -I for headers, and -w for the status and timing.
+analogy: curl -v is a glass-walled kitchen where you watch every step of the order.
+syntax: curl [-v] [-I] [-H header] [-d data] [-L] url
+anatomy: -v = verbose | -I = headers only | -H = header | -d = body | -L = follow redirects
+example_1: curl -H "Authorization: Bearer TOKEN" https://api.example.com/me
+example_2: curl -X POST -d '{"a":1}' -H "Content-Type: application/json" https://api.example.com/items
+example_3: curl --resolve example.com:443:203.0.113.10 https://example.com
+variation: curl -k https://host   // skip certificate checks, for testing only
+used_with: dig, ping, openssl
+related: HTTP, HTTPS and TLS, certificates, proxy problems
+alternatives: wget | HTTP client tools
+where_used: API debugging | Certificate checks | Health checks
+mini_conversation: A: The API call fails with no useful message. | B: Run curl -v and read the headers.
+misconception: ✗ curl -k is a fine permanent fix for certificate errors → ✓ It only hides the problem and should never stay in scripts
+confused_with: curl vs browser: curl shows raw details, a browser hides them.
+avoid: Do not leave -k in production scripts.
+wrong_code: curl https://example.com/old
+right_code: curl -L https://example.com/old
+memory_trick: Verbose shows steps, dash I shows headers.
+real_project: Using curl --resolve to test a new server before changing DNS.
+real_interview: An interviewer may ask: How would you debug an API call from the command line?
+real_daily: It is like a glass-walled kitchen.
+mcq_question: Which option follows redirects?
+mcq_options: A) -k B) -v C) -I D) -L
+mcq_answer: D
+mcq_why: -L follows Location headers.
+fill_blank: The option that prints only response headers is ____ → -I
+hindi_to_task: Check the status code and time of a URL quietly.
+task_answer: curl -sS -o /dev/null -w "%{http_code} %{time_total}s\n" https://example.com
+own_task: Test a new server address with curl before changing DNS.
+practice_question: What does --resolve do?
+practice_answer: It forces a name to use a chosen address for the request.
+
+@NET-039
+type: code56
+topic: 06 Troubleshooting
+level: Intermediate
+term: ss
+cue: Which command lists sockets, so you can see which ports are open and in use?
+kind: Network command
+frequency: High
+importance: 4
+origin: To know what is listening on a machine you need a list of sockets, so a fast tool replaced the older netstat.
+pro_tip: Use ss -ltnp to see listening TCP ports and the programs using them.
+memory_story: ss is the building directory showing which doors are open and who is behind each.
+visual: A table of listening addresses, ports and process names.
+emotion: The satisfaction of finding the program that holds a port.
+meaning: ss shows sockets on a Linux machine, including listening ports, established connections and the processes that own them.
+code: ss -ltnp¶ss -tn state established¶ss -s
+output: The first lists listening TCP ports with process names, the second lists active connections, and the third prints a summary of socket counts.
+explanation: The flags are l for listening, t for TCP, u for UDP, n for numbers and p for processes. A service listening on 127.0.0.1 is reachable only locally, while 0.0.0.0 or :: means all addresses. Process names need root rights. It replaces the older netstat. Many connections in TIME-WAIT are normal.
+simple_explain: Use ss -ltnp to see what listens where, and check the bind address.
+analogy: ss is a building directory showing which doors are open and who is behind each.
+syntax: ss [-l] [-t|-u] [-n] [-p] [state ...]
+anatomy: -l = listening | -t = TCP | -u = UDP | -n = numeric | -p = process
+example_1: ss -lun
+example_2: ss -tnp dst :443
+example_3: sudo ss -ltnp | grep 5432
+variation: netstat -tulpn   // older equivalent
+used_with: lsof, firewalls, curl
+related: ports, client and server, firewalls, timeouts vs refused
+alternatives: netstat | lsof -i
+where_used: Port conflicts | Binding checks | Security reviews
+mini_conversation: A: The service is up but unreachable from outside. | B: Check whether it listens on 127.0.0.1 only.
+misconception: ✗ A service listening on 127.0.0.1 is reachable from other machines → ✓ It accepts only local connections
+confused_with: ss vs netstat: ss is newer and faster, netstat is the older tool.
+avoid: Do not read process details without the right permissions.
+wrong_code: ss -ltn | grep postgres
+right_code: sudo ss -ltnp | grep postgres
+memory_trick: L T N P shows listeners with names.
+real_project: Finding that an app bound to 127.0.0.1 so the load balancer could not reach it.
+real_interview: An interviewer may ask: How do you see which process uses port 8080?
+real_daily: It is like a building directory.
+mcq_question: What does 0.0.0.0 mean as a listen address?
+mcq_options: A) All IPv4 addresses on the host B) Only local C) No address D) A broadcast
+mcq_answer: A
+mcq_why: The service accepts connections on every interface.
+fill_blank: The flag that shows the owning program is ____ → -p
+hindi_to_task: List all listening TCP ports with numbers.
+task_answer: ss -ltn
+own_task: Find which program is listening on port 8080.
+practice_question: Why can a service listen but be unreachable from outside?
+practice_answer: It may be bound to 127.0.0.1 or blocked by a firewall.
+
+@NET-040
+type: code56
+topic: 06 Troubleshooting
+level: Advanced
+term: tcpdump
+cue: Which command captures packets so you can see what actually crosses the wire?
+kind: Network command
+frequency: Medium
+importance: 4
+origin: When logs and tools disagree, you need to see the real packets, so a command line sniffer was built.
+pro_tip: Always add a filter, or the output will drown you.
+memory_story: tcpdump is a microphone on the cable that records every word spoken.
+visual: A stream of timestamped packet lines with flags and addresses.
+emotion: The thrill of seeing the proof in the packets.
+meaning: tcpdump captures and prints packets on an interface, and filters select traffic by host, port or protocol.
+code: sudo tcpdump -i any -n port 443 and host 203.0.113.10¶sudo tcpdump -i eth0 -w capture.pcap port 53
+output: The first prints matching packets live, and the second saves DNS packets to a file that can be opened in Wireshark.
+explanation: Flags such as S for SYN and S. for SYN-ACK show handshake steps. -n skips name lookups, -i picks the interface, and -w writes a file. Captures need root rights and may contain sensitive data, so handle them carefully. For encrypted traffic you see only metadata. Filters use a language called BPF.
+simple_explain: Capture only the traffic you need, then read the flags to see if the handshake finished.
+analogy: tcpdump is a microphone on the cable that records every word spoken.
+syntax: tcpdump -i interface [-n] [-w file] filter
+anatomy: -i = interface | -n = numeric | -w = write file | filter = host, port, protocol
+example_1: sudo tcpdump -n icmp
+example_2: sudo tcpdump -n -c 20 port 80
+example_3: sudo tcpdump -r capture.pcap -n
+variation: tshark -i eth0 -f "port 53"   // command line Wireshark
+used_with: Wireshark, ss, curl
+related: Wireshark basics, TCP handshake, ports, timeouts vs refused
+alternatives: tshark | Wireshark
+where_used: Hard faults | Proof for providers | Security work
+mini_conversation: A: Does our request even leave the server? | B: Capture on the interface and look for the SYN.
+misconception: ✗ tcpdump can show the content of encrypted traffic → ✓ It shows only metadata for TLS traffic
+confused_with: tcpdump vs ss: tcpdump shows packets, ss shows sockets.
+avoid: Do not share captures without removing sensitive data.
+wrong_code: tcpdump port 443
+right_code: sudo tcpdump -n port 443
+memory_trick: Filter first, or drown in packets.
+real_project: Capturing traffic to prove the reply was dropped upstream of our server.
+real_interview: An interviewer may ask: How do you check whether a SYN is answered?
+real_daily: It is like a microphone on the cable.
+mcq_question: Which option writes packets to a file?
+mcq_options: A) -n B) -c C) -w D) -r
+mcq_answer: C
+mcq_why: -w saves a capture file.
+fill_blank: The filter language used by tcpdump is called ____ → BPF
+hindi_to_task: Capture 20 packets on port 80 without name lookups.
+task_answer: sudo tcpdump -n -c 20 port 80
+own_task: Capture DNS traffic into a file for later study.
+practice_question: Why does tcpdump need elevated rights?
+practice_answer: Reading raw packets from an interface is a privileged operation.
+
+@NET-041
+type: topic56
+topic: 06 Troubleshooting
+level: Advanced
+term: Wireshark basics
+cue: Which graphical tool lets you open and analyse packet captures?
+category: Tool
+frequency: Medium
+importance: 3
+origin: Reading raw packet lists is hard, so a graphical analyser was made that decodes protocols and colours problems.
+pro_tip: Apply a display filter such as tcp.port == 443 to cut the noise.
+memory_story: Wireshark is a translator that turns raw packets into readable sentences.
+visual: Three panes showing packet list, details and raw bytes.
+emotion: The thrill of finding the exact malformed packet.
+definition: Wireshark is a packet analyser that opens captures, decodes protocols layer by layer, and offers filters and tools to follow conversations.
+explanation: The main screen shows a list of packets, a tree of protocol layers and the raw bytes. Display filters such as ip.addr == 10.0.0.5 or http narrow the list. Follow TCP stream shows one conversation as text. Expert information flags retransmissions and resets. Capture filters limit what is recorded, while display filters limit what is shown.
+simple_explain: Open a capture, filter it, follow a stream, and read the expert warnings.
+analogy: Wireshark is a translator that turns raw packets into readable sentences.
+formula_rule: Capture filter limits recording. Display filter limits viewing.
+example_1: Filtering with dns to see only DNS traffic.
+example_2: Following a TCP stream to read an HTTP exchange.
+example_3: Spotting retransmissions in expert information.
+related: tcpdump, TCP handshake, HTTP, TLS
+word_family: capture, display filter, stream, dissector, expert
+where_used: Deep troubleshooting | Training | Security analysis
+mini_conversation: A: The transfer is slow. | B: Wireshark shows many retransmissions on that stream.
+misconception: ✗ Wireshark can decrypt any HTTPS traffic → ✓ It needs the session keys to decrypt, otherwise only metadata is visible
+contrast: Capture filter vs display filter: one limits recording, the other limits what you see.
+avoid: Do not capture on production without permission.
+memory_trick: Capture narrow first, then display narrower still.
+real_project: Opening a capture to show a customer firewall resetting connections.
+real_interview: An interviewer may ask: What is the difference between a capture and a display filter?
+real_daily: It is like a translator for raw packets.
+mcq_question: Which feature shows one conversation as text?
+mcq_options: A) Export B) Expert info C) Statistics D) Follow TCP stream
+mcq_answer: D
+mcq_why: It reassembles the stream for reading.
+fill_blank: A filter applied after capture is a ____ filter → display
+apply: A transfer is slow and you suspect packet loss. What do you look at? → Retransmissions in expert information
+explain_task: Explain how to use Wireshark in three lines.
+own_task: Write three display filters for a DNS problem.
+
+@NET-042
+type: code56
+topic: 06 Troubleshooting
+level: Advanced
+term: MTU and fragmentation
+cue: Which size limit can make small requests work and large ones hang?
+kind: Network concept
+frequency: Medium
+importance: 4
+origin: Links carry only a maximum frame size, so large packets are split or dropped when they do not fit.
+pro_tip: If small calls work but large ones hang, test the path MTU.
+memory_story: MTU is the door width, and a big sofa must be cut up or stay outside.
+visual: A wide packet failing to fit through a narrow link.
+emotion: The aha moment when a strange hang has a simple cause.
+meaning: The MTU is the largest packet a link can carry, and packets bigger than it must be fragmented or are dropped if marked do-not-fragment.
+code: ping -M do -s 1472 -c 2 example.com¶ping -M do -s 1400 -c 2 example.com¶ip link show eth0
+output: If 1472 fails but 1400 works, the path MTU is below the standard 1500, and ip link shows the interface MTU.
+explanation: Ethernet commonly uses 1500 bytes. Tunnels such as VPNs and some cloud links add headers, so the usable size is smaller. TCP learns the limit through path MTU discovery, which needs ICMP messages, and blocked ICMP causes hangs. The usual fix is to lower the MTU or clamp the TCP segment size. The test size is the MTU minus 28 bytes of headers.
+simple_explain: Test with do-not-fragment pings of different sizes, and lower the MTU on tunnels.
+analogy: MTU is the door width, and a big sofa must be cut or stay outside.
+syntax: ping -M do -s size host
+anatomy: -M do = do not fragment | -s = payload size | 28 bytes = IP and ICMP headers
+example_1: ping -M do -s 1372 -c 2 10.8.0.1
+example_2: ip link set dev tun0 mtu 1400
+example_3: iptables clamp of MSS to path MTU
+variation: tracepath example.com   // reports path MTU
+used_with: VPN, tcpdump, firewalls
+related: packets and frames, VPN, ICMP, timeouts vs refused
+alternatives: tracepath | MSS clamping
+where_used: VPNs | Tunnels | Cloud links
+mini_conversation: A: Small API calls work but uploads hang. | B: Test MTU, as a tunnel may cut the size.
+misconception: ✗ ICMP can always be blocked safely → ✓ Blocking it can break path MTU discovery and cause hangs
+confused_with: MTU vs bandwidth: MTU is the maximum packet size, bandwidth is capacity.
+avoid: Do not block all ICMP messages.
+wrong_code: ping -s 1500 example.com
+right_code: ping -M do -s 1472 example.com
+memory_trick: Small works, large hangs, think MTU.
+real_project: Lowering the tunnel MTU after large uploads hung over a VPN.
+real_interview: An interviewer may ask: Why would only large packets fail?
+real_daily: It is like a sofa that will not fit a door.
+mcq_question: Which symptom suggests an MTU problem?
+mcq_options: A) Small requests work, large ones hang B) Nothing works C) Ping works for none D) DNS fails
+mcq_answer: A
+mcq_why: Large packets exceed the path limit.
+fill_blank: The usual Ethernet MTU is ____ bytes → 1500
+hindi_to_task: Send a do-not-fragment ping with payload 1400.
+task_answer: ping -M do -s 1400 -c 2 example.com
+own_task: Work out the payload size to test an MTU of 1400.
+practice_question: Why can blocking ICMP cause hangs?
+practice_answer: It breaks path MTU discovery, so large packets are silently dropped.
+
+@NET-043
+type: topic56
+topic: 06 Troubleshooting
+level: Intermediate
+term: Timeouts vs connection refused
+cue: Which two failures look similar but point to different causes?
+category: Practice
+frequency: Very high
+importance: 5
+origin: Both errors mean no connection, but they have different meanings, so reading them correctly saves a lot of time.
+pro_tip: Refused means someone answered no, and timeout means nobody answered.
+memory_story: Refused is a door slammed in your face, and timeout is knocking on a silent house.
+visual: One arrow bouncing back with a reset and another arrow vanishing.
+emotion: The relief of knowing which layer to look at.
+definition: Connection refused means the host replied with a reset because nothing listens on that port, while a timeout means no reply arrived at all.
+explanation: A refusal shows the host is reachable and the port is closed, or the service is not running or bound elsewhere. A timeout suggests a firewall dropping packets, a wrong address, a routing problem or a host that is down. Test from the same side as the client, since the path may differ. Tools such as nc, curl and tcpdump show which case you have.
+simple_explain: Refused means the host answered no. Timeout means silence.
+analogy: Refused is a door slammed in your face, and timeout is knocking on a silent house.
+formula_rule: Reset = refused. Silence = timeout.
+example_1: Connecting to a closed port and getting refused at once.
+example_2: Connecting through a firewall that drops packets and timing out.
+example_3: A service bound to localhost giving refused from outside.
+related: TCP handshake, firewalls, ss, tcpdump
+word_family: refused, timeout, reset, drop, reachable
+where_used: Daily debugging | Incident calls | Firewall work
+mini_conversation: A: It says connection refused. | B: The host is reachable, so check that the service listens.
+misconception: ✗ A timeout always means the server is down → ✓ It can also mean a firewall silently drops packets
+contrast: Refused vs timeout: refused is an answer, timeout is no answer.
+avoid: Do not open firewall rules for a refused error.
+memory_trick: Refused answered, timeout stayed silent.
+real_project: Telling a customer that a timeout meant their firewall dropped our traffic.
+real_interview: An interviewer may ask: What is the difference between refused and timeout?
+real_daily: It is like a slammed door versus a silent house.
+mcq_question: What does connection refused indicate?
+mcq_options: A) The host is down B) A cable is cut C) The host replied that nothing listens there D) DNS failed
+mcq_answer: C
+mcq_why: A reset is an active reply.
+fill_blank: A silent drop leads to a connection ____ → timeout
+apply: A client gets refused from outside but works locally. What is likely? → The service listens only on localhost
+explain_task: Explain refused versus timeout in three lines.
+own_task: List two likely causes for each of the two results.
+
+@NET-044
+type: topic56
+topic: 06 Troubleshooting
+level: Intermediate
+term: DNS caching
+cue: Where are DNS answers stored, and why do old answers survive after a change?
+category: Practice
+frequency: High
+importance: 4
+origin: Asking the root servers every time would be slow, so answers are cached at several levels for their lifetime.
+pro_tip: Lower the TTL before a planned change and flush caches when testing.
+memory_story: DNS caches are sticky notes left on every desk, and each note has an expiry date.
+visual: Layers of caches in the browser, the system and the resolver.
+emotion: The patience of waiting for an old note to expire.
+definition: DNS caching stores answers in browsers, operating systems and resolvers for the time set by the record's TTL, so changes spread only as old entries expire.
+explanation: A browser may keep an answer, then the operating system, then the router or provider's resolver. Each obeys the TTL, but some apps cache longer. Negative answers, such as NXDOMAIN, are cached too. Flush commands exist for the system cache, but you cannot flush a provider's resolver. Test with dig against different resolvers.
+simple_explain: Old answers live until their TTL ends, so lower it before changes and test several resolvers.
+analogy: DNS caches are sticky notes on every desk, each with an expiry date.
+formula_rule: Change takes effect after the longest TTL still cached.
+example_1: A browser still opening the old server after a change.
+example_2: A system cache flushed to pick up a new record.
+example_3: A negative answer cached for a few minutes.
+related: DNS and record types, dig, load balancers, migrations
+word_family: cache, TTL, flush, negative caching, resolver
+where_used: Migrations | Failover | Troubleshooting
+mini_conversation: A: I changed the record but my site is unchanged. | B: Caches still hold the old answer until the TTL expires.
+misconception: ✗ Flushing my own computer's DNS cache updates everyone → ✓ It affects only my machine, and other caches keep the old answer
+contrast: Positive vs negative caching: one stores found records, the other stores not found answers.
+avoid: Do not plan a cutover with a very long TTL.
+memory_trick: Lower the TTL a day before.
+real_project: Lowering the TTL to sixty seconds the day before a server move.
+real_interview: An interviewer may ask: Why does a DNS change take time?
+real_daily: It is like sticky notes with expiry dates.
+mcq_question: What controls how long an answer is cached?
+mcq_options: A) The gateway B) The TTL C) The port D) The MAC
+mcq_answer: B
+mcq_why: Each record carries a time to live.
+fill_blank: Caching a not-found answer is called ____ caching → negative
+apply: A cutover is tomorrow. What do you lower today? → The TTL
+explain_task: Explain DNS caching in three lines.
+own_task: Write a plan for lowering and restoring TTL around a move.
+
+@NET-045
+type: topic56
+topic: 06 Troubleshooting
+level: Advanced
+term: Proxy problems
+cue: Which failures are caused by proxies, and how do you spot them?
+category: Practice
+frequency: High
+importance: 4
+origin: Corporate and cloud networks put proxies in the path, and they change addresses, headers and certificates in ways that break tools.
+pro_tip: Check the proxy environment variables first when a tool works on your laptop but not on a server.
+memory_story: A proxy is a middleman, so every missing or odd detail may be the middleman's doing.
+visual: A request passing through a proxy that modifies it.
+emotion: The relief of finding the middleman responsible.
+definition: Proxy problems are failures caused by an intermediary that blocks, rewrites, times out or inspects requests, often visible through proxy settings, headers and certificates.
+explanation: Command line tools read variables such as HTTP_PROXY, HTTPS_PROXY and NO_PROXY, and some ignore them. Internal addresses should be listed in NO_PROXY. Proxies can enforce time limits, size limits and allow-lists. They can add forwarded headers, change the host header or replace certificates. Compare a direct request with a proxied one to find the difference.
+simple_explain: Find out whether a proxy is in the path, read its settings, and compare direct and proxied requests.
+analogy: A proxy is a middleman, so every odd detail may be the middleman's doing.
+formula_rule: Direct request vs proxied request, compare the difference.
+example_1: A tool failing because HTTPS_PROXY is not set on the server.
+example_2: An internal service wrongly sent through a proxy because NO_PROXY is missing.
+example_3: A 502 error returned by the proxy instead of the app.
+related: proxies and reverse proxies, TLS inspection, curl -v, allow-lists
+word_family: proxy, NO_PROXY, 502, timeout, header
+where_used: Corporate networks | Cloud | CI runners
+mini_conversation: A: It works on my laptop but not on the server. | B: The server needs the proxy variables set.
+misconception: ✗ If the target is up, the proxy cannot be the problem → ✓ The proxy may block, slow or rewrite the request
+contrast: 502 vs 504: 502 is a bad reply from upstream, 504 means upstream timed out.
+avoid: Do not hard-code proxy settings in code.
+memory_trick: Works at home, check the proxy variables.
+real_project: Adding NO_PROXY entries so internal calls stopped going through the company proxy.
+real_interview: An interviewer may ask: What does a 504 mean?
+real_daily: It is like a middleman that may be the cause.
+mcq_question: Which variable lists hosts that bypass the proxy?
+mcq_options: A) HTTP_HOST B) NO_PROXY C) HOME D) PATH
+mcq_answer: B
+mcq_why: NO_PROXY lists exceptions to the proxy.
+fill_blank: A gateway timeout is the status code ____ → 504
+apply: A tool works from your laptop but not from a server behind a proxy. What do you set? → The proxy environment variables
+explain_task: Explain how to find proxy problems in three lines.
+own_task: Write the environment variables a server behind a proxy needs.

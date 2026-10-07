@@ -1,0 +1,703 @@
+deck.title: LLM APIs – Beginner to Advanced Flashcards
+deck.subject: Large language model APIs
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: json
+type: topic56
+
+@LLM-001
+topic: 01 Basics
+level: Beginner
+term: What an LLM is
+cue: Which kind of model predicts text and can follow instructions?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Researchers trained very large neural networks on huge amounts of text to predict the next piece of text, and found they could follow instructions and answer questions.
+pro_tip: Think of an LLM as a very capable text predictor, not a database of verified facts.
+memory_story: An LLM is a very well-read assistant who writes fluent answers from patterns it learned, without looking anything up unless you give it tools.
+visual: Text going into a model box and a continuation coming out.
+emotion: The wonder of a machine that writes useful text.
+definition: A large language model is a neural network trained on large text collections that generates text by predicting likely next tokens, and is adapted to follow instructions and hold conversations.
+explanation: The model has fixed knowledge up to its training cut-off and no live access to the internet unless tools are provided. It does not look up facts but produces likely text, so it can be wrong while sounding confident. Behaviour depends on the prompt, settings and context. Applications wrap the model with instructions, data and tools.
+simple_explain: An LLM generates text from your prompt using patterns learned in training, and it can be wrong.
+analogy: An LLM is a well-read assistant who writes fluent answers from learned patterns and checks nothing unless given tools.
+formula_rule: Prompt in, predicted text out.
+example_1: Summarising a pasted email.
+example_2: Drafting a reply in a given tone.
+example_3: Classifying a ticket by topic.
+related: tokens, context window, hallucination, grounding
+word_family: model, prediction, training, inference, instruction
+where_used: Assistants | Automation | Customer tools
+mini_conversation: A: Does the model know our latest policy? | B: Only if we put it in the prompt, since its training is fixed.
+misconception: ✗ An LLM looks up facts like a search engine → ✓ It generates likely text and can be wrong without any lookup
+contrast: LLM vs search engine: one generates text, the other retrieves existing documents.
+avoid: Do not treat model output as verified fact.
+memory_trick: Fluent does not mean correct.
+real_project: Explaining that the model needed the policy text in its prompt resolved a customer's wrong answers.
+real_interview: An interviewer may ask: What can and cannot an LLM do reliably?
+real_daily: It is like a well-read assistant who writes fluently.
+mcq_question: How does an LLM produce text?
+mcq_options: A) By predicting likely next tokens B) By copying a database C) By random letters D) By searching the web always
+mcq_answer: A
+mcq_why: Generation is token prediction.
+fill_blank: The date after which a model has no training data is its ____ cut-off → knowledge
+apply: A model must answer from your private policy. What do you do? → Provide the policy in the prompt
+explain_task: Explain what an LLM is in three lines.
+own_task: List three tasks suited to LLMs and two that are not.
+
+@LLM-002
+topic: 01 Basics
+level: Beginner
+term: Tokens
+cue: Which pieces of text do models read, write and charge for?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models work on numbers, so text is split into pieces called tokens that map to numbers.
+pro_tip: Estimate cost and limits in tokens, not words or characters.
+memory_story: Tokens are the Lego bricks of text, and the model reads and builds with bricks, not whole sentences.
+visual: A single sentence cut into several coloured chunks.
+emotion: The understanding of why limits are counted oddly.
+definition: A token is a unit of text, such as a word, part of a word or punctuation, that a tokenizer produces, and models read, generate and bill by tokens.
+explanation: In English, a token is roughly three quarters of a word, but this varies by language and tokenizer, and other languages may use more tokens per word. Both input and output count toward limits and cost. Rare words split into several tokens. Providers offer tokenizer tools or token counting endpoints. Whitespace and formatting also use tokens.
+simple_explain: Text becomes tokens, and tokens decide limits and cost.
+analogy: Tokens are the Lego bricks of text.
+formula_rule: Input tokens + output tokens = total used.
+example_1: A short sentence using about ten tokens.
+example_2: A long contract using thousands of tokens.
+example_3: Hindi text using more tokens per word than English.
+related: context window, cost control, model choice, caching
+word_family: token, tokenizer, input, output, limit
+where_used: Cost estimates | Limits | Prompt design
+mini_conversation: A: Why does this Hindi prompt cost more? | B: It uses more tokens per word.
+misconception: ✗ One token equals one word → ✓ Tokens are pieces of words, and the ratio varies by language
+contrast: Token vs word: tokens are model units, words are human units.
+avoid: Do not estimate cost by counting words only.
+memory_trick: Always count tokens, never just words.
+real_project: Counting tokens before sending documents avoided surprise limit errors in a batch job.
+real_interview: An interviewer may ask: Why are tokens important?
+real_daily: It is like Lego bricks of text.
+mcq_question: What counts toward the limit?
+mcq_options: A) Only output B) Neither C) Only input D) Both input and output tokens
+mcq_answer: D
+mcq_why: The context holds both.
+fill_blank: The tool that splits text into tokens is a ____ → tokenizer
+apply: You need to estimate the cost of a long document. What do you count? → Tokens
+explain_task: Explain tokens in three lines.
+own_task: Estimate tokens for a one thousand word English page.
+
+@LLM-003
+topic: 01 Basics
+level: Beginner
+term: Context window
+cue: Which limit says how much text the model can consider at once?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models can only attend to a fixed amount of text per request, so every call has a maximum size.
+pro_tip: Leave room for the answer, and put the most important material where it is easy to find.
+memory_story: The context window is the size of the desk where the model spreads all its papers for one job.
+visual: A desk holding instructions, documents and the answer space.
+emotion: The awareness of exactly how much text fits.
+definition: The context window is the maximum number of tokens, covering the prompt, history and output, that a model can process in one request.
+explanation: Everything the model should use must fit in the window, including the system prompt, previous messages, retrieved documents and the reply. Larger windows allow longer documents, but cost more and may reduce attention on details in the middle. Overflow causes errors or truncation. Strategies include summarising history, retrieving only relevant parts and splitting work. The model has no memory beyond what you send each time.
+simple_explain: Everything must fit in the window, and the model remembers only what you send.
+analogy: The context window is the size of the desk where the model spreads all papers for one job.
+formula_rule: Prompt + history + documents + answer ≤ window.
+example_1: A long chat history trimmed to fit.
+example_2: A document split into parts.
+example_3: Retrieving only relevant passages.
+related: tokens, chat memory, RAG, cost control
+word_family: window, limit, truncation, history, budget
+where_used: Chat apps | Document tools | Cost planning
+mini_conversation: A: The model forgot what I said earlier. | B: That message fell outside the context we sent.
+misconception: ✗ The model remembers earlier calls by itself → ✓ It sees only what is included in each request
+contrast: Window vs memory: the window is per request, memory is something you build.
+avoid: Do not fill the whole window with input and leave no room for output.
+memory_trick: Send it or it is forgotten.
+real_project: Summarising old messages kept a long support chat inside the window.
+real_interview: An interviewer may ask: What happens when the prompt exceeds the context window?
+real_daily: It is like the size of a desk.
+mcq_question: What does the context window include?
+mcq_options: A) Only the question B) Only the answer C) Prompt, history and output D) The internet
+mcq_answer: C
+mcq_why: All tokens in the request count.
+fill_blank: Cutting off text that does not fit is ____ → truncation
+apply: A chat grows too long. What do you do? → Summarise or trim old messages
+explain_task: Explain the context window in three lines.
+own_task: Plan a token budget for a document question answering call.
+
+@LLM-004
+topic: 01 Basics
+level: Beginner
+term: Roles in a conversation
+cue: Which labels mark who is speaking in a chat style request?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Chat models need to know which text is instructions and which is the user or the model, so messages carry roles.
+pro_tip: Put stable rules in the system message and the user's request in the user message.
+memory_story: Roles are the name tags in a script that say who speaks each line.
+visual: A list of messages labelled system, user and assistant.
+emotion: The clarity of a structured conversation.
+definition: A chat request is a list of messages with roles such as system for rules, user for the person's input, assistant for earlier model replies, and tool for tool results.
+explanation: The system message sets behaviour, tone and constraints. User messages carry requests and data. Assistant messages hold previous replies to keep the thread. Tool messages return results of tool calls. Models give system content higher priority, but this is not a security boundary, so untrusted text must not be placed as instructions.
+simple_explain: Use system for rules, user for requests, assistant for history, and tool for tool results.
+analogy: Roles are the name tags in a script that say who speaks each line.
+formula_rule: system = rules, user = input, assistant = replies, tool = results.
+example_1: System: You are a polite support agent.
+example_2: User: Where is my order?
+example_3: Assistant: Let me check that for you.
+related: system prompts, prompt injection, tool calling, chat memory
+word_family: role, message, system, user, assistant
+where_used: Every chat API | Assistants | Agents
+mini_conversation: A: Where do I put the tone instructions? | B: In the system message.
+misconception: ✗ The system role makes instructions impossible to override → ✓ It guides the model, but it is not a hard security boundary
+contrast: System vs user: rules versus requests.
+avoid: Do not put untrusted text into the system message.
+memory_trick: System sets rules, user asks questions.
+real_project: Moving tone rules into the system message made replies consistent across a support bot.
+real_interview: An interviewer may ask: What are the roles in a chat request?
+real_daily: It is like name tags in a script.
+mcq_question: Which role holds the behaviour rules?
+mcq_options: A) User B) System C) Tool D) Assistant
+mcq_answer: B
+mcq_why: The system message sets instructions.
+fill_blank: The role that carries earlier model replies is ____ → assistant
+apply: You want a consistent polite tone. Where do you write it? → In the system message
+explain_task: Explain conversation roles in three lines.
+own_task: Write a three message conversation with roles.
+
+@LLM-005
+topic: 01 Basics
+level: Intermediate
+term: Temperature and sampling
+cue: Which settings control how random or predictable the output is?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: The model produces a probability for each next token, and settings decide how strictly the most likely one is chosen.
+pro_tip: Use low temperature for extraction and classification, and higher for creative writing.
+memory_story: Temperature is a creativity dial from strict clerk to imaginative poet.
+visual: A dial from low to high with spread-out choices on the right.
+emotion: The control of choosing how adventurous the answer is.
+definition: Temperature rescales next-token probabilities so low values make output more focused and repeatable, and high values make it more varied, while top-p limits choices to the most probable group.
+explanation: At temperature near zero the model almost always picks the likeliest token, giving more consistent but not guaranteed identical output. Higher values increase variety and risk of odd answers. Top-p and top-k limit the pool of tokens. Some models fix these settings. Change one setting at a time, and test on examples.
+simple_explain: Use lower values for consistent answers and higher for variety.
+analogy: Temperature is a creativity dial from strict clerk to imaginative poet.
+formula_rule: Low = predictable. High = varied.
+example_1: Temperature near zero for data extraction.
+example_2: Higher temperature for brainstorming names.
+example_3: Top-p of 0.9 limiting rare tokens.
+related: structured output, hallucination, model choice, evaluation
+word_family: temperature, top-p, sampling, randomness, determinism
+where_used: Extraction | Creative tools | Testing
+mini_conversation: A: The output changes every run. | B: Lower the temperature for more consistent answers.
+misconception: ✗ Temperature zero guarantees identical output every time → ✓ It reduces variation but does not promise it
+contrast: Temperature vs top-p: one reshapes probabilities, the other limits the choice set.
+avoid: Do not change several sampling settings at once.
+memory_trick: Cold for facts, warm for ideas.
+real_project: Lowering temperature made ticket classification far more consistent.
+real_interview: An interviewer may ask: What does temperature do?
+real_daily: It is like a creativity dial.
+mcq_question: Which setting suits data extraction?
+mcq_options: A) Longer output B) High temperature C) Random seed only D) Low temperature
+mcq_answer: D
+mcq_why: Consistency matters for extraction.
+fill_blank: A setting that limits the pool of likely tokens is top-____ → p
+apply: You need repeatable classification. What do you adjust? → Lower the temperature
+explain_task: Explain temperature in three lines.
+own_task: Choose temperature settings for three different tasks.
+
+@LLM-006
+topic: 01 Basics
+level: Intermediate
+term: Stop reasons
+cue: Which values tell you why the model stopped generating?
+category: Core concept
+frequency: High
+importance: 4
+origin: Output can end for different reasons, and handling each correctly prevents cut-off or broken results.
+pro_tip: Always check the stop reason, especially for length cut-offs and tool calls.
+memory_story: A stop reason is the model telling you why it put down the pen.
+visual: A response with a reason field next to the text.
+emotion: The relief of knowing why an answer ended.
+definition: A stop reason is a field in the response that states why generation ended, for example finished naturally, reached the maximum token limit, hit a stop sequence or wants to call a tool.
+explanation: A length stop means the output was cut off and may be incomplete, such as broken JSON. A natural end means the model finished. A tool stop means the application must run the tool and send back the result. Stop sequences can end output at a chosen marker. Content filters may also stop output. Names of values differ between providers.
+simple_explain: Read the stop reason, and handle cut-offs and tool requests.
+analogy: A stop reason is the model telling you why it put down the pen.
+formula_rule: Finished, length, stop sequence, tool request.
+example_1: A reply cut off at the maximum tokens.
+example_2: A stop sequence ending a list.
+example_3: A tool request waiting for a result.
+related: tokens, structured output, tool calling, errors and retries
+word_family: stop reason, max tokens, stop sequence, truncation, completion
+where_used: Every integration | Parsing | Agents
+mini_conversation: A: The JSON is cut in the middle. | B: The stop reason says length, so raise the output limit.
+misconception: ✗ Every response is complete → ✓ A length stop may leave it unfinished
+contrast: Natural end vs length stop: complete versus cut off.
+avoid: Do not parse output without checking why it ended.
+memory_trick: Check why it stopped before you trust it.
+real_project: Checking the stop reason found truncated outputs that had broken a parser.
+real_interview: An interviewer may ask: What does a length stop mean?
+real_daily: It is like asking why the pen was put down.
+mcq_question: What does a length stop reason mean?
+mcq_options: A) The model finished B) The network failed C) The output hit the token limit D) The user left
+mcq_answer: C
+mcq_why: It was cut off at the maximum.
+fill_blank: A text marker that ends generation is a stop ____ → sequence
+apply: Output ends mid-sentence. What do you check? → The stop reason and the output limit
+explain_task: Explain stop reasons in three lines.
+own_task: List the stop reasons your code must handle.
+
+@LLM-007
+topic: 01 Basics
+level: Intermediate
+term: Model choice
+cue: How do you pick a model for a task without chasing the newest name?
+category: Core concept
+frequency: High
+importance: 4
+origin: Providers offer models of different size, speed, price and ability, so the best choice depends on the job.
+pro_tip: Start with a capable model to see what is possible, then test cheaper ones on your own examples.
+memory_story: Choosing a model is choosing a vehicle, since a bicycle, a car and a truck suit different trips.
+visual: A triangle of quality, speed and cost.
+emotion: The clarity of a decision based on tests.
+definition: Model choice means selecting a model by testing quality, latency, cost, context size, supported features and data handling terms on your own examples.
+explanation: Bigger models usually reason better but are slower and cost more. Smaller models suit simple, high-volume tasks. Check features such as tool use, structured output, images and context length. Read data retention and privacy terms. Keep model names in configuration so you can switch. Re-test when models change.
+simple_explain: Test candidates on your own cases and pick the cheapest that meets quality.
+analogy: Choosing a model is choosing a vehicle for the trip.
+formula_rule: Quality, speed, cost and features, tested on your data.
+example_1: A small model for classification at high volume.
+example_2: A larger model for complex analysis.
+example_3: A model name stored in a config file.
+related: cost control, evaluation, tokens, fallbacks
+word_family: model, latency, cost, capability, configuration
+where_used: Design reviews | Cost control | Migrations
+mini_conversation: A: Do we need the biggest model? | B: Test a smaller one on our examples first.
+misconception: ✗ The newest and biggest model is always best → ✓ The best choice meets your quality need at acceptable cost and speed
+contrast: Large vs small model: stronger reasoning versus lower cost and delay.
+avoid: Do not hard-code model names throughout the code.
+memory_trick: Test on your data, not on hype.
+real_project: A smaller model met quality needs on a classification task at much lower cost.
+real_interview: An interviewer may ask: How do you choose a model?
+real_daily: It is like choosing a vehicle for a trip.
+mcq_question: What should drive model choice?
+mcq_options: A) Tests on your own examples B) Colour C) Marketing D) Random choice
+mcq_answer: A
+mcq_why: Your data shows real quality.
+fill_blank: Model names should live in ____ rather than code → configuration
+apply: A high-volume simple task is costly. What do you try? → A smaller, cheaper model
+explain_task: Explain how to choose a model in three lines.
+own_task: List the criteria for choosing a model for a support bot.
+
+@LLM-008
+topic: 01 Basics
+level: Intermediate
+term: Embeddings
+cue: Which vectors capture the meaning of text so similar texts are close together?
+category: Core concept
+frequency: High
+importance: 5
+origin: Searching by meaning needs numbers that represent meaning, so models turn text into lists of numbers called embeddings.
+pro_tip: Use the same embedding model for documents and queries.
+memory_story: Embeddings are map coordinates where similar ideas sit near each other.
+visual: Points on a map with related sentences clustered.
+emotion: The delight of finding results with different words but the same meaning.
+definition: An embedding is a vector of numbers produced by a model that represents the meaning of a piece of text, so that similarity can be measured by distance or cosine similarity.
+explanation: Embeddings power semantic search, clustering, deduplication and retrieval for RAG. Texts with similar meaning have vectors that point in similar directions. They are generated by an embedding model, which differs from a chat model. Changing the model means re-embedding everything. Long texts are usually split into chunks first.
+simple_explain: Convert text into vectors and compare them to find similar meaning.
+analogy: Embeddings are map coordinates where similar ideas sit near each other.
+formula_rule: Similar meaning = nearby vectors.
+example_1: Finding FAQ answers that match a question.
+example_2: Grouping tickets by topic.
+example_3: Removing near-duplicate documents.
+related: RAG, vector search, chunking, evaluation
+word_family: embedding, vector, similarity, cosine, semantic
+where_used: Search | RAG | Clustering
+mini_conversation: A: The search misses synonyms. | B: Use embeddings for meaning-based search.
+misconception: ✗ Embeddings contain readable text → ✓ They are numbers that encode meaning and cannot be read directly
+contrast: Keyword vs semantic search: exact words versus meaning.
+avoid: Do not mix vectors from different embedding models.
+memory_trick: Same model for both sides of the search.
+real_project: Embedding support articles made search find answers phrased differently from the question.
+real_interview: An interviewer may ask: What are embeddings used for?
+real_daily: It is like coordinates on a map of meaning.
+mcq_question: What does closeness of vectors suggest?
+mcq_options: A) Same author B) Similar meaning C) Same length D) Same language only
+mcq_answer: B
+mcq_why: Embeddings place related text near each other.
+fill_blank: A common measure of vector similarity is ____ similarity → cosine
+apply: A search must match meaning, not exact words. What do you use? → Embeddings
+explain_task: Explain embeddings in three lines.
+own_task: List three uses of embeddings in a support system.
+
+@LLM-009
+topic: 02 Prompting
+level: Beginner
+term: Clear instructions
+cue: What makes a prompt that the model follows reliably?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models do what the text asks, so vague prompts produce vague results and precise ones produce precise results.
+pro_tip: State the task, the audience, the format and the constraints in plain words.
+memory_story: A good prompt is a clear brief given to a new colleague who knows nothing about your project.
+visual: A brief with goal, context, format and limits.
+emotion: The satisfaction of getting the right output first time.
+definition: Clear instructions state the task, the context, the desired format, the constraints and the success criteria in direct, specific language.
+explanation: Say what to do rather than only what to avoid. Give relevant background, since the model cannot see your situation. Specify length, tone and structure. Define terms that might be ambiguous. Provide the data to use. Test on varied inputs. Explain why a rule exists, since reasons help the model apply it sensibly.
+simple_explain: Write the prompt like a clear brief to a capable colleague with no context.
+analogy: A good prompt is a clear brief given to a new colleague who knows nothing about the project.
+formula_rule: Task + context + format + constraints.
+example_1: Summarise this email in three bullet points for a manager.
+example_2: Classify the ticket as billing, technical or other, and reply with only the label.
+example_3: Rewrite for a beginner, keeping every number unchanged.
+related: examples, structure with delimiters, output format, prompt versions
+word_family: instruction, brief, constraint, context, audience
+where_used: Every LLM application | Prompt reviews | Testing
+mini_conversation: A: The summaries are too long. | B: State the length and audience in the prompt.
+misconception: ✗ Short prompts are always better → ✓ Clear and specific prompts work better than vague short ones
+contrast: Vague vs specific prompt: vague gives guesses, specific gives targeted output.
+avoid: Do not assume the model knows your context.
+memory_trick: Brief it like a smart stranger.
+real_project: Adding audience and length to a prompt fixed inconsistent summaries.
+real_interview: An interviewer may ask: How do you make a prompt reliable?
+real_daily: It is like briefing a new colleague.
+mcq_question: Which belongs in a clear prompt?
+mcq_options: A) Only a name B) Nothing C) Task, context, format and constraints D) Only a greeting
+mcq_answer: C
+mcq_why: These let the model do the right job.
+fill_blank: The structure of the answer you want is its ____ → format
+apply: Output is too long. What do you add to the prompt? → A length limit
+explain_task: Explain clear instructions in three lines.
+own_task: Rewrite a vague prompt into a clear one.
+
+@LLM-010
+topic: 02 Prompting
+level: Beginner
+term: Examples in prompts
+cue: How do examples show the model exactly what you want?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Describing a format can be hard, but showing a few examples is easy, so prompts often include sample inputs and outputs.
+pro_tip: Use a few varied, correct examples that match real inputs.
+memory_story: Examples are showing a trainee three finished forms before they fill in their own.
+visual: Input and output pairs followed by a new input.
+emotion: The ease of teaching by showing.
+definition: Few-shot prompting includes a small number of example inputs and outputs in the prompt, so the model imitates their pattern, while zero-shot gives only instructions.
+explanation: Examples set format, tone and decision rules better than long descriptions. Choose diverse cases, including edge cases. Wrong or biased examples teach wrong patterns. Keep the format of examples identical to the real task. Too many examples cost tokens. Wrap examples in tags so they are not confused with the task.
+simple_explain: Show two to five good examples, then give the real input.
+analogy: Examples are showing a trainee three finished forms before they fill in their own.
+formula_rule: Examples set the pattern.
+example_1: Three labelled tickets before the new ticket.
+example_2: An example of the exact JSON shape wanted.
+example_3: An edge case example with an unclear ticket.
+related: clear instructions, output format, structure with delimiters, evaluation
+word_family: few-shot, zero-shot, example, pattern, edge case
+where_used: Classification | Extraction | Style control
+mini_conversation: A: The model keeps using the wrong format. | B: Add two examples of the format.
+misconception: ✗ More examples are always better → ✓ A few good diverse examples beat many similar ones
+contrast: Zero-shot vs few-shot: instructions only versus instructions plus examples.
+avoid: Do not use examples that contain mistakes.
+memory_trick: Show a few, vary them, keep them correct.
+real_project: Adding edge case examples raised accuracy of a ticket classifier.
+real_interview: An interviewer may ask: What is few-shot prompting?
+real_daily: It is like showing finished forms to a trainee.
+mcq_question: What is few-shot prompting?
+mcq_options: A) Using no prompt B) Including examples in the prompt C) Training a new model D) Using images only
+mcq_answer: B
+mcq_why: The model imitates the examples.
+fill_blank: Giving only instructions and no examples is ____-shot → zero
+apply: The output format keeps varying. What do you add? → Examples of the exact format
+explain_task: Explain examples in prompts in three lines.
+own_task: Write three examples for a sentiment classifier.
+
+@LLM-011
+topic: 02 Prompting
+level: Intermediate
+term: Structure with delimiters
+cue: How do you separate instructions, data and examples inside a prompt?
+category: Core concept
+frequency: High
+importance: 5
+origin: Long prompts mix instructions with data, so clear markers prevent the model from confusing them.
+pro_tip: Wrap documents and user text in tags, and refer to them by name in the instructions.
+memory_story: Delimiters are labelled folders that keep each paper in its own place.
+visual: A prompt with tagged sections for instructions, document and question.
+emotion: The tidiness of a well-organised prompt.
+definition: Delimiters such as XML-style tags or clear headings mark the boundaries of instructions, context, examples and user input, so the model treats each part correctly.
+explanation: Tags like document and question let you refer to parts explicitly. They also reduce the chance that text inside data is read as instructions, though they do not stop prompt injection fully. Keep tag names consistent. Put long documents first and the question last for many models. Use the same structure across prompts.
+simple_explain: Put each part in its own labelled section.
+analogy: Delimiters are labelled folders that keep each paper in its own place.
+formula_rule: Label each part, refer to it by name.
+example_1: A document tag around an article.
+example_2: A question tag at the end.
+example_3: An examples tag holding sample pairs.
+related: clear instructions, prompt injection, examples, output format
+word_family: delimiter, tag, section, boundary, structure
+where_used: Long prompts | Document tasks | RAG
+mini_conversation: A: The model answers using the instructions as data. | B: Wrap the data in tags so it stays separate.
+misconception: ✗ Delimiters make prompt injection impossible → ✓ They help, but untrusted input still needs other defences
+contrast: Plain text vs tagged sections: tags give clear boundaries.
+avoid: Do not mix instructions and untrusted data without markers.
+memory_trick: Label every section by name.
+real_project: Tagging retrieved documents reduced confusion between data and instructions.
+real_interview: An interviewer may ask: Why use tags in prompts?
+real_daily: It is like keeping papers in labelled folders.
+mcq_question: What do delimiters do?
+mcq_options: A) Speed up the internet B) Encrypt text C) Delete data D) Mark the boundaries of prompt parts
+mcq_answer: D
+mcq_why: They separate instructions from data.
+fill_blank: XML-style markers around a section are ____ → tags
+apply: Documents and instructions are mixed up. What do you add? → Tags around each part
+explain_task: Explain prompt structure in three lines.
+own_task: Structure a prompt with a document, a question and rules.
+
+@LLM-012
+topic: 02 Prompting
+level: Intermediate
+term: Step-by-step reasoning
+cue: How do you get better answers on hard problems by letting the model work through steps?
+category: Core concept
+frequency: High
+importance: 4
+origin: Complex tasks go wrong when answered in one jump, so asking the model to reason step by step improves accuracy.
+pro_tip: Ask for the reasoning first and the final answer last, in separate sections.
+memory_story: It is like asking a student to show their working before the answer.
+visual: Steps leading to a final answer box.
+emotion: The comfort of answers that show how they were reached.
+definition: Step-by-step prompting asks the model to break a problem into steps or think before answering, which often improves results on multi-step tasks, and some models have built-in extended thinking.
+explanation: Give room for reasoning before the answer, and separate the final answer so it is easy to parse. For simple tasks it adds cost without benefit. Reasoning shown by a model is useful for review but is not guaranteed to be a faithful explanation. Check results with tests or tools. Built-in reasoning modes may make explicit prompts less necessary.
+simple_explain: Let the model think through steps before the final answer on hard tasks.
+analogy: It is like asking a student to show their working.
+formula_rule: Think first, answer last.
+example_1: Work through the calculation, then give the total.
+example_2: List assumptions, then recommend.
+example_3: Reason inside a thinking section and answer in an answer section.
+related: clear instructions, output format, evaluation, agents and loops
+word_family: reasoning, steps, chain of thought, thinking, verification
+where_used: Analysis | Maths | Planning
+mini_conversation: A: The model gets multi-step sums wrong. | B: Ask it to work step by step before answering.
+misconception: ✗ Shown reasoning is always a true record of how the model decided → ✓ It is helpful but not guaranteed to be faithful
+contrast: Direct vs stepwise answer: one jumps to the answer, the other works through steps.
+avoid: Do not use step-by-step reasoning for trivial tasks.
+memory_trick: Let it reason first, then answer.
+real_project: Asking for steps improved accuracy on invoice calculations.
+real_interview: An interviewer may ask: When does step-by-step prompting help?
+real_daily: It is like showing working in an exam.
+mcq_question: When does step-by-step prompting help most?
+mcq_options: A) Multi-step problems B) Greetings C) Single words D) Simple lookups
+mcq_answer: A
+mcq_why: Steps reduce errors in complex tasks.
+fill_blank: Asking the model to show its working in stages is often called chain of ____ prompting → thought
+apply: A multi-step calculation is wrong. What do you try? → Ask for step-by-step reasoning
+explain_task: Explain step-by-step prompting in three lines.
+own_task: Write a prompt that separates reasoning and answer.
+
+@LLM-013
+topic: 02 Prompting
+level: Beginner
+term: Output format
+cue: How do you make the model reply in a form your program or reader can use?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Programs need predictable shapes, so prompts state the format, with schemas or examples, and code validates it.
+pro_tip: For programs, ask for JSON with named fields and validate it.
+memory_story: Output format is giving the model a form with boxes to fill in.
+visual: A form with named fields being filled in.
+emotion: The ease of parsing predictable results.
+definition: Output format instructions tell the model the exact shape of its reply, such as JSON with named fields, a table, a fixed list of labels or plain text of set length.
+explanation: Show the shape with an example. Name the fields and allowed values. Tell the model to output only the structure when a program reads it. Many APIs offer structured output features that enforce a schema. Always validate and handle failures, since free-form instructions can still fail. Separate display text from data.
+simple_explain: State the format, show an example, and validate what comes back.
+analogy: Output format is giving the model a form with boxes to fill in.
+formula_rule: Format stated, shown, then validated.
+example_1: Reply with JSON containing label and confidence.
+example_2: Reply with one word from a fixed list.
+example_3: A table with three columns.
+related: structured output, examples, stop reasons, errors and retries
+word_family: format, schema, field, JSON, validation
+where_used: Extraction | Automation | Reports
+mini_conversation: A: My parser breaks on the model's text. | B: Ask for JSON only and validate it.
+misconception: ✗ A format instruction guarantees valid output → ✓ You still need validation and retries
+contrast: Prompted JSON vs enforced schema: the first can fail, the second is constrained by the API.
+avoid: Do not parse model output without validating it.
+memory_trick: Name the fields, show one, validate always.
+real_project: Validating JSON from the model and retrying once fixed rare formatting failures.
+real_interview: An interviewer may ask: How do you get reliable JSON from an LLM?
+real_daily: It is like a form with boxes.
+mcq_question: What should you always do with model JSON?
+mcq_options: A) Trust it B) Print it only C) Ignore it D) Validate it
+mcq_answer: D
+mcq_why: Failures can still occur.
+fill_blank: A description of the allowed JSON shape is a ____ → schema
+apply: A program must read the answer. What format do you ask for? → JSON with named fields
+explain_task: Explain output format in three lines.
+own_task: Define a JSON shape for a ticket classifier.
+
+@LLM-014
+topic: 02 Prompting
+level: Intermediate
+term: System prompts
+cue: How do you set stable behaviour, tone and rules for an assistant?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: An assistant needs consistent rules across all conversations, so they are written once in a system prompt.
+pro_tip: Explain the reasons behind rules, and include what to do when unsure.
+memory_story: A system prompt is the job description given to an employee on day one.
+visual: A prompt block with role, rules and limits above the conversation.
+emotion: The comfort of behaviour that stays consistent.
+definition: A system prompt is the initial instruction message that defines the assistant's role, tone, rules, tools and limits for the whole conversation.
+explanation: Good system prompts define the role and audience, list rules with reasons, say how to handle uncertainty and refusal, and describe the output style. They should be tested against hard inputs. Keep them as short as clarity allows. They are guidance, not a security control, and users may try to override them. Do not store secrets in them.
+simple_explain: Write the assistant's role, rules and fallback behaviour once, and test it.
+analogy: A system prompt is the job description given to an employee on day one.
+formula_rule: Role + rules with reasons + uncertainty handling + style.
+example_1: You are a support assistant for a software product.
+example_2: If you are unsure, say so and offer to escalate.
+example_3: Answer in short, polite sentences.
+related: roles, prompt injection, prompt versions, guardrails
+word_family: system prompt, role, rules, tone, fallback
+where_used: Assistants | Agents | Customer bots
+mini_conversation: A: The bot makes up policies. | B: Add a rule to say when it does not know, and test it.
+misconception: ✗ A system prompt can keep secrets safe → ✓ Users may extract it, so never put secrets there
+contrast: System prompt vs user prompt: standing rules versus one request.
+avoid: Do not put credentials in a system prompt.
+memory_trick: Rules with reasons, plus a fallback.
+real_project: Adding an uncertainty rule stopped a support bot inventing refund policies.
+real_interview: An interviewer may ask: What belongs in a system prompt?
+real_daily: It is like a job description on day one.
+mcq_question: What should not be placed in a system prompt?
+mcq_options: A) Secrets B) Style C) Tone rules D) Role
+mcq_answer: A
+mcq_why: Prompts can leak.
+fill_blank: The behaviour for unclear cases is the ____ rule → fallback
+apply: The bot invents answers. What do you add? → A rule for admitting uncertainty
+explain_task: Explain system prompts in three lines.
+own_task: Write a short system prompt for a billing bot.
+
+@LLM-015
+topic: 02 Prompting
+level: Intermediate
+term: Prompt versions
+cue: How do you manage prompt changes like code?
+category: Core concept
+frequency: High
+importance: 4
+origin: Small prompt edits can change behaviour a lot, so teams track and test them like software.
+pro_tip: Keep prompts in files under version control and run an evaluation set before each change.
+memory_story: Prompt versions are numbered editions of a recipe, so you can return to the one that worked.
+visual: A history of prompt files with test results.
+emotion: The confidence of changes that are tested.
+definition: Prompt versioning stores prompts in version control with identifiers, ties each version to evaluation results, and records which version produced each output.
+explanation: Treat prompts as code, with reviews and tests. Keep a set of example inputs with expected qualities and run them for each change. Log the prompt version with each request so problems can be traced. Roll out changes gradually. Avoid editing live prompts in a dashboard without history.
+simple_explain: Store prompts in Git, test every change, and log the version used.
+analogy: Prompt versions are numbered editions of a recipe.
+formula_rule: Version + test set + log of which version ran.
+example_1: A prompts folder in the repository.
+example_2: A test run comparing version two with version three.
+example_3: A log field prompt_version.
+related: evaluation, system prompts, logging calls safely, human review
+word_family: version, test set, regression, rollout, changelog
+where_used: Production LLM apps | Teams | Audits
+mini_conversation: A: Quality dropped after the last edit. | B: Compare the new prompt version against the test set and revert.
+misconception: ✗ Prompt wording changes are harmless → ✓ Small changes can alter behaviour widely
+contrast: Tested vs untested change: tested changes show regressions before release.
+avoid: Do not edit production prompts without a record.
+memory_trick: Version it, test it, log it.
+real_project: Versioned prompts let a team roll back a bad change within minutes.
+real_interview: An interviewer may ask: How do you manage prompts in production?
+real_daily: It is like numbered editions of a recipe.
+mcq_question: Where should prompts be stored?
+mcq_options: A) Memory only B) Version control C) A chat message D) A sticky note
+mcq_answer: B
+mcq_why: History and review matter.
+fill_blank: A drop in quality after a change is a ____ → regression
+apply: A prompt change hurt quality. What do you do? → Revert to the previous version
+explain_task: Explain prompt versioning in three lines.
+own_task: Design a folder layout for versioned prompts.
+
+@LLM-016
+topic: 02 Prompting
+level: Intermediate
+term: Common prompting mistakes
+cue: Which errors most often make prompts fail?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: The same mistakes repeat across teams, so knowing them saves hours of trial and error.
+pro_tip: Test with real, messy inputs, not only clean examples.
+memory_story: Prompt mistakes are the common potholes on the road, and you learn where they are.
+visual: A checklist with several crossed-out bad prompting habits.
+emotion: The relief of recognising a familiar mistake.
+definition: Common prompting mistakes include vague tasks, missing context, conflicting rules, no output format, untested edge cases, trusting output without checks and mixing untrusted text with instructions.
+explanation: Conflicting instructions confuse the model. Shouting in capitals and piling on rules can backfire. Missing context makes the model guess. Testing only on easy inputs hides failures. Asking for facts the model cannot know invites invention. Not validating outputs lets errors through. Ignoring cost and length limits causes failures in production.
+simple_explain: Be clear and consistent, give context, test on real inputs, and validate outputs.
+analogy: Prompt mistakes are the common potholes on the road.
+formula_rule: Vague + untested + unvalidated = failure.
+example_1: A rule that says be brief and another that says be detailed.
+example_2: Testing only on three clean examples.
+example_3: No instruction for unknown answers.
+related: clear instructions, examples, evaluation, hallucination
+word_family: conflict, vague, edge case, validation, guess
+where_used: Prompt reviews | Debugging | Training
+mini_conversation: A: The model ignores my rule. | B: It conflicts with another rule, so make them consistent.
+misconception: ✗ Adding more rules always improves the result → ✓ Too many or conflicting rules confuse the model
+contrast: Clear vs crowded prompt: clear is focused, crowded is contradictory.
+avoid: Do not test only on perfect inputs.
+memory_trick: Keep prompts consistent, contextual, tested and validated.
+real_project: Removing conflicting rules improved a prompt more than adding new ones.
+real_interview: An interviewer may ask: What mistakes do you see in prompts?
+real_daily: It is like potholes on a road.
+mcq_question: Which is a common prompting mistake?
+mcq_options: A) Clear format B) Good examples C) Conflicting instructions D) Validation
+mcq_answer: C
+mcq_why: Conflicts confuse the model.
+fill_blank: Rare unusual inputs are called ____ cases → edge
+apply: A prompt performs well in demos but fails in use. What was likely missing? → Tests on messy real inputs
+explain_task: Explain common prompting mistakes in three lines.
+own_task: Review a prompt and list five problems.
+
+@LLM-017
+topic: 02 Prompting
+level: Advanced
+term: Prompting vs fine-tuning
+cue: When should you teach the model through the prompt and when through training?
+category: Core concept
+frequency: High
+importance: 4
+origin: Teams wonder whether to adjust the model itself or its instructions, and the answer depends on the problem.
+pro_tip: Try prompting, examples and retrieval first, since they are faster and cheaper to change.
+memory_story: Prompting is giving instructions to a skilled worker, and fine-tuning is sending them on a training course.
+visual: Two paths, one editing the prompt and one adjusting the model.
+emotion: The clarity of picking the cheapest effective tool.
+definition: Prompting changes behaviour through instructions, examples and context at run time, while fine-tuning trains the model on example data to change its default behaviour or style.
+explanation: Prompting and retrieval suit changing knowledge, quick iteration and low volume. Fine-tuning can help with consistent style or format, specialised tasks and shorter prompts at high volume, but needs quality data, costs effort, and can go stale. It is not a good way to add fresh facts. Evaluate before and after.
+simple_explain: Start with prompts and retrieval, and fine-tune only for stable, high-volume needs.
+analogy: Prompting is giving instructions to a skilled worker, and fine-tuning is sending them on a training course.
+formula_rule: Facts and changes: retrieval. Style and format at scale: maybe fine-tune.
+example_1: Policy answers from retrieved documents.
+example_2: A fixed brand voice learned from many examples.
+example_3: A short prompt after fine-tuning for a narrow task.
+related: RAG, examples, evaluation, cost control
+word_family: fine-tuning, prompting, retrieval, training data, style
+where_used: Architecture decisions | Cost planning | Specialised tasks
+mini_conversation: A: Should we fine-tune on our policies? | B: Use retrieval for facts, since policies change.
+misconception: ✗ Fine-tuning is the best way to teach new facts → ✓ Retrieval handles changing facts better
+contrast: Fine-tuning vs RAG: one changes behaviour, the other supplies knowledge.
+avoid: Do not fine-tune before trying prompts and examples.
+memory_trick: Prompt for rules, retrieve for facts.
+real_project: Using retrieval instead of fine-tuning kept answers up to date as policies changed.
+real_interview: An interviewer may ask: When would you fine-tune a model?
+real_daily: It is like instructions versus a training course.
+mcq_question: Which suits changing facts?
+mcq_options: A) Neither B) Retrieval C) A larger window only D) Fine-tuning
+mcq_answer: B
+mcq_why: Documents can be updated at once.
+fill_blank: Supplying documents at run time is called ____ → retrieval
+apply: Policies change monthly. Which approach? → Retrieval with the current documents
+explain_task: Explain prompting versus fine-tuning in three lines.
+own_task: Decide which approach fits three different business needs.

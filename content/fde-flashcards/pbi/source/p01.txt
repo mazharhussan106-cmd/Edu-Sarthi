@@ -1,0 +1,375 @@
+deck.title: Power BI – Beginner to Advanced Flashcards
+deck.subject: Power BI
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: dax
+type: topic56
+
+@PBI-001
+topic: 01 Basics
+level: Beginner
+term: Power BI (Desktop, Service, Mobile)
+cue: Microsoft's business analytics product comes in three parts. What are they, and what does each part do?
+category: Product overview
+frequency: Very high
+importance: 5
+origin: Microsoft built Power BI to let ordinary business users turn raw data into interactive reports without writing a full application.
+pro_tip: Build the report in Desktop, publish it to the Service, and use Mobile just to read it on the go.
+memory_story: Desktop is the kitchen where you cook, the Service is the restaurant where you serve, and Mobile is the takeaway box.
+visual: A laptop, a cloud and a phone are joined by arrows showing a report travelling between them.
+emotion: The excitement of seeing messy numbers turn into a clean, clickable dashboard.
+definition: Power BI is a set of tools: Desktop to build reports, the Service in the cloud to share them, and Mobile apps to view them.
+explanation: Power BI Desktop is a free Windows application for connecting to data, cleaning it, modelling it and designing reports. The Power BI Service (the website) is where you publish, schedule refreshes and share. The mobile apps let people read reports on phones and tablets.
+simple_explain: You create the report on your computer with Desktop. You upload it to the Service so others can see it in a browser. People then open it on their phones with the Mobile app.
+analogy: It works like writing a document in a word processor, saving it to a shared drive, and reading it on your phone.
+formula_rule: Build (Desktop) → Publish and share (Service) → Read anywhere (Mobile)
+example_1: An analyst builds a sales report in Power BI Desktop on a laptop.
+example_2: The analyst publishes the report to a workspace in the Power BI Service so the sales team can open it in a browser.
+example_3: A regional manager checks the same report on a phone while travelling.
+related: Power BI Desktop, Power BI Service, semantic model, workspace
+word_family: Desktop, Service, Mobile, report, dashboard
+where_used: Business reporting | Data analysis jobs | Management dashboards
+mini_conversation: A: Where do I create my report? | B: Build it in Power BI Desktop, then publish it to the Service to share it.
+misconception: ✗ Power BI is just one program you install on your computer → ✓ Power BI has three parts: Desktop is installed, the Service runs in the cloud, and Mobile is an app
+contrast: Desktop vs Service: Desktop is where you build and model, the Service is where you share and manage.
+avoid: Do not edit a report only in the Service when it should be maintained in the original Desktop file.
+memory_trick: Desktop builds, Service shares, Mobile carries.
+real_project: Building a monthly sales report in Desktop and publishing it so managers see fresh numbers each morning.
+real_interview: An interviewer may ask: What is the difference between Power BI Desktop and the Power BI Service?
+real_daily: It is like cooking at home, serving guests at a restaurant, and packing leftovers to take away.
+mcq_question: Which part of Power BI is mainly used to build and model reports on your own computer?
+mcq_options: A) Power BI Mobile B) Power BI Service C) Power BI Gateway D) Power BI Desktop
+mcq_answer: D
+mcq_why: Desktop is the authoring tool, while the Service is for sharing and the Mobile app is for viewing.
+fill_blank: You publish a finished report from Desktop to the Power BI ____ so others can open it → Service
+apply: Which part would you use to read a report on a phone while travelling? → The Power BI Mobile app
+explain_task: Explain the three parts of Power BI to a friend in three lines.
+own_task: Write which part of Power BI you would use for each step of making and sharing a report.
+
+@PBI-002
+topic: 01 Basics
+level: Beginner
+term: Power BI Desktop interface (Report, Table, Model views)
+cue: Which three views on the left side of Power BI Desktop let you design pages, inspect data and draw relationships?
+category: Tool interface
+frequency: Very high
+importance: 4
+origin: Authoring a report involves three different jobs, so Desktop separates them into their own views instead of one crowded screen.
+pro_tip: Use Table view to check your data before you build any visual on it.
+memory_story: Think of a theatre with a stage, a backstage list and a floor plan, where each room has one job.
+visual: Three icons stacked on the left edge of the screen, each opening a different workspace.
+emotion: The calm of knowing exactly which screen to go to for each job.
+definition: Power BI Desktop has a Report view for building visuals, a Table view for browsing data, and a Model view for managing relationships.
+explanation: Report view is the canvas where you place visuals and filters. Table view shows the loaded data in rows and columns so you can check values and create columns. Model view shows tables as boxes and relationships as lines. There is also a DAX query view in newer versions.
+simple_explain: Report view is for drawing charts. Table view is for looking at the raw rows. Model view is for connecting tables to each other.
+analogy: It is like a stage for the show, a backstage list of props, and a floor plan of how everything connects.
+formula_rule: Report = design, Table = inspect data, Model = connect tables
+example_1: Dragging a bar chart onto a page happens in Report view.
+example_2: Checking whether a Date column was imported as text happens in Table view.
+example_3: Drawing a line between Sales and Products happens in Model view.
+related: relationships, visuals, data model, fields pane
+word_family: view, canvas, pane, field, visual
+where_used: Every Power BI Desktop project | Data checking | Model design
+mini_conversation: A: The charts show the wrong totals. | B: Open Model view and check whether the relationships between your tables are correct.
+misconception: ✗ All the work in Power BI Desktop is done on the report canvas → ✓ Data checking happens in Table view and relationships are managed in Model view
+contrast: Table view vs Model view: Table view shows the rows of data, Model view shows how the tables relate.
+avoid: Do not build visuals before checking the data types in Table view.
+memory_trick: Report draws, Table tells, Model maps.
+real_project: Opening Model view to fix a missing relationship that caused wrong totals in a report.
+real_interview: An interviewer may ask: What are the three main views in Power BI Desktop?
+real_daily: It is like a theatre with a stage, a backstage list and a floor plan.
+mcq_question: In which view do you draw lines to connect one table to another?
+mcq_options: A) Model view B) Report view C) Data view D) Table view
+mcq_answer: A
+mcq_why: Model view shows tables and their relationships.
+fill_blank: You inspect the loaded rows of your data in the ____ view → Table
+apply: Where would you check whether a Date column was loaded as text? → In Table view
+explain_task: Explain what each of the three views is used for in three lines.
+own_task: Open any Power BI file and write one task you did in each of the three views.
+
+@PBI-003
+topic: 01 Basics
+level: Beginner
+term: Semantic model (dataset)
+cue: What is the name for the loaded, modelled data that sits behind one or more Power BI reports?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Reports need a shared, well-defined source of data, so Power BI separates the data and logic from the visuals, and this layer was long called a dataset.
+pro_tip: Build one good model and let many reports connect to it instead of copying data into every report.
+memory_story: The model is the engine room of a ship, and the reports are only the dashboard the captain looks at.
+visual: One large block of connected tables with several different reports pointing at it.
+emotion: The satisfaction of fixing a number once and seeing every report update.
+definition: A semantic model holds the tables, relationships, measures and security that reports use, and it was formerly called a dataset.
+explanation: When you import data and build relationships and DAX measures, you create a semantic model. When you publish from Desktop, the model and report go to the Service, where the model can be refreshed and reused by other reports. Microsoft renamed datasets to semantic models.
+simple_explain: The semantic model is the data brain behind your report. It stores your tables, links and calculations, and the report just shows the results.
+analogy: It is like a restaurant kitchen that cooks the food, while the menu cards are just what the customers see.
+formula_rule: Semantic model = tables + relationships + measures + security
+example_1: A sales model holds Sales, Product and Date tables linked together.
+example_2: Three different reports reuse the same published sales model.
+example_3: An administrator refreshes the model once a night so all reports show new data.
+related: report, relationships, measures, refresh
+word_family: dataset, model, tables, measures, relationships
+where_used: Every published report | Shared enterprise models | Self-service analysis
+mini_conversation: A: Why do two of our reports show different totals? | B: They use separate copies of the data, so build one shared semantic model.
+misconception: ✗ A semantic model and a report are the same thing → ✓ The model holds the data and logic, and a report is only the visuals built on top of it
+contrast: Semantic model vs report: the model stores and calculates, the report displays.
+avoid: Do not create a new copy of the same data in every report.
+memory_trick: Model is the machine, report is the screen.
+real_project: Publishing one certified sales semantic model that many team reports connect to.
+real_interview: An interviewer may ask: What is a semantic model, and what was it called before?
+real_daily: It is like a kitchen that cooks the food while the menu is only what customers see.
+mcq_question: What is Power BI's semantic model formerly known as?
+mcq_options: A) Gateway B) Workspace C) Dataset D) Dashboard
+mcq_answer: C
+mcq_why: Microsoft renamed datasets to semantic models.
+fill_blank: Reports are built on top of the tables and measures held in a semantic ____ → model
+apply: How do you avoid different totals across several reports? → Build one shared semantic model and connect all reports to it
+explain_task: Explain the difference between a semantic model and a report in three lines.
+own_task: List the tables and measures that would sit in a semantic model for a small shop.
+
+@PBI-004
+topic: 01 Basics
+level: Beginner
+term: Report vs dashboard
+cue: Power BI has a multi-page interactive canvas and a one-page canvas of pinned tiles. What are they called?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: People need both detailed, explorable pages and one quick overview screen, so Power BI offers reports for depth and dashboards for the big picture.
+pro_tip: Pin only the most important visuals to a dashboard so it can be read in a few seconds.
+memory_story: A report is a book you read and explore, while a dashboard is the poster on the wall.
+visual: A thick book of pages beside a single poster of small tiles.
+emotion: The comfort of seeing the key numbers at one glance.
+definition: A report is a multi-page, interactive set of visuals built on one model, while a dashboard is a single page of tiles pinned from one or more reports.
+explanation: Reports are created in Desktop or the Service and have filters, slicers and many pages. A dashboard exists only in the Service and is made by pinning visuals, so its tiles can come from different reports. Clicking a tile opens the report it came from.
+simple_explain: A report is for exploring details across pages. A dashboard is a single overview page made of pinned tiles. Click a tile and you jump to its report.
+analogy: A report is a full book and a dashboard is a poster summarising the key points.
+formula_rule: Report = many pages, one model. Dashboard = one page, many sources.
+example_1: A sales report with pages for regions, products and trends.
+example_2: A dashboard with tiles pinned from the sales report and the finance report.
+example_3: A manager opens the dashboard and clicks a tile to land on the detailed report page.
+related: visual, tile, pin, workspace
+word_family: report, dashboard, tile, page, pin
+where_used: Management overviews | Detailed analysis | Daily monitoring
+mini_conversation: A: Can I build a dashboard in Power BI Desktop? | B: No, dashboards are made in the Service by pinning visuals from reports.
+misconception: ✗ Reports and dashboards are the same and can both be built in Desktop → ✓ Reports are built in Desktop or the Service, while dashboards exist only in the Service
+contrast: Report vs dashboard: a report has many interactive pages from one model, a dashboard has one page of pinned tiles.
+avoid: Do not cram every visual onto a dashboard, keep it to the key numbers.
+memory_trick: Report is a book, dashboard is a poster.
+real_project: Pinning five key sales visuals to a dashboard that executives open every morning.
+real_interview: An interviewer may ask: What is the difference between a Power BI report and a dashboard?
+real_daily: It is like a full book and a poster that sums up its main points.
+mcq_question: Where can a dashboard be created?
+mcq_options: A) In Power Query B) Only in the Power BI Service C) In Excel only D) Only in Power BI Desktop
+mcq_answer: B
+mcq_why: Dashboards are made in the Service by pinning tiles.
+fill_blank: A dashboard is made by ____ visuals from reports onto one page → pinning
+apply: A manager wants one screen with key numbers from two reports. What should you build? → A dashboard with tiles pinned from both reports
+explain_task: Explain the difference between a report and a dashboard in three lines.
+own_task: Choose five visuals you would pin to a dashboard for a shop owner.
+
+@PBI-005
+topic: 01 Basics
+level: Beginner
+term: Visual
+cue: What is the name for a single chart, table, card or map on a Power BI report page?
+category: Report element
+frequency: Very high
+importance: 4
+origin: Raw numbers are hard to read, so reports present data as charts and other graphics, each of which is called a visual.
+pro_tip: Pick the visual that answers the question, and delete anything that does not help.
+memory_story: Each visual is a window that shows one answer from the data.
+visual: A page tiled with a bar chart, a line chart, a card showing one big number and a table.
+emotion: The pleasure of dragging a field and watching a chart appear.
+definition: A visual is one graphical element on a report page, such as a chart, table, card, slicer or map.
+explanation: You create a visual by choosing a type from the Visualizations pane and dragging fields into its wells such as Axis, Values and Legend. Visuals interact: clicking one can filter or highlight the others on the page.
+simple_explain: A visual is one chart or table on your page. You pick its type and drag fields into it, and it responds when you click on other visuals.
+analogy: It is like one picture in a photo wall, where each picture tells part of the story.
+formula_rule: Visual = type + fields + formatting
+example_1: A card visual showing total sales as one big number.
+example_2: A line chart showing sales by month.
+example_3: A table visual listing each product with its quantity.
+related: slicer, Visualizations pane, report page, cross-filtering
+word_family: chart, card, table, matrix, map
+where_used: Every Power BI report | Dashboards | Data storytelling
+mini_conversation: A: How do I show sales by region? | B: Add a bar chart visual and drag Region to the axis and Sales to the values.
+misconception: ✗ A visual only shows data and cannot affect other visuals → ✓ Visuals interact, and clicking one can filter or highlight the others on the page
+contrast: Visual vs slicer: a visual shows data, a slicer is a visual used to filter other visuals.
+avoid: Do not place too many visuals on one page, it overwhelms the reader.
+memory_trick: Visual means a view of one answer.
+real_project: Designing a report page with a card, a line chart and a bar chart that answer three business questions.
+real_interview: An interviewer may ask: Which visual would you use to show a trend over time?
+real_daily: It is like one picture on a wall of photographs.
+mcq_question: Which visual shows a single big number such as total sales?
+mcq_options: A) Matrix B) Slicer C) Treemap D) Card
+mcq_answer: D
+mcq_why: A card displays one value prominently.
+fill_blank: You drag fields into the wells of a ____ to build it → visual
+apply: Which visual would you choose to show sales by month over a year? → A line chart
+explain_task: Explain in three lines how a visual is built from fields.
+own_task: Design a page of three visuals that answer three questions about a shop's sales.
+
+@PBI-006
+topic: 01 Basics
+level: Beginner
+term: Get Data (data sources and connectors)
+cue: Which button starts the process of connecting Power BI to files, databases or online services?
+category: Data connection
+frequency: Very high
+importance: 5
+origin: Business data lives in many places, so Power BI includes connectors that know how to talk to each kind of source.
+pro_tip: Start with Transform Data rather than Load so you can clean the data before it enters the model.
+memory_story: Get Data is a set of plug adapters that fit almost any wall socket of data.
+visual: A plug board with icons for Excel, SQL, web and cloud services.
+emotion: The thrill of seeing your first table appear from a file you already had.
+definition: Get Data opens a list of connectors that let Power BI load data from files, databases, online services and web sources.
+explanation: Common sources include Excel, CSV, SQL Server, SharePoint, web pages and cloud services. After you choose a source, you can Load the data directly or choose Transform Data to open Power Query and clean it first.
+simple_explain: Click Get Data, choose the kind of source, and sign in or pick the file. Then choose Load, or Transform Data to clean it first.
+analogy: It is like a travel adapter set that fits sockets in many countries.
+formula_rule: Get Data → choose connector → Load or Transform Data
+example_1: Connecting to an Excel workbook that holds monthly sales.
+example_2: Connecting to a SQL Server database for customer records.
+example_3: Connecting to a web page that has a table of exchange rates.
+related: Power Query, Import vs DirectQuery, gateway, connector
+word_family: connector, source, load, transform, credentials
+where_used: Starting every report | Refreshing data | Combining files
+mini_conversation: A: My data is in a CSV file, how do I bring it in? | B: Use Get Data, choose Text/CSV, and pick Transform Data if it needs cleaning.
+misconception: ✗ Power BI can only load data from Excel files → ✓ Power BI has many connectors, including databases, cloud services and web sources
+contrast: Load vs Transform Data: Load brings the data in as it is, Transform Data lets you clean it in Power Query first.
+avoid: Do not load a huge raw table without removing columns you do not need.
+memory_trick: Get Data gets the data in.
+real_project: Connecting a report to a company SQL database and loading only the columns the team needs.
+real_interview: An interviewer may ask: What kinds of data sources can Power BI connect to?
+real_daily: It is like a travel adapter set that fits sockets in different countries.
+mcq_question: Which choice lets you clean data before it is loaded?
+mcq_options: A) Transform Data B) Load C) Publish D) Refresh
+mcq_answer: A
+mcq_why: Transform Data opens Power Query so you can clean the data first.
+fill_blank: Cleaning data before loading is done by choosing ____ Data → Transform
+apply: Which button do you press first to bring a CSV file into a report? → Get Data
+explain_task: Explain the difference between Load and Transform Data in three lines.
+own_task: List three data sources from your own work or study that Power BI could connect to.
+
+@PBI-007
+topic: 01 Basics
+level: Beginner
+term: Import vs DirectQuery
+cue: Which two storage modes decide whether Power BI keeps a copy of your data or asks the source every time?
+category: Storage mode
+frequency: Very high
+importance: 5
+origin: Some data is small and fast to copy while other data is huge or must be live, so Power BI offers both a stored copy and a live query option.
+pro_tip: Choose Import by default and use DirectQuery only when the data is too large or must be real time.
+memory_story: Import is photocopying a book to read at home, and DirectQuery is going to the library every time you need a page.
+visual: One arrow carries a full copy into Power BI, another arrow keeps asking the source each time.
+emotion: The relief of fast visuals when the data is already inside the model.
+definition: Import loads a compressed copy of the data into Power BI, while DirectQuery sends queries to the source each time a visual is used.
+explanation: In Import mode the data is stored in the model's fast in-memory engine and refreshed on a schedule, so visuals are quick and all DAX features work. In DirectQuery mode nothing is stored, each visual sends a query to the source, so data is current but slower and some features are limited.
+simple_explain: Import copies the data into Power BI, which is fast but needs refreshing. DirectQuery leaves the data where it is and asks every time, which is current but slower.
+analogy: Import is photocopying the book, DirectQuery is visiting the library each time.
+formula_rule: Import = copy + fast + scheduled refresh. DirectQuery = live + slower + source does the work.
+example_1: A monthly Excel sales file is loaded in Import mode.
+example_2: A huge live transactions database is queried with DirectQuery.
+example_3: A report mixes both modes in one composite model.
+related: refresh, composite model, aggregations, gateway
+word_family: Import, DirectQuery, Live connection, storage mode, refresh
+where_used: Choosing report performance | Large data | Real-time reporting
+mini_conversation: A: Our database is huge and changes every second. | B: Use DirectQuery so each visual asks the source for current data.
+misconception: ✗ DirectQuery is always better because the data is live → ✓ DirectQuery is usually slower and has feature limits, so Import is the better default
+contrast: Import vs DirectQuery: Import stores a copy and needs refresh, DirectQuery stores nothing and queries the source each time.
+avoid: Do not choose DirectQuery just to avoid scheduling a refresh.
+memory_trick: Import imports a copy, DirectQuery directly asks.
+real_project: Using Import for a monthly finance model and DirectQuery for a live operations table.
+real_interview: An interviewer may ask: When would you choose DirectQuery over Import?
+real_daily: It is like photocopying a book versus going to the library every time.
+mcq_question: Which storage mode keeps no copy of the data inside the model?
+mcq_options: A) Offline B) Dual copy C) DirectQuery D) Import
+mcq_answer: C
+mcq_why: DirectQuery sends queries to the source each time and stores no data.
+fill_blank: With ____ mode the data is stored in the model and refreshed on a schedule → Import
+apply: Which mode would you choose for a small file that changes once a month? → Import
+explain_task: Explain the difference between Import and DirectQuery in three lines.
+own_task: Write one real situation for Import and one for DirectQuery.
+
+@PBI-008
+topic: 01 Basics
+level: Beginner
+term: Publish and share
+cue: What do you do in Power BI Desktop to put a finished report online so other people can open it?
+category: Sharing
+frequency: High
+importance: 4
+origin: A report on one laptop helps only one person, so Power BI lets you publish it to a cloud workspace and share it with others.
+pro_tip: Publish into a workspace and share through an app instead of sending file copies.
+memory_story: Publishing is moving your finished painting from your studio to a public gallery.
+visual: A report file flies from a laptop up into a cloud shaped like a workspace.
+emotion: The pride of seeing colleagues open your report in a browser.
+definition: Publishing sends a report and its model from Desktop to a workspace in the Power BI Service, where it can be shared.
+explanation: In Desktop you choose Publish and select a workspace. In the Service you can then share the report by link, give access to people, or distribute it through an app. Viewers usually need a licence or the content must be in suitable capacity.
+simple_explain: Click Publish in Desktop, choose a workspace, and your report goes to the cloud. From there you share it with people or package it as an app.
+analogy: It is like moving a painting from your studio into a public gallery.
+formula_rule: Desktop → Publish → workspace → share or app
+example_1: Publishing a sales report to the Sales workspace.
+example_2: Sharing a link to the report with three managers.
+example_3: Packaging several reports into an app for the whole department.
+related: workspace, app, licence, refresh
+word_family: publish, share, workspace, app, link
+where_used: Distributing reports | Team collaboration | Stakeholder updates
+mini_conversation: A: How do my managers see this report? | B: Publish it to a workspace and share it with them or package it as an app.
+misconception: ✗ Emailing the .pbix file is the best way to share a report → ✓ Publishing to a workspace lets people view one live, refreshed version without copies
+contrast: Publish vs share: publishing puts the report in the Service, sharing gives people access to it.
+avoid: Do not email copies of the report file, versions will drift apart.
+memory_trick: Publish puts it up, share lets people in.
+real_project: Publishing a monthly report to a workspace and giving the leadership team access.
+real_interview: An interviewer may ask: How do you share a Power BI report with colleagues?
+real_daily: It is like moving a painting from a studio to a gallery.
+mcq_question: What is the best way to give many people the same, current version of a report?
+mcq_options: A) Print it B) Publish it to a workspace and share C) Email the .pbix file D) Copy it to a USB stick
+mcq_answer: B
+mcq_why: Publishing keeps one live version in the Service for everyone.
+fill_blank: In Desktop you press ____ to send a report to the Service → Publish
+apply: How do you avoid sending many copies of a file to colleagues? → Publish it to a workspace and share it
+explain_task: Explain in three lines how a report gets from Desktop to colleagues.
+own_task: Write the steps you would follow to publish and share a report with your team.
+
+@PBI-009
+topic: 01 Basics
+level: Beginner
+term: .pbix and .pbit files
+cue: Which two Power BI Desktop file types hold a full report with data, and a reusable template without data?
+category: File types
+frequency: Medium
+importance: 3
+origin: Analysts need to save their whole work and also reuse a design on new data, so Power BI Desktop has a complete file and a template file.
+pro_tip: Save a template when you want a ready-made layout and model for new monthly data.
+memory_story: The pbix is the full cake, and the pbit is the recipe card without the cake.
+visual: A full file icon holding data beside a lighter template icon with an empty box.
+emotion: The convenience of reusing a design you already worked hard on.
+definition: A .pbix file stores the report, the model and the loaded data, while a .pbit template stores the report and model structure without the data.
+explanation: A .pbix is the normal Power BI Desktop file. A .pbit template keeps the queries, model, measures and visuals but leaves out the data, so when you open it you are asked for parameter values and the data loads fresh.
+simple_explain: Save as .pbix to keep everything with its data. Save as .pbit when you want to share the design and rebuild it on new data.
+analogy: It is like a finished cake versus the recipe that lets you bake it again.
+formula_rule: .pbix = report + model + data. .pbit = report + model, no data.
+example_1: A monthly sales report saved as a .pbix file.
+example_2: A template saved as .pbit and sent to regional teams who load their own data.
+example_3: Opening a .pbit and entering a server name parameter before the data loads.
+related: parameters, publish, template, Power BI Desktop
+word_family: pbix, pbit, template, file, parameter
+where_used: Saving work | Reusing designs | Handing a report to others
+mini_conversation: A: I want others to use my layout with their own data. | B: Save it as a .pbit template so the data is not included.
+misconception: ✗ A .pbit template contains the loaded data too → ✓ A .pbit stores the structure only and asks you to load the data again
+contrast: .pbix vs .pbit: .pbix includes data, .pbit does not.
+avoid: Do not share a .pbix that contains confidential data by mistake.
+memory_trick: pbix is the Box with data, pbit is the Blueprint.
+real_project: Sending a .pbit template to branch offices so each loads its own figures into the same design.
+real_interview: An interviewer may ask: What is the difference between a .pbix and a .pbit file?
+real_daily: It is like a finished cake versus the recipe card.
+mcq_question: Which file type holds the report design but not the data?
+mcq_options: A) .xlsx B) .pbit C) .pbix D) .csv
+mcq_answer: B
+mcq_why: A .pbit is a template without data.
+fill_blank: The normal Power BI Desktop file that includes data has the extension ____ → .pbix
+apply: How can you share a design that others will fill with their own data? → Save it as a .pbit template
+explain_task: Explain the difference between .pbix and .pbit in three lines.
+own_task: Write when you would choose a template instead of a normal report file.

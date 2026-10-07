@@ -1,0 +1,540 @@
+deck.title: ETL and Data Pipelines – Beginner to Advanced Flashcards
+deck.subject: ETL, ELT and data pipelines
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: sql
+type: topic56
+
+@ETL-001
+topic: 01 Ideas
+level: Beginner
+term: ETL vs ELT
+cue: Which two patterns differ in whether data is reshaped before or after it reaches the warehouse?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Early warehouses had little computing power, so data was cleaned first, but cheap cloud warehouses made it practical to load first and transform later.
+pro_tip: Say where the transformation runs, because that is the real difference.
+memory_story: ETL is cooking in the kitchen before serving, and ELT is bringing raw groceries to the table and cooking there.
+visual: Two arrows, one transforming before the warehouse and one transforming inside it.
+emotion: The clarity of seeing why modern teams load raw data first.
+definition: ETL extracts data, transforms it in a separate system, and then loads the result, while ELT extracts and loads raw data first and transforms it inside the warehouse.
+explanation: In ETL a processing server or tool cleans and reshapes data before loading, which suits strict targets and sensitive data. In ELT the warehouse does the heavy work using SQL, which scales well and keeps raw data for replays. Many teams use ELT with tools such as dbt, but still apply light cleaning on the way in. The choice depends on volume, cost, privacy rules and team skills.
+simple_explain: ETL transforms before loading, ELT loads first and transforms inside the warehouse.
+analogy: ETL is cooking in the kitchen before serving, and ELT is bringing raw groceries to the table and cooking there.
+formula_rule: ETL = transform, then load. ELT = load, then transform.
+example_1: A script cleaning a CSV and then inserting it into a database.
+example_2: Raw API data landed in a warehouse table and reshaped with SQL models.
+example_3: Masking personal data before loading because the target must never hold it.
+related: warehouse vs lake, batch vs streaming, dbt basics, data contracts
+word_family: extract, transform, load, staging, raw layer
+where_used: Data platforms | Analytics projects | Customer integrations
+mini_conversation: A: Do we clean the data before it lands in the warehouse? | B: With ELT we load raw first and clean it there with SQL.
+misconception: ✗ ELT means no transformation is needed → ✓ It only moves the transformation into the warehouse
+contrast: ETL vs ELT: ETL transforms outside the target before loading, ELT transforms inside the target after loading.
+avoid: Do not load sensitive fields raw if the target must never hold them.
+memory_trick: ETL cooks first, ELT cooks last.
+real_project: Moving a customer pipeline from ETL to ELT cut nightly run time by loading raw data once.
+real_interview: An interviewer may ask: When would you choose ETL over ELT?
+real_daily: It is like cooking in a kitchen versus cooking at the table.
+mcq_question: Where does the transformation happen in ELT?
+mcq_options: A) Nowhere B) Only in the browser C) On a separate server before loading D) Inside the warehouse
+mcq_answer: D
+mcq_why: ELT loads raw data and transforms it in the target.
+fill_blank: In ETL the letter T stands for ____ → transform
+apply: Personal data must never reach the warehouse unmasked. Which pattern fits? → ETL with masking before loading
+explain_task: Explain ETL and ELT in three lines.
+own_task: Choose a pattern for a small analytics project and give two reasons.
+
+@ETL-002
+topic: 01 Ideas
+level: Beginner
+term: Sources and targets
+cue: Which two ends of every pipeline say where data comes from and where it goes?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Data lives in many systems, so every pipeline starts by naming the place it reads from and the place it writes to.
+pro_tip: Write down the owner, format and refresh rate of every source before building.
+memory_story: A source is the tap and a target is the tank, with the pipeline as the pipe between them.
+visual: Several sources on the left, a pipeline in the middle and one target on the right.
+emotion: The calm of knowing exactly where data starts and ends.
+definition: A source is a system or file that provides data, such as an API, database or spreadsheet, and a target is the system that receives it, such as a warehouse, lake or application.
+explanation: Sources differ in format, speed, reliability and access rules, so each needs its own extraction method. Targets define the schema, the load method and who can read the data. A pipeline may have many sources and several targets. Documenting owners and expected behaviour prevents surprises when a source changes.
+simple_explain: Every pipeline reads from sources and writes to targets, so know both well.
+analogy: A source is the tap and a target is the tank, with the pipeline as the pipe.
+formula_rule: Source → pipeline → target.
+example_1: A payment API as a source and a warehouse table as a target.
+example_2: A shared spreadsheet as a source with unpredictable edits.
+example_3: A dashboard database as the target of a daily load.
+related: extract from APIs, full vs incremental loads, schemas, data contracts
+word_family: source, target, sink, system of record, upstream
+where_used: Pipeline design | Documentation | Customer discovery
+mini_conversation: A: Who owns this source table? | B: The billing team does, so we must tell them before changing anything.
+misconception: ✗ A source is always clean and stable → ✓ Sources change, break and contain errors, so pipelines must expect that
+contrast: Source vs target: a source provides data, a target receives it.
+avoid: Do not build a pipeline without knowing the source owner.
+memory_trick: Know both ends before you build the pipe.
+real_project: Mapping every source and its owner before a migration exposed a spreadsheet nobody maintained.
+real_interview: An interviewer may ask: How do you document a new data source?
+real_daily: It is like knowing the tap and the tank.
+mcq_question: Which is a typical target?
+mcq_options: A) A source CSV B) A data warehouse C) A keyboard D) A raw API
+mcq_answer: B
+mcq_why: Targets receive and store the processed data.
+fill_blank: A system upstream of the pipeline is called a ____ → source
+apply: A customer says their data comes from three systems. What do you document first? → Each source's owner and format
+explain_task: Explain sources and targets in three lines.
+own_task: Draw a pipeline with two sources and one target.
+
+@ETL-003
+topic: 01 Ideas
+level: Beginner
+term: Batch vs streaming
+cue: Which two ways of processing data differ in how often it moves?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Some questions can wait for a nightly update, but others need data within seconds, so two processing styles exist.
+pro_tip: Start with batch unless the business truly needs data in seconds.
+memory_story: Batch is the postman who delivers once a day, and streaming is a pipe that never stops flowing.
+visual: Bundles of data moving at set times versus a continuous flow.
+emotion: The relief of choosing the simpler option that fits.
+definition: Batch processing moves and transforms data in scheduled groups, while streaming processes each event or small piece continuously as it arrives.
+explanation: Batch is simpler, cheaper and easy to retry, and suits reports and daily loads. Streaming gives low delay for alerts, live dashboards and fraud checks, but it needs more careful design for ordering, duplicates and failures. Micro-batch sits between them with very small frequent batches. Many platforms use both.
+simple_explain: Batch runs on a schedule in groups, and streaming handles events as they arrive.
+analogy: Batch is a postman who delivers once a day, and streaming is a pipe that never stops flowing.
+formula_rule: Batch = groups on a schedule. Streaming = events as they happen.
+example_1: A nightly job that loads yesterday's orders.
+example_2: A stream that flags a suspicious payment within seconds.
+example_3: A micro-batch job running every five minutes.
+related: pipelines vs jobs, Kafka basics, late-arriving data, orchestration
+word_family: batch, stream, event, micro-batch, latency
+where_used: Reporting | Alerts | Platform design
+mini_conversation: A: Do we need this dashboard live? | B: Hourly batches are enough, and much cheaper.
+misconception: ✗ Streaming is always better than batch → ✓ It is more complex, and batch is often the right answer
+contrast: Batch vs streaming: batch is simple and delayed, streaming is complex and immediate.
+avoid: Do not choose streaming without a real need for low delay.
+memory_trick: Batch is bundles, streaming is a flow.
+real_project: Replacing a streaming design with hourly batches saved cost and met the real need.
+real_interview: An interviewer may ask: When is streaming worth the extra complexity?
+real_daily: It is like daily post versus a running tap.
+mcq_question: Which suits a nightly sales report?
+mcq_options: A) Both are required B) Streaming C) Batch D) Neither
+mcq_answer: C
+mcq_why: The report can wait, so a schedule is enough.
+fill_blank: Very small, frequent batches are called ____ → micro-batches
+apply: A bank must flag fraud within seconds. Which style? → Streaming
+explain_task: Explain batch and streaming in three lines.
+own_task: Give one use for each and say why.
+
+@ETL-004
+topic: 01 Ideas
+level: Intermediate
+term: Warehouse vs lake vs lakehouse
+cue: Which three storage designs hold analytics data, and how do they differ?
+category: Core concept
+frequency: High
+importance: 4
+origin: Teams needed a place to analyse data, and the designs grew from structured warehouses to raw lakes to a blend of both.
+pro_tip: Match the design to the data shape and the people who will use it.
+memory_story: A warehouse is a tidy shop with labelled shelves, a lake is a big pond of everything, and a lakehouse is a pond with shelves built in.
+visual: Three containers, one organised, one open and one with organised zones.
+emotion: The clarity of choosing storage for a reason.
+definition: A data warehouse stores structured, modelled data for SQL analytics, a data lake stores raw files of any type cheaply, and a lakehouse adds table features and SQL on top of lake storage.
+explanation: Warehouses give speed, governance and simple SQL but cost more per terabyte. Lakes hold structured, semi-structured and unstructured data cheaply, but need extra work to make it reliable. Lakehouse formats such as Delta, Iceberg and Hudi add transactions and schema control to files. Many organisations keep raw data in a lake and curated data in a warehouse.
+simple_explain: Warehouses are structured and fast, lakes are raw and cheap, and lakehouses try to give both.
+analogy: A warehouse is a tidy shop, a lake is a pond of everything, and a lakehouse is a pond with shelves.
+formula_rule: Warehouse = structured. Lake = raw. Lakehouse = raw with table features.
+example_1: Sales tables in a cloud warehouse for dashboards.
+example_2: Raw JSON logs stored as files in object storage.
+example_3: Parquet tables with transactions managed by a lakehouse format.
+related: ETL vs ELT, file formats, schemas, cost and performance
+word_family: warehouse, lake, lakehouse, Parquet, object storage
+where_used: Architecture decisions | Customer platforms | Cost planning
+mini_conversation: A: Should the raw logs go in the warehouse? | B: Keep them in the lake, and load only cleaned tables.
+misconception: ✗ A lake replaces the need for a warehouse → ✓ Each has strengths, and many teams use both
+contrast: Lake vs warehouse: a lake stores raw files cheaply, a warehouse stores modelled tables for fast SQL.
+avoid: Do not let a lake turn into an unmanaged swamp.
+memory_trick: Warehouse shelves, lake pond, lakehouse both.
+real_project: Landing raw files in a lake kept a cheap replayable copy behind the warehouse.
+real_interview: An interviewer may ask: What problem does a lakehouse solve?
+real_daily: It is like a shop, a pond and a pond with shelves.
+mcq_question: Which stores raw files of any type cheaply?
+mcq_options: A) A data lake B) A warehouse C) A cache D) A spreadsheet
+mcq_answer: A
+mcq_why: Lakes keep raw data in cheap object storage.
+fill_blank: A lake that has become messy and unusable is called a data ____ → swamp
+apply: You need cheap storage for raw logs and files. Which design? → A data lake
+explain_task: Explain warehouse, lake and lakehouse in three lines.
+own_task: Choose a design for a small startup and give two reasons.
+
+@ETL-005
+topic: 01 Ideas
+level: Beginner
+term: Pipelines vs jobs
+cue: Which two terms describe the whole flow and its individual runnable steps?
+category: Core concept
+frequency: High
+importance: 4
+origin: Data work grew from single scripts into chains of steps, so the words pipeline and job separate the flow from the pieces.
+pro_tip: Keep each job small so a failure can be retried alone.
+memory_story: A pipeline is a train line, and each job is one station where something is done.
+visual: A chain of boxes where each box is one job.
+emotion: The tidiness of small, nameable steps.
+definition: A job is one runnable unit of work such as extracting a table, and a pipeline is an ordered set of jobs with dependencies that together move data from sources to targets.
+explanation: Jobs have inputs, outputs and a status. Dependencies say which job must finish first. A scheduler or orchestrator runs the pipeline, retries failed jobs and records history. Small jobs are easier to test and rerun. Large jobs hide failures and are costly to repeat.
+simple_explain: A pipeline is the whole chain, and a job is one step in it.
+analogy: A pipeline is a train line, and a job is one station.
+formula_rule: Pipeline = jobs + order + schedule.
+example_1: Jobs for extract, clean and load inside one pipeline.
+example_2: A failed load job rerun without repeating the extract.
+example_3: A dependency saying report runs after load.
+related: orchestration, idempotency, retries, Airflow tasks
+word_family: job, task, pipeline, dependency, schedule
+where_used: Orchestrators | Data platforms | Operations
+mini_conversation: A: One failure reran everything for three hours. | B: Split it into smaller jobs so only the failed one reruns.
+misconception: ✗ A pipeline should be one big script → ✓ Small jobs give clearer failures and cheaper retries
+contrast: Job vs pipeline: a job is one step, a pipeline is the whole chain.
+avoid: Do not put extract, clean and load in one unmonitored script.
+memory_trick: Small jobs make safe pipelines.
+real_project: Splitting one long script into jobs let operators rerun only the failed load.
+real_interview: An interviewer may ask: Why keep jobs small?
+real_daily: It is like stations on a train line.
+mcq_question: What is a job?
+mcq_options: A) A database table B) The whole data warehouse C) A server D) One runnable unit of work
+mcq_answer: D
+mcq_why: Pipelines are made of many jobs.
+fill_blank: A rule saying which job must finish first is a ____ → dependency
+apply: A load fails after a long extract. How do you avoid repeating the extract? → Split into separate jobs
+explain_task: Explain pipelines and jobs in three lines.
+own_task: Break a daily sales pipeline into at least four jobs.
+
+@ETL-006
+topic: 01 Ideas
+level: Intermediate
+term: Data contracts
+cue: Which agreements describe what shape and quality of data a producer promises to deliver?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Pipelines kept breaking when upstream teams changed columns without warning, so explicit agreements on data were introduced.
+pro_tip: Version the contract and test it automatically on every change.
+memory_story: A data contract is a written promise between a supplier and a customer about what is in each delivery.
+visual: Two teams with a signed document describing columns and rules.
+emotion: The relief of no more surprise column changes.
+definition: A data contract is an agreed description of a dataset's schema, meaning, quality rules, freshness and ownership, between the team that produces it and the teams that use it.
+explanation: A contract lists fields with types, allowed values, null rules, update frequency and who to contact. Automated checks compare real data with the contract and alert on breaks. Changes follow a process, such as adding fields freely but announcing removals ahead of time. Contracts turn hidden assumptions into visible, testable rules.
+simple_explain: Write down what the data should look like, test it, and agree how changes happen.
+analogy: A data contract is a written promise between a supplier and a customer about each delivery.
+formula_rule: Schema + quality rules + freshness + owner.
+example_1: A contract saying order_id is never null and unique.
+example_2: A test failing when a column is renamed.
+example_3: A notice period before removing a field.
+related: schemas, schema changes, data quality checks, sources and targets
+word_family: contract, schema, SLA, producer, consumer
+where_used: Platform teams | Large organisations | Critical pipelines
+mini_conversation: A: The source team renamed a column and broke our job. | B: A data contract would have flagged that change first.
+misconception: ✗ A data contract is only a document that nobody checks → ✓ It is useful only when tests enforce it automatically
+contrast: Contract vs documentation: a contract is enforced by tests, documentation is only read.
+avoid: Do not leave quality expectations unwritten.
+memory_trick: A promise only counts when it is tested.
+real_project: Adding contract tests caught a type change from a source before the nightly run.
+real_interview: An interviewer may ask: How do you stop upstream changes from breaking pipelines?
+real_daily: It is like a written promise between a supplier and a customer.
+mcq_question: What does a data contract describe?
+mcq_options: A) Schema, quality rules and ownership B) The colour of a dashboard C) A password D) A server price
+mcq_answer: A
+mcq_why: It states what the dataset promises to look like.
+fill_blank: The team that provides a dataset is the ____ → producer
+apply: A source team plans to remove a column. What does the contract require? → An agreed notice and a versioned change
+explain_task: Explain data contracts in three lines.
+own_task: Write five rules for a contract on an orders table.
+
+@ETL-007
+type: code56
+topic: 02 Extract
+level: Beginner
+term: Extracting from APIs
+cue: How do you read data from a web API safely and completely?
+kind: Extraction method
+frequency: Very high
+importance: 5
+origin: Many business systems expose data only through APIs, so pipelines call them page by page and store what comes back.
+pro_tip: Save the raw response before you transform it, so you can replay without calling again.
+memory_story: Extracting from an API is borrowing books through a librarian who hands them over a few at a time.
+visual: A loop of requests returning pages of records.
+emotion: The satisfaction of a clean, complete download.
+meaning: API extraction sends authenticated requests, follows pagination, handles errors and limits, and stores the returned records in a landing area.
+code: import requests¶rows, url = [], "https://api.example.com/orders?limit=100"¶headers = {"Authorization": "Bearer TOKEN"}¶while url:¶    r = requests.get(url, headers=headers, timeout=30)¶    r.raise_for_status()¶    body = r.json()¶    rows.extend(body["data"])¶    url = body.get("next")¶print(len(rows))
+output: Prints the total number of records collected across all pages.
+explanation: The loop follows a next link until it is empty. A timeout stops a hung call, and raise_for_status turns bad responses into errors. Real pipelines add retries with delays and respect rate limits. Store the raw JSON with a load timestamp before reshaping. Never print or log tokens.
+simple_explain: Call the API in a loop, follow the pages, handle errors, and keep the raw data.
+analogy: Extracting from an API is borrowing books through a librarian who hands them over a few at a time.
+syntax: requests.get(url, headers=..., params=..., timeout=...)
+anatomy: headers = credentials | params = filters | timeout = safety | next = next page
+example_1: requests.get(url, params={"updated_since": ts})
+example_2: r.raise_for_status()
+example_3: json.dump(body, open("raw/orders_1.json", "w"))
+variation: session = requests.Session()   // reuse the connection across pages
+used_with: pagination, rate limits, credentials
+related: pagination and rate limits, credentials, full vs incremental, retries
+alternatives: Official client libraries | Connectors
+where_used: SaaS integrations | Customer data pulls | Backfills
+mini_conversation: A: The job only got the first hundred records. | B: It ignored pagination, so follow the next links.
+misconception: ✗ One API call returns all the data → ✓ Responses are usually paged, so loop until the end
+confused_with: API extract vs database extract: an API is paged and limited, a database allows queries.
+avoid: Do not call an API without a timeout.
+wrong_code: r = requests.get(url)
+right_code: r = requests.get(url, timeout=30); r.raise_for_status()
+memory_trick: Follow the next link until none remains.
+real_project: Replaying from the raw layer recovered the lost records.
+real_interview: An interviewer may ask: How do you extract all records from a paged API?
+real_daily: It is like borrowing books a few at a time.
+mcq_question: What should a pipeline do with a paged API?
+mcq_options: A) Ignore limits B) Follow the pages until the end C) Read only the first page D) Call it once a year
+mcq_answer: B
+mcq_why: Records are spread across pages.
+fill_blank: A setting that stops a call from hanging forever is a ____ → timeout
+hindi_to_task: Request a page of records with a bearer token.
+task_answer: requests.get(url, headers={"Authorization": "Bearer TOKEN"}, timeout=30)
+own_task: Extend the loop so it saves the raw response of each page.
+practice_question: Why keep the raw response?
+practice_answer: It lets you replay transformations without calling the API again.
+
+@ETL-008
+type: code56
+topic: 02 Extract
+level: Beginner
+term: Extracting from databases and files
+cue: How do you read data from relational databases and from files such as CSV?
+kind: Extraction method
+frequency: Very high
+importance: 5
+origin: Most business data sits in databases and exported files, so pipelines need safe ways to read both without disturbing the source.
+pro_tip: Read from a replica or off-peak, and select only the columns you need.
+memory_story: Reading a database is asking the librarian for a list, and reading a file is picking up a sealed parcel.
+visual: A query on one side and a file on the other, both feeding the pipeline.
+emotion: The comfort of a repeatable, polite extraction.
+meaning: Database extraction runs read-only queries, often by key or date ranges, and file extraction reads delimited or structured files from storage with explicit types and encodings.
+code: SELECT order_id, customer_id, total, updated_at¶FROM orders¶WHERE updated_at >= '2026-10-01' AND updated_at < '2026-10-02'¶ORDER BY order_id;¶-- files in Python: pandas.read_csv("orders.csv", dtype={"order_id": "string"}, encoding="utf-8")
+output: Returns only the orders updated on that day, and the file read keeps order_id as text.
+explanation: Selecting needed columns and a time range keeps the load on the source small. Large tables should be read in chunks. For files, declare types so leading zeros and dates are not guessed wrongly. Check encoding, delimiter and header. A partially written file must not be read, so wait for a completion marker or use atomic moves.
+simple_explain: Query only what you need from databases, and declare types when reading files.
+analogy: Reading a database is asking the librarian for a list, and reading a file is picking up a sealed parcel.
+syntax: SELECT columns FROM table WHERE range | read_csv(path, dtype=..., encoding=...)
+anatomy: WHERE range = limit rows | dtype = fixed types | chunks = bounded memory
+example_1: SELECT * FROM events WHERE id > 1000 ORDER BY id LIMIT 5000;
+example_2: pandas.read_csv("big.csv", chunksize=100000)
+example_3: df = pandas.read_parquet("part-0001.parquet")
+variation: COPY orders TO STDOUT WITH CSV   // fast bulk export in PostgreSQL
+used_with: replicas, incremental loads, file formats
+related: full vs incremental, file formats, credentials, change data capture
+alternatives: Database replicas | change data capture
+where_used: Warehouse loads | Migrations | Reports
+mini_conversation: A: The nightly export slows the live app. | B: Read from a replica and select only the columns we need.
+misconception: ✗ Reading from the source database is always safe → ✓ Heavy queries can slow production, so extract carefully
+confused_with: Chunked vs full read: chunks limit memory, a full read loads everything at once.
+avoid: Do not run huge queries on a production primary at peak time.
+wrong_code: SELECT * FROM orders;
+right_code: SELECT order_id, total FROM orders WHERE updated_at >= '2026-10-01';
+memory_trick: Select less, read from a replica, declare types.
+real_project: Moving the nightly extract to a replica removed daytime slowdowns for the customer.
+real_interview: An interviewer may ask: How do you extract from a production database safely?
+real_daily: It is like asking a librarian for a list.
+mcq_question: Why declare types when reading a CSV?
+mcq_options: A) To rename the file B) To make the file smaller C) To avoid wrong guesses such as lost leading zeros D) To speed up the internet
+mcq_answer: C
+mcq_why: Type guessing can corrupt identifiers and dates.
+fill_blank: Reading a big file piece by piece is reading in ____ → chunks
+hindi_to_task: Select only the orders updated on a given day.
+task_answer: SELECT order_id, total FROM orders WHERE updated_at >= '2026-10-01' AND updated_at < '2026-10-02';
+own_task: Write a query that reads a table in batches of five thousand rows by key.
+practice_question: Why read from a replica?
+practice_answer: It avoids slowing the production database.
+
+@ETL-009
+type: code56
+topic: 02 Extract
+level: Intermediate
+term: Full vs incremental loads
+cue: Which two extraction styles differ in whether you copy everything or only what changed?
+kind: Extraction method
+frequency: Very high
+importance: 5
+origin: Copying whole tables every night wastes time and money, so pipelines learned to move only new or changed rows.
+pro_tip: Keep a watermark of the last successful value and only advance it after the load succeeds.
+memory_story: Full load is photocopying the whole book, and incremental is copying only the new pages.
+visual: A marker on a timeline showing what has been copied.
+emotion: The relief of a fast nightly run.
+meaning: A full load copies the entire source each run, while an incremental load copies only rows newer than a stored watermark such as a timestamp or id.
+code: -- state table holds the watermark¶SELECT last_value FROM etl_state WHERE name = 'orders';¶SELECT * FROM orders WHERE updated_at > :last_value ORDER BY updated_at;¶-- after a successful load¶UPDATE etl_state SET last_value = :max_updated_at WHERE name = 'orders';
+output: Only rows changed since the last run are read, and the watermark moves forward after success.
+explanation: Incremental loads need a reliable change column, such as an updated timestamp or a rising id. Deletes are not visible with a simple watermark, so they need a soft delete flag or change data capture. Clock differences and late edits can be handled by re-reading a small overlap window. Full loads are simpler and fine for small tables.
+simple_explain: Store a watermark, read only newer rows, and move the watermark after success.
+analogy: Full load is photocopying the whole book, and incremental is copying only the new pages.
+syntax: WHERE updated_at > :watermark
+anatomy: watermark = last processed value | overlap = safety margin | state table = stored progress
+example_1: SELECT * FROM events WHERE id > 98200;
+example_2: WHERE updated_at > :last - INTERVAL '10 minutes'
+example_3: TRUNCATE staging; INSERT ... SELECT * FROM source;
+variation: SELECT * FROM orders WHERE is_deleted = true AND updated_at > :last;   // catch soft deletes
+used_with: watermarks, upserts, change data capture
+related: upserts, change data capture, idempotency, extract from databases
+alternatives: Change data capture | full refresh for small tables
+where_used: Large tables | Frequent syncs | Cost control
+mini_conversation: A: Why does the sync miss deleted rows? | B: A timestamp watermark cannot see deletes, so use soft deletes or CDC.
+misconception: ✗ Incremental loads always catch every change → ✓ Deletes and late edits can slip through without extra handling
+confused_with: Incremental vs full refresh: one moves changes, the other replaces everything.
+avoid: Do not advance the watermark before the load succeeds.
+wrong_code: UPDATE etl_state SET last_value = now();   -- before loading
+right_code: UPDATE etl_state SET last_value = :max_updated_at;   -- after a successful load
+memory_trick: Move the watermark only after success.
+real_project: Backfilling by partition made reruns much faster for the whole team.
+real_interview: An interviewer may ask: What is a watermark in a pipeline?
+real_daily: It is like copying only the new pages of a book.
+mcq_question: When should the watermark advance?
+mcq_options: A) Never B) Before the extract C) Randomly D) After a successful load
+mcq_answer: D
+mcq_why: Advancing early can lose rows if the load fails.
+fill_blank: A stored value marking progress is called a ____ → watermark
+hindi_to_task: Read only rows changed after a stored time.
+task_answer: SELECT * FROM orders WHERE updated_at > :last_value;
+own_task: Design how to capture deletes in an incremental load.
+practice_question: Why does a timestamp watermark miss deletes?
+practice_answer: A deleted row no longer exists to show an updated time.
+
+@ETL-010
+type: topic56
+topic: 02 Extract
+level: Advanced
+term: Change data capture
+cue: Which technique reads inserts, updates and deletes from a database's own change log?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Polling tables misses deletes and loads the database, so CDC reads the transaction log that the database already writes.
+pro_tip: Use CDC when you need deletes, low delay or low source load.
+memory_story: CDC is reading the shop's till roll instead of recounting the shelves.
+visual: A log of changes streaming from a database to a target.
+emotion: The satisfaction of seeing every change arrive in order.
+definition: Change data capture reads the database's transaction log to emit each insert, update and delete as an event, usually with the old and new values.
+explanation: Tools such as Debezium read logs and publish changes to a stream, and managed connectors do the same into warehouses. It captures deletes, keeps order and adds little load. It needs log access, careful setup and a plan for the first full snapshot. Schema changes and log retention need attention. Events often carry an operation type and a timestamp.
+simple_explain: Read the database change log to get every change, including deletes.
+analogy: CDC is reading the shop's till roll instead of recounting the shelves.
+formula_rule: Snapshot first, then stream the changes.
+example_1: A connector sending each order update to a stream.
+example_2: A delete event removing a row in the target.
+example_3: An initial snapshot followed by continuous changes.
+related: full vs incremental, Kafka basics, slowly changing data, upserts
+word_family: CDC, transaction log, snapshot, event, Debezium
+where_used: Replication | Near real-time sync | Migrations
+mini_conversation: A: We must see deleted rows in the warehouse. | B: Use change data capture instead of a timestamp watermark.
+misconception: ✗ CDC is just a faster way of polling → ✓ It reads the log, so it also sees deletes and the order of changes
+contrast: CDC vs polling: CDC reads the log, polling queries tables.
+avoid: Do not forget the initial snapshot.
+memory_trick: Log first, snapshot once, then stream.
+real_project: Using CDC kept a reporting table in step with deletes in the customer database.
+real_interview: An interviewer may ask: What can CDC do that a timestamp watermark cannot?
+real_daily: It is like reading a till roll.
+mcq_question: What does CDC read?
+mcq_options: A) A password file B) The web page C) The database transaction log D) A spreadsheet
+mcq_answer: C
+mcq_why: The log records every change.
+fill_blank: The first full copy before streaming changes is a ____ → snapshot
+apply: A target must reflect deleted rows. Which method fits? → Change data capture
+explain_task: Explain CDC in three lines.
+own_task: List two benefits and two risks of CDC.
+
+@ETL-011
+type: code56
+topic: 02 Extract
+level: Intermediate
+term: Pagination and rate limits
+cue: How do you handle APIs that return data in pages and slow you down when you call too fast?
+kind: Extraction method
+frequency: Very high
+importance: 5
+origin: Servers protect themselves by splitting results and limiting request rates, so clients must page politely and back off when told.
+pro_tip: Prefer cursor pagination over page numbers, since pages shift when data changes.
+memory_story: Pagination is taking a few trays from the buffet at a time, and rate limits are the waiter asking you to slow down.
+visual: Requests spaced out with a waiting pause after a limit message.
+emotion: The calm of a client that behaves politely.
+meaning: Pagination splits results by page number, offset or cursor, and rate limits cap requests per time, which clients meet by waiting and retrying with backoff.
+code: import time, requests¶def get(url, **kw):¶    for attempt in range(5):¶        r = requests.get(url, timeout=30, **kw)¶        if r.status_code == 429:¶            time.sleep(int(r.headers.get("Retry-After", 2 ** attempt)))¶            continue¶        r.raise_for_status()¶        return r¶    raise RuntimeError("Rate limit not lifting. Retry later or ask for a higher limit.")
+output: Returns the response, or waits and retries on a 429 status, and fails with a clear message after five tries.
+explanation: Offset pagination can skip or repeat rows when data changes during the run, while cursors point to a stable position. A 429 status means too many requests, and a Retry-After header says how long to wait. Exponential backoff doubles the wait on each try, and jitter adds randomness. Parallel callers share the same limit.
+simple_explain: Follow cursors, respect Retry-After, and back off when told to slow down.
+analogy: Pagination is taking a few trays at a time, and rate limits are the waiter asking you to slow down.
+syntax: if r.status_code == 429: time.sleep(wait)
+anatomy: cursor = stable position | 429 = too many requests | Retry-After = seconds to wait | backoff = growing delay
+example_1: ?cursor=eyJpZCI6MTAwfQ
+example_2: ?page=3&per_page=100
+example_3: time.sleep(2 ** attempt + random.random())
+variation: requests_per_second = 5   // a client-side throttle
+used_with: API extraction, retries, credentials
+related: extract from APIs, retries, idempotency, error handling
+alternatives: Bulk export endpoints | webhooks
+where_used: SaaS integrations | Backfills | Large pulls
+mini_conversation: A: The API keeps returning 429. | B: Respect Retry-After and slow the request rate.
+misconception: ✗ Retrying immediately fixes a rate limit → ✓ It makes the problem worse, so wait and back off
+confused_with: Offset vs cursor: offset counts rows and can drift, a cursor marks a stable position.
+avoid: Do not hammer an API without delays.
+wrong_code: while True: r = requests.get(url)
+right_code: time.sleep(int(r.headers.get("Retry-After", 2)))
+memory_trick: Cursors beat offsets, waiting beats hammering.
+real_project: Adding backoff and cursors stopped duplicate and missing rows in a nightly sync.
+real_interview: An interviewer may ask: What does a 429 response mean?
+real_daily: It is like a waiter asking you to slow down.
+mcq_question: Which status means too many requests?
+mcq_options: A) 404 B) 429 C) 301 D) 500
+mcq_answer: B
+mcq_why: The server is limiting the request rate.
+fill_blank: Waiting longer after each failed try is exponential ____ → backoff
+hindi_to_task: Wait the number of seconds the server asks for.
+task_answer: time.sleep(int(r.headers.get("Retry-After", 2)))
+own_task: Add random jitter to the backoff delay.
+practice_question: Why prefer cursors over offsets?
+practice_answer: Offsets drift when data changes while paging.
+
+@ETL-012
+type: topic56
+topic: 02 Extract
+level: Intermediate
+term: Credentials in pipelines
+cue: How do you store and use passwords and tokens for sources without leaking them?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Pipelines need access to many systems, and leaked credentials are a common cause of breaches, so secure handling is part of the design.
+pro_tip: Use a secrets manager and the narrowest access that works.
+memory_story: Credentials are keys on a ring, and you hand each job only the key to its own door.
+visual: A job fetching a secret at run time from a vault.
+emotion: The peace of keeping secrets out of the code.
+definition: Pipeline credentials are secrets used to access sources and targets, and they should be stored in a secrets manager, injected at run time, scoped to least privilege and rotated.
+explanation: Never hard-code passwords in scripts or commit them to Git. Use environment variables from a secrets system, or short-lived tokens through roles. Give each pipeline its own read-only account for sources. Log access but never log secret values. Rotate secrets on a schedule and after any leak, and test that rotation does not break jobs.
+simple_explain: Keep secrets in a vault, give each job a narrow read-only account, and never print them.
+analogy: Credentials are keys on a ring, and each job receives only its own key.
+formula_rule: Vault + least privilege + rotation + no logging.
+example_1: A job reading a password from a secrets manager.
+example_2: A read-only database user for the extract.
+example_3: A rotation test before the schedule changes.
+related: secrets and KMS, least privilege, extract from APIs, error handling
+word_family: secret, token, vault, rotation, read-only
+where_used: Every pipeline | Customer integrations | Security reviews
+mini_conversation: A: Where is the database password stored? | B: In the secrets manager, and the job reads it at run time.
+misconception: ✗ A private repository is a safe place for passwords → ✓ Secrets in Git history can leak, so use a vault
+contrast: Hard-coded vs injected secrets: hard-coded ones leak, injected ones stay outside the code.
+avoid: Do not print connection strings in logs.
+memory_trick: Vault it, scope it, rotate it.
+real_project: Replacing passwords in scripts with vault lookups passed a customer security review.
+real_interview: An interviewer may ask: How do you handle secrets in a data pipeline?
+real_daily: It is like keys on a ring for each door.
+mcq_question: Where should pipeline passwords live?
+mcq_options: A) A secrets manager B) The source code C) A spreadsheet D) A chat message
+mcq_answer: A
+mcq_why: Vaults control and audit access.
+fill_blank: Changing a secret on a schedule is called ____ → rotation
+apply: A script has a password in its code. What do you do? → Move it to a secrets manager and rotate it
+explain_task: Explain how to handle credentials in pipelines in three lines.
+own_task: List three rules for source accounts used by a pipeline.

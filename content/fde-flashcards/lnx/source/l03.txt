@@ -1,0 +1,714 @@
+
+@LNX-032
+type: code56
+topic: 05 Processes and system
+level: Beginner
+term: ps, top and htop
+cue: Which commands show what is running on the machine and how much CPU and memory each program uses?
+kind: Command
+frequency: Very high
+importance: 5
+origin: When a machine feels slow you must see which program is responsible, so Unix has tools that list processes and watch them live.
+pro_tip: Press q to leave top, and use the shift and M keys to sort by memory.
+memory_story: ps takes a photograph of the processes, and top is a live security camera.
+visual: A table of process names with CPU and memory columns that updates live.
+emotion: The relief of spotting the program that is eating the machine.
+meaning: ps lists processes at one moment, and top and htop show them live with CPU and memory use.
+code: ps aux¶ps aux | grep nginx¶top¶htop¶pgrep -a nginx
+output: A list of all processes with user, id, CPU and memory, only nginx lines, a live updating view, a friendlier live view, and the process ids and command lines of nginx.
+explanation: Each process has a process id (PID). ps aux shows every process of every user in a wide table. top refreshes every few seconds and sorts by CPU by default. htop is a more readable alternative, which may need installing. pgrep finds process ids by name without the extra grep line that ps | grep adds.
+simple_explain: Use ps to take a snapshot and top to watch live. Look at the PID, CPU and memory columns to find the heavy program.
+analogy: ps is a photograph of the processes, and top is a live security camera.
+syntax: ps aux  |  top  |  pgrep name
+anatomy: PID = process id | %CPU = processor use | %MEM = memory use | aux = all users, with details
+example_1: ps -ef
+example_2: top -o %MEM
+example_3: pgrep -u asha python
+variation: ps -eo pid,ppid,cmd --sort=-%mem | head   // top memory users¶pstree -p   // the process tree
+used_with: grep, kill, systemctl
+related: kill and signals, systemctl, free
+alternatives: A monitoring tool such as glances
+where_used: Slow machines | Finding stuck programs | Checking if a service is running
+mini_conversation: A: The server is slow. | B: Run top and see which process uses the most CPU.
+misconception: ✗ ps shows live changing values → ✓ ps shows a snapshot, and top or htop show live values
+confused_with: ps vs top: ps prints once, top keeps updating.
+avoid: Do not kill a process before you know what it is.
+wrong_code: ps -aux | grep nginx | grep -v nginx
+right_code: ps aux | grep [n]ginx
+memory_trick: ps is a snapshot, top is live.
+real_project: Finding a runaway worker process that used all the memory on a customer server.
+real_interview: An interviewer may ask: How do you find the process using the most memory?
+real_daily: It is like a photograph versus a live camera.
+mcq_question: Which tool updates its view of processes live?
+mcq_options: A) cat B) ls C) top D) ps
+mcq_answer: C
+mcq_why: top refreshes every few seconds.
+fill_blank: Each running program has a numeric process ____ called a PID → id
+hindi_to_task: List all processes whose command contains nginx.
+task_answer: ps aux | grep nginx
+own_task: Find the three processes using the most memory on your machine.
+practice_question: Which key quits top?
+practice_answer: q
+
+@LNX-033
+type: code56
+topic: 05 Processes and system
+level: Intermediate
+term: kill and signals
+cue: Which command sends a signal to a process, asking it to stop politely or forcing it to end?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Processes need a way to be told to reload, pause or stop from outside, so Unix sends small numbered messages called signals.
+pro_tip: Try the polite signal first, and use the forced one only if the process does not respond.
+memory_story: Signals are messages slipped under a process's door, from a polite request to a forced eviction.
+visual: A process receiving a note labelled TERM, and then a stronger one labelled KILL.
+emotion: The calm of ending a stuck program without rebooting.
+meaning: kill sends a signal to a process id, where TERM asks nicely, KILL forces, and HUP often means reload.
+code: kill 1234¶kill -15 1234¶kill -9 1234¶kill -HUP 1234¶pkill -f myscript.py
+output: The process is asked to terminate, the same with signal 15 explicitly, the process is forced to stop, a service rereads its configuration, and processes matching myscript.py are ended.
+explanation: kill without a number sends SIGTERM (15), which lets the program clean up. SIGKILL (9) cannot be caught, so the program cannot clean up and may leave temp files or data in a bad state. SIGHUP (1) is often used to ask daemons to reload configuration. Ctrl and C sends SIGINT (2) to the foreground program. pkill matches by name.
+simple_explain: Start with a normal kill so the program can close properly. Use kill -9 only when it refuses to stop.
+analogy: It is like a note slipped under a door, from a polite request to a forced eviction.
+syntax: kill [-signal] pid  |  pkill pattern
+anatomy: -15 or -TERM = ask to stop | -9 or -KILL = force | -HUP = reload | pid = process id
+example_1: kill 4321
+example_2: kill -9 4321
+example_3: pkill nginx
+variation: killall name   // all processes with an exact name¶kill -l   // list all signals
+used_with: ps, pgrep, systemctl
+related: ps and top, background jobs, systemctl
+alternatives: systemctl stop for services
+where_used: Stuck programs | Reloading services | Clean-up
+mini_conversation: A: The script is hung and ignores Ctrl and C. | B: Find its PID with ps and try kill, and kill -9 if it still does not stop.
+misconception: ✗ kill -9 is the normal way to stop a program → ✓ kill -9 is a last resort, since the program cannot clean up
+confused_with: SIGTERM vs SIGKILL: TERM can be handled by the program, KILL cannot.
+avoid: Do not use kill -9 on databases unless you must.
+wrong_code: kill -9 nginx
+right_code: pkill nginx
+memory_trick: Ask nicely first, force last.
+real_project: Reloading a service's configuration with HUP instead of restarting it.
+real_interview: An interviewer may ask: What is the difference between kill and kill -9?
+real_daily: It is like a polite request versus a forced eviction.
+mcq_question: Which signal cannot be caught or ignored by a program?
+mcq_options: A) SIGINT B) SIGKILL C) SIGTERM D) SIGHUP
+mcq_answer: B
+mcq_why: SIGKILL is handled by the kernel and cannot be caught.
+fill_blank: The default signal sent by kill is SIG____ → TERM
+hindi_to_task: Force a process with id 2345 to stop.
+task_answer: kill -9 2345
+own_task: Start a sleep command, find its PID and stop it with a signal.
+practice_question: Which key combination sends SIGINT to the foreground program?
+practice_answer: Ctrl and C
+
+@LNX-034
+type: code56
+topic: 05 Processes and system
+level: Intermediate
+term: Background jobs and nohup
+cue: How do you run a long command in the background and keep it running after you log out?
+kind: Shell feature
+frequency: High
+importance: 4
+origin: Long tasks should not block your terminal or die when the connection drops, so the shell can run jobs in the background and shield them from hangup signals.
+pro_tip: For anything important, use a service, tmux or screen instead of relying on a bare background job.
+memory_story: The ampersand sends a task to the back room, and nohup keeps it working after you leave the building.
+visual: A command returning to the prompt while a number shows it working in the background.
+emotion: The freedom of closing the laptop without killing your job.
+meaning: A trailing & runs a command in the background, and nohup keeps it running after the terminal closes.
+code: ./long_task.sh &¶jobs¶fg %1¶nohup ./long_task.sh > out.log 2>&1 &¶disown
+output: The script starts in the background, the jobs list is shown, job 1 returns to the foreground, a script continues after logout and writes to out.log, and a job is detached from the shell.
+explanation: The shell tracks jobs started from it. Ctrl and Z suspends the foreground job, bg continues it in the background and fg brings it back. When the terminal closes, jobs normally receive a hangup signal and stop. nohup ignores that signal and writes output to nohup.out unless redirected. For real services, use systemd or a terminal multiplexer.
+simple_explain: Add an ampersand to run something in the background. Wrap it in nohup if it must survive logout, and redirect the output.
+analogy: The ampersand sends a task to the back room, and nohup keeps it working after you leave.
+syntax: command &  |  nohup command > out.log 2>&1 &
+anatomy: & = run in background | jobs = list jobs | fg and bg = move jobs | nohup = ignore hangup
+example_1: sleep 300 &
+example_2: nohup python train.py > train.log 2>&1 &
+example_3: fg %2
+variation: Ctrl and Z then bg   // suspend and continue in the background¶disown -h %1   // keep a running job after logout
+used_with: tmux, screen, redirection, systemd
+related: tmux, systemctl, redirection
+alternatives: tmux, screen, or a systemd service
+where_used: Long jobs | Remote sessions | Downloads
+mini_conversation: A: My job died when my SSH connection dropped. | B: Run it with nohup or inside tmux next time.
+misconception: ✗ A background job with & survives when the terminal closes → ✓ Without nohup or a multiplexer, a background job normally ends when the terminal closes
+confused_with: & vs nohup: & backgrounds a job, nohup protects it from hangup.
+avoid: Do not forget to redirect the output of a nohup job.
+wrong_code: nohup ./long_task.sh
+right_code: nohup ./long_task.sh > out.log 2>&1 &
+memory_trick: The ampersand backgrounds, and nohup survives logout.
+real_project: Starting a data export on a remote server and logging out.
+real_interview: An interviewer may ask: How do you keep a command running after logging out?
+real_daily: It is like sending a task to the back room.
+mcq_question: Which tool keeps a job running after logout?
+mcq_options: A) pwd B) head C) cat D) nohup
+mcq_answer: D
+mcq_why: nohup ignores the hangup signal.
+fill_blank: Ctrl and Z ____ the foreground job → suspends
+hindi_to_task: Run backup.sh in the background and keep it running after logout.
+task_answer: nohup ./backup.sh > backup.log 2>&1 &
+own_task: Start a long command in the background and bring it back with fg.
+practice_question: What does the jobs command show?
+practice_answer: The jobs started from the current shell and their state.
+
+@LNX-035
+type: code56
+topic: 05 Processes and system
+level: Intermediate
+term: systemd and systemctl
+cue: Which tool starts, stops and enables background services on most modern Linux systems?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Servers must start the right services at boot and keep them alive, so most distributions use systemd to manage services, and systemctl is its control command.
+pro_tip: Use systemctl status first, since it shows the state and the last log lines together.
+memory_story: systemd is the building manager that starts services in the morning and restarts any that fall over.
+visual: A list of services with green active labels and a few red failed ones.
+emotion: The comfort of a service that restarts itself.
+meaning: systemctl controls services managed by systemd, such as starting, stopping, enabling at boot and checking status.
+code: systemctl status nginx¶sudo systemctl restart nginx¶sudo systemctl enable nginx¶systemctl list-units --type=service --state=failed¶sudo systemctl daemon-reload
+output: The state and last logs of nginx, nginx restarted, nginx set to start at boot, a list of failed services, and unit files reread after a change.
+explanation: A service is defined by a unit file, often in /etc/systemd/system or /lib/systemd/system. start and stop act now, while enable and disable decide behaviour at boot. After editing a unit file, run daemon-reload. A unit file has sections such as Unit, Service and Install, with directives like ExecStart and Restart.
+simple_explain: Use systemctl status to check a service, restart to apply changes, and enable so it starts at boot.
+analogy: It is like a building manager who starts services in the morning and restarts any that fall over.
+syntax: systemctl action service
+anatomy: start stop restart reload = act now | enable disable = boot behaviour | status = state | daemon-reload = reread unit files
+example_1: sudo systemctl start docker
+example_2: systemctl is-active nginx
+example_3: sudo systemctl disable apache2
+variation: systemctl cat nginx   // show the unit file¶sudo systemctl edit nginx   // override settings safely
+used_with: journalctl, sudo, unit files
+related: journalctl, cron, background jobs
+alternatives: Older init scripts or containers' own supervisors
+where_used: Web servers | Databases | Custom services
+mini_conversation: A: I changed the config but nothing happened. | B: Reload or restart the service with systemctl.
+misconception: ✗ systemctl start also makes the service start at every boot → ✓ start runs it now, and enable makes it start at boot
+confused_with: start vs enable: start acts now, enable acts at boot.
+avoid: Do not edit a unit file without running daemon-reload.
+wrong_code: sudo systemctl enable nginx   # expecting it to start now
+right_code: sudo systemctl enable --now nginx
+memory_trick: Start is now, enable is at boot.
+real_project: Creating a unit file so a customer's custom service restarts after a crash.
+real_interview: An interviewer may ask: What is the difference between start and enable?
+real_daily: It is like a building manager who restarts what falls over.
+mcq_question: Which command makes a service start at boot?
+mcq_options: A) systemctl cat B) systemctl status C) systemctl enable D) systemctl start
+mcq_answer: C
+mcq_why: enable creates the links that start the service at boot.
+fill_blank: After editing a unit file, run systemctl daemon-____ → reload
+hindi_to_task: Check whether the ssh service is active.
+task_answer: systemctl is-active ssh
+own_task: Write a short unit file for a script that must restart on failure.
+practice_question: Which option starts a service now and enables it at boot?
+practice_answer: systemctl enable --now service
+
+@LNX-036
+type: code56
+topic: 05 Processes and system
+level: Intermediate
+term: journalctl and system logs
+cue: Which command reads the logs that systemd collects, filtered by service, time or priority?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Logs from many services used to be scattered in text files, so systemd gathers them into one journal that you can query.
+pro_tip: Use journalctl -u service -f to watch a service log live, just like tail -f.
+memory_story: The journal is a ship's logbook where every service writes in the same book.
+visual: A scrolling log filtered to one service and a time window.
+emotion: The satisfaction of finding why a service failed.
+meaning: journalctl shows entries of the systemd journal, with filters for unit, time and priority.
+code: journalctl -u nginx¶journalctl -u nginx -f¶journalctl --since "1 hour ago"¶journalctl -p err -b¶journalctl --disk-usage
+output: All logs of nginx, new nginx log lines live, entries from the last hour, errors since the current boot, and the space the journal uses.
+explanation: -u picks a service, -f follows new entries, --since and --until limit the time, -p filters by priority such as err, and -b limits to the current boot. Older text logs still live in /var/log, for example in files written by web servers. Journal size is limited by the settings, and old entries are removed.
+simple_explain: Ask the journal for one service with -u, add -f to follow, and use --since to look at a time window.
+analogy: It is like a ship's logbook in which every service writes.
+syntax: journalctl [-u unit] [-f] [--since time] [-p priority]
+anatomy: -u = unit | -f = follow | --since = from a time | -p = priority | -b = this boot
+example_1: journalctl -u ssh --since today
+example_2: journalctl -p warning -b
+example_3: journalctl -k
+variation: journalctl -n 100 -u app   // last 100 lines¶journalctl -o json   // output as JSON
+used_with: systemctl, grep, less
+related: systemctl, tail, /var/log
+alternatives: Reading text files in /var/log
+where_used: Service failures | Boot problems | Audits
+mini_conversation: A: The service fails at boot and I do not know why. | B: Check journalctl -u for that service and -b for this boot.
+misconception: ✗ All logs on Linux are plain files in /var/log → ✓ Systemd keeps many logs in its journal, which you read with journalctl
+confused_with: journalctl vs tail: journalctl queries the journal, tail reads a text file.
+avoid: Do not forget that the journal may be limited in size.
+wrong_code: journalctl nginx
+right_code: journalctl -u nginx
+memory_trick: -u picks the unit and -f follows it.
+real_project: Reading the journal to find why a customer's service stopped after an update.
+real_interview: An interviewer may ask: How do you view the logs of a systemd service?
+real_daily: It is like a ship's logbook.
+mcq_question: Which flag follows new journal entries?
+mcq_options: A) -f B) -b C) -p D) -u
+mcq_answer: A
+mcq_why: -f follows new entries like tail -f.
+fill_blank: journalctl -u ____ shows the logs of one service → name
+hindi_to_task: Show the logs of the docker service from the last hour.
+task_answer: journalctl -u docker --since "1 hour ago"
+own_task: Find the error messages of the current boot with journalctl.
+practice_question: Which flag limits entries to the current boot?
+practice_answer: -b
+
+@LNX-037
+type: code56
+topic: 05 Processes and system
+level: Intermediate
+term: cron
+cue: Which scheduler runs commands automatically at set times, and what do the five time fields mean?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Regular jobs such as backups should run by themselves, so cron checks a table of schedules every minute and runs the commands that are due.
+pro_tip: Always use absolute paths and redirect output in cron jobs, because cron has a minimal environment.
+memory_story: cron is an alarm clock for commands, with five dials for minute, hour, day, month and weekday.
+visual: A line of five fields followed by a command.
+emotion: The satisfaction of a task that runs by itself every night.
+meaning: cron runs commands on a schedule defined in a crontab, with five fields for minute, hour, day of month, month and day of week.
+code: crontab -e¶# minute hour day month weekday command¶0 2 * * * /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1¶*/15 * * * * /usr/bin/python3 /opt/app/check.py¶crontab -l
+output: The crontab opens for editing, a backup runs every day at 02:00 and logs to a file, a check runs every fifteen minutes, and the current schedule is listed.
+explanation: A star means every value, a slash gives steps, and commas give lists. Cron runs jobs with a short PATH and starts in the user's home folder, not where the script is, so absolute paths and explicit redirection are needed. Cron uses the system's timezone unless configured. Each user has a crontab, and system jobs live in /etc/cron.d.
+simple_explain: Write the schedule in five fields and then the command. Use absolute paths and log the output, since cron does not run in your normal shell environment.
+analogy: It is like an alarm clock for commands with five dials.
+syntax: m h dom mon dow command
+anatomy: minute 0-59 | hour 0-23 | day of month | month | day of week 0-7 | * = every
+example_1: 30 6 * * 1-5 /opt/report.sh
+example_2: */10 * * * * /usr/bin/curl -s https://example.com/health
+example_3: @reboot /opt/start.sh
+variation: @daily command   // shortcut for once a day¶MAILTO="" at the top   // stop cron emailing output
+used_with: absolute paths, redirection, scripts
+related: systemctl, redirection, scripts
+alternatives: systemd timers
+where_used: Backups | Reports | Clean-up jobs
+mini_conversation: A: My script works by hand but not from cron. | B: Cron has a minimal environment, so use absolute paths and set PATH.
+misconception: ✗ Cron jobs run with the same environment as my shell → ✓ Cron uses a minimal environment, so PATH and other variables may differ
+confused_with: cron vs systemd timers: cron is the classic scheduler, timers are the systemd alternative.
+avoid: Do not use relative paths in cron jobs.
+wrong_code: * 2 * * * /opt/backup.sh
+right_code: 0 2 * * * /opt/backup.sh
+memory_trick: Five fields, then the command.
+real_project: Scheduling a nightly export that logs its output.
+real_interview: An interviewer may ask: What does 0 2 * * * mean in a crontab?
+real_daily: It is like an alarm clock for commands.
+mcq_question: What does */15 in the minute field mean?
+mcq_options: A) Fifteen times an hour only B) At minute 15 only C) Every fifteen minutes D) Every fifteen hours
+mcq_answer: C
+mcq_why: The slash sets a step of fifteen.
+fill_blank: The first field of a crontab line is the ____ → minute
+hindi_to_task: Write a cron line that runs /opt/clean.sh every day at 03:30.
+task_answer: 30 3 * * * /opt/clean.sh
+own_task: Write three cron schedules for different jobs and explain each.
+practice_question: Why should cron jobs use absolute paths?
+practice_answer: Because cron has a minimal environment and starts in the home folder, not the script's folder.
+
+@LNX-038
+type: code56
+topic: 05 Processes and system
+level: Beginner
+term: df, du and disk space
+cue: Which commands show how full the disks are and which folders use the most space?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Full disks stop services and databases, so admins need quick commands to see free space and find the folders that are using it.
+pro_tip: Check inodes with df -i too, since you can run out of files before you run out of space.
+memory_story: df is the fuel gauge of each disk, and du is the receipt showing which folder used the fuel.
+visual: A table of disks with used and free percentages, and a list of the biggest folders.
+emotion: The relief of finding the folder that filled the disk.
+meaning: df shows free and used space of file systems, and du shows the space used by folders.
+code: df -h¶df -i¶du -sh /var/log¶du -h --max-depth=1 /var | sort -h¶ncdu /var
+output: The size, used, available and mount point of each disk, inode usage, the total size of /var/log, the size of each folder directly under /var in order, and an interactive browser of space use.
+explanation: -h prints human-readable sizes. df works on whole file systems, while du walks folders and adds up file sizes. A disk can be full because of space or because it ran out of inodes, which are file records. Deleted files that are still held open by a process keep using space until that process exits.
+simple_explain: Use df -h to see which disk is full, then du -h --max-depth=1 to find which folder is large, and go one level deeper each time.
+analogy: df is the fuel gauge of each disk, and du is the receipt showing where the fuel went.
+syntax: df -h  |  du -sh path
+anatomy: df = file systems | du = folders | -h = readable sizes | -s = summary | --max-depth = how deep to list
+example_1: df -h /
+example_2: du -sh *
+example_3: du -h --max-depth=2 /home | sort -h | tail
+variation: lsof +L1   // deleted files still held open¶df -T   // show file system types
+used_with: sort, find, journalctl
+related: find, journalctl, ls
+alternatives: ncdu for an interactive view
+where_used: Disk full incidents | Capacity checks | Log clean-up
+mini_conversation: A: The database stopped, saying no space left on device. | B: Run df -h and then du to find which folder filled the disk.
+misconception: ✗ df and du always show the same numbers → ✓ df reads file system totals and du adds up files, so deleted-but-open files and other details can make them differ
+confused_with: df vs du: df shows disks, du shows folders.
+avoid: Do not delete files blindly to free space, find out what they are first.
+wrong_code: du -h /var --depth 1
+right_code: du -h --max-depth=1 /var
+memory_trick: df is for disks, du is for directories.
+real_project: Finding a log folder that filled the disk on a customer server.
+real_interview: An interviewer may ask: How do you find the folder using the most disk space?
+real_daily: It is like a fuel gauge and a receipt of where the fuel went.
+mcq_question: Which command shows how full each disk is?
+mcq_options: A) free B) du -sh C) ls -l D) df -h
+mcq_answer: D
+mcq_why: df reports file system usage.
+fill_blank: du -____ prints one total for a folder → s
+hindi_to_task: Show the total size of the /var/log folder in readable form.
+task_answer: du -sh /var/log
+own_task: Find the three largest folders under /var on a test machine.
+practice_question: What does df -i show?
+practice_answer: Inode usage of the file systems.
+
+@LNX-039
+type: code56
+topic: 05 Processes and system
+level: Intermediate
+term: Memory and load (free, uptime)
+cue: Which commands show how much memory is used and how busy the CPU has been?
+kind: Command
+frequency: High
+importance: 4
+origin: Slow machines are usually short of memory or CPU, so quick commands report memory use and a load average.
+pro_tip: Look at the available column of free, not the free column, since Linux uses spare memory for caching.
+memory_story: free is the memory gauge, and uptime shows how long the engine has run and how hard it has worked.
+visual: A memory table with total, used and available, and three load numbers.
+emotion: The calm of reading the machine's health at a glance.
+meaning: free shows memory and swap use, and uptime shows how long the system has run and the load average.
+code: free -h¶uptime¶nproc¶vmstat 1 5
+output: Total, used, free and available memory in readable units, the uptime with three load averages, the number of CPU cores, and five lines of live system statistics.
+explanation: Linux uses free memory for caches, so a low free value is normal and the available value is the useful one. The load average shows the average number of processes waiting to run over one, five and fifteen minutes. A load higher than the number of CPU cores suggests the machine is overloaded. Heavy swap use can make a machine slow.
+simple_explain: Read the available column in free, and compare the load average with the number of cores from nproc.
+analogy: free is the memory gauge, and uptime shows how long and how hard the engine has worked.
+syntax: free -h  |  uptime  |  nproc
+anatomy: total used free available = memory columns | load average = 1, 5 and 15 minutes | swap = disk used as extra memory
+example_1: free -m
+example_2: uptime -p
+example_3: cat /proc/meminfo
+variation: vmstat 2   // live statistics every two seconds¶swapon --show   // swap devices
+used_with: top, ps, vmstat
+related: ps and top, df, systemctl
+alternatives: htop or a monitoring dashboard
+where_used: Slow servers | Capacity planning | Memory leaks
+mini_conversation: A: Free memory is almost zero, is the server in trouble? | B: Look at available memory, since Linux uses spare memory for caches.
+misconception: ✗ Low free memory means the server is out of memory → ✓ Linux uses spare memory for caching, so look at the available value
+confused_with: free vs available: free is unused memory, available includes memory that caches can give back.
+avoid: Do not panic when the free column is small.
+wrong_code: free --human-readable-all
+right_code: free -h
+memory_trick: Always read available, and not free.
+real_project: Checking whether a customer's server ran out of memory before an application crash.
+real_interview: An interviewer may ask: How do you read the load average?
+real_daily: It is like a fuel gauge for memory.
+mcq_question: Which free column shows memory that applications can really use?
+mcq_options: A) available B) total C) buff D) shared
+mcq_answer: A
+mcq_why: available estimates memory that can be used without swapping.
+fill_blank: A load higher than the number of cores suggests the machine is ____ → overloaded
+hindi_to_task: Show memory use in human-readable form.
+task_answer: free -h
+own_task: Compare the load average of an idle and a busy machine.
+practice_question: Which command prints the number of CPU cores?
+practice_answer: nproc
+
+@LNX-040
+type: code56
+topic: 06 Network tools
+level: Beginner
+term: ping
+cue: Which command checks whether another machine answers on the network and how long it takes?
+kind: Command
+frequency: Very high
+importance: 5
+origin: The first question in any network problem is whether the other side is reachable, so ping sends small echo requests and times the replies.
+pro_tip: Ping an IP address and a name separately, to tell a DNS problem apart from a network problem.
+memory_story: ping is a sonar pulse that bounces back from the other machine and tells you how far away it is.
+visual: Request lines with times in milliseconds, and a summary of lost packets.
+emotion: The relief of seeing replies come back.
+meaning: ping sends echo requests to a host and reports whether replies come back and how long they take.
+code: ping -c 4 8.8.8.8¶ping -c 4 example.com¶ping -c 1 -W 2 10.0.0.5
+output: Four replies from the address with times, four replies from the name with its resolved address, and one attempt with a two second wait.
+explanation: A reply shows the host is reachable and gives the round trip time. No reply does not always mean the host is down, because many networks block ping. Pinging a name tests DNS as well. On Linux, ping runs until you stop it unless you give -c with a count.
+simple_explain: Ping an address to see if it answers. If the IP works but the name fails, the problem is DNS.
+analogy: It is like a sonar pulse that bounces back and shows how far away the other machine is.
+syntax: ping [-c count] host
+anatomy: -c = how many packets | -W = wait time | host = name or IP
+example_1: ping -c 3 localhost
+example_2: ping -c 5 8.8.8.8
+example_3: ping -6 -c 3 ::1
+variation: ping -s 1400 host   // packet size for MTU tests¶ping -i 0.2 host   // faster interval
+used_with: dig, traceroute, curl
+related: dig, traceroute, curl
+alternatives: curl or nc when ping is blocked
+where_used: Reachability checks | DNS tests | Latency checks
+mini_conversation: A: I cannot reach the customer's server. | B: Ping its IP address first, and then its name.
+misconception: ✗ If ping gets no reply, the host must be down → ✓ Many networks and firewalls block ping, so no reply does not prove the host is down
+confused_with: ping vs curl: ping tests basic reachability, curl tests an actual web service.
+avoid: Do not rely on ping alone to test a service.
+wrong_code: ping example.com -n 4
+right_code: ping -c 4 example.com
+memory_trick: Ping the number, then the name.
+real_project: Using ping to separate a network fault from a DNS fault on a customer site.
+real_interview: An interviewer may ask: What does it mean if you can ping an IP but not a name?
+real_daily: It is like a sonar pulse that bounces back.
+mcq_question: If an IP address answers but its name does not, what is likely wrong?
+mcq_options: A) The disk B) DNS C) The CPU D) The cable
+mcq_answer: B
+mcq_why: The name could not be resolved to an address.
+fill_blank: ping -____ 4 host sends four packets → c
+hindi_to_task: Send exactly three ping packets to example.com.
+task_answer: ping -c 3 example.com
+own_task: Ping three hosts and compare their response times.
+practice_question: What does ping time show?
+practice_answer: The round trip time of the packet in milliseconds.
+
+@LNX-041
+type: code56
+topic: 06 Network tools
+level: Beginner
+term: curl and wget
+cue: Which commands fetch a URL from the terminal, send requests with headers, and download files?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Testing web services and downloading files from scripts needs a client without a browser, so curl and wget fetch content over HTTP and other protocols.
+pro_tip: Use curl -v to see the whole conversation, which helps with redirects, certificates and headers.
+memory_story: curl is a browser without a window that shows you exactly what the server says.
+visual: A terminal showing response headers and a body.
+emotion: The clarity of seeing the real response.
+meaning: curl transfers data to or from a URL and shows details, while wget mainly downloads files.
+code: curl https://example.com/health¶curl -I https://example.com¶curl -s -o page.html https://example.com¶curl -X POST -H "Content-Type: application/json" -d '{"a":1}' https://example.com/api¶wget https://example.com/file.zip
+output: The health response body, only the response headers, the page saved to a file quietly, the response of a JSON post request, and file.zip downloaded.
+explanation: curl prints the body to the screen by default. -I fetches only headers, -s hides the progress, -o saves to a file, -L follows redirects and -v shows details. -H adds headers and -d sends a body, which makes curl a main tool for testing APIs. wget saves files by default and can download recursively.
+simple_explain: Use curl to look at a response, and add options for headers and bodies. Use wget when you just want a file.
+analogy: It is like a browser without a window that shows exactly what the server says.
+syntax: curl [options] url
+anatomy: -I = headers only | -s = silent | -o = output file | -L = follow redirects | -v = verbose | -d = body
+example_1: curl -L https://example.com/short
+example_2: curl -H "Authorization: Bearer $TOKEN" https://example.com/api/me
+example_3: curl -sS -o /dev/null -w "%{http_code}\n" https://example.com
+variation: curl --max-time 5 url   // give up after five seconds¶curl -k url   // skip certificate checks, only for tests
+used_with: grep, jq, ssh
+related: HTTP and APIs, ping, dig
+alternatives: wget, or HTTPie
+where_used: API tests | Health checks | Downloads in scripts
+mini_conversation: A: Does the endpoint respond? | B: Run curl -I on it to see the status and headers.
+misconception: ✗ curl -k is a normal way to fix certificate errors → ✓ -k turns off certificate checking, which is unsafe outside quick tests
+confused_with: curl vs wget: curl is flexible for requests, wget is simple for downloads.
+avoid: Do not use -k in scripts that handle real data.
+wrong_code: curl -X POST https://example.com/api -d {"a":1}
+right_code: curl -X POST https://example.com/api -H "Content-Type: application/json" -d '{"a":1}'
+memory_trick: Remember that curl -v shows everything.
+real_project: Checking a customer's health endpoint from a script with curl.
+real_interview: An interviewer may ask: How do you test an API from the command line?
+real_daily: It is like a browser without a window.
+mcq_question: Which curl option shows only the response headers?
+mcq_options: A) -o B) -I C) -L D) -s
+mcq_answer: B
+mcq_why: -I sends a HEAD request and prints the headers.
+fill_blank: curl -____ follows redirects → L
+hindi_to_task: Print only the HTTP status code of https://example.com.
+task_answer: curl -s -o /dev/null -w "%{http_code}\n" https://example.com
+own_task: Call a public endpoint with curl and read its headers.
+practice_question: Which option saves the response to a file?
+practice_answer: -o
+
+@LNX-042
+type: code56
+topic: 06 Network tools
+level: Intermediate
+term: ssh, scp and rsync
+cue: Which commands log in to another machine securely, copy files to it, and sync folders efficiently?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Remote administration needs encryption, so SSH replaced older plain-text tools, and scp and rsync reuse it to move files.
+pro_tip: Add hosts to ~/.ssh/config with short names, so you can type ssh customer-prod.
+memory_story: ssh is a secure tunnel to another computer, scp posts a parcel through it, and rsync sends only what changed.
+visual: A terminal prompt of a remote machine, and an arrow of files travelling over a lock.
+emotion: The power of working on a distant server as if it were local.
+meaning: ssh opens a secure shell on another machine, scp copies files over it, and rsync synchronises folders by sending only differences.
+code: ssh asha@203.0.113.10¶ssh -i key.pem ubuntu@host¶scp report.txt asha@host:/tmp/¶rsync -avz ./site/ asha@host:/var/www/site/¶ssh -L 5432:localhost:5432 asha@host
+output: A shell on the remote machine, a login with a key file, a file copied to /tmp, a folder synchronised with progress, and a tunnel so local port 5432 reaches the remote database.
+explanation: SSH authenticates with passwords or, better, key pairs. rsync -a keeps permissions and times, -v is verbose and -z compresses, and a trailing slash on the source copies its contents. Use --dry-run to preview. The -L option forwards a local port through the connection, which helps reach services that are not exposed publicly.
+simple_explain: Use ssh to log in, scp for a quick copy, and rsync for folders, since it sends only changes. Use key files instead of passwords.
+analogy: ssh is a secure tunnel, scp posts a parcel through it, and rsync sends only what changed.
+syntax: ssh user@host  |  scp file user@host:path  |  rsync -avz src/ user@host:dest/
+anatomy: -i = key file | -p = port | -a = archive mode | -z = compress | -L = local port forward
+example_1: ssh -p 2222 asha@host
+example_2: scp -r folder asha@host:/home/asha/
+example_3: rsync -av --delete src/ backup/
+variation: rsync -avn src/ dest/   // dry run, show what would change¶ssh host 'tail -n 50 /var/log/syslog'   // run one remote command
+used_with: SSH keys, config file, tunnels
+related: SSH key permissions, curl, networking
+alternatives: sftp for interactive transfers
+where_used: Remote servers | Deployments | Backups
+mini_conversation: A: I need the customer's config file on my laptop. | B: Copy it with scp, or sync the folder with rsync.
+misconception: ✗ A trailing slash on the rsync source makes no difference → ✓ With a trailing slash rsync copies the contents of the folder, without it the folder itself is copied
+confused_with: scp vs rsync: scp copies everything every time, rsync sends only the differences.
+avoid: Do not use --delete with rsync before a dry run.
+wrong_code: rsync -avz site asha@host:/var/www/site/
+right_code: rsync -avz site/ asha@host:/var/www/site/
+memory_trick: Trailing slash copies the contents.
+real_project: Syncing a build folder to a customer server with rsync over SSH.
+real_interview: An interviewer may ask: How do you copy files securely to a server?
+real_daily: It is like a secure tunnel with parcels posted through it.
+mcq_question: Which tool sends only changed files?
+mcq_options: A) cat B) scp C) rsync D) mv
+mcq_answer: C
+mcq_why: rsync compares source and target and sends differences.
+fill_blank: ssh -____ selects a private key file → i
+hindi_to_task: Copy report.txt to the /tmp folder of host server1 as user asha.
+task_answer: scp report.txt asha@server1:/tmp/
+own_task: Set up an ssh config entry and log in with the short name.
+practice_question: What does rsync -n do?
+practice_answer: It does a dry run and shows what would be done.
+
+@LNX-043
+type: code56
+topic: 06 Network tools
+level: Intermediate
+term: ss and listening ports
+cue: Which command shows which ports your machine listens on and which connections are open?
+kind: Command
+frequency: High
+importance: 5
+origin: To know whether a service is really listening you need to inspect sockets, and ss replaced the older netstat for this job.
+pro_tip: Run ss -tulpn with sudo to see which program owns each listening port.
+memory_story: ss lists the doors of the building that are open and who stands behind each one.
+visual: A table of ports with the process name next to each listening one.
+emotion: The satisfaction of finding the service that blocks a port.
+meaning: ss shows sockets, such as listening ports and established connections.
+code: ss -tulpn¶ss -tn state established¶ss -ltn 'sport = :443'¶sudo lsof -i :8080
+output: Listening TCP and UDP ports with their programs, established TCP connections, whether anything listens on port 443, and the process using port 8080.
+explanation: The flags -t and -u pick TCP and UDP, -l shows listening sockets, -p shows the process, -n shows numbers instead of names. Listening on 127.0.0.1 means only local connections are accepted, and 0.0.0.0 means all interfaces. If a service starts but cannot be reached, ss shows whether it listens and on which address.
+simple_explain: Use ss -tulpn to see which program listens on which port, and on which address. A service on 127.0.0.1 is not reachable from outside.
+analogy: It is like a list of the building's open doors and who stands behind each.
+syntax: ss [options]
+anatomy: -t = TCP | -u = UDP | -l = listening | -p = process | -n = numeric
+example_1: ss -ltn
+example_2: ss -s
+example_3: ss -tn dst 10.0.0.5
+variation: netstat -tulpn   // the older tool with similar output¶nc -zv host 443   // test whether a port is open
+used_with: lsof, firewall, curl
+related: ip, curl, firewall
+alternatives: netstat on older systems
+where_used: Port conflicts | Service checks | Firewall debugging
+mini_conversation: A: My app starts but I cannot reach it from outside. | B: Check with ss whether it listens on 127.0.0.1 or on all interfaces.
+misconception: ✗ If a service is running, it is reachable from every machine → ✓ A service listening on 127.0.0.1 accepts only local connections
+confused_with: ss vs ping: ss shows local sockets, ping tests reaching another host.
+avoid: Do not bind internal services to 0.0.0.0 without a firewall.
+wrong_code: ss -tupln | grep 80
+right_code: ss -tulpn | grep ':80 '
+memory_trick: Listen on localhost means local only.
+real_project: Finding which process already used the port a new service needed.
+real_interview: An interviewer may ask: How do you check which process listens on a port?
+real_daily: It is like a list of the building's open doors.
+mcq_question: Which flag of ss shows listening sockets?
+mcq_options: A) -p B) -t C) -u D) -l
+mcq_answer: D
+mcq_why: -l limits output to listening sockets.
+fill_blank: A service bound to 127.0.0.1 accepts only ____ connections → local
+hindi_to_task: Show all listening TCP ports with their process names.
+task_answer: sudo ss -ltnp
+own_task: Find which program listens on port 22 of your machine.
+practice_question: What does 0.0.0.0 mean as a listening address?
+practice_answer: The service listens on all network interfaces.
+
+@LNX-044
+type: code56
+topic: 06 Network tools
+level: Intermediate
+term: ip and network interfaces
+cue: Which command shows your IP addresses, network interfaces and routes?
+kind: Command
+frequency: High
+importance: 4
+origin: To debug a connection you must know your own address and route, and ip replaced the older ifconfig and route commands.
+pro_tip: Use ip -br a for a short summary of interfaces and addresses.
+memory_story: ip is the map of your machine's network connections and roads.
+visual: A list of interfaces with addresses and a default route line.
+emotion: The clarity of knowing which way traffic leaves the machine.
+meaning: ip shows and changes interfaces, addresses and routes.
+code: ip addr¶ip -br a¶ip route¶ip route get 8.8.8.8¶ip link show
+output: Interfaces with addresses, a short summary, the routing table with the default route, the route used to reach 8.8.8.8, and the state of the links.
+explanation: ip addr lists addresses on each interface such as eth0, with the loopback lo at 127.0.0.1. ip route shows where traffic goes, and the default route is the gateway for everything else. ip route get tells you which interface and gateway a destination uses. Changes made with ip are lost at reboot unless saved in network configuration.
+simple_explain: Use ip addr to see your address and ip route to see the gateway. If the default route is missing, nothing outside the local network is reachable.
+analogy: It is like a map of your machine's connections and roads.
+syntax: ip addr  |  ip route  |  ip link
+anatomy: addr = addresses | route = routing table | link = interface state | -br = brief
+example_1: ip addr show eth0
+example_2: ip route | grep default
+example_3: ip neigh
+variation: hostname -I   // print the host's addresses¶ifconfig   // older tool, may be missing
+used_with: ping, ss, dig
+related: ping, ss, dig
+alternatives: nmcli on systems with NetworkManager
+where_used: Network debugging | Cloud servers | Containers
+mini_conversation: A: The server cannot reach the internet. | B: Check ip route for a default gateway.
+misconception: ✗ ip changes survive a reboot → ✓ Changes made with ip are temporary unless saved in the network configuration
+confused_with: ip vs ifconfig: ip is the modern tool, ifconfig is older and often not installed.
+avoid: Do not change routes on a remote machine without a way back in.
+wrong_code: ip show addr
+right_code: ip addr show
+memory_trick: ip addr shows addresses, ip route shows roads.
+real_project: Finding the right interface and gateway on a customer's virtual machine.
+real_interview: An interviewer may ask: What is a default route?
+real_daily: It is like a map of connections and roads.
+mcq_question: Which command shows the routing table?
+mcq_options: A) ip route B) ip addr C) ip link D) ip neigh
+mcq_answer: A
+mcq_why: ip route lists the routes.
+fill_blank: The loopback address is 127.0.0.____ → 1
+hindi_to_task: Show a brief list of interfaces and addresses.
+task_answer: ip -br a
+own_task: Find the default gateway of your machine.
+practice_question: Which command shows the route used to reach a given address?
+practice_answer: ip route get address
+
+@LNX-045
+type: code56
+topic: 06 Network tools
+level: Intermediate
+term: dig and DNS lookups
+cue: Which command asks DNS servers what a name resolves to, and shows the full answer?
+kind: Command
+frequency: High
+importance: 5
+origin: Many outages are really DNS problems, so dig lets you query name servers directly and see the answer, the time and the server that gave it.
+pro_tip: Use dig +short for just the answer, and @server to ask a specific DNS server.
+memory_story: dig digs into the phone book of the internet and shows you the entry.
+visual: A query for a name with an answer section holding an address.
+emotion: The relief of proving that DNS is the problem.
+meaning: dig queries DNS servers for records such as A, AAAA, CNAME, MX and TXT.
+code: dig example.com¶dig +short example.com¶dig example.com MX¶dig @8.8.8.8 example.com¶dig -x 8.8.8.8
+output: The full answer for the name, just the address, the mail server records, the answer from a specific resolver, and the name for an address.
+explanation: The answer section lists the records and their time to live, which says how long the answer may be cached. Asking different resolvers can show whether a change has spread. A CNAME points a name to another name, and MX records name the mail servers. -x does a reverse lookup from an address to a name.
+simple_explain: Use dig to ask DNS directly. Compare answers from different servers when a name works in one place but not another.
+analogy: It is like looking up an entry in the internet's phone book.
+syntax: dig [@server] name [type]
+anatomy: @server = which resolver | type = A, MX, TXT, CNAME | +short = answer only | -x = reverse lookup
+example_1: dig api.example.com A
+example_2: dig +short TXT example.com
+example_3: dig @1.1.1.1 example.com
+variation: dig +trace example.com   // follow the delegation from the root¶nslookup example.com   // older, simpler tool
+used_with: ping, curl, ip
+related: ping, networking basics, curl
+alternatives: nslookup or host
+where_used: DNS problems | Mail setup | Migrations
+mini_conversation: A: The new site address works for me but not for the customer. | B: Query their resolver with dig, since the old record may still be cached.
+misconception: ✗ A DNS change takes effect everywhere at once → ✓ Caches keep old answers until the time to live ends, so changes spread gradually
+confused_with: dig vs ping: dig asks what a name means, ping tests reaching the address.
+avoid: Do not change DNS records without noting their TTL.
+wrong_code: dig MX example.com @
+right_code: dig example.com MX
+memory_trick: dig the name, then check the answer section.
+real_project: Checking that a customer's new domain points at the right server.
+real_interview: An interviewer may ask: What is TTL in DNS?
+real_daily: It is like looking up an entry in a phone book.
+mcq_question: Which record type names mail servers?
+mcq_options: A) MX B) A C) CNAME D) TXT
+mcq_answer: A
+mcq_why: MX records point to the mail servers of a domain.
+fill_blank: dig ____ example.com prints only the answer → +short
+hindi_to_task: Show only the IP address of example.com.
+task_answer: dig +short example.com
+own_task: Compare the answers of two public resolvers for one name.
+practice_question: What does TTL mean in a DNS answer?
+practice_answer: How long the answer may be cached.

@@ -1,0 +1,420 @@
+
+@PBI-049
+type: topic56
+topic: 06 Service and governance
+level: Intermediate
+term: Workspaces and apps
+cue: Which two Power BI Service features hold content for a team and package it for a wider audience?
+category: Service feature
+frequency: Very high
+importance: 5
+origin: A shared place was needed to build content together and a controlled way to hand it to viewers, so the Service provides workspaces and apps.
+pro_tip: Build and test in a workspace, and publish an app for the viewers so they see only the final content.
+memory_story: A workspace is a team's workshop, and an app is the finished product shown in the shop window.
+visual: A workshop room full of reports and a neat shop window displaying only the final ones.
+emotion: The orderliness of knowing where content lives and who can see it.
+definition: A workspace is a shared area in the Service where teams create and manage content, and an app packages selected content for distribution to viewers.
+explanation: Workspace roles such as Admin, Member, Contributor and Viewer control what people can do. Reports, semantic models and dashboards are stored there. An app bundles chosen items with its own navigation and permissions, so viewers see a stable, polished version.
+simple_explain: A workspace is where the team works. An app is the polished copy you give to readers, so they do not see your unfinished work.
+analogy: A workspace is a workshop, and an app is the product displayed in a shop window.
+formula_rule: Workspace = build together. App = share the finished version.
+example_1: A Sales workspace where analysts build reports.
+example_2: An app that shows managers only the final sales dashboards.
+example_3: A workspace role of Viewer for someone who may only read.
+related: roles, publish, semantic model, licences
+word_family: workspace, app, role, Admin, Member, Contributor, Viewer
+where_used: Team collaboration | Distribution to many readers | Access control
+mini_conversation: A: How do I give 200 people the finished reports? | B: Publish an app from the workspace and give them access to it.
+misconception: ✗ Everyone who needs to view a report must be added to the workspace → ✓ Viewers can be given access through an app, without being workspace members
+contrast: Workspace vs app: a workspace is for creating, an app is for consuming.
+avoid: Do not make everyone a workspace Admin.
+memory_trick: Workspace is where we work, app is what we show.
+real_project: Building in a workspace and publishing an app to the whole sales department.
+real_interview: An interviewer may ask: What is the difference between a workspace and an app?
+real_daily: It is like a workshop and the shop window displaying the finished product.
+mcq_question: Which feature is designed to share finished content with many viewers?
+mcq_options: A) Workspace B) Gateway C) Parameter D) App
+mcq_answer: D
+mcq_why: An app packages selected content for consumption by many viewers.
+fill_blank: Content is built together by a team in a ____ → workspace
+apply: How can 200 managers see the final reports without editing rights? → Publish an app and give them access to it
+explain_task: Explain workspaces and apps in three lines.
+own_task: Plan a workspace for your team and list which reports go into an app.
+
+@PBI-050
+type: topic56
+topic: 06 Service and governance
+level: Intermediate
+term: Scheduled refresh and gateway
+cue: What keeps the data in a published report up to date, and what is needed to reach data on a company's own network?
+category: Service feature
+frequency: Very high
+importance: 5
+origin: Imported data becomes stale unless it is reloaded, and cloud services cannot see inside a private network, so Power BI offers scheduled refresh and an on-premises data gateway.
+pro_tip: Set the refresh schedule in the Service after publishing, and add failure notifications.
+memory_story: Scheduled refresh is an alarm clock that reloads the data, and the gateway is a secure door through the company wall.
+visual: A clock icon next to a report and a bridge connecting an office server to the cloud.
+emotion: The calm of waking up to fresh numbers without clicking anything.
+definition: Scheduled refresh reloads imported data at set times, and an on-premises data gateway lets the Service reach data sources inside a private network.
+explanation: In the Service you configure the semantic model's refresh times and credentials. For cloud sources no gateway is needed, but for data on a local server or file share you install a gateway on a machine inside the network, and the Service sends refresh requests through it. Refresh limits depend on your licence.
+simple_explain: Set a schedule so the report reloads each morning. If the data sits on your office server, a gateway acts as the secure bridge that lets the cloud collect it.
+analogy: It is like an alarm clock that reloads the data and a secure door through the company wall.
+formula_rule: Imported data → scheduled refresh. On-premises source → gateway.
+example_1: A model refreshed every morning at 6:00 from a cloud database.
+example_2: A gateway installed on a server so the Service can read an on-premises SQL database.
+example_3: An email alert when a scheduled refresh fails.
+related: Import vs DirectQuery, semantic model, credentials, incremental refresh
+word_family: refresh, gateway, schedule, credentials, on-premises
+where_used: Keeping reports current | Hybrid cloud setups | Automated updates
+mini_conversation: A: The report shows last week's numbers. | B: Check the scheduled refresh and the gateway status.
+misconception: ✗ A published report always shows live data on its own → ✓ Imported data shows the last refresh, so you must schedule refreshes or use DirectQuery
+contrast: Refresh vs gateway: refresh updates the data on a schedule, a gateway lets the Service reach private data.
+avoid: Do not forget to update credentials when a password changes.
+memory_trick: Refresh is the alarm, gateway is the door.
+real_project: Installing a gateway so a nightly refresh could reach an on-premises database.
+real_interview: An interviewer may ask: When do you need an on-premises data gateway?
+real_daily: It is like an alarm clock plus a secure door through a company wall.
+mcq_question: When is an on-premises data gateway needed?
+mcq_options: A) Only for Excel in OneDrive B) For data on a private network C) For every cloud source D) Never
+mcq_answer: B
+mcq_why: The gateway connects the Service to sources inside a private network.
+fill_blank: A scheduled ____ reloads imported data at set times → refresh
+apply: A report shows old numbers. What do you check first? → The scheduled refresh status and the gateway
+explain_task: Explain refresh and gateway in three lines.
+own_task: Plan a refresh schedule for a daily report and say if it needs a gateway.
+
+@PBI-051
+type: topic56
+topic: 06 Service and governance
+level: Advanced
+term: Row-level security (RLS)
+cue: Which feature makes different people see different rows of the same report, such as only their own region?
+category: Security
+frequency: High
+importance: 5
+origin: One shared report often serves people who may see only their own data, so Power BI lets you restrict rows with rules defined in the model.
+pro_tip: Test each role with View as before publishing, and use USERPRINCIPALNAME for dynamic security.
+memory_story: RLS is a pair of coloured glasses that shows each person only the rows meant for them.
+visual: Two viewers open the same report and one sees North sales while the other sees South.
+emotion: The comfort of sharing one report safely with many people.
+definition: Row-level security restricts which rows of data a user can see by applying DAX filter rules defined in roles on the model.
+explanation: In Desktop you create a role with a DAX filter on a table, such as Region[Name] = "North". After publishing, you add members to the role in the Service. For dynamic RLS, a filter such as Users[Email] = USERPRINCIPALNAME() ties each row to the signed-in user. Filters flow to related tables through relationships.
+simple_explain: You write a rule per role, and Power BI applies it to every query by that person. The same report then shows each person only their rows.
+analogy: It is like coloured glasses that let each person see only the rows meant for them.
+formula_rule: Create roles with DAX filters → publish → add members to roles
+example_1: A role North that filters Region[Name] to "North".
+example_2: A dynamic rule that matches Users[Email] to USERPRINCIPALNAME().
+example_3: Testing a role with View as in Desktop before publishing.
+related: roles, DAX, relationships, workspaces
+word_family: RLS, role, filter, USERPRINCIPALNAME, View as
+where_used: Regional reports | Customer data separation | Compliance
+mini_conversation: A: Each manager should only see their own region. | B: Create a role per region with a filter and assign members.
+misconception: ✗ Hiding a visual hides the data from users → ✓ Only row-level security stops users from seeing rows, and hidden visuals do not protect the data
+contrast: RLS vs hiding visuals: RLS filters the data, hiding only changes what is displayed.
+avoid: Do not make people workspace Contributors if they should be restricted by RLS, since editors can bypass it.
+memory_trick: RLS restricts the rows by role.
+real_project: Using dynamic RLS so each salesperson sees only their own customers.
+real_interview: An interviewer may ask: What is the difference between static and dynamic RLS?
+real_daily: It is like coloured glasses that show each person only their rows.
+mcq_question: Where do you define the DAX filter rules of RLS roles?
+mcq_options: A) In the mobile app B) In Excel C) In the model, in Power BI Desktop D) In the gateway
+mcq_answer: C
+mcq_why: Roles and their filters are defined on the model and then assigned in the Service.
+fill_blank: Dynamic RLS often uses the function ____() to find the signed-in user → USERPRINCIPALNAME
+apply: How do you test a role before publishing? → Use View as in Power BI Desktop
+explain_task: Explain row-level security in three lines.
+own_task: Write the DAX filter for a role that shows only the North region.
+
+@PBI-052
+type: topic56
+topic: 06 Service and governance
+level: Advanced
+term: Dataflows
+cue: Which Service feature lets you do Power Query cleaning once in the cloud and reuse the result in many models?
+category: Service feature
+frequency: Medium
+importance: 3
+origin: The same cleaning was being repeated in many reports, so Microsoft let Power Query run online and store its output for reuse.
+pro_tip: Put shared dimension tables, such as Customers and Products, into a dataflow so every model uses the same clean copy.
+memory_story: A dataflow is a central kitchen that prepares ingredients once for every restaurant.
+visual: One cleaning pipeline in the cloud feeding several different reports.
+emotion: The relief of fixing a transformation in one place for every report.
+definition: A dataflow is a collection of Power Query transformations that run in the Service and store reusable tables.
+explanation: You create a dataflow in a workspace using Power Query Online and schedule its refresh. Reports then connect to the dataflow as a data source instead of repeating the cleaning. This gives consistent, shared data and takes load off the original source.
+simple_explain: Clean once in a dataflow and reuse everywhere. Change the logic in one place, and every report that uses it gets the update at the next refresh.
+analogy: It is like a central kitchen that prepares ingredients for every restaurant.
+formula_rule: Source → dataflow (clean once) → many semantic models
+example_1: A Customers dataflow used by three sales reports.
+example_2: A date dimension shared across all finance models.
+example_3: Splitting heavy cleaning into a dataflow so model refreshes are quicker.
+related: Power Query, semantic model, refresh, workspace
+word_family: dataflow, Power Query Online, reuse, shared tables
+where_used: Shared dimensions | Enterprise data prep | Reducing duplicate work
+mini_conversation: A: Three reports clean the same table in three different ways. | B: Move the cleaning into one dataflow and let all of them use it.
+misconception: ✗ A dataflow is the same as a semantic model → ✓ A dataflow stores cleaned tables for reuse, while a semantic model adds relationships, measures and security for reports
+contrast: Dataflow vs semantic model: a dataflow prepares data, a model organises it for analysis.
+avoid: Do not duplicate cleaning logic in every report when a dataflow can hold it.
+memory_trick: Dataflow means cleaning in the cloud, shared by all.
+real_project: Creating a shared Customer dataflow used by all sales reports.
+real_interview: An interviewer may ask: When would you use a dataflow?
+real_daily: It is like a central kitchen preparing ingredients for every restaurant.
+mcq_question: What do dataflows run in the Service?
+mcq_options: A) Power Query transformations B) DAX measures C) Visuals D) Bookmarks
+mcq_answer: A
+mcq_why: Dataflows run Power Query transformations and store reusable tables.
+fill_blank: Dataflows are created with Power Query ____ in the Service → Online
+apply: Several reports need the same cleaned customer table. What do you create? → A dataflow
+explain_task: Explain what a dataflow does in three lines.
+own_task: List two tables in your work that would be good in a dataflow.
+
+@PBI-053
+type: topic56
+topic: 06 Service and governance
+level: Advanced
+term: Deployment pipelines
+cue: Which Service feature moves content through Development, Test and Production stages in a controlled way?
+category: Lifecycle management
+frequency: Medium
+importance: 3
+origin: Changing a report that people use daily is risky, so teams needed separate stages for building, checking and releasing, and pipelines provide those stages.
+pro_tip: Build in Development, check in Test, and deploy to Production only when it is approved.
+memory_story: A pipeline is an assembly line where each stage inspects the product before it ships.
+visual: Three boxes in a row: Development, Test and Production, with arrows moving content through them.
+emotion: The confidence of releasing changes without breaking live reports.
+definition: A deployment pipeline is a set of stages, usually Development, Test and Production, through which content moves with comparison and controlled release.
+explanation: Each stage is tied to a workspace. You deploy content from one stage to the next and can compare the stages to see differences. Rules can change data sources or parameters per stage. Pipelines need suitable capacity or licensing, so check what your organisation has.
+simple_explain: Build in Development, check in Test, and promote to Production when ready. It stops half-finished changes from reaching live users.
+analogy: It is like an assembly line where each stage inspects the product before it ships.
+formula_rule: Development → Test → Production
+example_1: An analyst builds a new page in Development and deploys it to Test.
+example_2: A reviewer approves it in Test and it moves to Production.
+example_3: A deployment rule switches the data source from the test database to the live one.
+related: workspaces, parameters, apps, governance
+word_family: pipeline, stage, deploy, rule, compare
+where_used: Managed releases | Enterprise BI teams | Testing changes
+mini_conversation: A: How do we test changes before users see them? | B: Use a deployment pipeline so changes go through Test first.
+misconception: ✗ Publishing straight to the live workspace is just as safe as using a pipeline → ✓ A pipeline lets you test and compare changes before they reach live users
+contrast: Pipeline vs direct publish: a pipeline adds stages and checks, a direct publish overwrites live content.
+avoid: Do not edit live reports directly if a Test stage exists.
+memory_trick: A pipeline moves content through stages.
+real_project: Releasing monthly report changes through Test before Production.
+real_interview: An interviewer may ask: How do you manage releases of Power BI content?
+real_daily: It is like an assembly line where each stage inspects the product.
+mcq_question: What are the usual stages of a deployment pipeline?
+mcq_options: A) Development, Test and Production B) Draft and Done C) Load and Save D) Input and Output
+mcq_answer: A
+mcq_why: The standard stages are Development, Test and Production.
+fill_blank: Content moves from Development to Test and then to ____ → Production
+apply: How do you check changes before users see them? → Deploy to the Test stage of a pipeline first
+explain_task: Explain deployment pipelines in three lines.
+own_task: Describe what you would check at the Test stage before releasing.
+
+@PBI-054
+type: topic56
+topic: 06 Service and governance
+level: Advanced
+term: Sensitivity labels
+cue: Which feature classifies Power BI content, such as Confidential or Public, and carries protection with it?
+category: Governance
+frequency: Medium
+importance: 3
+origin: Organisations must protect sensitive data wherever it travels, so labels from Microsoft's information protection tools can be applied to Power BI content too.
+pro_tip: Label content at creation so protections follow the data when it is exported.
+memory_story: A sensitivity label is a stamp on a document that says how carefully to handle it.
+visual: A report with a Confidential tag at the top that stays on exported files.
+emotion: The reassurance that important data keeps its protection when shared.
+definition: A sensitivity label classifies content by how sensitive it is and can apply protection such as access restrictions and markings.
+explanation: Labels come from Microsoft Purview Information Protection and are set by the organisation's administrators. In Power BI you apply a label to a report or semantic model, and it can follow the data when exported to Excel, PowerPoint or PDF. It supports governance and compliance policies.
+simple_explain: A label tells everyone how sensitive the report is. When the data is exported, the label and its protection can travel with it.
+analogy: It is like a stamp on a document that says how carefully it must be handled.
+formula_rule: Label → classification + protection that follows the data
+example_1: Labelling a salary report Confidential.
+example_2: A label that follows the data into an exported Excel file.
+example_3: A policy that requires labels on all published content.
+related: governance, permissions, export, compliance
+word_family: label, classification, Purview, protection, policy
+where_used: Regulated industries | Sensitive reports | Compliance programmes
+mini_conversation: A: Can we stop confidential data leaving with exports? | B: Apply a sensitivity label so protection follows the exported file.
+misconception: ✗ A sensitivity label alone decides who can open a report → ✓ A label classifies and can add protection, but workspace and app permissions still control access
+contrast: Label vs permission: a label classifies and protects the content, permission decides who may open it.
+avoid: Do not assume a label replaces access control.
+memory_trick: Label means classify and protect.
+real_project: Labelling finance reports Confidential so exports keep their protection.
+real_interview: An interviewer may ask: What is a sensitivity label used for?
+real_daily: It is like a stamp on a document telling people how to handle it.
+mcq_question: What does a sensitivity label do?
+mcq_options: A) Refreshes data B) Draws charts C) Classifies and can protect content D) Creates relationships
+mcq_answer: C
+mcq_why: A label marks sensitivity and can apply protection.
+fill_blank: Labels used by Power BI come from Microsoft Purview Information ____ → Protection
+apply: How can you protect an exported file from a confidential report? → Apply a sensitivity label that follows the data
+explain_task: Explain sensitivity labels in three lines.
+own_task: List which of your reports would need a Confidential label and why.
+
+@PBI-055
+type: topic56
+topic: 07 Advanced
+level: Advanced
+term: Incremental refresh
+cue: Which feature refreshes only recent data and keeps older data untouched so that big tables refresh quickly?
+category: Performance
+frequency: Medium
+importance: 4
+origin: Reloading millions of unchanged old rows every night wastes time, so Power BI can split a table into partitions and refresh only the new ones.
+pro_tip: Create RangeStart and RangeEnd parameters and filter your date column with them, and then define the policy.
+memory_story: Incremental refresh is topping up only today's page of a ledger instead of rewriting the whole book.
+visual: A long timeline with old years greyed out and only the latest weeks glowing as refreshed.
+emotion: The relief of a refresh that takes minutes instead of hours.
+definition: Incremental refresh keeps historical data as it is and refreshes only a recent range, defined by a policy and two date parameters.
+explanation: You create two DateTime parameters named RangeStart and RangeEnd, filter the table's date column with them in Power Query, and then set a policy such as store 5 years and refresh the last 7 days. The Service creates partitions and refreshes only the recent ones. It works best when the filter folds to the source.
+simple_explain: Instead of reloading everything, only the newest data is reloaded each time. Old data stays as it was, so large tables refresh quickly.
+analogy: It is like adding only today's page to a ledger instead of rewriting the whole book.
+formula_rule: RangeStart + RangeEnd parameters → filter → policy → partitions
+example_1: Keeping five years of sales and refreshing only the last seven days.
+example_2: Using parameters named RangeStart and RangeEnd to filter OrderDate.
+example_3: A model that refreshes in minutes after switching from full refresh.
+related: parameters, query folding, scheduled refresh, partitions
+word_family: incremental, partition, RangeStart, RangeEnd, policy
+where_used: Very large tables | Daily refreshes | Performance tuning
+mini_conversation: A: Our nightly refresh now takes five hours. | B: Set up incremental refresh so only recent days reload.
+misconception: ✗ Incremental refresh works with any column in the filter → ✓ It needs a date or datetime column filtered by the RangeStart and RangeEnd parameters
+contrast: Full vs incremental refresh: full reloads everything, incremental reloads only the recent range.
+avoid: Do not forget that the parameters must be named exactly RangeStart and RangeEnd.
+memory_trick: Incremental refreshes only the new slice.
+real_project: Switching a large sales table to incremental refresh to cut refresh time sharply.
+real_interview: An interviewer may ask: What do you need to set up incremental refresh?
+real_daily: It is like adding only today's page to a ledger.
+mcq_question: What are the names of the two required parameters for incremental refresh?
+mcq_options: A) From and To B) RangeStart and RangeEnd C) Min and Max D) Start and End
+mcq_answer: B
+mcq_why: The parameters must be named exactly RangeStart and RangeEnd.
+fill_blank: Incremental refresh uses parameters named RangeStart and ____ → RangeEnd
+apply: A huge table takes hours to refresh. What can you set up? → Incremental refresh with RangeStart and RangeEnd
+explain_task: Explain incremental refresh in three lines.
+own_task: Write the steps to set up incremental refresh for an orders table.
+
+@PBI-056
+type: topic56
+topic: 07 Advanced
+level: Advanced
+term: Aggregations and composite models
+cue: Which techniques mix Import and DirectQuery in one model and use summary tables to speed up large datasets?
+category: Performance
+frequency: Low
+importance: 3
+origin: Huge tables are too big to import fully but too slow to query live, so Power BI allows a mix of modes and pre-summarised tables.
+pro_tip: Put a small summarised table in Import mode and let the detailed table stay in DirectQuery.
+memory_story: It is a map with a fast overview in your pocket and a detailed atlas on the shelf that you open only when needed.
+visual: A small fast summary table beside a large live detail table, with queries choosing the faster one.
+emotion: The thrill of fast visuals on a huge dataset.
+definition: A composite model mixes storage modes in one model, and aggregations are summary tables that answer common queries quickly while detail stays in the source.
+explanation: In a composite model some tables are Import and others DirectQuery. An aggregation table holds data summarised at a higher level, such as sales by day and product, and Power BI uses it when a query can be answered from it, going to the detail table only when needed.
+simple_explain: Keep a small summary table in memory for quick answers, and the huge detail table in the source. Power BI picks the fast one automatically when it can.
+analogy: It is like carrying a pocket map for quick use and keeping the big atlas on a shelf.
+formula_rule: Summary table (Import) + detail table (DirectQuery) = fast and complete
+example_1: A daily sales summary imported and the full transaction table in DirectQuery.
+example_2: A composite model that joins an imported Date table to a DirectQuery fact.
+example_3: Drilling from a summary visual into detail that queries the source.
+related: Import vs DirectQuery, query folding, performance, relationships
+word_family: composite, aggregation, summary table, storage mode, Dual
+where_used: Very large datasets | Real-time detail with fast summaries | Performance tuning
+mini_conversation: A: Our live data table is huge and visuals are slow. | B: Add an imported aggregation table so common queries are answered quickly.
+misconception: ✗ A model must be either all Import or all DirectQuery → ✓ Composite models can mix both modes in one model
+contrast: Aggregations vs detail: aggregations answer high-level queries quickly, detail tables answer row-level questions.
+avoid: Do not build aggregations until you have tried simpler fixes.
+memory_trick: Aggregations are a fast summary in front of slow detail.
+real_project: Adding a daily summary table to speed up a DirectQuery sales model.
+real_interview: An interviewer may ask: What is a composite model?
+real_daily: It is like carrying a pocket map and keeping the atlas on a shelf.
+mcq_question: What is a composite model?
+mcq_options: A) A model with only DAX B) A model with one table C) A model without relationships D) A model with more than one storage mode
+mcq_answer: D
+mcq_why: Composite models combine Import and DirectQuery tables.
+fill_blank: A summary table that answers common queries fast is called an ____ → aggregation
+apply: Live detail data is slow at a high level. What can speed it up? → An imported aggregation table
+explain_task: Explain composite models and aggregations in three lines.
+own_task: Describe which summary table you would create for a large sales fact.
+
+@PBI-057
+type: topic56
+topic: 07 Advanced
+level: Advanced
+term: Performance Analyzer
+cue: Which built-in Power BI Desktop tool records how long each visual takes to load and breaks it into DAX query and display time?
+category: Performance tool
+frequency: Medium
+importance: 4
+origin: Slow reports frustrate users, and guesses about the cause waste time, so Desktop includes a tool that measures where time is spent.
+pro_tip: Start recording, refresh the visuals, and then look at the slowest ones first.
+memory_story: It is a stopwatch that times each visual and tells you where the delay is.
+visual: A pane listing each visual with bars for DAX query time, visual display time and other time.
+emotion: The satisfaction of finding the one slow measure behind a sluggish page.
+definition: Performance Analyzer records the time each visual needs to load, split into DAX query, visual display and other.
+explanation: You open it from the View tab, start recording and interact with the page. It lists every visual with durations and lets you copy the DAX query to run in other tools such as DAX Studio. A long DAX query time points to the model or measure, while a long display time points to the visual itself.
+simple_explain: Turn on Performance Analyzer, refresh the visuals, and see which one is slow. If the DAX time is long, fix the measure or model; if the display time is long, simplify the visual.
+analogy: It is like a stopwatch that times each lap so you know where the delay is.
+formula_rule: View → Performance Analyzer → record → find the slowest visual → fix the cause
+example_1: Finding that a matrix takes the longest on a page.
+example_2: Seeing a long DAX query time and rewriting the measure.
+example_3: Copying a slow visual's query into DAX Studio.
+related: DAX, query folding, aggregations, model design
+word_family: performance, DAX query, display, record, tuning
+where_used: Slow report pages | Measure tuning | Visual design checks
+mini_conversation: A: This page takes ages to load. | B: Record it with Performance Analyzer and see which visual is slowest.
+misconception: ✗ Performance Analyzer fixes slow reports automatically → ✓ It only measures and shows where time is spent, and you must fix the cause yourself
+contrast: DAX query time vs display time: the first is spent calculating the data, the second is spent drawing the visual.
+avoid: Do not tune guesses without measuring first.
+memory_trick: Measure first, and only then fix.
+real_project: Using Performance Analyzer to find one slow measure on a dashboard.
+real_interview: An interviewer may ask: How do you find out why a report is slow?
+real_daily: It is like a stopwatch that times each lap.
+mcq_question: Where does Performance Analyzer show a visual's calculation time?
+mcq_options: A) Gateway B) Slicer C) DAX query D) Theme
+mcq_answer: C
+mcq_why: The DAX query time shows how long the data calculation took.
+fill_blank: Performance Analyzer is found on the ____ tab of Desktop → View
+apply: A visual has a long DAX query time. What do you examine? → The measure and the model
+explain_task: Explain Performance Analyzer in three lines.
+own_task: Record a report page and write which visual is slowest and why.
+
+@PBI-058
+type: topic56
+topic: 07 Advanced
+level: Advanced
+term: Calculation groups
+cue: Which model feature lets you write time-intelligence or formatting logic once and apply it to many measures?
+category: Advanced modelling
+frequency: Low
+importance: 3
+origin: Models ended up with dozens of near-identical measures such as Sales YTD and Cost YTD, so calculation groups let one set of calculation items act on any measure.
+pro_tip: Use calculation groups for time intelligence variations to avoid creating many duplicate measures.
+memory_story: A calculation group is a set of reusable filters you can slip over any measure.
+visual: A column of items such as Current, YTD and Last Year that change whatever measure is placed beside them.
+emotion: The tidiness of a model with a few measures instead of hundreds.
+definition: A calculation group is a table of calculation items that modify the measures used with them, such as turning any measure into its year-to-date version.
+explanation: A calculation group has items such as Current, YTD and Previous Year, each defined with DAX that uses SELECTEDMEASURE() to refer to whichever measure is in use. Users pick an item with a slicer or on a matrix axis and every measure follows. Calculation groups are created in the model, in recent Desktop versions or with external tools such as Tabular Editor.
+simple_explain: Write the YTD logic once as an item, and it works for sales, cost and profit alike. You avoid making one YTD measure per measure.
+analogy: It is like a set of lenses you can place over any picture to see it a different way.
+formula_rule: Calculation item = DAX using SELECTEDMEASURE()
+example_1: An item YTD defined as CALCULATE(SELECTEDMEASURE(), DATESYTD(Dates[Date])).
+example_2: An item Previous Year that shifts any measure back one year.
+example_3: A matrix with items on columns showing Current, YTD and Previous Year for every measure.
+related: DAX, time intelligence, measures, Tabular Editor
+word_family: calculation group, calculation item, SELECTEDMEASURE, Tabular Editor
+where_used: Time-intelligence families | Currency conversion | Reducing duplicate measures
+mini_conversation: A: I have thirty measures and want a YTD version of each. | B: Create a calculation group with a YTD item that applies to all of them.
+misconception: ✗ Calculation groups are another kind of visual → ✓ A calculation group is a model feature that changes how measures are calculated, not something you place on a page by itself
+contrast: Calculation group vs measure: a measure computes one value, a calculation group modifies many measures.
+avoid: Do not use calculation groups when only one or two measures need the change.
+memory_trick: Write the logic once, reuse it for every measure.
+real_project: Replacing dozens of YTD and previous-year measures with one calculation group.
+real_interview: An interviewer may ask: What problem do calculation groups solve?
+real_daily: It is like a set of lenses you can place over any picture.
+mcq_question: Which function lets a calculation item refer to whichever measure is in use?
+mcq_options: A) DIVIDE B) SELECTEDMEASURE C) CALCULATE only D) RELATED
+mcq_answer: B
+mcq_why: SELECTEDMEASURE() stands for the measure currently being evaluated.
+fill_blank: Calculation items use ____() to refer to the measure in use → SELECTEDMEASURE
+apply: How can you avoid creating a YTD version of thirty measures? → Create a calculation group with a YTD item
+explain_task: Explain calculation groups in three lines.
+own_task: Define two calculation items you would add for a sales model.

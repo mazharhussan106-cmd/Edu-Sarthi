@@ -1,0 +1,731 @@
+deck.title: Linux and the Command Line – Beginner to Advanced Flashcards
+deck.subject: Linux
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: bash
+type: topic56
+
+@LNX-001
+topic: 01 Basics
+level: Beginner
+term: Linux and distributions
+cue: Which free, open-source operating system family runs most servers and cloud machines, and what are its different flavours called?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Linus Torvalds started the Linux kernel in 1991, and groups of volunteers and companies packaged it with other software into complete systems called distributions.
+pro_tip: Learn on Ubuntu or Debian first, since their commands and packages are the most common in tutorials and servers.
+memory_story: The kernel is the engine, and each distribution is a car built around that same engine with its own body and features.
+visual: One engine in the centre with several different car bodies around it, each with a name tag.
+emotion: The confidence of knowing that the same skills work on almost every server.
+definition: Linux is an open-source operating system kernel, and a distribution (distro) bundles that kernel with tools, a package manager and a desktop or server setup.
+explanation: The kernel manages hardware, memory and processes. Distributions such as Ubuntu, Debian, Fedora, Red Hat Enterprise Linux and Alpine add software, defaults and update systems. Most commands you learn work on all of them, but package managers and some file locations differ between families.
+simple_explain: Linux is the core of the system, and a distro is a ready-to-use package of Linux plus tools. Pick one, learn it well, and most of it carries over to the others.
+analogy: The kernel is the engine, and each distribution is a car built around that engine.
+formula_rule: Distribution = Linux kernel + tools + package manager + defaults
+example_1: Ubuntu, a popular distribution for servers and desktops.
+example_2: Alpine, a very small distribution common in container images.
+example_3: Red Hat Enterprise Linux, widely used in large companies.
+related: shell, package managers, file system layout, containers
+word_family: kernel, distribution, open source, server, package
+where_used: Servers and cloud machines | Containers | Customer systems
+mini_conversation: A: The customer runs Red Hat but I learned on Ubuntu. | B: Most commands are the same, only the package manager differs.
+misconception: ✗ Linux is one single product made by one company → ✓ Linux is a kernel, and many different distributions package it in different ways
+contrast: Kernel vs distribution: the kernel talks to hardware, the distribution is the complete system you install.
+avoid: Do not assume every Linux machine uses the same package manager.
+memory_trick: One kernel powers many different distributions.
+real_project: Using the same Bash skills on an Ubuntu laptop, a Debian server and an Alpine container.
+real_interview: An interviewer may ask: What is the difference between Linux and a Linux distribution?
+real_daily: It is like one engine used in many different cars.
+mcq_question: What is a Linux distribution?
+mcq_options: A) The kernel bundled with tools and a package manager B) A programming language C) A web browser D) A hardware brand
+mcq_answer: A
+mcq_why: A distribution is a complete system built around the Linux kernel.
+fill_blank: The core part of Linux that manages hardware is called the ____ → kernel
+apply: A customer runs a different Linux family than you know. What stays the same? → Most commands, while package managers differ
+explain_task: Explain Linux and distributions in three lines.
+own_task: Name the distribution you will practise on and why.
+
+@LNX-002
+topic: 01 Basics
+level: Beginner
+term: Shell vs terminal
+cue: Which program interprets the commands you type, and which window do you type them into?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Early computers were reached through physical terminals, and the shell was the program that read the typed commands, and both ideas survive in the windows we open today.
+pro_tip: Check which shell you are in with echo $SHELL, because Bash and Zsh differ in small ways.
+memory_story: The terminal is the window of a shop, and the shell is the shopkeeper who understands what you ask for.
+visual: A black window with a prompt, and a figure behind it reading each line.
+emotion: The thrill of the first command returning a result.
+definition: The terminal is the window where you type and read text, and the shell is the program inside it that interprets commands, such as Bash or Zsh.
+explanation: When you press Enter, the shell splits the line into a command and arguments, expands things like wildcards and variables, finds the program and runs it. Bash is the most common shell on servers, and Zsh is common on macOS. Many shells support scripting, so the same commands can be saved in a file.
+simple_explain: The terminal is where you type. The shell is the program that understands and runs what you type.
+analogy: The terminal is the shop window, and the shell is the shopkeeper who understands your request.
+formula_rule: Terminal (window) → shell (interpreter) → program
+example_1: Opening a terminal and typing ls, which the shell runs.
+example_2: Bash as the default shell on many servers.
+example_3: Zsh as the default on recent macOS.
+related: Bash scripting, environment variables, PATH, commands
+word_family: terminal, shell, Bash, Zsh, prompt, command line
+where_used: Servers | Developer laptops | Automation scripts
+mini_conversation: A: Which shell is this server using? | B: Run echo $SHELL and it will tell you.
+misconception: ✗ The terminal and the shell are the same thing → ✓ The terminal is the window, and the shell is the program that runs inside it and interprets commands
+contrast: Terminal vs shell: the terminal shows text, the shell understands commands.
+avoid: Do not assume a script written for Bash works unchanged in every shell.
+memory_trick: The terminal shows and the shell understands.
+real_project: Logging into a customer server over SSH and working in its Bash shell.
+real_interview: An interviewer may ask: What is the difference between a terminal and a shell?
+real_daily: It is like a shop window and the shopkeeper behind it.
+mcq_question: Which one interprets the commands you type?
+mcq_options: A) The monitor B) The keyboard C) The kernel only D) The shell
+mcq_answer: D
+mcq_why: The shell reads and runs commands.
+fill_blank: Bash and Zsh are examples of a ____ → shell
+apply: How do you find out which shell you are using? → Run echo $0 (or ps -p $$)
+explain_task: Explain terminal and shell in three lines.
+own_task: Open a terminal and write which shell it uses.
+
+@LNX-003
+topic: 01 Basics
+level: Beginner
+term: File system layout
+cue: Which single tree starting at the slash holds all files on Linux, and what do directories such as /etc, /var and /home contain?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Unix systems put everything under one root directory so that programs and people always know where to look for settings, logs and user files.
+pro_tip: Memorise the main folders, since knowing where logs and config live saves hours when debugging.
+memory_story: The file system is one big tree with / as the trunk and every folder as a branch with a known job.
+visual: A tree diagram with the root at the top and branches labelled etc, var, home and usr.
+emotion: The comfort of knowing where to look.
+definition: Linux has one directory tree starting at the root /, where /etc holds configuration, /var holds changing data such as logs, /home holds user files, /usr holds programs, and /tmp holds temporary files.
+explanation: There are no drive letters. Other disks are mounted at folders inside the tree. Other common places are /bin and /usr/bin for commands, /opt for extra software, /dev for devices, /proc for process information and /root for the administrator's home. Logs usually live in /var/log.
+simple_explain: Everything lives under /. Settings are in /etc, logs in /var/log, people's files in /home, and temporary files in /tmp.
+analogy: It is like one big tree where every branch has a known job.
+formula_rule: /etc = config, /var/log = logs, /home = users, /usr = programs, /tmp = temporary
+example_1: /etc/nginx/nginx.conf holds a web server's configuration.
+example_2: /var/log/syslog holds system messages on many systems.
+example_3: /home/asha holds the files of the user asha.
+related: absolute paths, permissions, logs, mounting
+word_family: root, directory, mount, config, logs
+where_used: Finding configuration | Reading logs | Customer troubleshooting
+mini_conversation: A: Where do I find the web server's logs? | B: Look in /var/log, usually in a folder named after the service.
+misconception: ✗ Linux has drive letters such as C: and D: → ✓ Linux has a single tree under /, and other disks are mounted inside it
+contrast: /etc vs /var: /etc holds settings that you edit, /var holds data that changes while the system runs.
+avoid: Do not store important data in /tmp, since it can be cleared.
+memory_trick: etc is for settings, var is for changing data.
+real_project: Reading /var/log and /etc to find why a service on a customer server would not start.
+real_interview: An interviewer may ask: Where are configuration files and logs usually stored on Linux?
+real_daily: It is like a building plan where each floor has a known purpose.
+mcq_question: Where are system logs usually found?
+mcq_options: A) /bin B) /var/log C) /home D) /etc/log only
+mcq_answer: B
+mcq_why: Logs normally live under /var/log.
+fill_blank: Configuration files are usually in /____ → etc
+apply: Where would you look for a web server's settings? → In /etc
+explain_task: Explain the Linux file system layout in three lines.
+own_task: List five directories and what each is used for.
+
+@LNX-004
+topic: 01 Basics
+level: Beginner
+term: Absolute vs relative paths
+cue: How do you write the address of a file starting from the root, versus starting from where you are now?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Commands need to point at files, so paths can be written in full from the root or in short from the current folder.
+pro_tip: Use absolute paths in scripts and cron jobs, because the current folder may not be what you expect.
+memory_story: An absolute path is a full postal address, and a relative path is directions from where you are standing.
+visual: A path starting with a slash beside a path starting with a dot.
+emotion: The clarity of knowing exactly which file a command will touch.
+definition: An absolute path starts at the root /, such as /home/asha/notes.txt, while a relative path starts from the current directory, such as notes.txt or ../data/notes.txt.
+explanation: A single dot means the current directory, and two dots mean the parent directory. The tilde ~ means your home directory. A relative path changes meaning when you change directory, but an absolute path always points to the same place. Cron starts scripts in the user's home folder, not in the folder where the script lives, so relative paths inside a script break.
+simple_explain: A path that starts with / is complete. Any other path starts from where you are now.
+analogy: An absolute path is a full postal address, and a relative path is directions from where you stand.
+formula_rule: /full/path starts at root. path starts here. ../path starts one level up.
+example_1: /var/log/syslog is an absolute path.
+example_2: ./script.sh is a relative path to a file in the current folder.
+example_3: ../config/app.yml goes up one folder and then into config.
+related: cd and pwd, file system layout, cron, scripts
+word_family: absolute, relative, dot, double dot, tilde
+where_used: Every command | Scripts | Cron jobs
+mini_conversation: A: My script cannot find the file when cron runs it. | B: Use an absolute path, since cron starts in your home folder, not in the script's folder.
+misconception: ✗ A relative path always points to the same file → ✓ A relative path depends on the current directory, and an absolute path does not
+contrast: Absolute vs relative: absolute starts at /, relative starts at the current folder.
+avoid: Do not use relative paths in scheduled scripts.
+memory_trick: A leading slash means from the root.
+real_project: Replacing relative paths with absolute ones in a nightly script.
+real_interview: An interviewer may ask: What do . and .. mean in a path?
+real_daily: It is like a full postal address versus directions from where you stand.
+mcq_question: Which description matches an absolute path?
+mcq_options: A) It begins with two dots B) It has no slash at all C) It starts at the root slash D) It begins with a single dot
+mcq_answer: C
+mcq_why: An absolute path starts at the root slash.
+fill_blank: Two dots in a path mean the ____ directory → parent
+apply: Why use absolute paths in cron scripts? → Because cron does not start in the folder where the script lives
+explain_task: Explain absolute and relative paths in three lines.
+own_task: Write the absolute path of a file in your home folder.
+
+@LNX-005
+type: code56
+topic: 01 Basics
+level: Beginner
+term: man pages and --help
+cue: Where do you find the official manual of a command without leaving the terminal?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Unix shipped its manuals on the machine itself so that anyone could look up a command without a network, and the man command shows them.
+pro_tip: Press / inside a man page to search, and q to quit.
+memory_story: The man page is the instruction booklet that comes inside the box of every command.
+visual: A terminal showing a manual page with NAME, SYNOPSIS and OPTIONS sections.
+emotion: The independence of finding answers yourself.
+meaning: man shows the manual page of a command, and most commands also print a short summary with --help.
+code: man ls¶ls --help¶man -k copy
+output: A manual page for ls with its description and options, a short options list from --help, and a list of commands whose summary mentions copy.
+explanation: A man page has sections such as NAME, SYNOPSIS, DESCRIPTION and OPTIONS. You scroll with the arrow keys, search with a slash, and quit with q. The --help flag gives a shorter summary and works on most commands. man -k searches the summaries for a keyword, which helps when you do not know the command name.
+simple_explain: Type man and the command name to read its manual. Use --help for a quick reminder, and man -k to search by keyword.
+analogy: It is like the instruction booklet that comes inside the box.
+syntax: man command  |  command --help  |  man -k keyword
+anatomy: man = manual | --help = quick summary | -k = search by keyword
+example_1: man grep
+example_2: tar --help
+example_3: man -k network
+variation: man 5 passwd   // a specific manual section¶info coreutils   // another documentation format
+used_with: less, grep, apropos
+related: shell, commands, package managers
+alternatives: tldr pages for short examples
+where_used: Learning commands | Checking options | Unknown customer machines
+mini_conversation: A: What does this flag do? | B: Open the man page for the command and search for the flag.
+misconception: ✗ You need the internet to read command documentation → ✓ Manual pages are stored on the machine, so man works offline
+confused_with: man vs --help: man gives the full manual, --help gives a short summary.
+avoid: Do not copy a command from the internet without checking its options in the man page.
+wrong_code: man --ls
+right_code: man ls
+memory_trick: When in doubt, man it out.
+real_project: Checking the exact flags of a command on a customer server with no internet access.
+real_interview: An interviewer may ask: How do you learn what a command does on a server?
+real_daily: It is like the instruction booklet inside the box.
+mcq_question: Which command shows the manual page for grep?
+mcq_options: A) show grep B) man grep C) help grep D) read grep
+mcq_answer: B
+mcq_why: man followed by the command name opens its manual.
+fill_blank: Inside a man page, press ____ to quit → q
+hindi_to_task: Show the manual of the cp command.
+task_answer: man cp
+own_task: Read the man page of one command and write down three of its options.
+practice_question: Which command searches manual summaries for a keyword?
+practice_answer: man -k keyword
+
+@LNX-006
+type: code56
+topic: 01 Basics
+level: Beginner
+term: Package managers (apt and dnf)
+cue: Which tools install, update and remove software on a Linux machine from trusted repositories?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Installing software by hand from many websites was unsafe and slow, so distributions created package managers that fetch signed software from central repositories.
+pro_tip: Run the update command before installing, so the package list is fresh.
+memory_story: A package manager is an app store that lives in your terminal.
+visual: A command fetching a package from a repository and installing it with its dependencies.
+emotion: The ease of installing a tool with one line.
+meaning: A package manager installs and updates software and its dependencies, with apt on Debian and Ubuntu, and dnf on Fedora and Red Hat families.
+code: sudo apt update¶sudo apt install nginx¶apt search json¶sudo apt remove nginx
+output: The package lists refresh, nginx and its dependencies are installed, packages about json are listed, and nginx is removed.
+explanation: Packages come from repositories listed in the system configuration. update refreshes the list of available packages, and install fetches the package and its dependencies. On Red Hat families the matching tool is dnf, with commands such as sudo dnf install nginx. Alpine uses apk. Installing needs administrator rights, so commands usually start with sudo.
+simple_explain: Use the package manager of your distribution to install software. Update first, then install, and use sudo because it changes the system.
+analogy: It is like an app store that lives in your terminal.
+syntax: sudo apt install package  |  sudo dnf install package
+anatomy: apt or dnf = the package manager | install = add software | sudo = run with admin rights
+example_1: sudo apt install curl
+example_2: sudo dnf install git
+example_3: apk add curl
+variation: sudo apt upgrade   // update installed packages¶dpkg -l | grep nginx   // see if a package is installed
+used_with: sudo, repositories, dependencies, containers
+related: distributions, sudo, Docker images
+alternatives: snap, flatpak, or building from source
+where_used: Setting up servers | Container images | Installing tools on customer machines
+mini_conversation: A: The command curl is not found on this server. | B: Install it with the package manager, apt or dnf depending on the system.
+misconception: ✗ apt works on every Linux distribution → ✓ apt belongs to Debian and Ubuntu families, while Red Hat families use dnf and Alpine uses apk
+confused_with: apt update vs apt upgrade: update refreshes the package list, upgrade installs newer versions.
+avoid: Do not install software by piping unknown scripts into the shell.
+wrong_code: apt install nginx
+right_code: sudo apt install nginx
+memory_trick: Update the list, then install.
+real_project: Installing the tools a customer's server needs with apt in a setup script.
+real_interview: An interviewer may ask: What is the difference between apt update and apt upgrade?
+real_daily: It is like an app store in your terminal.
+mcq_question: Which command refreshes the list of available packages on Ubuntu?
+mcq_options: A) sudo apt update B) sudo apt remove C) sudo apt clean D) apt list only
+mcq_answer: A
+mcq_why: update downloads the latest package lists.
+fill_blank: On Fedora the package manager is called ____ → dnf
+hindi_to_task: Install the package git using apt.
+task_answer: sudo apt install git
+own_task: Write the commands to install and remove a package on your distribution.
+practice_question: Why does apt install usually need sudo?
+practice_answer: Because installing software changes the system and needs administrator rights.
+
+@LNX-007
+type: code56
+topic: 02 Files and folders
+level: Beginner
+term: ls (listing files)
+cue: Which command shows what is inside a directory, including sizes, owners and hidden files?
+kind: Command
+frequency: Very high
+importance: 5
+origin: You must see what a folder holds before you can work with it, so Unix has a small command that lists directory contents.
+pro_tip: Use ls -lah to see everything with readable sizes.
+memory_story: ls is opening a drawer and reading the labels.
+visual: A list of file names with permissions, owners and sizes in columns.
+emotion: The comfort of seeing exactly what is there.
+meaning: ls lists the files and folders of a directory, and flags control detail and hidden files.
+code: ls¶ls -l¶ls -lah /var/log
+output: A plain list of names, a long list with permissions, owners, sizes and dates, and a long list of /var/log that includes hidden files and human-readable sizes.
+explanation: Hidden files start with a dot and appear only with -a. The long format -l shows permissions, link count, owner, group, size and modification time. -h makes sizes readable such as 4.0K. You can sort by time with -t and reverse with -r.
+simple_explain: Run ls to see names. Add -l for details, -a for hidden files and -h for readable sizes.
+analogy: It is like opening a drawer and reading the labels.
+syntax: ls [options] [path]
+anatomy: -l = long format | -a = include hidden | -h = human-readable sizes | path = which folder
+example_1: ls -l
+example_2: ls -a ~
+example_3: ls -lt /var/log
+variation: ls -lS   // sort by size¶ls -d */   // list only directories
+used_with: cd, find, permissions, wildcards
+related: cd and pwd, find, permissions
+alternatives: tree for a nested view
+where_used: Exploring folders | Checking permissions | Finding recent files
+mini_conversation: A: I cannot see the config file. | B: It is probably hidden, so use ls -a.
+misconception: ✗ ls shows every file including hidden ones → ✓ Hidden files, which start with a dot, appear only with the -a flag
+confused_with: ls -l vs ls -a: -l shows details, -a includes hidden files.
+avoid: Do not forget -a when looking for dotfiles.
+wrong_code: ls -hidden
+right_code: ls -a
+memory_trick: l for long, a for all.
+real_project: Checking file owners and sizes in a customer's log folder.
+real_interview: An interviewer may ask: How do you list hidden files?
+real_daily: It is like opening a drawer and reading the labels.
+mcq_question: Which flag shows hidden files?
+mcq_options: A) -h B) -r C) -a D) -x
+mcq_answer: C
+mcq_why: -a means all, including names that start with a dot.
+fill_blank: ls -____ shows the long format with details → l
+hindi_to_task: List all files, including hidden ones, with readable sizes in long format.
+task_answer: ls -lah
+own_task: List your home folder with all details and find one hidden file.
+practice_question: What does the -h flag change in ls -lh?
+practice_answer: It shows file sizes in a human-readable form such as 4.0K.
+
+@LNX-008
+type: code56
+topic: 02 Files and folders
+level: Beginner
+term: cd and pwd
+cue: Which two commands tell you where you are and move you to another directory?
+kind: Command
+frequency: Very high
+importance: 5
+origin: A shell always has a current working directory, so there are commands to show it and to change it.
+pro_tip: Use cd - to jump back to the previous directory.
+memory_story: pwd is the you-are-here pin on a map, and cd is walking to another place on it.
+visual: A map with a pin and an arrow to a new location.
+emotion: The ease of moving around the system quickly.
+meaning: pwd prints the current directory, and cd changes to another directory.
+code: pwd¶cd /var/log¶cd ..¶cd ~¶cd -
+output: The current path, then moves to /var/log, up to /var, to the home directory, and back to the previous directory.
+explanation: cd with no argument goes to your home directory. cd .. goes to the parent, and cd - returns to the last directory you were in. The tilde ~ stands for your home directory. If a path has spaces, put it in quotes. Many commands depend on the current directory, so pwd is a useful habit.
+simple_explain: pwd tells you where you are, and cd takes you somewhere else. Use .. for up one level and - for back to where you were.
+analogy: pwd is the you-are-here pin, and cd is walking to another place on the map.
+syntax: pwd  |  cd path
+anatomy: pwd = print working directory | cd = change directory | .. = parent | - = previous directory
+example_1: cd /etc
+example_2: cd ../..
+example_3: cd "My Documents"
+variation: cd   // go home¶pushd and popd   // keep a stack of directories
+used_with: ls, absolute and relative paths, tab completion
+related: absolute vs relative paths, ls, file system layout
+alternatives: Opening a new terminal in the folder
+where_used: Moving around | Running scripts | Checking location
+mini_conversation: A: Where am I in the file system? | B: Run pwd to see the current directory.
+misconception: ✗ cd changes the folder of every open terminal → ✓ cd changes only the current shell's working directory
+confused_with: pwd vs ls: pwd shows where you are, ls shows what is inside.
+avoid: Do not run destructive commands before checking pwd.
+wrong_code: cd..
+right_code: cd ..
+memory_trick: pwd asks where, cd goes there.
+real_project: Checking pwd before running a delete command on a customer server.
+real_interview: An interviewer may ask: What does cd - do?
+real_daily: It is like the you-are-here pin on a map.
+mcq_question: How do you return to the directory you were in before?
+mcq_options: A) Use the pwd command B) Use cd followed by a tilde C) Use cd followed by two dots D) Use cd followed by a single dash
+mcq_answer: D
+mcq_why: cd - returns to the directory you were in before.
+fill_blank: The tilde ~ stands for your ____ directory → home
+hindi_to_task: Go up two levels from the current directory.
+task_answer: cd ../..
+own_task: Move around three folders and use pwd to confirm where you are.
+practice_question: Which command goes directly to your home directory?
+practice_answer: cd (or cd ~)
+
+@LNX-009
+type: code56
+topic: 02 Files and folders
+level: Beginner
+term: mkdir and rmdir
+cue: Which commands create a new directory, including missing parent folders, and remove an empty one?
+kind: Command
+frequency: Very high
+importance: 4
+origin: Files need folders to stay organised, so there are small commands to make and remove them.
+pro_tip: Use mkdir -p to create a whole path in one go without errors if it exists.
+memory_story: mkdir builds a new shelf, and rmdir removes only a shelf that is empty.
+visual: A folder tree growing a new branch.
+emotion: The tidiness of creating a clean structure.
+meaning: mkdir creates directories, and rmdir removes empty directories.
+code: mkdir reports¶mkdir -p project/src/utils¶rmdir reports
+output: A folder named reports, a nested path project/src/utils created in one step, and the empty folder reports removed.
+explanation: Without -p, mkdir fails if a parent folder is missing. With -p it creates all missing parents and does not complain if the folder exists. rmdir refuses to remove a folder that still has files in it, which protects you from accidents. To remove a folder with contents you use rm -r.
+simple_explain: Use mkdir to make folders, with -p for nested ones. Use rmdir to delete an empty folder safely.
+analogy: It is like building a new shelf, and rmdir removes only a shelf that is empty.
+syntax: mkdir [-p] path  |  rmdir path
+anatomy: -p = create parent folders too | rmdir = only works on empty folders
+example_1: mkdir backups
+example_2: mkdir -p a/b/c
+example_3: rmdir old_folder
+variation: mkdir -m 700 private   // set permissions while creating¶mkdir -p logs/{2025,2026}   // brace expansion for several folders
+used_with: ls, cd, rm -r, permissions
+related: cp mv rm, ls, permissions
+alternatives: rm -r for non-empty folders
+where_used: Project setup | Backups | Deployment folders
+mini_conversation: A: mkdir fails because the parent does not exist. | B: Add -p so it creates the missing parent folders.
+misconception: ✗ rmdir removes a folder together with its files → ✓ rmdir removes only empty folders, and rm -r is needed for folders with contents
+confused_with: rmdir vs rm -r: rmdir needs an empty folder, rm -r deletes contents too.
+avoid: Do not use rm -r when rmdir would protect you.
+wrong_code: mkdir a/b/c
+right_code: mkdir -p a/b/c
+memory_trick: The p flag stands for parents.
+real_project: Creating a deployment folder structure with one mkdir -p command.
+real_interview: An interviewer may ask: What does mkdir -p do?
+real_daily: It is like building a new shelf.
+mcq_question: Which flag creates parent directories as needed?
+mcq_options: A) -r B) -f C) -v D) -p
+mcq_answer: D
+mcq_why: -p creates all missing parent directories.
+fill_blank: mkdir -____ a/b/c creates nested folders → p
+hindi_to_task: Create the nested folders data/raw/2026 in one command.
+task_answer: mkdir -p data/raw/2026
+own_task: Create a project folder structure with src, tests and docs.
+practice_question: Why does rmdir fail on a folder with files in it?
+practice_answer: Because rmdir only removes empty directories.
+
+@LNX-010
+type: code56
+topic: 02 Files and folders
+level: Beginner
+term: cp, mv and rm
+cue: Which three commands copy, move or rename, and delete files, with no recycle bin?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Basic file management needs copying, moving and deleting, and Unix kept these as tiny commands that do exactly what they say.
+pro_tip: Use the -i flag to be asked before overwriting or deleting, until you are confident.
+memory_story: cp is the photocopier, mv is the removal van that also renames, and rm is the shredder.
+visual: A file duplicated, a file moved to a new place, and a file shredded.
+emotion: The caution of knowing rm cannot be undone.
+meaning: cp copies files, mv moves or renames them, and rm deletes them permanently.
+code: cp report.txt backup/¶cp -r project project_copy¶mv old.txt new.txt¶mv new.txt archive/¶rm -i temp.txt
+output: report.txt is copied into backup, the folder project is copied recursively, old.txt is renamed to new.txt, the file moves into archive, and temp.txt is deleted after confirmation.
+explanation: Copying folders needs -r. mv uses the same command for renaming and moving, because renaming is moving to a new name. rm does not use a trash, so deleted files are gone, and rm -rf deletes folders without asking, which is dangerous with a wrong path. Use -v to see what happens.
+simple_explain: cp makes a copy, mv moves or renames, and rm deletes forever. Check the path before pressing Enter.
+analogy: cp is a photocopier, mv is a removal van that also renames, and rm is a shredder.
+syntax: cp source dest  |  mv source dest  |  rm file
+anatomy: -r = recursive for folders | -i = ask first | -f = force | -v = verbose
+example_1: cp -r src src_backup
+example_2: mv draft.txt final.txt
+example_3: rm -rf build/
+variation: cp -a src/ dest/   // copy and keep attributes¶rm -- -weird-name   // delete a name that starts with a dash
+used_with: ls, mkdir, wildcards, permissions
+related: ls, mkdir, find
+alternatives: trash-cli for a recoverable delete
+where_used: Housekeeping | Deployment | Clean-up scripts
+mini_conversation: A: I removed the wrong folder with rm -rf. | B: There is no undo, so check with ls and use -i next time.
+misconception: ✗ rm moves files to a recycle bin that I can restore → ✓ rm deletes files immediately, with no built-in way to recover them
+confused_with: mv vs cp: mv moves the original, cp leaves it in place.
+avoid: Never run rm -rf with a variable that could be empty.
+wrong_code: cp project project_copy
+right_code: cp -r project project_copy
+memory_trick: rm means gone for good.
+real_project: Renaming release folders with mv and clearing old builds with rm in a deployment script.
+real_interview: An interviewer may ask: What is the difference between cp and mv?
+real_daily: It is like a photocopier, a removal van and a shredder.
+mcq_question: Which command renames a file?
+mcq_options: A) rm B) ls C) mv D) cp
+mcq_answer: C
+mcq_why: mv moves a file to a new name or place.
+fill_blank: To copy a folder you must add the ____ flag → -r
+hindi_to_task: Rename notes.txt to notes_old.txt.
+task_answer: mv notes.txt notes_old.txt
+own_task: Practise copying, moving and deleting in a test folder with the -i flag.
+practice_question: What does rm -rf do?
+practice_answer: It deletes a folder and everything inside it without asking.
+
+@LNX-011
+type: code56
+topic: 02 Files and folders
+level: Beginner
+term: touch and the file command
+cue: How do you create an empty file or update its time, and find out what kind of file something really is?
+kind: Command
+frequency: High
+importance: 3
+origin: File names and extensions can lie, so Unix gives a command that inspects the content to tell the type, and another that creates files and updates their timestamps.
+pro_tip: Use file when a download or an unknown file has no extension.
+memory_story: touch lays a finger on a file to mark the time, and file is a detective that reads the contents.
+visual: An empty file appearing, and a label saying ASCII text or PNG image.
+emotion: The curiosity of finding out what a mystery file is.
+meaning: touch creates an empty file or updates its modification time, and file reports the type of a file from its content.
+code: touch notes.txt¶ls -l notes.txt¶file notes.txt¶file /bin/ls
+output: An empty notes.txt is created, its listing shows size 0, file reports empty, and file reports that /bin/ls is an executable program.
+explanation: On Linux, extensions are only a convention and the system does not rely on them. file reads the first bytes and matches known patterns to report text, images, archives or programs. touch on an existing file only changes its timestamps, which is useful to trigger build tools.
+simple_explain: touch makes an empty file. file tells you what a file really is, whatever its name says.
+analogy: touch marks a file with a fingerprint of the time, and file is a detective that reads the contents.
+syntax: touch filename  |  file filename
+anatomy: touch = create or update time | file = detect the type
+example_1: touch app.log
+example_2: file photo.jpg
+example_3: file script.sh
+variation: touch -t 202601011200 file   // set a specific time¶stat file   // show detailed file information
+used_with: ls, cat, permissions
+related: ls, cat, permissions
+alternatives: stat for detailed metadata
+where_used: Creating placeholders | Checking unknown files | Triggering builds
+mini_conversation: A: This download has no extension, what is it? | B: Run file on it and it will tell you the type.
+misconception: ✗ The file extension decides what a file really is → ✓ The extension is only a hint, and the file command checks the actual content
+confused_with: touch vs echo > file: touch keeps content, redirecting a command's output replaces it.
+avoid: Do not trust an extension for a file from an unknown source.
+wrong_code: file create notes.txt
+right_code: touch notes.txt
+memory_trick: touch makes the file, file identifies it.
+real_project: Checking whether an uploaded file is really an image or an archive.
+real_interview: An interviewer may ask: How do you check a file's type on Linux?
+real_daily: It is like a detective that reads the contents.
+mcq_question: Which command reads the first bytes of something to report its kind?
+mcq_options: A) mv B) file C) touch D) rm
+mcq_answer: B
+mcq_why: file inspects the content to find the type.
+fill_blank: touch creates an ____ file if it does not exist → empty
+hindi_to_task: Create an empty file named app.log.
+task_answer: touch app.log
+own_task: Run file on five different files and write down what it reports.
+practice_question: What does touch do to an existing file?
+practice_answer: It updates its timestamps without changing the content.
+
+@LNX-012
+type: code56
+topic: 02 Files and folders
+level: Beginner
+term: cat, less, head and tail
+cue: Which commands show a whole file, one page at a time, only the first lines, or only the last lines and new ones as they arrive?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Admins read text files and logs all day, so there are tools to dump a file, page through it, peek at the start, and follow the end of a growing log.
+pro_tip: Use tail -f on a log file to watch new lines appear while you test something.
+memory_story: cat spills the whole file, less is a page turner, head is a peek at the start, and tail is a window on the end.
+visual: A log file with the last lines scrolling as new ones appear.
+emotion: The satisfaction of seeing an error appear live in the log.
+meaning: cat prints a file, less lets you scroll through it, head shows the first lines, and tail shows the last lines or follows new ones.
+code: cat notes.txt¶less /var/log/syslog¶head -n 5 data.csv¶tail -n 20 app.log¶tail -f app.log
+output: The full file, a scrollable view, the first five lines, the last twenty lines, and a live stream of new lines added to app.log.
+explanation: less opens a file without loading it all, so it handles huge files. Inside less, press / to search, n for the next match, and q to quit. tail -f keeps running and prints new lines until you press Ctrl and C. Combine head and tail with pipes to take a slice from the middle.
+simple_explain: Use cat for small files, less for big ones, head and tail for the ends, and tail -f to watch a log grow.
+analogy: cat spills everything, less is a page turner, head peeks at the start and tail is a window on the end.
+syntax: cat file  |  less file  |  head -n N file  |  tail -n N file  |  tail -f file
+anatomy: -n = how many lines | -f = follow new lines | q = quit less
+example_1: head -n 1 data.csv
+example_2: tail -n 50 /var/log/nginx/error.log
+example_3: tail -f /var/log/app.log
+variation: head -n 20 file | tail -n 5   // lines 16 to 20¶less +F file   // follow mode inside less
+used_with: grep, pipes, logs, redirection
+related: grep, pipes, journalctl
+alternatives: bat or an editor for viewing code
+where_used: Reading logs | Checking CSV headers | Watching a service start
+mini_conversation: A: How do I watch the log while I restart the service? | B: Run tail -f on the log file in another terminal.
+misconception: ✗ cat is the best way to read large log files → ✓ cat dumps everything, so use less, head or tail for large files
+confused_with: tail vs tail -f: tail shows the last lines once, tail -f keeps following new lines.
+avoid: Do not cat a huge file into your terminal.
+wrong_code: tail app.log -follow
+right_code: tail -f app.log
+memory_trick: Head is the start, tail is the end.
+real_project: Following an application log while reproducing a customer's error.
+real_interview: An interviewer may ask: How do you watch a log file live?
+real_daily: It is like a window on the end of a growing scroll.
+mcq_question: Which command follows new lines added to a file?
+mcq_options: A) tail -f B) cat -f C) head -f D) less -n
+mcq_answer: A
+mcq_why: tail -f keeps printing lines as they are added.
+fill_blank: To see the first five lines you use head -n ____ file → 5
+hindi_to_task: Show the last 30 lines of server.log.
+task_answer: tail -n 30 server.log
+own_task: Use tail -f on a log while you trigger an event.
+practice_question: Which key quits the less viewer?
+practice_answer: q
+
+@LNX-013
+type: code56
+topic: 02 Files and folders
+level: Intermediate
+term: find
+cue: Which command searches a folder tree for files by name, type, size or age?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Files get lost in deep trees, so find walks a directory tree live and tests every item against the conditions you give.
+pro_tip: Quote patterns such as "*.log" so the shell does not expand them before find sees them.
+memory_story: find is a search party walking every corridor and checking each door against your description.
+visual: A tree being walked with matching files highlighted.
+emotion: The relief of finally locating a lost config file.
+meaning: find walks a directory and prints the items that match tests such as -name, -type, -size and -mtime.
+code: find /var/log -name "*.log"¶find . -type f -size +100M¶find /tmp -mtime +7 -type f¶find . -name "*.tmp" -exec rm {} \;
+output: Log files under /var/log, files over 100 megabytes under the current folder, files in /tmp older than seven days, and all .tmp files deleted.
+explanation: The first argument is where to start, and the rest are tests combined with and. -type f means files and -type d means directories. -mtime +7 means modified more than seven days ago. -exec runs a command on each match, with {} as the file name. Always test with -print first before deleting anything.
+simple_explain: Tell find where to look and what to match. It searches live, so it is slower than an index, but always up to date.
+analogy: It is like a search party walking every corridor and checking each door.
+syntax: find path tests actions
+anatomy: path = where to start | -name = match name | -type = f or d | -exec = run a command on matches
+example_1: find . -name "config*"
+example_2: find /home -user asha
+example_3: find . -type d -name node_modules
+variation: find . -name "*.log" -delete   // delete matches directly¶find . -newer file   // files newer than a reference file
+used_with: grep, xargs, wildcards, rm
+related: ls, grep, xargs
+alternatives: locate, which uses a prebuilt index
+where_used: Finding configs | Clean-up | Disk space hunts
+mini_conversation: A: Where is the nginx config on this server? | B: Try find /etc -name "nginx*" to search for it.
+misconception: ✗ find uses a pre-built index and is instant → ✓ find walks the directory live, while locate uses an index
+confused_with: find vs grep: find searches for files by attributes, grep searches inside files for text.
+avoid: Do not run find with -delete or -exec rm before checking the output with -print.
+wrong_code: find . -name *.log
+right_code: find . -name "*.log"
+memory_trick: Quote the pattern, test before deleting.
+real_project: Finding and removing log files older than a week in a clean-up job.
+real_interview: An interviewer may ask: How do you find files larger than 100 MB?
+real_daily: It is like a search party checking every door.
+mcq_question: Which test finds files modified more than seven days ago?
+mcq_options: A) -name 7 B) -type 7 C) -mtime +7 D) -size +7
+mcq_answer: C
+mcq_why: -mtime +7 matches items older than seven days.
+fill_blank: find . -____ f matches only regular files → type
+hindi_to_task: Find all files ending in .conf under /etc.
+task_answer: find /etc -name "*.conf"
+own_task: Find the five largest files in your home folder using find and sort.
+practice_question: What does {} stand for in -exec?
+practice_answer: The name of the current matching file.
+
+@LNX-014
+type: code56
+topic: 02 Files and folders
+level: Beginner
+term: Wildcards (globbing)
+cue: Which special characters let one pattern match many file names, expanded by the shell before the command runs?
+kind: Shell feature
+frequency: Very high
+importance: 4
+origin: Typing every file name is slow, so the shell lets you write patterns that it expands into the list of matching names.
+pro_tip: Use echo with a pattern first to see what it expands to before running something destructive.
+memory_story: A wildcard is a blank card in a card game that can stand for any card you need.
+visual: A pattern star dot txt expanding into a list of text files.
+emotion: The speed of acting on many files at once.
+meaning: Wildcards such as *, ? and [] are patterns that the shell expands into matching file names.
+code: ls *.txt¶ls data_?.csv¶ls report_[0-9][0-9].pdf¶echo *.log
+output: All text files, data files with a single character in the place of the question mark, reports with two digits in the name, and the list of log files printed by echo.
+explanation: The star matches any number of characters, the question mark matches exactly one, and square brackets match one character from a set or range. The shell expands the pattern before the command starts, so the command sees the full list of names. Curly braces such as {a,b} are a related feature called brace expansion. If nothing matches, Bash passes the pattern unchanged.
+simple_explain: Use star for anything, question mark for one character, and brackets for a set. The shell turns the pattern into real file names first.
+analogy: It is like a blank card in a card game that can stand for any card.
+syntax: * ? [abc] [a-z]
+anatomy: * = any characters | ? = one character | [..] = one from a set | {a,b} = brace expansion
+example_1: rm *.tmp
+example_2: cp img_?.png backup/
+example_3: ls file{1,2,3}.txt
+variation: ls [!a]*   // names not starting with a¶ls **/*.js   // recursive in shells with globstar on
+used_with: ls, cp, rm, find
+related: find, quoting, xargs
+alternatives: find for recursive searches
+where_used: Bulk actions | Scripts | Logs and exports
+mini_conversation: A: I need to delete all temp files in this folder. | B: Run echo *.tmp first to check, then rm *.tmp.
+misconception: ✗ The command itself expands wildcards → ✓ The shell expands wildcards before the command starts, and quoting stops it
+confused_with: Wildcards vs regular expressions: wildcards match file names in the shell, regular expressions match text in tools like grep.
+avoid: Do not run rm * without checking what it expands to.
+wrong_code: ls *.txt.
+right_code: ls *.txt
+memory_trick: Star is many, question mark is one.
+real_project: Archiving all monthly CSV files with one pattern.
+real_interview: An interviewer may ask: Who expands a wildcard, the shell or the command?
+real_daily: It is like a blank card that can stand for any card.
+mcq_question: Which wildcard stands for any single character, whatever it is?
+mcq_options: A) Square brackets B) Curly braces C) The asterisk D) The question mark
+mcq_answer: D
+mcq_why: The question mark stands for exactly one character.
+fill_blank: The ____ wildcard matches any number of characters → *
+hindi_to_task: List all files that start with report and end with .pdf.
+task_answer: ls report*.pdf
+own_task: Write patterns that match three different groups of files in a test folder.
+practice_question: What happens to an unquoted pattern before the command runs?
+practice_answer: The shell expands it into the list of matching file names.
+
+@LNX-015
+type: code56
+topic: 02 Files and folders
+level: Intermediate
+term: Hard links and symbolic links
+cue: How do you make a second name that points to the same file, and a shortcut that points to a path?
+kind: Command
+frequency: Medium
+importance: 4
+origin: Sometimes one file should appear in two places, and Unix offers two ways: a second name for the same data, and a shortcut file that stores a path.
+pro_tip: Symbolic links are the common choice, for example to switch a current release folder to a new version.
+memory_story: A symbolic link is a signpost pointing at a place, and a hard link is a second door into the same room.
+visual: A shortcut arrow beside a file, and two names sharing one block of data.
+emotion: The convenience of one file available in many places.
+meaning: ln -s creates a symbolic link that stores a path, and ln creates a hard link, a second name for the same data.
+code: ln -s /var/www/releases/v2 /var/www/current¶ls -l /var/www¶ln original.txt hardcopy.txt
+output: The link current points to releases/v2, the listing shows current with an arrow to its target, and hardcopy.txt becomes another name for the same data as original.txt.
+explanation: A symbolic link is a small file containing a path, so it can point to folders and to other file systems, and it breaks if the target is deleted. A hard link is another directory entry for the same data, so the content stays until all names are removed, but it cannot cross file systems or point to folders. ls -l shows symbolic links with an arrow.
+simple_explain: Use ln -s to make a shortcut to a file or folder. A hard link is a second name for the same file, and is less common.
+analogy: A symbolic link is a signpost pointing at a place, and a hard link is a second door into the same room.
+syntax: ln -s target linkname  |  ln target linkname
+anatomy: -s = symbolic link | target = what it points to | linkname = the new name
+example_1: ln -s /opt/app/v3 /opt/app/current
+example_2: ln -s ~/projects/site /var/www/site
+example_3: ln data.csv data_backup_name.csv
+variation: ln -sfn newtarget current   // replace an existing link¶readlink current   // show where a link points
+used_with: ls -l, deployment, readlink
+related: file system layout, permissions, deployment
+alternatives: Copying the file
+where_used: Release folders | Config sharing | Shortcuts
+mini_conversation: A: How do we switch the live site to the new release? | B: Point the current link to the new release folder with ln -sfn.
+misconception: ✗ A symbolic link and a hard link behave the same → ✓ A symbolic link stores a path and can break, a hard link is another name for the same data
+confused_with: Symbolic vs hard link: symbolic stores a path, hard shares the same data.
+avoid: Do not forget that a symbolic link breaks if its target is removed or moved.
+wrong_code: ln /var/www/releases/v2 /var/www/current
+right_code: ln -s /var/www/releases/v2 /var/www/current
+memory_trick: s for signpost, a symbolic link.
+real_project: Switching a current link to a new release folder during deployment.
+real_interview: An interviewer may ask: What is the difference between a hard link and a symbolic link?
+real_daily: It is like a signpost versus a second door into the same room.
+mcq_question: Which flag creates a symbolic link?
+mcq_options: A) -h B) -s C) -l D) -r
+mcq_answer: B
+mcq_why: ln -s makes a symbolic link.
+fill_blank: A symbolic link stores the ____ of its target → path
+hindi_to_task: Create a symbolic link named current to the folder releases/v5.
+task_answer: ln -s releases/v5 current
+own_task: Create a link, show it with ls -l, then delete the target and observe what happens.
+practice_question: Which command shows where a symbolic link points?
+practice_answer: readlink linkname (or ls -l)

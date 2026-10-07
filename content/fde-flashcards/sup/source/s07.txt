@@ -1,0 +1,237 @@
+
+@SUP-040
+type: code56
+topic: 07 Realtime and functions
+level: Intermediate
+term: Realtime (Postgres changes)
+cue: How can your app receive a message the moment a row is inserted, updated or deleted in a table?
+kind: JavaScript method
+frequency: High
+importance: 4
+origin: Apps such as chats and dashboards need to update without refreshing, so Supabase streams database changes to subscribed clients over a websocket.
+pro_tip: Enable realtime for the table first, and remember RLS still decides which changes each user receives.
+memory_story: Realtime is a doorbell wired to the table that rings whenever something changes.
+visual: A table change sending a signal to open browser windows.
+emotion: The delight of seeing data update live on screen.
+meaning: A channel subscribed to postgres_changes calls your function whenever matching rows change.
+code: const channel = supabase¶  .channel("todos-changes")¶  .on("postgres_changes", { event: "INSERT", schema: "public", table: "todos" },¶    (payload) => console.log("New todo:", payload.new))¶  .subscribe();
+output: Each time a todo is inserted, the console prints New todo with the new row.
+explanation: The table must be included in the supabase_realtime publication, which you can enable in the dashboard. The event can be INSERT, UPDATE, DELETE or a star for all. Row Level Security applies to what each subscriber receives. Remove the channel when the component unmounts, with removeChannel.
+simple_explain: Turn on realtime for the table, create a channel, listen for changes, and subscribe. Remember to remove the channel when you no longer need it.
+analogy: It is like a doorbell wired to the table that rings whenever something changes.
+syntax: supabase.channel(name).on("postgres_changes", filter, callback).subscribe()
+anatomy: channel = a named connection | on = listen for changes | filter = event, schema, table | subscribe = start
+example_1: event: "INSERT", schema: "public", table: "todos"
+example_2: event: "*", schema: "public", table: "messages"
+example_3: supabase.removeChannel(channel)
+variation: filter: "room_id=eq.5"   // only changes for one room
+used_with: websockets, publication, RLS, removeChannel
+related: Broadcast and Presence, Row Level Security, triggers
+alternatives: Polling the table on a timer
+where_used: Chat | Live dashboards | Collaborative apps
+mini_conversation: A: New messages do not show until I refresh. | B: Subscribe to INSERT changes on the messages table.
+misconception: ✗ Realtime works on every table automatically → ✓ A table must be added to the realtime publication, and RLS still limits what each user receives
+confused_with: Realtime vs polling: realtime pushes changes as they happen, polling asks repeatedly.
+avoid: Do not forget to remove channels when leaving a page.
+wrong_code: supabase.on("postgres_changes", {}, callback).subscribe();
+right_code: supabase.channel("todos-changes").on("postgres_changes", { event: "INSERT", schema: "public", table: "todos" }, callback).subscribe();
+memory_trick: Make a channel, listen, then subscribe.
+real_project: Showing new chat messages live as other users send them.
+real_interview: An interviewer may ask: How does Supabase Realtime deliver database changes?
+real_daily: It is like a doorbell wired to the table.
+mcq_question: What must you do for a table before listening to its changes?
+mcq_options: A) Rename it B) Make a bucket C) Add it to the realtime publication D) Delete its rows
+mcq_answer: C
+mcq_why: Only tables in the publication send change events.
+fill_blank: Stop listening with supabase.____(channel) → removeChannel
+hindi_to_task: Listen to every change on the messages table.
+task_answer: supabase.channel("m").on("postgres_changes", { event: "*", schema: "public", table: "messages" }, (p) => console.log(p)).subscribe();
+own_task: Write a subscription that shows new comments live.
+practice_question: Which events can you listen for?
+practice_answer: INSERT, UPDATE, DELETE, or all of them.
+
+@SUP-041
+type: topic56
+topic: 07 Realtime and functions
+level: Intermediate
+term: Broadcast and Presence
+cue: Which two Realtime features send short messages between clients and track who is currently online?
+category: Realtime feature
+frequency: Medium
+importance: 3
+origin: Some live features, such as typing indicators and cursors, do not belong in the database, so Realtime offers lightweight messages and shared state between connected clients.
+pro_tip: Use Broadcast for ephemeral events and Presence for who-is-here state, and keep the database for data you must keep.
+memory_story: Broadcast is shouting across a room, and Presence is the list of who is currently standing in it.
+visual: Messages flying between browser windows and a list of online names.
+emotion: The fun of seeing other people's cursors move live.
+definition: Broadcast sends low-latency messages between clients subscribed to a channel, and Presence keeps a shared record of which clients are online with their state.
+explanation: Both work through a channel. With Broadcast, a client sends an event and others receive it, with nothing stored in the database. With Presence, each client tracks its own state, such as a name or status, and everyone can see the combined list, which updates when people join or leave.
+simple_explain: Use Broadcast for things like typing or cursor movements, and Presence for an online users list. Neither needs a table.
+analogy: Broadcast is shouting across a room, and Presence is the list of who is standing in it.
+formula_rule: Broadcast = messages between clients. Presence = who is online and their state.
+example_1: A typing indicator sent through Broadcast.
+example_2: A list of users in a room shown with Presence.
+example_3: Live cursors in a shared whiteboard.
+related: Realtime Postgres changes, channels, websockets
+word_family: channel, broadcast, presence, track, sync
+where_used: Collaboration tools | Games | Live classrooms
+mini_conversation: A: How do I show who is online in this class? | B: Use Presence on the class channel.
+misconception: ✗ Broadcast messages are saved in the database → ✓ Broadcast messages are ephemeral and are not stored unless you save them yourself
+contrast: Broadcast vs Postgres changes: Broadcast sends client messages, Postgres changes stream database row changes.
+avoid: Do not rely on Broadcast for data that must be kept.
+memory_trick: Broadcast shouts and presence keeps a list.
+real_project: Showing which students are currently in a live practice room.
+real_interview: An interviewer may ask: What is the difference between Broadcast and Presence?
+real_daily: It is like shouting across a room and keeping a list of who is in it.
+mcq_question: Which feature shows a list of online users?
+mcq_options: A) Broadcast B) Presence C) Auth D) Storage
+mcq_answer: B
+mcq_why: Presence tracks who is connected and their state.
+fill_blank: Short-lived messages between clients use ____ → Broadcast
+apply: How would you show typing indicators? → Send them through Broadcast on a channel
+explain_task: Explain Broadcast and Presence in three lines.
+own_task: List two features of your app that need Presence.
+
+@SUP-042
+type: code56
+topic: 07 Realtime and functions
+level: Advanced
+term: Edge Functions
+cue: Which Supabase feature runs your own TypeScript server code close to users, such as for secrets or third-party calls?
+kind: Server-side function
+frequency: High
+importance: 4
+origin: Some work cannot happen in the browser, such as using secret keys or receiving webhooks, so Supabase lets you deploy small server-side functions without managing servers.
+pro_tip: Keep secrets in function secrets and call third-party APIs from here, never from the browser.
+memory_story: Picture a tiny kitchen beside the dining room that cooks the dishes guests must not prepare themselves.
+visual: A small function box between the browser and the outside world.
+emotion: The relief of server logic with no server to manage.
+meaning: An Edge Function is a small TypeScript function that runs on Deno on Supabase's infrastructure and is called over HTTP.
+code: Deno.serve(async (req) => {¶  const { name } = await req.json();¶  return new Response(JSON.stringify({ message: `Hello ${name}` }), {¶    headers: { "Content-Type": "application/json" },¶  });¶});
+output: A call with the body {"name": "Asha"} returns {"message": "Hello Asha"}.
+explanation: You write the function in your project's supabase/functions folder, and deploy it with supabase functions deploy name. Secrets are set with the CLI and read through Deno.env. From the client you call it with supabase.functions.invoke, which also forwards the user's token. Typical uses are calling payment or email providers, receiving webhooks and running scheduled jobs.
+simple_explain: Write a function, deploy it, and call it from your app. Use it for anything that needs secrets or must run on the server.
+analogy: It is like a small kitchen beside the dining room for tasks guests must not do themselves.
+syntax: supabase.functions.invoke("name", { body })
+anatomy: Deno.serve = handle requests | invoke = call from the client | secrets = set with the CLI
+example_1: await supabase.functions.invoke("hello", { body: { name: "Asha" } });
+example_2: A function that calls an email provider with a secret key.
+example_3: A function that receives a payment webhook.
+variation: supabase functions deploy hello   // publish the function¶supabase secrets set EMAIL_KEY=...   // store a secret
+used_with: Deno, secrets, CLI, webhooks
+related: webhooks, database functions, environment variables
+alternatives: Your own server or another serverless platform
+where_used: Third-party API calls | Webhook receivers | Scheduled jobs
+mini_conversation: A: Where should the email API key live? | B: In an edge function secret, called from the app through the function.
+misconception: ✗ Edge Functions are the same as database functions → ✓ Edge Functions run TypeScript outside the database, while database functions run inside Postgres
+confused_with: Edge Function vs database function: one runs your TypeScript on Deno, the other runs SQL inside Postgres.
+avoid: Do not put secret keys in front-end code, use a function.
+wrong_code: const key = "my-email-secret"; // inside browser code
+right_code: const key = Deno.env.get("EMAIL_KEY"); // inside an edge function
+memory_trick: Secrets stay inside the function.
+real_project: Sending a welcome email from an edge function after signup.
+real_interview: An interviewer may ask: When would you use an Edge Function?
+real_daily: It is like a small kitchen next to the dining room.
+mcq_question: Which runtime do Edge Functions use?
+mcq_options: A) COBOL B) Flash C) Excel D) Deno
+mcq_answer: D
+mcq_why: Supabase Edge Functions run on Deno.
+fill_blank: You call a function from the client with supabase.functions.____ → invoke
+hindi_to_task: Call a function named hello with the body name set to Ravi.
+task_answer: await supabase.functions.invoke("hello", { body: { name: "Ravi" } });
+own_task: Write the steps to deploy a function and set a secret for it.
+practice_question: How do you publish a function?
+practice_answer: supabase functions deploy <name>
+
+@SUP-043
+type: code56
+topic: 07 Realtime and functions
+level: Advanced
+term: Database functions and triggers
+cue: Which two Postgres features let the database run code automatically when a row is inserted, such as creating a profile for each new user?
+kind: SQL concept
+frequency: High
+importance: 4
+origin: Some rules must always happen whenever data changes, whatever the app does, so Postgres lets you attach functions to table events through triggers.
+pro_tip: Use a trigger on auth.users to create a profile row automatically for each new sign-up.
+memory_story: A trigger is a tripwire, and the function is the alarm it sets off.
+visual: A new row appearing and a second row being created by itself.
+emotion: The comfort of rules that never get forgotten.
+meaning: A trigger runs a function automatically before or after an insert, update or delete on a table.
+code: create function public.handle_new_user() returns trigger¶language plpgsql security definer set search_path = '' as $$¶begin¶  insert into public.profiles (id) values (new.id);¶  return new;¶end;¶$$;¶create trigger on_auth_user_created¶  after insert on auth.users¶  for each row execute function public.handle_new_user();
+output: Each new user in auth.users automatically gets a matching row in public.profiles.
+explanation: The function returns trigger and can read the new row through new. It is security definer so it can write to your table, and setting search_path avoids hijacking risks. The trigger says when to run it, such as after insert, and for each row. Triggers work whatever client changed the data, so rules cannot be skipped.
+simple_explain: Write a function, then attach it with a trigger to a table event. From then on the database runs it every time the event occurs.
+analogy: It is like a tripwire that sets off an alarm automatically.
+syntax: create trigger name after insert on table for each row execute function fn();
+anatomy: function = the code to run | trigger = when to run it | new = the row that was added
+example_1: create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
+example_2: A trigger that sets updated_at before each update.
+example_3: A trigger that writes a row into an audit log after each delete.
+variation: before update   // run before the change¶for each statement   // once per statement, not per row
+used_with: plpgsql, security definer, auth.users, profiles
+related: RPC, Supabase Auth, database webhooks
+alternatives: Doing the same step in application code
+where_used: Profile creation | Audit logs | Timestamps
+mini_conversation: A: How do I create a profile for every new user? | B: Add a trigger on auth.users that inserts into profiles.
+misconception: ✗ Triggers only run when my app code calls them → ✓ Triggers run inside the database whenever the event happens, whichever client caused it
+confused_with: Function vs trigger: a function holds the code, a trigger decides when it runs.
+avoid: Do not write security definer functions without setting the search_path.
+wrong_code: create trigger t on auth.users execute function public.handle_new_user();
+right_code: create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
+memory_trick: Function holds the code, trigger fires it.
+real_project: Creating a profile row for each learner at sign-up.
+real_interview: An interviewer may ask: What is a trigger in Postgres?
+real_daily: It is like a tripwire that sets off an alarm.
+mcq_question: What does a trigger do?
+mcq_options: A) Creates a bucket B) Renames a column C) Runs a function automatically on a table event D) Sends an email directly
+mcq_answer: C
+mcq_why: A trigger executes a function when a table event occurs.
+fill_blank: Inside a row trigger, the row that was just added is available as ____ → new
+hindi_to_task: Name the clause that runs a trigger after a row is inserted.
+task_answer: after insert on table_name for each row execute function fn();
+own_task: Write a trigger plan that updates updated_at on every change.
+practice_question: What does security definer do for a function?
+practice_answer: It runs the function with the owner's rights instead of the caller's.
+
+@SUP-044
+type: topic56
+topic: 07 Realtime and functions
+level: Advanced
+term: Database webhooks
+cue: Which feature sends an HTTP request to a URL automatically when a table row is inserted, updated or deleted?
+category: Integration feature
+frequency: Medium
+importance: 3
+origin: Other systems often need to know when data changes, so Supabase can call a URL whenever a table event occurs, built on triggers.
+pro_tip: Point a database webhook at an Edge Function, and verify the request in that function.
+memory_story: A database webhook is a doorbell that rings another system when your data changes.
+visual: A row change sending an HTTP request with a JSON body to a URL.
+emotion: The ease of connecting data changes to other tools.
+definition: A database webhook is a trigger-based feature that sends an HTTP request containing the changed row to a URL when a chosen table event happens.
+explanation: You configure the table, the events and the destination in the dashboard. The request body carries the event type, the table, the new record and the old record where relevant. It is an easy way to start an email, a notification or a sync after data changes. Treat the receiving URL like any webhook endpoint and verify the call.
+simple_explain: Choose a table and an event, give a URL, and Supabase calls it with the row data whenever the event happens.
+analogy: It is like a doorbell that rings another system when your data changes.
+formula_rule: Table event → HTTP POST with the row → your function or URL
+example_1: Calling an Edge Function after each new order is inserted.
+example_2: Notifying a chat tool when a support ticket is created.
+example_3: Syncing a deleted record to another system.
+related: webhooks, Edge Functions, triggers
+word_family: webhook, trigger, payload, record, event
+where_used: Notifications | Syncs | Automations
+mini_conversation: A: How do we send an email when an order is created? | B: Add a database webhook on the orders table that calls an edge function.
+misconception: ✗ A database webhook is the same as the realtime feature → ✓ Realtime pushes changes to subscribed clients, while a database webhook calls a URL from the server side
+contrast: Database webhook vs Realtime: a webhook calls a URL on the server, Realtime pushes to connected clients.
+avoid: Do not leave the receiving URL unverified.
+memory_trick: A data change calls a URL.
+real_project: Emailing a coach when a student submits a recording.
+real_interview: An interviewer may ask: How would you react to a new row with server code?
+real_daily: It is like a doorbell that rings another system.
+mcq_question: What does a database webhook send?
+mcq_options: A) An HTTP request about a row change B) A table C) A password D) A file
+mcq_answer: A
+mcq_why: It calls a URL with the details of the change.
+fill_blank: A database webhook is built on a ____ → trigger
+apply: How do you send an email when a row is inserted? → Add a database webhook that calls an Edge Function
+explain_task: Explain database webhooks in three lines.
+own_task: Write two events in your app that deserve a database webhook.

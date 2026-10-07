@@ -1,0 +1,420 @@
+deck.title: Kubernetes – Beginner to Advanced Flashcards
+deck.subject: Kubernetes
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: yaml
+type: code56
+
+@K8S-001
+type: topic56
+topic: 01 Architecture
+level: Beginner
+term: Why Kubernetes
+cue: Which platform runs and manages many containers across many machines for you?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Running a few containers by hand is easy, but running hundreds across servers needs automatic scheduling, healing and scaling, so Kubernetes was built.
+pro_tip: Describe the state you want, and let Kubernetes keep it true.
+memory_story: Kubernetes is the harbour master who places every container ship and replaces any that sinks.
+visual: A cluster of machines with containers moved around automatically.
+emotion: The relief of apps that restart and scale without midnight calls.
+definition: Kubernetes is an open-source container orchestration platform that schedules containers onto machines, keeps the desired number running, handles networking and storage, and updates apps gradually.
+explanation: You declare what you want, such as three copies of a web app, and controllers constantly compare reality with that wish and fix differences. If a machine dies, the containers are started elsewhere. It adds service discovery, rolling updates and autoscaling. It also adds complexity, so small projects may not need it.
+simple_explain: You say what should run, and Kubernetes keeps it running and healthy across machines.
+analogy: Kubernetes is the harbour master who places every container ship and replaces any that sinks.
+formula_rule: Desired state declared, controllers keep reality equal to it.
+example_1: Asking for three copies of an API and getting them restarted when one crashes.
+example_2: A rolling update replacing old pods with new ones.
+example_3: Scaling out when traffic rises.
+related: control plane, pods, Deployments, managed offerings
+word_family: orchestration, cluster, desired state, controller, scheduler
+where_used: Production platforms | Microservices | Customer clusters
+mini_conversation: A: A server died overnight, was the app down? | B: No, Kubernetes restarted its pods on other nodes.
+misconception: ✗ Every project should use Kubernetes → ✓ It suits many services at scale, and simpler options fit small apps
+contrast: Docker vs Kubernetes: Docker runs containers on one machine, Kubernetes manages them across many.
+avoid: Do not adopt Kubernetes for one small app without a reason.
+memory_trick: Declare the state, controllers make it true.
+real_project: Moving services to Kubernetes gave a customer automatic restarts and rolling updates.
+real_interview: An interviewer may ask: What problem does Kubernetes solve?
+real_daily: It is like a harbour master for container ships.
+mcq_question: What does Kubernetes keep true?
+mcq_options: A) The logs B) The price C) The declared desired state D) The images
+mcq_answer: C
+mcq_why: Controllers reconcile reality with the declaration.
+fill_blank: Kubernetes works from a declared ____ state → desired
+apply: A team has hundreds of containers over many servers. What do they need? → An orchestrator such as Kubernetes
+explain_task: Explain Kubernetes in three lines.
+own_task: List two reasons to choose Kubernetes and two to avoid it.
+
+@K8S-002
+type: topic56
+topic: 01 Architecture
+level: Intermediate
+term: The control plane
+cue: Which components make the decisions and keep the cluster state?
+category: Core concept
+frequency: High
+importance: 5
+origin: A cluster needs a brain that stores the desired state, makes scheduling choices and exposes an interface, so the control plane was separated from the machines that run work.
+pro_tip: When the API server is unreachable, nothing can change, but running pods keep running.
+memory_story: The control plane is the head office, and the nodes are branch offices doing the actual work.
+visual: A group of components in the middle managing worker nodes around it.
+emotion: The understanding of what happens after kubectl apply.
+definition: The control plane consists of the API server, etcd, the scheduler and the controller manager, which store state, accept requests, place pods on nodes and run controllers.
+explanation: The API server is the front door for all requests. etcd is the consistent store of cluster data. The scheduler picks a node for each new pod based on resources and rules. The controller manager runs loops, such as the one that keeps the right number of replicas. Managed services run the control plane for you.
+simple_explain: The API server takes requests, etcd stores state, the scheduler chooses nodes and controllers fix differences.
+analogy: The control plane is the head office, and nodes are branch offices doing the work.
+formula_rule: API server + etcd + scheduler + controllers = the brain.
+example_1: A new pod accepted by the API server and placed by the scheduler.
+example_2: etcd holding every object definition.
+example_3: A controller creating pods to match the replica count.
+related: nodes, kubectl, managed offerings, Deployments
+word_family: API server, etcd, scheduler, controller manager, reconciliation
+where_used: Architecture talks | Troubleshooting | Cloud services
+mini_conversation: A: The API server is down, did our app stop? | B: No, running pods continue, but we cannot change anything.
+misconception: ✗ The control plane runs your application containers → ✓ Your workloads run on worker nodes
+contrast: Control plane vs node: the control plane decides, nodes run containers.
+avoid: Do not lose etcd without backups.
+memory_trick: API takes, etcd keeps, scheduler places, controllers fix.
+real_project: Understanding the control plane helped explain why deployments paused during an API outage.
+real_interview: An interviewer may ask: What does the scheduler do?
+real_daily: It is like a head office directing branches.
+mcq_question: Which component stores cluster state?
+mcq_options: A) kube-proxy B) The kubelet C) The container runtime D) etcd
+mcq_answer: D
+mcq_why: etcd is the consistent key-value store.
+fill_blank: The front door for every request is the ____ server → API
+apply: A new pod is not placed on any node. Which component decides placement? → The scheduler
+explain_task: Explain the control plane in three lines.
+own_task: Draw the control plane parts and say what each does.
+
+@K8S-003
+type: topic56
+topic: 01 Architecture
+level: Intermediate
+term: Nodes
+cue: Which machines run your containers, and which agents run on them?
+category: Core concept
+frequency: High
+importance: 4
+origin: Workloads must run somewhere, so worker machines run agents that start and watch pods for the control plane.
+pro_tip: Treat nodes as disposable and never store the only copy of data on one.
+memory_story: Nodes are the workers' desks where the assigned jobs are actually done.
+visual: Several machines each running a kubelet and a container runtime.
+emotion: The comfort of machines that can be replaced anytime.
+definition: A node is a worker machine, physical or virtual, that runs pods and has the kubelet agent, a container runtime and kube-proxy for networking.
+explanation: The kubelet talks to the API server, starts the containers for assigned pods and reports their health. The container runtime, such as containerd, runs the containers. Nodes have capacity in CPU and memory, which the scheduler uses. A node can be cordoned to stop new pods, or drained to move pods away before maintenance.
+simple_explain: Nodes run the pods, and the kubelet is the agent that makes it happen.
+analogy: Nodes are the workers' desks where assigned jobs are done.
+formula_rule: Node = kubelet + container runtime + kube-proxy + capacity.
+example_1: A virtual machine in a node group.
+example_2: kubectl drain before maintenance.
+example_3: A node marked NotReady after a network fault.
+related: control plane, pods, taints and tolerations, requests and limits
+word_family: node, kubelet, runtime, cordon, drain
+where_used: Cluster operations | Capacity planning | Maintenance
+mini_conversation: A: How do we patch a node without downtime? | B: Drain it so pods move elsewhere first.
+misconception: ✗ A node is the same as a pod → ✓ A node is a machine, and pods are the units that run on it
+contrast: Node vs pod: a node is the machine, a pod is a group of containers on it.
+avoid: Do not keep irreplaceable data on a node's local disk.
+memory_trick: Cordon blocks new pods, drain moves old ones.
+real_project: Draining nodes one by one allowed patching without any visible outage.
+real_interview: An interviewer may ask: What does kubectl drain do?
+real_daily: It is like workers' desks where jobs are done.
+mcq_question: Which agent starts containers on a node?
+mcq_options: A) etcd B) kubelet C) kubectl D) scheduler
+mcq_answer: B
+mcq_why: The kubelet carries out the assignments from the control plane.
+fill_blank: Moving pods off a node before maintenance is called ____ → draining
+apply: You must patch a node safely. What do you run first? → kubectl drain
+explain_task: Explain nodes in three lines.
+own_task: List what each node needs to run pods.
+
+@K8S-004
+type: code56
+topic: 01 Architecture
+level: Beginner
+term: kubectl
+cue: Which command line tool talks to a Kubernetes cluster?
+kind: Command line tool
+frequency: Very high
+importance: 5
+origin: Clusters are controlled through an API, so a command line client was built to send requests to it.
+pro_tip: Use kubectl get with -o wide or -o yaml to see more detail.
+memory_story: kubectl is the remote control for the cluster.
+visual: A terminal listing pods with their status.
+emotion: The thrill of seeing your first pod running.
+meaning: kubectl sends requests to the Kubernetes API server to create, read, update and delete resources, using a kubeconfig file for the cluster address and credentials.
+code: kubectl get pods -n shop¶kubectl get deploy,svc -o wide¶kubectl apply -f deployment.yaml¶kubectl describe pod web-7d9f -n shop¶kubectl delete -f deployment.yaml
+output: The commands list pods, show deployments and services with extra columns, create or update resources from a file, show details, and delete the resources again.
+explanation: get lists, describe shows details and events, apply sends a declarative definition, and delete removes. The -n flag picks a namespace, and -A means all namespaces. Output formats such as yaml and json help scripting. Shorthand names such as po, svc and deploy save typing. Always check the current context before changing anything.
+simple_explain: Use get, describe, apply and delete, and always check the namespace and context.
+analogy: kubectl is the remote control for the cluster.
+syntax: kubectl <verb> <resource> [name] [-n namespace] [-o format]
+anatomy: get = list | describe = detail | apply = declare | delete = remove | -n = namespace
+example_1: kubectl get pods -A
+example_2: kubectl get pod web-1 -o yaml
+example_3: kubectl api-resources
+variation: kubectl explain deployment.spec.strategy   // built-in field documentation
+used_with: contexts, namespaces, YAML files
+related: clusters and contexts, namespaces, debugging with describe and logs, Deployments
+alternatives: Dashboards | k9s | Lens
+where_used: Daily operations | Debugging | Automation
+mini_conversation: A: I applied the file but cannot see the pod. | B: Add the namespace with -n, or look in all namespaces with -A.
+misconception: ✗ kubectl apply and create are the same → ✓ apply is declarative and can update, create fails if the object already exists
+confused_with: apply vs create: apply updates to match the file, create only makes a new object.
+avoid: Do not run changes without checking the current context.
+wrong_code: kubectl get pods   # empty because the app is in another namespace
+right_code: kubectl get pods -n shop
+memory_trick: Check namespace and context before every command.
+real_project: Always printing the context in the shell prompt avoided changes on the wrong cluster.
+real_interview: An interviewer may ask: What is the difference between apply and create?
+real_daily: It is like a remote control for the cluster.
+mcq_question: Which verb shows detailed information and events for an object?
+mcq_options: A) describe B) apply C) get D) delete
+mcq_answer: A
+mcq_why: describe prints details and recent events.
+fill_blank: The flag that selects a namespace is ____ → -n
+hindi_to_task: List all pods in every namespace.
+task_answer: kubectl get pods -A
+own_task: Write the command to see the YAML of a deployment named web.
+practice_question: What does -A mean?
+practice_answer: All namespaces.
+
+@K8S-005
+type: code56
+topic: 01 Architecture
+level: Intermediate
+term: Clusters and contexts
+cue: How do you switch between several clusters and users safely?
+kind: Command line tool
+frequency: High
+importance: 5
+origin: People work with several clusters, so a kubeconfig file stores clusters, users and contexts that combine them.
+pro_tip: Show the current context in your shell prompt, and use a read-only user for production when you can.
+memory_story: A context is a saved key plus an address that tells kubectl where and as whom to act.
+visual: A list of contexts with one marked as current.
+emotion: The caution of checking before pressing enter.
+meaning: A kubeconfig file lists clusters, users and contexts, a context pairs a cluster with a user and optional namespace, and the current context decides where kubectl acts.
+code: kubectl config get-contexts¶kubectl config current-context¶kubectl config use-context staging¶kubectl config set-context --current --namespace=shop¶kubectl --context prod-readonly get pods -n shop
+output: The commands list contexts, show the active one, switch to staging, set a default namespace, and run one command against another context.
+explanation: The default file is in the .kube folder in the home directory, and the KUBECONFIG variable can point to several files. Cloud tools can write entries for managed clusters. The --context flag runs a single command against another cluster without switching. A mistaken context is a common cause of changes on production. Tools can colour the prompt per context.
+simple_explain: A context says which cluster, which user and which namespace, so check it before every change.
+analogy: A context is a saved key and address telling kubectl where and as whom to act.
+syntax: kubectl config use-context NAME | kubectl --context NAME ...
+anatomy: cluster = server address | user = credentials | context = cluster + user + namespace
+example_1: kubectl config view --minify
+example_2: export KUBECONFIG=~/.kube/a:~/.kube/b
+example_3: aws eks update-kubeconfig --name my-cluster
+variation: kubectx and kubens   // faster switching tools
+used_with: managed offerings, namespaces, RBAC
+related: kubectl, namespaces, managed offerings, RBAC
+alternatives: kubectx | per-cluster kubeconfig files
+where_used: Daily work | Multi-cluster teams | Production safety
+mini_conversation: A: I deleted pods on the wrong cluster. | B: Always check current-context before running changes.
+misconception: ✗ kubectl always talks to the cluster from the last command → ✓ It uses the current context stored in the kubeconfig file
+confused_with: Cluster vs context: a cluster is a server, a context is a cluster plus user plus namespace.
+avoid: Do not run deletes before confirming the context.
+wrong_code: kubectl delete pods --all   # wrong cluster by mistake
+right_code: kubectl config current-context && kubectl delete pods --all -n shop
+memory_trick: Look at the context before you leap.
+real_project: A prompt showing the context prevented a destructive command on production.
+real_interview: An interviewer may ask: What is a kubeconfig context?
+real_daily: It is like a saved key plus an address.
+mcq_question: What does a context combine?
+mcq_options: A) A pod and a node B) A cluster, a user and a namespace C) An image and a tag D) A volume and a claim
+mcq_answer: B
+mcq_why: It selects where and as whom to act.
+fill_blank: The environment variable that points kubectl to one or more config files is ____ → KUBECONFIG
+hindi_to_task: Switch to the context named staging.
+task_answer: kubectl config use-context staging
+own_task: Write the commands to set shop as the default namespace.
+practice_question: How do you run one command against another cluster without switching?
+practice_answer: Use the --context flag.
+
+@K8S-006
+type: topic56
+topic: 01 Architecture
+level: Beginner
+term: Managed Kubernetes offerings
+cue: Which cloud services run the Kubernetes control plane for you?
+category: Core concept
+frequency: High
+importance: 4
+origin: Running a control plane is hard work, so cloud providers offer managed services that operate it while you manage the workloads.
+pro_tip: Use a managed service unless you have a strong reason to run your own control plane.
+memory_story: A managed cluster is a rented kitchen where the owner maintains the ovens and you do the cooking.
+visual: A cloud logo owning the control plane and the customer owning worker nodes.
+emotion: The relief of not looking after etcd yourself.
+definition: Managed Kubernetes services such as Amazon EKS, Azure AKS and Google GKE run and upgrade the control plane, and offer node groups, autoscaling and cloud integrations.
+explanation: The provider handles control plane availability, patches and etcd backups. You choose versions, node sizes and add-ons, and still manage workloads, security rules and upgrades of nodes. Some offer fully serverless nodes, such as GKE Autopilot or EKS Fargate. Local tools such as kind and minikube run small clusters for learning.
+simple_explain: Pick EKS, AKS or GKE so the provider runs the control plane, and you run the apps.
+analogy: A managed cluster is a rented kitchen where the owner maintains the ovens and you do the cooking.
+formula_rule: Managed = provider runs the control plane, you run workloads.
+example_1: An EKS cluster with managed node groups.
+example_2: GKE Autopilot managing nodes automatically.
+example_3: kind running a cluster in Docker for tests.
+related: control plane, nodes, clusters and contexts, cloud basics
+word_family: EKS, AKS, GKE, kind, minikube
+where_used: Production | Learning | Customer projects
+mini_conversation: A: Do we manage etcd ourselves? | B: No, the managed service handles the control plane.
+misconception: ✗ A managed cluster needs no operations from you → ✓ You still manage workloads, security, node upgrades and cost
+contrast: Managed vs self-managed: managed hides the control plane, self-managed gives you all of it.
+avoid: Do not forget that node upgrades are still your job on most services.
+memory_trick: They run the head office, you run the apps.
+real_project: Choosing a managed service let a small team run production without a dedicated platform engineer.
+real_interview: An interviewer may ask: What do you still manage on EKS?
+real_daily: It is like a rented kitchen with maintained ovens.
+mcq_question: Which service is Google's managed Kubernetes?
+mcq_options: A) EKS B) AKS C) GKE D) ECS
+mcq_answer: C
+mcq_why: GKE is Google Kubernetes Engine.
+fill_blank: A tool that runs a small cluster inside Docker is ____ → kind
+apply: A small team wants Kubernetes without running the control plane. What do they choose? → A managed service
+explain_task: Explain managed Kubernetes in three lines.
+own_task: Compare managed and self-run clusters in a short table.
+
+@K8S-007
+type: code56
+topic: 02 Workloads
+level: Beginner
+term: Pods
+cue: Which smallest unit does Kubernetes run, holding one or more containers?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Containers that must work closely together need to share networking and storage, so Kubernetes groups them in a pod.
+pro_tip: Run one main container per pod, and add helpers only when they must share the same lifecycle.
+memory_story: A pod is a flat shared by a few roommates who use the same address and kitchen.
+visual: A box containing one main container and a helper sharing one IP.
+emotion: The clarity of seeing what actually runs.
+meaning: A pod is the smallest deployable unit, with one or more containers that share an IP address, ports and volumes, and are scheduled together on one node.
+code: apiVersion: v1¶kind: Pod¶metadata:¶  name: web¶  labels:¶    app: web¶spec:¶  containers:¶    - name: app¶      image: nginx:1.27¶      ports:¶        - containerPort: 80
+output: A pod named web runs one nginx container on port 80 with the label app web.
+explanation: Containers in one pod reach each other on localhost and share volumes. Pods are temporary, and when one dies it is not repaired, but replaced by a controller with a new name and IP. Creating bare pods is rare, as controllers such as Deployments manage them. Sidecars are helper containers in the same pod, such as log shippers.
+simple_explain: A pod wraps one or more containers that share an address, and it is disposable.
+analogy: A pod is a flat shared by a few roommates with one address and kitchen.
+syntax: apiVersion: v1 / kind: Pod / spec: containers: [...]
+anatomy: metadata = name and labels | spec.containers = what runs | image = container image
+example_1: kubectl run web --image=nginx:1.27
+example_2: kubectl get pod web -o wide
+example_3: kubectl delete pod web
+variation: initContainers: [...]   // run setup containers before the main one
+used_with: Deployments, Services, volumes
+related: ReplicaSets, Deployments, labels and selectors, probes
+alternatives: Deployments | Jobs
+where_used: Every workload | Debugging | Sidecars
+mini_conversation: A: I deleted the pod and the app lost its data. | B: Pods are disposable, so use a volume for data.
+misconception: ✗ A pod is a container → ✓ A pod can hold several containers that share networking and storage
+confused_with: Pod vs container: a pod is the wrapper, containers run inside it.
+avoid: Do not rely on a pod's IP, since it changes.
+wrong_code: kind: Pod   # created alone for production
+right_code: kind: Deployment   # manages pods for you
+memory_trick: Pods are pets that get replaced, not repaired.
+real_project: Adding a log shipping sidecar to a pod collected logs without changing the app.
+real_interview: An interviewer may ask: What is the difference between a pod and a container?
+real_daily: It is like roommates sharing a flat.
+mcq_question: What do containers in one pod share?
+mcq_options: A) Their images B) The node's disk only C) Nothing D) Network address and volumes
+mcq_answer: D
+mcq_why: Pods share an IP, ports and mounted volumes.
+fill_blank: A helper container in the same pod is called a ____ → sidecar
+hindi_to_task: Run a pod called web using the nginx image.
+task_answer: kubectl run web --image=nginx:1.27
+own_task: Write a pod with two containers sharing a volume.
+practice_question: Why not rely on a pod's IP address?
+practice_answer: A replacement pod gets a new IP.
+
+@K8S-008
+type: topic56
+topic: 02 Workloads
+level: Intermediate
+term: ReplicaSets
+cue: Which controller keeps a set number of identical pods running?
+category: Core concept
+frequency: High
+importance: 4
+origin: One pod is not enough for reliability, so a controller was added that counts pods and creates or deletes them to match the wanted number.
+pro_tip: You rarely create ReplicaSets yourself, because Deployments manage them for you.
+memory_story: A ReplicaSet is a supervisor who counts workers and calls in a replacement whenever the count drops.
+visual: A box ensuring three pods exist at all times.
+emotion: The comfort of counts that heal on their own.
+definition: A ReplicaSet ensures that a specified number of pod replicas matching its selector are running at any time, creating new ones when pods disappear.
+explanation: The ReplicaSet uses a label selector to find its pods and compares their number with the desired replicas. If a pod is deleted, a new one is created. Deployments create a new ReplicaSet for each version, which enables rolling updates and rollbacks. Pods owned by a ReplicaSet are recreated even if you delete them by hand.
+simple_explain: A ReplicaSet keeps N pods running, and Deployments use ReplicaSets under the hood.
+analogy: A ReplicaSet is a supervisor who counts workers and calls a replacement whenever the count drops.
+formula_rule: Replicas wanted = pods matching the selector.
+example_1: Three replicas of a web pod kept alive.
+example_2: A deleted pod recreated automatically.
+example_3: Two ReplicaSets during a rolling update.
+related: pods, Deployments, labels and selectors, rolling updates
+word_family: replica, selector, controller, scale, ownership
+where_used: Under every Deployment | Debugging | Scaling
+mini_conversation: A: I deleted the pod and it came back. | B: Its ReplicaSet recreated it to keep the count.
+misconception: ✗ Deleting a pod removes the workload → ✓ The controller recreates it, so delete or scale the controller
+contrast: ReplicaSet vs Deployment: the ReplicaSet keeps a count, the Deployment manages versions through ReplicaSets.
+avoid: Do not manage ReplicaSets by hand when a Deployment owns them.
+memory_trick: Delete the owner, not the pod.
+real_project: Understanding ReplicaSets explained why deleted pods kept returning after a cleanup.
+real_interview: An interviewer may ask: What does a ReplicaSet do?
+real_daily: It is like a supervisor counting workers.
+mcq_question: What does a ReplicaSet keep constant?
+mcq_options: A) The number of matching pods B) The image size C) The log level D) The node count
+mcq_answer: A
+mcq_why: It reconciles pods with the replica number.
+fill_blank: A ReplicaSet finds its pods using a label ____ → selector
+apply: A deleted pod keeps coming back. What should you delete or scale instead? → The owning controller
+explain_task: Explain ReplicaSets in three lines.
+own_task: Describe what happens when one of three replicas is deleted.
+
+@K8S-009
+type: code56
+topic: 02 Workloads
+level: Beginner
+term: Deployments
+cue: Which resource manages stateless apps with replicas, updates and rollbacks?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Teams need to run several copies and update them safely, so Deployments manage ReplicaSets and handle gradual rollouts.
+pro_tip: Change the Deployment template to roll out a new version, and never edit pods directly.
+memory_story: A Deployment is a project manager who keeps the right team size and swaps people in gradually.
+visual: A Deployment owning ReplicaSets which own pods.
+emotion: The ease of shipping a new version with one command.
+meaning: A Deployment declares a pod template and a replica count, and creates and updates ReplicaSets so the cluster moves smoothly from one version to the next.
+code: apiVersion: apps/v1¶kind: Deployment¶metadata:¶  name: web¶spec:¶  replicas: 3¶  selector:¶    matchLabels:¶      app: web¶  template:¶    metadata:¶      labels:¶        app: web¶    spec:¶      containers:¶        - name: app¶          image: acme/web:1.4.2¶          ports:¶            - containerPort: 8080
+output: Three pods of the web app run, and changing the image tag triggers a rolling update.
+explanation: The selector must match the template labels. Changing the template, such as the image, creates a new ReplicaSet and shifts pods gradually. The rollout status and history can be checked, and a rollback returns to the previous ReplicaSet. Deployments suit stateless services. Scale with the replicas field or with kubectl scale.
+simple_explain: Describe the pod template and replicas, and change the image to roll out a new version.
+analogy: A Deployment is a project manager who keeps the right team size and swaps people in gradually.
+syntax: apiVersion: apps/v1 / kind: Deployment / spec: replicas, selector, template
+anatomy: replicas = copies | selector = which pods | template = pod blueprint
+example_1: kubectl scale deployment web --replicas=5
+example_2: kubectl set image deployment/web app=acme/web:1.4.3
+example_3: kubectl rollout status deployment/web
+variation: kubectl create deployment web --image=nginx --dry-run=client -o yaml   // generate a starter file
+used_with: Services, probes, resource limits
+related: ReplicaSets, rolling updates and rollbacks, Services, probes
+alternatives: StatefulSets | Argo Rollouts
+where_used: Web services | APIs | Workers
+mini_conversation: A: How do I release the new image? | B: Change the image in the Deployment and watch the rollout.
+misconception: ✗ A Deployment runs the containers itself → ✓ It manages ReplicaSets, which manage pods
+confused_with: Deployment vs StatefulSet: Deployments suit stateless pods, StatefulSets give stable identities.
+avoid: Do not use the latest tag in Deployments.
+wrong_code: image: acme/web:latest
+right_code: image: acme/web:1.4.2
+memory_trick: Pin the tag, change the template, watch the rollout.
+real_project: A Deployment let the team roll out weekly releases with zero downtime.
+real_interview: An interviewer may ask: How does a Deployment roll out a new version?
+real_daily: It is like a manager swapping workers in gradually.
+mcq_question: What does a Deployment create to manage pods?
+mcq_options: A) Secrets B) Nodes C) ReplicaSets D) Namespaces
+mcq_answer: C
+mcq_why: Each version has its own ReplicaSet.
+fill_blank: The field that sets the number of copies is ____ → replicas
+hindi_to_task: Scale the deployment web to five copies.
+task_answer: kubectl scale deployment web --replicas=5
+own_task: Write a Deployment with two replicas and a fixed image tag.
+practice_question: Why must the selector match the template labels?
+practice_answer: Otherwise the Deployment cannot find its pods.

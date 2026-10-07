@@ -1,0 +1,363 @@
+
+@AIR-018
+type: topic56
+topic: 03 Running
+level: Intermediate
+term: Data intervals
+cue: Which idea explains what time period a DAG run is responsible for?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A daily run processes a whole day of data that has already finished, so each run is tied to an interval rather than to the moment it starts.
+pro_tip: Remember that a run starts after its interval ends.
+memory_story: A data interval is a page of a diary that can only be read after the day is over.
+visual: A timeline with an interval shaded and the run starting at its end.
+emotion: The aha moment when the run date finally makes sense.
+definition: A data interval is the time period a DAG run covers, with a start and an end, and the run is triggered at the end of that period.
+explanation: For a daily schedule, the run with logical date 1 October covers 1 October 00:00 to 2 October 00:00 and actually starts on 2 October. The values data_interval_start and data_interval_end give the period. The older name execution date confused many people. Using the interval in queries makes each run process exactly its own period. This describes interval-based timetables (the Airflow 2 default). In Airflow 3 cron schedules run at the trigger time unless you use CronDataIntervalTimetable.
+simple_explain: Each run owns a period, and it starts when that period has finished.
+analogy: A data interval is a page of a diary that can be read only after the day is over.
+formula_rule: Run starts at the interval end and processes the interval.
+example_1: The run for 1 October starting early on 2 October.
+example_2: A query using data_interval_start and data_interval_end.
+example_3: A weekly DAG covering seven days per run.
+related: schedules, templating, catchup and backfill, idempotency
+word_family: logical date, interval, execution date, period, trigger time
+where_used: Incremental loads | Reports | Backfills
+mini_conversation: A: Today's run is processing yesterday's data. | B: That is correct, since a run covers the interval that just ended.
+misconception: ✗ A run for a date processes data from that date's moment onward → ✓ It processes the interval that ended when the run started
+contrast: Logical date vs run time: the logical date is the interval start, and the run starts at the interval end.
+avoid: Do not use the current time to choose which data to process.
+memory_trick: Runs start when their period ends.
+real_project: Understanding intervals fixed an off-by-one-day bug in a daily sales load.
+real_interview: An interviewer may ask: Why does a daily DAG run for 1 October start on 2 October?
+real_daily: It is like reading a diary page after the day has ended.
+mcq_question: When does the run for the interval of 1 October start?
+mcq_options: A) After the interval ends B) During it C) Before it starts D) Never
+mcq_answer: A
+mcq_why: Airflow runs after the period is complete.
+fill_blank: The start of the period a run covers is the ____ date → logical
+apply: A daily run needs to process one full day. Which values do you use? → The data interval start and end
+explain_task: Explain data intervals in three lines.
+own_task: Write the interval of the run for 5 October with a daily schedule.
+
+@AIR-019
+type: topic56
+topic: 03 Running
+level: Intermediate
+term: Catchup and backfill
+cue: How do you run a DAG for past dates it has not processed yet?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A new DAG or a fixed bug often needs past periods processed, so Airflow can create the missed runs automatically or on request.
+pro_tip: Set catchup false for most DAGs, and run backfills deliberately.
+memory_story: Catchup is the clerk who works through the missed days automatically, and backfill is you telling the clerk which days to redo.
+visual: A timeline with missed days being filled by runs.
+emotion: The relief of recovering missed days without custom scripts.
+definition: Catchup makes the scheduler create runs for all intervals since the start date that have not run, and a backfill is a command that runs a DAG for a chosen date range.
+explanation: With catchup on and an old start date, many runs start at once, which can overload systems. Most teams turn catchup off and trigger backfills on purpose with the command line or interface. Backfills rely on idempotent tasks and logical dates. Limit parallelism with max_active_runs. Check the results before running more. Catchup defaulted to True in Airflow 2 and False in Airflow 3. The backfill command shown is Airflow 2; Airflow 3 uses airflow backfill create.
+simple_explain: Turn catchup off by default, and backfill specific ranges when you need history.
+analogy: Catchup is the clerk working through missed days automatically, and a backfill tells the clerk which days to redo.
+formula_rule: Catchup = automatic past runs. Backfill = chosen past runs.
+example_1: airflow dags backfill -s 2026-09-01 -e 2026-09-07 daily_sales
+example_2: catchup=True with an old start_date creating hundreds of runs.
+example_3: max_active_runs=2 limiting parallel backfill runs.
+related: data intervals, idempotency, DAG definition, pools and concurrency
+word_family: catchup, backfill, missed run, range, max_active_runs
+where_used: New DAGs | Bug fixes | Migrations
+mini_conversation: A: We deployed and hundreds of runs started. | B: Catchup was on with an old start date, so turn it off and backfill carefully.
+misconception: ✗ Catchup is a harmless default → ✓ It can start hundreds of runs at once and overload sources
+contrast: Catchup vs backfill: catchup is automatic, backfill is requested.
+avoid: Do not run backfills on tasks that are not idempotent.
+memory_trick: Catchup off, backfill by choice.
+real_project: Backfilling a month in small ranges recovered data without stressing the source API.
+real_interview: An interviewer may ask: What is the risk of catchup?
+real_daily: It is like a clerk working through missed days.
+mcq_question: What does catchup do?
+mcq_options: A) Sends alerts B) Creates runs for missed intervals C) Deletes old runs D) Speeds up tasks
+mcq_answer: B
+mcq_why: The scheduler fills the missing intervals.
+fill_blank: The setting that limits how many copies of one DAG are active is max_active_____ → runs
+apply: A bug fix needs last month rerun safely. What do you use? → A controlled backfill
+explain_task: Explain catchup and backfill in three lines.
+own_task: Write a backfill command for seven days of a DAG.
+
+@AIR-020
+type: code56
+topic: 03 Running
+level: Intermediate
+term: Retries and timeouts
+cue: How do you make tasks recover from temporary failures and stop when they take too long?
+kind: Airflow setting
+frequency: Very high
+importance: 5
+origin: Failures are often temporary and hangs are dangerous, so every task can retry automatically and be limited in time.
+pro_tip: Set sensible defaults for the whole DAG, and tighten them for fragile tasks.
+memory_story: Retries are second chances with a pause, and a timeout is an alarm that stops a stuck task.
+visual: A task attempt failing, waiting and trying again.
+emotion: The calm of tasks fixing themselves.
+meaning: The retries argument sets how many times a failed task is retried, retry_delay and exponential backoff set the pause, and execution_timeout stops a task that runs too long.
+code: from datetime import timedelta¶BashOperator(¶    task_id="call_api",¶    bash_command="python call_api.py --date {{ ds }}",¶    retries=3,¶    retry_delay=timedelta(minutes=5),¶    retry_exponential_backoff=True,¶    max_retry_delay=timedelta(minutes=30),¶    execution_timeout=timedelta(minutes=20),¶)
+output: A failed call is retried up to three times with growing pauses, and any attempt longer than twenty minutes is stopped.
+explanation: Without a timeout a stuck task can hold a worker slot forever. Retries only help with temporary problems and need idempotent tasks. A failure callback or email can notify after the final try. The DAG-level dagrun_timeout limits a whole run. Very long retry chains can hide real problems, so keep them modest.
+simple_explain: Add retries with a delay and a timeout to every task that talks to the outside.
+analogy: Retries are second chances with a pause, and a timeout is an alarm that stops a stuck task.
+syntax: retries=n, retry_delay=timedelta(...), execution_timeout=timedelta(...)
+anatomy: retries = attempts | retry_delay = pause | execution_timeout = limit per attempt
+example_1: default_args={"retries": 2, "retry_delay": timedelta(minutes=5)}
+example_2: dagrun_timeout=timedelta(hours=2)
+example_3: on_failure_callback=notify
+variation: retry_exponential_backoff=True   // pauses grow after each failure
+used_with: idempotency, alerts, sensors
+related: idempotency, alerts, sensors, the web UI
+alternatives: Application level retries
+where_used: API calls | Network jobs | All production tasks
+mini_conversation: A: A task has been running for two days. | B: It had no timeout, so set execution_timeout.
+misconception: ✗ Retries can fix any failing task → ✓ They fix temporary problems only, and permanent errors fail again
+confused_with: execution_timeout vs dagrun_timeout: one limits a task attempt, the other limits the whole run.
+avoid: Do not leave tasks without a timeout.
+wrong_code: BashOperator(task_id="t", bash_command="python long.py")
+right_code: BashOperator(task_id="t", bash_command="python long.py", retries=2, execution_timeout=timedelta(minutes=30))
+memory_trick: Every outside call needs retries and a timeout.
+real_project: Adding timeouts stopped a hung API call from blocking a worker slot for days.
+real_interview: An interviewer may ask: How do you stop a stuck task?
+real_daily: It is like a second chance and an alarm.
+mcq_question: Which setting stops a task that runs too long?
+mcq_options: A) owner B) tags C) retries D) execution_timeout
+mcq_answer: D
+mcq_why: It limits the time of one attempt.
+fill_blank: The setting for the pause between attempts is retry ____ → delay
+hindi_to_task: Retry a task twice with a five minute pause.
+task_answer: retries=2, retry_delay=timedelta(minutes=5)
+own_task: Set a timeout of one hour on a task and a run limit of three hours.
+practice_question: Why must retried tasks be idempotent?
+practice_answer: A repeated attempt must not duplicate data.
+
+@AIR-021
+type: code56
+topic: 03 Running
+level: Advanced
+term: Pools and concurrency
+cue: How do you limit how many tasks run at once so that systems are not overloaded?
+kind: Airflow setting
+frequency: High
+importance: 4
+origin: Parallel tasks can overload a database or an API, so Airflow offers limits at the task, DAG and system level.
+pro_tip: Create a pool for each limited resource, such as a database or an API.
+memory_story: A pool is a set of limited seats, and tasks must wait for a free seat.
+visual: Many tasks queued behind a small number of slots.
+emotion: The comfort of a protected database.
+meaning: A pool has a fixed number of slots, tasks assigned to it take one slot each, and other tasks wait, while DAG and system settings cap overall parallelism.
+code: # airflow pools set warehouse 4 "Warehouse connections"¶BashOperator(task_id="heavy_query", bash_command="python q.py", pool="warehouse", pool_slots=1)¶with DAG("x", max_active_runs=1, max_active_tasks=8, start_date=datetime(2026, 10, 1), schedule="@daily") as dag:¶    ...
+output: At most four tasks use the warehouse pool at once, the DAG has one active run, and at most eight tasks run in it.
+explanation: Parallelism has several levels: the whole installation, each DAG, each task and each pool. Pools protect shared resources across DAGs. A task can use more than one slot. Priority weights decide which waiting task gets a slot first. Sensors waiting in poke mode consume slots, so use reschedule mode.
+simple_explain: Put tasks that share a limited resource into a pool, and cap DAG parallelism.
+analogy: A pool is a set of limited seats, and tasks must wait for a free seat.
+syntax: pool="name", pool_slots=n, max_active_tasks=n
+anatomy: pool = named limit | slots = seats | max_active_runs = runs at once | priority_weight = order
+example_1: airflow pools set api 2 "API calls"
+example_2: max_active_tis_per_dag=1
+example_3: priority_weight=10
+variation: max_active_tis_per_dag=2   // limit one task across runs
+used_with: sensors, executors, backfills
+related: sensors, executors, catchup and backfill, retries and timeouts
+alternatives: Rate limiting in code
+where_used: Shared databases | Rate-limited APIs | Backfills
+mini_conversation: A: Fifty tasks hit the database at the same time. | B: Put them in a pool with a few slots.
+misconception: ✗ More parallelism always means faster runs → ✓ Too much parallelism can overload shared systems
+confused_with: Pool vs max_active_tasks: a pool limits across DAGs, max_active_tasks limits within one DAG.
+avoid: Do not let unlimited tasks hit a shared database.
+wrong_code: BashOperator(task_id="q", bash_command="python q.py")   # unlimited
+right_code: BashOperator(task_id="q", bash_command="python q.py", pool="warehouse")
+memory_trick: A limited resource needs a limited pool.
+real_project: Creating a pool for a rate-limited API stopped a backfill from being blocked by the vendor.
+real_interview: An interviewer may ask: What is an Airflow pool?
+real_daily: It is like limited seats that tasks must wait for.
+mcq_question: What does a pool limit?
+mcq_options: A) Log size B) Concurrent tasks using a resource C) Variables D) The number of DAG files
+mcq_answer: B
+mcq_why: A pool has a fixed number of slots.
+fill_blank: The number of seats in a pool is its number of ____ → slots
+hindi_to_task: Assign a task to a pool called api.
+task_answer: pool="api"
+own_task: Design pools for a database and a rate-limited API.
+practice_question: Why do poking sensors affect slots?
+practice_answer: They hold a slot while waiting.
+
+@AIR-022
+type: topic56
+topic: 03 Running
+level: Advanced
+term: Executors
+cue: Which component decides how and where Airflow tasks actually run?
+category: Core concept
+frequency: High
+importance: 4
+origin: Different installations need different ways to run tasks, from one machine to a cluster, so the executor is pluggable.
+pro_tip: Use Local for learning, Celery for steady worker fleets, and Kubernetes for isolated task pods.
+memory_story: The executor is the transport company that decides whether tasks travel by bike, bus or private taxi.
+visual: A scheduler passing tasks to workers or pods through different executors.
+emotion: The understanding of why task isolation differs between setups.
+definition: An executor is the Airflow component that runs task instances, for example on local processes, Celery workers, or Kubernetes pods, one per task.
+explanation: The LocalExecutor runs tasks as processes on the scheduler machine and suits small setups. CeleryExecutor sends tasks to long-running workers through a message broker and scales by adding workers. KubernetesExecutor starts a new pod for each task, giving isolation and resource control, with a startup cost. Choice affects dependency management and cost. The older SequentialExecutor is only for testing. SequentialExecutor was removed in Airflow 3.
+simple_explain: The executor decides where tasks run, and the choice depends on scale and isolation needs.
+analogy: The executor is the transport company that decides whether tasks go by bike, bus or private taxi.
+formula_rule: Local = simple. Celery = worker fleet. Kubernetes = pod per task.
+example_1: A small team on the LocalExecutor.
+example_2: Celery workers scaled up for the nightly peak.
+example_3: Kubernetes pods with different images per task.
+related: Airflow components, deployment options, pools and concurrency, Kubernetes
+word_family: executor, Celery, Kubernetes, worker, pod
+where_used: Platform setup | Scaling | Isolation
+mini_conversation: A: Tasks need different Python libraries. | B: Use the Kubernetes executor with an image for each task.
+misconception: ✗ The executor schedules the DAGs → ✓ The scheduler schedules, and the executor only runs tasks
+contrast: Celery vs Kubernetes executor: Celery uses long-lived workers, Kubernetes starts one pod per task.
+avoid: Do not use the Sequential executor in production.
+memory_trick: Executor runs tasks, scheduler decides when.
+real_project: Moving to the Kubernetes executor isolated conflicting library versions between teams.
+real_interview: An interviewer may ask: When would you choose the Celery executor?
+real_daily: It is like choosing bike, bus or taxi.
+mcq_question: Which executor starts a pod for each task?
+mcq_options: A) SequentialExecutor B) CeleryExecutor C) LocalExecutor D) KubernetesExecutor
+mcq_answer: D
+mcq_why: It creates one pod per task instance.
+fill_blank: Celery uses a message ____ to pass tasks to workers → broker
+apply: Tasks need isolated libraries and resources. Which executor? → The Kubernetes executor
+explain_task: Explain executors in three lines.
+own_task: Choose an executor for a small team and for a large platform.
+
+@AIR-023
+type: topic56
+topic: 03 Running
+level: Advanced
+term: Triggers and deferrable operators
+cue: How can a task wait for something without holding a worker slot?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Waiting tasks wasted worker capacity, so deferrable operators hand the waiting to a small asynchronous process called the triggerer.
+pro_tip: Prefer deferrable versions of sensors and long-running external jobs.
+memory_story: A deferrable task leaves its seat and asks a doorman to call it back when the event happens.
+visual: A task handing off its wait to a single triggerer that wakes it later.
+emotion: The relief of freeing slots during long waits.
+definition: A deferrable operator suspends itself and gives a trigger to the triggerer process, which waits asynchronously and resumes the task on a worker when the event occurs.
+explanation: Thousands of waits can share one triggerer, instead of using thousands of worker slots. Many provider operators offer a deferrable argument. The triggerer must be running, or deferred tasks never resume. Triggers are small async functions. Datasets and external triggers are different ideas, which start whole DAGs on events.
+simple_explain: Use deferrable operators so waiting does not occupy a worker slot.
+analogy: A deferrable task leaves its seat and asks a doorman to call it back when the event happens.
+formula_rule: Defer → triggerer waits → task resumes.
+example_1: S3KeySensor with deferrable true.
+example_2: A long cloud job waited on by the triggerer.
+example_3: TimeSensorAsync waiting until a time of day.
+related: sensors, pools and concurrency, executors, Airflow components
+word_family: deferrable, triggerer, async, resume, wait
+where_used: Long waits | Cloud jobs | Partner feeds
+mini_conversation: A: All workers are busy waiting for files. | B: Switch to deferrable sensors so the triggerer waits instead.
+misconception: ✗ Deferrable tasks need no extra component → ✓ They need the triggerer process to be running
+contrast: Reschedule sensor vs deferrable: reschedule polls between sleeps, deferrable waits asynchronously.
+avoid: Do not use deferrable operators without a running triggerer.
+memory_trick: Defer the wait, free the worker.
+real_project: Using deferrable sensors freed dozens of worker slots during partner delays.
+real_interview: An interviewer may ask: What does the triggerer do?
+real_daily: It is like a doorman who calls you back.
+mcq_question: Which process resumes deferred tasks?
+mcq_options: A) The web server B) The database C) The triggerer D) The browser
+mcq_answer: C
+mcq_why: It waits for events and then resumes the task.
+fill_blank: Deferrable operators hand waiting to the ____ → triggerer
+apply: Hundreds of sensors hold slots for hours. What do you switch to? → Deferrable sensors
+explain_task: Explain deferrable operators in three lines.
+own_task: List two benefits and one requirement of deferrable tasks.
+
+@AIR-024
+type: topic56
+topic: 03 Running
+level: Intermediate
+term: SLAs and deadlines
+cue: How do you track whether a DAG finishes by the time it must?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Business reports are needed by a certain time, so teams monitor deadlines and alert when a pipeline is late.
+pro_tip: Alert on the business deadline, such as data ready by seven, not only on failures.
+memory_story: A deadline alert is a clock bell that rings when the delivery is late.
+visual: A timeline with a deadline marker and a late run.
+emotion: The confidence of knowing before the boss asks.
+definition: A deadline or SLA expresses the time by which a DAG or task must complete, and Airflow can alert, using deadline features or custom checks, when a run is late.
+explanation: Older versions had an sla argument with a miss callback, which has been limited and replaced by newer deadline alerts in recent releases. Many teams add their own check, such as a task that fails or a monitoring query when data is not fresh by the deadline. Lateness can come from slow upstream tasks, queues or failures. Good alerts name the DAG and what is delayed.
+simple_explain: Define the time the data must be ready, and alert when a run is late.
+analogy: A deadline alert is a clock bell that rings when the delivery is late.
+formula_rule: Deadline + monitoring + alert with context.
+example_1: An alert if the sales DAG has not finished by seven in the morning.
+example_2: A freshness query alerting on stale data.
+example_3: A callback posting to a chat channel.
+related: alerts, retries and timeouts, data quality checks, logs
+word_family: SLA, deadline, late, freshness, callback
+where_used: Morning reports | Customer feeds | Operations
+mini_conversation: A: The dashboard was empty at eight. | B: We need a deadline alert at seven so we can react.
+misconception: ✗ If nothing failed, the pipeline was on time → ✓ A slow run can be late without ever failing
+contrast: Failure alert vs deadline alert: one fires on errors, the other on lateness.
+avoid: Do not rely on failure alerts alone.
+memory_trick: Alert on late, not only on failed.
+real_project: A seven o'clock deadline alert caught slow runs before the business day began.
+real_interview: An interviewer may ask: How do you detect a pipeline that is late but not failed?
+real_daily: It is like a clock bell for late delivery.
+mcq_question: Which problem does a deadline alert catch?
+mcq_options: A) A run that is late without failing B) A missing import C) A syntax error D) A typo
+mcq_answer: A
+mcq_why: Lateness is separate from failure.
+fill_blank: Checking that data is recent enough is a ____ check → freshness
+apply: Reports must be ready by seven. What alert do you add? → A deadline or freshness alert at seven
+explain_task: Explain SLA alerts in three lines.
+own_task: Write the message of a deadline alert.
+
+@AIR-025
+type: code56
+topic: 03 Running
+level: Advanced
+term: Dynamic task mapping
+cue: How do you create a variable number of tasks at run time from data?
+kind: Airflow code
+frequency: Medium
+importance: 4
+origin: The number of items to process is often unknown until run time, so tasks can be mapped over a list produced earlier.
+pro_tip: Keep the mapped list small enough for the scheduler, and use pools to limit parallelism.
+memory_story: Dynamic mapping is a stamping machine that makes one task copy for each item in a list.
+visual: One task fanning out into several copies, one per item.
+emotion: The satisfaction of a DAG that adapts to its input.
+meaning: The expand method creates one task instance for each item of an input list at run time, and the results can be collected by a downstream task.
+code: from airflow.decorators import task¶@task¶def list_files():¶    return ["a.csv", "b.csv", "c.csv"]¶@task¶def process(name):¶    print("processing", name)¶    return len(name)¶@task¶def summarise(sizes):¶    print(sum(sizes))¶summarise(process.expand(name=list_files()))
+output: Three process task instances run, one for each file, and summarise receives all their results.
+explanation: expand takes arguments as lists, and Airflow creates a mapped instance for each. partial sets arguments that are the same for all instances. The number of instances is known only when the upstream task finishes. The interface shows each mapped instance separately. Results can be reduced by a downstream task. Very large mappings need care. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Produce a list, then expand a task over it, and collect the results downstream.
+analogy: Dynamic mapping is a stamping machine that makes one task copy for each item in a list.
+syntax: task.expand(arg=list) | task.partial(fixed=value).expand(arg=list)
+anatomy: expand = one per item | partial = shared arguments | mapped instance = copy for one item
+example_1: process.partial(bucket="raw").expand(name=names)
+example_2: BashOperator.partial(task_id="b").expand(bash_command=["echo 1", "echo 2"])
+example_3: summarise(process.expand(name=names))
+variation: expand_kwargs([{"a": 1}, {"a": 2}])   // map over dictionaries of arguments
+used_with: TaskFlow API, pools, XCom
+related: TaskFlow API, XCom, pools and concurrency, task groups
+alternatives: Loops that create tasks at parse time
+where_used: Many files | Many tables | Partner lists
+mini_conversation: A: The number of files changes every day. | B: Use dynamic task mapping over the file list.
+misconception: ✗ Loops at the top of the DAG file are the same as mapping → ✓ A loop fixes the tasks at parse time, while mapping decides at run time
+confused_with: expand vs partial: expand varies arguments, partial fixes them.
+avoid: Do not create thousands of mapped tasks without limits.
+wrong_code: for f in os.listdir("/data"): PythonOperator(...)   # runs at parse time
+right_code: process.expand(name=list_files())
+memory_trick: Expand varies the input, partial fixes it.
+real_project: Mapping over the daily file list replaced a fragile loop that read the folder on every parse.
+real_interview: An interviewer may ask: What problem does dynamic task mapping solve?
+real_daily: It is like a stamping machine making one copy per item.
+mcq_question: Which method creates one task per input item?
+mcq_options: A) partial B) branch C) expand D) chain
+mcq_answer: C
+mcq_why: expand maps over the given lists.
+fill_blank: Arguments shared by all mapped copies are set with ____ → partial
+hindi_to_task: Run process once for each name in a list.
+task_answer: process.expand(name=names)
+own_task: Map a task over three tables and sum the row counts.
+practice_question: When is the number of mapped instances known?
+practice_answer: At run time, after the upstream task finishes.

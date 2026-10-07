@@ -1,0 +1,462 @@
+
+@OBS-025
+type: topic56
+topic: 05 Reliability Practice
+level: Intermediate
+term: SLI, SLO and SLA
+cue: Which three terms measure, target and promise service quality?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Teams needed an agreed way to say how reliable a service must be, so measurements, targets and contracts were separated.
+pro_tip: Pick SLIs that reflect what users feel, and set SLOs a little tighter than any SLA.
+memory_story: The SLI is the thermometer, the SLO is the target temperature, and the SLA is the signed promise with penalties.
+visual: A graph of a measured value against a target line and a contract line.
+emotion: The clarity of an agreed definition of good.
+definition: An SLI is a measured indicator such as the share of successful requests, an SLO is the target for that indicator over a period, and an SLA is a contract with consequences if the service falls below an agreed level.
+explanation: A typical SLI is requests that succeed within 300 ms. An SLO might say 99.9 percent over thirty days. The SLA, if any, is looser and has penalties such as credits. SLOs guide engineering decisions and alerts. Targets of one hundred percent are impossible and too costly.
+simple_explain: Measure it, set a target, and promise less than you target.
+analogy: The SLI is the thermometer, the SLO is the target temperature, and the SLA is the signed promise.
+formula_rule: SLI = measurement. SLO = target. SLA = contract.
+example_1: SLI: percent of requests answered under 300 ms.
+example_2: SLO: 99.9 percent over thirty days.
+example_3: SLA: service credits if availability drops below 99.5 percent.
+related: error budgets, alerts, percentiles, incident response
+word_family: SLI, SLO, SLA, availability, target
+where_used: Reliability work | Customer contracts | Reviews
+mini_conversation: A: What does reliable mean for this API? | B: Ninety-nine point nine percent of requests succeed under 300 ms.
+misconception: ✗ An SLO and an SLA are the same → ✓ An SLO is an internal target, an SLA is a contract with penalties
+contrast: SLO vs SLA: internal goal versus external promise.
+avoid: Do not promise one hundred percent.
+memory_trick: Measure, target, promise, in that order.
+real_project: Defining SLOs gave a customer team an objective way to decide when to pause releases.
+real_interview: An interviewer may ask: What is the difference between SLI, SLO and SLA?
+real_daily: It is like a thermometer, a target and a promise.
+mcq_question: Which one is a contract?
+mcq_options: A) SLO B) Dashboard C) SLI D) SLA
+mcq_answer: D
+mcq_why: The agreement carries consequences.
+fill_blank: The measured indicator is the ____ → SLI
+apply: A customer wants a measurable goal for availability. What do you define? → An SLO
+explain_task: Explain SLI, SLO and SLA in three lines.
+own_task: Write an SLI and an SLO for a login API.
+
+@OBS-026
+type: topic56
+topic: 05 Reliability Practice
+level: Advanced
+term: Error budgets
+cue: How much unreliability may you spend before you must slow down releases?
+category: Core concept
+frequency: High
+importance: 4
+origin: Perfect reliability blocks progress, so the gap between the target and one hundred percent becomes a budget to spend on change.
+pro_tip: Use burn rate alerts to see how fast the budget is being used.
+memory_story: An error budget is a monthly allowance you can spend on risk and must stop spending when it runs out.
+visual: A bar of budget shrinking over a month.
+emotion: The fairness of a shared rule about risk.
+definition: An error budget is the allowed amount of failure implied by an SLO, such as 0.1 percent over thirty days, used to balance feature work against reliability work.
+explanation: A 99.9 percent SLO over thirty days allows about 43 minutes of downtime. When the budget is healthy, teams can ship faster. When it is spent, effort shifts to stability. Burn rate alerts fire when the budget is consumed too quickly. It turns reliability debates into shared numbers.
+simple_explain: The budget is the allowed failure, and you slow down when it is gone.
+analogy: An error budget is a monthly allowance you can spend on risk and must stop spending when it runs out.
+formula_rule: Budget = 100 percent minus the SLO.
+example_1: 99.9 percent allows about 43 minutes a month.
+example_2: Pausing releases when the budget is spent.
+example_3: An alert at fast burn rate.
+related: SLI SLO SLA, alerts, incident response, postmortems
+word_family: budget, burn rate, allowance, SLO, downtime
+where_used: Reliability engineering | Release planning | Reviews
+mini_conversation: A: Can we ship this risky change? | B: The budget is healthy, so yes, but watch the burn rate.
+misconception: ✗ Any downtime breaks the rules → ✓ Some failure is budgeted and acceptable
+contrast: Budget vs target: the target is the goal, the budget is the allowed gap.
+avoid: Do not ignore a spent budget.
+memory_trick: When the budget is gone, fix before you ship.
+real_project: An error budget policy gave product and engineering one shared rule for release pauses.
+real_interview: An interviewer may ask: What happens when an error budget is exhausted?
+real_daily: It is like a monthly allowance for risk.
+mcq_question: What does a 99.9 percent SLO leave as budget?
+mcq_options: A) Nothing B) 10 percent C) 0.1 percent D) 99.9 percent
+mcq_answer: C
+mcq_why: The remaining share is the budget.
+fill_blank: How quickly the budget is used is the ____ rate → burn
+apply: The monthly budget is spent in week one. What should the team do? → Focus on reliability before more releases
+explain_task: Explain error budgets in three lines.
+own_task: Calculate the monthly downtime allowed by 99.95 percent.
+
+@OBS-027
+type: topic56
+topic: 05 Reliability Practice
+level: Intermediate
+term: Alert fatigue
+cue: What happens when people get too many alerts and how do you prevent it?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Noisy alerts train people to ignore them, so real incidents get missed.
+pro_tip: Review alerts after each on-call week, and delete or fix the noisy ones.
+memory_story: Alert fatigue is the boy who cried wolf, repeated until nobody comes.
+visual: A phone screen buried under a long pile of notifications.
+emotion: The weariness of being woken for nothing.
+definition: Alert fatigue is the desensitisation of responders caused by frequent, low-value or duplicated alerts, which leads to slow or missed responses.
+explanation: Causes include thresholds that are too sensitive, alerts on causes instead of symptoms and duplicate alerts for one problem. Fixes are to alert on user-facing symptoms, add durations, group related alerts, remove unactionable ones and route low urgency to tickets. Track pages per shift as a health measure.
+simple_explain: Send fewer and better alerts so people stay responsive.
+analogy: Alert fatigue is the boy who cried wolf, repeated until nobody comes.
+formula_rule: Every page must be urgent, actionable and real.
+example_1: Removing an alert that fired daily with no action.
+example_2: Grouping fifty alerts into one incident.
+example_3: Moving a warning to a daily ticket.
+related: alerts, on-call, runbooks, SLOs
+word_family: fatigue, noise, grouping, actionable, flapping
+where_used: On-call | Operations | Team health
+mini_conversation: A: I ignore the pager now, it is always noise. | B: That is alert fatigue, so let us fix the rules.
+misconception: ✗ More alerts make the system safer → ✓ Noise hides real problems
+contrast: Actionable vs noisy: actionable alerts need a person, noisy ones do not.
+avoid: Do not keep alerts nobody acts on.
+memory_trick: Every page needs a person and an action.
+real_project: Deleting noisy alerts improved response to real incidents.
+real_interview: An interviewer may ask: How do you reduce alert fatigue?
+real_daily: It is like the boy who cried wolf.
+mcq_question: Which helps reduce alert fatigue?
+mcq_options: A) Add more pages B) Alert on actionable symptoms C) Ignore reviews D) Alert on every metric
+mcq_answer: B
+mcq_why: Fewer actionable alerts keep trust.
+fill_blank: An alert that rapidly turns on and off is ____ → flapping
+apply: An alert fires daily and nobody acts. What do you do? → Remove or fix it
+explain_task: Explain alert fatigue in three lines.
+own_task: Review five alerts and decide which to keep.
+
+@OBS-028
+type: topic56
+topic: 05 Reliability Practice
+level: Intermediate
+term: On-call
+cue: How do teams share responsibility for responding to problems at any hour?
+category: Core concept
+frequency: High
+importance: 4
+origin: Services run all day, so engineers take turns being reachable to respond to incidents.
+pro_tip: Keep rotations fair, with handover notes and time off after hard shifts.
+memory_story: On-call is a fire station crew taking turns on the night shift.
+visual: A weekly rota with names and an escalation path.
+emotion: The calm of knowing someone is always responsible.
+definition: On-call is a rotation in which engineers are available to respond to pages outside normal hours, with clear escalation, tools and support.
+explanation: A good rotation has enough people, a primary and a backup, and an escalation path. Responders need access, runbooks and authority to act. Pages should be rare and meaningful, and the load measured. Handover notes pass context. Compensation and rest are part of a healthy practice.
+simple_explain: Take turns, have a backup, and give responders what they need.
+analogy: On-call is a fire station crew taking turns on the night shift.
+formula_rule: Rota + escalation + runbooks + rest.
+example_1: A weekly primary and secondary rota.
+example_2: Escalating to a manager after fifteen minutes.
+example_3: A handover note listing open issues.
+related: alerts, runbooks, incident response, alert fatigue
+word_family: rota, escalation, primary, handover, pager
+where_used: Operations | Platform teams | Customer support
+mini_conversation: A: Who gets the page tonight? | B: The primary, and the backup if there is no answer in ten minutes.
+misconception: ✗ On-call means one hero always available → ✓ A shared, fair rotation is sustainable
+contrast: Primary vs secondary: the primary responds first, the secondary backs up.
+avoid: Do not leave one person on call forever.
+memory_trick: Share the load, back up the first.
+real_project: Adding a secondary and runbooks made night pages easier to handle.
+real_interview: An interviewer may ask: How would you set up an on-call rotation?
+real_daily: It is like a fire station crew.
+mcq_question: What does escalation do?
+mcq_options: A) Moves an unanswered page to the next person B) Lowers the severity C) Stops the rota D) Deletes the alert
+mcq_answer: A
+mcq_why: It ensures someone responds.
+fill_blank: Notes passed between shifts are a ____ → handover
+apply: A page is unanswered for ten minutes. What happens? → It escalates to the secondary
+explain_task: Explain on-call in three lines.
+own_task: Design a fair weekly rota for four engineers.
+
+@OBS-029
+type: topic56
+topic: 05 Reliability Practice
+level: Intermediate
+term: Runbooks
+cue: Which documents tell a responder what to check and do for a known alert?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: At three in the morning nobody remembers details, so steps are written down in advance.
+pro_tip: Link each alert to a runbook and update it after each incident.
+memory_story: A runbook is a recipe card for a fire, kept next to the alarm.
+visual: An alert with a link to a checklist page.
+emotion: The comfort of clear steps under pressure.
+definition: A runbook is a concise, tested document that explains what an alert means, how to check impact, what to try first and whom to escalate to.
+explanation: Good runbooks start with the symptom, show quick diagnostic commands, list safe fixes and risks, and say when to escalate. They are short and kept near the code. After incidents, gaps are fixed. Steps can later be automated. Outdated runbooks are worse than none.
+simple_explain: Write the steps for each alert, keep them short, and fix them after every incident.
+analogy: A runbook is a recipe card for a fire, kept next to the alarm.
+formula_rule: Symptom, check, fix, escalate.
+example_1: A runbook for high error rate listing the first three checks.
+example_2: A command to restart a stuck worker safely.
+example_3: Contact details for the database owner.
+related: alerts, on-call, incident response, postmortems
+word_family: runbook, playbook, checklist, escalation, automation
+where_used: On-call | Operations | Support
+mini_conversation: A: What do I do about this alert? | B: Open its runbook and follow the first checks.
+misconception: ✗ Runbooks can be written once and forgotten → ✓ They must be updated after each incident
+contrast: Runbook vs postmortem: a runbook prepares for the next one, a postmortem reviews the last.
+avoid: Do not leave alerts without runbooks.
+memory_trick: Each alert links to a recipe card.
+real_project: Adding runbooks cut the time new engineers needed to handle common alerts.
+real_interview: An interviewer may ask: What belongs in a runbook?
+real_daily: It is like a recipe card kept next to the alarm.
+mcq_question: What should every alert link to?
+mcq_options: A) A login page B) A price list C) A runbook D) A poem
+mcq_answer: C
+mcq_why: Responders need steps.
+fill_blank: Another common name for a runbook is a ____ → playbook
+apply: A new alert has no steps. What do you write? → A runbook
+explain_task: Explain runbooks in three lines.
+own_task: Write a runbook for a high error rate alert.
+
+@OBS-030
+type: topic56
+topic: 05 Reliability Practice
+level: Intermediate
+term: Incident response
+cue: How do teams organise during a live outage?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Chaos during outages slows recovery, so roles and steps are agreed in advance.
+pro_tip: Fix impact first, then find the root cause later.
+memory_story: Incident response is a fire drill with clear roles and one commander.
+visual: A war room with roles for commander, scribe and communicator.
+emotion: The calm of an organised response.
+definition: Incident response is the process of detecting, triaging, mitigating, communicating and resolving a service disruption, usually with defined roles such as incident commander, operations lead and communicator.
+explanation: Steps are declare the incident, assign roles, assess impact, mitigate by rollback or failover, communicate status and then resolve. The commander coordinates and does not debug. A scribe records a timeline. Mitigation comes before root cause. Severity levels guide urgency and who is told.
+simple_explain: Declare, assign roles, restore service first, communicate, and learn after.
+analogy: Incident response is a fire drill with clear roles and one commander.
+formula_rule: Detect, assign, mitigate, communicate, resolve, review.
+example_1: Rolling back a release to restore service.
+example_2: A status update every thirty minutes.
+example_3: A scribe noting each action with time.
+related: runbooks, postmortems, status pages, on-call
+word_family: incident, commander, severity, mitigation, timeline
+where_used: Outages | Operations | Customer support
+mini_conversation: A: Should we find the root cause now? | B: First restore service, then investigate.
+misconception: ✗ The best engineer should lead and debug at once → ✓ The commander coordinates, others debug
+contrast: Mitigation vs root cause fix: mitigation restores service, the fix prevents recurrence.
+avoid: Do not debug without a clear coordinator.
+memory_trick: Restore service first, understand the cause later.
+real_project: Assigning a commander shortened a multi-team outage that had been chaotic.
+real_interview: An interviewer may ask: What do you do first in an incident?
+real_daily: It is like a fire drill.
+mcq_question: What comes before root cause analysis?
+mcq_options: A) A rewrite B) A holiday C) A new feature D) Mitigation
+mcq_answer: D
+mcq_why: Users need service restored first.
+fill_blank: The person who coordinates an incident is the incident ____ → commander
+apply: An outage started after a release. What is the fastest mitigation? → Roll back
+explain_task: Explain incident response in three lines.
+own_task: List the roles and their jobs in a major incident.
+
+@OBS-031
+type: topic56
+topic: 05 Reliability Practice
+level: Intermediate
+term: Postmortems
+cue: How do teams learn from incidents without blaming people?
+category: Core concept
+frequency: High
+importance: 5
+origin: Repeating failures wastes effort, so teams review what happened and fix the system, not the person.
+pro_tip: Focus on causes and contributing factors, and track follow-up actions to completion.
+memory_story: A postmortem is a flight recorder review that aims to improve the plane, not punish the pilot.
+visual: A timeline of events with action items.
+emotion: The relief of learning without blame.
+definition: A postmortem is a written, blameless review of an incident covering impact, timeline, causes, what went well and badly, and concrete follow-up actions.
+explanation: Blameless means treating mistakes as signs of system weaknesses. The document includes a timeline, root and contributing causes, detection and response analysis, and actions with owners and dates. It is shared widely. Fixes may include tests, alerts, automation and documentation. Actions that are never completed make the review pointless.
+simple_explain: Write what happened and why, without blame, and follow up on actions.
+analogy: A postmortem is a flight recorder review to improve the plane, not punish the pilot.
+formula_rule: Impact, timeline, causes, actions with owners.
+example_1: A review noting a missing alert as a contributing cause.
+example_2: An action to add a test, owned by one person.
+example_3: Sharing the document with the whole company.
+related: incident response, runbooks, alerts, error budgets
+word_family: postmortem, blameless, root cause, action item, timeline
+where_used: After incidents | Reliability programs | Team learning
+mini_conversation: A: Who made the mistake? | B: Let us ask how the system allowed it, not who.
+misconception: ✗ A postmortem finds someone to blame → ✓ It finds system weaknesses and fixes
+contrast: Blame vs blameless: blame hides facts, blameless invites them.
+avoid: Do not leave action items without owners.
+memory_trick: Ask how it happened, not who did it.
+real_project: Blameless reviews led to a new alert that caught the next similar failure early.
+real_interview: An interviewer may ask: What is in a blameless postmortem?
+real_daily: It is like reviewing a flight recorder.
+mcq_question: What does blameless mean?
+mcq_options: A) Blame the tool B) Focus on systems, not individuals C) No review D) Hide the facts
+mcq_answer: B
+mcq_why: People share facts more freely.
+fill_blank: Tasks created to prevent recurrence are ____ items → action
+apply: An incident exposed a missing alert. What goes in the review? → An action item with an owner to add it
+explain_task: Explain postmortems in three lines.
+own_task: Outline a postmortem for a one-hour outage.
+
+@OBS-032
+type: topic56
+topic: 05 Reliability Practice
+level: Beginner
+term: Status pages
+cue: How do you tell customers about problems and progress during an outage?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Customers who hear nothing assume the worst, so a public page gives honest updates.
+pro_tip: Post early, update on a schedule, and avoid blame or jargon.
+memory_story: A status page is a notice board outside the shop during a power cut.
+visual: A page with components and coloured status.
+emotion: The trust built by honest updates.
+definition: A status page is a public or private page that shows current service health, active incidents and updates, hosted separately from the main system.
+explanation: It lists components with states such as operational, degraded and outage. During incidents, updates follow a pattern of investigating, identified, monitoring and resolved. The page must be hosted independently so it works during an outage. Subscriptions by email or chat reach users. Honest, plain wording builds trust, and history shows reliability.
+simple_explain: Tell customers early and often, in plain words, from a separate place.
+analogy: A status page is a notice board outside the shop during a power cut.
+formula_rule: Early, regular, honest, independent.
+example_1: An update saying investigating elevated errors.
+example_2: A component marked degraded.
+example_3: A resolved note with a short summary.
+related: incident response, postmortems, SLAs, communication
+word_family: status, component, update, subscribe, degraded
+where_used: Customer communication | Incidents | SaaS
+mini_conversation: A: Customers are asking if we are down. | B: Post on the status page now and update every thirty minutes.
+misconception: ✗ Silence is better until we know the cause → ✓ Early honest updates reduce support load and build trust
+contrast: Status page vs postmortem: one is live communication, the other is later analysis.
+avoid: Do not host the status page on the same failing system.
+memory_trick: Update early, update often, stay honest.
+real_project: A status page cut support tickets during a partial outage.
+real_interview: An interviewer may ask: What should an incident update say?
+real_daily: It is like a notice board during a power cut.
+mcq_question: Why host a status page separately?
+mcq_options: A) It must work during an outage B) It is cheaper C) It looks nicer D) It is faster
+mcq_answer: A
+mcq_why: A shared outage would hide it.
+fill_blank: A component working but slowly is marked ____ → degraded
+apply: An outage starts. What do you do for customers? → Post an early status update
+explain_task: Explain status pages in three lines.
+own_task: Write the first update for a partial outage.
+
+@OBS-033
+type: topic56
+topic: 06 Cost and Quality
+level: Intermediate
+term: Cost of telemetry
+cue: Why can logs, metrics and traces become one of the biggest bills, and how do you control it?
+category: Core concept
+frequency: High
+importance: 4
+origin: Telemetry volume grows with traffic and detail, and vendors charge by volume, so costs can surprise teams.
+pro_tip: Measure cost per service and set budgets and alerts for ingestion.
+memory_story: Telemetry is like water use, and every leaky tap shows up on the bill.
+visual: A bar chart of ingestion volume by service.
+emotion: The relief of finding the biggest source of cost.
+definition: Telemetry cost is the spend on collecting, storing and querying logs, metrics and traces, driven by volume, retention, cardinality and query load.
+explanation: Reduce cost by lowering log levels, sampling, shortening retention, dropping unused metrics and labels, and aggregating before storage. Review top sources of volume regularly. Keep high-value data longer and cheap archives for the rest. Set ingestion alerts so spikes are noticed. Cost should not remove the data needed for incidents.
+simple_explain: Find the top sources, trim what nobody uses, and set limits.
+analogy: Telemetry is like water use, and every leaky tap shows up on the bill.
+formula_rule: Volume × retention × cardinality drives cost.
+example_1: Cutting a noisy debug log in production.
+example_2: Dropping a high-cardinality metric label.
+example_3: An ingestion alert for a sudden spike.
+related: log sampling, retention, cardinality, trace sampling
+word_family: ingestion, volume, budget, retention, aggregation
+where_used: Platform teams | Finance reviews | Tool choice
+mini_conversation: A: The monitoring bill doubled. | B: Check which service increased its log volume.
+misconception: ✗ Cutting all telemetry is the safe way to save money → ✓ Cut waste, but keep the signals needed for incidents
+contrast: Waste vs value: unused data is waste, incident data is value.
+avoid: Do not remove the signals needed to debug failures.
+memory_trick: Trim the waste, keep the evidence.
+real_project: Reviewing top log sources cut the monitoring bill.
+real_interview: An interviewer may ask: How would you reduce observability cost?
+real_daily: It is like fixing leaky taps.
+mcq_question: Which reduces telemetry cost?
+mcq_options: A) Logging everything forever B) Higher cardinality C) Sampling and shorter retention D) More labels
+mcq_answer: C
+mcq_why: Both reduce stored volume.
+fill_blank: Data sent into a monitoring system is called ____ → ingestion
+apply: The bill spiked. What do you check first? → The sources with the highest volume
+explain_task: Explain telemetry cost control in three lines.
+own_task: List four changes that cut telemetry cost.
+
+@OBS-034
+type: topic56
+topic: 06 Cost and Quality
+level: Advanced
+term: Log pipelines
+cue: Which processing steps clean and route logs between sources and stores?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Raw logs vary in format and value, so pipelines parse, enrich, filter and route them before storage.
+pro_tip: Do light parsing and masking in the pipeline, and keep the raw stream briefly for replay.
+memory_story: A log pipeline is a sorting line that cleans, labels and sends each parcel to the right bin.
+visual: Stages for collect, parse, enrich, filter and route.
+emotion: The tidiness of consistent logs everywhere.
+definition: A log pipeline collects logs from sources, parses them into fields, enriches them with metadata, filters or masks data, and routes them to stores or archives.
+explanation: Tools such as Fluent Bit, Vector or Logstash run these stages. Parsing turns text into fields. Enrichment adds labels like environment and version. Filters drop noise and mask secrets. Routing sends security logs to one place and application logs to another. Buffers handle bursts, and monitoring the pipeline prevents silent loss.
+simple_explain: Collect, parse, enrich, filter and route, and monitor the pipeline itself.
+analogy: A log pipeline is a sorting line that cleans, labels and sends each parcel to the right bin.
+formula_rule: Collect → parse → enrich → filter → route.
+example_1: Parsing a nginx line into fields.
+example_2: Adding the Kubernetes pod name.
+example_3: Sending audit logs to an archive.
+related: central logging, sensitive data in logs, cost of telemetry, structured logs
+word_family: Fluent Bit, Vector, parser, enrichment, routing
+where_used: Platforms | Security | Cost control
+mini_conversation: A: Logs arrive in five formats. | B: Parse them in the pipeline into one schema.
+misconception: ✗ The pipeline needs no monitoring → ✓ A broken pipeline silently loses logs
+contrast: Collector vs pipeline: the collector gathers, the pipeline also transforms and routes.
+avoid: Do not leave the pipeline unmonitored.
+memory_trick: Watch the pipe that carries your evidence.
+real_project: Masking secrets in the pipeline gave a second layer of protection against leaks.
+real_interview: An interviewer may ask: What does a log pipeline do?
+real_daily: It is like a sorting line for parcels.
+mcq_question: Which step adds metadata such as environment?
+mcq_options: A) Enrichment B) Sampling only C) Deletion D) Printing
+mcq_answer: A
+mcq_why: Enrichment attaches context fields.
+fill_blank: Sending logs to different stores by type is ____ → routing
+apply: Logs use different formats. What stage fixes this? → Parsing in the pipeline
+explain_task: Explain log pipelines in three lines.
+own_task: Design a pipeline for application and audit logs.
+
+@OBS-035
+type: topic56
+topic: 06 Cost and Quality
+level: Intermediate
+term: Testing alerts
+cue: How do you make sure alerts really fire and reach the right people?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: An untested alert may never fire when needed, so teams verify rules and notification paths on purpose.
+pro_tip: Test alerts after changes, and run regular game days.
+memory_story: Testing alerts is pressing the smoke alarm test button.
+visual: A synthetic failure triggering a notification on a phone.
+emotion: The confidence that the alarm really works.
+definition: Testing alerts means checking that rules fire for the intended conditions, do not fire for normal behaviour, and route notifications to the correct owner through working channels.
+explanation: Methods include unit tests of alert rules on recorded data, injecting a synthetic failure in staging, and sending a test notification. Check silences and routing after changes. Game days practise the whole response. Alerts on missing data catch dead exporters. Review alerts that never fired, since they may be broken.
+simple_explain: Verify the rule, the routing and the notification, and rehearse with game days.
+analogy: Testing alerts is pressing the smoke alarm test button.
+formula_rule: Rule works + routing works + people respond.
+example_1: A unit test of a rule against sample data.
+example_2: Stopping a test service to see the alert.
+example_3: A game day with a simulated outage.
+related: alerts, runbooks, on-call, health checks
+word_family: test, game day, synthetic, silence, routing
+where_used: Reliability work | Releases | Training
+mini_conversation: A: How do we know the alert still works? | B: Run a synthetic failure in staging each month.
+misconception: ✗ If an alert never fires, the system is healthy → ✓ It may be broken or misrouted
+contrast: Unit test vs game day: one tests rules, the other tests the people and process.
+avoid: Do not assume alert routing survives every change.
+memory_trick: Test the alarm before the fire.
+real_project: A monthly synthetic test found a dead notification channel before a real outage.
+real_interview: An interviewer may ask: How do you verify alerting works?
+real_daily: It is like pressing the smoke alarm test button.
+mcq_question: What does a game day practise?
+mcq_options: A) Naming servers B) The whole response to a simulated incident C) Writing code D) Buying tools
+mcq_answer: B
+mcq_why: It tests people, alerts and process together.
+fill_blank: A fake failure used for testing is ____ → synthetic
+apply: An alert has never fired in a year. What do you do? → Test whether it still works
+explain_task: Explain how to test alerts in three lines.
+own_task: Plan a game day for a database outage.

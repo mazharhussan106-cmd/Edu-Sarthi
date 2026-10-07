@@ -1,0 +1,639 @@
+
+@EVL-016
+type: topic56
+topic: 03 RAG and Agents
+level: Intermediate
+term: Retrieval metrics
+cue: Which measures show whether a RAG system retrieves the right evidence?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Answer quality depends on retrieval, so retrieval is scored with labelled relevant passages.
+pro_tip: Report recall at k and a ranking metric, and read the failing questions.
+memory_story: Retrieval metrics are the quiz results of the librarian, scored on finding the right books.
+visual: A table of questions with the rank of the first relevant chunk.
+emotion: The satisfaction of seeing recall rise.
+definition: Retrieval metrics include recall at k, precision at k, mean reciprocal rank, hit rate and nDCG, computed against labelled relevant chunks for a set of questions.
+explanation: Recall at k asks whether the needed evidence is in the top k. MRR rewards ranking the first relevant result high. nDCG weighs graded relevance and position. Context precision and recall in RAG frameworks apply similar ideas to the passages actually put in the prompt. Metrics only work with trustworthy labels.
+simple_explain: Label relevant chunks, then measure recall at k and ranking quality.
+analogy: Retrieval metrics are the quiz results of the librarian.
+formula_rule: Recall at k, MRR and nDCG against labelled chunks.
+example_1: Recall at 5 of 0.82.
+example_2: MRR of 0.6, meaning the first relevant chunk is usually in the top two.
+example_3: A failing question list for review.
+related: precision and recall, evaluating retrieval in RAG, faithfulness, test sets
+word_family: recall at k, MRR, nDCG, hit rate, relevance
+where_used: RAG tuning | Release gates | Experiments
+mini_conversation: A: The answer is wrong, is it retrieval? | B: Check whether the relevant chunk was in the top k.
+misconception: ✗ Good answer scores prove good retrieval → ✓ A strong model can hide weak retrieval on easy questions
+contrast: Hit rate vs MRR: found anywhere versus how high it ranked.
+avoid: Do not measure retrieval without labelled chunks.
+memory_trick: Found it, and found it early.
+real_project: Recall at five on a labelled set guided a chunking change that raised accuracy.
+real_interview: An interviewer may ask: Which metrics do you use for retrieval?
+real_daily: It is like a quiz for the librarian.
+mcq_question: Which metric rewards high ranking of the first relevant result?
+mcq_options: A) MRR B) Cost C) Latency D) Hit rate only
+mcq_answer: A
+mcq_why: It uses the rank of the first relevant item.
+fill_blank: The share of questions with at least one relevant chunk in the top k is the ____ rate at k → hit
+apply: You changed the embedding model. What do you measure? → Recall at k on the labelled set
+explain_task: Explain retrieval metrics in three lines.
+own_task: Compute recall at 3 for five questions.
+
+@EVL-017
+type: topic56
+topic: 03 RAG and Agents
+level: Advanced
+term: Faithfulness evaluation
+cue: How do you score whether answers stay within the supplied sources?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A fluent answer can add unsupported claims, so groundedness is scored claim by claim.
+pro_tip: Break answers into claims, check each against sources, and review disagreements by hand.
+memory_story: Faithfulness evaluation checks every sentence against the source pages.
+visual: Answer claims linked to supporting sentences or marked unsupported.
+emotion: The assurance that answers stay honest.
+definition: Faithfulness evaluation extracts the claims of an answer and checks whether each is entailed by the retrieved sources, reporting the share of supported claims, using judge models, entailment models or human review.
+explanation: The score is supported claims divided by all claims. It does not check correctness against the real world, since sources may be wrong. Pair it with answer relevance to ensure the question was addressed. Human spot checks calibrate automatic scores. Track it over time, and use it as a release gate.
+simple_explain: Check each claim against the sources and report the supported share.
+analogy: Faithfulness evaluation checks every sentence against the source pages.
+formula_rule: Supported claims ÷ total claims.
+example_1: Nine of ten claims supported gives 0.9.
+example_2: An invented number flagged.
+example_3: A release gate requiring 0.95.
+related: faithfulness, citations, LLM-as-judge, answer relevance
+word_family: faithfulness, groundedness, entailment, claim, support
+where_used: RAG evaluation | Monitoring | Quality gates
+mini_conversation: A: Is the answer grounded? | B: The judge found one unsupported claim out of ten.
+misconception: ✗ High faithfulness means the answer is useful → ✓ It can still miss the question or rely on wrong sources
+contrast: Faithfulness vs relevance: support versus addressing the question.
+avoid: Do not use faithfulness alone to approve answers.
+memory_trick: Supported claims over total claims.
+real_project: A faithfulness gate blocked a prompt change that increased invented details.
+real_interview: An interviewer may ask: How do you measure groundedness?
+real_daily: It is like checking each sentence against the page.
+mcq_question: How is faithfulness computed?
+mcq_options: A) Supported claims divided by all claims B) Words divided by tokens C) Length divided by pages D) Cost divided by time
+mcq_answer: A
+mcq_why: It is the share of supported claims.
+fill_blank: Another term for faithfulness is ____ → groundedness
+apply: An answer cites a number not in the sources. What does the score do? → It decreases
+explain_task: Explain faithfulness evaluation in three lines.
+own_task: Write the steps of a claim-level faithfulness check.
+
+@EVL-018
+type: topic56
+topic: 03 RAG and Agents
+level: Intermediate
+term: Answer relevance
+cue: How do you check that the answer actually addresses the question?
+category: Core concept
+frequency: High
+importance: 4
+origin: An answer can be faithful and still ignore what the user asked, so relevance is measured separately.
+pro_tip: Score relevance and faithfulness together, since either alone can mislead.
+memory_story: Answer relevance asks whether the reply answers the question that was asked.
+visual: A question and an answer with a relevance rating.
+emotion: The relief of replies that stay on topic.
+definition: Answer relevance measures how well a response addresses the user's question, covering completeness, focus and absence of unrelated content, scored by reviewers or judge models against a rubric.
+explanation: A faithful answer that talks about a different topic scores high on groundedness and low on relevance. Methods include judge ratings, comparing the question with questions regenerated from the answer, and human review. Check completeness for multi-part questions. Use with correctness when reference answers exist.
+simple_explain: Check that the answer addresses the question, fully and without drifting.
+analogy: Answer relevance asks whether the reply answers the question that was asked.
+formula_rule: On-topic + complete + focused.
+example_1: A faithful reply about shipping to a billing question.
+example_2: Half of a two-part question answered.
+example_3: A rubric scoring focus from one to four.
+related: faithfulness evaluation, rubrics, retrieval metrics, LLM-as-judge
+word_family: relevance, completeness, focus, on-topic, rubric
+where_used: RAG evaluation | Chatbots | Quality reviews
+mini_conversation: A: The answer is grounded but useless. | B: Its relevance is low, since it does not address the question.
+misconception: ✗ Faithful answers are always relevant → ✓ They can be accurate yet off-topic
+contrast: Relevance vs faithfulness: on the question versus on the sources.
+avoid: Do not rely on one metric.
+memory_trick: Grounded and on-topic, both needed.
+real_project: Adding a relevance score caught accurate but evasive answers.
+real_interview: An interviewer may ask: Why measure answer relevance separately?
+real_daily: It is like checking whether the reply answers the question.
+mcq_question: What does answer relevance measure?
+mcq_options: A) Length only B) Cost C) Whether the answer addresses the question D) Speed
+mcq_answer: C
+mcq_why: It checks focus and completeness.
+fill_blank: Covering every part of the question is ____ → completeness
+apply: An answer is accurate but off-topic. Which score is low? → Answer relevance
+explain_task: Explain answer relevance in three lines.
+own_task: Write a three-level rubric for answer relevance and score ten real answers with it.
+
+@EVL-019
+type: topic56
+topic: 03 RAG and Agents
+level: Advanced
+term: Tool-call accuracy
+cue: How do you measure whether an agent calls the right tools with the right arguments?
+category: Core concept
+frequency: High
+importance: 5
+origin: Agents act through tools, so their choices and arguments must be checked, not just their final words.
+pro_tip: Log every tool call and compare against expected calls on test tasks.
+memory_story: Tool-call accuracy checks whether the apprentice picked the right tool and used it correctly.
+visual: A table of expected and actual tool calls.
+emotion: The clarity of checking actions, not just words.
+definition: Tool-call accuracy measures whether an agent selected the correct tool, supplied valid and correct arguments, avoided unnecessary or forbidden calls and handled errors, compared with expected calls on test tasks.
+explanation: Metrics include correct tool selection rate, argument correctness, number of calls, avoided forbidden calls and recovery after errors. Some tasks have more than one valid path, so compare outcomes as well as exact calls. Use mocks for tools in tests to keep them repeatable. Review traces of failures for patterns.
+simple_explain: Compare actual tool calls with expected ones and check outcomes and errors.
+analogy: Tool-call accuracy checks whether the apprentice picked the right tool and used it correctly.
+formula_rule: Right tool + right arguments + no forbidden calls.
+example_1: The order lookup called with the correct id.
+example_2: A refund tool called when not allowed.
+example_3: A retry after a tool error.
+related: task success, tool calling, agents and loops, guardrails
+word_family: tool call, arguments, trace, mock, forbidden
+where_used: Agent evaluation | Testing | Safety reviews
+mini_conversation: A: The final answer is fine but did it call tools correctly? | B: Check the trace against expected calls.
+misconception: ✗ A good final answer proves the agent behaved correctly → ✓ It may have used wrong or risky tools on the way
+contrast: Outcome vs trace evaluation: final result versus the steps taken.
+avoid: Do not run agent tests against real systems.
+memory_trick: Check the steps, not only the answer.
+real_project: Trace checks found an agent calling a risky tool that final answers had hidden.
+real_interview: An interviewer may ask: How do you evaluate an agent?
+real_daily: It is like checking the tools an apprentice picked.
+mcq_question: What do tests use in place of real tools?
+mcq_options: A) Humans only B) Mocks C) Nothing D) Production systems
+mcq_answer: B
+mcq_why: Mocks keep tests safe and repeatable.
+fill_blank: A recorded sequence of agent steps is a ____ → trace
+apply: An agent may call forbidden tools. What do you test? → That it never calls them
+explain_task: Explain tool-call accuracy in three lines.
+own_task: Write expected tool calls for a refund request test.
+
+@EVL-020
+type: topic56
+topic: 03 RAG and Agents
+level: Advanced
+term: Task success
+cue: How do you measure whether an agent completed the goal?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Users care about outcomes, so agents are scored on whether the task was achieved, not just how they behaved.
+pro_tip: Define a checkable end state for every test task.
+memory_story: Task success is checking whether the errand was actually done.
+visual: A task with a final state check mark.
+emotion: The satisfaction of a measurable outcome.
+definition: Task success measures whether an agent achieved the defined goal, checked by comparing the final state, such as a database record or file, or by rubric review, and is usually reported as a success rate with confidence.
+explanation: Good tasks have programmatic checks, such as whether the ticket was created with the right fields. Partial credit can reflect steps completed. Run each task several times, since agents vary. Report success rate, steps, cost and time together. Failures are classified by cause to guide improvement.
+simple_explain: Check the final state against the goal and report the success rate over several runs.
+analogy: Task success is checking whether the errand was actually done.
+formula_rule: Success rate = successful runs ÷ total runs.
+example_1: A ticket created with the correct priority.
+example_2: A file renamed as requested.
+example_3: Seven of ten runs succeeding.
+related: tool-call accuracy, cost and latency, eval harness, statistical care
+word_family: success rate, end state, goal, partial credit, runs
+where_used: Agent benchmarks | Release gates | Product reviews
+mini_conversation: A: Does the agent finish the job? | B: It succeeds in seven of ten runs, so we need to study the failures.
+misconception: ✗ One successful run shows reliability → ✓ Agents vary, so repeat runs are needed
+contrast: Success vs steps: outcome versus the path.
+avoid: Do not judge from a single run.
+memory_trick: Check the end state, repeat the runs.
+real_project: Repeating runs showed an agent's success rate was far lower than a demo suggested.
+real_interview: An interviewer may ask: How do you measure agent reliability?
+real_daily: It is like checking whether the errand was done.
+mcq_question: How is success usually checked?
+mcq_options: A) By guessing B) By reading the first reply C) By counting words D) By comparing the final state with the goal
+mcq_answer: D
+mcq_why: Outcomes can be verified.
+fill_blank: Share of runs that reach the goal is the success ____ → rate
+apply: A demo run worked once. What do you do before trusting it? → Repeat it many times
+explain_task: Explain task success in three lines.
+own_task: Define the end-state check for a ticket creation task.
+
+@EVL-021
+type: topic56
+topic: 03 RAG and Agents
+level: Intermediate
+term: Cost and latency in evaluation
+cue: Why must quality be reported together with cost and speed?
+category: Core concept
+frequency: High
+importance: 5
+origin: A better answer that costs ten times more or takes a minute may not be a better product.
+pro_tip: Always show quality, cost and latency in the same table.
+memory_story: Quality, cost and speed are the three sides of a triangle, and you cannot judge by one.
+visual: A table with accuracy, cost per request and p95 latency per version.
+emotion: The calm realism of accepting trade-offs openly.
+definition: Evaluating cost and latency means measuring tokens, price per request, time to first token and total time, including percentiles, and comparing them with quality to choose the best trade-off.
+explanation: Record input and output tokens, number of calls and tool steps per task. Use p50 and p95 latency, since slow tails hurt users. Compare versions on quality per cost. Set budgets as release gates. Smaller or cheaper models may meet the bar for easy tasks. Costs change over time, so recalculate with current prices.
+simple_explain: Report quality, cost and latency together and choose by trade-off.
+analogy: Quality, cost and speed are three sides of a triangle.
+formula_rule: Quality per cost, within a latency budget.
+example_1: Version B 3 points better but twice the cost.
+example_2: p95 latency over the target.
+example_3: A cheaper model passing the quality bar.
+related: model choice, cost control, task success, A/B tests
+word_family: cost, latency, p95, budget, trade-off
+where_used: Model selection | Release decisions | Planning
+mini_conversation: A: Version B is more accurate. | B: Check its cost and latency before choosing it.
+misconception: ✗ Higher quality always justifies higher cost → ✓ The product needs an acceptable balance
+contrast: Average vs p95 latency: typical versus slow tail.
+avoid: Do not compare quality without cost.
+memory_trick: Quality, cost and speed always travel together.
+real_project: A cost-quality table led to a cheaper model for easy tickets without losing accuracy.
+real_interview: An interviewer may ask: How do you choose between two models?
+real_daily: It is like a triangle of three sides.
+mcq_question: Which should be reported together?
+mcq_options: A) Font and logo B) Age and name C) Colour and size D) Quality, cost and latency
+mcq_answer: D
+mcq_why: The trade-off decides the best choice.
+fill_blank: The time until the first output appears is time to first ____ → token
+apply: A model is better but much slower. What do you consider? → The quality, cost and latency trade-off
+explain_task: Explain why cost and latency belong in evaluation.
+own_task: Build a comparison table for three model options.
+
+@EVL-022
+type: topic56
+topic: 04 Safety and Robustness
+level: Advanced
+term: Red teaming
+cue: How do people deliberately try to break an AI system to find weaknesses?
+category: Core concept
+frequency: High
+importance: 5
+origin: Normal tests miss creative misuse, so testers act like attackers to find failures before real attackers do.
+pro_tip: Mix human creativity with automated attack generation, and fix and retest.
+memory_story: Red teaming is hiring a friendly burglar to test your locks.
+visual: A tester trying many tricks on a chatbot.
+emotion: The humility of finding weaknesses early.
+definition: Red teaming is structured adversarial testing in which testers try to make a system produce harmful, leaking, off-policy or incorrect behaviour, using prompts, tools and multi-step attacks, and findings drive fixes and new tests.
+explanation: Scope covers harmful content, privacy leaks, injection, jailbreaks, bias and misuse of tools. Use diverse testers and a taxonomy of attacks. Log successful attacks with severity, fix by prompts, guardrails and permissions, and add them to regression tests. Repeat after major changes. It complements, but does not replace, normal evaluation.
+simple_explain: Attack your own system on purpose, record what works, fix it and retest.
+analogy: Red teaming is hiring a friendly burglar to test your locks.
+formula_rule: Attack, record, fix, retest.
+example_1: A tester extracting hidden instructions.
+example_2: A prompt tricking the bot into off-policy advice.
+example_3: A successful attack added to the regression set.
+related: prompt injection tests, edge cases, guardrails, regression tests
+word_family: red team, jailbreak, adversarial, severity, taxonomy
+where_used: Launch reviews | Security | Regulated systems
+mini_conversation: A: Before launch, how do we test misuse? | B: Run a red team session and save every successful attack as a test.
+misconception: ✗ Red teaming once before launch is enough → ✓ Systems change, so it must be repeated
+contrast: Red teaming vs ordinary testing: adversarial creativity versus expected use.
+avoid: Do not ignore findings without a severity rating.
+memory_trick: Attack it, log it, fix it, then retest it.
+real_project: A red team found a data leak path that was closed before launch.
+real_interview: An interviewer may ask: What is red teaming?
+real_daily: It is like a friendly burglar testing the locks.
+mcq_question: What should happen to successful attacks?
+mcq_options: A) They are hidden B) They become regression tests after fixing C) They are forgotten D) They are published
+mcq_answer: B
+mcq_why: Tests stop them returning.
+fill_blank: An attempt to bypass a model's rules is a ____ → jailbreak
+apply: A tester extracts hidden instructions. What do you do? → Fix it and add the attack to the tests
+explain_task: Explain red teaming in three lines.
+own_task: List ten attack ideas for a customer support bot.
+
+@EVL-023
+type: topic56
+topic: 04 Safety and Robustness
+level: Intermediate
+term: Edge cases
+cue: Which unusual inputs most often break AI systems?
+category: Core concept
+frequency: High
+importance: 4
+origin: Systems work on typical inputs, so rare and odd inputs expose hidden weaknesses.
+pro_tip: Collect edge cases from real logs and add each one as a test.
+memory_story: Edge cases are the corner of the room where dust hides.
+visual: A map of typical inputs with odd cases at the edges.
+emotion: The thoroughness of testing the corners.
+definition: Edge cases are rare or unusual inputs, such as empty text, very long text, mixed languages, typos, ambiguous questions, conflicting sources, special characters and out-of-scope requests, which test the limits of a system.
+explanation: Build a list by category. Test empty and huge inputs, other languages, formatting oddities, sarcasm, contradictory documents and requests the system should refuse. Record expected behaviour, such as a polite refusal or a clarifying question. Real user logs reveal new edge cases. Add each failure as a regression test.
+simple_explain: Test odd and extreme inputs, define expected behaviour and keep them as tests.
+analogy: Edge cases are the corner of the room where dust hides.
+formula_rule: Typical cases pass, edges reveal weakness.
+example_1: An empty message.
+example_2: A question mixing two languages.
+example_3: An out-of-scope request expecting a refusal.
+related: test sets, red teaming, regression tests, refusal quality
+word_family: edge case, corner case, out-of-scope, ambiguity, robustness
+where_used: Test design | Quality assurance | Launch checks
+mini_conversation: A: The bot fails on very long messages. | B: Add long inputs to the edge case tests.
+misconception: ✗ Typical examples are enough for testing → ✓ Failures cluster at unusual inputs
+contrast: Typical vs edge cases: common inputs versus rare extremes.
+avoid: Do not skip empty and oversized inputs.
+memory_trick: Test the corners, not only the middle.
+real_project: Edge case tests found a crash on empty messages.
+real_interview: An interviewer may ask: What edge cases would you test for a chatbot?
+real_daily: It is like corners where dust hides.
+mcq_question: Which is an edge case?
+mcq_options: A) An empty message B) A normal question C) A short thanks D) A greeting
+mcq_answer: A
+mcq_why: It is unusual and often breaks systems.
+fill_blank: A request outside the system's purpose is ____ → out-of-scope
+apply: A bot crashes on huge inputs. What do you add? → Edge case tests with long inputs
+explain_task: Explain edge cases in three lines.
+own_task: List ten edge cases for a support assistant.
+
+@EVL-024
+type: topic56
+topic: 04 Safety and Robustness
+level: Advanced
+term: Prompt injection tests
+cue: How do you test whether hidden instructions can hijack your system?
+category: Core concept
+frequency: High
+importance: 5
+origin: Injection is a main threat to tool-using systems, so tests plant malicious instructions in data and check the result.
+pro_tip: Test through every input channel, such as documents, web pages, emails and tool outputs.
+memory_story: Injection tests slip forged notes into the paperwork to see whether the assistant obeys.
+visual: A document with a hidden instruction and a flagged tool call.
+emotion: The alertness of checking every channel.
+definition: Prompt injection tests insert adversarial instructions into user input, retrieved documents, web content and tool outputs, and verify that the system ignores them and never performs forbidden actions or leaks data.
+explanation: Build a library of injection payloads, including direct, hidden and encoded forms. Plant them in test documents and run the full pipeline with mock tools. Pass means no forbidden tool call, no secret revealed and the user's task continues. Measure attack success rate, and retest after each defence change. Combine with permission limits as the real defence.
+simple_explain: Plant malicious instructions in every channel and check nothing forbidden happens.
+analogy: Injection tests slip forged notes into the paperwork to see whether the assistant obeys.
+formula_rule: Payload in, forbidden action out means failure.
+example_1: A web page telling the agent to email files.
+example_2: A document asking for the system prompt.
+example_3: An attack success rate of 5 percent.
+related: prompt injection, red teaming, guardrails, tool-call accuracy
+word_family: injection, payload, channel, success rate, mock
+where_used: Agent testing | Security reviews | RAG systems
+mini_conversation: A: How do we know the agent resists injection? | B: Plant payloads in documents and check it makes no forbidden calls.
+misconception: ✗ Testing the chat box alone covers injection → ✓ Documents, pages and tool outputs are attack channels too
+contrast: Direct vs indirect injection tests: user typed versus hidden in data.
+avoid: Do not test against real tools.
+memory_trick: Test every channel, with mock tools.
+real_project: Planted payloads in documents revealed an agent that obeyed hidden instructions.
+real_interview: An interviewer may ask: How do you test for prompt injection?
+real_daily: It is like slipping forged notes into paperwork.
+mcq_question: What counts as a failure in an injection test?
+mcq_options: A) A polite refusal B) A short reply C) A forbidden tool call D) A normal answer
+mcq_answer: C
+mcq_why: The attack succeeded in causing an action.
+fill_blank: The percentage of attacks that work is the attack success ____ → rate
+apply: An agent reads web pages. What do you test? → That page text cannot trigger forbidden actions
+explain_task: Explain injection testing in three lines.
+own_task: Write five injection payloads for a document assistant.
+
+@EVL-025
+type: topic56
+topic: 04 Safety and Robustness
+level: Advanced
+term: Bias checks
+cue: How do you test whether a system treats groups of people unfairly?
+category: Core concept
+frequency: Medium
+importance: 5
+origin: Models learn patterns from data and may treat names, genders, regions or languages differently, so fairness needs testing.
+pro_tip: Test paired inputs that differ only in a sensitive attribute and compare outcomes.
+memory_story: Bias checks are asking the same question in different voices and seeing whether the answer changes unfairly.
+visual: Two near-identical inputs with different outcomes highlighted.
+emotion: The quiet responsibility of treating every user fairly.
+definition: Bias checks compare system behaviour across groups or attributes, using paired or counterfactual inputs, subgroup metrics and reviews, to find unfair differences in quality, tone, refusals or decisions.
+explanation: Swap names, genders, ethnic markers or dialects in otherwise identical prompts and compare scores and tone. Report metrics per subgroup rather than one average. Consider the impact of errors on each group. Mitigate with data, prompts, guardrails and human review, and document limits. Sensitive decisions need extra scrutiny and legal advice.
+simple_explain: Compare outcomes across groups on matched inputs and report per-group metrics.
+analogy: Bias checks are asking the same question in different voices and seeing whether the answer changes unfairly.
+formula_rule: Same input, different attribute, compare outcomes.
+example_1: Two CVs identical except for the name.
+example_2: Lower quality answers in a regional dialect.
+example_3: Per-group error rates.
+related: precision and recall, red teaming, human review, test sets
+word_family: bias, fairness, counterfactual, subgroup, parity
+where_used: Hiring tools | Finance | Public services
+mini_conversation: A: Does the bot treat names the same? | B: Test paired inputs that differ only in the name.
+misconception: ✗ A good average score means the system is fair → ✓ Averages can hide poor performance for a group
+contrast: Average vs subgroup metrics: overall versus per group.
+avoid: Do not report only overall accuracy.
+memory_trick: Match the inputs, split the metrics.
+real_project: Subgroup metrics revealed lower accuracy on one dialect, which led to extra test data.
+real_interview: An interviewer may ask: How do you check an LLM for bias?
+real_daily: It is like asking in different voices.
+mcq_question: What are counterfactual tests?
+mcq_options: A) Long inputs B) Random inputs C) Inputs identical except for one attribute D) Empty inputs
+mcq_answer: C
+mcq_why: Differences in output reveal bias.
+fill_blank: Metrics split by group are ____ metrics → subgroup
+apply: Accuracy is lower for one language. What do you do? → Report subgroup metrics and add test data
+explain_task: Explain bias checks in three lines.
+own_task: Design a paired-input test that swaps only names and compare the scores for each pair.
+
+@EVL-026
+type: topic56
+topic: 04 Safety and Robustness
+level: Intermediate
+term: Refusal quality
+cue: How do you judge whether the system refuses well when it should, and helps when it should?
+category: Core concept
+frequency: High
+importance: 5
+origin: Too many refusals frustrate users, and too few create harm, so refusals themselves must be evaluated.
+pro_tip: Test both harmful requests and borderline harmless ones.
+memory_story: A good doorman turns away trouble politely and still lets honest guests in.
+visual: A matrix of requests that should be refused or answered.
+emotion: The balance of safety and helpfulness.
+definition: Refusal quality evaluates correct refusal of disallowed requests, avoidance of over-refusal on legitimate ones, and the helpfulness and tone of the refusal, such as explaining why and offering safe alternatives.
+explanation: Build two sets: requests that must be refused and legitimate requests that look similar. Measure refusal rate on each, tracking false refusals and misses. Review tone: polite, clear and not preachy. Provide alternatives or next steps. Policies differ by product, so write them down. Re-test after prompt or model changes.
+simple_explain: Test that harmful requests are refused politely and normal ones are answered.
+analogy: A good doorman turns away trouble politely and still lets honest guests in.
+formula_rule: Refuse what must be refused, help with the rest.
+example_1: A bot declining unsafe advice with an alternative.
+example_2: A legitimate question wrongly refused.
+example_3: A harmful request answered by mistake.
+related: moderation, guardrails, red teaming, edge cases
+word_family: refusal, over-refusal, false refusal, policy, tone
+where_used: Public chatbots | Education | Health tools
+mini_conversation: A: The bot refuses harmless questions. | B: That is over-refusal, so add borderline cases to the tests.
+misconception: ✗ More refusals always mean a safer system → ✓ Over-refusal harms usefulness and trust
+contrast: False refusal vs missed refusal: blocking good requests versus allowing bad ones.
+avoid: Do not measure only the refusal of harmful requests.
+memory_trick: Measure both mistakes: too many and too few.
+real_project: Adding borderline questions to tests cut false refusals in a health information bot.
+real_interview: An interviewer may ask: How do you evaluate refusals?
+real_daily: It is like a polite doorman.
+mcq_question: What is over-refusal?
+mcq_options: A) Answering all B) Refusing legitimate requests C) Logging D) Refusing harmful requests
+mcq_answer: B
+mcq_why: It frustrates users unnecessarily.
+fill_blank: Blocking a legitimate request is a false ____ → refusal
+apply: Users complain about unnecessary refusals. What do you test? → Borderline harmless requests
+explain_task: Explain refusal quality in three lines.
+own_task: Write five borderline requests that should be answered.
+
+@EVL-027
+type: code56
+topic: 05 Practice
+level: Advanced
+term: Eval harness
+cue: Which program runs your test cases through the system and records scores?
+kind: Tooling
+frequency: Very high
+importance: 5
+origin: Manual testing does not scale or repeat, so a small program runs every case, scores it and stores results for comparison.
+pro_tip: Keep the harness simple and runnable in CI with one command.
+memory_story: An eval harness is a test bench that runs every version through the same course.
+visual: Cases going in, scores and a report coming out.
+emotion: The comfort of one command that checks everything.
+meaning: An eval harness loads a dataset, calls the system under test, applies scorers such as exact match or a judge, aggregates metrics by category and saves results with the versions used.
+code: import json, time¶def run_eval(dataset, system, scorers, version):¶    rows = []¶    for case in dataset:¶        t0 = time.time()¶        output = system(case["input"])¶        scores = {name: fn(output, case) for name, fn in scorers.items()}¶        rows.append({"id": case["id"], "category": case["category"], "latency_s": round(time.time() - t0, 3), **scores})¶    summary = {}¶    for name in scorers:¶        summary[name] = sum(r[name] for r in rows) / len(rows)¶    json.dump({"version": version, "summary": summary, "rows": rows}, open(f"results_{version}.json", "w"))¶    return summary
+output: A saved results file with per-case rows and average scores for the named version.
+explanation: Store per-case results to compare versions case by case. Fix random seeds or set low temperature where possible, and repeat runs to measure noise. Mock external tools. Record prompt and model versions, dataset version and cost. Output a report with the biggest regressions first. Tools such as promptfoo, Ragas and custom scripts provide similar features.
+simple_explain: Load cases, run the system, score, save per-case results with versions, and compare.
+analogy: An eval harness is a test bench that runs every version through the same course.
+syntax: for case in dataset: output = system(case.input); scores = scorers(output, case)
+anatomy: dataset = cases | system = what is tested | scorers = metrics | version = what ran
+example_1: python run_eval.py --version v3
+example_2: A report listing the ten biggest regressions.
+example_3: Results saved per category.
+variation: promptfoo or Ragas   // ready-made evaluation tools
+used_with: CI, test sets, regression tests
+related: regression tests, prompt and model versioning, test sets, statistical care
+alternatives: Evaluation frameworks
+where_used: CI pipelines | Prompt work | Model comparisons
+mini_conversation: A: How do we check each prompt change? | B: Run the harness and look at the per-case differences.
+misconception: ✗ A harness must be complex → ✓ A small script that runs and saves cases is enough to start
+confused_with: Harness vs test set: one runs the tests, the other is the data.
+avoid: Do not save only the average.
+wrong_code: print(sum(scores) / len(scores))   # no per-case results
+right_code: rows.append({"id": case["id"], **scores})
+memory_trick: Save the cases, not only the average.
+real_project: A fifty-line harness in CI caught regressions on every prompt change.
+real_interview: An interviewer may ask: What does an eval harness do?
+real_daily: It is like a test bench.
+mcq_question: What should a harness save besides averages?
+mcq_options: A) Only the cost B) Only the date C) Nothing D) Per-case results and versions
+mcq_answer: D
+mcq_why: Comparisons need case detail and version info.
+fill_blank: A harness is often run in ____ on each change → CI
+hindi_to_task: Save results with the version name.
+task_answer: json.dump({"version": version, "rows": rows}, open(f"results_{version}.json", "w"))
+own_task: Outline a harness for a RAG assistant.
+practice_question: Why store per-case results?
+practice_answer: To see which cases got worse.
+
+@EVL-028
+type: topic56
+topic: 05 Practice
+level: Advanced
+term: Prompt and model versioning
+cue: How do you tie every evaluation result to exactly what was tested?
+category: Core concept
+frequency: High
+importance: 5
+origin: Results mean little if you cannot tell which prompt, model and data produced them, so versions are recorded.
+pro_tip: Record prompt hash, model name, dataset version, parameters and code commit with each run.
+memory_story: Versioning is writing the recipe card number on every photo of the dish.
+visual: A results row with prompt, model and dataset version fields.
+emotion: The ability to reproduce any result.
+definition: Versioning identifies the prompt text, model identifier, parameters, retrieval settings, tool definitions, dataset and code commit used in each evaluation and production call, so results can be reproduced and compared.
+explanation: Store prompts in version control, give models explicit identifiers, and log versions with each request. Providers update models, so pin versions where possible and re-run evaluations when they change. Keep an experiment log of changes and outcomes. Rolling back needs earlier versions to remain available.
+simple_explain: Record what was tested, so every result can be reproduced and compared.
+analogy: Versioning is writing the recipe card number on every photo of the dish.
+formula_rule: Result = prompt version + model + data + settings.
+example_1: A results file naming prompt v7 and dataset v3.
+example_2: A pinned model version.
+example_3: A rollback to prompt v6.
+related: prompt versions, eval harness, drift monitoring, regression tests
+word_family: version, pin, hash, experiment log, reproducibility
+where_used: Experiments | Production | Audits
+mini_conversation: A: Quality changed overnight. | B: Check whether the provider updated the model version.
+misconception: ✗ The model name stays the same, so behaviour does too → ✓ Providers may update models, so pin and re-test
+contrast: Pinned vs floating model: fixed behaviour versus changing behaviour.
+avoid: Do not record scores without versions.
+memory_trick: Every score carries its recipe number.
+real_project: Version logs showed a quality drop began when a model alias changed.
+real_interview: An interviewer may ask: Why record versions with results?
+real_daily: It is like a recipe card number on every photo.
+mcq_question: What should be logged with each evaluation?
+mcq_options: A) Prompt, model, dataset and code versions B) Nothing C) Only the score D) Only the date
+mcq_answer: A
+mcq_why: Reproducibility needs them.
+fill_blank: Fixing a model to an exact version is ____ it → pinning
+apply: Scores shifted but nothing was changed by you. What do you check? → Whether the model version changed
+explain_task: Explain versioning for evaluation in three lines.
+own_task: List the fields of an experiment record.
+
+@EVL-029
+type: topic56
+topic: 05 Practice
+level: Advanced
+term: Drift monitoring
+cue: How do you notice when quality slowly gets worse in production?
+category: Core concept
+frequency: High
+importance: 5
+origin: Questions, documents and models change over time, so a system that once performed well can degrade without any code change.
+pro_tip: Run a fixed evaluation set on a schedule and track production signals.
+memory_story: Drift monitoring is checking whether a clock is slowly running fast.
+visual: A quality line sloping down over weeks.
+emotion: The calm of catching problems early.
+definition: Drift monitoring tracks quality signals over time, such as scheduled evaluation scores, user feedback, retrieval scores, refusal and no-answer rates and input topic shifts, and alerts when they move beyond expected ranges.
+explanation: Causes include new kinds of questions, outdated documents, changed provider models and upstream data changes. Run the golden set nightly or weekly, compare with baseline, and alert on drops. Watch input distributions for new topics. Sample production outputs for review. Investigate with versions and logs.
+simple_explain: Re-run tests on a schedule, watch live signals and alert on changes.
+analogy: Drift monitoring is checking whether a clock is slowly running fast.
+formula_rule: Scheduled eval + live signals + alerts.
+example_1: A weekly golden set run showing a three point drop.
+example_2: A rising no-answer rate.
+example_3: New question topics appearing.
+related: feedback loops, monitoring RAG, regression tests, prompt and model versioning
+word_family: drift, baseline, schedule, distribution, alert
+where_used: Production AI | Quality teams | Operations
+mini_conversation: A: Complaints rose slowly this month. | B: Check drift in the weekly evaluation and the no-answer rate.
+misconception: ✗ If the code did not change, quality cannot change → ✓ Data, users and models change too
+contrast: Regression vs drift: sudden after a change versus slow without one.
+avoid: Do not rely on launch-day test results forever.
+memory_trick: Schedule the checks, watch the slope.
+real_project: A weekly eval run caught a quality drop after a provider model update.
+real_interview: An interviewer may ask: How do you detect quality drift?
+real_daily: It is like a clock running slightly fast.
+mcq_question: What helps detect drift?
+mcq_options: A) No logs B) Scheduled evaluation runs C) Larger fonts D) A single launch test
+mcq_answer: B
+mcq_why: Regular tests show change over time.
+fill_blank: Slow decline in quality over time is ____ → drift
+apply: Quality seems to fall without releases. What do you run? → The evaluation set on a schedule
+explain_task: Explain drift monitoring in three lines.
+own_task: Choose five signals to monitor for drift.
+
+@EVL-030
+type: topic56
+topic: 05 Practice
+level: Intermediate
+term: Feedback loops
+cue: How do user feedback and failures flow back into better tests and systems?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Real users find problems that tests miss, so feedback is collected and converted into improvements.
+pro_tip: Make giving feedback easy, and turn every confirmed failure into a test case.
+memory_story: A feedback loop is a suggestion box that someone actually reads and acts on.
+visual: A circle from users to logs to test cases to fixes and back.
+emotion: The motivation of a system that keeps improving.
+definition: A feedback loop collects signals such as thumbs, edits, escalations and reviews, analyses failures, adds them to the test sets, improves the system and measures whether the fix worked.
+explanation: Collect explicit feedback and implicit signals such as retries and copy actions. Triage by frequency and severity. Reproduce failures, fix, add a regression test and verify after release. Close the loop by informing users where appropriate. Protect privacy when storing examples. Without action, feedback collection is wasted.
+simple_explain: Collect feedback, find the causes, add tests, fix, and verify.
+analogy: A feedback loop is a suggestion box that someone actually reads and acts on.
+formula_rule: Feedback → triage → test → fix → verify.
+example_1: A thumbs-down answer added as a test case.
+example_2: A weekly review of the top failure types.
+example_3: A fix confirmed by improved scores.
+related: online evaluation, regression tests, drift monitoring, human review
+word_family: feedback, triage, signal, loop, improvement
+where_used: Product teams | Quality programmes | Support tools
+mini_conversation: A: Users keep thumbs-downing refund questions. | B: Review them, fix the cause and add them as tests.
+misconception: ✗ Collecting feedback alone improves the system → ✓ Someone must act on it and verify the effect
+contrast: Explicit vs implicit feedback: ratings versus behaviour signals.
+avoid: Do not store feedback examples without privacy controls.
+memory_trick: Collect, triage, test, fix, verify.
+real_project: A weekly feedback review converted failures into tests and steadily raised accuracy.
+real_interview: An interviewer may ask: How do you use feedback to improve an LLM feature?
+real_daily: It is like a suggestion box that is read.
+mcq_question: What should happen to a confirmed failure?
+mcq_options: A) It is deleted B) It is ignored C) It becomes a test case D) It is hidden
+mcq_answer: C
+mcq_why: It prevents the same failure returning.
+fill_blank: Reviewing and ranking issues by severity is ____ → triage
+apply: Users report the same failure often. What do you do? → Reproduce it, fix it and add a test
+explain_task: Explain feedback loops in three lines.
+own_task: Design a weekly feedback review process with an owner, a time slot and a rule for turning complaints into test cases.

@@ -1,0 +1,525 @@
+
+@GIT-056
+topic: 02 Branching & Merging
+level: Beginner
+term: git show
+cue: Which command shows one commit's message, author and full change together?
+kind: Git command
+frequency: High
+importance: 4
+origin: Log gives only a list and diff only a difference, so Git added show to see the whole picture of a single commit in one place.
+pro_tip: You can write HEAD or HEAD~2 instead of a commit hash.
+memory_story: Show is a shopkeeper who opens one box and lays out everything inside.
+visual: One commit box lies open showing its message, name and changes together.
+emotion: The satisfaction of grasping a whole commit's story at a glance.
+meaning: git show displays one commit's message, author, date and its full change.
+code: git show 8b7d1e2¶git show HEAD~1 --stat
+output: commit 8b7d1e2¶Author: Asha <asha@example.com>¶    Fix refund rounding¶-  return round(total)¶+  return round(total, 2)
+explanation: Show prints the commit's header (hash, author, date, message) and its diff. --stat gives only a summary. With a file path it shows that file as it was in that commit.
+simple_explain: Pick a commit from the log and read its whole story with show: who wrote it, why, and what changed.
+analogy: It is like opening one envelope and reading the letter and every page with it.
+syntax: git show [<commit>] [--stat]
+anatomy: git show = command | <commit> = which commit | --stat = summary only
+example_1: git show 8b7d1e2
+example_2: git show HEAD~2 --stat
+example_3: git show v1.0.0:README.md
+variation: git show --name-only HEAD   # file names only¶git show main:src/app.js   # a file on a branch
+used_with: HEAD, --stat, git log, tags
+related: git log, git diff, git blame
+alternatives: The commit page on GitHub
+word_family: git show, git log, git diff, git blame, git tag
+where_used: Understanding why a commit was made | Code review | Finding bugs
+mini_conversation: A: What did this commit change? | B: Run git show with the hash and you will see the message and the change.
+misconception: ✗ git show displays only the commit message → ✓ git show shows the message and also the full change (diff) of that commit
+confused_with: git show vs git log: show gives full details of one commit, log lists many commits.
+avoid: Do not open a huge commit without --stat.
+wrong_code: git show commit 8b7d1e2
+right_code: git show 8b7d1e2
+memory_trick: Show means display one commit fully.
+real_project: Reading the suspect commit with git show while hunting a bug.
+real_interview: An interviewer may ask: What is the difference between git show and git log -p?
+real_daily: It is like opening one envelope and reading every page together.
+mcq_question: Which command shows one commit's message and full change together?
+mcq_options: A) git remote B) git status C) git fetch D) git show
+mcq_answer: D
+mcq_why: show gives both the header and the diff of a commit.
+fill_blank: git ____ HEAD~1 --stat → show
+hindi_to_task: Show a summary of the last commit.
+task_answer: git show HEAD --stat
+own_task: Pick an old commit in your project, run git show, and write its reason in your own words.
+practice_question: What command shows a file as it was at a tag?
+practice_answer: git show v1.0.0:README.md
+
+@GIT-057
+topic: 04 Undo & Fix Mistakes
+level: Beginner
+term: git rm and git mv
+cue: How do you tell Git that you removed or renamed a tracked file?
+kind: Git command
+frequency: Medium
+importance: 4
+origin: Removing a file by hand made you tell Git separately, so rm and mv do the job and stage it straight away.
+pro_tip: Use git rm --cached when you want Git to stop tracking a file but keep it on disk.
+memory_story: rm takes out the rubbish and notes it in the ledger, and mv renames and corrects the entry.
+visual: One file gets a new name tag and another goes into a bin, both stamped by Git.
+emotion: The comfort that history stays tidy while you clean up.
+meaning: git rm removes a tracked file and git mv renames or moves it, and both are staged.
+code: git rm old.txt¶git mv draft.md notes.md¶git status -s
+output: D  old.txt¶R  draft.md -> notes.md
+explanation: git rm deletes the file from the folder and stages the removal. --cached removes it only from Git and leaves the file on disk. git mv renames the file and Git shows it as a rename, which makes history easier to follow.
+simple_explain: Use git rm instead of deleting by hand and Git knows at once. Use git mv to rename so history stays clean.
+analogy: It is like removing an entry from the ledger or correcting a name, and noting that down too.
+syntax: git rm [--cached] <file>  |  git mv <old> <new>
+anatomy: git rm = remove | --cached = only from Git | git mv = rename or move
+example_1: git rm old.txt
+example_2: git rm --cached .env
+example_3: git mv draft.md notes.md
+variation: git rm -r build/   # a whole folder¶git rm -f file.txt   # even with changes
+used_with: --cached, -r, git commit, .gitignore
+related: .gitignore, git restore, git add
+alternatives: Delete by hand and run git add -A
+word_family: git rm, git mv, git add, git commit, git restore
+where_used: Cleaning up | Removing a file committed by mistake | Renaming a file
+mini_conversation: A: I committed .env, how do I ignore it now? | B: Run git rm --cached .env and add it to .gitignore.
+misconception: ✗ git rm --cached also deletes the file from the folder → ✓ --cached only stops Git tracking it, and the file stays in the folder
+confused_with: git rm vs git rm --cached: rm deletes the file, --cached only removes it from Git.
+avoid: Do not use git rm -f carelessly on a file with changes.
+wrong_code: git rm --untrack .env
+right_code: git rm --cached .env
+memory_trick: With --cached, stop tracking but keep the file.
+real_project: Taking a secrets file committed by mistake out of Git with git rm --cached and adding it to .gitignore.
+real_interview: An interviewer may ask: How do you remove a file from Git without deleting it?
+real_daily: It is like striking an entry out of the ledger while the goods stay where they are.
+mcq_question: Which option keeps the file in the folder and removes it only from Git tracking?
+mcq_options: A) git rm -f B) git clean C) git rm --cached D) git mv
+mcq_answer: C
+mcq_why: --cached removes it only from Git's record, not the file.
+fill_blank: git rm ____ .env → --cached
+hindi_to_task: Rename draft.md to notes.md.
+task_answer: git mv draft.md notes.md
+own_task: Make a test file, stop tracking it with git rm --cached, and look at git status.
+practice_question: What is the difference between git mv and renaming by hand and running git add -A?
+practice_answer: The result is nearly the same; git mv stages the rename in one step.
+
+@GIT-058
+topic: 04 Undo & Fix Mistakes
+level: Intermediate
+term: git clean
+cue: How do you remove a pile of unwanted untracked files from your folder in one go?
+kind: Git command
+frequency: Low
+importance: 3
+origin: Builds and experiments leave untracked files behind that restore cannot remove, so clean exists to delete them.
+pro_tip: Run git clean -n first to see what will go, and then -f.
+memory_story: Clean is a broom that sweeps away everything not tracked and leaves your tracked things.
+visual: A broom sweeps scattered scraps out of a folder.
+emotion: The freshness of a clean folder.
+meaning: git clean deletes untracked files from the working folder.
+code: git clean -n¶git clean -fd
+output: Would remove build.log¶Removing build.log¶Removing tmp/
+explanation: Clean removes only untracked files. -n is a dry run that deletes nothing, -f is required, -d also removes folders, and -x also removes ignored files. It deletes for good, there is no recycle bin.
+simple_explain: First see what will go with -n, then add -f. Remember that these files do not come back.
+analogy: It is like a broom that sweeps only the scraps and not your belongings.
+syntax: git clean [-n] [-f] [-d] [-x]
+anatomy: -n = only show | -f = force | -d = folders too | -x = ignored files too
+example_1: git clean -n
+example_2: git clean -fd
+example_3: git clean -fdx
+variation: git clean -i   # ask one by one
+used_with: -n, -f, -d, -x
+related: git restore, git rm, .gitignore
+alternatives: Deleting by hand
+word_family: git clean, git restore, git rm, git stash, git status
+where_used: Build leftovers | A fresh start | Cleaning up after tests
+mini_conversation: A: My folder is full of useless files. | B: Run git clean -n first, and if it looks fine, then -fd.
+misconception: ✗ git clean also wipes the changes of tracked files → ✓ git clean removes only untracked files, and git restore is for changes in tracked files
+confused_with: git clean vs git restore: clean removes untracked files, restore brings back a tracked file.
+avoid: Do not run git clean -fdx without a -n look first.
+wrong_code: git clean -r
+right_code: git clean -fd
+memory_trick: Clean means check first with -n, then clean.
+real_project: Clearing leftover temp folders after a build before a fresh test run.
+real_interview: An interviewer may ask: What does git clean -n do?
+real_daily: It is like sweeping the scraps off the floor with a broom.
+mcq_question: Which flag of git clean only shows what would be removed?
+mcq_options: A) -x B) -n C) -d D) -f
+mcq_answer: B
+mcq_why: -n is a dry run and removes nothing.
+fill_blank: git clean ____ → -n
+hindi_to_task: Remove untracked files and folders after a dry run.
+task_answer: git clean -fd
+own_task: Make a few files in a test folder and look at them with git clean -n.
+practice_question: Which flag also removes ignored files?
+practice_answer: -x
+
+@GIT-059
+topic: 05 Advanced Git
+level: Advanced
+term: Git LFS (Large File Storage)
+cue: How do you track large files such as videos or designs without bloating the repository?
+kind: Git extension
+frequency: Low
+importance: 3
+origin: Git keeps the full history of every file, so large binary files make a repo very heavy, and LFS stores the real file elsewhere and keeps only a small pointer in the repo.
+pro_tip: First tell it the pattern with git lfs track, and then add the files.
+memory_story: LFS is a warehouse receipt: the repo holds only the slip and the heavy goods sit in the warehouse.
+visual: A small slip in the repo and a big warehouse far away holding the heavy goods.
+emotion: Relief that the repo stays light despite heavy files.
+meaning: Git LFS stores large files separately and keeps a small pointer to them in the repo.
+code: git lfs install¶git lfs track "*.psd"¶git add .gitattributes design.psd¶git commit -m "Add design"
+output: Tracking "*.psd"
+explanation: The tracking rule is written into .gitattributes, so that file must be committed too. On push the real file goes to the LFS server. GitHub has limits and quotas for LFS, so check your plan.
+simple_explain: Putting big files straight into Git makes the repo heavy. LFS keeps the real file elsewhere and a pointer in the repo, so cloning stays fast.
+analogy: It is like heavy goods in a warehouse and only a slip at home.
+syntax: git lfs track "<pattern>"
+anatomy: git lfs install = one-time setup | track = which files | .gitattributes = the rule file
+example_1: git lfs track "*.psd"
+example_2: git lfs track "videos/*.mp4"
+example_3: git lfs ls-files
+variation: git lfs untrack "*.psd"   # stop tracking¶git lfs pull   # fetch the real files
+used_with: .gitattributes, git add, git push
+related: .gitattributes, clone, repository size
+alternatives: Keeping large files outside the repo in cloud storage
+word_family: LFS, pointer, .gitattributes, binary, track
+where_used: Game assets | Design files | Machine learning models
+mini_conversation: A: My repo has become 2 GB. | B: Track the large files with LFS so the repo stays light.
+misconception: ✗ LFS removes large files from the repo for good → ✓ LFS stores the real file separately and keeps a pointer in the repo, and the file comes back on clone
+confused_with: LFS vs .gitignore: gitignore does not track a file at all, LFS tracks it but stores it elsewhere.
+avoid: Do not expect a file already committed to shrink the history just because you write an LFS rule.
+wrong_code: git lfs add "*.psd"
+right_code: git lfs track "*.psd"
+memory_trick: LFS is a Large File's safe slip.
+real_project: Tracking a game's large texture files with LFS.
+real_interview: An interviewer may ask: How does LFS work?
+real_daily: It is like heavy goods in a warehouse and only a slip at home.
+mcq_question: In which file does the LFS tracking rule get saved?
+mcq_options: A) .gitattributes B) config.json C) .gitignore D) README.md
+mcq_answer: A
+mcq_why: git lfs track writes its rules into .gitattributes.
+fill_blank: git lfs ____ "*.psd" → track
+hindi_to_task: Track all .mp4 files with LFS.
+task_answer: git lfs track "*.mp4"
+own_task: Install LFS in a small test repo and track one large file.
+practice_question: What stays in the repo with LFS, and where does the real file go?
+practice_answer: A small pointer stays in the repo, and the real file goes to the LFS server.
+
+@GIT-060
+topic: 05 Advanced Git
+level: Advanced
+term: git submodule
+cue: How do you include another repository inside yours at one fixed version?
+kind: Git command
+frequency: Low
+importance: 3
+origin: Sometimes a project needs another repo's code without keeping a copy, so a submodule pins that repo at one particular commit.
+pro_tip: Use --recurse-submodules when you clone, or the submodule folder will be empty.
+memory_story: A submodule is a reference in a book saying: see this edition of the other book.
+visual: A small repo folder sits inside a repo folder with one fixed commit written on it.
+emotion: The assurance of keeping a shared library on one version.
+meaning: git submodule includes another repository inside yours at a fixed commit.
+code: git submodule add https://github.com/asha/ui-kit.git libs/ui-kit¶git commit -m "Add ui-kit"
+output: Cloning into 'libs/ui-kit'...¶done.
+explanation: The parent repo stores only the submodule's URL and a fixed commit hash. A clone needs --recurse-submodules or git submodule update --init. To move to a newer version you pull inside the submodule and commit the new pointer in the parent.
+simple_explain: A submodule pins another repo at a fixed version. The parent only remembers which commit it wants, and an update happens when you commit a new pointer.
+analogy: It is like a note in a book saying to read only that edition of another book.
+syntax: git submodule add <url> <path>
+anatomy: git submodule add = include it | <url> = address of the other repo | <path> = folder in the parent
+example_1: git submodule add https://github.com/asha/ui-kit.git libs/ui-kit
+example_2: git clone --recurse-submodules https://github.com/asha/app.git
+example_3: git submodule update --init --recursive
+variation: git submodule update --remote   # fetch the newer version¶git submodule status
+used_with: --recurse-submodules, update, .gitmodules
+related: git clone, git subtree, package managers
+alternatives: git subtree, or a package manager (npm, pip)
+word_family: submodule, .gitmodules, pointer, recurse, pin
+where_used: Shared libraries | Large multi-repo projects | Pinning third-party code
+mini_conversation: A: The libs folder is empty after cloning. | B: Run git submodule update --init, or clone with --recurse-submodules.
+misconception: ✗ A submodule always stays on its latest version → ✓ A submodule is pinned to one commit, and you must update the pointer by hand to get a newer version
+confused_with: submodule vs package manager: a submodule pins a git commit, a package manager handles versions and dependencies.
+avoid: Do not forget to commit the new pointer in the parent after changing a submodule.
+wrong_code: git submodule clone https://github.com/asha/ui-kit.git
+right_code: git submodule add https://github.com/asha/ui-kit.git libs/ui-kit
+memory_trick: Submodule means a sub-repo pinned to one commit.
+real_project: Sharing one UI library across two apps at the same version through a submodule.
+real_interview: An interviewer may ask: When would you use a submodule and when not?
+real_daily: It is like a note in a book to read only that edition of the other book.
+mcq_question: After cloning, the submodule folder is empty. What should you do?
+mcq_options: A) git reset B) git stash C) Delete the repo D) git submodule update --init
+mcq_answer: D
+mcq_why: update --init fetches the submodule's code.
+fill_blank: git clone ____ <url> → --recurse-submodules
+hindi_to_task: Clone a repo along with its submodules.
+task_answer: git clone --recurse-submodules https://github.com/asha/app.git
+own_task: Add a small public repo to a test repo as a submodule.
+practice_question: What does the parent repo store about a submodule?
+practice_answer: The submodule's URL and one fixed commit hash.
+
+@GIT-061
+type: topic56
+topic: 03 Collaboration
+level: Intermediate
+term: PR merge methods (Merge, Squash, Rebase)
+cue: What are the three ways to join a PR into main on GitHub, and how does each affect history?
+category: GitHub feature
+frequency: High
+importance: 4
+origin: Different teams want different shapes of history, so GitHub offers three ways to merge a PR and lets repo settings choose which are allowed.
+pro_tip: Squash suits small tasks, and pick a merge commit when you want long history.
+memory_story: Three ways of packing the same goods: all in one box, kept separate, or placed in a line.
+visual: Three small diagrams: all commits become one, commits stay apart, commits line up.
+emotion: The control of keeping the history your team prefers.
+definition: A merge commit keeps all history, squash joins all commits into one, and rebase places the commits in a straight line.
+explanation: Create a merge commit: all commits stay and one merge commit is added. Squash and merge: all the PR's commits become one commit and history stays clean. Rebase and merge: commits arrive in a straight line without a merge commit.
+simple_explain: A merge commit gives the fullest history, squash the cleanest history, and rebase a straight line. Choose according to your team's rule.
+analogy: It is like three ways of packing goods: in one box, separately, or in a row.
+formula_rule: Merge = full history, Squash = one commit, Rebase = straight line
+example_1: Squashing a small bug-fix PR into one clean commit.
+example_2: Merging a long feature branch with a merge commit to keep its history.
+example_3: A team that wants a straight history picks rebase and merge.
+related: pull request, git merge, git rebase
+word_family: merge commit, squash, rebase, history, linear
+where_used: Merging PRs | Release history | Changelogs
+mini_conversation: A: My PR has twelve small commits. | B: Use squash and merge to make one clean commit.
+misconception: ✗ Squash and merge makes the PR's commits disappear → ✓ The commits stay on the PR page, but only one squash commit lands on main
+contrast: Squash vs rebase merge: squash turns all commits into one, rebase merge keeps each in a straight line.
+avoid: Do not mix all three methods in one repo without a rule.
+memory_trick: Merge for Memory, Squash for Spotless.
+real_project: A team decided all PRs are squashed to keep main's history short.
+real_interview: An interviewer may ask: What is the difference between squash and rebase merge?
+real_daily: It is like three ways of packing the same goods.
+mcq_question: Which method makes all of a PR's commits one commit on main?
+mcq_options: A) Rebase and merge B) Fast-forward C) Squash and merge D) Create a merge commit
+mcq_answer: C
+mcq_why: Squash turns all the PR's commits into one commit.
+fill_blank: For a straight history that keeps every PR commit you choose ____ and merge → rebase
+apply: Which method would you choose for a small team that wants clean history? → Squash and merge
+explain_task: Explain the difference between the three methods in three lines.
+own_task: Choose a merge method for your team and write why.
+
+@GIT-062
+type: topic56
+topic: 07 GitHub Platform
+level: Intermediate
+term: GitHub Codespaces
+cue: Which GitHub cloud feature opens a full coding environment right in the browser?
+category: GitHub feature
+frequency: Low
+importance: 3
+origin: Setting up a project used to take a new developer hours, so Codespaces opens a ready-made environment in the cloud together with the repository.
+pro_tip: Describe the setup in devcontainer.json so everyone gets the same environment.
+memory_story: A codespace is a ready workshop whose key comes along with the repo.
+visual: A full editor and terminal are open in a browser tab.
+emotion: The joy of starting work without any setup hassle.
+definition: Codespaces is a development environment in the cloud that is built from a repository and opened in a browser or VS Code.
+explanation: The repo's devcontainer.json says which tools and extensions are needed. A codespace runs on a virtual machine with a terminal and an editor. It can be stopped or deleted, and plans give some free time.
+simple_explain: Open a codespace from a repo and a full environment is ready in moments. New contributors are spared the pain of setup.
+analogy: It is like a ready workshop with every tool already laid out.
+formula_rule: Repo + devcontainer.json → Codespace
+example_1: A new intern runs the project on day one with no setup.
+example_2: In a tutorial every student gets the same environment.
+example_3: Running a PR in the browser to check it.
+related: devcontainer, VS Code, GitHub Actions
+word_family: codespace, devcontainer, VM, extension
+where_used: Onboarding | Tutorials | Quick bug fixes
+mini_conversation: A: A new teammate needs hours to set up. | B: Add a devcontainer.json and Codespaces will do it in one click.
+misconception: ✗ Codespaces is only an online editor and cannot run code → ✓ A codespace is a whole virtual machine where the terminal, tools and servers can run
+contrast: Codespaces vs local setup: Codespaces lives in the cloud, a local setup lives on your laptop.
+avoid: Delete old codespaces after use, they can eat your quota.
+memory_trick: A codespace is a ready workspace in the cloud.
+real_project: Keeping a devcontainer.json in an open-source project so contributors can start at once.
+real_interview: An interviewer may ask: What does devcontainer.json do?
+real_daily: It is like a ready workshop with every tool laid out.
+mcq_question: Which file defines a codespace's environment?
+mcq_options: A) README.md B) devcontainer.json C) .gitignore D) LICENSE
+mcq_answer: B
+mcq_why: devcontainer.json lists the tools and extensions.
+fill_blank: Codespaces run in the cloud on a ____ → virtual machine
+apply: How would you make setup easy for new contributors? → Add devcontainer.json and enable Codespaces
+explain_task: Explain in three lines why Codespaces is useful.
+own_task: Open a codespace for one of your repos and see if the project runs.
+
+@GIT-063
+type: topic56
+topic: 07 GitHub Platform
+level: Beginner
+term: GitHub Gist
+cue: What is GitHub's way of sharing a small snippet of code or a note quickly without creating a whole repo?
+category: GitHub feature
+frequency: Low
+importance: 2
+origin: A whole repository felt heavy for a tiny snippet, so GitHub made the gist, a light git repo of one or a few files that can be shared by link.
+pro_tip: A secret gist can be seen by anyone with the link, so do not treat it as private.
+memory_story: A gist is a small slip on which you write a bit of code and pass it on with a link.
+visual: A small note holding a few lines of code and a share link.
+emotion: The ease of sending a snippet right away.
+definition: A gist is a light git repo for sharing small code snippets or notes through a link.
+explanation: A gist can be public or secret. A secret gist does not show in search, but anyone with the link can view it, so it is not truly private. A gist keeps versions and comments, and can also be cloned with git.
+simple_explain: With a gist you share a few lines of code or notes through one link. You do not need a whole repo.
+analogy: It is like writing a snippet on a slip and handing it to a friend.
+formula_rule: Write the snippet → make a gist → share the link
+example_1: Sending a small script to a friend by link.
+example_2: Embedding a config snippet in a blog.
+example_3: Sharing an error log with a support team.
+related: repository, snippets, embed
+word_family: gist, snippet, secret, public
+where_used: Snippet sharing | Bug reports | Blog posts
+mini_conversation: A: How do I send this little script? | B: Make a gist and send the link.
+misconception: ✗ A secret gist is private and only I can see it → ✓ A secret gist can be seen by anyone with the link, it is only hidden from search
+contrast: Gist vs repo: a gist is light for small snippets, a repo is for a whole project.
+avoid: Do not put secrets or passwords in a gist.
+memory_trick: A gist is a quick-share fragment.
+real_project: Putting a small config file in a gist and sending the link to support.
+real_interview: An interviewer may ask: What is the difference between a secret gist and a private repo?
+real_daily: It is like writing a snippet on a slip and handing it to a friend.
+mcq_question: Which statement about a secret gist is true?
+mcq_options: A) Only I can see it B) Nobody can see it C) It shows to everyone in search D) Anyone with the link can see it
+mcq_answer: D
+mcq_why: A secret gist is unlisted and opens through its link.
+fill_blank: To share a small snippet without a repo, you make a ____ → gist
+apply: How do you share a config snippet without a repo? → Make a gist and send the link
+explain_task: Explain the difference between a gist and a repo in three lines.
+own_task: Put a small script in a gist and write down its link.
+
+@GIT-064
+topic: 05 Advanced Git
+level: Advanced
+term: Git hooks (pre-commit)
+cue: What does Git offer to run a script automatically before a commit or push?
+kind: Git feature
+frequency: Medium
+importance: 3
+origin: Teams needed to stop badly formatted or failing commits, so Git added scripts that run on certain events, called hooks.
+pro_tip: Share hooks with the team through a tool such as Husky or pre-commit.
+memory_story: A hook is a guard at the commit door who lets you through only after a check.
+visual: A script guard stands at the commit door, runs the tests, and shows a green flag.
+emotion: Trust that bad commits get stopped.
+meaning: A Git hook is a script that runs automatically before or after an event such as a commit or push.
+code: printf '#!/bin/sh\nnpm test\n' > .git/hooks/pre-commit¶chmod +x .git/hooks/pre-commit
+output: (npm test will now run before every commit)
+explanation: Hooks live in .git/hooks and must be executable. If pre-commit fails, the commit is stopped. The .git folder is not committed, so hooks do not reach the team on their own; share them with Husky or the pre-commit framework.
+simple_explain: A hook lets you run tests or formatting before each commit. If it fails, the commit does not happen.
+analogy: It is like a guard at a door who lets you in only after checking.
+syntax: .git/hooks/<hook-name> (an executable script)
+anatomy: pre-commit = before a commit | pre-push = before a push | commit-msg = checks the message
+example_1: Running lint in pre-commit
+example_2: Checking the message format in commit-msg
+example_3: Running tests in pre-push
+variation: git commit --no-verify   # skip the hooks
+used_with: .git/hooks, chmod, Husky, pre-commit framework
+related: GitHub Actions, linting, CI
+alternatives: Running the same checks in CI
+word_family: hook, pre-commit, pre-push, commit-msg, Husky
+where_used: Lint and format | Message rules | Local tests
+mini_conversation: A: Badly formatted code keeps getting committed. | B: Run a formatter in a pre-commit hook and the commit will stop on failure.
+misconception: ✗ A hook in .git applies automatically to everyone on the team → ✓ The .git folder is not cloned, so hooks must be shared with a tool such as Husky
+confused_with: hook vs CI: a hook runs on your own machine, CI runs on GitHub's servers.
+avoid: Do not make --no-verify a habit.
+wrong_code: echo "npm test" > .git/hooks/pre-commit
+right_code: printf '#!/bin/sh\nnpm test\n' > .git/hooks/pre-commit
+memory_trick: A hook holds the commit until the check passes.
+real_project: Running lint and format on every pre-commit through Husky.
+real_interview: An interviewer may ask: What is the difference between a hook and CI?
+real_daily: It is like a guard at the door who checks everyone coming in.
+mcq_question: What should a pre-commit hook do to stop a commit?
+mcq_options: A) Exit with non-zero B) Exit with zero C) Delete a file D) Print something
+mcq_answer: A
+mcq_why: A non-zero exit code counts as failure and the commit stops.
+fill_blank: To make a hook runnable you use ____ +x → chmod
+hindi_to_task: Make the pre-commit hook executable.
+task_answer: chmod +x .git/hooks/pre-commit
+own_task: Make a small pre-commit hook that prints checking before a commit.
+practice_question: What is the flag to skip hooks once?
+practice_answer: --no-verify
+
+@GIT-065
+type: topic56
+topic: 02 Branching & Merging
+level: Advanced
+term: Detached HEAD
+cue: Git says you are in detached HEAD state. What does it mean, and how do you save work done there?
+category: Git situation
+frequency: Medium
+importance: 4
+origin: HEAD normally points to a branch, but going straight to an old commit or tag leaves HEAD on no branch, and that is called a detached HEAD.
+pro_tip: If you did work there, run git switch -c name at once to make a branch.
+memory_story: A detached HEAD is a kite whose string was cut from the branch.
+visual: A kite whose string is cut flies alone in the wind.
+emotion: A first scare that turns into a feeling of control once you understand.
+definition: A detached HEAD is when HEAD points straight to a commit and not to a branch.
+explanation: New commits there belong to no branch, so you may forget them when you switch away. To save the work, run git switch -c new-name. For just looking, this state is perfectly fine. To return, run git switch main.
+simple_explain: Going to an old commit takes HEAD off the branch. Only look there or make a new branch, or new commits may be lost.
+analogy: It is like tying a kite whose string was cut to a post straight away.
+formula_rule: Work done in detached HEAD → git switch -c new-branch
+example_1: Viewing an old version with git switch --detach v1.0.0.
+example_2: Reaching a commit with git checkout 8b7d1e2.
+example_3: Committing in the detached state and saving it with git switch -c rescue.
+related: HEAD, git switch, git reflog
+word_family: HEAD, detached, checkout, switch, reflog
+where_used: Viewing an old version | Bisect | Going to a tag
+mini_conversation: A: Git says detached HEAD and I already committed. | B: Run git switch -c rescue straight away so the commit is saved.
+misconception: ✗ Detached HEAD means the repo is broken → ✓ It is a normal state: look around freely, and make a new branch to keep any work
+contrast: Detached HEAD vs being on a branch: on a branch new commits move the branch forward, in a detached state they move no branch.
+avoid: Do not switch branches after committing in a detached state without making a branch first.
+memory_trick: Detached means the string is cut, so make a branch.
+real_project: Going to an old release tag in detached HEAD to reproduce a bug.
+real_interview: An interviewer may ask: How do you save work done in a detached HEAD?
+real_daily: It is like tying a loose kite to a post right away.
+mcq_question: How do you save a commit made in a detached HEAD?
+mcq_options: A) git init B) git remote add C) git switch -c new-branch D) Delete the repo
+mcq_answer: C
+mcq_why: A new branch makes the commit part of that branch.
+fill_blank: To go back to main from a detached HEAD, run git ____ main → switch
+apply: What do you do if you only want to look at an old commit? → Look in detached HEAD and return with git switch main
+explain_task: Explain in three lines what a detached HEAD is.
+own_task: Go to an old commit, make a commit, and save it by making a branch.
+
+@GIT-066
+topic: 01 Basics
+level: Intermediate
+term: Git alias
+cue: How do you run a long git command under a short name?
+kind: Git config
+frequency: Medium
+importance: 3
+origin: Typing long commands every day is tiring, so Git lets you make short names, called aliases, in its config.
+pro_tip: Make an alias such as git lg that shows the log as a nice graph.
+memory_story: An alias is a shortcut name, like calling someone by a pet name.
+visual: A long command shrinks into a name of two or three letters.
+emotion: The comfort of typing much faster every day.
+meaning: A Git alias is a short name that stands for a long git command.
+code: git config --global alias.st status¶git config --global alias.lg "log --oneline --graph --all"¶git lg
+output: * 8b7d1e2 (HEAD -> main) Fix refund rounding¶* 3f2a9c1 Add homepage heading
+explanation: Aliases are saved in the [alias] section of ~/.gitconfig. For a Git subcommand you write only the part after git, and for a shell command you start with an exclamation mark. It is only a shortcut, not a new feature.
+simple_explain: Give long commands a short name. Write it once in the config, and then typing git st runs git status.
+analogy: It is like calling someone with a long name by a pet name.
+syntax: git config --global alias.<short> "<command>"
+anatomy: alias.st = the short name | "status" = the real command
+example_1: git config --global alias.st status
+example_2: git config --global alias.co switch
+example_3: git config --global alias.lg "log --oneline --graph --all"
+variation: git config --global alias.last "log -1 HEAD"¶git config --global --get-regexp alias   # list all aliases
+used_with: git config, ~/.gitconfig, --global
+related: git config, git log, shell alias
+alternatives: A shell alias (bash or zsh)
+word_family: alias, shortcut, config, ~/.gitconfig
+where_used: Daily work | Long log commands | Team shortcuts
+mini_conversation: A: I keep typing that long git log command. | B: Make an alias such as git lg.
+misconception: ✗ Aliases give new features that Git does not have → ✓ An alias is only a shortcut for an existing command, not a new feature
+confused_with: git alias vs shell alias: a git alias works inside git, a shell alias works in the whole terminal.
+avoid: Do not make an alias that clashes with a real git command name.
+wrong_code: git alias st status
+right_code: git config --global alias.st status
+memory_trick: An alias is an Abbreviation for Long Instructions, Always Short.
+real_project: Sharing a git lg alias with the team so everyone sees the same graph.
+real_interview: An interviewer may ask: How do you make a git alias?
+real_daily: It is like calling a person with a long name by a pet name.
+mcq_question: In which file and section is an alias saved?
+mcq_options: A) The [alias] section of ~/.gitconfig B) .git/HEAD C) Inside .gitignore D) README.md
+mcq_answer: A
+mcq_why: git config --global alias writes to the [alias] section of ~/.gitconfig.
+fill_blank: git config --global ____.st status → alias
+hindi_to_task: Make co a short name for switch.
+task_answer: git config --global alias.co switch
+own_task: Make an lg alias for yourself and run git lg.
+practice_question: What command lists all your aliases?
+practice_answer: git config --global --get-regexp alias

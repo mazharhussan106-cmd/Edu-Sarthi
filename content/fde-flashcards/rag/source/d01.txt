@@ -1,0 +1,613 @@
+deck.title: RAG – Beginner to Advanced Flashcards
+deck.subject: Retrieval-augmented generation
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: sql
+type: topic56
+
+@RAG-001
+topic: 01 Ideas
+level: Beginner
+term: What RAG is
+cue: Which pattern lets a model answer from your documents by retrieving relevant text first?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models do not know private or recent information, so retrieval fetches relevant passages and places them in the prompt before generation.
+pro_tip: Think of RAG as an open-book exam for the model.
+memory_story: RAG is a student who looks up the right pages before writing the answer.
+visual: A question, a search step, retrieved passages and a final answer.
+emotion: The comfort of answers backed by real documents.
+definition: Retrieval-augmented generation retrieves relevant passages from a knowledge source for a user's question, adds them to the prompt, and has the model generate an answer grounded in them.
+explanation: The pipeline has two phases. Offline, documents are split, embedded and indexed. Online, the question is embedded, similar chunks are retrieved, a prompt is built with the chunks, and the model answers, often with citations. RAG keeps knowledge outside the model so it can be updated and access-controlled.
+simple_explain: Search your documents first, then let the model answer using what was found.
+analogy: RAG is a student who looks up the right pages before writing the answer.
+formula_rule: Retrieve, augment the prompt, generate.
+example_1: A support bot answering from the help centre.
+example_2: An assistant answering questions about internal policies.
+example_3: A contract search tool with cited clauses.
+related: embeddings, grounding, chunking, vector search
+word_family: retrieval, generation, chunk, index, grounding
+where_used: Knowledge assistants | Support | Enterprise search
+mini_conversation: A: The model does not know our new policy. | B: Use RAG so it reads the policy before answering.
+misconception: ✗ RAG trains the model on your documents → ✓ It only supplies relevant text at question time
+contrast: RAG vs fine-tuning: RAG supplies knowledge at run time, fine-tuning changes the model.
+avoid: Do not assume retrieval always finds the right passage.
+memory_trick: Look up first, then write.
+real_project: A RAG assistant answered from a customer's help centre with cited sources.
+real_interview: An interviewer may ask: How does RAG work?
+real_daily: It is like an open-book exam.
+mcq_question: When does RAG add the knowledge?
+mcq_options: A) Never B) At deployment only C) At question time D) During model training
+mcq_answer: C
+mcq_why: Passages are retrieved per question.
+fill_blank: Supplying retrieved text to ground the answer is the ____ part of RAG → augmentation
+apply: A model must answer from private documents that change often. What do you build? → A RAG system
+explain_task: Explain RAG in three lines.
+own_task: Sketch the offline and online phases of a RAG system.
+
+@RAG-002
+topic: 01 Ideas
+level: Intermediate
+term: RAG vs fine-tuning vs long context
+cue: Which three ways give a model your knowledge, and when does each fit?
+category: Core concept
+frequency: High
+importance: 5
+origin: Teams can put knowledge in the model, in the prompt or in a retrieval system, and each has different trade-offs.
+pro_tip: Use RAG for large, changing, permissioned knowledge, and long context for small bounded documents.
+memory_story: Fine-tuning is teaching, long context is handing over the whole book, and RAG is handing over the right pages.
+visual: Three separate paths leading from knowledge to a final answer.
+emotion: The clarity of choosing the right tool.
+definition: Fine-tuning changes model behaviour with training data, long context places whole documents in the prompt, and RAG retrieves only relevant passages from a larger store at question time.
+explanation: Long context is simple for a few documents, but costly per call and may dilute attention. RAG scales to huge collections, supports updates, access control and citations. Fine-tuning suits style and format, not fresh facts. Hybrids are common, such as RAG with a lightly tuned model.
+simple_explain: Small documents fit in context, large changing collections need RAG, and style needs fine-tuning.
+analogy: Fine-tuning is teaching, long context is handing over the whole book, and RAG is handing over the right pages.
+formula_rule: Size and change decide: small = context, large and live = RAG.
+example_1: A ten page manual pasted into the prompt.
+example_2: Millions of tickets searched with RAG.
+example_3: A brand voice learned through fine-tuning.
+related: prompting vs fine-tuning, context window, cost control, pipeline overview
+word_family: context, retrieval, fine-tuning, scale, freshness
+where_used: Architecture decisions | Proposals | Cost planning
+mini_conversation: A: Can we just paste all documents in the prompt? | B: Not if there are thousands, so retrieve the relevant ones.
+misconception: ✗ A bigger context window makes RAG unnecessary → ✓ Large collections, cost, permissions and updates still favour retrieval
+contrast: RAG vs long context: retrieve selected pages versus supply everything.
+avoid: Do not paste huge collections into every call.
+memory_trick: Small book in context, big library by retrieval.
+real_project: Switching from pasting documents to retrieval cut cost and improved relevance.
+real_interview: An interviewer may ask: When would you use RAG instead of long context?
+real_daily: It is like handing over the right pages instead of the whole library.
+mcq_question: Which fits a huge, changing document store?
+mcq_options: A) RAG B) Fine-tuning only C) Nothing D) A short prompt
+mcq_answer: A
+mcq_why: Retrieval scales and updates easily.
+fill_blank: Behaviour and style changes suit ____ → fine-tuning
+apply: A single short policy must be applied to every call. What fits? → Put it in the prompt
+explain_task: Explain the three approaches in three lines.
+own_task: Choose the approach for three different knowledge sizes.
+
+@RAG-003
+topic: 01 Ideas
+level: Beginner
+term: Pipeline overview
+cue: Which stages make up a typical RAG system from documents to answer?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A working system needs ingestion, retrieval and generation stages, each with its own failure modes.
+pro_tip: Measure each stage separately so you know where quality is lost.
+memory_story: The pipeline is a library: shelving books, finding the right ones, and writing the answer.
+visual: Boxes for load, chunk, embed, index, retrieve, rerank, prompt and answer.
+emotion: The clarity of seeing the whole flow.
+definition: A RAG pipeline loads and cleans documents, chunks them, embeds and indexes the chunks, then at question time retrieves candidates, optionally reranks, builds a prompt and generates a cited answer.
+explanation: Quality depends on every stage. Poor parsing loses text, bad chunking splits ideas, weak retrieval misses evidence, and a weak prompt ignores it. Add evaluation, logging and access control around the pipeline. Updates must flow through ingestion. Each stage can be improved independently.
+simple_explain: Load, chunk, embed, index, retrieve, rerank, prompt, answer, and measure each step.
+analogy: The pipeline is a library: shelving books, finding the right ones, and writing the answer.
+formula_rule: Ingest → retrieve → generate → evaluate.
+example_1: A PDF parsed into text and chunked.
+example_2: A query retrieving ten chunks and reranking to five.
+example_3: A prompt with five chunks and a citation rule.
+related: loading documents, chunking, vector search, building the prompt
+word_family: pipeline, ingestion, retrieval, generation, evaluation
+where_used: Design | Debugging | Reviews
+mini_conversation: A: The answers are wrong. | B: First check whether retrieval found the right chunks.
+misconception: ✗ If the answer is wrong, the model is to blame → ✓ Often retrieval or parsing failed earlier
+contrast: Ingestion vs retrieval: preparing the knowledge versus finding it.
+avoid: Do not tune the prompt before checking retrieval.
+memory_trick: Check retrieval before blaming the model.
+real_project: Finding poor PDF parsing explained why answers missed table content.
+real_interview: An interviewer may ask: Walk me through a RAG pipeline.
+real_daily: It is like shelving books and finding the right ones.
+mcq_question: Which stage runs before retrieval?
+mcq_options: A) Evaluation only B) Ingestion and indexing C) Answer generation D) Citation
+mcq_answer: B
+mcq_why: Content must be indexed first.
+fill_blank: Preparing and indexing documents is called ____ → ingestion
+apply: Answers are wrong. What do you check first? → Whether the right chunks were retrieved
+explain_task: Explain the RAG pipeline in three lines.
+own_task: Draw the pipeline and mark where quality can be lost.
+
+@RAG-004
+topic: 01 Ideas
+level: Intermediate
+term: When RAG fails
+cue: Which problems make RAG answers wrong even with a good model?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Teams are surprised when a RAG system fails, and the causes repeat across projects.
+pro_tip: Keep a list of failing questions and classify the cause of each.
+memory_story: RAG failures are broken links in a chain, and the weakest link decides the result.
+visual: A chain of stages with several labelled weak links.
+emotion: The relief of knowing where to look.
+definition: Common RAG failures include missing or badly parsed content, chunks that split key information, retrieval that misses relevant text, too much irrelevant context, ignored or misread evidence, outdated data and questions that need reasoning across many documents.
+explanation: Diagnose by checking whether the evidence exists, whether it was retrieved, whether it was in the prompt, and whether the model used it. Fixes include better parsing, new chunking, hybrid search, reranking, query rewriting, shorter context and clearer instructions. Some questions need aggregation or multi-step retrieval.
+simple_explain: Check exists, retrieved, in prompt, and used, to find the broken link.
+analogy: RAG failures are broken links in a chain.
+formula_rule: Exists? Retrieved? In the prompt? Used?
+example_1: A table that the parser dropped.
+example_2: An answer split across two chunks.
+example_3: A model ignoring a retrieved passage.
+related: pipeline overview, evaluating retrieval, failure analysis, reranking
+word_family: failure, recall, noise, parsing, aggregation
+where_used: Debugging | Quality reviews | Operations
+mini_conversation: A: The answer is in the document but the bot says it does not know. | B: Check whether that chunk was retrieved.
+misconception: ✗ More retrieved chunks always help → ✓ Irrelevant context can distract the model
+contrast: Retrieval failure vs generation failure: wrong evidence versus misused evidence.
+avoid: Do not guess the cause without checking each stage.
+memory_trick: Four questions find the failing stage.
+real_project: Classifying failures showed that most errors came from parsing, not the model.
+real_interview: An interviewer may ask: How do you debug a wrong RAG answer?
+real_daily: It is like finding the broken link in a chain.
+mcq_question: What do you check first when the answer is missing?
+mcq_options: A) The logo B) The font C) The colour D) Whether the evidence was retrieved
+mcq_answer: D
+mcq_why: Missing retrieval is the common cause.
+fill_blank: The share of relevant passages found is called ____ → recall
+apply: A relevant chunk never appears in results. What stage failed? → Retrieval
+explain_task: Explain how to diagnose RAG failures in three lines.
+own_task: Make a table of five failures and their fixes.
+
+@RAG-005
+topic: 01 Ideas
+level: Intermediate
+term: Build vs buy
+cue: Should you build RAG yourself or use a managed service?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Many vendors offer ready RAG platforms, so teams must decide where custom work is worth it.
+pro_tip: Prototype with managed pieces, and own the parts that are your advantage or risk.
+memory_story: Build or buy is choosing between cooking from scratch and ordering a meal kit.
+visual: A scale with control on one side and speed on the other.
+emotion: The calm of a decision based on constraints.
+definition: Build versus buy compares assembling your own pipeline from libraries and databases with using a managed retrieval or RAG platform that handles parsing, indexing and search.
+explanation: Managed services give speed, but may limit control over parsing, chunking, ranking, data location and cost. Building gives control, but needs engineering, evaluation and maintenance. Consider data sensitivity, scale, team skills, vendor lock-in and exit plans. A common path is to start managed and replace pieces as needs grow.
+simple_explain: Buy for speed, build for control, and start simple.
+analogy: Build or buy is cooking from scratch versus a meal kit.
+formula_rule: Speed and cost versus control and fit.
+example_1: A managed vector search for a prototype.
+example_2: Custom parsing for complex contracts.
+example_3: A move from managed to self-hosted later.
+related: pipeline overview, pgvector, cost and latency, access control
+word_family: managed, self-hosted, lock-in, control, prototype
+where_used: Proposals | Architecture | Procurement
+mini_conversation: A: Should we build our own pipeline? | B: Prototype with a managed service, then see what needs control.
+misconception: ✗ Building is always cheaper in the long run → ✓ Maintenance and evaluation cost real effort
+contrast: Managed vs custom: faster start versus deeper control.
+avoid: Do not choose a platform without checking data handling terms.
+memory_trick: Start managed, own what matters.
+real_project: A managed prototype validated demand before investing in custom parsing.
+real_interview: An interviewer may ask: How do you decide whether to build RAG?
+real_daily: It is like a meal kit versus cooking from scratch.
+mcq_question: What does a managed RAG service give first?
+mcq_options: A) Total control B) Speed to a working system C) Zero cost D) No data
+mcq_answer: B
+mcq_why: It handles the plumbing.
+fill_blank: Dependence on one vendor is ____ → lock-in
+apply: A team needs a quick pilot. What approach? → Start with a managed service
+explain_task: Explain build versus buy in three lines.
+own_task: List the criteria you would use to choose between them.
+
+@RAG-006
+topic: 02 Ingestion
+level: Beginner
+term: Loading documents
+cue: How do you bring documents from many sources into the pipeline?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Knowledge sits in files, wikis, tickets and databases, so connectors collect it with its context.
+pro_tip: Keep the source id, URL, owner and modified time with every document.
+memory_story: Loading is collecting books from many shelves into one reading room.
+visual: Connectors from several sources feeding one store.
+emotion: The satisfaction of a complete corpus.
+definition: Document loading uses connectors or scripts to read content from sources such as files, wikis, help desks, drives and databases, along with metadata like source, author, permissions and modified time.
+explanation: Decide which sources are authoritative. Respect permissions and licences. Capture metadata for citations and filters. Detect changes so updates are incremental. Handle formats such as HTML, Word, PDF and spreadsheets. Remove duplicates and stale versions. Log what was loaded and what failed.
+simple_explain: Collect from trusted sources with metadata, permissions and change tracking.
+analogy: Loading is collecting books from many shelves into one reading room.
+formula_rule: Content + metadata + permissions + change tracking.
+example_1: A connector for a wiki.
+example_2: A scheduled sync of a shared drive.
+example_3: A record of source URL and modified time.
+related: parsing PDFs and OCR, metadata, updating the index, access control
+word_family: connector, source, sync, permissions, metadata
+where_used: Enterprise search | Knowledge bases | Support tools
+mini_conversation: A: Which version of the policy is current? | B: Load the latest modified one and mark older ones stale.
+misconception: ✗ Loading everything available improves answers → ✓ Duplicates and outdated files lower quality
+contrast: Full vs incremental load: everything each time versus only changes.
+avoid: Do not ignore permissions when loading.
+memory_trick: Authoritative sources only, with metadata.
+real_project: Excluding outdated drafts raised answer accuracy in a policy assistant.
+real_interview: An interviewer may ask: What metadata do you keep when loading documents?
+real_daily: It is like collecting books into one reading room.
+mcq_question: Which should be kept with each document?
+mcq_options: A) Only the text B) Nothing C) Source and modified time D) The font
+mcq_answer: C
+mcq_why: Citations and updates need it.
+fill_blank: A tool that reads a source system is a ____ → connector
+apply: Old drafts pollute answers. What do you do? → Exclude or mark them stale
+explain_task: Explain document loading in three lines.
+own_task: List the metadata fields you would capture.
+
+@RAG-007
+topic: 02 Ingestion
+level: Intermediate
+term: Parsing PDFs and OCR
+cue: How do you turn PDFs and scans into clean text?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: PDFs store layout, not meaning, so extracting text with order, tables and headings is hard, and scans need character recognition.
+pro_tip: Inspect parsed output on real documents, since parsing is the commonest silent failure.
+memory_story: Parsing a PDF is copying text from a photograph of a page.
+visual: A page with columns and a table turning into ordered text.
+emotion: The relief of finally seeing text in the right order.
+definition: Parsing extracts text and structure from files such as PDFs, and OCR converts images of text into characters, while layout-aware tools preserve columns, headings and tables.
+explanation: Simple PDFs have a text layer, but multi-column layouts can come out scrambled. Scans need OCR, which makes errors on poor images. Tables need special handling, such as converting to markdown or rows. Headers and footers should be removed. Vision models can read pages directly. Always sample outputs and compare with the original.
+simple_explain: Use layout-aware parsing or OCR, keep tables and headings, and check the results by eye.
+analogy: Parsing a PDF is copying text from a photograph of a page.
+formula_rule: Text layer or OCR, then structure, then inspection.
+example_1: A two-column paper read in the wrong order.
+example_2: A scanned form needing OCR.
+example_3: A table converted to rows.
+related: loading documents, cleaning, chunking, multimodal input
+word_family: parsing, OCR, layout, table, text layer
+where_used: Document pipelines | Contracts | Reports
+mini_conversation: A: The bot cannot answer from the tables. | B: The parser dropped them, so use a table-aware parser.
+misconception: ✗ Any PDF library gives clean text → ✓ Layouts, scans and tables often break simple extraction
+contrast: Text layer vs OCR: embedded text versus recognised images.
+avoid: Do not trust parsed text without sampling.
+memory_trick: Look at the parsed text yourself.
+real_project: Switching to a layout-aware parser recovered table data that answers needed.
+real_interview: An interviewer may ask: What problems do PDFs cause in RAG?
+real_daily: It is like copying text from a photograph.
+mcq_question: What do scanned pages need?
+mcq_options: A) Encryption B) Compression C) Deletion D) OCR
+mcq_answer: D
+mcq_why: They contain images, not text.
+fill_blank: Converting images of text to characters is ____ → OCR
+apply: Answers miss data inside tables. What do you improve? → Table-aware parsing
+explain_task: Explain PDF parsing problems in three lines.
+own_task: List five checks for parsed document quality.
+
+@RAG-008
+topic: 02 Ingestion
+level: Beginner
+term: Cleaning text for RAG
+cue: Which cleanup steps remove noise before indexing?
+category: Core concept
+frequency: High
+importance: 4
+origin: Menus, footers and boilerplate pollute search results, so text is cleaned before it is indexed.
+pro_tip: Remove repeated headers and footers, but keep headings that give context.
+memory_story: Cleaning is removing the packaging before weighing the goods.
+visual: A page with a header and footer greyed out.
+emotion: The tidiness of a clean corpus.
+definition: Cleaning removes or normalises noise such as navigation text, headers, footers, page numbers, repeated boilerplate, odd characters and duplicate content, while preserving headings and meaning.
+explanation: Noise lowers search precision and wastes prompt space. Normalise whitespace and encodings. Deduplicate near-identical pages. Keep structure such as titles and section names, since they help retrieval and citations. Be careful not to delete meaningful content, such as legal notes. Test the effect on retrieval.
+simple_explain: Strip repeated noise, keep structure and meaning, and test the effect.
+analogy: Cleaning is removing the packaging before weighing the goods.
+formula_rule: Remove noise, keep structure.
+example_1: Deleting repeated page footers.
+example_2: Removing cookie banners from scraped pages.
+example_3: Merging duplicate versions of an article.
+related: parsing PDFs, chunking, metadata, evaluating retrieval
+word_family: cleaning, boilerplate, noise, normalise, duplicate
+where_used: Ingestion | Scraping | Knowledge bases
+mini_conversation: A: Every result starts with the same legal footer. | B: Remove the footer before indexing.
+misconception: ✗ The more text indexed, the better → ✓ Noise reduces precision and wastes space
+contrast: Noise vs structure: remove noise, keep headings.
+avoid: Do not strip headings that give context.
+memory_trick: Delete the noise, keep the headings.
+real_project: Removing repeated footers improved top results for short questions.
+real_interview: An interviewer may ask: Why clean documents before indexing?
+real_daily: It is like removing packaging before weighing goods.
+mcq_question: What should cleaning keep?
+mcq_options: A) Headings and meaning B) Cookie banners C) Page numbers D) Repeated footers
+mcq_answer: A
+mcq_why: Structure helps retrieval.
+fill_blank: Repeated text appearing on every page is ____ → boilerplate
+apply: Search results all show the same footer. What do you do? → Remove it during cleaning
+explain_task: Explain cleaning for RAG in three lines.
+own_task: Write cleaning rules for a scraped help centre.
+
+@RAG-009
+type: code56
+topic: 02 Ingestion
+level: Intermediate
+term: Chunking
+cue: How do you split long documents into pieces that can be retrieved?
+kind: Ingestion step
+frequency: Very high
+importance: 5
+origin: Embedding and prompts work on limited text, and whole documents blur meaning, so documents are split into focused chunks.
+pro_tip: Split on natural boundaries such as headings and paragraphs before using fixed sizes.
+memory_story: Chunking is cutting a long scroll at the paragraph breaks into index cards.
+visual: A document cut into labelled cards with titles.
+emotion: The satisfaction of cards that each make sense alone.
+meaning: Chunking divides documents into smaller passages, ideally along semantic boundaries such as headings and paragraphs, each carrying its title path and metadata.
+code: -- a chunks table for ingestion¶CREATE TABLE chunks (¶  id BIGSERIAL PRIMARY KEY,¶  doc_id TEXT NOT NULL,¶  section_path TEXT,¶  chunk_index INT NOT NULL,¶  content TEXT NOT NULL,¶  token_count INT,¶  source_url TEXT,¶  updated_at TIMESTAMPTZ¶);¶-- python-style idea (not run): split by headings, then merge small paragraphs up to about 400 tokens
+output: Each chunk is stored with its document, section path and position, ready to embed and cite.
+explanation: Too large chunks mix topics and dilute matches. Too small chunks lose context. Prepend the document title and section path to each chunk's text. Respect tables and code blocks. Overlap and size are tuned using evaluation. Keep a link back to the source for citations. Re-chunk when the strategy changes.
+simple_explain: Split on structure, keep chunks self-contained, and attach titles and metadata.
+analogy: Chunking is cutting a long scroll at the paragraph breaks into index cards.
+syntax: split by heading, merge up to target size, add section path
+anatomy: chunk = passage | section_path = where it lives | token_count = size | source_url = for citation
+example_1: A chunk titled Returns > Refund timeline.
+example_2: A table kept together in one chunk.
+example_3: Chunk index used to fetch neighbours.
+variation: parent and child chunks   // retrieve small, return the larger parent
+used_with: embeddings, metadata, evaluation
+related: chunk size and overlap, metadata, embeddings, parsing PDFs
+alternatives: Fixed-size splitting | semantic splitting
+where_used: Every RAG system | Search | Document Q and A
+mini_conversation: A: The answer was cut between two chunks. | B: Use structure-based chunks and some overlap.
+misconception: ✗ Fixed 500-word chunks work for all documents → ✓ Structure-aware chunking usually works better
+confused_with: Chunk vs document: a chunk is a retrievable passage, the document is the whole source.
+avoid: Do not split in the middle of tables.
+wrong_code: -- split every 500 characters regardless of structure
+right_code: -- split by headings, then merge to a target token size
+memory_trick: Cut at meaning, not at counts.
+real_project: Heading-based chunks with titles improved retrieval of policy clauses.
+real_interview: An interviewer may ask: How do you choose chunking strategy?
+real_daily: It is like cutting a scroll into index cards.
+mcq_question: What should chunks respect?
+mcq_options: A) Only length B) Natural structure C) Random positions D) Colours
+mcq_answer: B
+mcq_why: Coherent passages retrieve better.
+fill_blank: Prepending the section title to chunk text adds ____ → context
+hindi_to_task: Store the section path with each chunk.
+task_answer: section_path TEXT
+own_task: Design chunking rules for a policy handbook.
+practice_question: Why keep a link to the source?
+practice_answer: It supports citations and updates.
+
+@RAG-010
+type: topic56
+topic: 02 Ingestion
+level: Intermediate
+term: Chunk size and overlap
+cue: How big should chunks be and how much should neighbours share?
+category: Core concept
+frequency: High
+importance: 5
+origin: Size and overlap trade precision against context, so they are tuned rather than guessed.
+pro_tip: Start with a few hundred tokens and tune using retrieval tests.
+memory_story: Chunk size is the size of the index card, and overlap is the line copied onto the next card.
+visual: Two neighbouring chunks sharing a few sentences.
+emotion: The patience of tuning with evidence.
+definition: Chunk size is the target length of each passage, and overlap is the amount of text repeated between consecutive chunks so that information at boundaries is not lost.
+explanation: Small chunks give precise matches but less context. Large chunks give context but retrieve more noise and cost more tokens. Overlap of around ten to twenty percent is a common starting point; it helps boundary cases but increases index size and duplicates in results. Optimal values depend on documents and questions, so measure recall and answer quality on a test set.
+simple_explain: Choose a size and small overlap, then tune with tests.
+analogy: Chunk size is the size of the index card, and overlap is the line copied onto the next card.
+formula_rule: Smaller = precise, larger = contextual, overlap = boundary safety.
+example_1: Chunks of about 300 tokens with 30 tokens overlap.
+example_2: Larger chunks for narrative text.
+example_3: Smaller chunks for FAQs.
+related: chunking, evaluating retrieval, top-k, cost and latency
+word_family: chunk size, overlap, tokens, boundary, tuning
+where_used: Tuning | Evaluation | Cost control
+mini_conversation: A: Should chunks be 1000 tokens? | B: Test a few sizes and compare recall.
+misconception: ✗ There is one best chunk size → ✓ It depends on content and questions, so test
+contrast: Overlap vs no overlap: overlap protects boundaries but adds duplicates.
+avoid: Do not tune by feel alone.
+memory_trick: Measure, then pick the size.
+real_project: Smaller, better-split chunks improved recall for a help centre of FAQs.
+real_interview: An interviewer may ask: How do you tune chunk size?
+real_daily: It is like the size of an index card.
+mcq_question: What does overlap protect?
+mcq_options: A) Information at chunk boundaries B) Speed C) Passwords D) Storage
+mcq_answer: A
+mcq_why: Shared text keeps cross-boundary meaning.
+fill_blank: Repeated text between neighbouring chunks is ____ → overlap
+apply: Answers are lost between chunks. What do you try? → Add overlap or change the splitting rules
+explain_task: Explain chunk size and overlap in three lines.
+own_task: Plan a test comparing three chunk sizes.
+
+@RAG-011
+type: code56
+topic: 02 Ingestion
+level: Intermediate
+term: Metadata
+cue: Which extra fields attach context to chunks for filtering and citation?
+kind: Ingestion step
+frequency: Very high
+importance: 5
+origin: Text alone cannot tell who may see a chunk or where it came from, so metadata carries that information.
+pro_tip: Store the fields you will filter on, such as tenant, language, product and date.
+memory_story: Metadata is the label on each index card saying whose it is and where it came from.
+visual: A chunk with tags for source, date and access group.
+emotion: The control of knowing each chunk's origin.
+meaning: Metadata fields such as source URL, title, section, author, language, product, version, updated time and access group are stored with each chunk for filtering, ranking, citing and permissions.
+code: ALTER TABLE chunks ADD COLUMN tenant_id TEXT NOT NULL DEFAULT 'public';¶ALTER TABLE chunks ADD COLUMN lang TEXT;¶ALTER TABLE chunks ADD COLUMN product TEXT;¶CREATE INDEX chunks_tenant_product_idx ON chunks (tenant_id, product);¶SELECT id, content FROM chunks¶WHERE tenant_id = 'acme' AND product = 'billing' AND lang = 'en';
+output: Only English billing chunks belonging to the tenant acme are candidates for search.
+explanation: Filters narrow search before or during vector search, which raises precision and enforces permissions. Dates support freshness rules. Source and section support citations. Metadata must be accurate and updated with the content. Plan fields early, since adding them later means re-ingesting. Tenant fields are critical for isolation.
+simple_explain: Attach source, permissions and filter fields to every chunk.
+analogy: Metadata is the label on each index card saying whose it is and where it came from.
+syntax: WHERE tenant_id = :tenant AND product = :product
+anatomy: tenant_id = who may see | lang = language | updated_at = freshness | source_url = citation
+example_1: WHERE updated_at > now() - interval '1 year'
+example_2: WHERE access_group IN ('staff')
+example_3: SELECT source_url FROM chunks WHERE id = 42
+variation: metadata filters inside the vector database   // the same idea
+used_with: filters, access control, citations
+related: filters, access control per user, loading documents, citations
+alternatives: Separate indexes per tenant
+where_used: Multi-tenant apps | Enterprise search | Support
+mini_conversation: A: Users of one customer see another's documents. | B: Filter by tenant id on every search.
+misconception: ✗ Metadata is optional decoration → ✓ It enforces permissions and improves precision
+confused_with: Metadata vs content: metadata describes, content is searched.
+avoid: Do not search without a tenant filter.
+wrong_code: SELECT content FROM chunks ORDER BY embedding <=> :q LIMIT 5;   -- no tenant filter
+right_code: SELECT content FROM chunks WHERE tenant_id = :tenant ORDER BY embedding <=> :q LIMIT 5;
+memory_trick: Without a filter there is no safety.
+real_project: A mandatory tenant filter closed a cross-customer leak found in testing.
+real_interview: An interviewer may ask: Why is metadata important in RAG?
+real_daily: It is like a label on each card.
+mcq_question: Which field enforces data isolation between customers?
+mcq_options: A) token_count B) chunk_index C) lang D) tenant_id
+mcq_answer: D
+mcq_why: It restricts search to one customer.
+fill_blank: Restricting search by fields is ____ → filtering
+hindi_to_task: Search only the chunks of tenant acme.
+task_answer: WHERE tenant_id = 'acme'
+own_task: List the metadata fields for a multi-tenant help centre.
+practice_question: Why plan metadata early?
+practice_answer: Adding fields later may need re-ingestion.
+
+@RAG-012
+type: code56
+topic: 02 Ingestion
+level: Intermediate
+term: Embedding chunks
+cue: How do chunks become vectors stored for search?
+kind: Ingestion step
+frequency: Very high
+importance: 5
+origin: Similarity search needs numbers, so each chunk is passed through an embedding model and stored with its vector.
+pro_tip: Record the embedding model name and version with every vector.
+memory_story: Embedding chunks is giving each index card map coordinates for meaning.
+visual: Chunks passing through an embedding model into a vector column.
+emotion: The satisfaction of a searchable index.
+meaning: Each chunk's text is sent to an embedding model, usually in batches, and the returned vector is stored in a vector column along with the model version.
+code: CREATE EXTENSION IF NOT EXISTS vector;¶ALTER TABLE chunks ADD COLUMN embedding vector(1024);¶ALTER TABLE chunks ADD COLUMN embed_model TEXT;¶-- application code (not run): batch chunks, call the embedding API, then¶UPDATE chunks SET embedding = :vec, embed_model = 'EMBED_MODEL_V1' WHERE id = :id;
+output: Each chunk has a stored vector and a record of the model that produced it.
+explanation: The vector size must match the model. Embeddings should come from the same model for chunks and queries. Changing models requires re-embedding everything. Batch calls to save time and respect rate limits. Retry failures and track which chunks are missing vectors. Embedding costs scale with total tokens.
+simple_explain: Embed in batches, store the vector with the model name, and re-embed when the model changes.
+analogy: Embedding chunks is giving each index card map coordinates for meaning.
+syntax: embedding vector(N) with N matching the model
+anatomy: vector(1024) = dimensions | embed_model = provenance | batch = efficient calls
+example_1: Embedding 100 chunks per request.
+example_2: A job listing chunks without vectors.
+example_3: Storing the model name per row.
+variation: separate table for vectors   // keep the content table lean
+used_with: pgvector, batch jobs, rate limits
+related: embeddings, vector search, updating the index, rate limits
+alternatives: Managed vector databases
+where_used: Every RAG system | Search | Recommendations
+mini_conversation: A: Search results got strange after the upgrade. | B: Queries use a new embedding model while stored vectors use the old one.
+misconception: ✗ Vectors from different models can be mixed → ✓ They live in different spaces and must not be compared
+confused_with: Document vs query embedding: both must use the same model.
+avoid: Do not change the embedding model without re-embedding.
+wrong_code: -- query embedded with model B, chunks with model A
+right_code: -- both embedded with the same model version
+memory_trick: One model for both sides.
+real_project: Tracking the model name per row made a safe migration to a new embedding model possible.
+real_interview: An interviewer may ask: What happens if you change the embedding model?
+real_daily: It is like giving each card map coordinates.
+mcq_question: What must match between chunks and queries?
+mcq_options: A) The file name B) The font C) The embedding model D) The language only
+mcq_answer: C
+mcq_why: Different models give incompatible vectors.
+fill_blank: The size of a vector is its number of ____ → dimensions
+hindi_to_task: Add a vector column of 1024 dimensions.
+task_answer: ALTER TABLE chunks ADD COLUMN embedding vector(1024);
+own_task: Plan a migration to a new embedding model.
+practice_question: Why store the model name with each vector?
+practice_answer: It makes safe migrations and debugging possible.
+
+@RAG-013
+type: topic56
+topic: 02 Ingestion
+level: Intermediate
+term: Updating the index
+cue: How do you keep the index in step with changing documents?
+category: Core concept
+frequency: High
+importance: 5
+origin: Documents change daily, and a stale index gives outdated answers, so ingestion must handle updates.
+pro_tip: Hash each document's content to detect real changes and re-embed only those.
+memory_story: Updating the index is refreshing the library catalogue when books are replaced.
+visual: A changed document triggering re-chunking and re-embedding.
+emotion: The comfort of answers that stay current.
+definition: Index updating detects new, changed and removed documents, re-parses and re-chunks the changed ones, replaces their old chunks and vectors, and records the run.
+explanation: Use modified times or content hashes to find changes. Replace all chunks of a changed document atomically, so old and new versions do not mix. Schedule syncs or react to webhooks. Handle renames and moved files. Monitor freshness lag. Keep the process idempotent so reruns are safe.
+simple_explain: Detect changes by hash, replace the document's chunks, and make reruns safe.
+analogy: Updating the index is refreshing the library catalogue when books are replaced.
+formula_rule: Detect change, replace all its chunks, record it.
+example_1: A policy edited and re-indexed within minutes.
+example_2: A deleted page removed from the index.
+example_3: A content hash comparison.
+related: loading documents, deleting data, freshness, idempotency
+word_family: sync, hash, replace, freshness, webhook
+where_used: Operations | Knowledge bases | Support
+mini_conversation: A: The bot quotes the old price list. | B: The update job missed that file, so check the sync.
+misconception: ✗ Adding new chunks is enough when documents change → ✓ Old chunks must be removed, or stale content stays searchable
+contrast: Append vs replace: appending keeps stale chunks, replacing removes them.
+avoid: Do not leave old chunks of a changed document.
+memory_trick: Replace the whole document, not a piece.
+real_project: Replacing chunks per document ended stale price answers after updates.
+real_interview: An interviewer may ask: How do you keep a RAG index fresh?
+real_daily: It is like refreshing a library catalogue.
+mcq_question: What must happen to old chunks of a changed document?
+mcq_options: A) They are ignored B) They are doubled C) They are replaced or removed D) They stay forever
+mcq_answer: C
+mcq_why: Stale content would still be retrieved.
+fill_blank: A fingerprint of content used to detect change is a ____ → hash
+apply: A document was edited but old text is still returned. What do you check? → That its old chunks were removed
+explain_task: Explain index updates in three lines.
+own_task: Design an update job with change detection.
+
+@RAG-014
+type: topic56
+topic: 02 Ingestion
+level: Advanced
+term: Deleting data
+cue: How do you remove documents completely, including from vectors and caches?
+category: Core concept
+frequency: High
+importance: 5
+origin: Documents must sometimes be removed for legal, privacy or accuracy reasons, and leftovers can still be retrieved.
+pro_tip: Make deletion a tested feature with proof, not an afterthought.
+memory_story: Deleting is pulling every page of a book out of every copy of the catalogue.
+visual: A deleted document disappearing from chunks, vectors and caches.
+emotion: The responsibility of honouring a removal request.
+definition: Deletion removes a document and all derived data, such as chunks, embeddings, cached answers and backups where required, and verifies that it can no longer be retrieved.
+explanation: Keep a mapping from documents to chunks and caches. Delete in the store and the search index, and invalidate cached answers. Logs and backups follow retention rules. For personal data requests, record when and what was deleted. Test by searching for the removed content. Soft delete flags can hide content first, but are not enough where erasure is required.
+simple_explain: Delete the document, its chunks, vectors and caches, and test that it is gone.
+analogy: Deleting is pulling every page of a book out of every copy of the catalogue.
+formula_rule: Document → chunks → vectors → caches → verify.
+example_1: Removing a retired policy.
+example_2: Honouring an erasure request.
+example_3: A test that searches for deleted text.
+related: updating the index, access control, data privacy, caching
+word_family: deletion, erasure, derived data, cache, verification
+where_used: Compliance | Privacy | Operations
+mini_conversation: A: The customer asked us to delete their file. | B: Remove its chunks and vectors, clear caches and verify.
+misconception: ✗ Deleting the source file removes it from search → ✓ Derived chunks and vectors remain until deleted
+contrast: Soft vs hard delete: hidden versus removed.
+avoid: Do not forget caches and derived stores.
+memory_trick: Delete the source and everything derived.
+real_project: A deletion test caught chunks that remained after a document was removed.
+real_interview: An interviewer may ask: How do you delete data from a RAG system?
+real_daily: It is like pulling a book from every catalogue copy.
+mcq_question: What must also be deleted besides the file?
+mcq_options: A) Chunks, vectors and caches B) The logo C) The server D) Nothing
+mcq_answer: A
+mcq_why: They can still reveal content.
+fill_blank: Data created from a source is ____ data → derived
+apply: A user requests erasure. What do you verify afterwards? → That the content can no longer be retrieved
+explain_task: Explain deletion in RAG in three lines.
+own_task: Write a deletion checklist for one document.

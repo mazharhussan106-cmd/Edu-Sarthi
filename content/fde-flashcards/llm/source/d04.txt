@@ -1,0 +1,378 @@
+
+@LLM-037
+type: topic56
+topic: 05 Applications
+level: Intermediate
+term: Chat memory
+cue: How does a chat assistant seem to remember earlier turns?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models are stateless, so applications resend the earlier conversation or a summary with every request.
+pro_tip: Keep recent turns in full and summarise older ones.
+memory_story: Chat memory is a notebook that the app hands back to the model before every answer.
+visual: A growing list of messages sent each time.
+emotion: The ease of a conversation that feels natural.
+definition: Chat memory is the application-managed history, recent messages, summaries and stored facts, that is included in each request so the model can respond with context.
+explanation: The model remembers nothing between calls. Strategies include sending the full history, a sliding window, summaries of old turns and long-term stores of facts retrieved when relevant. Memory costs tokens, so it must be trimmed. Store memory per user with privacy controls and deletion options.
+simple_explain: The app sends history or summaries every time, because the model has no memory of its own.
+analogy: Chat memory is a notebook that the app hands back to the model before every answer.
+formula_rule: Recent turns + summary + retrieved facts.
+example_1: The last ten messages sent in full.
+example_2: A summary of the earlier conversation.
+example_3: A stored preference loaded for each session.
+related: context window, token budgeting, data privacy, summarising
+word_family: memory, history, summary, window, state
+where_used: Chat apps | Assistants | Support bots
+mini_conversation: A: The bot forgot my name. | B: That message fell out of the history we send.
+misconception: ✗ The model stores conversations by itself → ✓ The application must send the history each time
+contrast: Short-term vs long-term memory: recent messages versus stored facts.
+avoid: Do not store personal memories without consent and deletion.
+memory_trick: No history sent means no memory.
+real_project: Summarising old turns kept long support chats coherent and cheap.
+real_interview: An interviewer may ask: How do chatbots remember?
+real_daily: It is like a notebook handed back each time.
+mcq_question: Who stores the conversation history?
+mcq_options: A) The application B) The browser cache only C) The model itself D) The router
+mcq_answer: A
+mcq_why: The model is stateless.
+fill_blank: A condensed version of earlier turns is a ____ → summary
+apply: A long chat exceeds the window. What do you do? → Summarise older turns
+explain_task: Explain chat memory in three lines.
+own_task: Design a memory strategy for a support assistant.
+
+@LLM-038
+type: topic56
+topic: 05 Applications
+level: Beginner
+term: Summarising
+cue: How do you condense long text faithfully?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: People face more text than they can read, so models condense documents, meetings and threads into short summaries.
+pro_tip: State the audience, length and what to include, and check for invented details.
+memory_story: Summarising is writing the executive brief of a long report.
+visual: A long document shrinking into a short bullet list.
+emotion: The relief of seconds instead of hours.
+definition: Summarisation produces a shorter version of source text that keeps the key points, tailored to an audience and length, and is checked for accuracy against the source.
+explanation: Specify audience, length, format and focus, such as decisions and action items. For very long texts, summarise in chunks and then combine. Ask to avoid adding information not in the text. Review for omissions and errors, especially numbers and names. Provide the text in tags.
+simple_explain: Tell the model who it is for, how long, and what to keep, and check it against the source.
+analogy: Summarising is writing the executive brief of a long report.
+formula_rule: Audience + length + focus + faithfulness.
+example_1: A three bullet summary of an email thread.
+example_2: Decisions and action items from a meeting.
+example_3: A chunked summary of a long contract.
+related: clear instructions, hallucination, context window, evaluation
+word_family: summary, chunk, faithful, audience, key points
+where_used: Email tools | Meetings | Reports
+mini_conversation: A: The summary added a date that is not in the meeting. | B: Tell it to use only the transcript and check the numbers.
+misconception: ✗ A summary is always accurate → ✓ Models can omit or invent details, so verify critical facts
+contrast: Extractive vs abstractive: copying key sentences versus rewriting.
+avoid: Do not trust numbers in a summary without checking.
+memory_trick: Keep it faithful, check the numbers.
+real_project: Chunked summaries made long contract reviews faster and easier to check.
+real_interview: An interviewer may ask: How do you summarise a very long document?
+real_daily: It is like an executive brief of a long report.
+mcq_question: How do you handle very long text?
+mcq_options: A) Ignore half B) Summarise chunks and combine C) Delete it D) Use one huge prompt always
+mcq_answer: B
+mcq_why: Chunking fits the window and keeps detail.
+fill_blank: Splitting text into parts is ____ → chunking
+apply: A transcript is too long for one call. What do you do? → Summarise parts, then combine
+explain_task: Explain summarising in three lines.
+own_task: Write a prompt that summarises a meeting for managers.
+
+@LLM-039
+type: topic56
+topic: 05 Applications
+level: Intermediate
+term: Extraction
+cue: How do you turn messy text into structured fields?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Most business information sits in emails, PDFs and forms, so models extract names, dates and amounts into structured data.
+pro_tip: Use a schema, handle missing fields explicitly and validate values.
+memory_story: Extraction is filling a form from a pile of letters.
+visual: An invoice image turning into a JSON record.
+emotion: The satisfaction of automated data entry.
+definition: Extraction uses a model to read unstructured text and return specified fields in a defined structure, with null for fields that are not present.
+explanation: Define the fields, types and formats, such as dates in year-month-day. Tell the model to use null instead of guessing. Validate with code, such as checking totals and date formats. Use low temperature. Handle documents longer than the window and tables carefully. Measure accuracy against labelled examples.
+simple_explain: Define the fields, forbid guessing, and validate the result.
+analogy: Extraction is filling a form from a pile of letters.
+formula_rule: Schema + null when missing + validation.
+example_1: Extracting invoice number, date and total.
+example_2: Pulling names and dates from an email.
+example_3: A check that line items sum to the total.
+related: structured output, hallucination, evaluation, validation
+word_family: extraction, field, null, validation, schema
+where_used: Invoices | Forms | Support tickets
+mini_conversation: A: The model guessed a missing date. | B: Tell it to return null and validate.
+misconception: ✗ The model should always fill every field → ✓ Missing values should be null, not guessed
+contrast: Extraction vs generation: extraction copies facts from text, generation invents new text.
+avoid: Do not let the model guess missing fields.
+memory_trick: Missing means null, not a guess.
+real_project: Validating totals caught extraction errors before they reached accounting.
+real_interview: An interviewer may ask: How do you make extraction reliable?
+real_daily: It is like filling a form from letters.
+mcq_question: What should be returned for a missing field?
+mcq_options: A) A random value B) Zero always C) null D) A guess
+mcq_answer: C
+mcq_why: Guessing creates false data.
+fill_blank: Checking extracted values with rules is ____ → validation
+apply: An invoice has no due date. What should the field hold? → null
+explain_task: Explain extraction in three lines.
+own_task: Define the fields and checks for invoice extraction.
+
+@LLM-040
+type: topic56
+topic: 05 Applications
+level: Beginner
+term: Classification
+cue: How do you assign labels to text using a model?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Sorting tickets, emails and reviews by hand is slow, so models assign labels from a defined set.
+pro_tip: Give clear label definitions and examples, and include an other label.
+memory_story: Classification is sorting the post into labelled pigeonholes.
+visual: Several items dropping neatly into separate labelled boxes.
+emotion: The ease of routing that happens automatically.
+definition: Classification asks the model to choose one or more labels from a fixed list for each input, with definitions and examples, and returns the label in a constrained format.
+explanation: Define each label clearly and show edge cases. Include other or unknown to avoid forced wrong choices. Use low temperature and structured output with an enum. Evaluate with labelled data, looking at errors per class. For high volume, a small model with good examples may suffice. Add confidence or review for uncertain cases.
+simple_explain: Define labels with examples, constrain the output, and measure accuracy.
+analogy: Classification is sorting post into labelled pigeonholes.
+formula_rule: Clear labels + examples + enum output + evaluation.
+example_1: Tagging tickets as billing, technical or other.
+example_2: Labelling review sentiment.
+example_3: Routing emails to teams.
+related: structured output, examples, evaluation, model choice
+word_family: classification, label, enum, confidence, routing
+where_used: Support | Moderation | Routing
+mini_conversation: A: Tickets are labelled inconsistently. | B: Add definitions and examples, and use an enum.
+misconception: ✗ Any label wording works → ✓ Vague or overlapping labels give inconsistent results
+contrast: Single vs multi label: one label per item versus several.
+avoid: Do not forget an other label.
+memory_trick: Define labels, show examples, constrain, then measure.
+real_project: Adding definitions and an other label raised ticket routing accuracy.
+real_interview: An interviewer may ask: How do you build a reliable classifier with an LLM?
+real_daily: It is like sorting post into pigeonholes.
+mcq_question: Why include an other label?
+mcq_options: A) To lower cost B) To add noise C) To lengthen prompts D) To avoid forced wrong labels
+mcq_answer: D
+mcq_why: Unclear items need a safe label.
+fill_blank: A fixed list of allowed values is an ____ → enum
+apply: Tickets fit none of the labels sometimes. What do you add? → An other label
+explain_task: Explain classification with LLMs in three lines.
+own_task: Write label definitions for a three-class ticket classifier.
+
+@LLM-041
+type: topic56
+topic: 05 Applications
+level: Advanced
+term: Agents and loops
+cue: How does a model plan, call tools and repeat until a task is done?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Some tasks need several steps with tool use, so applications run the model in a loop that acts, observes and decides again.
+pro_tip: Set a step limit, keep tools small and log each step.
+memory_story: An agent is an apprentice who plans, tries a tool, looks at the result and tries again.
+visual: A loop of think, act and observe arrows.
+emotion: The excitement and caution of autonomy.
+definition: An agent is an application loop in which a model decides on actions, calls tools, receives results and continues until it produces a final answer or hits a limit.
+explanation: Each cycle sends the history and tool results back to the model. Good agents have clear goals, small reliable tools, step and cost limits, error handling and logging. Failures include loops, wrong tool use and prompt injection. Prefer simple workflows when the steps are known, and use agents when the path varies.
+simple_explain: Loop through plan, act and observe with limits, and use simple workflows when possible.
+analogy: An agent is an apprentice who plans, tries a tool, looks at the result and tries again.
+formula_rule: Decide, act, observe, repeat, with a limit.
+example_1: A support agent that searches orders and drafts a reply.
+example_2: A coding agent that runs tests and edits files.
+example_3: A step limit of ten.
+related: tool calling, guardrails, prompt injection, human review
+word_family: agent, loop, tool, step limit, workflow
+where_used: Automation | Assistants | Developer tools
+mini_conversation: A: The agent keeps calling the same tool. | B: Add a step limit and report repeated calls.
+misconception: ✗ Agents are always better than fixed workflows → ✓ Fixed workflows are more predictable when steps are known
+contrast: Workflow vs agent: fixed steps versus model-chosen steps.
+avoid: Do not run agents without step and spend limits.
+memory_trick: Limit the loop, log each step.
+real_project: A step limit and logging turned a runaway agent into a reliable helper.
+real_interview: An interviewer may ask: When would you use an agent instead of a workflow?
+real_daily: It is like an apprentice trying tools.
+mcq_question: What should every agent loop have?
+mcq_options: A) Unlimited tools B) No logging C) No stop D) A step limit
+mcq_answer: D
+mcq_why: Limits prevent runaway behaviour.
+fill_blank: A fixed sequence of steps is a ____ → workflow
+apply: Steps are known in advance. What do you build? → A fixed workflow
+explain_task: Explain agents and loops in three lines.
+own_task: Design a safe agent for looking up orders with limits.
+
+@LLM-042
+type: topic56
+topic: 05 Applications
+level: Advanced
+term: The MCP idea
+cue: Which open protocol connects models to tools and data in a standard way?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Every integration used its own format, so the Model Context Protocol defines a common way for apps to offer tools and data to models.
+pro_tip: Treat connected servers as code you must trust and review permissions.
+memory_story: MCP is a universal socket so any assistant can plug into any tool server.
+visual: An assistant connected to several tool servers through one protocol.
+emotion: The convenience of tools that simply plug in.
+definition: The Model Context Protocol is an open standard in which MCP servers expose tools, resources and prompts, and MCP clients inside AI applications discover and call them, so integrations are reusable.
+explanation: A server might offer database queries or file access. The client lists the available tools to the model and carries out calls. Standardisation reduces custom glue code. Security matters, since servers can run actions and read data, so use least privilege, trusted sources and approval for risky tools. Check current specification details.
+simple_explain: One standard way to plug tools and data into AI applications.
+analogy: MCP is a universal socket so any assistant can plug into any tool server.
+formula_rule: Client discovers server tools, model requests, client executes.
+example_1: A server exposing a database query tool.
+example_2: A file system server limited to one folder.
+example_3: An assistant connecting to several servers.
+related: tool calling, agents and loops, guardrails, prompt injection
+word_family: MCP, server, client, tool, resource
+where_used: Assistants | Developer tools | Integrations
+mini_conversation: A: How do we give the assistant access to our docs? | B: Run an MCP server for them with read-only access.
+misconception: ✗ Connected tool servers are automatically safe → ✓ They can act on data, so permissions and trust need review
+contrast: MCP vs plain tool calling: MCP standardises how tools are provided and discovered.
+avoid: Do not connect untrusted servers.
+memory_trick: One socket, but check what you plug in.
+real_project: A read-only server let an assistant search internal docs with limited risk.
+real_interview: An interviewer may ask: What problem does MCP solve?
+real_daily: It is like a universal socket.
+mcq_question: What does MCP standardise?
+mcq_options: A) How tools and data are exposed to AI apps B) Passwords C) Server prices D) Colours
+mcq_answer: A
+mcq_why: It defines a common integration protocol.
+fill_blank: The component inside the app that connects to servers is the MCP ____ → client
+apply: An assistant needs read-only access to documents. What do you run? → A read-only server
+explain_task: Explain MCP in three lines.
+own_task: List the permissions a docs server should and should not have.
+
+@LLM-043
+type: topic56
+topic: 05 Applications
+level: Intermediate
+term: Multimodal input
+cue: How can a model work with images, documents and audio as well as text?
+category: Core concept
+frequency: High
+importance: 4
+origin: Real information appears in pictures, scans and sounds, so models accept more than text.
+pro_tip: Use clear, high-quality inputs and ask specific questions about them.
+memory_story: Multimodal input is giving the assistant eyes and ears as well as a reading desk.
+visual: An image and a question sent together.
+emotion: The delight of asking questions about a picture.
+definition: Multimodal models accept inputs such as images, PDFs and sometimes audio or video along with text, and can describe, read and reason about them.
+explanation: Typical uses are reading invoices, describing charts, checking screenshots and transcribing text from scans. Inputs are sent as encoded data or links, and images consume tokens. Quality matters, since blurry or small text causes errors. Verify extracted numbers. Respect privacy, since images may contain faces and personal data. Output is usually text.
+simple_explain: Send the image or file with a precise question, and verify what is read.
+analogy: Multimodal input is giving the assistant eyes and ears as well as a reading desk.
+formula_rule: File + specific question + verification.
+example_1: Reading a table from a scanned page.
+example_2: Describing a chart.
+example_3: Explaining an error screenshot.
+related: extraction, data privacy, tokens, evaluation
+word_family: multimodal, image, PDF, vision, OCR
+where_used: Document processing | Support | Accessibility
+mini_conversation: A: Can the model read this scanned invoice? | B: Yes, send the image and verify the totals.
+misconception: ✗ Models read every image perfectly → ✓ Blurry or dense images cause mistakes
+contrast: Text-only vs multimodal: text input versus images and files.
+avoid: Do not send sensitive images without checking terms.
+memory_trick: Clear picture, clear question, checked numbers.
+real_project: Reading scanned forms with a vision model sped up data entry with human checks.
+real_interview: An interviewer may ask: What care is needed with image inputs?
+real_daily: It is like giving the assistant eyes.
+mcq_question: What should you do with numbers read from an image?
+mcq_options: A) Trust them blindly B) Ignore them C) Verify them D) Delete them
+mcq_answer: C
+mcq_why: Reading errors happen.
+fill_blank: Turning scanned text into digital text is ____ → OCR
+apply: A scanned invoice must be read. What do you also do? → Verify the totals
+explain_task: Explain multimodal input in three lines.
+own_task: List three checks for data read from images.
+
+@LLM-044
+type: topic56
+topic: 05 Applications
+level: Intermediate
+term: Fallbacks
+cue: What should happen when the model or API fails or gives a poor answer?
+category: Core concept
+frequency: High
+importance: 5
+origin: Services go down and answers fail validation, so applications plan for failure instead of showing errors.
+pro_tip: Define fallbacks for every failure type before launch.
+memory_story: A fallback is the spare tyre in the boot.
+visual: A primary path and a backup path.
+emotion: The confidence of failures that end gracefully.
+definition: A fallback is a planned alternative when the primary model call fails, times out, fails validation or is unsafe, such as retrying, using another model, using a simpler method, showing a cached or default answer or handing over to a human.
+explanation: Typical sequence is retry with backoff, switch to a backup model or provider, use rules or search, and finally show a clear message with options. Validate outputs, and fall back when invalid. Monitor fallback rates, since a rise signals trouble. Test failures on purpose. Keep model names configurable for fast switching.
+simple_explain: Plan retries, a backup model, a simple method and a human handover.
+analogy: A fallback is the spare tyre in the boot.
+formula_rule: Retry, backup model, simple method, human.
+example_1: Switching to a second model after repeated errors.
+example_2: A keyword search when the model is down.
+example_3: A handover to a human agent.
+related: errors and retries, timeouts, human review, model choice
+word_family: fallback, backup, degrade, handover, failover
+where_used: Production apps | Customer support | Critical tools
+mini_conversation: A: What if the provider is down? | B: We fall back to a backup model and then to a human.
+misconception: ✗ Failure handling can wait until after launch → ✓ Outages and bad outputs happen from day one
+contrast: Retry vs fallback: retry repeats the same path, fallback changes the path.
+avoid: Do not show raw errors to users.
+memory_trick: Plan the spare tyre before the trip.
+real_project: A backup model kept a support bot running through a provider outage.
+real_interview: An interviewer may ask: How do you make an LLM feature resilient?
+real_daily: It is like a spare tyre.
+mcq_question: What is a fallback?
+mcq_options: A) A colour B) A planned alternative path C) A new feature D) A log line
+mcq_answer: B
+mcq_why: It keeps the service useful when the primary path fails.
+fill_blank: Switching to a backup system is ____ → failover
+apply: The provider is down. What should happen? → Use a backup model or hand over to a human
+explain_task: Explain fallbacks in three lines.
+own_task: Design a fallback chain for a support assistant.
+
+@LLM-045
+type: topic56
+topic: 05 Applications
+level: Beginner
+term: Writing and rewriting
+cue: How do you use a model to draft or improve text while keeping your meaning?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: People spend hours drafting and editing messages, so models help produce and refine text in a chosen tone.
+pro_tip: Give the audience, tone, purpose and facts, and always review before sending.
+memory_story: A writing assistant is an editor who drafts quickly but needs your facts.
+visual: A rough draft turning into a polished message.
+emotion: The relief of a clear first draft in seconds.
+definition: Writing and rewriting tasks ask the model to draft, shorten, translate or change the tone of text, using supplied facts, audience and purpose, with a human checking the result.
+explanation: Provide the facts so the model does not invent them, and say what must stay unchanged, such as numbers and names. Specify tone and length. Ask for options when unsure. Review for accuracy, tone and sensitive content before sending. Keep customer data private. Style guides can be included in the prompt.
+simple_explain: Give facts, tone and audience, tell it what to keep, and review the result.
+analogy: A writing assistant is an editor who drafts quickly but needs your facts.
+formula_rule: Facts + audience + tone + keep list + review.
+example_1: Rewriting an email politely for a customer.
+example_2: Shortening a report summary.
+example_3: Translating a notice with names unchanged.
+related: clear instructions, hallucination, human review, data privacy
+word_family: draft, tone, rewrite, translate, review
+where_used: Email | Documentation | Customer communication
+mini_conversation: A: The draft added a discount we never offered. | B: Supply the facts and tell it not to add new ones.
+misconception: ✗ Model drafts can be sent without reading → ✓ They may contain wrong facts or the wrong tone
+contrast: Drafting vs editing: creating from facts versus improving existing text.
+avoid: Do not send drafts without review.
+memory_trick: You supply the facts, it supplies the words.
+real_project: A drafting helper with fixed facts cut reply time while keeping accuracy.
+real_interview: An interviewer may ask: How do you stop a model inventing details in a draft?
+real_daily: It is like an editor who needs your facts.
+mcq_question: Which details must a rewrite never change?
+mcq_options: A) The wording of every sentence B) Names and numbers C) The length D) The font
+mcq_answer: B
+mcq_why: Details must stay accurate.
+fill_blank: Changing the style of writing is changing its ____ → tone
+apply: A reply must be polite and accurate. What do you supply? → The facts, audience and tone
+explain_task: Explain how to use a model for writing in three lines.
+own_task: Write a rewriting prompt that keeps all numbers.

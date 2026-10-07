@@ -1,0 +1,429 @@
+
+@RAG-025
+type: code56
+topic: 04 Generation
+level: Intermediate
+term: Building the prompt
+cue: How do you place retrieved chunks and rules into the final prompt?
+kind: Generation step
+frequency: Very high
+importance: 5
+origin: The model only sees what is in the prompt, so retrieved evidence must be laid out clearly with rules for using it.
+pro_tip: Put long evidence first and the question last, and label each source with an id.
+memory_story: Building the prompt is laying out evidence cards on a table with numbered labels before asking the question.
+visual: A prompt with numbered source blocks, rules and a question.
+emotion: The satisfaction of a well-organised evidence pack.
+meaning: The prompt includes instructions, numbered source passages with ids and metadata, rules for answering only from them and citing, and finally the user's question.
+code: SYSTEM: You answer questions using only the sources. Cite source ids in square brackets. If the sources do not contain the answer, say you do not know.¶<sources>¶<source id="1" title="Refund policy" updated="2026-08-01">Refunds are issued within 7 days ...</source>¶<source id="2" title="Shipping" updated="2026-06-10">Orders ship in 2 days ...</source>¶</sources>¶<question>How long do refunds take?</question>
+output: A structured prompt in which the model can quote and cite numbered sources.
+explanation: Tags separate sources from instructions, which also helps against injected text. Ids make citations checkable. Include dates and titles so conflicts can be handled. Order matters, since long contexts may weaken attention to the middle. Trim chunks to fit the budget, dropping the lowest ranked first.
+simple_explain: Number the sources, state the rules, and put the question at the end.
+analogy: Building the prompt is laying numbered evidence cards on a table before asking the question.
+syntax: <source id="n">text</source> then <question>
+anatomy: system rules = behaviour | sources = evidence | ids = citations | question = last
+example_1: Dates included to settle conflicts.
+example_2: Lowest ranked chunks dropped first.
+example_3: A rule to say I do not know.
+variation: parent chunks inserted instead of small ones   // more context per hit
+used_with: citations, context limits, delimiters
+related: citations, handling no answer, context limits, structure with delimiters
+alternatives: Plain concatenated text
+where_used: Every RAG system | Support bots | Knowledge tools
+mini_conversation: A: The model mixes up sources. | B: Label each source with an id and require citations.
+misconception: ✗ Dumping chunks without structure works as well → ✓ Labels and rules make evidence usable and checkable
+confused_with: System rules vs sources: rules say how to behave, sources provide facts.
+avoid: Do not mix untrusted source text with instructions unlabelled.
+wrong_code: Here is some text: ... answer the question.
+right_code: <sources><source id="1">...</source></sources><question>...</question>
+memory_trick: Rules, numbered sources, question last.
+real_project: Numbered sources made citations verifiable and answers easier to review.
+real_interview: An interviewer may ask: How do you structure a RAG prompt?
+real_daily: It is like evidence cards on a table.
+mcq_question: Why number the sources?
+mcq_options: A) To hide text B) To save tokens C) To lengthen the prompt D) So citations can be checked
+mcq_answer: D
+mcq_why: Ids link claims to evidence.
+fill_blank: Wrapping sources in tags uses ____ → delimiters
+hindi_to_task: Wrap a source with id 3 in tags.
+task_answer: <source id="3">text</source>
+own_task: Write a RAG prompt template with rules and sources.
+practice_question: Where should the question go in a long prompt?
+practice_answer: At the end, after the sources.
+
+@RAG-026
+type: topic56
+topic: 04 Generation
+level: Intermediate
+term: Citations
+cue: How does the answer show which sources support each claim?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Users and reviewers need to verify answers, so responses point back to the passages they used.
+pro_tip: Return ids and quotes, and check in code that each cited id exists and the quote appears in it.
+memory_story: Citations are footnotes that let you check the book.
+visual: An answer with bracketed numbers linked to source cards.
+emotion: The trust of answers you can verify.
+definition: Citations attach references such as source ids, titles, links and quoted text to the claims in an answer, so readers can check them against the retrieved material.
+explanation: Ask the model to cite ids in a fixed format. Validate that ids exist and that quoted text really occurs in the source. Show readable links in the interface. Citations show where an answer came from, but do not prove that the claim is faithful, so combine with faithfulness checks. Missing citations can trigger a retry or a refusal.
+simple_explain: Require ids and quotes, and verify them in code.
+analogy: Citations are footnotes that let you check the book.
+formula_rule: Claim + source id + supporting quote.
+example_1: Refunds take seven days [1].
+example_2: A link to the policy page.
+example_3: A check that the quote appears in the source.
+related: building the prompt, faithfulness, handling no answer, human review
+word_family: citation, quote, source id, reference, verification
+where_used: Support bots | Legal tools | Research assistants
+mini_conversation: A: How can I trust this answer? | B: Open the cited source and read the quote.
+misconception: ✗ A citation proves the answer is right → ✓ It only points to a source, and the claim must still match it
+contrast: Citation vs faithfulness: a pointer versus a true match.
+avoid: Do not accept citations without checking they exist.
+memory_trick: Cite it, then check it.
+real_project: Verifying quotes in code removed fake citations from answers.
+real_interview: An interviewer may ask: How do you verify RAG citations?
+real_daily: It is like footnotes in a book.
+mcq_question: What should code check about a citation?
+mcq_options: A) That the id and quote exist in the source B) That it is blue C) That it is long D) That it is short
+mcq_answer: A
+mcq_why: Models can invent citations.
+fill_blank: A reference to a source in an answer is a ____ → citation
+apply: Answers contain fake references. What do you add? → Validation of ids and quotes
+explain_task: Explain citations in three lines.
+own_task: Design the citation format and checks for a policy bot.
+
+@RAG-027
+type: topic56
+topic: 04 Generation
+level: Intermediate
+term: Handling no answer
+cue: What should the system do when the sources do not contain the answer?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Models tend to answer anyway, so systems must make it safe and normal to say the answer was not found.
+pro_tip: Test with questions that have no answer, since they reveal hallucination.
+memory_story: A good librarian says I could not find that, instead of making something up.
+visual: A question with empty retrieval and a polite not found message.
+emotion: The comfort of answers that are honest.
+definition: No-answer handling instructs and checks the model to say it cannot find the information when retrieved sources do not support an answer, and offers next steps such as rephrasing or contacting a person.
+explanation: Add a rule to the prompt, use retrieval score thresholds to detect weak evidence, and test with out-of-scope questions. The reply should be helpful, such as suggesting related topics or a human contact. Do not let the model fall back on its own memory for facts that must come from documents. Track the rate of no-answer results, since high rates reveal content gaps.
+simple_explain: Detect weak evidence, say so honestly, and offer next steps.
+analogy: A good librarian says I could not find that, instead of making something up.
+formula_rule: Weak evidence → honest not found plus help.
+example_1: I could not find that in the policy, but here is the support contact.
+example_2: A threshold below which no answer is attempted.
+example_3: A report of top unanswered questions.
+related: hallucination, building the prompt, evaluating retrieval, human review
+word_family: no answer, threshold, refusal, content gap, fallback
+where_used: Support bots | Compliance | Knowledge bases
+mini_conversation: A: The bot answers questions outside our documents. | B: Add a rule and test out-of-scope questions.
+misconception: ✗ A helpful bot should always give some answer → ✓ A wrong answer is worse than an honest not found
+contrast: Not found vs wrong answer: honest limits build trust, invented answers destroy it.
+avoid: Do not let the model answer from memory when sources are empty.
+memory_trick: Honest not found beats a confident guess.
+real_project: Reporting unanswered questions showed which documents to add.
+real_interview: An interviewer may ask: How do you handle questions with no answer in the documents?
+real_daily: It is like a librarian who admits not finding a book.
+mcq_question: What reveals content gaps?
+mcq_options: A) Shorter prompts B) A log of unanswered questions C) Faster servers D) Larger fonts
+mcq_answer: B
+mcq_why: Repeated not found results show what is missing.
+fill_blank: A minimum evidence score for answering is a ____ → threshold
+apply: A question has no support in the documents. What should the bot do? → Say it cannot find it and offer help
+explain_task: Explain no-answer handling in three lines.
+own_task: Write five out-of-scope questions to test the bot.
+
+@RAG-028
+type: topic56
+topic: 04 Generation
+level: Intermediate
+term: Context limits
+cue: How do you fit evidence, history and instructions into the context window?
+category: Core concept
+frequency: High
+importance: 4
+origin: The window is finite, so evidence competes with history and instructions for space.
+pro_tip: Budget tokens for each part, and drop the lowest-ranked evidence first.
+memory_story: Context limits are the size of the table where you lay out evidence cards.
+visual: A table divided into rules, history, sources and answer space.
+emotion: The discipline of fitting only what matters.
+definition: Context limits require a token budget that divides the window between instructions, conversation history, retrieved chunks and reserved output space, and trimming rules when the total is too large.
+explanation: Count tokens for fixed parts, reserve room for the answer, and fill the rest with the best chunks. If chunks are large, fewer fit. Summarise history. Avoid padding with weak evidence. Longer contexts cost more and may reduce focus on details. Monitor the average prompt size and trim rate.
+simple_explain: Make a token budget, keep the best evidence, and trim the rest.
+analogy: Context limits are the size of the table where you lay out evidence cards.
+formula_rule: Window = rules + history + evidence + answer reserve.
+example_1: Ten chunks reduced to five to fit.
+example_2: History summarised to save space.
+example_3: A reserve of 1000 tokens for the answer.
+related: context window, top-k, token budgeting, chat memory
+word_family: budget, trim, reserve, window, priority
+where_used: Prompt design | Cost control | Long chats
+mini_conversation: A: Requests fail with a context error on long chats. | B: Budget tokens and summarise old turns.
+misconception: ✗ Filling the window gives the best answers → ✓ Extra weak text can distract the model
+contrast: Budget vs window: the window is the limit, the budget is the plan.
+avoid: Do not forget to reserve output space.
+memory_trick: Always reserve room for the answer first.
+real_project: A token budget stopped context errors in a long support chat.
+real_interview: An interviewer may ask: How do you handle too much retrieved text?
+real_daily: It is like the size of a table.
+mcq_question: What is reserved in the budget?
+mcq_options: A) Space for ads B) Nothing C) Space for the answer D) Space for passwords
+mcq_answer: C
+mcq_why: The model needs room to write.
+fill_blank: Removing the least important text to fit is ____ → trimming
+apply: Retrieved chunks do not fit the window. What do you drop? → The lowest-ranked ones
+explain_task: Explain context limits in RAG in three lines.
+own_task: Make a token budget for a 16 thousand token window.
+
+@RAG-029
+type: topic56
+topic: 04 Generation
+level: Advanced
+term: Faithfulness
+cue: How do you check that the answer says only what the sources support?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A fluent answer can add claims that are not in the sources, so faithfulness measures whether each claim is supported.
+pro_tip: Check claims one by one against the sources, using a judge model or rules plus human review.
+memory_story: Faithfulness is checking every sentence of an answer against the cited pages.
+visual: Claims in an answer linked to supporting passages or flagged.
+emotion: The assurance that nothing was invented.
+definition: Faithfulness, also called groundedness, is the degree to which every claim in the generated answer is supported by the retrieved sources, and is measured by checking claims against the evidence.
+explanation: Methods split the answer into claims and ask whether each is entailed by the sources, using a judge model, natural language inference or manual review. Unsupported claims are flagged or blocked. Faithfulness differs from correctness, since sources may be wrong, and from relevance, since a faithful answer may not address the question. Track it in evaluation and monitoring.
+simple_explain: Break the answer into claims and check each against the sources.
+analogy: Faithfulness is checking every sentence of an answer against the cited pages.
+formula_rule: Supported claims ÷ total claims.
+example_1: An answer with one invented number flagged.
+example_2: A judge scoring support for each claim.
+example_3: A blocked answer with unsupported claims.
+related: hallucination, citations, evaluation, human review
+word_family: faithfulness, groundedness, entailment, claim, judge
+where_used: Evaluation | Monitoring | Quality gates
+mini_conversation: A: The sources say seven days but the answer says ten. | B: That claim is unfaithful, so flag it.
+misconception: ✗ A faithful answer is always correct → ✓ It matches the sources, which may themselves be wrong or outdated
+contrast: Faithfulness vs relevance: support versus answering the question.
+avoid: Do not measure only whether an answer sounds good.
+memory_trick: Every single claim needs real support.
+real_project: Claim-level checks caught invented numbers that readers had missed.
+real_interview: An interviewer may ask: How do you measure faithfulness?
+real_daily: It is like checking every sentence against the page.
+mcq_question: What does faithfulness measure?
+mcq_options: A) Support of claims by sources B) Length C) Speed D) Style
+mcq_answer: A
+mcq_why: It checks grounding of claims.
+fill_blank: Another word for faithfulness is ____ → groundedness
+apply: An answer includes a number absent from the sources. What do you flag? → An unfaithful claim
+explain_task: Explain faithfulness in three lines.
+own_task: List how you would test faithfulness on ten answers.
+
+@RAG-030
+type: topic56
+topic: 04 Generation
+level: Beginner
+term: Answer style
+cue: How do you control tone, length and format of RAG answers?
+category: Core concept
+frequency: High
+importance: 4
+origin: Users need answers that suit their situation, so style rules are part of the prompt.
+pro_tip: Write the style rules once in the system prompt and test them with examples.
+memory_story: Answer style is the uniform and manner of the support agent.
+visual: Two answers to one question, one short and plain, one long and formal.
+emotion: The polish of replies that stay consistent.
+definition: Answer style rules specify tone, length, structure, language, level of detail and when to show sources, so responses are consistent and fit the audience.
+explanation: Typical rules are short answers first with details after, bullet steps for procedures, plain language for customers, and the user's language. Include citations in a fixed format. Offer follow-up options. Avoid revealing internal notes. Test with many question types and review samples for tone.
+simple_explain: Set tone, length and format rules, and test them on samples.
+analogy: Answer style is the uniform and manner of the support agent.
+formula_rule: Tone + length + structure + language.
+example_1: Answer in two sentences, then offer details.
+example_2: Steps as a numbered list.
+example_3: Reply in the user's language.
+related: system prompts, output format, citations, evaluation
+word_family: tone, format, length, language, audience
+where_used: Customer bots | Internal assistants | Documentation tools
+mini_conversation: A: The answers are too long for chat. | B: Add a rule for two sentences first and offer details.
+misconception: ✗ Style does not affect trust → ✓ Clear, consistent style makes answers easier to trust and use
+contrast: Content vs style: what is said versus how it is said.
+avoid: Do not allow answers to expose internal notes.
+memory_trick: Short first, details on request.
+real_project: A short-first style rule raised satisfaction scores for a chat assistant.
+real_interview: An interviewer may ask: How do you keep RAG answers consistent?
+real_daily: It is like the manner of a support agent.
+mcq_question: Where should style rules be stored?
+mcq_options: A) In the logs B) In the browser C) In the database only D) In the system prompt
+mcq_answer: D
+mcq_why: They apply to every answer.
+fill_blank: The way something is said is its ____ → style
+apply: Answers are too long for a chat window. What do you add? → A length and structure rule
+explain_task: Explain answer style in three lines.
+own_task: Write style rules for a customer support bot.
+
+@RAG-031
+type: topic56
+topic: 05 Operations
+level: Advanced
+term: Access control per user
+cue: How do you make sure each user can retrieve only documents they may see?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Enterprise documents have permissions, and a RAG system that ignores them can leak confidential content.
+pro_tip: Enforce permissions in retrieval using the user's identity, never in the prompt.
+memory_story: Access control is a guard who checks each book's label against your badge before fetching it.
+visual: A user badge matched against chunk permission labels.
+emotion: The responsibility of protecting confidential data.
+definition: Per-user access control stores permission information with each chunk, such as allowed users, groups or tenants, and filters retrieval by the authenticated user's identity so unauthorised content is never fetched or shown.
+explanation: Copy permissions from the source system during ingestion and keep them updated. Filter inside the retrieval query using identity from the session. Do not rely on prompts to hide content, since the model has already seen it. Test with users of different rights. Permission changes must propagate quickly, and caches must be keyed by user or group.
+simple_explain: Store permissions with chunks, filter by the real user in the query, and test it.
+analogy: Access control is a guard who checks each book's label against your badge before fetching it.
+formula_rule: Identity from the session + permissions on chunks + filter in the query.
+example_1: A chunk labelled for the finance group only.
+example_2: Two users asking the same question and getting different evidence.
+example_3: A permission change reflected within minutes.
+related: metadata, retrieval filters, multi-tenant data, caching
+word_family: permission, identity, group, filter, ACL
+where_used: Enterprise RAG | Confidential data | Compliance
+mini_conversation: A: Can the prompt tell the model not to show HR files? | B: No, filter them out in retrieval.
+misconception: ✗ Telling the model to hide restricted content is enough → ✓ Restricted content must never be retrieved
+contrast: Prompt rule vs retrieval filter: one asks, the other enforces.
+avoid: Do not put restricted text in the prompt.
+memory_trick: Never retrieve what the user may not see.
+real_project: Syncing source permissions into chunk metadata closed a leak found in testing.
+real_interview: An interviewer may ask: How do you enforce document permissions in RAG?
+real_daily: It is like a guard checking labels against your badge.
+mcq_question: Where are permissions enforced?
+mcq_options: A) In the answer B) In the prompt text only C) In the retrieval query D) Nowhere
+mcq_answer: C
+mcq_why: Unauthorised text must not enter the prompt.
+fill_blank: A record of which users or groups may open an item is often called an ACL, short for access control ____ → list
+apply: Users must see only their department's files. What do you add? → Permission filters in retrieval
+explain_task: Explain access control in RAG in three lines.
+own_task: Design a permission test with three users.
+
+@RAG-032
+type: topic56
+topic: 05 Operations
+level: Advanced
+term: Multi-tenant data
+cue: How do you serve many customers from one RAG system without mixing their data?
+category: Core concept
+frequency: High
+importance: 5
+origin: SaaS products host many customers, and one leak between them can end a business relationship.
+pro_tip: Make the tenant id mandatory in every query path and test isolation automatically.
+memory_story: Multi-tenancy is an apartment block where every flat has its own locked door.
+visual: Several tenants' data in one system separated by walls.
+emotion: The seriousness of keeping customers strictly isolated.
+definition: Multi-tenant RAG keeps each customer's documents, chunks, vectors and caches separated by a tenant id enforced in storage and queries, or by separate indexes or databases for stronger isolation.
+explanation: Options are shared tables with a tenant column and row-level security, separate schemas, separate databases or separate collections. Stronger isolation costs more. Every path, including caches, logs and background jobs, must carry the tenant. Test with cross-tenant queries expecting zero leakage. Deleting a tenant must remove everything.
+simple_explain: Tag everything with the tenant, enforce it everywhere, and test for leaks.
+analogy: Multi-tenancy is an apartment block where every flat has its own locked door.
+formula_rule: Tenant id everywhere, enforced by the database.
+example_1: Row-level security on the chunks table.
+example_2: A separate database for a regulated customer.
+example_3: An automated cross-tenant leak test.
+related: metadata, access control per user, retrieval filters, deleting data
+word_family: tenant, isolation, row-level security, schema, leak
+where_used: SaaS | Enterprise platforms | Customer projects
+mini_conversation: A: Can customer A ever see customer B's chunks? | B: Not with row-level security and tests proving it.
+misconception: ✗ A tenant column in code is enough → ✓ Enforce isolation in the database and test it
+contrast: Shared vs separate storage: cheaper versus stronger isolation.
+avoid: Do not rely on every query remembering the filter.
+memory_trick: The database enforces it, tests prove it.
+real_project: Row-level security made a missing filter in code harmless.
+real_interview: An interviewer may ask: How do you isolate tenants in a shared vector database?
+real_daily: It is like flats with locked doors.
+mcq_question: What gives strong database-level isolation?
+mcq_options: A) A larger LIMIT B) Row-level security C) A comment D) A longer name
+mcq_answer: B
+mcq_why: The database enforces it regardless of code.
+fill_blank: A database feature that restricts rows per user is row-level ____ → security
+apply: A regulated customer needs the strongest isolation. What do you use? → A separate database
+explain_task: Explain multi-tenant RAG in three lines.
+own_task: Write an automated cross-tenant leak test plan.
+
+@RAG-033
+type: topic56
+topic: 05 Operations
+level: Intermediate
+term: Freshness
+cue: How do you make sure answers reflect the latest documents?
+category: Core concept
+frequency: High
+importance: 5
+origin: Stale answers erode trust, so freshness is measured and managed as a property of the system.
+pro_tip: Show the document date in citations so users can judge currency.
+memory_story: Freshness is the expiry date on the food you serve.
+visual: A timeline from document change to index update.
+emotion: The trust of answers that are always up to date.
+definition: Freshness is the delay between a change in a source document and the moment it is reflected in retrieval, along with the rule for preferring newer versions over older ones.
+explanation: Measure lag from the modified time to the indexed time. Use webhooks or frequent syncs for important sources. Prefer the latest version, and mark or exclude superseded ones. Cached answers must be invalidated. Show dates to users. Alert when sync jobs fail, since silent failure leads to stale answers.
+simple_explain: Keep the lag small, prefer the latest versions, and alert on failed syncs.
+analogy: Freshness is the expiry date on the food you serve.
+formula_rule: Freshness lag = indexed time minus modified time.
+example_1: A policy change searchable within ten minutes.
+example_2: An alert when the sync is more than a day late.
+example_3: A superseded document excluded.
+related: updating the index, deleting data, caching, monitoring
+word_family: freshness, lag, sync, version, superseded
+where_used: Policies | Pricing | Support
+mini_conversation: A: The bot gave last year's price. | B: The sync failed, so check freshness lag.
+misconception: ✗ Once indexed, answers stay correct → ✓ Documents change, so the index must keep up
+contrast: Fresh vs stale: current versus outdated content.
+avoid: Do not ignore failed sync jobs.
+memory_trick: Measure the lag, alert on the gap.
+real_project: A freshness alert caught a failed sync before customers saw wrong prices.
+real_interview: An interviewer may ask: How do you keep RAG answers current?
+real_daily: It is like an expiry date on food.
+mcq_question: How is freshness lag measured?
+mcq_options: A) Token count B) Page count C) File size D) Indexed time minus modified time
+mcq_answer: D
+mcq_why: It is the delay until the change is searchable.
+fill_blank: A document replaced by a newer one is ____ → superseded
+apply: Answers show an old price list. What do you check? → The sync and freshness lag
+explain_task: Explain freshness in three lines.
+own_task: Set a freshness target and alert for a pricing document.
+
+@RAG-034
+type: topic56
+topic: 05 Operations
+level: Advanced
+term: Caching in RAG
+cue: Which results can you reuse to save time and money, and what are the risks?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Many questions repeat, so reusing embeddings, retrievals and answers lowers latency and cost.
+pro_tip: Key caches by user permissions and document versions, and expire them on changes.
+memory_story: A cache is a notebook of answers already worked out, valid only while the books are unchanged.
+visual: Layers of caches for embeddings, retrieval and answers.
+emotion: The pleasure of instant repeat answers.
+definition: RAG caching stores results at several levels, such as query embeddings, retrieval results, model prompts and final answers, to avoid repeating work, and must respect permissions and document changes.
+explanation: Embedding caches are safe and save calls. Retrieval and answer caches need keys that include tenant, permission group and index version, otherwise users may see content they should not. Invalidate when documents change or are deleted. Semantic caches reuse answers for similar questions but risk wrong matches, so use strict thresholds. Prompt caching at the provider reduces input cost.
+simple_explain: Cache carefully with permissions and versions in the key, and invalidate on changes.
+analogy: A cache is a notebook of answers already worked out, valid only while the books are unchanged.
+formula_rule: Cache key = question + tenant + permissions + index version.
+example_1: Caching query embeddings.
+example_2: A cached answer cleared after a document update.
+example_3: A semantic cache with a strict similarity threshold.
+related: access control per user, freshness, cost and latency, deleting data
+word_family: cache, key, invalidation, semantic cache, version
+where_used: High-traffic bots | Cost control | Latency tuning
+mini_conversation: A: Two users saw the same answer including private data. | B: The cache key ignored permissions.
+misconception: ✗ Caching answers is always safe → ✓ Without permissions and versions in the key, it can leak or serve stale content
+contrast: Embedding cache vs answer cache: low risk versus higher risk.
+avoid: Do not cache across users with different permissions.
+memory_trick: Key by user rights and index version.
+real_project: Adding permissions to cache keys fixed a leak and kept the savings.
+real_interview: An interviewer may ask: What are the risks of caching RAG answers?
+real_daily: It is like a notebook of worked-out answers.
+mcq_question: What must a cache key include for private data?
+mcq_options: A) Permission group B) Colour C) Date of birth D) Font
+mcq_answer: A
+mcq_why: Different users may see different evidence.
+fill_blank: Clearing outdated cache entries is ____ → invalidation
+apply: A document is updated. What happens to cached answers about it? → They are invalidated
+explain_task: Explain caching in RAG in three lines.
+own_task: Design cache keys for a multi-tenant bot.

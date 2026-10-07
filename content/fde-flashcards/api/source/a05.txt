@@ -1,0 +1,363 @@
+
+@API-035
+type: topic56
+topic: 06 Real-world handling
+level: Intermediate
+term: Error handling for API calls
+cue: What should your code do when a call fails because of the network, a bad request or a server problem?
+category: Reliability practice
+frequency: Very high
+importance: 5
+origin: Networks drop, servers fail and users send bad input, so any real integration must expect failures and respond sensibly instead of crashing or hiding them.
+pro_tip: Handle network errors, 4xx errors and 5xx errors separately, since each calls for a different action.
+memory_story: Good error handling is a safety net under a tightrope, so a fall becomes a bounce rather than a crash.
+visual: Three paths from a failed call: show a message, fix the request, or retry later.
+emotion: The calm of an app that fails politely.
+definition: Error handling is the practice of detecting failures in API calls and responding with the right action, such as showing a message, fixing the request, logging, or retrying.
+explanation: Network failures reject the fetch promise and need try and catch. Status 4xx means the request is wrong, so show a helpful message or fix it, and do not retry blindly. Status 5xx means a server problem, so retry carefully or tell the user to try later. Read the error body, because many APIs return a message and a code, and log the request id.
+simple_explain: Always expect a failure. Catch network errors, check the status, read the error message from the body, and then decide: fix, retry or tell the user.
+analogy: It is like a safety net under a tightrope.
+formula_rule: Network error → catch. 4xx → fix the request. 5xx → retry or inform.
+example_1: Showing a message that the internet connection was lost.
+example_2: Showing field errors returned with a 422 response.
+example_3: Retrying a 503 once and then showing a try-again message.
+related: status codes, retries, timeouts, logging
+word_family: error, exception, retry, fallback, logging
+where_used: Every integration | User-facing apps | Background jobs
+mini_conversation: A: Users see a blank screen when the API fails. | B: Catch the error and show a clear message with a retry option.
+misconception: ✗ Retrying every failed request is the best way to handle errors → ✓ Retrying suits network and 5xx errors, while a 4xx error needs the request fixed
+contrast: 4xx vs 5xx handling: a 4xx means correct the request, a 5xx may be worth retrying.
+avoid: Do not swallow errors silently with an empty catch block.
+memory_trick: Catch it, classify it, then act.
+real_project: Showing field errors from a 422 response beside the form inputs.
+real_interview: An interviewer may ask: How do you handle failed API calls?
+real_daily: It is like a safety net under a tightrope.
+mcq_question: Which error type is usually worth retrying?
+mcq_options: A) 503 Service Unavailable B) 400 Bad Request C) 403 Forbidden D) 404 Not Found
+mcq_answer: A
+mcq_why: A 5xx error may be temporary, whereas the 4xx errors need the request changed.
+fill_blank: A try and ____ block catches network failures in JavaScript → catch
+apply: A call returns 422 with field errors. What should the app do? → Show the field messages so the user can correct the input
+explain_task: Explain how to handle API errors in three lines.
+own_task: Write an error plan for 401, 404, 429 and 500.
+
+@API-036
+type: code56
+topic: 06 Real-world handling
+level: Advanced
+term: Retries and exponential backoff
+cue: Which technique waits longer after each failed attempt so a struggling server is not hammered with repeated requests?
+kind: Reliability technique
+frequency: High
+importance: 4
+origin: Immediate retries from thousands of clients can overload a server that is already struggling, so waiting progressively longer between attempts became standard practice.
+pro_tip: Add random jitter to the delay and respect any Retry-After header the server sends.
+memory_story: Backoff is knocking on a door and waiting a little longer after each unanswered knock.
+visual: A timeline of attempts spaced by growing gaps of one, two and four seconds.
+emotion: The comfort of a client that recovers by itself without making things worse.
+meaning: Exponential backoff retries a failed call after waiting a time that doubles with each attempt.
+code: async function fetchWithRetry(url, tries = 3) {¶  for (let i = 0; i < tries; i++) {¶    const res = await fetch(url);¶    if (res.ok) return res;¶    if (res.status < 500 && res.status !== 429) throw new Error(`Failed: ${res.status}`);¶    await new Promise(r => setTimeout(r, 2 ** i * 1000));¶  }¶  throw new Error("Too many retries");¶}
+output: Failed 5xx or 429 calls are tried up to 3 times, waiting 1 and 2 seconds between attempts; other errors fail at once.
+explanation: Only retry errors that may be temporary, such as network failures, 429 and 5xx. Never retry plain 4xx errors, because the same request will fail again. Add jitter, a small random amount, so many clients do not retry at the same instant. Only retry non-idempotent requests when you use an idempotency key.
+simple_explain: If a call fails temporarily, wait, then try again, waiting longer each time. Stop after a few tries, and do not retry mistakes in your own request.
+analogy: It is like knocking on a door and waiting a little longer after each unanswered knock.
+syntax: delay = 2 ** attempt * baseDelay (plus jitter)
+anatomy: 2 ** i = doubles each attempt | baseDelay = starting wait | jitter = random extra time
+example_1: Waiting 1, 2 and 4 seconds between attempts.
+example_2: Honouring a Retry-After: 30 header from a 429 response.
+example_3: Giving up after five tries and showing a message.
+variation: const delay = 2 ** i * 1000 + Math.random() * 250;   // with jitter¶const wait = Number(res.headers.get("Retry-After")) * 1000;   // use the server's hint
+used_with: 429, 5xx, Retry-After, idempotency
+related: rate limiting, error handling, idempotency, timeouts
+alternatives: A retry library or the SDK's built-in retries
+where_used: Unreliable networks | Rate-limited APIs | Background jobs
+mini_conversation: A: Our nightly job floods the API when it fails. | B: Add exponential backoff with jitter and a limit on attempts.
+misconception: ✗ Retrying immediately and as fast as possible is the best strategy → ✓ Fast retries can overload the server, so wait longer after each attempt
+confused_with: Backoff vs a fixed delay: backoff grows each time, a fixed delay stays the same.
+avoid: Do not retry forever without a limit.
+wrong_code: while (true) { const res = await fetch(url); if (res.ok) return res; }
+right_code: for (let i = 0; i < 3; i++) { const res = await fetch(url); if (res.ok) return res; await new Promise(r => setTimeout(r, 2 ** i * 1000)); }
+memory_trick: Wait longer after each failure.
+real_project: Retrying a payment status check with backoff and a maximum of five attempts.
+real_interview: An interviewer may ask: What is exponential backoff and why add jitter?
+real_daily: It is like knocking on a door and waiting longer each time.
+mcq_question: Which status should you not blindly retry?
+mcq_options: A) A network timeout B) 400 Bad Request C) 503 Service Unavailable D) 429 Too Many Requests
+mcq_answer: B
+mcq_why: A 400 means the request itself is wrong, so repeating it will fail again.
+fill_blank: Adding a small random extra delay is called ____ → jitter
+hindi_to_task: Wait two seconds before the next attempt.
+task_answer: await new Promise(r => setTimeout(r, 2000));
+own_task: Write the retry delays for five attempts that start at one second and double.
+practice_question: Which response header can tell you how long to wait?
+practice_answer: Retry-After
+
+@API-037
+type: code56
+topic: 06 Real-world handling
+level: Intermediate
+term: Timeouts (AbortController)
+cue: How do you stop waiting for an API that never answers, so your app does not hang forever?
+kind: Reliability technique
+frequency: High
+importance: 4
+origin: A slow or silent server can freeze an app that waits endlessly, so clients need a time limit after which they give up and handle the failure.
+pro_tip: Set a timeout on every external call, and pick it from how long the user can reasonably wait.
+memory_story: A timeout is an egg timer that rings when waiting has gone on long enough.
+visual: A stopwatch beside a request that is cancelled when time runs out.
+emotion: The relief of an app that fails quickly instead of freezing.
+meaning: A timeout cancels a request that takes too long, which in fetch is done with an AbortController and a timer.
+code: const controller = new AbortController();¶const timer = setTimeout(() => controller.abort(), 5000);¶try {¶  const res = await fetch("https://api.example.com/v1/report", { signal: controller.signal });¶  console.log(res.status);¶} finally {¶  clearTimeout(timer);¶}
+output: If the server does not answer within five seconds, fetch rejects with an AbortError.
+explanation: fetch has no built-in timeout, so you create an AbortController, pass its signal to fetch, and call abort after a delay. Aborting rejects the promise, which your catch block can handle, for example by retrying or showing a message. Always clear the timer when the call finishes. AbortSignal.timeout rejects with TimeoutError, while controller.abort() rejects with AbortError.
+simple_explain: Without a timeout, a silent server can make your app wait forever. Set a limit, abort after it, and handle the error.
+analogy: It is like an egg timer that rings when waiting has gone on long enough.
+syntax: fetch(url, { signal: controller.signal })
+anatomy: AbortController = the cancel switch | signal = handed to fetch | abort() = pull the switch
+example_1: setTimeout(() => controller.abort(), 5000)
+example_2: catch (err) { if (err.name === "AbortError") showTimeoutMessage(); }
+example_3: A user-triggered cancel button that calls controller.abort().
+variation: fetch(url, { signal: AbortSignal.timeout(5000) })   // shorter in modern runtimes
+used_with: AbortController, try and catch, retries
+related: error handling, retries, fetch
+alternatives: A library option such as a timeout setting
+where_used: Slow third-party APIs | Mobile networks | Background jobs
+mini_conversation: A: The page spins forever when the API is down. | B: Add a five-second timeout and show an error message.
+misconception: ✗ fetch times out by itself after a short while → ✓ fetch has no default timeout that you can rely on, so you must set one
+confused_with: Timeout vs retry: a timeout stops waiting, a retry tries again.
+avoid: Do not leave external calls without a time limit.
+wrong_code: const res = await fetch(url, { timeout: 5000 });
+right_code: const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+memory_trick: A timeout rings the egg timer.
+real_project: Cancelling a slow report request after ten seconds and offering a retry.
+real_interview: An interviewer may ask: How do you set a timeout on fetch?
+real_daily: It is like an egg timer that rings when you have waited long enough.
+mcq_question: What do you pass to fetch to allow cancelling the request?
+mcq_options: A) A timeout number B) A cookie C) A header D) A signal from an AbortController
+mcq_answer: D
+mcq_why: fetch accepts a signal that can abort the request.
+fill_blank: The object used to cancel a fetch request is an ____Controller → Abort
+hindi_to_task: Abort the request after three seconds.
+task_answer: setTimeout(() => controller.abort(), 3000);
+own_task: Write a fetch call that gives up after five seconds.
+practice_question: What error name does an aborted fetch reject with?
+practice_answer: AbortError
+
+@API-038
+type: topic56
+topic: 06 Real-world handling
+level: Intermediate
+term: Rate limiting (429)
+cue: What do providers do to stop any one client from sending too many requests, and which status do they return?
+category: Reliability concept
+frequency: Very high
+importance: 5
+origin: Shared servers must protect themselves and other users from overload, so providers cap how many requests each client may send in a time window.
+pro_tip: Read the rate limit headers and the Retry-After value, and slow down before you hit the limit.
+memory_story: Rate limiting is a turnstile that lets only so many people through each minute.
+visual: A gate that lets a few requests through and shows a stop sign to the rest.
+emotion: The patience of waiting for a limit to reset rather than fighting it.
+definition: Rate limiting caps how many requests a client may make in a period, and a client that exceeds it receives status 429 Too Many Requests.
+explanation: Limits may be per key, per user or per IP, over a second, minute or day. Responses often include headers showing the limit, the remaining calls and the reset time, and a 429 may include Retry-After. Good clients throttle themselves, cache results and back off when limited.
+simple_explain: Each key may only make so many calls in a time window. If you go over, you get 429, so wait and slow down.
+analogy: It is like a turnstile that lets only a few people through each minute.
+formula_rule: Too many requests → 429 + Retry-After → wait → continue slower
+example_1: A free plan that allows sixty requests per minute.
+example_2: A 429 response with Retry-After: 30.
+example_3: A client that caches results to make fewer calls.
+related: retries, backoff, caching, API key
+word_family: rate limit, quota, throttle, 429, Retry-After
+where_used: Public APIs | Paid plans | Bulk data jobs
+mini_conversation: A: My import job keeps getting 429. | B: You are over the rate limit, so slow down and honour Retry-After.
+misconception: ✗ A 429 means the API is broken → ✓ A 429 means you sent too many requests and should slow down
+contrast: Rate limit vs quota: a rate limit caps speed over a short window, a quota caps total use over a longer period.
+avoid: Do not retry a 429 immediately in a tight loop.
+memory_trick: A 429 simply means you must slow down.
+real_project: Throttling an import job to stay below the provider's per-minute limit.
+real_interview: An interviewer may ask: How do you deal with API rate limits?
+real_daily: It is like a turnstile that lets in only a few people each minute.
+mcq_question: Which status means you have been rate limited?
+mcq_options: A) 429 B) 301 C) 404 D) 204
+mcq_answer: A
+mcq_why: 429 Too Many Requests is the standard rate limit response.
+fill_blank: A header that says how long to wait is ____-After → Retry
+apply: Your job gets 429. What should it do? → Wait for the Retry-After time and then continue more slowly
+explain_task: Explain rate limiting in three lines.
+own_task: Write how you would keep a bulk job within sixty calls per minute.
+
+@API-039
+type: code56
+topic: 06 Real-world handling
+level: Intermediate
+term: Pagination (cursor and page)
+cue: How do APIs return a long list in smaller pieces, and how do you walk through all the pieces?
+kind: API technique
+frequency: Very high
+importance: 5
+origin: Returning millions of records in one response would be slow and could crash both sides, so APIs return lists in pages and tell you how to ask for the next one.
+pro_tip: Prefer cursor-based pagination when data changes often, because page numbers can skip or repeat items.
+memory_story: Pagination is reading a long book one chapter at a time using the bookmark the server hands you.
+visual: A stack of pages, each ending with a link to the next one.
+emotion: The satisfaction of collecting every record without overloading anything.
+meaning: Pagination splits a long list into pages, and the client keeps requesting the next page until none remains.
+code: let url = "https://api.example.com/v1/orders?limit=100";¶const all = [];¶while (url) {¶  const res = await fetch(url);¶  const page = await res.json();¶  all.push(...page.data);¶  url = page.next;¶}¶console.log(all.length);
+output: The total number of orders collected from all pages.
+explanation: Common styles are page and limit numbers, offset and limit, and cursors, where each response includes a token for the next page. A typical response has the items plus a next link or cursor, which is empty on the last page. Always follow the provider's documented fields, and stop when there is no next page.
+simple_explain: Ask for a page, read its items, then use the next link or cursor to ask for the next page, and repeat until there is no next.
+analogy: It is like reading a long book one chapter at a time using the bookmark you are given.
+syntax: next = response.next (or a cursor value)
+anatomy: limit = page size | next or cursor = pointer to the next page | loop until no next
+example_1: GET /orders?page=2&limit=50
+example_2: GET /orders?cursor=abc123&limit=100
+example_3: A response with a next link that is null on the last page.
+variation: ?offset=200&limit=100   // offset style¶Link header with rel="next"   // some APIs use headers
+used_with: query parameters, loops, rate limiting
+related: URL parts, filtering, rate limiting
+alternatives: Streaming or export endpoints for very large data
+where_used: Lists of orders and users | Data export | Sync jobs
+mini_conversation: A: The API only returned 100 items but we have thousands. | B: It is paginated, so follow the next link until there are no more pages.
+misconception: ✗ One request returns the whole list → ✓ Large lists come back in pages, and you must request each page in turn
+confused_with: Offset paging vs cursor paging: offset uses a position number, a cursor uses a pointer from the server and is steadier when data changes.
+avoid: Do not assume the first response holds all the data.
+wrong_code: const orders = (await (await fetch(url)).json()).data;
+right_code: while (url) { const page = await (await fetch(url)).json(); all.push(...page.data); url = page.next; }
+memory_trick: Keep following next until there is none.
+real_project: Syncing all customers by following the cursor until the last page.
+real_interview: An interviewer may ask: Why is cursor pagination often better than page numbers?
+real_daily: It is like reading a book chapter by chapter with a bookmark.
+mcq_question: How do you know you have reached the last page?
+mcq_options: A) The body is JSON B) The list is long C) There is no next link or cursor D) The status is 500
+mcq_answer: C
+mcq_why: The final response has an empty next value.
+fill_blank: A pointer to the next page returned by the server is called a ____ → cursor
+hindi_to_task: Collect items while a next link exists.
+task_answer: while (url) { const page = await (await fetch(url)).json(); all.push(...page.data); url = page.next; }
+own_task: Write the requests needed to read three pages of fifty items.
+practice_question: What parameter sets how many items come in one page?
+practice_answer: limit (or a similarly named page size parameter)
+
+@API-040
+type: topic56
+topic: 06 Real-world handling
+level: Intermediate
+term: Filtering, sorting and searching
+cue: Which query parameters let you ask the server for only matching items, in a chosen order?
+category: API technique
+frequency: High
+importance: 4
+origin: Fetching everything and filtering in your own code wastes bandwidth, so APIs let clients ask the server to do the narrowing and ordering.
+pro_tip: Filter on the server whenever the API supports it, so less data travels.
+memory_story: Filtering is telling the shop assistant exactly which items to bring instead of carrying the whole warehouse.
+visual: A long list narrowing to a few rows after a filter is added to the URL.
+emotion: The speed of getting only what you need.
+definition: Filtering, sorting and searching are done with query parameters that ask the server to return only matching items in a requested order.
+explanation: Common patterns are status=paid for filters, sort=-created_at or sort=price&order=desc for sorting, and q=shirt for search. Names vary by provider, so always read the documentation. Combine them with pagination for large lists.
+simple_explain: Add parameters to the URL, like status=paid and sort=-created_at. The server returns only the matching items in that order.
+analogy: It is like telling the shop assistant exactly which items to bring.
+formula_rule: GET /items?filter=value&sort=field&page=1
+example_1: GET /orders?status=paid
+example_2: GET /orders?sort=-created_at
+example_3: GET /products?q=shirt&limit=20
+related: query parameters, pagination, search
+word_family: filter, sort, order, search, query
+where_used: Lists and tables | Search boxes | Reports
+mini_conversation: A: The app downloads all orders just to show paid ones. | B: Ask the API to filter with status=paid instead.
+misconception: ✗ Every API uses the same names for filter and sort parameters → ✓ Names differ between providers, so check the documentation
+contrast: Server-side vs client-side filtering: server-side sends only the matches, client-side downloads everything first.
+avoid: Do not download whole datasets just to filter them in your code.
+memory_trick: Ask the server to narrow it down.
+real_project: Using status and date filters so a dashboard loads only the last week of paid orders.
+real_interview: An interviewer may ask: How would you design filtering and sorting in an API?
+real_daily: It is like telling a shop assistant exactly which items to bring.
+mcq_question: Which URL asks only for paid orders?
+mcq_options: A) /paid B) /orders?status=paid C) /orders/paid/all/none D) /orders#paid
+mcq_answer: B
+mcq_why: A query parameter is the usual way to filter a list.
+fill_blank: A parameter such as sort=-created_at controls the ____ of results → order
+apply: How do you get the newest orders first? → Add a sort parameter such as sort=-created_at
+explain_task: Explain filtering and sorting in three lines.
+own_task: Write a URL that returns the ten cheapest products in a category.
+
+@API-041
+type: topic56
+topic: 06 Real-world handling
+level: Advanced
+term: Caching and ETags
+cue: Which headers help you avoid downloading the same data again when it has not changed?
+category: Performance concept
+frequency: Medium
+importance: 4
+origin: Fetching unchanged data wastes time and bandwidth, so HTTP added caching headers that let clients reuse a stored response or ask whether it has changed.
+pro_tip: Cache data that rarely changes, and use conditional requests to confirm freshness cheaply.
+memory_story: An ETag is a version sticker, and you ask the server whether your sticker is still current.
+visual: A stored response with a version tag, and a short 304 reply meaning nothing changed.
+emotion: The pleasure of faster apps and smaller bills.
+definition: Caching stores responses for reuse, Cache-Control sets how long a response is fresh, and an ETag lets a client ask whether it has changed and receive 304 Not Modified if not.
+explanation: The server may send Cache-Control: max-age=60 and an ETag value. Later, the client sends If-None-Match with that ETag. If the data is unchanged the server replies 304 with no body, and the client reuses its stored copy. This saves bandwidth and counts less against some limits.
+simple_explain: Keep a copy, and ask the server whether it is still current. If it is, you get a tiny 304 reply and reuse your copy.
+analogy: It is like holding a version sticker and asking the shop whether yours is still current.
+formula_rule: ETag + If-None-Match → 304 Not Modified (reuse your copy)
+example_1: Cache-Control: max-age=60 means the response is fresh for a minute.
+example_2: Sending If-None-Match with the stored ETag.
+example_3: Receiving 304 and using the saved copy.
+related: headers, rate limiting, performance, status codes
+word_family: cache, ETag, If-None-Match, max-age, 304
+where_used: Rarely changing data | Mobile apps | High-traffic services
+mini_conversation: A: We download the same price list every minute. | B: Use an ETag so the server can reply 304 when nothing changed.
+misconception: ✗ A 304 response means an error → ✓ A 304 means not modified, and you should reuse your stored copy
+contrast: max-age vs ETag: max-age says how long a copy stays fresh, an ETag lets you check whether it changed.
+avoid: Do not cache private or frequently changing data for long.
+memory_trick: 304 means your copy is still good.
+real_project: Using ETags so a mobile app downloads a catalogue only when it changes.
+real_interview: An interviewer may ask: How does an ETag reduce bandwidth?
+real_daily: It is like checking whether your version sticker is still current.
+mcq_question: What does status 304 mean?
+mcq_options: A) Not Modified B) Server Error C) Not Found D) Bad Request
+mcq_answer: A
+mcq_why: 304 tells the client its stored copy is still valid.
+fill_blank: A conditional request sends the ____ header with the stored ETag → If-None-Match
+apply: How can an app avoid downloading unchanged data? → Send If-None-Match with the stored ETag and reuse the copy on 304
+explain_task: Explain ETags in three lines.
+own_task: Write the request and response steps of a conditional request.
+
+@API-042
+type: topic56
+topic: 06 Real-world handling
+level: Advanced
+term: API versioning
+cue: How do providers change an API without breaking the apps that already use it?
+category: API design
+frequency: Medium
+importance: 4
+origin: An API cannot change freely once others depend on it, so providers label versions and keep old ones running while clients migrate to new ones.
+pro_tip: Pin your integration to a specific version and watch the provider's deprecation notices.
+memory_story: Versioning is keeping old editions of a book on the shelf while a new edition is published.
+visual: Two shelves labelled v1 and v2 holding the same API with small differences.
+emotion: The security of knowing an update will not suddenly break your app.
+definition: API versioning labels each release of an API, such as v1 or v2, so that clients can keep using a stable version while a new one is introduced.
+explanation: Versions appear in the URL (/v1/users), in a header, or in a date such as 2024-01-01. Breaking changes, such as removing a field, belong in a new version, while adding optional fields is usually backward compatible. Providers announce deprecation dates, and clients should migrate before the old version is removed.
+simple_explain: A version number lets the provider improve the API without breaking you. Stay on a version until you have tested the next one.
+analogy: It is like keeping old editions of a book on the shelf while the new edition is published.
+formula_rule: Breaking change → new version. Adding optional fields → usually same version.
+example_1: https://api.example.com/v1/users and /v2/users exist side by side.
+example_2: A header such as X-API-Version: 2024-01-01 chooses the version.
+example_3: A deprecation notice announcing that v1 ends in six months.
+related: base URL, headers, backward compatibility, deprecation
+word_family: version, deprecation, breaking change, backward compatible
+where_used: Public APIs | Long-lived integrations | Mobile apps
+mini_conversation: A: The provider removed a field and our app broke. | B: We should have pinned a version and tested the new one before upgrading.
+misconception: ✗ Adding a new optional field always needs a new API version → ✓ Adding optional fields is usually backward compatible, and breaking changes need a new version
+contrast: Backward compatible vs breaking: compatible changes leave old clients working, breaking changes do not.
+avoid: Do not ignore deprecation notices.
+memory_trick: New version for breaking changes.
+real_project: Migrating from v1 to v2 of a payment API before v1 was switched off.
+real_interview: An interviewer may ask: How would you version an API?
+real_daily: It is like keeping old editions on the shelf while a new one is published.
+mcq_question: Which change needs a new API version?
+mcq_options: A) Adding an optional field B) Removing a field clients rely on C) Fixing a typo in docs D) Improving speed
+mcq_answer: B
+mcq_why: Removing a field is a breaking change.
+fill_blank: Announcing that an old version will end is called ____ → deprecation
+apply: How do you protect an integration from sudden changes? → Pin it to a specific API version
+explain_task: Explain API versioning in three lines.
+own_task: Write where in the URL or header you would place a version.

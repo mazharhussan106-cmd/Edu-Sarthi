@@ -1,0 +1,211 @@
+deck.title: Logging and Monitoring – Beginner to Advanced Flashcards
+deck.subject: Observability, logging, metrics and tracing
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: bash
+type: topic56
+
+@OBS-001
+topic: 01 Ideas
+level: Beginner
+term: Logs, metrics and traces
+cue: Which three kinds of telemetry describe what a running system is doing?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Running systems cannot be seen directly, so engineers collect three kinds of signals that each answer different questions.
+pro_tip: Start with metrics to notice a problem, use traces to find where, and use logs to learn why.
+memory_story: Metrics are the speedometer, traces are the route map, and logs are the driver's diary.
+visual: Three stacked panels showing a graph, a timeline of spans and lines of text.
+emotion: The clarity of knowing which signal answers which question.
+definition: Metrics are numbers measured over time, logs are timestamped records of events, and traces follow one request across the services it touches.
+explanation: Metrics are cheap and good for trends and alerts, such as requests per second. Logs hold detail about single events, such as an error message with its context. Traces show the path and timing of one request through many services. Together they let you move from a symptom to its cause.
+simple_explain: Metrics tell you something is wrong, traces show where, and logs explain why.
+analogy: Metrics are the speedometer, traces are the route map, and logs are the driver's diary.
+formula_rule: Metrics = what and how much. Traces = where. Logs = why.
+example_1: A graph of error rate rising at ten past two.
+example_2: A trace showing the slow call was the payment service.
+example_3: A log line with the exact error and order id.
+related: monitoring vs observability, structured logs, spans and traces, dashboards
+word_family: telemetry, metric, log, trace, signal
+where_used: Operations | Incident response | Platform design
+mini_conversation: A: Users report slow checkouts. | B: Check the latency metric, then the trace, then the logs of the slow service.
+misconception: ✗ Logs alone are enough to understand a system → ✓ Metrics and traces answer questions logs answer poorly
+contrast: Metrics vs logs: metrics are cheap numbers over time, logs are detailed single events.
+avoid: Do not rely on one signal type only.
+memory_trick: Numbers notice, traces locate, logs explain.
+real_project: Adding traces showed that a slow customer page waited on one third-party call.
+real_interview: An interviewer may ask: What is the difference between logs, metrics and traces?
+real_daily: It is like a speedometer, a route map and a diary.
+mcq_question: Which signal follows one request across services?
+mcq_options: A) A metric B) A dashboard C) A ticket D) A trace
+mcq_answer: D
+mcq_why: Traces connect the steps of a single request.
+fill_blank: Numbers measured over time are called ____ → metrics
+apply: You need to find which service made a request slow. Which signal? → A trace
+explain_task: Explain the three signals in three lines.
+own_task: Give one question that each signal answers best.
+
+@OBS-002
+topic: 01 Ideas
+level: Intermediate
+term: Monitoring vs observability
+cue: Which two ideas differ in whether you check known problems or can investigate unknown ones?
+category: Core concept
+frequency: High
+importance: 4
+origin: Simple checks catch known failures, but complex systems fail in new ways, so observability aims to let you ask new questions without new code.
+pro_tip: Build monitoring for known failure modes and observability for the surprises.
+memory_story: Monitoring is a smoke alarm for known fires, and observability is a toolkit to investigate any smell.
+visual: A fixed list of alarms beside a flexible search and drill-down tool.
+emotion: The confidence of being able to investigate anything.
+definition: Monitoring watches predefined signals and alerts on known conditions, while observability is the ability to understand internal behaviour from rich telemetry, including problems nobody predicted.
+explanation: Monitoring answers known questions such as whether CPU is high. Observability needs detailed, high-context data that you can slice by many fields, such as user, version and region. It depends on good instrumentation and structured events. The two work together, since alerts tell you when to investigate.
+simple_explain: Monitoring checks the known, and observability lets you explore the unknown.
+analogy: Monitoring is a smoke alarm for known fires, and observability is a toolkit to investigate any smell.
+formula_rule: Monitoring = known questions. Observability = new questions.
+example_1: An alert when disk usage passes ninety percent.
+example_2: Filtering traces by app version to find a bad release.
+example_3: Grouping errors by customer to spot one affected account.
+related: logs metrics and traces, alerts, structured logs, cardinality
+word_family: monitoring, observability, instrumentation, high cardinality, drill-down
+where_used: Platform engineering | Incidents | Tool choice
+mini_conversation: A: The alerts are quiet but customers complain. | B: We need better observability to see what the alerts miss.
+misconception: ✗ Observability is just a fancier word for monitoring → ✓ It is the ability to investigate new problems from rich data
+contrast: Monitoring vs observability: known checks versus open investigation.
+avoid: Do not buy tools instead of adding good instrumentation.
+memory_trick: Alarm for the known, toolkit for the unknown.
+real_project: Adding version and customer fields to events let the team find a bug affecting one customer.
+real_interview: An interviewer may ask: How is observability different from monitoring?
+real_daily: It is like an alarm plus a toolkit.
+mcq_question: What does observability emphasise?
+mcq_options: A) Only dashboards B) Only fixed alerts C) Investigating unknown problems from rich data D) Only logs
+mcq_answer: C
+mcq_why: It supports new questions without new code.
+fill_blank: Adding telemetry code to an application is called ____ → instrumentation
+apply: Alerts are quiet but one customer has errors. What helps? → Rich events you can filter by customer
+explain_task: Explain monitoring versus observability in three lines.
+own_task: List three fields to add to events to make them searchable.
+
+@OBS-003
+topic: 01 Ideas
+level: Beginner
+term: Health checks
+cue: Which simple endpoints or probes tell you whether a service is alive and ready?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Orchestrators and load balancers need a fast yes or no from each service, so services expose health endpoints.
+pro_tip: Keep liveness cheap and local, and make readiness check what the service needs to serve traffic.
+memory_story: A health check is a pulse and a readiness check is asking if the shop is open.
+visual: A load balancer asking a service for its health and getting a green tick.
+emotion: The comfort of automatic removal of sick instances.
+definition: A health check is an endpoint or command that reports whether a service is alive and, separately, ready to handle requests.
+explanation: Liveness answers whether the process should be restarted. Readiness answers whether traffic should be sent to it, including the few dependencies it cannot work without. Load balancers, Kubernetes and monitors call these regularly. Checks must be fast and must not overload dependencies. A deep check that fails on any dependency can take the whole fleet down at once.
+simple_explain: Expose a cheap liveness check and a readiness check for dependencies, and let platforms use them.
+analogy: A health check is a pulse, and readiness is asking whether the shop is open.
+formula_rule: Liveness = restart me. Readiness = send me traffic.
+example_1: A /healthz endpoint returning 200 quickly.
+example_2: A /ready endpoint that checks the database connection.
+example_3: A load balancer removing a failing instance.
+related: Kubernetes probes, Docker HEALTHCHECK, load balancers, alerts
+word_family: liveness, readiness, endpoint, probe, heartbeat
+where_used: Load balancers | Orchestrators | Uptime monitors
+mini_conversation: A: One database blip took every instance out of rotation. | B: The readiness check was too deep, so keep it narrower.
+misconception: ✗ A health check should test every dependency deeply → ✓ Deep checks can cause a whole fleet to fail together
+contrast: Liveness vs readiness: restart decision versus traffic decision.
+avoid: Do not make liveness depend on outside systems.
+memory_trick: Alive means restart, ready means route.
+real_project: Narrowing a readiness check stopped repeated mass restarts during database slowdowns.
+real_interview: An interviewer may ask: What is the difference between liveness and readiness?
+real_daily: It is like a pulse and an open sign.
+mcq_question: What does a readiness check decide?
+mcq_options: A) Whether to send traffic B) Whether to delete the code C) Whether to rename the host D) Whether to buy storage
+mcq_answer: A
+mcq_why: Not-ready instances are skipped by routers.
+fill_blank: A check telling a platform to restart a process is a ____ check → liveness
+apply: An instance is slow to warm up. What stops traffic until it is ready? → A readiness check
+explain_task: Explain health checks in three lines.
+own_task: Design the liveness and readiness checks for an API with a database.
+
+@OBS-004
+topic: 01 Ideas
+level: Beginner
+term: Dashboards
+cue: Which screens show the key signals of a system at a glance?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: People cannot read raw numbers fast, so dashboards turn telemetry into graphs for quick understanding.
+pro_tip: Make one overview dashboard per service showing the golden signals first.
+memory_story: A dashboard is the instrument panel of an aircraft.
+visual: A grid of graphs for traffic, errors and latency.
+emotion: The calm of seeing the whole system on one screen.
+definition: A dashboard is a visual display of selected metrics and logs, arranged so that health, trends and problems can be understood quickly.
+explanation: Good dashboards answer clear questions, such as whether users are happy right now. They start with high-level signals and let you drill into detail. Too many graphs hide the important ones. Use consistent time ranges and units, label axes, and mark deployments. Dashboards support investigation but do not replace alerts.
+simple_explain: Show the few signals that matter most, and make it easy to drill down.
+analogy: A dashboard is the instrument panel of an aircraft.
+formula_rule: Few signals, clear questions, easy drill-down.
+example_1: A panel with request rate, error rate and latency.
+example_2: A deployment marker on a latency graph.
+example_3: A dashboard per service with links to logs.
+related: Grafana basics, RED and USE methods, alerts, percentiles
+word_family: dashboard, panel, time range, drill-down, annotation
+where_used: Operations rooms | Reviews | Incident response
+mini_conversation: A: Which graph should I look at first? | B: The overview dashboard with errors and latency.
+misconception: ✗ More graphs on a dashboard make it better → ✓ Too many graphs hide what matters
+contrast: Dashboard vs alert: dashboards are looked at, alerts come to you.
+avoid: Do not rely on someone watching a dashboard to catch problems.
+memory_trick: A few graphs answering clear questions.
+real_project: Replacing a wall of fifty graphs with one overview cut time to spot problems.
+real_interview: An interviewer may ask: What makes a good dashboard?
+real_daily: It is like an aircraft instrument panel.
+mcq_question: What should a good dashboard start with?
+mcq_options: A) Raw logs only B) High-level signals C) Random graphs D) Every possible metric
+mcq_answer: B
+mcq_why: Overview first, detail on demand.
+fill_blank: A marker on a graph for a release is an ____ → annotation
+apply: Responders waste time on a crowded dashboard. What do you do? → Reduce it to a few key signals
+explain_task: Explain good dashboard design in three lines.
+own_task: Sketch a dashboard for a web API with five panels.
+
+@OBS-005
+topic: 01 Ideas
+level: Beginner
+term: Alerts
+cue: How do you get told about problems that need action, instead of watching screens?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Nobody can watch dashboards all day, so alerts notify people when signals cross meaningful thresholds.
+pro_tip: Alert on symptoms users feel, and send each alert to a person who can act.
+memory_story: An alert is a smoke alarm that rings in the right person's pocket.
+visual: A graph crossing a threshold and a notification appearing on a phone.
+emotion: The comfort of being warned before customers complain.
+definition: An alert is an automatic notification triggered when a signal meets a rule, such as an error rate above a threshold for several minutes.
+explanation: Good alerts are actionable, urgent and based on symptoms such as errors and latency. Rules use thresholds with durations to avoid noise. Alerts need an owner, a severity and a link to a runbook. Causes such as high CPU are better as warnings or dashboard items than pages. Test alerts to confirm they fire and reach the right people.
+simple_explain: Alert on user-facing symptoms, route to an owner, and include what to do next.
+analogy: An alert is a smoke alarm that rings in the right person's pocket.
+formula_rule: Symptom + threshold + duration + owner + runbook.
+example_1: Page when the error rate is above five percent for five minutes.
+example_2: A ticket for disk usage above eighty percent.
+example_3: A message with a link to the runbook.
+related: alert fatigue, runbooks, SLOs, on-call
+word_family: alert, threshold, severity, page, routing
+where_used: On-call | Production systems | Customer operations
+mini_conversation: A: We get fifty alerts a night. | B: Remove the ones that need no action and alert on symptoms.
+misconception: ✗ Alert on every metric that moves → ✓ Alert only on conditions that need human action
+contrast: Page vs ticket: a page needs action now, a ticket can wait.
+avoid: Do not create alerts nobody can act on.
+memory_trick: Each alert needs an owner and an action.
+real_project: Cutting alerts to actionable symptoms gave on-call engineers quiet nights.
+real_interview: An interviewer may ask: What makes a good alert?
+real_daily: It is like a smoke alarm that reaches the right person.
+mcq_question: Which alert is usually best to page on?
+mcq_options: A) Slightly high CPU B) A full moon C) High error rate seen by users D) A new log line
+mcq_answer: C
+mcq_why: It reflects user pain and needs action.
+fill_blank: A rule that waits several minutes before firing uses a ____ → duration
+apply: CPU is at seventy percent but users are fine. Should you page? → No, make it a warning
+explain_task: Explain good alerting in three lines.
+own_task: Write three alert rules and decide page or ticket for each.

@@ -1,0 +1,492 @@
+
+@NET-022
+topic: 04 Devices and Paths
+level: Beginner
+term: Routers and switches
+cue: Which two devices connect networks together and connect devices inside one network?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Devices need to talk inside a building and across the world, so one device forwards locally and another forwards between networks.
+pro_tip: A switch decides by MAC address and a router decides by IP address.
+memory_story: A switch is the corridor inside a building, and a router is the road that joins buildings.
+visual: Several devices joined to a switch, and the switch joined to a router leading outside.
+emotion: The clarity of seeing how a local network reaches the world.
+definition: A switch forwards frames between devices on the same network using MAC addresses, and a router forwards packets between different networks using IP addresses.
+explanation: A switch learns which MAC address is on which port and sends frames only there. A router has a routing table that chooses the next hop for a destination network. The default gateway is the router address that devices use for anything outside their subnet. Home devices often combine the two with Wi-Fi in one box.
+simple_explain: Switches connect devices in one network, and routers connect different networks.
+analogy: A switch is the corridor inside a building, and a router is the road that joins buildings.
+formula_rule: Switch = layer 2, MAC. Router = layer 3, IP.
+example_1: Laptops and printers connected to one office switch.
+example_2: A router sending traffic from 10.0.1.0/24 to 10.0.2.0/24.
+example_3: A default gateway sending unknown destinations to the internet.
+related: MAC and ARP, route tables, gateways, VLANs
+word_family: switch, router, gateway, routing table, hop
+where_used: Offices | Data centres | Cloud route tables
+mini_conversation: A: Which device sends traffic to another subnet? | B: The router, through the default gateway.
+misconception: ✗ Switches and routers do the same job → ✓ A switch works inside a network, and a router connects networks
+contrast: Switch vs router: a switch uses MAC addresses locally, a router uses IP addresses between networks.
+avoid: Do not call every network box a router.
+memory_trick: Switches work inside, routers work between.
+real_project: Tracing a customer outage to a missing route on the office router.
+real_interview: An interviewer may ask: What is a default gateway?
+real_daily: It is like a corridor versus a road.
+mcq_question: Which device forwards between different networks?
+mcq_options: A) A hub B) A router C) A switch D) A cable
+mcq_answer: B
+mcq_why: Routers use IP routing between networks.
+fill_blank: Traffic for other subnets is sent to the default ____ → gateway
+apply: Two subnets must communicate. Which device do you need? → A router
+explain_task: Explain routers and switches in three lines.
+own_task: Draw a small network with one switch and one router.
+
+@NET-023
+topic: 04 Devices and Paths
+level: Intermediate
+term: Firewalls
+cue: Which devices or services allow or block traffic according to rules?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Open networks were attacked at once, so rule-based filters were placed at the edges and inside networks.
+pro_tip: Default deny, then allow only what a service truly needs.
+memory_story: A firewall is the security desk that checks every visitor against a list.
+visual: A wall with a few gates that match a rule list.
+emotion: The comfort of a closed door by default.
+definition: A firewall filters network traffic using rules based on addresses, ports, protocols and sometimes connection state or application content.
+explanation: Stateful firewalls remember connections, so replies to allowed requests pass automatically. Rules are checked in order or by priority, with a default action for no match. Next-generation firewalls can also inspect applications. Host firewalls protect single machines, while network firewalls protect segments. Cloud security groups act as firewalls for instances.
+simple_explain: Write rules that allow only needed traffic, and block everything else by default.
+analogy: A firewall is the security desk that checks every visitor against a list.
+formula_rule: Match rule → allow or deny. No match → default deny.
+example_1: A rule allowing inbound port 443 only.
+example_2: A rule blocking outbound traffic to a bad address range.
+example_3: A host firewall allowing SSH only from the office.
+related: ports, security groups, zero trust, allow-lists
+word_family: rule, stateful, deny, allow, rule order
+where_used: Networks | Servers | Cloud
+mini_conversation: A: The port is open on the server but unreachable. | B: A firewall rule may block it.
+misconception: ✗ Opening a port on the server is enough to make a service reachable → ✓ Every firewall on the path must allow it
+contrast: Stateful vs stateless filter: stateful remembers connections, stateless checks each packet alone.
+avoid: Do not allow all traffic just to make something work.
+memory_trick: Default deny, allow by exception.
+real_project: Tightening a rule from any address to the office range after an audit.
+real_interview: An interviewer may ask: What is a stateful firewall?
+real_daily: It is like a security desk with a visitor list.
+mcq_question: What should the default firewall action be?
+mcq_options: A) Deny B) Ignore C) Log only D) Allow
+mcq_answer: A
+mcq_why: Unmatched traffic should be blocked.
+fill_blank: A firewall that tracks connections is called ____ → stateful
+apply: A service is open locally but unreachable from outside. What do you check? → Firewalls along the path
+explain_task: Explain firewalls in three lines.
+own_task: Write three rules for a public web server.
+
+@NET-024
+topic: 04 Devices and Paths
+level: Intermediate
+term: Proxies and reverse proxies
+cue: Which intermediaries sit between clients and servers on either side?
+category: Core concept
+frequency: High
+importance: 4
+origin: Organisations wanted to control outgoing traffic and protect servers, so intermediaries were placed in the middle.
+pro_tip: Remember that a forward proxy serves clients and a reverse proxy serves servers.
+memory_story: A forward proxy is a company's travel agent, and a reverse proxy is the receptionist for the building.
+visual: Clients behind a proxy on one side, and a proxy in front of servers on the other.
+emotion: The ease of seeing which side each proxy protects.
+definition: A forward proxy makes requests on behalf of clients, and a reverse proxy receives requests on behalf of servers and forwards them to the right backend.
+explanation: Forward proxies filter, log and cache outgoing web traffic, and many companies force browsers through one. Reverse proxies such as Nginx terminate TLS, balance load, cache and hide backend details. Proxies add headers such as X-Forwarded-For, which carry the original client address. Misconfigured proxies cause timeouts and wrong addresses in logs.
+simple_explain: Forward proxies speak for clients, reverse proxies speak for servers.
+analogy: A forward proxy is a travel agent for staff, and a reverse proxy is the building receptionist.
+formula_rule: Forward = client side. Reverse = server side.
+example_1: A company proxy filtering employee web access.
+example_2: Nginx in front of three app servers.
+example_3: A header showing the original client address.
+related: load balancers, TLS inspection, CDN, proxy problems
+word_family: proxy, reverse proxy, header, backend, cache
+where_used: Corporate networks | Web hosting | APIs
+mini_conversation: A: All our logs show the same client address. | B: The proxy hides it, so read X-Forwarded-For.
+misconception: ✗ A proxy and a VPN do the same thing → ✓ A proxy handles specific application traffic, while a VPN tunnels all network traffic
+contrast: Forward vs reverse proxy: forward protects clients, reverse protects servers.
+avoid: Do not trust forwarded headers from untrusted sources.
+memory_trick: Forward faces clients, reverse faces servers.
+real_project: Reading forwarded headers to find real client addresses behind a reverse proxy.
+real_interview: An interviewer may ask: What is a reverse proxy used for?
+real_daily: It is like a building receptionist.
+mcq_question: Which proxy sits in front of web servers?
+mcq_options: A) A forward proxy B) A mail proxy C) A reverse proxy D) A DNS proxy
+mcq_answer: C
+mcq_why: It receives requests for the servers behind it.
+fill_blank: The header carrying the original client address is X-Forwarded-____ → For
+apply: Logs show only the proxy address. What do you read for the real client? → X-Forwarded-For
+explain_task: Explain forward and reverse proxies in three lines.
+own_task: List three jobs a reverse proxy can do.
+
+@NET-025
+topic: 04 Devices and Paths
+level: Intermediate
+term: Load balancers (layer 4 vs layer 7)
+cue: How do load balancers differ when they work on connections versus on requests?
+category: Core concept
+frequency: High
+importance: 4
+origin: Spreading traffic over many servers can be done by looking at connections or at the content of each request.
+pro_tip: Use layer 7 for web routing by path and host, and layer 4 for raw speed or non-HTTP traffic.
+memory_story: Layer 4 is a post room sorting by address only, and layer 7 reads the letter before choosing the desk.
+visual: Two balancers, one reading ports and one reading URLs.
+emotion: The satisfaction of picking the right tool for the job.
+definition: A layer 4 load balancer distributes connections by address and port, and a layer 7 load balancer inspects HTTP details such as paths, headers and cookies to choose a backend.
+explanation: Layer 4 is faster and simpler and works for any TCP or UDP service. Layer 7 can route by path, host or header, terminate TLS, rewrite requests and apply rules. Both use health checks and algorithms such as round robin or least connections. Sticky sessions send a user to the same backend, which should be avoided if possible.
+simple_explain: Layer 4 balances connections quickly, layer 7 makes smarter decisions from HTTP content.
+analogy: Layer 4 is a post room sorting by address only, and layer 7 reads the letter first.
+formula_rule: L4 = address and port. L7 = path, host and headers.
+example_1: A layer 4 balancer for a database proxy.
+example_2: A layer 7 balancer sending /api to one pool.
+example_3: Least connections choosing the quietest server.
+related: cloud load balancers, TLS, health checks, proxies
+word_family: layer 4, layer 7, round robin, sticky, health check
+where_used: Web services | APIs | Cloud
+mini_conversation: A: We need different servers for /api and /web. | B: Use a layer 7 balancer with path rules.
+misconception: ✗ Sticky sessions are good practice for scaling → ✓ They limit even distribution, so share session state instead
+contrast: Layer 4 vs layer 7: L4 is faster and simple, L7 is smarter and HTTP aware.
+avoid: Do not rely on sticky sessions to fix poor design.
+memory_trick: Four sees ports, seven reads paths.
+real_project: Switching to path-based routing so one balancer served three services.
+real_interview: An interviewer may ask: When would you choose a layer 4 balancer?
+real_daily: It is like sorting mail by address or by content.
+mcq_question: Which balancer can route by URL path?
+mcq_options: A) Layer 7 B) Layer 1 C) Layer 4 D) Layer 2
+mcq_answer: A
+mcq_why: Layer 7 understands HTTP.
+fill_blank: An algorithm that rotates through servers is ____ robin → round
+apply: A non-HTTP TCP service needs balancing. Which layer? → Layer 4
+explain_task: Explain layer 4 versus layer 7 balancers in three lines.
+own_task: Choose a balancer type for an API and a game server.
+
+@NET-026
+topic: 04 Devices and Paths
+level: Intermediate
+term: VPN
+cue: Which technology creates a private encrypted tunnel across a public network?
+category: Core concept
+frequency: High
+importance: 4
+origin: Remote workers and offices needed to reach private systems safely over the internet, so encrypted tunnels were built.
+pro_tip: Know the difference between a site-to-site VPN and a remote-access VPN.
+memory_story: A VPN is a private covered bridge across a public river.
+visual: Two networks joined by a tunnel drawn across the internet.
+emotion: The comfort of reaching private systems safely from anywhere.
+definition: A virtual private network encrypts traffic between two endpoints and carries it over a public network as if the endpoints were on one private network.
+explanation: A site-to-site VPN joins two networks, such as an office and a cloud network, while a remote-access VPN connects one user to a network. Common protocols include IPsec, OpenVPN and WireGuard. Split tunnelling sends only some traffic through the VPN. Address ranges must not overlap between the sides. Throughput is limited by encryption and the internet path.
+simple_explain: A VPN tunnels and encrypts traffic so remote parties can use a private network.
+analogy: A VPN is a private covered bridge across a public river.
+formula_rule: Encrypted tunnel + routes to private ranges.
+example_1: An office linked to a cloud VPC by site-to-site VPN.
+example_2: An engineer connecting from home with a client.
+example_3: Split tunnelling sending only company traffic through the VPN.
+related: IPsec, route tables, subnets, zero trust
+word_family: tunnel, IPsec, WireGuard, split tunnel, endpoint
+where_used: Hybrid cloud | Remote work | Customer links
+mini_conversation: A: The VPN is up but we cannot reach the server. | B: Check that routes and firewalls allow that subnet.
+misconception: ✗ A VPN makes you anonymous and fully safe → ✓ It protects the path between endpoints, not what happens at either end
+contrast: Site-to-site vs remote-access: one joins networks, the other connects one user.
+avoid: Do not use overlapping address ranges across a VPN.
+memory_trick: Tunnel up still needs routes up.
+real_project: Building a site-to-site VPN so a customer's data centre could reach a cloud network.
+real_interview: An interviewer may ask: What is the difference between site-to-site and remote-access VPNs?
+real_daily: It is like a covered bridge across a river.
+mcq_question: Which VPN type joins two networks?
+mcq_options: A) Split tunnel B) Proxy C) Site-to-site D) Remote-access
+mcq_answer: C
+mcq_why: It links whole networks together.
+fill_blank: Sending only some traffic through a VPN is split ____ → tunnelling
+apply: A tunnel is up but one subnet is unreachable. What do you check? → Routes and firewall rules
+explain_task: Explain what a VPN does in three lines.
+own_task: List what must match on both sides of a site-to-site VPN.
+
+@NET-027
+topic: 04 Devices and Paths
+level: Intermediate
+term: CDN and edge networks
+cue: How do content delivery networks bring data closer to users?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Distance adds delay, so providers placed caches near users to serve popular content from nearby.
+pro_tip: Set cache headers properly, or the edge will fetch from the origin every time.
+memory_story: A CDN is a chain of local shops stocking your goods so nobody travels to the factory.
+visual: A world map with small cache points close to users.
+emotion: The delight of fast pages from anywhere.
+definition: A content delivery network is a distributed set of cache servers that store copies of content near users and fetch from the origin only on a miss.
+explanation: DNS or anycast routing sends each user to a nearby edge location. A cache hit is served locally, and a miss goes to the origin. Cache-Control headers decide how long content stays cached. CDNs also absorb traffic spikes, terminate TLS near the user and filter attacks. Purging removes outdated content.
+simple_explain: Serve popular files from nearby caches and let the origin handle only misses.
+analogy: A CDN is a chain of local shops stocking your goods.
+formula_rule: Hit = nearby copy. Miss = fetch from origin once.
+example_1: Images served from an edge in the user's city.
+example_2: A Cache-Control header of one day.
+example_3: Purging a stale script after a release.
+related: HTTP, DNS, TLS, latency
+word_family: edge, origin, cache hit, purge, anycast
+where_used: Websites | Downloads | Streaming
+mini_conversation: A: Users abroad see old files. | B: The edge cache is stale, so purge it.
+misconception: ✗ A CDN stores only images → ✓ It can cache many kinds of content and also accelerate dynamic traffic
+contrast: Origin vs edge: the origin holds the source, the edge holds cached copies.
+avoid: Do not cache personalised pages for everyone.
+memory_trick: Edges hold copies, the origin owns them.
+real_project: Putting static assets on a CDN and halving page load time for distant users.
+real_interview: An interviewer may ask: What is a cache miss at a CDN?
+real_daily: It is like local shops stocking goods.
+mcq_question: Which header controls how long content is cached?
+mcq_options: A) Accept B) Host C) Cookie D) Cache-Control
+mcq_answer: D
+mcq_why: Cache-Control sets lifetime rules.
+fill_blank: The server that holds the source content is the ____ → origin
+apply: Users abroad see slow static files. What do you add? → A CDN
+explain_task: Explain a CDN in three lines.
+own_task: List three headers or settings that affect CDN caching.
+
+@NET-028
+topic: 04 Devices and Paths
+level: Beginner
+term: Gateways
+cue: Which devices or addresses connect one network to another or to a different kind of network?
+category: Core concept
+frequency: High
+importance: 4
+origin: Networks with different rules need a meeting point, so gateways translate or forward traffic across the boundary.
+pro_tip: When nothing outside works, check that the default gateway is correct and reachable.
+memory_story: A gateway is the front gate of a compound where all outgoing and incoming traffic passes.
+visual: A network boundary with a single gate drawn on it.
+emotion: The relief of finding the one setting that was wrong.
+definition: A gateway is a node that connects two networks, and the default gateway is the router address a device uses to reach anything outside its own subnet.
+explanation: A device compares a destination with its own subnet. If it is outside, the frame goes to the gateway's MAC address. In clouds, internet gateways and NAT gateways play this role for private networks. API gateways are a different idea, where a service fronts many APIs. Wrong gateways cause local traffic to work and outside traffic to fail.
+simple_explain: The gateway is the door to everything outside your own network.
+analogy: A gateway is the front gate of a compound where traffic passes.
+formula_rule: Destination outside subnet → send to gateway.
+example_1: 192.168.1.1 as a home gateway.
+example_2: A cloud NAT gateway for private servers.
+example_3: An API gateway in front of microservices.
+related: routers and switches, NAT, route tables, cloud gateways
+word_family: gateway, default route, next hop, subnet, boundary
+where_used: Home networks | Cloud | Troubleshooting
+mini_conversation: A: I can ping local servers but not the internet. | B: The default gateway may be wrong.
+misconception: ✗ An API gateway and a network gateway are the same → ✓ An API gateway manages API traffic, a network gateway routes between networks
+contrast: Default gateway vs API gateway: one routes packets out, the other manages API calls.
+avoid: Do not set a gateway outside the local subnet.
+memory_trick: Local works, outside fails, check the gateway.
+real_project: Correcting a wrong gateway setting on a new server that could reach nothing outside.
+real_interview: An interviewer may ask: What is a default gateway?
+real_daily: It is like the front gate of a compound.
+mcq_question: Where does a device send traffic for another subnet?
+mcq_options: A) The printer B) The default gateway C) The DNS server D) The switch
+mcq_answer: B
+mcq_why: The gateway forwards traffic outside the subnet.
+fill_blank: The route used when nothing else matches is the ____ route → default
+apply: Local pings work, internet pings fail. What do you check? → The default gateway
+explain_task: Explain a gateway in three lines.
+own_task: Write how a device decides whether to use the gateway.
+
+@NET-029
+topic: 05 Network Security
+level: Intermediate
+term: Zero trust
+cue: Which security model treats no user or device as trusted just because of its network location?
+category: Core concept
+frequency: High
+importance: 4
+origin: Attackers who got inside a network could move freely, so security shifted from trusting the inside to checking every request.
+pro_tip: Verify identity, device health and permission for every access, not just at the edge.
+memory_story: Zero trust is a building where every door has its own lock and a guard checks you at each one.
+visual: Many small checkpoints between each user and each service.
+emotion: The confidence of access that is checked at every step.
+definition: Zero trust is a model where every request is authenticated, authorised and checked regardless of whether it comes from inside or outside the network.
+explanation: Instead of one strong wall and a soft inside, access is granted per resource using identity, device state and context. Network segments are small, and services talk through verified, encrypted paths. Least privilege and continuous monitoring support it. Zero trust is an approach, not a single product.
+simple_explain: Never trust a request just because it is on the internal network.
+analogy: Zero trust is a building where every door has its own lock and a guard.
+formula_rule: Verify identity + device + context for every request.
+example_1: Access to an app only after sign-in and device check.
+example_2: Services using mutual TLS inside the network.
+example_3: Short sessions that need re-authentication.
+related: firewalls, VPN, least privilege, mutual TLS
+word_family: zero trust, identity, segmentation, verify, context
+where_used: Modern enterprises | Cloud security | Remote work
+mini_conversation: A: It is on the internal network, so it is safe. | B: Zero trust says to verify it anyway.
+misconception: ✗ Zero trust means buying one special product → ✓ It is an approach made of many controls working together
+contrast: Perimeter vs zero trust: perimeter trusts the inside, zero trust verifies everywhere.
+avoid: Do not treat internal traffic as automatically safe.
+memory_trick: Never trust, always verify, every request.
+real_project: Replacing a flat VPN with per-application access checks for contractors.
+real_interview: An interviewer may ask: How is zero trust different from a VPN-based perimeter?
+real_daily: It is like a lock and a guard on every door.
+mcq_question: What does zero trust assume?
+mcq_options: A) Passwords are optional B) The inside is safe C) VPN is enough D) No request is trusted by location alone
+mcq_answer: D
+mcq_why: Each request must be verified.
+fill_blank: Splitting a network into small zones is called ____ → segmentation
+apply: A contractor needs one app only. What does zero trust suggest? → Grant access to that app only, per request
+explain_task: Explain zero trust in three lines.
+own_task: List three checks in a zero trust access decision.
+
+@NET-030
+topic: 05 Network Security
+level: Advanced
+term: TLS inspection
+cue: How do some organisations decrypt and inspect encrypted traffic, and what are the risks?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Encrypted traffic hides threats from security tools, so some networks decrypt it at a gateway and inspect it before re-encrypting.
+pro_tip: If an app fails only on a customer's network, suspect TLS inspection replacing the certificate.
+memory_story: TLS inspection is a mail room that opens, reads and reseals every envelope with its own stamp.
+visual: A proxy sitting in the middle of a client and a server with two separate TLS connections.
+emotion: The recognition of why a certificate looked different on a customer network.
+definition: TLS inspection is when a network device terminates the client's TLS connection, inspects the content, and opens a new TLS connection to the server, presenting its own certificate to the client.
+explanation: The client must trust the inspecting device's authority certificate, usually installed by the organisation on managed devices. Tools that use their own certificate store can fail with trust errors. Pinned certificates break completely. Inspection raises privacy and security concerns, so sensitive categories are often excluded.
+simple_explain: A middle device decrypts and re-encrypts traffic, and clients must trust its certificate.
+analogy: It is a mail room that opens, reads and reseals every envelope.
+formula_rule: Two TLS sessions with an inspector in between.
+example_1: A browser showing a company-issued certificate for a public site.
+example_2: A command line tool failing with unknown authority.
+example_3: An app with pinned certificates refusing to connect.
+related: HTTPS and TLS, certificates, proxies, curl -v
+word_family: inspection, interception, trust store, pinning, authority
+where_used: Corporate networks | Customer sites | Security tools
+mini_conversation: A: Our tool fails with a certificate error only at the customer. | B: Their proxy inspects TLS, so add their authority.
+misconception: ✗ A different certificate always means an attack → ✓ It may be legitimate company inspection, but you must confirm
+contrast: End-to-end TLS vs inspected TLS: one is a single session, the other is split in two.
+avoid: Do not disable verification instead of trusting the right authority.
+memory_trick: Unexpected issuer means check for inspection.
+real_project: Installing a customer's inspection authority into the tool's trust store.
+real_interview: An interviewer may ask: Why might a tool fail on a corporate network?
+real_daily: It is like a mail room that reseals envelopes.
+mcq_question: What must clients trust for inspection to work cleanly?
+mcq_options: A) The inspector's authority certificate B) A bigger server C) A new DNS D) A new browser
+mcq_answer: A
+mcq_why: The inspector signs certificates with its own authority.
+fill_blank: Fixing a certificate to one expected value is called ____ → pinning
+apply: A tool fails only on a customer network with an unknown authority error. What is likely? → TLS inspection
+explain_task: Explain TLS inspection in three lines.
+own_task: List the steps to make a tool trust a customer's inspection authority.
+
+@NET-031
+topic: 05 Network Security
+level: Intermediate
+term: Allow-lists
+cue: Which approach permits only known addresses or names and blocks everything else?
+category: Core concept
+frequency: High
+importance: 4
+origin: Block lists never keep up with new threats, so strict environments list what is allowed instead of what is forbidden.
+pro_tip: Document why each entry exists and who owns it, so lists do not rot.
+memory_story: An allow-list is a guest list at the door, and anyone not on it stays outside.
+visual: A list of approved addresses beside a closed gate.
+emotion: The tidy feeling of knowing exactly what may connect.
+definition: An allow-list permits only listed addresses, domains, ports or applications, and denies everything not on the list.
+explanation: Outbound allow-lists limit which sites a server can call, which stops data theft and malware calls. Inbound allow-lists limit who may reach a service, such as an office address range for a database. Lists by IP break when providers change addresses, so name-based or service-based rules may suit better. Reviews remove stale entries.
+simple_explain: Permit only what is known and needed, and review the list often.
+analogy: An allow-list is a guest list at the door.
+formula_rule: Not on the list = blocked.
+example_1: A database allowing only the app subnet.
+example_2: A server permitted to call one payment API only.
+example_3: A customer sharing a list of source addresses for our service.
+related: firewalls, security groups, least privilege, proxies
+word_family: allow-list, deny-list, entry, egress, ingress
+where_used: Customer networks | Cloud | Compliance
+mini_conversation: A: The customer needs our source IPs. | B: Give them our NAT address so they can add it to their allow-list.
+misconception: ✗ Allow-lists are set once and then fine forever → ✓ Addresses change and entries go stale, so they need reviews
+contrast: Allow-list vs deny-list: allow-lists block by default, deny-lists allow by default.
+avoid: Do not leave unexplained entries in a list.
+memory_trick: Guest list in, everyone else out.
+real_project: Giving a customer a fixed NAT address so they could allow-list our service.
+real_interview: An interviewer may ask: Why is an allow-list safer than a deny-list?
+real_daily: It is like a guest list at the door.
+mcq_question: What happens to traffic not on an allow-list?
+mcq_options: A) It is allowed B) It is encrypted C) It is blocked D) It is logged only
+mcq_answer: C
+mcq_why: Everything not listed is denied.
+fill_blank: Rules limiting traffic leaving a network are called ____ rules → egress
+apply: A customer wants only our service to reach their API. What do they use? → An allow-list of our addresses
+explain_task: Explain allow-lists in three lines.
+own_task: List what you should record for each entry.
+
+@NET-032
+topic: 05 Network Security
+level: Advanced
+term: Bastion hosts
+cue: Which hardened server acts as the single entry point into a private network?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Exposing every private server to SSH is dangerous, so one carefully protected host is used as the only door in.
+pro_tip: Prefer session managers or just-in-time access to a permanent open bastion.
+memory_story: A bastion is the castle gatehouse, strong, watched and the only way in.
+visual: One server in a public subnet leading to servers in a private subnet.
+emotion: The calm of one door to guard instead of many.
+definition: A bastion host is a hardened, tightly monitored server in a public subnet that administrators connect to first, in order to reach private servers.
+explanation: Only the bastion accepts SSH from the internet, and only from allowed addresses. Private servers accept SSH only from the bastion. Access is logged and uses keys with multi-factor authentication. Modern alternatives include session managers, identity-aware proxies and just-in-time access, which avoid a permanently exposed port.
+simple_explain: Connect to one guarded host, and jump from there to private servers.
+analogy: A bastion is the castle gatehouse, strong, watched and the only way in.
+formula_rule: Internet → bastion → private servers.
+example_1: SSH to a bastion and then to a database host.
+example_2: ProxyJump configured in an SSH config file.
+example_3: A session manager replacing the bastion.
+related: SSH tunnels, security groups, least privilege, zero trust
+word_family: bastion, jump host, ProxyJump, hardened, audit
+where_used: Cloud admin | Private networks | Audits
+mini_conversation: A: How do we reach the private database server? | B: Through the bastion with ProxyJump.
+misconception: ✗ A bastion host can be a normal general-purpose server → ✓ It must be minimal, hardened and monitored
+contrast: Bastion vs session manager: a bastion needs an open port, a session manager does not.
+avoid: Do not run other services on a bastion.
+memory_trick: One guarded gate, then the inner rooms.
+real_project: Replacing a bastion with a session manager to close the last public SSH port.
+real_interview: An interviewer may ask: How do you give admins access to private servers?
+real_daily: It is like a castle gatehouse.
+mcq_question: Where does a bastion usually live?
+mcq_options: A) Inside the database B) A public subnet C) A private subnet only D) On a laptop
+mcq_answer: B
+mcq_why: It must be reachable from outside.
+fill_blank: SSH can hop through a bastion with the option Proxy____ → Jump
+apply: Admins need access to private servers with one exposed door. What do you build? → A bastion host
+explain_task: Explain a bastion host in three lines.
+own_task: Write the firewall rules for a bastion and a private server.
+
+@NET-033
+topic: 05 Network Security
+level: Intermediate
+term: SSH tunnels
+cue: How can you reach a private service securely through an SSH connection?
+category: Core concept
+frequency: High
+importance: 4
+origin: Some services have no safe public access, so SSH can carry their traffic through an encrypted tunnel.
+pro_tip: Use a local forward to reach a private database from your laptop for a short task.
+memory_story: An SSH tunnel is a pipe laid inside an encrypted cable.
+visual: A local port on a laptop leading through a server to a private database.
+emotion: The satisfaction of reaching a hidden service with one command.
+definition: An SSH tunnel forwards a local or remote port through an encrypted SSH connection, so traffic reaches a service on the far side.
+explanation: A local forward opens a port on your machine, such as 5433, and sends connections through the SSH server to a target like db.internal:5432. A remote forward does the reverse. Dynamic forwarding makes a SOCKS proxy. Tunnels are handy for debugging but can bypass controls, so teams should know when they are used and avoid leaving them open.
+simple_explain: ssh -L opens a local port that leads through the server to a private service.
+analogy: An SSH tunnel is a pipe laid inside an encrypted cable.
+formula_rule: Local port → SSH server → target host and port.
+example_1: ssh -L 5433:db.internal:5432 bastion
+example_2: A remote forward exposing a local web app temporarily.
+example_3: ssh -D 1080 for a SOCKS proxy.
+related: bastion hosts, ports, VPN, SSH keys
+word_family: tunnel, forward, local, remote, SOCKS
+where_used: Debugging | Private access | Temporary access
+mini_conversation: A: I need to query the private database now. | B: Open an SSH tunnel through the bastion.
+misconception: ✗ SSH tunnels are a permanent replacement for proper access → ✓ They suit short tasks, and long-term access should use managed paths
+contrast: Local vs remote forward: local brings a remote service to you, remote exposes your service to them.
+avoid: Do not leave tunnels open after finishing.
+memory_trick: Dash L brings it local.
+real_project: Opening a tunnel through a bastion to check data in a private database.
+real_interview: An interviewer may ask: How do you reach a private database from your laptop?
+real_daily: It is like a pipe inside a protected cable.
+mcq_question: Which option creates a local port forward?
+mcq_options: A) -X B) -L C) -D D) -R
+mcq_answer: B
+mcq_why: -L maps a local port to a remote target.
+fill_blank: The option for a dynamic SOCKS proxy is -____ → D
+apply: You need to reach a private database briefly. What do you use? → An SSH local forward
+explain_task: Explain SSH tunnels in three lines.
+own_task: Write the command for a local forward to a private database.

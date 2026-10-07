@@ -1,0 +1,388 @@
+
+@JUP-007
+topic: 02 Daily use
+level: Beginner
+term: Keyboard shortcuts
+cue: Which key combinations make notebook work much faster?
+category: Productivity
+frequency: Very high
+importance: 4
+origin: Reaching for the mouse for every action is slow, so notebooks have two modes with single-key shortcuts.
+pro_tip: Learn only five shortcuts first: run, insert below, delete, markdown and command mode.
+memory_story: Command mode is the remote control, and edit mode is the keyboard in your hand.
+visual: A cell with a blue border for command mode and a green border for edit mode.
+emotion: The pride of working without touching the mouse.
+definition: Notebooks have command mode, entered with Esc, for acting on cells, and edit mode, entered with Enter, for typing inside a cell, and each mode has its own shortcuts.
+explanation: In command mode, A inserts a cell above, B inserts below, DD deletes the cell, M turns it into markdown and Y back into code. In both modes, Shift+Enter runs the cell and moves on, and Ctrl+Enter runs it and stays. The shortcut list is available from the command palette, and exact keys may differ slightly between interfaces and versions.
+simple_explain: Press Esc to control cells and Enter to type, then use single keys for common actions.
+analogy: Command mode is the remote control, and edit mode is the keyboard in your hand.
+formula_rule: Esc to command, Enter to edit, Shift+Enter to run.
+example_1: Pressing B to add a cell under the current one.
+example_2: Pressing M to switch a cell to text.
+example_3: Pressing Shift+Enter to run and move down.
+related: cells, markdown cells, restart and run all, JupyterLab
+word_family: shortcut, command mode, edit mode, palette, key
+where_used: Daily analysis | Live demos | Teaching
+mini_conversation: A: Why did pressing D twice delete my cell? | B: You were in command mode, where DD removes a cell.
+misconception: ✗ Shortcuts work the same in every mode → ✓ Many keys only work in command mode
+contrast: Shift+Enter vs Ctrl+Enter: run and move on versus run and stay.
+avoid: Do not type letters in command mode, because they trigger actions.
+memory_trick: Esc is the remote, Enter is the keyboard.
+real_project: Learning five shortcuts made a live demo on a client call smoother.
+real_interview: An interviewer may ask: What are the two notebook modes?
+real_daily: It is like a game controller with one set of buttons for menus and another for play.
+mcq_question: Which key enters command mode?
+mcq_options: A) Caps Lock B) Esc C) Tab D) Delete
+mcq_answer: B
+mcq_why: Esc leaves editing so single-key cell shortcuts work.
+fill_blank: Running a cell and jumping to the next one uses Shift plus ____ → Enter
+apply: You want a new cell below without the mouse. What do you press in command mode? → B
+explain_task: Explain the two notebook modes and how to switch.
+own_task: Write your own five-shortcut cheat sheet and practise it for a week.
+
+@JUP-008
+type: code56
+topic: 02 Daily use
+level: Beginner
+term: Markdown cells
+cue: Which cell type lets you write headings, lists and explanations?
+kind: Text format
+frequency: Very high
+importance: 5
+origin: Results need explanation, so notebooks let you write formatted text between the code.
+pro_tip: Start each section with a heading and one sentence saying what the next cells do.
+memory_story: Markdown cells are the signposts that tell a reader where the road goes.
+visual: A heading, a bullet list and a bold word shown as rendered text.
+emotion: The pleasure of a notebook that reads like a story.
+meaning: Markdown cells use simple symbols, such as hashes for headings, dashes for lists and asterisks for emphasis, which render as formatted text when the cell is run.
+code: # Sales check¶Data from **March** only.¶- Removed refunds¶- Kept paid orders¶Use `df.shape` to see the size.
+output: A large heading, a line with March in bold, two bullet points and the code term df.shape in code style.
+explanation: Markdown is plain text with light symbols. Headings give the notebook an outline that you can navigate. Lists and tables explain choices, and inline code marks names. Many notebooks also render simple maths written between dollar signs. Explain why a step is done, not only what it does, because the code already shows what.
+simple_explain: Write plain text with a few symbols and it turns into a tidy heading or list.
+analogy: Markdown cells are the signposts that tell a reader where the road goes.
+syntax: # Heading | - item | **bold** | `code`
+anatomy: # = heading | - = bullet | ** = bold | backticks = code style
+example_1: A heading for the cleaning section.
+example_2: A bullet list of assumptions made.
+example_3: A link to the source of the data.
+variation: ## and ### for smaller headings   // sub-sections
+used_with: Code cells, outlines, reports
+related: cells, shortcuts, sharing, documentation
+alternatives: Comments in code | Separate README
+where_used: Reports | Tutorials | Handover notebooks
+mini_conversation: A: Nobody understands my notebook. | B: Add headings and short notes between the code cells.
+misconception: ✗ Comments in code are enough to explain a notebook → ✓ Rendered text and headings help readers far more
+confused_with: Markdown cell vs code comment: one is rendered for readers, the other stays inside the code.
+avoid: Do not leave a notebook with code cells only and no explanation.
+wrong_code: Sales check (plain text without any symbol)
+right_code: # Sales check
+memory_trick: Hash for headings, dash for lists, stars for bold.
+real_project: Headings in a handover notebook let a new engineer find each stage quickly.
+real_interview: An interviewer may ask: How do you document a notebook?
+real_daily: It is like adding titles and captions to a photo album.
+mcq_question: Which symbol starts a top-level heading?
+mcq_options: A) An ampersand B) A dollar sign C) A hash sign D) A percent sign
+mcq_answer: C
+mcq_why: One hash at the start of a line makes the biggest heading.
+fill_blank: Wrapping words in double asterisks makes them ____ → bold
+hindi_to_task: Write a heading and two bullet points in a markdown cell.
+task_answer: # Cleaning¶- Removed blanks¶- Fixed dates
+own_task: Write a markdown intro of four lines for your latest analysis.
+practice_question: What does a single dash at the start of a line create?
+practice_answer: A bullet list item.
+
+@JUP-009
+type: code56
+topic: 02 Daily use
+level: Intermediate
+term: Magic commands
+cue: Which special commands starting with percent signs add extra notebook features?
+kind: Command
+frequency: High
+importance: 4
+origin: Common chores such as timing code or listing files deserved shortcuts that are not part of the language itself.
+pro_tip: Use a single percent for one line and a double percent for the whole cell.
+memory_story: Magic commands are notebook buttons that you press by typing a word.
+visual: A cell starting with a percent sign above a timing result.
+emotion: The satisfaction of a handy shortcut that just works.
+meaning: Magic commands are special instructions of the IPython kernel, where line magics start with one percent sign and cell magics start with two, and they handle tasks like timing, file listing and loading.
+code: # cell 1¶%timeit sum(range(1000))¶%pwd¶%who¶# cell 2 (a cell magic must be the first line of its cell)¶%%time¶total = sum(range(100000))
+output: Cell 1 shows the average run time, the current folder and a list of variable names. Cell 2 shows the wall time for the cell.
+explanation: Line magics act on the rest of the line, and cell magics act on the whole cell. Useful ones include timeit for repeated timing, time for one run, pwd for the folder, who for variables, load for pulling a file into a cell and run for running a script. A leading exclamation mark runs a shell command instead. Magics work in IPython kernels only, not in plain Python scripts.
+simple_explain: Percent commands are notebook extras for timing, files and variables.
+analogy: Magic commands are notebook buttons that you press by typing a word.
+syntax: %name arguments | %%name
+anatomy: % = line magic | %% = cell magic | name = action | arguments = input
+example_1: Timing a function with timeit.
+example_2: Showing the current folder with pwd.
+example_3: Listing all variables with who.
+variation: !ls to run a shell command   // exclamation mark instead of percent
+used_with: IPython kernel, timing, files
+related: performance and memory, installing packages, shortcuts, nbconvert
+alternatives: Python time module | Terminal commands
+where_used: Profiling | File checks | Quick tools
+mini_conversation: A: How long does this step take? | B: Put %%time at the top of the cell.
+misconception: ✗ Magic commands work in any Python file → ✓ They only work inside IPython based notebooks and shells
+confused_with: %timeit vs %time: many repeated runs versus one run.
+avoid: Do not paste magic commands into a normal script file.
+wrong_code: time sum(range(1000))
+right_code: %time sum(range(1000))
+memory_trick: One percent for a line, two for the cell.
+real_project: A %%time check showed that one loading step was taking most of the run.
+real_interview: An interviewer may ask: What is the difference between % and %% magics?
+real_daily: It is like a stopwatch built into your pen.
+mcq_question: Which prefix makes a cell magic?
+mcq_options: A) Two percent signs B) Two hash signs C) Two ampersands D) Two at signs
+mcq_answer: A
+mcq_why: A double percent sign applies to the whole cell.
+fill_blank: A leading exclamation mark runs a ____ command → shell
+hindi_to_task: Time a cell that builds a list of a million numbers.
+task_answer: %%time¶nums = list(range(1000000))
+own_task: Time two versions of the same loop and note which one was faster.
+practice_question: Which magic repeats a line many times to measure speed?
+practice_answer: %timeit
+
+@JUP-010
+type: code56
+topic: 02 Daily use
+level: Beginner
+term: Displaying data
+cue: How do you show a table or value neatly under a cell?
+kind: Pattern
+frequency: Very high
+importance: 5
+origin: Seeing data is the first step of every analysis, and notebooks render the last value of a cell automatically.
+pro_tip: Use head and shape first, because printing a whole large table slows the page.
+memory_story: The last line of a cell is the shop window that shows its best item.
+visual: A cell above a neatly formatted table with rows and columns.
+emotion: The calm of seeing the real data before judging it.
+meaning: A notebook shows the value of the last expression in a cell, and tools like pandas render tables as HTML, while print and display give you control over what appears.
+code: import pandas as pd¶df = pd.DataFrame({"city": ["Pune", "Delhi"], "sales": [120, 90]})¶print(df.shape)¶df.head()
+output: (2, 2) followed by a table with two rows and two columns.
+explanation: Only the last expression is shown automatically, so earlier values need print or display. A DataFrame renders as a styled table. Limiting rows with head, sample or display options keeps the page light, which matters on slow connections. Very wide or long tables are better summarised with describe or info than printed in full.
+simple_explain: Put the value on the last line, or use print and display, to see it below the cell.
+analogy: The last line of a cell is the shop window that shows its best item.
+syntax: df.head(n) | print(x) | display(x)
+anatomy: df = table | head = first rows | print = text | display = rich output
+example_1: Looking at the first five rows of a file.
+example_2: Printing the shape of a table.
+example_3: Showing two tables from one cell with display.
+variation: df.sample(5)   // random rows instead of the first rows
+used_with: pandas, summaries, checks
+related: plotting inline, markdown cells, performance and memory, clean outputs
+alternatives: print | to_string | Spreadsheet view
+where_used: Exploration | Reports | Quality checks
+mini_conversation: A: Only my second table shows. | B: Only the last value auto-displays, so call display for the first one.
+misconception: ✗ Every line of a cell shows its value → ✓ Only the last expression is displayed automatically
+confused_with: print vs display: plain text versus rich formatted output.
+avoid: Do not print a million rows into a notebook cell.
+wrong_code: df¶df2   # expecting both tables to show
+right_code: display(df)¶df2
+memory_trick: Last line shows, the rest must be displayed.
+real_project: Using head and shape checks kept a client review notebook quick on poor internet.
+real_interview: An interviewer may ask: Why does only one table appear from my cell?
+real_daily: It is like a shop window that fits only one item.
+mcq_question: What shows automatically at the end of a cell?
+mcq_options: A) Every line B) Nothing C) The first line D) The last expression
+mcq_answer: D
+mcq_why: Only the final expression value is rendered.
+fill_blank: To see the first rows of a table you call ____ → head
+hindi_to_task: Show both tables from one cell.
+task_answer: display(df)¶display(df2)
+own_task: Open any file and write which three checks you run before analysing it.
+practice_question: Which pandas call gives random rows instead of the first ones?
+practice_answer: sample
+
+@JUP-011
+type: code56
+topic: 02 Daily use
+level: Beginner
+term: Plotting inline
+cue: How do charts appear directly under the code that makes them?
+kind: Pattern
+frequency: Very high
+importance: 4
+origin: Charts are easiest to judge right next to the data and code that produced them.
+pro_tip: Always label axes and add a title, because a notebook chart is often copied elsewhere.
+memory_story: An inline chart is a picture hung right under its caption.
+visual: A cell with code above a simple bar chart.
+emotion: The thrill of watching a chart appear from a few lines.
+meaning: Inline plotting renders figures from libraries such as matplotlib directly beneath the cell, so no separate image file or window is needed.
+code: import matplotlib.pyplot as plt¶cities = ["Pune", "Delhi", "Goa"]¶sales = [120, 90, 60]¶plt.bar(cities, sales)¶plt.title("Sales by city")¶plt.ylabel("Orders")¶plt.show()
+output: A bar chart titled Sales by city with three bars.
+explanation: Modern notebook kernels show matplotlib figures inline by default, and the older magic percent matplotlib inline may still appear in tutorials. Calling show ends the figure so the next cell starts clean. Other libraries, such as plotly or altair, give interactive charts. Save a chart with savefig when you need a file for a slide.
+simple_explain: Write the plotting code and the chart shows right below the cell.
+analogy: An inline chart is a picture hung right under its caption.
+syntax: plt.bar(x, y) | plt.title(text) | plt.show()
+anatomy: plt = plotting module | bar = chart type | title = heading | show = draw it
+example_1: A bar chart of orders per city.
+example_2: A line chart of daily visits.
+example_3: A histogram of delivery times.
+variation: plt.savefig("chart.png")   // write to a file as well
+used_with: pandas, matplotlib, reports
+related: displaying data, markdown cells, sharing, widgets
+alternatives: plotly | seaborn | altair
+where_used: Exploration | Reports | Teaching
+mini_conversation: A: My two charts merged into one. | B: Call plt.show after the first chart to separate them.
+misconception: ✗ A chart without labels is fine in a notebook → ✓ Unlabelled charts confuse readers once copied elsewhere
+confused_with: plt.show vs plt.savefig: display on the page versus write to a file.
+avoid: Do not publish a chart without a title and labelled axes.
+wrong_code: plt.bar(cities, sales)   # no title or labels
+right_code: plt.bar(cities, sales)¶plt.title("Sales by city")¶plt.xlabel("City")¶plt.ylabel("Orders")
+memory_trick: Title it, label it, then show it.
+real_project: A labelled inline chart helped a manager read a weekly trend without help.
+real_interview: An interviewer may ask: How do you display charts in a notebook?
+real_daily: It is like hanging a picture with its caption below.
+mcq_question: Which call writes a chart to a file?
+mcq_options: A) head B) display C) savefig D) print
+mcq_answer: C
+mcq_why: savefig stores the figure as an image.
+fill_blank: A chart needs a title and labelled ____ → axes
+hindi_to_task: Draw a line chart of three numbers with a title.
+task_answer: plt.plot([1, 3, 2])¶plt.title("Trend")¶plt.show()
+own_task: Make a labelled chart from a small file and save it as an image.
+practice_question: Why call plt.show between two charts?
+practice_answer: It finishes the first figure so the next starts fresh.
+
+@JUP-012
+type: code56
+topic: 02 Daily use
+level: Intermediate
+term: Installing packages
+cue: How do you add a library from inside a notebook the safe way?
+kind: Command
+frequency: High
+importance: 5
+origin: Installing from a notebook can go to a different Python than the kernel uses, which causes confusing import errors.
+pro_tip: Use the percent pip magic so the package lands in the kernel's own environment.
+memory_story: The percent pip command always delivers the parcel to the house where the kernel lives.
+visual: A package box arrowed into the kernel's environment.
+emotion: The relief of an import that finally works.
+meaning: The percent pip magic installs a package into the same Python environment the running kernel uses, unlike a plain shell pip that may target another Python.
+code: %pip install pandas¶import pandas as pd¶print(pd.__version__)
+output: Installation messages, then a version number such as the one installed.
+explanation: Plain shell pip can point at a different interpreter than the kernel, so the package installs but cannot be imported. The percent pip magic avoids this. After installing a package that was already imported, restart the kernel so the new version loads. Better still, list required packages in a requirements file so others can recreate the setup.
+simple_explain: Use the percent pip line so the library lands where the kernel can see it.
+analogy: The percent pip command always delivers the parcel to the house where the kernel lives.
+syntax: %pip install name
+anatomy: %pip = install into the kernel environment | install = action | name = package
+example_1: Adding a charting library for a demo.
+example_2: Upgrading a package, then restarting the kernel.
+example_3: Installing from a requirements file.
+variation: %pip install -r requirements.txt   // many packages at once
+used_with: Virtual environments, kernels, requirements file
+related: virtual environments, kernels, reproducibility, hosted notebooks
+alternatives: conda install | Terminal pip
+where_used: Setup | Hosted notebooks | Quick demos
+mini_conversation: A: I installed it but the import still fails. | B: The shell pip used another Python, so use the percent pip magic.
+misconception: ✗ Installing a package updates the running notebook at once → ✓ An already imported package needs a kernel restart
+confused_with: %pip vs !pip: one targets the kernel environment, the other may not.
+avoid: Do not install packages into the global Python for one project.
+wrong_code: !pip install pandas   # may target another Python
+right_code: %pip install pandas
+memory_trick: Percent pip goes where the kernel lives.
+real_project: Switching to the percent pip form fixed a missing import on a customer laptop.
+real_interview: An interviewer may ask: Why does an installed package fail to import?
+real_daily: It is like posting a letter to the right address instead of a similar one.
+mcq_question: Which form installs into the kernel's environment?
+mcq_options: A) ls B) %pip install C) cd D) pip
+mcq_answer: B
+mcq_why: The magic is tied to the running kernel.
+fill_blank: After upgrading an imported package you should ____ the kernel → restart
+hindi_to_task: Install the requests library from a notebook.
+task_answer: %pip install requests
+own_task: Write the requirements file you would give a colleague for your latest notebook.
+practice_question: Why restart the kernel after upgrading an imported package?
+practice_answer: The old version stays loaded in memory until restart.
+
+@JUP-013
+type: code56
+topic: 02 Daily use
+level: Intermediate
+term: Virtual environments and kernels
+cue: How do you give each project its own set of packages in notebooks?
+kind: Setup
+frequency: High
+importance: 5
+origin: Different projects need different package versions, and one shared environment makes them clash.
+pro_tip: Create one environment per project and register it as a named kernel.
+memory_story: Each project gets its own toolbox, and the kernel picks which toolbox is open.
+visual: Two toolboxes labelled project A and project B, each linked to a kernel name.
+emotion: The calm of projects that no longer break one another.
+meaning: A virtual environment is an isolated folder of packages, and registering it with ipykernel makes it appear as a selectable kernel in Jupyter.
+code: python -m venv .venv¶source .venv/bin/activate¶pip install ipykernel pandas¶python -m ipykernel install --user --name project-a --display-name "Project A"¶jupyter kernelspec list
+output: A list of kernels that includes project-a with its folder path.
+explanation: Activate the environment, install ipykernel and the packages the project needs, then register the environment as a kernel. In the notebook, choose Project A from the kernel menu. On Windows the activation command differs. The kernel list shows where each kernel lives, which helps when a notebook imports from the wrong place.
+simple_explain: Make a clean environment, register it as a kernel and pick it in the notebook.
+analogy: Each project gets its own toolbox, and the kernel picks which toolbox is open.
+syntax: python -m venv name | python -m ipykernel install --user --name name
+anatomy: venv = environment | ipykernel = bridge | --name = id | --display-name = label
+example_1: A kernel named after a client project.
+example_2: Two kernels with different pandas versions.
+example_3: Removing an old kernel with kernelspec remove.
+variation: conda create -n name   // conda users
+used_with: pip, requirements file, JupyterLab
+related: installing packages, kernels, reproducibility, remote kernels
+alternatives: conda environments | uv | poetry
+where_used: Projects | Teams | Customer setups
+mini_conversation: A: My notebook uses the wrong pandas. | B: Switch to the project kernel that was built from its own environment.
+misconception: ✗ One environment is fine for every project → ✓ Shared environments cause version clashes
+confused_with: Environment vs kernel: the package folder versus the entry that lets Jupyter use it.
+avoid: Do not mix every project's packages in one global environment.
+wrong_code: pip install pandas   # outside any environment
+right_code: source .venv/bin/activate¶pip install pandas
+memory_trick: Environment holds the tools, kernel opens the box.
+real_project: Per-project kernels let a team run two customer pipelines with different library versions.
+real_interview: An interviewer may ask: How do you keep project dependencies separate in Jupyter?
+real_daily: It is like keeping separate toolboxes for the kitchen and the garage.
+mcq_question: Which package lets an environment appear as a Jupyter kernel?
+mcq_options: A) ipykernel B) numpy C) flask D) pytest
+mcq_answer: A
+mcq_why: ipykernel registers the environment with Jupyter.
+fill_blank: Showing every registered kernel uses jupyter ____ list → kernelspec
+hindi_to_task: Register the active environment as a kernel called demo.
+task_answer: python -m ipykernel install --user --name demo
+own_task: Create a clean environment for one project and note each step you ran.
+practice_question: Why register an environment as a kernel?
+practice_answer: So notebooks can run with that environment's packages.
+
+@JUP-014
+topic: 02 Daily use
+level: Beginner
+term: Restart and run all
+cue: Which action proves a notebook works from top to bottom?
+category: Good habit
+frequency: Very high
+importance: 5
+origin: Because of hidden state, the only real proof of a notebook is a clean run of every cell in order.
+pro_tip: Do a restart and run all before every share, commit or review.
+memory_story: Restart and run all is the final dress rehearsal before opening night.
+visual: A menu showing restart the kernel and run all cells.
+emotion: The confidence of seeing every cell pass in order.
+definition: Restart and run all clears the kernel's memory and then runs every cell from top to bottom, showing whether the notebook works without leftover state.
+explanation: The command is in the kernel menu. If any cell fails, the notebook depended on something not shown, such as a deleted cell or a manual change. Fixing the first failing cell and repeating gives a notebook that others can run. For slow notebooks, test on a small sample first, then run the full version once at the end.
+simple_explain: Wipe the memory and run every cell in order to check the notebook is honest.
+analogy: Restart and run all is the final dress rehearsal before opening night.
+formula_rule: Share only after a clean top-to-bottom run.
+example_1: Running all cells before sending a report.
+example_2: Finding a missing import through the first failing cell.
+example_3: Checking a notebook before committing it.
+related: running order, reproducibility, version control, kernels
+word_family: restart, run all, clean run, state, order
+where_used: Before sharing | Code review | Handover
+mini_conversation: A: Is the notebook ready to send? | B: Only after a clean restart and run all.
+misconception: ✗ Running the last cell again proves the notebook works → ✓ Only a full clean run proves it
+contrast: Run all vs restart and run all: one keeps old memory, the other wipes it first.
+avoid: Do not send a notebook that has only been run in pieces.
+memory_trick: Wipe, run, check, then share.
+real_project: A clean run caught a missing import before a customer received the notebook.
+real_interview: An interviewer may ask: How do you check a notebook is reproducible?
+real_daily: It is like a full rehearsal before the real show.
+mcq_question: What does restart and run all start with?
+mcq_options: A) Changing the theme B) Clearing kernel memory C) Deleting the file D) Closing the browser
+mcq_answer: B
+mcq_why: A clean state is what makes the check honest.
+fill_blank: The check works because it removes leftover ____ → state
+apply: You finished editing and want to share. What do you do first? → Restart the kernel and run all cells
+explain_task: Explain why restart and run all matters before sharing.
+own_task: Write a pre-share checklist of four steps for notebooks.

@@ -1,0 +1,630 @@
+
+@CICD-017
+type: topic56
+topic: 03 Quality Gates
+level: Beginner
+term: Unit and integration tests in CI
+cue: Which two kinds of automatic tests check small parts and connected parts of a system?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Manual testing could not keep up with frequent releases, so tests were written as code that the pipeline runs on every change.
+pro_tip: Keep most tests as fast unit tests, with fewer slower integration tests on top.
+memory_story: Unit tests check each brick, and integration tests check that the wall stands.
+visual: A pyramid with many small unit tests at the base and few large tests at the top.
+emotion: The confidence of a green test run before merging.
+definition: Unit tests check one small piece of code in isolation, and integration tests check that several parts, such as code and a database, work together.
+explanation: Unit tests run in milliseconds and pinpoint the broken function. Integration tests are slower, because they start real dependencies such as a database container, but they catch wiring mistakes. In CI the database is often started as a service container. A good suite has many unit tests and fewer integration tests. A failing test must block the merge.
+simple_explain: Run fast unit tests first, then integration tests, and block the merge if either fails.
+analogy: Unit tests check each brick, and integration tests check that the wall stands.
+formula_rule: Many fast unit tests + fewer slower integration tests.
+example_1: A test of one function that adds two prices.
+example_2: A test that saves a record to a real test database.
+example_3: A job starting a database service container before tests.
+related: pipeline stages, required checks, flaky tests, coverage
+word_family: unit, integration, test pyramid, mock, fixture
+where_used: Every pipeline | Pull requests | Customer code
+mini_conversation: A: The tests pass locally but fail in CI. | B: CI uses a fresh database, so check the setup.
+misconception: ✗ More integration tests are always better than unit tests → ✓ They are slower and harder to debug, so keep most tests small
+contrast: Unit vs integration test: unit checks one piece alone, integration checks pieces together.
+avoid: Do not let a failing test pass by skipping it.
+memory_trick: Many bricks, a few walls.
+real_project: Adding a database service container so integration tests ran in the pipeline.
+real_interview: An interviewer may ask: What is the test pyramid?
+real_daily: It is like checking each brick and then the wall.
+mcq_question: Which tests are usually the fastest?
+mcq_options: A) Load tests B) Manual tests C) Unit tests D) Integration tests
+mcq_answer: C
+mcq_why: Unit tests avoid real dependencies.
+fill_blank: A shape with many small tests at the base is the test ____ → pyramid
+apply: You must test code against a real database in CI. Which test type? → An integration test
+explain_task: Explain unit and integration tests in three lines.
+own_task: List two unit tests and one integration test for a login page.
+
+@CICD-018
+type: topic56
+topic: 03 Quality Gates
+level: Beginner
+term: Linting and formatting
+cue: Which automatic checks find style problems and likely mistakes before tests run?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: Teams argued about style in reviews, so tools were introduced to check and fix it automatically.
+pro_tip: Run the formatter in a pre-commit hook and the linter in CI.
+memory_story: A linter is a proofreader that marks mistakes, and a formatter retypes the page neatly.
+visual: A code file with red marks beside suspicious lines.
+emotion: The relief of never arguing about commas again.
+definition: Linting analyses code for likely bugs and rule violations, and formatting rewrites code into one consistent style.
+explanation: Linters such as ESLint or Ruff catch unused variables, risky patterns and some bugs without running the code. Formatters such as Prettier or Black change layout only. In CI the formatter runs in check mode and fails if files would change. Running these first gives feedback in seconds. Rules should be agreed by the team and stored in the repository.
+simple_explain: Lint to find mistakes, format for consistent style, and fail the pipeline fast.
+analogy: A linter is a proofreader, and a formatter retypes the page neatly.
+formula_rule: Lint = find problems. Format = make style uniform.
+example_1: ESLint flagging an unused variable.
+example_2: A check mode run that fails if code is unformatted.
+example_3: A pre-commit hook that formats files before a commit.
+related: pipeline stages, required checks, code review, pre-commit hooks
+word_family: lint, format, rule, style, check
+where_used: Pull requests | Pre-commit hooks | Team standards
+mini_conversation: A: Reviews are full of style comments. | B: Add a formatter check in CI.
+misconception: ✗ Linting and formatting do the same job → ✓ Linting finds problems, and formatting only changes layout
+contrast: Linter vs formatter: one reports risky code, the other rewrites style.
+avoid: Do not disable lint rules just to get a green build.
+memory_trick: Lint finds, format fixes style.
+real_project: Adding lint and format checks that cut style comments in reviews.
+real_interview: An interviewer may ask: Why run linting first in a pipeline?
+real_daily: It is like a proofreader marking a page.
+mcq_question: Which tool changes only code layout?
+mcq_options: A) A formatter B) A scanner C) A compiler D) A linter
+mcq_answer: A
+mcq_why: Formatters rewrite style without changing behaviour.
+fill_blank: Running a formatter without changing files is called check ____ → mode
+apply: Reviews waste time on style. What do you add? → A formatter check
+explain_task: Explain linting and formatting in three lines.
+own_task: Choose a linter and a formatter for a Python project.
+
+@CICD-019
+type: topic56
+topic: 03 Quality Gates
+level: Intermediate
+term: Security scans in CI
+cue: Which automatic scans look for vulnerable dependencies, leaked secrets and risky code?
+category: Core concept
+frequency: High
+importance: 5
+origin: Security reviews at the end of a project were slow and late, so scans were moved into the pipeline to catch problems early.
+pro_tip: Fail the build only on serious, fixable findings so the team does not learn to ignore alerts.
+memory_story: Scans are airport security checks placed before the boarding gate.
+visual: A pipeline with a scanner stage before packaging.
+emotion: The reassurance of finding a flaw before release.
+definition: Security scans in CI include dependency scanning, secret scanning, static code analysis and image scanning, each checking a different risk.
+explanation: Dependency scanning compares packages with databases of known vulnerabilities. Secret scanning looks for leaked keys. Static analysis reads code for risky patterns, such as SQL built from user input. Image scanning checks container layers. Findings should have severity and owners. Too many false alarms cause alert fatigue, so tune the rules.
+simple_explain: Scan dependencies, secrets, code and images in the pipeline, and block only what matters.
+analogy: Scans are airport security checks before the boarding gate.
+formula_rule: Dependencies + secrets + code + images.
+example_1: A dependency scan failing on a critical vulnerability with a fix.
+example_2: A secret scan blocking a pushed API key.
+example_3: A static analysis tool flagging an injection risk.
+related: quality gates, secret scanning, container scanning, least privilege
+word_family: SAST, dependency, vulnerability, severity, false positive
+where_used: Pull requests | Release gates | Compliance
+mini_conversation: A: The scan found forty issues. | B: Start with critical ones that have a fix.
+misconception: ✗ If the scanner is quiet, the code is secure → ✓ Scanners find known patterns only, and reviews and design still matter
+contrast: SAST vs dependency scan: SAST reads your code, dependency scanning checks other people's packages.
+avoid: Do not ignore alerts because there are too many.
+memory_trick: Block what matters, tune what nags.
+real_project: Adding a dependency scan that blocked a critical vulnerable library before release.
+real_interview: An interviewer may ask: What security checks belong in a pipeline?
+real_daily: It is like airport security before boarding.
+mcq_question: Which scan finds known vulnerable packages?
+mcq_options: A) Caching B) Dependency scanning C) Formatting D) Tagging
+mcq_answer: B
+mcq_why: It compares packages to vulnerability databases.
+fill_blank: Too many false alarms cause alert ____ → fatigue
+apply: You need to catch a pushed API key. Which scan? → Secret scanning
+explain_task: Explain the security scans in three lines.
+own_task: Choose which findings should fail a build.
+
+@CICD-020
+type: topic56
+topic: 03 Quality Gates
+level: Intermediate
+term: Code coverage
+cue: Which measure shows how much of the code the tests actually run?
+category: Core concept
+frequency: High
+importance: 3
+origin: Teams needed a rough idea of untested areas, so tools record which lines run during the tests.
+pro_tip: Use coverage to find untested risky code, not as a number to chase.
+memory_story: Coverage is a highlighter showing which pages of the book the tests actually read.
+visual: Code lines painted green when tested and red when not.
+emotion: The curiosity of finding an untested corner.
+definition: Code coverage is the percentage of lines, branches or functions that run during the test suite.
+explanation: A report highlights lines never executed. Coverage shows what is not tested, but not how well the tested lines are checked. A test with no assertions can reach one hundred percent. Teams often set a minimum gate, such as eighty percent, and require that new code is covered. Chasing a high number can produce poor tests.
+simple_explain: Use coverage to find gaps, set a sensible minimum, and focus on meaningful tests.
+analogy: Coverage is a highlighter showing which pages the tests read.
+formula_rule: Coverage = executed lines ÷ total lines. It shows gaps, not quality.
+example_1: A report showing an error branch never tested.
+example_2: A gate requiring new code to have eighty percent coverage.
+example_3: A test with no checks inflating the number.
+related: unit tests, required checks, flaky tests, reviews
+word_family: coverage, line, branch, threshold, report
+where_used: Quality gates | Reviews | Reports
+mini_conversation: A: Coverage is ninety percent, so we are safe. | B: Not necessarily, the tests may check little.
+misconception: ✗ High coverage guarantees good tests → ✓ It only shows code was run, not that it was checked properly
+contrast: Line vs branch coverage: lines count statements run, branches count decisions covered.
+avoid: Do not write empty tests to raise the percentage.
+memory_trick: Coverage shows gaps, not quality.
+real_project: Using a coverage report to find an untested payment error path.
+real_interview: An interviewer may ask: Is one hundred percent coverage a good goal?
+real_daily: It is like a highlighter on read pages.
+mcq_question: What does coverage measure?
+mcq_options: A) How many bugs exist B) How big the repo is C) How fast tests are D) How much code the tests run
+mcq_answer: D
+mcq_why: It counts executed code in the tests.
+fill_blank: A minimum coverage value that fails the build is a ____ → threshold
+apply: A team chases one hundred percent with empty tests. What is wrong? → The tests do not check anything
+explain_task: Explain code coverage in three lines.
+own_task: Decide a coverage rule for new code.
+
+@CICD-021
+type: topic56
+topic: 03 Quality Gates
+level: Intermediate
+term: Required checks and branch protection
+cue: Which settings stop a pull request from merging until the checks pass?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Checks that can be ignored are just suggestions, so repositories can require them before code reaches the main branch.
+pro_tip: Require checks, a review and an up-to-date branch on main.
+memory_story: Branch protection is a turnstile that opens only with a valid ticket.
+visual: A merge button greyed out with a list of pending checks.
+emotion: The safety of a protected main branch.
+definition: Branch protection rules require status checks, reviews and other conditions before changes can be merged into a protected branch.
+explanation: You choose which checks are required, how many approvals are needed and whether force pushes are blocked. Rules can require the branch to be up to date before merging. Administrators can be included in the rules. A required check must report success. A check that never runs, for example because of a path filter, stays pending and blocks the merge, so design for that. Rulesets provide a newer way to manage rules across repositories.
+simple_explain: Protect main, require the pipeline and a review, and block direct pushes.
+analogy: Branch protection is a turnstile that opens only with a valid ticket.
+formula_rule: Required checks + review + no force push.
+example_1: A rule requiring the test and lint jobs to pass.
+example_2: A rule requiring one approving review.
+example_3: Blocking force pushes to main.
+related: pull requests, quality gates, code owners, rulesets
+word_family: protection, required check, review, ruleset, merge
+where_used: Main branches | Teams | Compliance
+mini_conversation: A: Someone pushed a broken change to main. | B: Turn on branch protection and required checks.
+misconception: ✗ Admins should be exempt from branch protection → ✓ Including admins avoids accidental bypasses
+contrast: Required check vs optional check: required ones block merging, optional ones only inform.
+avoid: Do not allow direct pushes to the main branch.
+memory_trick: Checks plus review guard the main branch.
+real_project: Enabling required checks so broken code could no longer be merged into main.
+real_interview: An interviewer may ask: How do you stop broken code reaching the main branch?
+real_daily: It is like a turnstile that opens only with a ticket.
+mcq_question: What does a required check do?
+mcq_options: A) Deletes the branch B) Adds a tag C) Speeds up tests D) Blocks merging until it passes
+mcq_answer: D
+mcq_why: A required check must succeed before the merge.
+fill_blank: Rules that guard the main branch are called branch ____ → protection
+apply: Broken code was pushed straight to main. What should you enable? → Branch protection
+explain_task: Explain required checks in three lines.
+own_task: Write the protection rules you would set on main.
+
+@CICD-022
+type: topic56
+topic: 03 Quality Gates
+level: Intermediate
+term: Flaky tests
+cue: Which tests pass and fail randomly without any change in the code?
+category: Core concept
+frequency: High
+importance: 4
+origin: As suites grew, some tests started failing at random because of timing or shared state, wasting everyone's time.
+pro_tip: Find the cause, since rerunning until green hides a real problem.
+memory_story: A flaky test is a smoke alarm that rings for no reason, so people stop trusting it.
+visual: A test history showing green and red runs on the same code.
+emotion: The frustration of a pipeline that fails for no reason.
+definition: A flaky test is one that gives different results on the same code, usually because of timing, order, shared data or external services.
+explanation: Common causes are sleeps instead of waiting for a condition, tests that depend on each other, random data, clock use and network calls. Flakiness trains people to ignore failures, which is dangerous. Quarantining a test temporarily is acceptable only with an owner and a deadline. Fix by isolating data, controlling time and mocking external services.
+simple_explain: Find why the result changes, fix the cause, and never train the team to rerun and ignore.
+analogy: It is a smoke alarm that rings for no reason.
+formula_rule: Same code, different result = a bug in the test or system.
+example_1: A test that fails when run after another test.
+example_2: A test using real time that fails near midnight.
+example_3: A test calling a real web service.
+related: unit tests, required checks, retries, test isolation
+word_family: flaky, intermittent, isolation, timing, mock
+where_used: Test suites | Pipelines | Reliability work
+mini_conversation: A: Just rerun it, it always passes the second time. | B: Then it is flaky, so let us find the cause.
+misconception: ✗ Rerunning a failed test until it passes is a fix → ✓ It hides the problem, which may be a real race condition
+contrast: Flaky vs failing test: a failing test fails every time, a flaky test fails sometimes.
+avoid: Do not add automatic retries to hide flakiness permanently.
+memory_trick: Random failure means find the cause.
+real_project: Replacing fixed sleeps with waits on a condition to remove random failures.
+real_interview: An interviewer may ask: How do you handle flaky tests?
+real_daily: It is like a smoke alarm that rings for nothing.
+mcq_question: Which is a common cause of flakiness?
+mcq_options: A) Fixed sleeps and shared state B) Isolated data C) Clear assertions D) Small tests
+mcq_answer: A
+mcq_why: Timing and shared state change results between runs.
+fill_blank: Results that change without code changes are called ____ → flaky
+apply: A test fails near midnight only. What is a likely cause? → It depends on the clock
+explain_task: Explain flaky tests in three lines.
+own_task: List three causes and a fix for each.
+
+@CICD-023
+type: topic56
+topic: 04 Deployment
+level: Intermediate
+term: Rolling deployments
+cue: Which strategy replaces old servers with new ones a few at a time?
+category: Core concept
+frequency: High
+importance: 4
+origin: Replacing everything at once causes downtime, so updates were made gradually across the running instances.
+pro_tip: Make sure old and new versions can run side by side during the rollout.
+memory_story: A rolling update is changing the tyres of a bus one wheel at a time while it keeps moving.
+visual: A row of servers turning from old to new one by one.
+emotion: The ease of updating with no outage.
+definition: A rolling deployment replaces instances of the old version with the new version gradually, keeping part of the service available throughout.
+explanation: A few instances are updated, checked for health, and then the next group is updated. Load balancers keep traffic away from instances being replaced. If health checks fail, the rollout stops. There is no extra full environment to pay for. The weakness is that two versions run at once, so database changes must be compatible with both.
+simple_explain: Update a few servers at a time, check health, and continue.
+analogy: It is like changing a bus's tyres one wheel at a time while it keeps moving.
+formula_rule: Replace a batch, check health, repeat.
+example_1: Updating two of ten servers at a time.
+example_2: A rollout that pauses when health checks fail.
+example_3: A Kubernetes deployment updating pods gradually.
+related: blue-green, canary, health checks, rollbacks
+word_family: rollout, batch, health check, surge, availability
+where_used: Web services | Kubernetes | Server fleets
+mini_conversation: A: Can we deploy without downtime? | B: Yes, with a rolling update behind a load balancer.
+misconception: ✗ Rolling deployments never have two versions running → ✓ Old and new versions run side by side during the rollout
+contrast: Rolling vs blue-green: rolling updates in place in batches, blue-green switches between two full environments.
+avoid: Do not ship changes that break the old version while it is still running.
+memory_trick: Few at a time, check each batch.
+real_project: Switching a service to rolling updates and removing the maintenance downtime.
+real_interview: An interviewer may ask: What is the risk of a rolling deployment?
+real_daily: It is like changing tyres one wheel at a time.
+mcq_question: What is the main risk of rolling updates?
+mcq_options: A) No servers are updated B) Two versions run at once C) The load balancer is removed D) Tests are skipped
+mcq_answer: B
+mcq_why: During the rollout both versions serve traffic.
+fill_blank: A check that decides whether to continue a rollout is a ____ check → health
+apply: You need zero downtime without paying for a second full environment. Which strategy? → A rolling deployment
+explain_task: Explain rolling deployments in three lines.
+own_task: List two conditions for a safe rolling update.
+
+@CICD-024
+type: topic56
+topic: 04 Deployment
+level: Intermediate
+term: Blue-green deployments
+cue: Which strategy keeps two full environments and switches traffic from one to the other?
+category: Core concept
+frequency: High
+importance: 4
+origin: Teams wanted instant switching and an instant way back, so they kept two identical environments side by side.
+pro_tip: Switch traffic at the load balancer or DNS, and keep the old environment until you are sure.
+memory_story: Blue-green is two stages, with the audience moved from one to the other in a moment.
+visual: Two boxes labelled blue and green with an arrow switching between them.
+emotion: The confidence of an instant way back.
+definition: A blue-green deployment runs the new version in a separate full environment and then switches all traffic to it, keeping the old one ready for rollback.
+explanation: Blue is live and green holds the new version. After testing green, traffic is moved over in one step. If something fails, traffic switches back to blue. It needs double the capacity during the switch, and databases must work with both versions. Shared data and in-flight sessions need planning.
+simple_explain: Build the new version next to the old, test it, then switch traffic, and switch back if needed.
+analogy: It is two stages, with the audience moved from one to the other in a moment.
+formula_rule: Deploy to idle → test → switch → keep old for rollback.
+example_1: Switching a load balancer from the blue pool to the green pool.
+example_2: Rolling back by pointing traffic to the old pool again.
+example_3: Testing green with internal traffic before the switch.
+related: rolling, canary, rollbacks, DNS and load balancers
+word_family: blue, green, switch, cutover, idle
+where_used: Critical services | Fast rollback needs | Cloud platforms
+mini_conversation: A: Can we roll back instantly if it fails? | B: Yes, with blue-green we just switch back.
+misconception: ✗ Blue-green solves database changes by itself → ✓ The database must be compatible with both versions during the switch
+contrast: Blue-green vs canary: blue-green switches all traffic, canary shifts a small share first.
+avoid: Do not delete the old environment right after the switch.
+memory_trick: Two stages, one switch, easy way back.
+real_project: Using blue-green so a payment service could be rolled back in seconds.
+real_interview: An interviewer may ask: What is the cost of blue-green?
+real_daily: It is like moving an audience between two stages.
+mcq_question: What is the main benefit of blue-green?
+mcq_options: A) Lower cost B) No need for tests C) Instant rollback by switching back D) No load balancer
+mcq_answer: C
+mcq_why: The old environment stays ready.
+fill_blank: Moving all traffic to the new version is called the ____ → cutover
+apply: You need an instant way back. Which strategy? → Blue-green
+explain_task: Explain blue-green deployments in three lines.
+own_task: List the steps of a blue-green release.
+
+@CICD-025
+type: topic56
+topic: 04 Deployment
+level: Advanced
+term: Canary releases
+cue: Which strategy sends a small share of traffic to the new version first?
+category: Core concept
+frequency: High
+importance: 4
+origin: Miners once took canaries underground to detect danger, so teams send a small group of users to the new version to detect problems early.
+pro_tip: Watch error rate and latency, and set automatic rollback conditions.
+memory_story: The canary is the small test group that tells you whether the mine is safe.
+visual: A traffic split showing five percent on the new version and ninety-five on the old.
+emotion: The comfort of testing with a few users first.
+definition: A canary release routes a small percentage of traffic to the new version, watches its health, and increases the share only if it behaves well.
+explanation: Typical steps are one, five, twenty-five and a hundred percent. Metrics such as errors and latency are compared between old and new. If they worsen, traffic returns to the old version. It needs good monitoring and traffic control, from a load balancer, mesh or flag system. It limits the number of users hurt by a bug.
+simple_explain: Send a few users to the new version, watch the metrics, and grow or stop.
+analogy: The canary is the small test group that tells you whether the mine is safe.
+formula_rule: Small share → measure → grow or roll back.
+example_1: Five percent of requests routed to version two.
+example_2: Automatic rollback when the error rate rises.
+example_3: Canary only for internal users first.
+related: rolling, blue-green, feature flags, monitoring
+word_family: canary, traffic split, percentage, metrics, promotion
+where_used: Large services | Risky changes | Platforms with traffic control
+mini_conversation: A: How do we limit damage from a bad release? | B: Release to five percent first and watch.
+misconception: ✗ Canary releases need no monitoring → ✓ They depend on metrics to decide whether to continue
+contrast: Canary vs rolling: canary controls the traffic share by percent, rolling replaces instances in batches.
+avoid: Do not run a canary without clear success metrics.
+memory_trick: A few users first, then the rest.
+real_project: Releasing a new pricing service to five percent of traffic before full rollout.
+real_interview: An interviewer may ask: How would you release a risky change safely?
+real_daily: It is like testing with a small group first.
+mcq_question: What decides whether a canary continues?
+mcq_options: A) The time of day B) The branch name C) The commit message D) Metrics such as error rate
+mcq_answer: D
+mcq_why: Health metrics show whether the new version is safe.
+fill_blank: The small test group that receives the new version first is named after a bird, the ____ → canary
+apply: A risky change should reach few users first. Which strategy? → A canary release
+explain_task: Explain canary releases in three lines.
+own_task: Write the steps and metrics for a canary rollout.
+
+@CICD-026
+type: topic56
+topic: 04 Deployment
+level: Intermediate
+term: Rollbacks
+cue: How do you quickly return to the last good version when a release fails?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Releases sometimes fail, so the ability to go back fast became as important as the ability to go forward.
+pro_tip: Practise rollbacks, and keep the previous artifact available.
+memory_story: A rollback is the undo button, which works only if you saved the previous version.
+visual: An arrow returning from version 2 to version 1.
+emotion: The calm of a fast undo.
+definition: A rollback restores the previous working version of an application after a bad release, usually by redeploying the earlier artifact.
+explanation: With immutable, versioned artifacts, rollback means deploying the old tag again. Blue-green offers an instant switch back, and canaries stop and revert. Database changes complicate it, since data written by the new version may not fit the old one. Use backward-compatible changes in steps. Decide beforehand who may trigger a rollback and how.
+simple_explain: Keep the previous artifact, deploy it again, and design database changes so going back is safe.
+analogy: A rollback is the undo button that works only if you saved the previous version.
+formula_rule: Versioned artifact + compatible data = easy rollback.
+example_1: Redeploying image tag 1.4.2 after 1.4.3 failed.
+example_2: Switching traffic back to the blue environment.
+example_3: A migration that only adds a column, which is safe for the old version.
+related: blue-green, build artifacts, database migrations, release tagging
+word_family: rollback, revert, previous version, undo, roll forward
+where_used: Incidents | Release planning | Runbooks
+mini_conversation: A: Version 1.4.3 broke checkout. | B: Redeploy 1.4.2 now and investigate after.
+misconception: ✗ A rollback is always possible after any release → ✓ Data and schema changes can make going back unsafe
+contrast: Rollback vs roll forward: rollback returns to the old version, roll forward ships a quick fix.
+avoid: Do not delete old artifacts that you may need to restore.
+memory_trick: Keep the old version one command away.
+real_project: Rolling back a failed release in two minutes by redeploying the previous image tag.
+real_interview: An interviewer may ask: How do you make rollbacks safe with database changes?
+real_daily: It is like an undo button that needs a saved copy.
+mcq_question: What makes rollback easy?
+mcq_options: A) Rebuilding from the branch B) Deleting old images C) Versioned, immutable artifacts D) Editing the server by hand
+mcq_answer: C
+mcq_why: The old version can simply be deployed again.
+fill_blank: Shipping a quick fix instead of reverting is rolling ____ → forward
+apply: A release broke checkout. What is the fastest safe action? → Redeploy the previous version
+explain_task: Explain rollbacks in three lines.
+own_task: Write a short rollback runbook for an API.
+
+@CICD-027
+type: topic56
+topic: 04 Deployment
+level: Intermediate
+term: Feature flags
+cue: Which switches let you turn features on or off without deploying new code?
+category: Core concept
+frequency: High
+importance: 4
+origin: Deploying and releasing were tied together, so flags were introduced to separate shipping code from showing a feature.
+pro_tip: Remove a flag after the feature is fully released, or it becomes clutter.
+memory_story: A feature flag is a light switch wired in before the room is open.
+visual: A toggle controlling a new button in the interface.
+emotion: The comfort of turning a bad feature off in seconds.
+definition: A feature flag is a runtime switch that enables or disables a feature, possibly for chosen users, without deploying new code.
+explanation: Code for a new feature is merged and deployed hidden behind a flag. The flag is then enabled for staff, a small group, or everyone. If problems appear, turning the flag off is faster than a rollback. Flags can be stored in config files or in a flag service. Old flags should be cleaned up, since each adds complexity and testing paths.
+simple_explain: Ship the code turned off, enable it gradually, and switch it off instantly if needed.
+analogy: It is a light switch wired in before the room opens.
+formula_rule: Deploy hidden, release by flag, remove when done.
+example_1: A new checkout page visible to ten percent of users.
+example_2: A kill switch disabling a failing integration.
+example_3: A flag enabled for internal staff only.
+related: canary releases, rollbacks, trunk-based development, release tagging
+word_family: flag, toggle, kill switch, rollout, targeting
+where_used: Gradual releases | Experiments | Emergency switches
+mini_conversation: A: The new search is broken. | B: Turn off its flag while we fix it.
+misconception: ✗ Feature flags are free of cost → ✓ Each flag adds code paths and must be cleaned up
+contrast: Deploy vs release: deploy puts code on servers, release makes the feature available.
+avoid: Do not leave stale flags in the code for years.
+memory_trick: Deploy dark, release by switch.
+real_project: Hiding a new report behind a flag and enabling it for one customer first.
+real_interview: An interviewer may ask: What is the difference between deploying and releasing?
+real_daily: It is like a switch wired before opening.
+mcq_question: What does a feature flag separate?
+mcq_options: A) Tests from code B) Deploying code from releasing a feature C) Dev from prod D) Users from admins
+mcq_answer: B
+mcq_why: Code can be live while the feature stays hidden.
+fill_blank: A flag that quickly disables a failing feature is a kill ____ → switch
+apply: A new feature is risky. How can you ship code but hide the feature? → Use a feature flag
+explain_task: Explain feature flags in three lines.
+own_task: List two benefits and one risk of feature flags.
+
+@CICD-028
+type: topic56
+topic: 04 Deployment
+level: Advanced
+term: Database migrations in pipelines
+cue: How do you change a database schema safely as part of a release?
+category: Core concept
+frequency: High
+importance: 5
+origin: Code and database must change together, so schema changes were written as versioned scripts that run in the pipeline.
+pro_tip: Split risky changes into small steps that old and new code can both handle.
+memory_story: Migrations are numbered steps on a staircase that the database climbs in order.
+visual: A staircase made of numbered migration files, one per step.
+emotion: The relief of schema changes that do not break the live app.
+definition: A database migration is a versioned script that changes the schema, and pipelines apply migrations in order before or during a release.
+explanation: Tools such as Alembic, Flyway or Prisma Migrate keep a table that records which migrations ran. The safest pattern is expand and contract. First add a new column, deploy code that writes both, move data, switch reads and only later remove the old column. Destructive changes need backups. Long locks can block production, so large changes need care.
+simple_explain: Use versioned migrations, make each step compatible with both code versions, and back up before destructive changes.
+analogy: Migrations are numbered steps on a staircase that the database climbs in order.
+formula_rule: Expand, migrate data, switch, then contract.
+example_1: Adding a nullable column before the code uses it.
+example_2: Backfilling data in batches.
+example_3: Dropping an old column two releases later.
+related: rollbacks, blue-green, backups, canary releases
+word_family: migration, schema, expand and contract, backfill, lock
+where_used: Every data-backed app | Releases | Upgrades
+mini_conversation: A: The new code needs a renamed column. | B: Add the new one first, then remove the old later.
+misconception: ✗ Renaming a column in one step is safe → ✓ A rename breaks the old version still running, so do it in steps
+contrast: Expand vs contract: expand adds, contract removes what is no longer used.
+avoid: Do not drop a column in the same release that stops using it.
+memory_trick: Add first, switch next, remove last.
+real_project: Splitting a column rename into three releases to avoid downtime.
+real_interview: An interviewer may ask: How do you change a database schema without downtime?
+real_daily: It is like climbing a numbered staircase.
+mcq_question: What should you do first when renaming a column safely?
+mcq_options: A) Add the new column B) Stop the app C) Drop the old one D) Delete data
+mcq_answer: A
+mcq_why: Expanding keeps the old code working.
+fill_blank: Filling a new column with old data is called a ____ → backfill
+apply: You must rename a column with no downtime. What pattern? → Expand and contract
+explain_task: Explain safe migrations in three lines.
+own_task: Write the release steps to rename a column.
+
+@CICD-029
+type: topic56
+topic: 04 Deployment
+level: Advanced
+term: GitOps
+cue: Which approach uses a Git repository as the source of truth for what runs in production?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Manually applied changes drifted from what was written down, so teams made Git the single record, with a tool applying it.
+pro_tip: Make every change a pull request so there is a review and a history.
+memory_story: GitOps is a ship whose cargo list is checked against the manifest and corrected automatically.
+visual: A Git repository feeding an agent that syncs a cluster.
+emotion: The assurance that production matches the repository.
+definition: GitOps keeps the desired state of infrastructure and applications in Git, and an automated agent applies it and corrects any drift.
+explanation: To change production you open a pull request that edits the manifests. After the merge, a tool such as Argo CD or Flux notices the change and applies it to the cluster. If someone changes the cluster by hand, the agent can detect and revert the drift. It gives an audit trail, easy rollback by reverting a commit, and fewer credentials outside the cluster.
+simple_explain: Git states what should run, and an agent makes reality match it.
+analogy: It is a ship whose cargo is checked against the manifest and corrected automatically.
+formula_rule: Git = desired state. Agent = reconcile.
+example_1: A merged pull request changing an image tag in a manifest.
+example_2: An agent reverting a manual edit.
+example_3: Rolling back by reverting a commit.
+related: infrastructure as code, Kubernetes, rollbacks, environments
+word_family: GitOps, reconcile, drift, manifest, agent
+where_used: Kubernetes | Platform teams | Audited environments
+mini_conversation: A: Someone changed production by hand. | B: The GitOps agent will revert it to match Git.
+misconception: ✗ GitOps means running kubectl from your laptop → ✓ Changes are made in Git, and the agent applies them
+contrast: Push vs pull deployment: push sends changes from the pipeline, pull has an agent fetch them from Git.
+avoid: Do not make manual edits to a GitOps-managed cluster.
+memory_trick: Commit it, merge it, the agent applies it.
+real_project: Managing cluster settings through pull requests so every change had an author.
+real_interview: An interviewer may ask: What is GitOps?
+real_daily: It is like checking cargo against the manifest.
+mcq_question: What is the source of truth in GitOps?
+mcq_options: A) A server console B) A Git repository C) A spreadsheet D) A chat message
+mcq_answer: B
+mcq_why: Git holds the desired state.
+fill_blank: When live state differs from Git it is called ____ → drift
+apply: You want every production change reviewed and recorded. Which approach? → GitOps
+explain_task: Explain GitOps in three lines.
+own_task: List the steps from a pull request to a change in the cluster.
+
+@CICD-030
+type: topic56
+topic: 04 Deployment
+level: Intermediate
+term: Infrastructure as code in pipelines
+cue: How does a pipeline plan and apply infrastructure changes safely?
+category: Core concept
+frequency: High
+importance: 4
+origin: Infrastructure changes carry as much risk as code changes, so pipelines run the same review and approval steps for them.
+pro_tip: Show the plan on the pull request and apply only after merge and approval.
+memory_story: The plan is a preview of the renovation before the builders start.
+visual: A pipeline with plan, approve and apply stages.
+emotion: The comfort of seeing changes before they happen.
+definition: Running infrastructure as code in a pipeline means validating and planning on pull requests, then applying approved changes after merge.
+explanation: On a pull request the pipeline runs format and validate checks and a plan, posting the result for reviewers. After merge and approval the apply stage runs. State is stored remotely with locking so two runs do not collide. Credentials come from short-lived tokens. Separate environments use separate state and variables.
+simple_explain: Plan on the pull request, review it, apply after merge, and lock the state.
+analogy: The plan is a preview of the renovation before builders start.
+formula_rule: Validate → plan → review → apply.
+example_1: A plan comment listing two resources to change.
+example_2: A manual approval before apply in production.
+example_3: Remote state with locking.
+related: infrastructure as code, environments, OIDC, approvals
+word_family: plan, apply, state, lock, validate
+where_used: Cloud teams | Platform engineering | Audited changes
+mini_conversation: A: What will this change do to production? | B: Read the plan posted on the pull request.
+misconception: ✗ Applying infrastructure changes from laptops is fine → ✓ A pipeline gives review, history and controlled credentials
+contrast: Plan vs apply: plan previews, apply makes the change.
+avoid: Do not run apply without reading the plan.
+memory_trick: Plan on the PR, apply after merge.
+real_project: Posting Terraform plans on pull requests so reviewers saw every resource change.
+real_interview: An interviewer may ask: How do you control infrastructure changes in CI?
+real_daily: It is like previewing a renovation.
+mcq_question: When should apply run?
+mcq_options: A) On every typo B) Never C) After merge and approval D) Before review
+mcq_answer: C
+mcq_why: Reviewed changes are applied from the main branch.
+fill_blank: A lock on state stops two runs from ____ → colliding
+apply: A reviewer wants to see what will change. What do you post? → The plan
+explain_task: Explain infrastructure pipelines in three lines.
+own_task: Sketch the stages for a Terraform pipeline with approvals.
+
+@CICD-031
+type: topic56
+topic: 04 Deployment
+level: Beginner
+term: Release tagging and versioning
+cue: How do you name and mark each release so it can be found and repeated?
+category: Core concept
+frequency: High
+importance: 4
+origin: Teams needed to know exactly what version was live, so releases were labelled with tags and version numbers.
+pro_tip: Tag releases in Git and tag images with the same version and the commit hash.
+memory_story: A release tag is a sticker with the version on a sealed box.
+visual: A Git commit labelled v1.4.2 beside an image labelled the same.
+emotion: The clarity of knowing exactly what is live.
+definition: Release tagging marks a specific commit with a version label, often following semantic versioning of major, minor and patch numbers.
+explanation: In semantic versioning, a major change breaks compatibility, a minor change adds features, and a patch fixes bugs. A pushed tag can trigger the release pipeline. Images and packages carry the same version. Changelogs summarise what changed. Avoid reusing or moving a tag, because it breaks traceability.
+simple_explain: Tag the commit with a version, build artifacts with the same version, and never move the tag.
+analogy: A release tag is a sticker with the version on a sealed box.
+formula_rule: MAJOR.MINOR.PATCH, one tag per release.
+example_1: v1.4.2 tagging a commit.
+example_2: An image tagged 1.4.2 and the commit hash.
+example_3: A tag push starting the release workflow.
+related: build artifacts, triggers, rollbacks, changelogs
+word_family: tag, semantic versioning, major, minor, patch
+where_used: Releases | Packages | Rollbacks
+mini_conversation: A: Which version is live? | B: Tag v1.4.2, the commit is in the release notes.
+misconception: ✗ Moving a tag to a new commit is harmless → ✓ It breaks traceability, because the same tag then means different code
+contrast: Major vs patch: major may break users, patch only fixes bugs.
+avoid: Do not reuse a version number.
+memory_trick: Major breaks, minor adds, patch fixes.
+real_project: Triggering the release pipeline from version tags so every release was traceable.
+real_interview: An interviewer may ask: What does semantic versioning mean?
+real_daily: It is like a sticker with the version on a box.
+mcq_question: Which part of a version changes for a bug fix?
+mcq_options: A) Patch B) Minor C) None D) Major
+mcq_answer: A
+mcq_why: Patch increments cover backward-compatible fixes.
+fill_blank: A version of the form 1.4.2 is called ____ versioning → semantic
+apply: A release adds a backward-compatible feature. Which number increases? → Minor
+explain_task: Explain semantic versioning in three lines.
+own_task: Write a tagging rule for images and Git.

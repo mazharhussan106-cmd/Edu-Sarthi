@@ -1,0 +1,541 @@
+
+@JUP-015
+topic: 03 Good practice
+level: Intermediate
+term: Reproducibility
+cue: What makes someone else get the same results from your notebook?
+category: Good practice
+frequency: Very high
+importance: 5
+origin: A result that nobody else can recreate is hard to trust, review or reuse.
+pro_tip: Record the data source, package versions and random seeds inside the notebook itself.
+memory_story: A reproducible notebook is a recipe with exact amounts, not a vague description of a meal.
+visual: A checklist with data, packages, seed and order all ticked.
+emotion: The trust of results that others can repeat.
+definition: A reproducible notebook gives the same results when another person runs it from top to bottom on their own machine, because its inputs, packages, randomness and order are all stated.
+explanation: Four things usually break reproducibility: hidden state, unpinned package versions, missing or changing data, and unseeded randomness. Fix them by running clean, listing versions in a requirements file, noting where data comes from, and setting seeds. Use relative paths so the notebook does not depend on your own folders.
+simple_explain: Someone else should be able to run your notebook and get the same answer.
+analogy: A reproducible notebook is a recipe with exact amounts, not a vague description of a meal.
+formula_rule: Same data, same packages, same seed, same order.
+example_1: A requirements file stored beside the notebook.
+example_2: A fixed random seed in a sampling step.
+example_3: A relative path to a data folder inside the project.
+related: running order, restart and run all, installing packages, version control
+word_family: reproducible, seed, pinned, relative path, environment
+where_used: Research | Client reports | Audits
+mini_conversation: A: My numbers differ from yours. | B: Let us compare package versions and the random seed.
+misconception: ✗ If it runs on my laptop it is reproducible → ✓ It must also run cleanly on another machine
+contrast: Reproducible vs repeatable: others can recreate it versus you can rerun it yourself.
+avoid: Do not hard-code paths that exist only on your own computer.
+memory_trick: Pin the versions, fix the seed, share the data path.
+real_project: Pinned package versions let an audit team recreate a client's numbers months later.
+real_interview: An interviewer may ask: How do you make a notebook reproducible?
+real_daily: It is like a recipe with exact measurements.
+mcq_question: Which item helps make random steps repeatable?
+mcq_options: A) A new tab B) More colours C) A bigger font D) A fixed seed
+mcq_answer: D
+mcq_why: A seed makes random choices follow the same sequence.
+fill_blank: A path that starts from the project folder is called a ____ path → relative
+apply: Two analysts get different sampled rows. What do you add? → A fixed random seed
+explain_task: Explain four causes of notebooks that cannot be reproduced.
+own_task: Write a reproducibility checklist you can paste at the top of any notebook.
+
+@JUP-016
+type: code56
+topic: 03 Good practice
+level: Intermediate
+term: Secrets in notebooks
+cue: How do you keep passwords and API keys out of a shared notebook?
+kind: Security
+frequency: Very high
+importance: 5
+origin: Notebooks store outputs and get shared, so a key typed into a cell can leak through the file, history or a repository.
+pro_tip: Read secrets from environment variables and clear any output that printed one.
+memory_story: A key in a notebook is a house key taped to the front door.
+visual: A notebook cell reading a value from the environment instead of showing a key.
+emotion: The worry of a leaked key and the calm of avoiding it.
+meaning: Secrets should live outside the notebook, in environment variables or a secrets manager, and the code should only read them at run time.
+code: import os¶api_key = os.environ.get("SERVICE_API_KEY")¶if not api_key:¶    print("Set SERVICE_API_KEY in the environment first.")¶else:¶    print("Key found, length", len(api_key))
+output: Set SERVICE_API_KEY in the environment first. (when the variable is missing)
+explanation: Never paste a key into a cell, even for a quick test, because saved outputs and version history keep it. Load it from the environment or from a local file that is ignored by version control. If a secret leaks, treat it as compromised and rotate it, since deleting the cell does not remove the old copies. Print only that a key exists, never its value.
+simple_explain: Read the key from the environment and never write its value in the notebook.
+analogy: A key in a notebook is a house key taped to the front door.
+syntax: os.environ.get("NAME")
+anatomy: os.environ = environment values | get = safe read | NAME = variable name
+example_1: Reading a service key from the environment.
+example_2: Loading a local env file that is ignored by version control.
+example_3: Rotating a key that appeared in a pushed notebook.
+variation: os.environ["NAME"]   // raises an error if missing
+used_with: Environment variables, gitignore, secrets managers
+related: version control and clean outputs, sharing, hosted notebooks, reproducibility
+alternatives: Secrets manager | Hosted notebook secrets feature
+where_used: API work | Database access | Customer projects
+mini_conversation: A: I pasted the key just to test. | B: Rotate it now, because it may already be saved in the file history.
+misconception: ✗ Deleting the cell removes a leaked key → ✓ History, outputs and copies may still hold it
+confused_with: Environment variable vs hard-coded value: read at run time versus stored in the file.
+avoid: Do not print a secret value to check that it loaded.
+wrong_code: api_key = "paste-the-real-key-here"
+right_code: api_key = os.environ.get("SERVICE_API_KEY")
+memory_trick: Read it from the environment, never write it in.
+real_project: A leaked key found in an old notebook was rotated, and the code moved to environment variables.
+real_interview: An interviewer may ask: How do you handle API keys in notebooks?
+real_daily: It is like keeping your house key in your pocket, not on the door.
+mcq_question: Where should an API key be stored for a notebook?
+mcq_options: A) In a chart title B) In the file name C) In the environment D) In a markdown cell
+mcq_answer: C
+mcq_why: The environment keeps the value outside the saved file.
+fill_blank: A key that has been exposed must be ____ → rotated
+hindi_to_task: Read a key named DATA_KEY from the environment.
+task_answer: import os¶key = os.environ.get("DATA_KEY")
+own_task: Write the steps you would follow after finding a key in a pushed notebook.
+practice_question: Why is deleting the cell not enough after a leak?
+practice_answer: Saved history and copies can still contain the key.
+
+@JUP-017
+type: code56
+topic: 03 Good practice
+level: Intermediate
+term: Version control and clean outputs
+cue: How do you keep notebooks tidy in Git?
+kind: Workflow
+frequency: High
+importance: 4
+origin: Notebooks are JSON files with outputs and counters, so every run makes noisy changes that hide real edits.
+pro_tip: Clear outputs before committing, unless the outputs are the deliverable.
+memory_story: Clearing outputs is wiping the whiteboard before saving the lesson plan.
+visual: A diff with a few real code lines instead of pages of changed output.
+emotion: The calm of a clean, readable review.
+meaning: Clearing outputs before a commit removes results, images and execution counts from the file, so the diff shows only the code and text that actually changed.
+code: jupyter nbconvert --clear-output --inplace analysis.ipynb¶git add analysis.ipynb¶git commit -m "Clean analysis notebook"¶git diff --stat HEAD~1
+output: A short diff summary showing the changed notebook file.
+explanation: Images and tables inside outputs make large, unreadable diffs and bloat the repository. Clear outputs, or use a tool that strips them automatically before each commit. Where reviewers need to see results, commit a rendered HTML copy separately. Tools that show notebook diffs cell by cell make review easier. Never commit outputs that contain private data or secrets.
+simple_explain: Strip the outputs so Git only tracks what you really changed.
+analogy: Clearing outputs is wiping the whiteboard before saving the lesson plan.
+syntax: jupyter nbconvert --clear-output --inplace file.ipynb
+anatomy: nbconvert = converter | --clear-output = remove results | --inplace = edit the same file
+example_1: Clearing outputs before a pull request.
+example_2: Committing a rendered HTML copy for reviewers.
+example_3: Stripping outputs with a pre-commit hook.
+variation: jupytext pairing   // keep a plain-text twin of the notebook
+used_with: Git, pre-commit, code review
+related: restart and run all, secrets in notebooks, nbconvert, sharing
+alternatives: nbstripout | jupytext | Notebook diff tools
+where_used: Team projects | Pull requests | Repositories
+mini_conversation: A: The pull request shows five thousand changed lines. | B: Outputs were committed, so clear them and push again.
+misconception: ✗ Outputs must always be committed with the notebook → ✓ They are often better left out of version control
+confused_with: Clearing outputs vs deleting cells: one removes results, the other removes code.
+avoid: Do not commit outputs that show customer data.
+wrong_code: git add analysis.ipynb   # with large outputs and private rows
+right_code: jupyter nbconvert --clear-output --inplace analysis.ipynb
+memory_trick: Wipe the outputs, then commit the code.
+real_project: Clearing outputs made review of a team notebook much quicker.
+real_interview: An interviewer may ask: Why are notebooks hard to review in Git?
+real_daily: It is like erasing the whiteboard before filing the notes.
+mcq_question: What does clearing outputs remove?
+mcq_options: A) Results and images B) The kernel C) The file name D) All code
+mcq_answer: A
+mcq_why: Only the saved results are stripped, and the code stays.
+fill_blank: A pre-commit hook can strip outputs ____ → automatically
+hindi_to_task: Clear the outputs of report.ipynb in place.
+task_answer: jupyter nbconvert --clear-output --inplace report.ipynb
+own_task: Describe how you would stop private data from reaching a repository through outputs.
+practice_question: Why do outputs make Git diffs noisy?
+practice_answer: They store images, tables and counters that change on every run.
+
+@JUP-018
+type: code56
+topic: 03 Good practice
+level: Intermediate
+term: Converting with nbconvert
+cue: Which tool turns a notebook into HTML, PDF or a script?
+kind: Command
+frequency: High
+importance: 4
+origin: Colleagues and clients often want a report, not a notebook file they must open in a special tool.
+pro_tip: Use the no-input option when the reader needs results but not your code.
+memory_story: nbconvert is a printing press that turns the notebook into any format you need.
+visual: A notebook file with arrows to an HTML page, a PDF and a script.
+emotion: The ease of sending a polished report from one command.
+meaning: The nbconvert tool converts a notebook file into formats such as HTML, PDF, Markdown or a Python script, and can also execute the notebook while converting.
+code: jupyter nbconvert --to html report.ipynb¶jupyter nbconvert --to html --no-input report.ipynb¶jupyter nbconvert --to script report.ipynb¶jupyter nbconvert --to notebook --execute report.ipynb
+output: Files report.html, a code-free HTML version, report.py and an executed notebook copy.
+explanation: HTML is the simplest format for sharing results because it needs no installation. PDF output may need extra tools installed on the machine. The no-input option hides code cells so business readers see only text and charts. The execute option runs all cells first, which proves the notebook runs cleanly. Available options can differ between versions, so check the help output.
+simple_explain: One command turns a notebook into a report or a script.
+analogy: nbconvert is a printing press that turns the notebook into any format you need.
+syntax: jupyter nbconvert --to FORMAT file.ipynb
+anatomy: --to = target format | html, pdf, script = formats | --execute = run first | --no-input = hide code
+example_1: Sending an HTML report to a manager.
+example_2: Producing a code-free summary for a client.
+example_3: Turning a prototype into a script.
+variation: --to pdf   // may need extra tools installed
+used_with: Reports, automation, scheduled runs
+related: sharing, notebook to script, clean outputs, parameterised notebooks
+alternatives: Quarto | Export from the menu | Papermill
+where_used: Reporting | Handover | Automation
+mini_conversation: A: The client does not use Jupyter. | B: Export an HTML report and send that instead.
+misconception: ✗ PDF export always works without extra setup → ✓ It often needs additional tools installed
+confused_with: --no-input vs the default export: hide the code cells versus show everything.
+avoid: Do not send a client an HTML file that still shows private cells.
+wrong_code: jupyter nbconvert --to html report.ipynb   # code cells and private code stay visible
+right_code: jupyter nbconvert --to html --no-input report.ipynb
+memory_trick: Say where it goes with --to.
+real_project: An HTML export with code hidden gave a client a clean weekly summary.
+real_interview: An interviewer may ask: How do you share a notebook with someone who does not use Jupyter?
+real_daily: It is like exporting a document as a PDF to send to a friend.
+mcq_question: Which option hides the code cells in the export?
+mcq_options: A) --to B) --kernel C) --inplace D) --no-input
+mcq_answer: D
+mcq_why: It leaves only text and outputs for the reader.
+fill_blank: The format flag for nbconvert is --____ → to
+hindi_to_task: Export summary.ipynb to HTML.
+task_answer: jupyter nbconvert --to html summary.ipynb
+own_task: Make a code-free HTML version of one notebook and check what the reader sees.
+practice_question: Why use the execute option while converting?
+practice_answer: It runs every cell first, which proves the notebook runs cleanly.
+
+@JUP-019
+topic: 03 Good practice
+level: Intermediate
+term: Sharing notebooks
+cue: How do you share a notebook so others can read or run it?
+category: Good practice
+frequency: High
+importance: 4
+origin: A notebook sent as a bare file may not open, may miss data, or may reveal more than intended.
+pro_tip: Decide first whether the reader needs to read, to run, or to edit, and pick the format to match.
+memory_story: Sharing is choosing between showing a photograph, lending a model, or handing over the workshop.
+visual: Three paths labelled read, run and edit leading to different formats.
+emotion: The care of giving others exactly what they need.
+definition: Sharing a notebook means choosing a form that fits the reader, such as a rendered HTML report to read, a repository with an environment file to run, or a hosted link to edit.
+explanation: Readers who only need results should get HTML or PDF. Readers who must rerun it need the notebook, its data location and a list of packages. Readers who will edit should receive it through version control. Always check for secrets and private data in code and outputs first. Hosted services add sharing links, but the provider's access rules and data location still apply.
+simple_explain: Give the reader a format that matches what they need to do.
+analogy: Sharing is choosing between showing a photograph, lending a model, or handing over the workshop.
+formula_rule: Read means HTML, run means repository plus environment, edit means version control.
+example_1: An HTML report for a manager.
+example_2: A repository link with a requirements file for a colleague.
+example_3: A hosted link for a workshop group.
+related: nbconvert, secrets in notebooks, version control, hosted notebooks
+word_family: share, export, repository, link, access
+where_used: Reports | Teams | Workshops
+mini_conversation: A: Can the client run the notebook? | B: Only if we send the data path and a requirements file with it.
+misconception: ✗ Sending the ipynb file is always enough → ✓ Readers also need data, packages and sometimes a clean export
+contrast: Read vs run: a rendered report versus a full working setup.
+avoid: Do not share a notebook before checking its outputs for private data.
+memory_trick: Read, run or edit decides the format.
+real_project: A client received an HTML summary and a separate repository for the engineering team.
+real_interview: An interviewer may ask: How do you share analysis with a non-technical stakeholder?
+real_daily: It is like choosing between sending a photo, lending a recipe or handing over the keys.
+mcq_question: Which format suits a manager who only reads results?
+mcq_options: A) Raw kernel B) Environment folder C) HTML report D) Source repository
+mcq_answer: C
+mcq_why: A rendered report needs no installation.
+fill_blank: A reader who must rerun the notebook also needs its ____ list → package
+apply: A client wants only the findings. What do you send? → A rendered HTML or PDF report
+explain_task: Explain how you decide how to share a notebook.
+own_task: Write a pre-share check of five items for any notebook.
+
+@JUP-020
+type: code56
+topic: 03 Good practice
+level: Advanced
+term: Parameterised notebooks
+cue: How do you run the same notebook with different inputs?
+kind: Pattern
+frequency: Medium
+importance: 4
+origin: Reports that repeat each week or per customer should not be copied by hand for every new value.
+pro_tip: Keep all inputs in one parameters cell at the top with clear defaults.
+memory_story: A parameter cell is the dial on the front of a machine that otherwise stays the same.
+visual: A parameters cell at the top feeding the same analysis with different values.
+emotion: The efficiency of one notebook serving many runs.
+meaning: A parameterised notebook has one cell of input values that an external tool such as papermill can override, so the same analysis runs for many customers, dates or settings.
+code: pip install papermill¶papermill report.ipynb out_march.ipynb -p month 2026-03 -p region west¶papermill report.ipynb out_april.ipynb -p month 2026-04 -p region west
+output: Two executed copies, one for each month, saved as new notebooks.
+explanation: The cell holding defaults is tagged parameters. Papermill injects a new cell after it with the supplied values, runs the notebook and saves the executed copy. This avoids editing the original and keeps one record per run. It suits scheduled reports and batch jobs. Combine with nbconvert to export each result as HTML.
+simple_explain: Put the inputs in one cell and run the notebook again with new values.
+analogy: A parameter cell is the dial on the front of a machine that otherwise stays the same.
+syntax: papermill input.ipynb output.ipynb -p name value
+anatomy: input = template | output = executed copy | -p = parameter | name value = setting
+example_1: A monthly sales report for each region.
+example_2: A customer health report with a customer id.
+example_3: A model check run on different dates.
+variation: -f params.yaml   // read the values from a file
+used_with: nbconvert, schedulers, batch jobs
+related: nbconvert, notebook to script, reproducibility, remote kernels
+alternatives: Quarto parameters | Plain script with arguments | Scheduler runs
+where_used: Reporting | Batch runs | Customer work
+mini_conversation: A: I copied the notebook for each customer. | B: Parameterise it and run one template many times.
+misconception: ✗ You must copy a notebook to reuse it with new values → ✓ Parameters let one template run many times
+confused_with: Parameters cell vs code edit: tagged inputs versus changing analysis code by hand.
+avoid: Do not scatter input values through the notebook.
+wrong_code: month = "2026-03"   # edited by hand in many cells
+right_code: papermill report.ipynb out.ipynb -p month 2026-03
+memory_trick: One dial cell, many runs.
+real_project: Parameterising a weekly report removed hours of copy and paste for a support team.
+real_interview: An interviewer may ask: How do you run one notebook for many inputs?
+real_daily: It is like a washing machine that runs the same cycle with different settings.
+mcq_question: What does papermill do with a parameters cell?
+mcq_options: A) Encrypts it B) Overrides its values C) Hides it D) Deletes it
+mcq_answer: B
+mcq_why: Supplied values replace the defaults for that run.
+fill_blank: Papermill saves each run as a separate executed ____ → notebook
+hindi_to_task: Run report.ipynb with region east and save it as east.ipynb.
+task_answer: papermill report.ipynb east.ipynb -p region east
+own_task: Pick one repeated report and list the three values you would turn into parameters.
+practice_question: Why keep parameters in one cell?
+practice_answer: One place makes values easy to find, override and record.
+
+@JUP-021
+type: code56
+topic: 03 Good practice
+level: Advanced
+term: Notebook to script
+cue: When and how do you move notebook code into a plain script or module?
+kind: Workflow
+frequency: High
+importance: 5
+origin: Notebooks are good for exploring, but stable logic belongs in tested files that run the same way every time.
+pro_tip: Move code into functions in a module as soon as you reuse it twice.
+memory_story: The notebook is the sketchpad and the module is the finished blueprint.
+visual: Functions moving from a notebook cell into a file imported back into the notebook.
+emotion: The pride of turning a rough sketch into solid code.
+meaning: Promoting notebook code means placing stable logic into functions inside a normal file, importing them in the notebook, and running the file from the command line or a scheduler.
+code: # clean.py¶def remove_blanks(rows):¶    return [r for r in rows if r.strip()]¶¶# in the notebook¶from clean import remove_blanks¶print(remove_blanks(["a", "", "b"]))
+output: ['a', 'b']
+explanation: Keep the notebook for exploring and explaining, and import the logic from a module. Functions in files can be tested, reviewed and reused. When the whole flow is ready, convert it with nbconvert or rewrite it as a command-line script, then schedule that script. In the notebook, the autoreload extension reloads edited modules without restarting the kernel.
+simple_explain: Put reusable code in a file and import it, and keep the notebook for the story.
+analogy: The notebook is the sketchpad and the module is the finished blueprint.
+syntax: from module import function
+anatomy: module = a python file | import = bring in | function = reusable step
+example_1: A cleaning function moved into clean.py.
+example_2: A scheduled script built from a finished notebook.
+example_3: Autoreload picking up an edited module.
+variation: %load_ext autoreload¶%autoreload 2   // reload edited modules automatically
+used_with: Modules, tests, schedulers
+related: testing notebook code, nbconvert, parameterised notebooks, performance and memory
+alternatives: nbconvert --to script | Rewrite as a command-line tool
+where_used: Production hand-off | Teams | Pipelines
+mini_conversation: A: Our nightly job runs a notebook and fails often. | B: Move the logic into a tested script and keep the notebook for reports.
+misconception: ✗ A notebook is fine as a long-term production job → ✓ Stable logic belongs in tested modules
+confused_with: Module vs notebook: reusable tested code versus exploratory narrative.
+avoid: Do not copy the same code between notebooks.
+wrong_code: # same cleaning code pasted into five notebooks
+right_code: from clean import remove_blanks
+memory_trick: Explore in notebooks, build in modules.
+real_project: Moving cleaning logic into a module let a team test it and reuse it in a nightly job.
+real_interview: An interviewer may ask: How do you take notebook code to production?
+real_daily: It is like turning a pencil sketch into a printed blueprint.
+mcq_question: Where should stable reusable logic live?
+mcq_options: A) In a tested module B) In one huge cell C) In a comment D) In a chart title
+mcq_answer: A
+mcq_why: Modules can be tested, reviewed and reused.
+fill_blank: Reloading edited modules without a restart uses the ____ extension → autoreload
+hindi_to_task: Import a function named clean_rows from a file called tools.py.
+task_answer: from tools import clean_rows
+own_task: Pick three repeated cells in one notebook and name the functions you would extract.
+practice_question: Why move code out of the notebook?
+practice_answer: Files can be tested, reviewed and reused, which notebooks make harder.
+
+@JUP-022
+type: code56
+topic: 04 Advanced
+level: Advanced
+term: Widgets
+cue: How do you add sliders and buttons that change results in a notebook?
+kind: Library
+frequency: Medium
+importance: 3
+origin: Exploring settings by editing and rerunning code is slow, so widgets give interactive controls.
+pro_tip: Use widgets for exploring and teaching, not as a way to build a full application.
+memory_story: Widgets are the volume knobs on your analysis.
+visual: A slider above a chart that redraws as it moves.
+emotion: The delight of watching a result react to a slider.
+meaning: The ipywidgets library adds interactive controls, such as sliders, dropdowns and buttons, that call a Python function whenever their value changes.
+code: from ipywidgets import interact¶def show(power):¶    print(2 ** power)¶interact(show, power=(1, 10))
+output: A slider from 1 to 10 and a printed value that updates as the slider moves.
+explanation: The interact helper turns function arguments into controls. For more control, create widgets and link them with observers. Widgets need a running kernel, so they do not work in a static HTML export. They are helpful for exploring parameters and teaching, but a separate app framework is better for end users. Support depends on the interface and extensions installed.
+simple_explain: Add a slider or dropdown that reruns a function when you move it.
+analogy: Widgets are the volume knobs on your analysis.
+syntax: interact(function, arg=(min, max))
+anatomy: interact = helper | function = what to run | arg = control | (min, max) = slider range
+example_1: A slider that changes a chart threshold.
+example_2: A dropdown that selects a region.
+example_3: A button that reloads a sample.
+variation: widgets.IntSlider()   // create a control by hand
+used_with: ipywidgets, plotting, teaching
+related: plotting inline, displaying data, sharing, hosted notebooks
+alternatives: Streamlit | Dash | Voila
+where_used: Exploration | Teaching | Demos
+mini_conversation: A: Can the client move the slider in the HTML report? | B: No, widgets need a live kernel, so use an app tool instead.
+misconception: ✗ Widgets work in any exported file → ✓ Most need a running kernel
+confused_with: Widgets vs dashboards: controls inside a notebook versus a separate app.
+avoid: Do not build a customer-facing product out of widgets alone.
+wrong_code: interact(show)   # no range for the argument
+right_code: interact(show, power=(1, 10))
+memory_trick: Give the function in, get a knob out.
+real_project: A slider helped a client explore a threshold live during a workshop.
+real_interview: An interviewer may ask: How can a notebook be made interactive?
+real_daily: It is like adding a dial to a radio to tune it.
+mcq_question: What do widgets need to work?
+mcq_options: A) A printer B) No code C) A static export D) A running kernel
+mcq_answer: D
+mcq_why: Changes call Python code in the live kernel.
+fill_blank: The helper that turns arguments into controls is called ____ → interact
+hindi_to_task: Add a slider from 0 to 5 for an argument named n.
+task_answer: interact(show, n=(0, 5))
+own_task: Design a slider-driven check for one threshold in your own analysis.
+practice_question: Why do widgets not work in a plain HTML export?
+practice_answer: They call Python in a live kernel, which a static file lacks.
+
+@JUP-023
+type: code56
+topic: 04 Advanced
+level: Advanced
+term: Remote kernels
+cue: How do you run notebook code on a more powerful or secure machine?
+kind: Setup
+frequency: Medium
+importance: 4
+origin: Laptops lack the power or data access that servers have, so notebooks often run against a remote machine.
+pro_tip: Use an SSH tunnel and a token rather than exposing a notebook server to the open internet.
+memory_story: A remote kernel is a long cable from your laptop screen to a bigger engine room.
+visual: A laptop browser linked through a tunnel to a server running a kernel.
+emotion: The comfort of power on demand with data kept safe.
+meaning: Running the server on another machine and connecting through an SSH tunnel lets you work in your local browser while the code and data stay on the remote host.
+code: ssh -L 8888:localhost:8888 user@server¶jupyter lab --no-browser --port 8888
+output: A server message with a local address and a token to open in your browser.
+explanation: The first command forwards your local port 8888 to the server. The second starts JupyterLab on the server without opening a browser. Open the printed address on your laptop and paste the token when asked. Never expose the notebook port directly on a public network, because anyone who reaches it can run code. Use the SSH tunnel or an approved company gateway.
+simple_explain: Run the server on the big machine and view it safely through a tunnel.
+analogy: A remote kernel is a long cable from your laptop screen to a bigger engine room.
+syntax: ssh -L local:localhost:remote user@host
+anatomy: -L = forward a port | 8888 = port number | user@host = remote login
+example_1: Using a company server with a graphics card.
+example_2: Working near data that must not leave a secure network.
+example_3: Reconnecting to a long job after closing the laptop.
+variation: tmux on the server   // keeps the session alive after disconnects
+used_with: SSH, tmux, JupyterHub
+related: kernels, hosted notebooks, performance and memory, secrets in notebooks
+alternatives: JupyterHub | VS Code remote | Hosted platform
+where_used: Secure data work | Heavy models | Shared servers
+mini_conversation: A: Can I open the server port to everyone for the demo? | B: No, use an SSH tunnel so only you can connect.
+misconception: ✗ A notebook server is safe on a public port → ✓ Anyone who reaches it can run code
+confused_with: Remote kernel vs hosted notebook: your own server versus a provider's service.
+avoid: Do not expose a notebook server to the internet without proper protection.
+wrong_code: jupyter lab --ip=0.0.0.0   # open to every network
+right_code: ssh -L 8888:localhost:8888 user@server
+memory_trick: Tunnel in, never open the port.
+real_project: A tunnel let an engineer analyse data that could not leave the customer's network.
+real_interview: An interviewer may ask: How do you use a notebook on a remote server securely?
+real_daily: It is like controlling a far-away computer through a private line.
+mcq_question: Which method safely reaches a remote notebook server?
+mcq_options: A) Disabling the token B) An SSH tunnel C) A shared password in chat D) An open public port
+mcq_answer: B
+mcq_why: A tunnel keeps the port private to the connecting user.
+fill_blank: The ssh flag that forwards a local port is -____ → L
+hindi_to_task: Forward local port 9999 to port 9999 on host dev.
+task_answer: ssh -L 9999:localhost:9999 user@dev
+own_task: Write the steps and security checks for working on a customer's server.
+practice_question: Why avoid exposing the notebook port publicly?
+practice_answer: Anyone who reaches it could run code on the server.
+
+@JUP-024
+type: code56
+topic: 04 Advanced
+level: Advanced
+term: Performance and memory
+cue: How do you find out why a notebook is slow or runs out of memory?
+kind: Practice
+frequency: Medium
+importance: 4
+origin: Large files and slow loops make notebooks freeze, and the kernel keeps every object in memory until told otherwise.
+pro_tip: Measure first with time and memory checks, then fix the slowest part only.
+memory_story: Speeding up code without measuring is repairing a car without finding the fault.
+visual: A timer next to a memory gauge for a large table.
+emotion: The relief when a stuck notebook finally moves.
+meaning: Performance work starts by timing steps and checking memory use, then reducing data early, using faster formats, and freeing objects you no longer need.
+code: import sys¶data = list(range(1000000))¶print(sys.getsizeof(data) > 1000)¶del data¶import gc¶gc.collect()¶print("freed")
+output: True¶freed
+explanation: Use the time magics to find the slow cell. Check the size of tables before copying them. Load only the columns and rows you need, read big files in chunks, and sample while developing. Delete large variables you no longer need, or restart the kernel. Faster file formats, such as columnar ones, reduce load time. Do not optimise a step that takes seconds.
+simple_explain: Time it, size it, then shrink or free the biggest part.
+analogy: Speeding up code without measuring is repairing a car without finding the fault.
+syntax: %%time | del name | gc.collect()
+anatomy: %%time = measure | del = drop the name | gc.collect = free unused objects
+example_1: Reading only three columns from a wide file.
+example_2: Sampling ten percent of rows while developing.
+example_3: Deleting a large table after summarising it.
+variation: pd.read_csv(chunksize=...)   // read a large file in pieces
+used_with: pandas, timing magics, columnar formats
+related: magic commands, displaying data, remote kernels, notebook to script
+alternatives: Profilers | Remote machines | Faster libraries
+where_used: Large data | Slow notebooks | Hosted notebooks
+mini_conversation: A: The kernel keeps dying on this file. | B: It may be running out of memory, so load fewer columns or read in chunks.
+misconception: ✗ A bigger laptop is the only fix for a slow notebook → ✓ Loading less data and measuring often helps more
+confused_with: Time problem vs memory problem: slow steps versus too much data held at once.
+avoid: Do not copy a huge table many times in memory.
+wrong_code: df2 = df.copy()¶df3 = df.copy()   # many copies of a huge table
+right_code: df = df[["city", "sales"]]
+memory_trick: Measure it, shrink it, then free it.
+real_project: Reading only the needed columns made a slow load much faster.
+real_interview: An interviewer may ask: How do you debug a notebook that runs out of memory?
+real_daily: It is like clearing a crowded desk so you can work.
+mcq_question: What should you do before optimising a slow notebook?
+mcq_options: A) Rewrite everything B) Delete the notebook C) Measure the slow step D) Buy new hardware
+mcq_answer: C
+mcq_why: Measuring shows where time is actually going.
+fill_blank: Reading a large file in pieces is called reading in ____ → chunks
+hindi_to_task: Delete a variable named big and free memory.
+task_answer: import gc¶del big¶gc.collect()
+own_task: List the three first checks you would run on a slow notebook.
+practice_question: Why load only the columns you need?
+practice_answer: Fewer columns means less memory used and faster loading.
+
+@JUP-025
+type: code56
+topic: 04 Advanced
+level: Advanced
+term: Testing notebook code
+cue: How do you test logic that lives in a notebook?
+kind: Practice
+frequency: Medium
+importance: 4
+origin: Untested notebook cells break quietly, so important logic should be checked automatically.
+pro_tip: Move logic into functions, then test the functions with pytest.
+memory_story: A test is a smoke alarm for the code you cannot watch all day.
+visual: A test file running green checks next to a notebook.
+emotion: The security of changes that are checked for you.
+meaning: Notebook code is tested by moving the logic into importable functions and checking them with a test runner, or by running the whole notebook automatically to catch errors.
+code: # test_clean.py¶from clean import remove_blanks¶def test_remove_blanks():¶    assert remove_blanks(["a", "", "b"]) == ["a", "b"]¶¶# run in a terminal¶pytest -q
+output: 1 passed
+explanation: Tests need importable code, which is why logic belongs in modules. Plain asserts inside a cell give quick checks while exploring. To check that a whole notebook still runs, execute it in an automated job with nbconvert or papermill, and fail the job on any error. Tools that run notebooks as tests exist too, but the function approach is usually simplest and clearest.
+simple_explain: Move logic into functions and test them, and run the whole notebook in automation.
+analogy: A test is a smoke alarm for the code you cannot watch all day.
+syntax: def test_name(): assert result == expected
+anatomy: test_ = pytest finds it | assert = the check | == expected = the rule
+example_1: A test for a cleaning function.
+example_2: An automated run that fails on any cell error.
+example_3: A quick assert inside an exploring cell.
+variation: assert in a cell   // quick check during exploration
+used_with: pytest, nbconvert, CI pipelines
+related: notebook to script, restart and run all, parameterised notebooks, reproducibility
+alternatives: nbval | testbook | Manual checks
+where_used: Team projects | Pipelines | Production hand-off
+mini_conversation: A: Someone changed the cleaning cell and the totals broke. | B: A small test on the function would have caught it.
+misconception: ✗ Notebook code cannot be tested → ✓ Move logic into functions or run the notebook in automation
+confused_with: Unit test vs notebook run: one function checked versus the whole notebook executed.
+avoid: Do not leave key business logic only inside untested cells.
+wrong_code: remove_blanks(["a", "", "b"])   # looked at by eye only
+right_code: assert remove_blanks(["a", "", "b"]) == ["a", "b"]
+memory_trick: Make it a function, then make it a test.
+real_project: A small test caught a changed filter before a report went to a customer.
+real_interview: An interviewer may ask: How do you test code in a notebook?
+real_daily: It is like fitting a smoke alarm in a room you cannot watch.
+mcq_question: What makes notebook logic easy to test?
+mcq_options: A) Longer cells B) Bigger charts C) Importable functions D) More outputs
+mcq_answer: C
+mcq_why: Test tools can import and call functions directly.
+fill_blank: The statement used to check a result in a test is ____ → assert
+hindi_to_task: Write a test that checks double(2) equals 4.
+task_answer: def test_double():¶    assert double(2) == 4
+own_task: Write one test for a function you currently have only in a notebook.
+practice_question: Why move logic into modules before testing it?
+practice_answer: Tests can only import code that lives in importable files.

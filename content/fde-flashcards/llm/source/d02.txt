@@ -1,0 +1,525 @@
+
+@LLM-018
+type: code56
+topic: 03 API Use
+level: Beginner
+term: A request and response
+cue: What does a basic call to an LLM API look like?
+kind: API call
+frequency: Very high
+importance: 5
+origin: Applications talk to hosted models over HTTP, sending messages and settings and receiving generated text with usage details.
+pro_tip: Check your provider's current documentation for exact field names, since they differ and change.
+memory_story: A request is an order slip with the instructions, and the response is the finished dish with a receipt.
+visual: A JSON request going out and a JSON response returning with text and usage.
+emotion: The thrill of your first model reply.
+meaning: A request sends the model name, the messages and settings such as maximum output tokens, and the response returns the generated content, a stop reason and token usage.
+code: POST https://api.provider.example/v1/chat¶Authorization: Bearer $API_KEY¶Content-Type: application/json¶{"model": "MODEL_NAME", "max_tokens": 300, "temperature": 0.2, "messages": [{"role": "system", "content": "You are a concise assistant."}, {"role": "user", "content": "Explain DNS in two sentences."}]}¶# response (shape varies by provider)¶{"content": "DNS turns names into addresses ...", "stop_reason": "end", "usage": {"input_tokens": 28, "output_tokens": 41}}
+output: A JSON reply with the generated text, why it stopped and how many tokens were used.
+explanation: The key is sent in a header and must never be placed in client-side code. The messages list carries the roles. max_tokens limits the output. Usage fields support cost tracking. Field names and endpoints differ between providers, so use the official SDK or documentation. Store the model name in configuration.
+simple_explain: Send model, messages and limits, and read text, stop reason and usage back.
+analogy: A request is an order slip with instructions, and the response is the finished dish with a receipt.
+syntax: POST /chat with model, messages, max_tokens
+anatomy: model = which model | messages = conversation | max_tokens = output cap | usage = token counts
+example_1: curl -X POST -H "Authorization: Bearer $API_KEY" -d @request.json URL
+example_2: {"role": "user", "content": "Summarise this text."}
+example_3: usage.output_tokens read for cost tracking
+variation: use the provider SDK   // handles headers, retries and parsing
+used_with: environment variables, logging, cost control
+related: tokens, roles, stop reasons, cost control
+alternatives: Provider SDKs
+where_used: Every LLM integration | Prototypes | Backends
+mini_conversation: A: Can the browser call the API with our key? | B: No, call it from a backend so the key stays secret.
+misconception: ✗ API keys can safely live in front-end code → ✓ Anyone can read them there, so call from a server
+confused_with: Request vs response: one carries your input, the other the model's output and usage.
+avoid: Do not embed API keys in web or mobile apps.
+wrong_code: const KEY = "sk-live-123";   // in browser code
+right_code: const key = process.env.API_KEY;   // on the server
+memory_trick: Keys live on servers, never in browsers.
+real_project: Moving model calls to a backend stopped leaked keys from a web page.
+real_interview: An interviewer may ask: What does an LLM API request contain?
+real_daily: It is like an order slip and a dish with a receipt.
+mcq_question: Where should the API key be stored?
+mcq_options: A) In the prompt B) In the web page C) In a public repo D) On the server in environment settings
+mcq_answer: D
+mcq_why: Anyone can read client-side code.
+fill_blank: The field that caps the length of the reply is max ____ → tokens
+hindi_to_task: Limit the reply to 300 tokens.
+task_answer: "max_tokens": 300
+own_task: Write a request with a system and a user message.
+practice_question: Which response field supports cost tracking?
+practice_answer: The usage token counts.
+
+@LLM-019
+type: code56
+topic: 03 API Use
+level: Intermediate
+term: Streaming
+cue: How do you show the reply word by word as it is generated?
+kind: API call
+frequency: High
+importance: 4
+origin: Long answers take seconds to finish, so streaming sends pieces as they are produced, which makes apps feel faster.
+pro_tip: Use streaming for chat screens, and non-streaming for background jobs.
+memory_story: Streaming is a tap that pours as the water arrives, instead of waiting for a full jug.
+visual: Text appearing a few words at a time.
+emotion: The pleasure of instant feedback on screen.
+meaning: Streaming returns the response as a sequence of small events, usually over server-sent events, which the client appends to the display until a final event signals completion.
+code: # request adds a stream flag¶{"model": "MODEL_NAME", "stream": true, "messages": [{"role": "user", "content": "Write a haiku."}]}¶# client reads events¶for event in client.stream(request):¶    if event.type == "text":¶        print(event.text, end="", flush=True)¶    elif event.type == "done":¶        print("\nstop:", event.stop_reason, event.usage)
+output: The text appears gradually, and the final event gives the stop reason and token usage.
+explanation: Time to first token drops, though total time is similar. The client must handle partial chunks, dropped connections and cancellation. Errors can arrive mid-stream after a success status. For structured output, wait for the full text before parsing. Proxies must not buffer the stream.
+simple_explain: Ask for streaming, append chunks as they arrive, and handle errors mid-stream.
+analogy: Streaming is a tap that pours as water arrives instead of waiting for a full jug.
+syntax: "stream": true
+anatomy: events = small chunks | done event = stop reason and usage | cancel = stop reading
+example_1: Server-sent events in a chat window.
+example_2: Cancelling a stream when the user leaves.
+example_3: Collecting chunks into one string.
+variation: non-streaming mode   // simpler for batch jobs
+used_with: chat interfaces, proxies, error handling
+related: a request and response, errors and retries, timeouts, structured output
+alternatives: Non-streaming calls
+where_used: Chat apps | Assistants | Live tools
+mini_conversation: A: Users wait ten seconds seeing nothing. | B: Stream the reply so text appears at once.
+misconception: ✗ Streaming makes the whole answer arrive faster → ✓ It only shows the first part sooner
+confused_with: Streaming vs batching: one shows partial replies, the other groups many requests.
+avoid: Do not parse structured output from partial chunks.
+wrong_code: json.loads(chunk)   # partial JSON
+right_code: json.loads("".join(chunks))   # after the final event
+memory_trick: Stream to show, buffer to parse.
+real_project: Streaming a support assistant's answers cut the perceived wait dramatically.
+real_interview: An interviewer may ask: Why use streaming?
+real_daily: It is like a tap pouring as water arrives.
+mcq_question: What does streaming improve?
+mcq_options: A) Accuracy B) Token limits C) Time to first visible text D) Cost
+mcq_answer: C
+mcq_why: Users see text sooner.
+fill_blank: The common protocol for streaming events over HTTP is ____ events → server-sent
+hindi_to_task: Request a streamed reply.
+task_answer: "stream": true
+own_task: Describe how to handle a connection drop mid-stream.
+practice_question: When should you parse JSON from a stream?
+practice_answer: After the stream is complete.
+
+@LLM-020
+type: code56
+topic: 03 API Use
+level: Intermediate
+term: Structured output
+cue: How do you make the API return data that always matches a schema?
+kind: API call
+frequency: Very high
+importance: 5
+origin: Parsing free text is fragile, so APIs let you provide a schema and constrain the reply to it.
+pro_tip: Define the schema with allowed values, and still validate in code.
+memory_story: Structured output is a form that physically cannot be submitted with the wrong boxes.
+visual: A schema on one side and a JSON reply that fits on the other.
+emotion: The relief of a parser that never breaks.
+meaning: Structured output uses a JSON schema supplied with the request, or a tool definition, so the model's reply is constrained to valid JSON of that shape.
+code: {"model": "MODEL_NAME", "messages": [{"role": "user", "content": "Ticket: My invoice is wrong and I was charged twice."}], "response_format": {"type": "json_schema", "schema": {"type": "object", "properties": {"category": {"type": "string", "enum": ["billing", "technical", "other"]}, "urgent": {"type": "boolean"}}, "required": ["category", "urgent"]}}}¶# reply¶{"category": "billing", "urgent": true}
+output: The reply is valid JSON with a category from the allowed list and an urgent flag.
+explanation: Schemas name the fields, types and allowed values. Constrained decoding makes invalid shapes much less likely, but values can still be wrong, so validate meaning too. Options and names differ by provider, and some use tool calls for the same effect. Keep schemas simple. Handle refusals and length cut-offs.
+simple_explain: Send a schema, get matching JSON, and validate the values.
+analogy: Structured output is a form that cannot be submitted with the wrong boxes.
+syntax: "response_format": {"type": "json_schema", "schema": {...}}
+anatomy: properties = fields | enum = allowed values | required = must exist
+example_1: enum: ["billing", "technical", "other"]
+example_2: required: ["category"]
+example_3: nested object for an address
+variation: a tool definition with an input schema   // the same idea through tools
+used_with: classification, extraction, validation
+related: output format, tool calling, stop reasons, extraction
+alternatives: Prompted JSON with validation
+where_used: Extraction | Classification | Pipelines
+mini_conversation: A: The labels sometimes vary in spelling. | B: Use an enum in the schema.
+misconception: ✗ A schema makes the content correct → ✓ It guarantees shape, not truth
+confused_with: Valid shape vs correct value: the first is enforced, the second is not.
+avoid: Do not skip semantic validation.
+wrong_code: "category": {"type": "string"}   // any text allowed
+right_code: "category": {"type": "string", "enum": ["billing", "technical", "other"]}
+memory_trick: Schema guards the shape, you check the facts.
+real_project: An enum in the schema ended inconsistent category names in a ticket pipeline.
+real_interview: An interviewer may ask: How do you get reliable structured data from a model?
+real_daily: It is like a form with fixed boxes.
+mcq_question: What does a schema guarantee?
+mcq_options: A) The shape of the output B) Speed C) Low cost D) Correct facts
+mcq_answer: A
+mcq_why: Constrained output follows the structure.
+fill_blank: A list of allowed values in a schema is an ____ → enum
+hindi_to_task: Restrict a field to three labels.
+task_answer: "enum": ["billing", "technical", "other"]
+own_task: Write a schema to extract a name, date and amount from an invoice.
+practice_question: Does a valid schema mean the extracted amount is right?
+practice_answer: No, only the shape is guaranteed.
+
+@LLM-021
+type: code56
+topic: 03 API Use
+level: Intermediate
+term: Tool calling
+cue: How can a model ask your code to run a function and use the result?
+kind: API call
+frequency: Very high
+importance: 5
+origin: Models cannot look up live data or act, so APIs let them request calls to functions that you define and run.
+pro_tip: Write clear tool names and descriptions, since the model decides from them.
+memory_story: Tool calling is the model handing a note to an assistant saying please fetch this and report back.
+visual: A loop of request, tool call, tool result and final answer.
+emotion: The excitement of a model that can act.
+meaning: You describe tools with names, descriptions and input schemas, the model replies with a tool call containing arguments, your code runs it, and you send the result back for the model to continue.
+code: {"tools": [{"name": "get_order_status", "description": "Look up the status of an order by its id", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}}], "messages": [{"role": "user", "content": "Where is order 1042?"}]}¶# model reply: stop_reason = tool request¶{"tool_call": {"name": "get_order_status", "arguments": {"order_id": "1042"}}}¶# you run it, then send a tool result message¶{"role": "tool", "content": "{\"status\": \"shipped\"}"}
+output: The model asks for the status lookup, your code runs it, and the model then writes an answer using the result.
+explanation: The model only proposes calls, and your code executes them, so you control security and limits. Validate arguments, check permissions and handle errors, returning clear error text as the result. Loops can continue until the model gives a final answer, with a maximum number of steps. Names and formats differ by provider.
+simple_explain: Describe tools, run the calls the model requests, and send results back.
+analogy: Tool calling is the model handing a note to an assistant saying please fetch this.
+syntax: tools: [{name, description, input_schema}]
+anatomy: tool definition = what exists | tool call = the request | tool result = your answer
+example_1: A search tool for the knowledge base.
+example_2: A calculator tool for exact arithmetic.
+example_3: A tool returning an error message the model can read.
+variation: parallel tool calls   // several requests in one turn
+used_with: agents, validation, permissions
+related: structured output, agents and loops, MCP idea, guardrails
+alternatives: Fixed pipelines
+where_used: Assistants | Agents | Integrations
+mini_conversation: A: Can the model run the database query itself? | B: No, it requests a tool call and our code decides whether to run it.
+misconception: ✗ The model executes tools itself → ✓ It only requests calls, and your code runs them
+confused_with: Tool call vs tool result: the call is the request, the result is your reply.
+avoid: Do not run tool arguments without validation and permission checks.
+wrong_code: db.execute(args["sql"])   # runs model-written SQL directly
+right_code: if args["order_id"].isdigit(): lookup(args["order_id"])
+memory_trick: The model asks, your code decides.
+real_project: A validated lookup tool let a bot answer order questions without database access.
+real_interview: An interviewer may ask: How does tool calling work?
+real_daily: It is like handing a note to an assistant.
+mcq_question: Who executes a tool call?
+mcq_options: A) The browser B) The model C) Your application code D) The provider only
+mcq_answer: C
+mcq_why: The model only proposes the call.
+fill_blank: A message carrying the output of a function call uses the role named after the ____ → tool
+hindi_to_task: Define a tool that looks up an order.
+task_answer: {"name": "get_order_status", "description": "Look up an order", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}}}
+own_task: Write a tool description for a weather lookup.
+practice_question: Why validate tool arguments?
+practice_answer: The model may produce wrong or unsafe values.
+
+@LLM-022
+type: code56
+topic: 03 API Use
+level: Intermediate
+term: Errors and retries
+cue: How do you handle failures from the API gracefully?
+kind: API call
+frequency: Very high
+importance: 5
+origin: Networks and services fail, so clients must retry the right errors and surface the others clearly.
+pro_tip: Retry timeouts, rate limits and server errors with backoff, and never retry invalid requests.
+memory_story: Retrying is knocking again with longer pauses, but only if the door might open.
+visual: Several attempts spaced out with growing delays between them.
+emotion: The calm of an integration that survives hiccups.
+meaning: Clients retry transient errors such as timeouts, rate limits and server errors with exponential backoff and jitter, and treat errors such as invalid requests or authentication failures as permanent.
+code: import random, time¶RETRYABLE = {408, 429, 500, 502, 503, 529}¶def call_with_retry(send, tries=5):¶    for attempt in range(tries):¶        resp = send()¶        if resp.status not in RETRYABLE:¶            return resp¶        wait = float(resp.headers.get("retry-after", 2 ** attempt)) + random.random()¶        time.sleep(wait)¶    raise RuntimeError("The service is still busy. Try again later or reduce the request rate.")
+output: Temporary failures are retried with growing pauses, and others are returned immediately.
+explanation: Bad requests, invalid keys and permission errors will not succeed on retry. Overload and rate limit errors need waiting, and a retry-after header gives the time. Calls that cause side effects need idempotency care. Log request ids for support. Set a maximum total time. SDKs often include retries.
+simple_explain: Retry temporary errors with backoff and jitter, and fail fast on permanent ones.
+analogy: Retrying is knocking again with longer pauses.
+syntax: if status in RETRYABLE: sleep(backoff); retry
+anatomy: 429 = slow down | 5xx = server trouble | 4xx others = fix the request | retry-after = wait time
+example_1: HTTP 429 with retry-after of ten seconds.
+example_2: HTTP 401 with a bad key, no retry.
+example_3: A timeout retried twice.
+variation: SDK built-in retries   // configure instead of writing your own
+used_with: rate limits, timeouts, logging
+related: rate limits, timeouts, retries in pipelines, fallbacks
+alternatives: Circuit breakers | queues
+where_used: Every integration | Batch jobs | Production apps
+mini_conversation: A: Should we retry a 400 error? | B: No, the request itself is wrong.
+misconception: ✗ Retry every error until it works → ✓ Permanent errors never succeed and waste time
+confused_with: Transient vs permanent error: temporary versus needing a fix.
+avoid: Do not retry without a maximum.
+wrong_code: while True: send()
+right_code: for attempt in range(5): ... sleep(2 ** attempt)
+memory_trick: Retry the temporary, fix the permanent.
+real_project: Backoff with jitter ended bursts of failures during provider overload.
+real_interview: An interviewer may ask: Which errors do you retry?
+real_daily: It is like knocking again with longer pauses.
+mcq_question: Which status suggests slowing down?
+mcq_options: A) 301 B) 200 C) 404 D) 429
+mcq_answer: D
+mcq_why: It means too many requests.
+fill_blank: Random extra delay added to backoff is ____ → jitter
+hindi_to_task: Wait for the time given in the retry-after header.
+task_answer: time.sleep(float(resp.headers.get("retry-after", 2)))
+own_task: List which error codes you retry and which you do not.
+practice_question: Why is a 401 not retried?
+practice_answer: The key is wrong, so retrying cannot succeed.
+
+@LLM-023
+type: topic56
+topic: 03 API Use
+level: Intermediate
+term: Rate limits
+cue: Which provider limits cap how many requests and tokens you may use per minute?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Providers share capacity among customers, so they limit requests and tokens per time window.
+pro_tip: Track usage headers, queue requests and spread load instead of bursts.
+memory_story: Rate limits are speed limits on a shared road.
+visual: A meter showing requests used against a cap.
+emotion: The calm of a system that respects limits.
+definition: Rate limits restrict the number of requests and tokens an account may use in a time window, and exceeding them returns an error such as 429 with information about when to retry.
+explanation: Limits may apply per minute and per day, and often grow with account tier. Large prompts consume token limits quickly. Handle limit errors with backoff, use queues to smooth bursts, and cache repeated work. Batch APIs offer separate capacity for non-urgent jobs. Request higher limits ahead of launches.
+simple_explain: Stay under the caps by queueing, caching, backing off, and asking for more when needed.
+analogy: Rate limits are speed limits on a shared road.
+formula_rule: Requests per minute and tokens per minute both count.
+example_1: A burst of parallel calls hitting the limit.
+example_2: A queue releasing five calls per second.
+example_3: A limit raised before a launch.
+related: errors and retries, batching, caching, cost control
+word_family: rate limit, quota, 429, backoff, queue
+where_used: Production apps | Batch jobs | Launch planning
+mini_conversation: A: Many calls fail during the import. | B: We hit the rate limit, so queue them.
+misconception: ✗ Limits count only requests → ✓ Token limits can be reached with few large requests
+contrast: Request limit vs token limit: calls per time versus tokens per time.
+avoid: Do not launch heavy usage without checking limits.
+memory_trick: Smooth the load, do not burst.
+real_project: A queue with a fixed rate removed errors during a nightly import.
+real_interview: An interviewer may ask: How do you handle rate limits?
+real_daily: It is like speed limits on a shared road.
+mcq_question: What status signals a rate limit?
+mcq_options: A) 404 B) 429 C) 200 D) 500
+mcq_answer: B
+mcq_why: Too many requests returns 429.
+fill_blank: A waiting line that smooths bursts is a ____ → queue
+apply: A bulk import hits limits. What do you add? → A rate-limited queue
+explain_task: Explain rate limits in three lines.
+own_task: Plan the call rate for a ten thousand document job.
+
+@LLM-024
+type: code56
+topic: 03 API Use
+level: Intermediate
+term: Timeouts
+cue: How long should your code wait for a model reply, and what happens after?
+kind: API call
+frequency: High
+importance: 4
+origin: Long generations can take a long time, and hung connections block users, so every call needs a sensible deadline.
+pro_tip: Use streaming for long outputs and set separate connect and read timeouts.
+memory_story: A timeout is an alarm that stops you waiting forever at the counter.
+visual: A clock face limiting how long a request may wait.
+emotion: The comfort of calls that never hang.
+meaning: A timeout is the maximum time a client waits for a connection or response, after which it abandons or retries the call.
+code: import requests¶try:¶    r = requests.post(URL, json=payload, headers=H, timeout=(5, 120))   # connect, read¶except requests.Timeout:¶    log.warning("model call timed out; retrying once with a shorter output limit")¶    payload["max_tokens"] = 200¶    r = requests.post(URL, json=payload, headers=H, timeout=(5, 60))
+output: The call fails after the chosen time, and one retry runs with a smaller output limit.
+explanation: Without a timeout a stuck call can hold threads and freeze the app. Long outputs and big prompts need larger limits. Streaming resets the read timer as chunks arrive. A timed-out request may still be processed by the provider, so avoid duplicate side effects. Show users a clear message and an option to retry.
+simple_explain: Always set connect and read timeouts, and plan what happens when they fire.
+analogy: A timeout is an alarm that stops you waiting forever at the counter.
+syntax: timeout=(connect_seconds, read_seconds)
+anatomy: connect = reach the server | read = wait for data | retry = after timeout
+example_1: timeout=(5, 120)
+example_2: A UI message after thirty seconds of no reply.
+example_3: A retry with a shorter prompt.
+variation: streaming with an idle timeout   // abort if no chunk arrives for a while
+used_with: streaming, errors and retries, user messages
+related: errors and retries, streaming, rate limits, fallbacks
+alternatives: Background jobs for long tasks
+where_used: Every API client | Web backends | User-facing tools
+mini_conversation: A: The app hangs when the model is slow. | B: Set a read timeout and show a retry message.
+misconception: ✗ A default client waits as long as needed safely → ✓ Many defaults wait forever
+confused_with: Connect vs read timeout: reaching the server versus waiting for the reply.
+avoid: Do not call APIs without a timeout.
+wrong_code: requests.post(URL, json=payload)
+right_code: requests.post(URL, json=payload, timeout=(5, 120))
+memory_trick: No timeout means waiting forever.
+real_project: Adding timeouts stopped a slow model call from freezing a web server.
+real_interview: An interviewer may ask: Why set timeouts on model calls?
+real_daily: It is like an alarm at the counter.
+mcq_question: Which part of a timeout waits for the reply?
+mcq_options: A) Read timeout B) Connect timeout C) Idle timeout only D) DNS timeout
+mcq_answer: A
+mcq_why: Read timeout limits waiting for data.
+fill_blank: Waiting too long without a timeout can ____ the app → freeze
+hindi_to_task: Set a five second connect and two minute read timeout.
+task_answer: timeout=(5, 120)
+own_task: Choose timeouts for a chat call and a long report call.
+practice_question: Can a timed-out request still be processed?
+practice_answer: Yes, the provider may still complete it.
+
+@LLM-025
+type: topic56
+topic: 03 API Use
+level: Intermediate
+term: Batching
+cue: How do you process many non-urgent requests cheaply?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Large offline jobs do not need instant answers, so providers offer batch interfaces with lower cost and higher limits.
+pro_tip: Use batch for bulk labelling, summarising and evaluation runs.
+memory_story: Batching is posting a big parcel of letters at the slow rate instead of one by one by courier.
+visual: A file of requests going in and a file of results coming out later.
+emotion: The satisfaction of cheaper bulk work.
+definition: A batch API accepts many requests together, processes them asynchronously within a time window, usually at lower cost, and returns results that you match by custom ids.
+explanation: You upload a file of requests with ids, poll or wait for completion and download results. Results may come out of order, so match by id. Some requests may fail and need resubmission. Batches suit evaluations, backfills and nightly jobs, not interactive chat. Check the provider's limits and discount terms.
+simple_explain: Send many requests as one job, collect the results later, and match them by id.
+analogy: Batching is posting a big parcel of letters at the slow rate instead of by courier.
+formula_rule: Many requests, lower cost, results later, match by id.
+example_1: Classifying ten thousand tickets overnight.
+example_2: Running an evaluation set across prompt versions.
+example_3: Resubmitting only the failed items.
+related: rate limits, cost control, evaluation, caching
+word_family: batch, asynchronous, custom id, window, backfill
+where_used: Bulk jobs | Evaluations | Data cleaning
+mini_conversation: A: We must label fifty thousand records by Friday. | B: Use a batch job, since it is cheaper and not urgent.
+misconception: ✗ Batch results come back in the same order as sent → ✓ Match them by the custom id
+contrast: Batch vs real-time: batch is cheap and delayed, real-time is immediate.
+avoid: Do not use batch for interactive features.
+memory_trick: Batch for bulk, match by id.
+real_project: Moving a nightly labelling job to a batch API cut its cost noticeably.
+real_interview: An interviewer may ask: When would you use a batch API?
+real_daily: It is like posting a big parcel at the slow rate.
+mcq_question: How do you match batch results to requests?
+mcq_options: A) By time B) By guess C) By order only D) By custom id
+mcq_answer: D
+mcq_why: Order is not guaranteed.
+fill_blank: Work that returns results later is ____ → asynchronous
+apply: A nightly job labels many records. Which interface? → A batch API
+explain_task: Explain batching in three lines.
+own_task: Design a batch job for evaluating a prompt.
+
+@LLM-026
+type: topic56
+topic: 03 API Use
+level: Advanced
+term: Prompt caching
+cue: How can repeated parts of a prompt be reused to save cost and time?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Many requests start with the same long instructions or documents, so providers can reuse their processed form.
+pro_tip: Put the stable content first and the changing question last.
+memory_story: Prompt caching is keeping the opening chapters already read so only the new page needs reading.
+visual: A long shared prefix reused across several requests.
+emotion: The pleasure of paying less for repeated context.
+definition: Prompt caching lets the provider reuse the processed form of an identical prompt prefix across requests within a time window, lowering input cost and delay for those tokens.
+explanation: The cached part must be exactly the same, at the start of the prompt, and usually above a minimum size. Place system instructions, tools and long documents first, and put user-specific text last. Caches expire after a short time, and some require marking cache points. Response usage fields show cached tokens. Check provider terms.
+simple_explain: Keep a stable prefix identical, and put what changes at the end.
+analogy: Prompt caching is keeping the opening chapters already read so only the new page needs reading.
+formula_rule: Same prefix, placed first, reused within the window.
+example_1: A long policy document reused by many questions.
+example_2: A stable system prompt and tool list.
+example_3: Usage showing cached input tokens.
+related: cost control, tokens, context window, RAG
+word_family: cache, prefix, hit, expiry, cache point
+where_used: Document Q and A | Agents | High-volume apps
+mini_conversation: A: Every call resends the same long manual. | B: Put it first and use prompt caching.
+misconception: ✗ Any similar prompt will hit the cache → ✓ The prefix must match exactly
+contrast: Prompt cache vs response cache: one reuses processed input, the other reuses whole answers.
+avoid: Do not put changing text before stable content.
+memory_trick: Stable content first, changing content last.
+real_project: Reordering the prompt so the manual came first made caching effective.
+real_interview: An interviewer may ask: How does prompt caching reduce cost?
+real_daily: It is like keeping opening chapters already read.
+mcq_question: Where should stable content go for caching?
+mcq_options: A) At the end B) At the start C) In the middle randomly D) Nowhere
+mcq_answer: B
+mcq_why: Caching matches the prefix.
+fill_blank: Reusing an identical start of the prompt is a prefix ____ → hit
+apply: A long manual is sent with every question. What do you change? → Put it first and cache it
+explain_task: Explain prompt caching in three lines.
+own_task: Reorder a prompt to maximise cache reuse.
+
+@LLM-027
+type: topic56
+topic: 03 API Use
+level: Intermediate
+term: Cost control
+cue: Which habits keep LLM spend predictable?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Usage-based pricing can grow quickly with traffic and long prompts, so teams measure and limit spend.
+pro_tip: Log tokens and cost per feature, and set budgets and alerts.
+memory_story: Cost control is checking the meter on every tap.
+visual: A dashboard of token spend by feature.
+emotion: The confidence of a predictable bill.
+definition: LLM cost control combines measuring tokens per request, choosing right-sized models, trimming prompts, caching, batching, limiting output length and setting budgets and alerts.
+explanation: Cost depends on input and output tokens and the model used. Reduce context, retrieve only relevant text, summarise history, and cap output. Use smaller models for easy steps and larger ones only when needed. Cache repeated prefixes and batch non-urgent work. Per-user and per-feature limits protect against abuse. Prices change, so read the current terms.
+simple_explain: Measure tokens, shrink prompts, pick the cheapest adequate model, and set limits.
+analogy: Cost control is checking the meter on every tap.
+formula_rule: Cost ≈ tokens × price, so cut tokens and choose models wisely.
+example_1: Capping output to 300 tokens.
+example_2: Routing simple tickets to a small model.
+example_3: A per-user daily limit.
+related: tokens, model choice, caching, batching
+word_family: budget, usage, limit, routing, alert
+where_used: Production apps | Finance reviews | Platform teams
+mini_conversation: A: The bill doubled last month. | B: Check tokens per feature and find the biggest prompts.
+misconception: ✗ Only the model price matters → ✓ Prompt length, output length and call count matter just as much
+contrast: Input vs output tokens: both cost, often at different rates.
+avoid: Do not ship without usage logging.
+memory_trick: Measure the tokens first, trim them second.
+real_project: Trimming retrieved context cut the monthly bill without losing quality.
+real_interview: An interviewer may ask: How would you reduce LLM costs?
+real_daily: It is like checking a meter on every tap.
+mcq_question: What drives most LLM cost?
+mcq_options: A) Tokens and model choice B) Font C) Server name D) Colour
+mcq_answer: A
+mcq_why: Billing is token based.
+fill_blank: A cap on how much one user may consume is a ____ → limit
+apply: Simple tasks use an expensive model. What do you do? → Route them to a smaller model
+explain_task: Explain cost control in three lines.
+own_task: List five actions that lower LLM cost.
+
+@LLM-028
+type: code56
+topic: 03 API Use
+level: Intermediate
+term: Counting and budgeting tokens
+cue: How do you check that a prompt fits and estimate its cost before sending?
+kind: API call
+frequency: High
+importance: 4
+origin: Surprises come from prompts that are too long, so counting tokens first prevents errors and unexpected bills.
+pro_tip: Reserve space for the answer when you compute how much input is allowed.
+memory_story: Budgeting tokens is checking your luggage weight before the airport.
+visual: A bar of window space split into prompt, documents and answer.
+emotion: The relief of no more surprise limit errors.
+meaning: Token budgeting counts tokens with the provider's counting tool or tokenizer, subtracts the reserved output from the context window, and trims or summarises input until it fits.
+code: WINDOW = 100_000   # example only; read the real value from the provider documentation for your model¶OUTPUT_RESERVE = 2000¶def fit(system, history, docs, count_tokens):¶    budget = WINDOW - OUTPUT_RESERVE - count_tokens(system)¶    kept = []¶    for item in reversed(history + docs):¶        cost = count_tokens(item)¶        if cost > budget:¶            break¶        kept.append(item); budget -= cost¶    return list(reversed(kept))
+output: The newest messages and documents that fit the budget are kept, and older ones are dropped.
+explanation: Use the provider's counting endpoint when possible, as local estimates vary by tokenizer. Keep the system prompt and latest question always. Summarise old history instead of dropping it silently. Log when trimming happens. Remember tools and images also use tokens.
+simple_explain: Count, reserve room for the answer, and trim by priority.
+analogy: Budgeting tokens is checking luggage weight before the airport.
+syntax: budget = window - output_reserve - fixed_parts
+anatomy: window = limit | reserve = output room | fixed = system prompt | trim = drop or summarise
+example_1: Counting tokens through a provider endpoint.
+example_2: Summarising history older than twenty turns.
+example_3: Dropping the least relevant retrieved chunks.
+variation: sliding window of recent messages   // simple history policy
+used_with: context window, chat memory, RAG
+related: tokens, context window, chat memory, cost control
+alternatives: Larger window models
+where_used: Chat apps | Document tools | RAG systems
+mini_conversation: A: Requests fail with a context error. | B: Count tokens first and trim old history.
+misconception: ✗ Word counts are accurate enough for limits → ✓ Token counts differ, so use the provider's counting method
+confused_with: Window vs budget: the window is the limit, the budget is your plan within it.
+avoid: Do not drop the system prompt when trimming.
+wrong_code: if len(text.split()) < 100000: send(text)
+right_code: if count_tokens(text) <= budget: send(text)
+memory_trick: Count the tokens, reserve room, then trim.
+real_project: Budgeting tokens removed context overflow errors in a long-running chat.
+real_interview: An interviewer may ask: How do you handle long conversations?
+real_daily: It is like weighing luggage before the airport.
+mcq_question: What should you reserve when budgeting?
+mcq_options: A) Nothing B) Space for emails C) Space for the output D) Space for logos
+mcq_answer: C
+mcq_why: The answer also needs room.
+fill_blank: Keeping only the newest messages is a sliding ____ → window
+hindi_to_task: Compute the input budget from the window and the output reserve.
+task_answer: budget = WINDOW - OUTPUT_RESERVE
+own_task: Write a policy for trimming history in a support chat.
+practice_question: Why use the provider's token counter?
+practice_answer: Tokenizers differ, so local word counts are inaccurate.

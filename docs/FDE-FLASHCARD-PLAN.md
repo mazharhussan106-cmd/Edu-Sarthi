@@ -186,6 +186,16 @@ Build order is the table order: the tools an FDE meets first on a customer machi
 | 15 Jupyter Notebook (25) | Built, audited, delivered in chat |
 | 16 Requirements and customer work (30) | Built, audited, delivered in chat |
 
-All 16 decks are built (about 700 cards in total, plus the earlier GitHub, Power BI, API Integration, Supabase, Python and SQL decks).
+All 16 decks are built (656 cards in total, plus the earlier GitHub, Power BI, API Integration, Supabase, Python and SQL decks).
 
 Finished decks are delivered in the chat as an Excel workbook, two Anki files and a preview page. The card source text files live only in the chat session's scratch folder, so they are not in the repository yet. Code in cards is never run by the audit for non-Python decks.
+
+## Audit, 7 Oct 2026
+
+Every deck, including the earlier GitHub, Power BI, API Integration and Supabase decks, was read card by card in two rounds.
+
+- **Fixed (mechanical):** the correct MCQ option was `A` on all 656 new cards and on most older ones. It is now spread evenly over A to D (about 25 percent each).
+- **Fixed (content):** about 150 corrections from the first round: code that would not run (JUP-009, SSO-029, ETL-027, DKR-042, K8S-010), wrong or invented examples and numbers, outdated tool facts (Airflow 3, Bitnami, ingress-nginx, DORA metrics, Node versions), unclear MCQs (LNX-014, K8S-022, K8S-043, TS-059, LLM-045).
+- **Known limits:** shell, YAML and library code is read and spot-run, not executed on a customer machine. Airflow cards are written for Airflow 2.x and carry a note for Airflow 3. Tool facts can age, so re-check them each year.
+- **Same term in two decks** (for example volumes, secrets, ping) is deliberate: the cards cover different tools.
+- **Not covered by this audit:** the Python and SQL decks from earlier chats.

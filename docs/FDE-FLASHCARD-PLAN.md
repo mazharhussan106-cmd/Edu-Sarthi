@@ -192,7 +192,7 @@ Finished decks are delivered in the chat as an Excel workbook, two Anki files an
 
 ## Audit, 7 Oct 2026
 
-Every deck, including the earlier GitHub, Power BI, API Integration and Supabase decks, was read card by card in two rounds.
+Every deck, including the earlier GitHub, Power BI, API Integration and Supabase decks, was read card by card in two rounds. Round 2 re-checked all 876 cards after the reshuffle and found 26 more issues, all fixed (snippets run in Node, Python, git and PostgreSQL where possible).
 
 - **Fixed (mechanical):** the correct MCQ option was `A` on all 656 new cards and on most older ones. It is now spread evenly over A to D (about 25 percent each).
 - **Fixed (content):** about 150 corrections from the first round: code that would not run (JUP-009, SSO-029, ETL-027, DKR-042, K8S-010), wrong or invented examples and numbers, outdated tool facts (Airflow 3, Bitnami, ingress-nginx, DORA metrics, Node versions), unclear MCQs (LNX-014, K8S-022, K8S-043, TS-059, LLM-045).

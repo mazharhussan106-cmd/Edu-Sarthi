@@ -173,6 +173,8 @@ Build order is the table order: the tools an FDE meets first on a customer machi
 | 2 Docker (50) | Built, audited, delivered in chat |
 | 3 Cloud basics (50) | Built, audited, delivered in chat |
 | 4 CI/CD (40) | Built, audited, delivered in chat |
-| 5–16 | Not started yet: NET, TS, ETL, AIR, K8S, OBS, SSO, LLM, RAG, EVL, JUP, REQ |
+| 5 Networking (45) | Built, audited, delivered in chat |
+| 6 JavaScript and TypeScript (60) | Built, audited, delivered in chat |
+| 7–16 | Not started yet: ETL, AIR, K8S, OBS, SSO, LLM, RAG, EVL, JUP, REQ |
 
 Finished decks are delivered in the chat as an Excel workbook, two Anki files and a preview page. The card source text files live only in the chat session's scratch folder, so they are not in the repository yet. Code in cards is never run by the audit for non-Python decks.

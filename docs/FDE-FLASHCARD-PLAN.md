@@ -182,6 +182,7 @@ Build order is the table order: the tools an FDE meets first on a customer machi
 | 11 SSO and identity (30) | Built, audited, delivered in chat |
 | 12 LLM APIs (45) | Built, audited, delivered in chat (generic API placeholders, no model names or prices) |
 | 13 RAG (40) | Built, audited, delivered in chat |
-| 14–16 | Not started yet: EVL, JUP, REQ |
+| 14 AI evaluation (30) | Built, audited, delivered in chat |
+| 15–16 | Not started yet: JUP, REQ |
 
 Finished decks are delivered in the chat as an Excel workbook, two Anki files and a preview page. The card source text files live only in the chat session's scratch folder, so they are not in the repository yet. Code in cards is never run by the audit for non-Python decks.

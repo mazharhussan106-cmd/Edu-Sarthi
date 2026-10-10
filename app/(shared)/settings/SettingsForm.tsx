@@ -15,13 +15,14 @@ import type { Theme } from "@prisma/client";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Switch } from "@/components/ui/Switch";
 import { attrFromTheme, THEMES } from "@/lib/theme";
+import { TEXT_SIZES, type TextSize } from "@/lib/textSize";
 
 const THEME_OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
 export type PreferenceState = {
   emailOnAudit: boolean;
   autoplayAudit: boolean;
-  largerText: boolean;
+  textSize: TextSize;
 };
 
 export function SettingsForm({
@@ -60,7 +61,7 @@ export function SettingsForm({
     }
   }
 
-  async function savePreference(key: keyof PreferenceState, value: boolean) {
+  async function savePreference(key: keyof PreferenceState, value: boolean | string) {
     setPrefs((p) => ({ ...p, [key]: value }));
     setNotice(null);
 
@@ -99,11 +100,21 @@ export function SettingsForm({
           checked={prefs.autoplayAudit}
           onCheckedChange={(v) => void savePreference("autoplayAudit", v)}
         />
-        <Switch
-          label="Larger text"
-          description="Increases body text across the site."
-          checked={prefs.largerText}
-          onCheckedChange={(v) => void savePreference("largerText", v)}
+      </div>
+
+      <div className="mt-4 border-t border-border pt-4">
+        <SegmentedControl
+          label="Text size"
+          description="A− smaller, A normal, A+ larger. Cards get a larger minimum size too."
+          options={TEXT_SIZES}
+          value={prefs.textSize}
+          onValueChange={(v) => {
+            // Applied to the live page first, like the theme, so the change is
+            // visible under the finger before the save returns.
+            if (v === "normal") document.documentElement.removeAttribute("data-text");
+            else document.documentElement.setAttribute("data-text", v);
+            void savePreference("textSize", v);
+          }}
         />
       </div>
 

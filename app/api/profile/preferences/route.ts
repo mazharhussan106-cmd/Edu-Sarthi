@@ -8,10 +8,14 @@
 // row, so it has its own route at /api/profile/theme.
 
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { TEXT_SIZE_COOKIE } from "@/lib/textSize";
+
+const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 const patchSchema = PREFERENCE_SCHEMA.partial().refine(
   (v) => Object.keys(v).length > 0,
@@ -53,6 +57,19 @@ export async function PATCH(req: Request) {
     where: { id: userId },
     data: { preferences: merged },
   });
+
+  // After the row is saved, so a failed write never leaves a cookie claiming a
+  // size the account does not have. The server render reads this cookie.
+  if (parsed.data.textSize) {
+    const store = await cookies();
+    store.set(TEXT_SIZE_COOKIE, parsed.data.textSize, {
+      maxAge: ONE_YEAR_SECONDS,
+      path: "/",
+      sameSite: "lax",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
 
   return NextResponse.json({ ok: true, preferences: merged });
 }

@@ -264,6 +264,11 @@
 }
 
 @layer base {
+  /* Tailwind sizes in rem, so scaling the root scales the whole site. The
+     flashcard text is fitted in px by useFitFont and follows separately. */
+  html[data-text="small"] { font-size: 93.75%; }
+  html[data-text="large"] { font-size: 112.5%; }
+
   body {
     background-color: var(--color-paper);
     color: var(--color-ink);

@@ -15,6 +15,8 @@
 
 import { useLayoutEffect, useState, type RefObject } from "react";
 
+import { cardFloorScale } from "@/lib/textSize";
+
 const DEFAULT_MIN_PX = 8;
 const MAX_PX = 17;
 
@@ -43,13 +45,17 @@ export function useFitFont(
 
     function fit() {
       if (!b || !c) return;
+      // Read at fit time, not render time: the attribute is on <html>, outside
+      // React, and changes with the setting.
+      const scale = cardFloorScale(document.documentElement.dataset.text);
+      const floor = minPx * scale;
       const fits = (px: number) => {
         c.style.fontSize = `${px}px`;
         return c.scrollHeight <= b.clientHeight;
       };
-      if (fits(MAX_PX)) return setOverflow(false);
-      let lo = minPx;
-      let hi = MAX_PX;
+      if (fits(MAX_PX * scale)) return setOverflow(false);
+      let lo = floor;
+      let hi = MAX_PX * scale;
       // Seven halvings get within 0.1px, finer than a phone can render.
       for (let i = 0; i < 7; i++) {
         const mid = (lo + hi) / 2;

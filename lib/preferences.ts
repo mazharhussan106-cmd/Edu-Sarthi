@@ -11,11 +11,14 @@
 import { z } from "zod";
 
 import { CARD_COLOR_VALUES, type CardColor } from "@/lib/cardColors";
+import { TEXT_SIZE_VALUES } from "@/lib/textSize";
 
 export const PREFERENCE_SCHEMA = z.object({
   emailOnAudit: z.boolean(),
   autoplayAudit: z.boolean(),
-  largerText: z.boolean(),
+  // Replaces the old largerText boolean, which no page ever read. A stored
+  // largerText key is simply ignored and the user starts at "normal".
+  textSize: z.enum(TEXT_SIZE_VALUES),
   cardColor: z.enum(CARD_COLOR_VALUES),
 });
 
@@ -24,6 +27,6 @@ export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
 export const DEFAULT_PREFERENCES: Preferences = {
   emailOnAudit: true,
   autoplayAudit: false,
-  largerText: false,
+  textSize: "normal",
   cardColor: "plain" as CardColor,
 };

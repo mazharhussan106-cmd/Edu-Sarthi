@@ -51,7 +51,7 @@ export function CardSurface({
   const content = useRef<HTMLDivElement>(null);
   const face = useRef<HTMLDivElement>(null);
   const zoomable = side !== 2;
-  const { overflow } = useFitFont(box, content, zoomable, `${word}-${side}`);
+  const { overflow } = useFitFont(box, content, zoomable, `${word}-${side}`, side === 1 ? 11 : undefined);
   const [view, setView] = useState<View>(RESET);
   const pts = useRef(new Map<number, { x: number; y: number }>());
   const g = useRef({ x0: 0, y0: 0, t0: 0, moved: false, pinched: false, d0: 0, v0: RESET, mid: { x: 0, y: 0 } });

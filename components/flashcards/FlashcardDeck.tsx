@@ -176,14 +176,17 @@ export function FlashcardDeck({
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* Tall enough to fill a phone between the chips and the control line;
-          the numbers are the header, page chrome and bottom bar around it. */}
+    <div className="flex flex-1 flex-col gap-2 md:flex-none">
+      {/* On a phone the card takes whatever height is left between the chips
+          and the Known / Unknown bar, so the bar sits right above the bottom
+          navigation with no gap on any screen size. From md up the card keeps
+          a height tied to the window instead, because there is no bottom bar
+          to pin against. */}
       <div
         className={
           tallTop
-            ? "h-[calc(100dvh-19.75rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-16rem)] md:max-h-[52rem]"
-            : "h-[calc(100dvh-17.5rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-14rem)] md:max-h-[52rem]"
+            ? "min-h-[20rem] flex-1 md:h-[calc(100dvh-16rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
+            : "min-h-[20rem] flex-1 md:h-[calc(100dvh-14rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
         }
       >
         <CardSurface

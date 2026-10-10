@@ -18,7 +18,7 @@ const FAQ = [
   },
   {
     q: "Why was my recording sent back?",
-    a: "A teacher can send a recording back when it cannot be audited, for example if it is silent or the wrong exercise. The reason and tips are shown on that screen. Record again and the new attempt replaces it.",
+    a: "A teacher can send a recording back when it cannot be audited: background noise, too quiet to hear, the wrong exercise, or an incomplete answer. The reason and tips are shown on that screen. Record again and the new attempt replaces it.",
   },
   {
     q: "How do flashcards decide what I see?",
@@ -34,7 +34,7 @@ const FAQ = [
   },
   {
     q: "The text is too small on the card.",
-    a: "Settings → Text size → A+. Cards also scale their text to fit the screen, and you can pinch to zoom on the first and last side.",
+    a: "Settings → Text size → A+. Cards also scale their text to fit the screen, and you can pinch to zoom on the first two sides.",
   },
   {
     q: "Uploads are slow on my data connection.",

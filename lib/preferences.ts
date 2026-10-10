@@ -13,6 +13,22 @@ import { z } from "zod";
 import { CARD_COLOR_VALUES, type CardColor } from "@/lib/cardColors";
 import { TEXT_SIZE_VALUES } from "@/lib/textSize";
 
+/// Self-described on the profile, never tested. "unset" is a real value so a
+/// student who skips it is not silently labelled Beginner.
+export const LEVELS = [
+  { value: "unset", label: "Not set" },
+  { value: "beginner", label: "Beginner" },
+  { value: "intermediate", label: "Intermediate" },
+  { value: "advanced", label: "Advanced" },
+] as const;
+export const GOALS = [
+  { value: "unset", label: "Not set" },
+  { value: "daily", label: "Daily English" },
+  { value: "interview", label: "Interviews" },
+  { value: "ielts", label: "IELTS / exams" },
+  { value: "work", label: "Work English" },
+] as const;
+
 export const PREFERENCE_SCHEMA = z.object({
   emailOnAudit: z.boolean(),
   autoplayAudit: z.boolean(),
@@ -22,6 +38,8 @@ export const PREFERENCE_SCHEMA = z.object({
   cardColor: z.enum(CARD_COLOR_VALUES),
   newPerDay: z.number().int().min(5).max(50),
   emailReminder: z.boolean(),
+  level: z.enum(LEVELS.map((l) => l.value) as [string, ...string[]]),
+  goal: z.enum(GOALS.map((g) => g.value) as [string, ...string[]]),
   dataSaver: z.boolean(),
   hideHindi: z.boolean(),
   autoSpeak: z.boolean(),
@@ -37,6 +55,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   newPerDay: 10,
   // Off until the student opts in: nobody gets a daily email they never asked for.
   emailReminder: false,
+  level: "unset",
+  goal: "unset",
   dataSaver: false,
   hideHindi: false,
   // Off by default for the same reason as autoplayAudit: a phone that speaks

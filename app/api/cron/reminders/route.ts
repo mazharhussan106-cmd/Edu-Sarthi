@@ -30,6 +30,8 @@ export async function GET(req: Request) {
       role: "STUDENT",
       suspendedAt: null,
       email: { not: null },
+      // An unproven address may belong to someone else; never mail it.
+      emailVerified: { not: null },
       preferences: { path: ["emailReminder"], equals: true },
     },
     select: { id: true, email: true },

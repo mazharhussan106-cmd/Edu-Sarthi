@@ -14,10 +14,10 @@ export async function notifyAuditReady(submissionId: string, req?: Request): Pro
   try {
     const row = await prisma.submission.findUnique({
       where: { id: submissionId },
-      select: { student: { select: { email: true, preferences: true } } },
+      select: { student: { select: { email: true, emailVerified: true, preferences: true } } },
     });
     const student = row?.student;
-    if (!student?.email) return;
+    if (!student?.email || !student.emailVerified) return;
 
     // Loose read, layered over defaults: a row older than the setting has no
     // key, and "no key" must mean the default (on), not "off".

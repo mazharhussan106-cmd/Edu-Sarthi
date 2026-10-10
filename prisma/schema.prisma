@@ -74,6 +74,9 @@ model User {
   /// already has is turned away at the next page load.
   suspendedAt       DateTime?
   suspendReason     String?
+  /// "Sign out of all devices": a session whose sign-in is older than this is
+  /// refused. Nullable and additive, so adding it changes no existing row.
+  sessionsValidFrom DateTime?
   /// Set by an admin once a teacher is vouched for. Only verified teachers can
   /// submit decks to the public library; it is cleared if the role changes.
   teacherVerifiedAt DateTime?

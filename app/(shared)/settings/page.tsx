@@ -12,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
+import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 
 export const revalidate = 0;
@@ -60,6 +61,13 @@ export default async function SettingsPage() {
           </div>
         </Card>
       ) : null}
+
+      <Card className="mt-6">
+        <CardTitle>Security</CardTitle>
+        <div className="mt-4">
+          <SignOutEverywhere />
+        </div>
+      </Card>
     </main>
   );
 }

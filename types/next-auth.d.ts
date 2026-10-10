@@ -14,6 +14,8 @@ declare module "next-auth" {
       id: string;
       role: Role;
       emailVerified: Date | null;
+      /** When this sign-in happened (ms); compared with sessionsValidFrom. */
+      loginAt?: number;
     } & DefaultSession["user"];
   }
 
@@ -30,6 +32,7 @@ declare module "@auth/core/jwt" {
   interface JWT {
     role: Role;
     emailVerified: Date | null;
+    loginAt?: number;
   }
 }
 
@@ -37,5 +40,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     role: Role;
     emailVerified: Date | null;
+    loginAt?: number;
   }
 }

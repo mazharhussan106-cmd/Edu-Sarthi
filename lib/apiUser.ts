@@ -18,14 +18,18 @@ import { prisma } from "@/lib/prisma";
 export type Gate = { ok: true; id: string; role: Role } | { ok: false; res: NextResponse };
 
 export async function requireUser(opts: { verified?: boolean } = {}): Promise<Gate> {
-  const id = (await auth())?.user?.id;
+  const session = await auth();
+  const id = session?.user?.id;
   if (!id) {
     return { ok: false, res: NextResponse.json({ error: "Your session has expired. Sign in again." }, { status: 401 }) };
   }
-  const row = await prisma.user.findUnique({ where: { id }, select: { role: true, suspendedAt: true, emailVerified: true } });
+  const row = await prisma.user.findUnique({ where: { id }, select: { role: true, suspendedAt: true, emailVerified: true, sessionsValidFrom: true } });
   // A deleted account and a suspended one get the same answer.
   if (!row || row.suspendedAt) {
     return { ok: false, res: NextResponse.json({ error: "This account cannot do that right now. Contact support from the Support page." }, { status: 403 }) };
+  }
+  if (row.sessionsValidFrom && (session?.user?.loginAt ?? 0) < row.sessionsValidFrom.getTime()) {
+    return { ok: false, res: NextResponse.json({ error: "You were signed out of all devices. Sign in again." }, { status: 401 }) };
   }
   if (opts.verified && !row.emailVerified) {
     return { ok: false, res: NextResponse.json({ error: "Verify your email first. Open the verification page and enter the code we sent you." }, { status: 403 }) };

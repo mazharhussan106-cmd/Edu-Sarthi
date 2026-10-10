@@ -6,7 +6,26 @@
 
 import { SignOutButton } from "@/app/(public)/suspended/SignOutButton";
 
-export default function SuspendedPage() {
+export default async function SuspendedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ why?: string }>;
+}) {
+  // Reached from a sign-out-everywhere too, which is not a suspension and
+  // must not tell the student their account is paused.
+  if ((await searchParams).why === "signed-out") {
+    return (
+      <main className="mx-auto max-w-md px-6 py-16">
+        <h1 className="font-display text-2xl font-bold text-ink">You were signed out</h1>
+        <p className="mt-3 text-sm text-ink-muted">
+          This session was ended from “Sign out of all devices”. Sign out here, then sign in again.
+        </p>
+        <div className="mt-6">
+          <SignOutButton />
+        </div>
+      </main>
+    );
+  }
   return (
     <main className="mx-auto max-w-md px-6 py-16">
       <h1 className="font-display text-2xl font-bold text-ink">This account is paused</h1>

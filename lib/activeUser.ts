@@ -19,9 +19,13 @@ export async function ensureActiveUser(allowed?: readonly Role[]): Promise<void>
   const session = await auth();
   const id = session?.user?.id;
   if (!id) return;
-  const row = await prisma.user.findUnique({ where: { id }, select: { suspendedAt: true, role: true } });
+  const row = await prisma.user.findUnique({ where: { id }, select: { suspendedAt: true, role: true, sessionsValidFrom: true } });
   // A deleted account and a suspended one are both sent out the same way.
   if (!row || row.suspendedAt) redirect("/suspended");
+  // A token with no loginAt predates this feature, so it counts as old.
+  if (row.sessionsValidFrom && (session?.user?.loginAt ?? 0) < row.sessionsValidFrom.getTime()) {
+    redirect("/suspended?why=signed-out");
+  }
   if (allowed && !allowed.includes(row.role)) {
     redirect(row.role === "ADMIN" ? "/admin" : row.role === "TEACHER" ? "/queue" : "/dashboard");
   }

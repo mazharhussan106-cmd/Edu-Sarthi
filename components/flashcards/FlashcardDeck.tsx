@@ -176,7 +176,7 @@ export function FlashcardDeck({
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-2 md:flex-none">
+    <div className="flex min-h-0 flex-1 flex-col gap-2 md:flex-none">
       {/* On a phone the card takes whatever height is left between the chips
           and the Known / Unknown bar, so the bar sits right above the bottom
           navigation with no gap on any screen size. From md up the card keeps
@@ -185,10 +185,14 @@ export function FlashcardDeck({
       <div
         className={
           tallTop
-            ? "min-h-[20rem] flex-1 md:h-[calc(100dvh-16rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
-            : "min-h-[20rem] flex-1 md:h-[calc(100dvh-14rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
+            ? "relative min-h-[18rem] flex-1 md:h-[calc(100dvh-16rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
+            : "relative min-h-[18rem] flex-1 md:h-[calc(100dvh-14rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
         }
       >
+        {/* Absolutely filled, so the card always gets exactly this box's
+            height however the flex columns above resolve. The card fits its
+            text to this height and scrolls inside it when it cannot. */}
+        <div className="absolute inset-0">
         <CardSurface
           side={side}
           titles={WORD_TITLES}
@@ -199,6 +203,7 @@ export function FlashcardDeck({
         >
           {chunk ? <ChunkSide {...sideProps} extras={chunk} /> : <WordSide {...sideProps} />}
         </CardSurface>
+        </div>
       </div>
 
       <CardControls

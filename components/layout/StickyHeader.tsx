@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { NavLinks, type NavLink } from "@/components/layout/NavLinks";
 import { SettingsMenu } from "@/components/layout/SettingsMenu";
+import type { MenuGroup } from "@/lib/studentNav";
 
 const MERGE_QUERY = "(min-width: 1400px)";
 const COLLAPSE_AFTER_PX = 24;
@@ -28,12 +29,14 @@ export function StickyHeader({
   links,
   stats,
   search,
+  more,
   theme,
   homeHref,
 }: {
   links: readonly NavLink[];
   stats?: ReactNode;
   search?: ReactNode;
+  more?: readonly MenuGroup[];
   theme: Theme;
   homeHref: string;
 }) {
@@ -118,7 +121,7 @@ export function StickyHeader({
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <SettingsMenu initialTheme={theme} />
-            <MobileMenu links={links} />
+            <MobileMenu links={links} more={more} />
           </div>
         </div>
 

@@ -148,7 +148,6 @@ export default async function FlashcardsPage({
       <DeckTopBar
         k={k}
         type={type}
-        q={q}
         list={list}
         base={base}
         skipCount={skip.length}

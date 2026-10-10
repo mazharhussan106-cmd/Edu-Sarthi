@@ -12,6 +12,7 @@ import { ensureActiveUser } from "@/lib/activeUser";
 import { Footer } from "@/components/layout/Footer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { HeaderSearch } from "@/components/layout/HeaderSearch";
 import { STUDENT_LINKS } from "@/lib/studentNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 
@@ -26,7 +27,7 @@ export default async function StudentLayout({
     <div className="flex min-h-screen flex-col">
       {/* No `stats` yet. Row 2 stays unrendered until the progress strip
           exists in Phase 6 — an empty bar is worse than no bar. */}
-      <StickyHeader links={STUDENT_LINKS} theme={theme} homeHref="/dashboard" />
+      <StickyHeader links={STUDENT_LINKS} theme={theme} homeHref="/dashboard" search={<HeaderSearch />} />
       <div className="flex-1">{children}</div>
       {/* Clears the fixed bottom bar on phones so the footer is not hidden. */}
       <div className="pb-16 md:pb-0">

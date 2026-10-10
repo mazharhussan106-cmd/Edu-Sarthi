@@ -12,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
+import { ShareApp } from "@/app/(shared)/settings/ShareApp";
 import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
 import { prefsOf } from "@/lib/preferences";
 
@@ -56,6 +57,13 @@ export default async function SettingsPage() {
           </div>
         </Card>
       ) : null}
+
+      <Card className="mt-6">
+        <CardTitle>Share EduSarthi</CardTitle>
+        <div className="mt-4">
+          <ShareApp />
+        </div>
+      </Card>
 
       <Card className="mt-6">
         <CardTitle>Security</CardTitle>

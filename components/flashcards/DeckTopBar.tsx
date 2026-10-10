@@ -69,6 +69,7 @@ export function DeckTopBar({
             institute. Placed after the card kinds, before the lists. */}
         {[
           { href: "/decks", label: "📚 My decks" },
+          { href: "/explore", label: "🧭 Explore" },
           { href: "/library", label: "🌐 Library" },
           { href: "/institute", label: "🏫 Institute" },
         ].map((l) => (

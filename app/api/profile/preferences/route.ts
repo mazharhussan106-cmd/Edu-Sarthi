@@ -13,6 +13,7 @@ import { cookies } from "next/headers";
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { DATA_SAVER_COOKIE } from "@/lib/dataSaver";
 import { HINDI_COOKIE } from "@/lib/hindiToggle";
 import { TEXT_SIZE_COOKIE } from "@/lib/textSize";
 
@@ -75,6 +76,17 @@ export async function PATCH(req: Request) {
   if (typeof parsed.data.hideHindi === "boolean") {
     const store = await cookies();
     store.set(HINDI_COOKIE, parsed.data.hideHindi ? "off" : "on", {
+      maxAge: ONE_YEAR_SECONDS,
+      path: "/",
+      sameSite: "lax",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
+
+  if (typeof parsed.data.dataSaver === "boolean") {
+    const store = await cookies();
+    store.set(DATA_SAVER_COOKIE, parsed.data.dataSaver ? "on" : "off", {
       maxAge: ONE_YEAR_SECONDS,
       path: "/",
       sameSite: "lax",

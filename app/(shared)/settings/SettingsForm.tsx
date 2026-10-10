@@ -26,6 +26,7 @@ export type PreferenceState = {
   textSize: TextSize;
   newPerDay: number;
   emailReminder: boolean;
+  dataSaver: boolean;
   hideHindi: boolean;
   autoSpeak: boolean;
 };
@@ -110,6 +111,16 @@ export function SettingsForm({
           description="Off by default, so opening an audit on a bus stays quiet."
           checked={prefs.autoplayAudit}
           onCheckedChange={(v) => void savePreference("autoplayAudit", v)}
+        />
+        <Switch
+          label="Data saver for recordings"
+          description="New recordings are made at lower quality so they upload faster on slow data. Playback is not changed."
+          checked={prefs.dataSaver}
+          onCheckedChange={(v) => {
+            if (v) document.documentElement.setAttribute("data-saver", "on");
+            else document.documentElement.removeAttribute("data-saver");
+            void savePreference("dataSaver", v);
+          }}
         />
         <Switch
           label="Hide Hindi meanings on cards"

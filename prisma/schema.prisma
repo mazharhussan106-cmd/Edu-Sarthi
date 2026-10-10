@@ -361,6 +361,23 @@ model AdminLog {
   @@index([actorId])
 }
 
+/// An announcement an admin posts to every student: a class, a deadline, a
+/// holiday. `eventAt` is when the thing happens (shown as "upcoming"); the
+/// notice disappears at `expiresAt`, or the event time if none is set.
+/// No relation to User: the author is only kept for the admin log, and a notice
+/// should outlive the admin who wrote it.
+model Notice {
+  id          String    @id @default(cuid())
+  title       String
+  body        String    @db.Text
+  eventAt     DateTime?
+  expiresAt   DateTime?
+  createdById String?
+  createdAt   DateTime  @default(now())
+
+  @@index([createdAt])
+}
+
 enum CardKind {
   WORD
   CHUNK

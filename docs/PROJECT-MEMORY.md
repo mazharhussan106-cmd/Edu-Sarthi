@@ -44,6 +44,14 @@ Not done / undecided: Hindi/English/Hinglish UI language; a per-student reminder
 
 **Phases B, C, D done (10 Oct):** menu with more links + Install app, `/help`, `/progress`, richer dashboard (`lib/studentStats.ts`, `components/dashboard/*`), profile level/goal/badges (badges are computed in `lib/badges.ts`, nothing stored). Audit: `tsc` and `next build` pass (run with dummy env); an independent review found sign-out-everywhere missing on routes that call `auth()` directly — fixed via `isRevoked()` in `lib/activeUser.ts` (requireAdmin, feedback, /api/me); the cron now pages through students with one grouped count. Known gaps: `/api/auth/verify` and `/api/profile/theme` still skip the revocation check; preference cookies are per device and are not cleared on sign-out (shared computers); `dashboard/page.tsx` is over 250 lines; no upcoming-class/notices (no data source), no profile photo, no ESLint config in the repo.
 
+## Follow-up batch (10 Oct, PR #6)
+
+Done: revocation check on `/api/auth/verify` and `/api/profile/theme`; password reset ends other sessions; display cookies re-synced from the account on each page (`PrefSync`); quiet auto-speak; dashboard split into components (`lib/dashboardNext.ts`, `components/dashboard/*`); **Notices** — new `Notice` table (additive), admin page `/admin/notices`, card on the student dashboard (this also covers "upcoming class / deadline": an admin posts it with a date).
+
+Run Actions → Database setup after merging: it now also creates the `Notice` table (new table, nothing existing is touched).
+
+Still not done, by choice: per-student reminder time (needs an hourly cron), Hindi/English UI language (undecided), profile photo, phone/email edit, ESLint config, hiding Hindi inside Excel-imported deck cards and the Hindi→English practice question.
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

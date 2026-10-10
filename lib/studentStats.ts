@@ -33,6 +33,8 @@ export async function weeklyActivity(userId: string): Promise<ActivityDay[]> {
     prisma.cardState.findMany({
       where: { userId, lastReviewedAt: { gte: since }, word: { deckId: null } },
       select: { lastReviewedAt: true },
+      // Newest first, so if the cap bites it trims the oldest day, not today.
+      orderBy: { lastReviewedAt: "desc" },
       take: 2000,
     }),
   ]);

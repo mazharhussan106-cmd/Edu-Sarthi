@@ -57,7 +57,9 @@ export async function POST(req: Request) {
   await prisma.$transaction([
     prisma.user.update({
       where: { id: record.userId },
-      data: { passwordHash },
+      // A reset is what someone does when they fear the account is in other
+      // hands, so every session signed in before it ends here.
+      data: { passwordHash, sessionsValidFrom: new Date() },
     }),
     prisma.passwordResetToken.update({
       where: { id: record.id },

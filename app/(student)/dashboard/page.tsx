@@ -15,15 +15,19 @@ import Link from "next/link";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { ScoreTrend, type TrendPoint } from "@/components/dashboard/ScoreTrend";
 import { DAILY_GOAL, sentToday, streakDays } from "@/lib/progress";
 import { TodayStrip } from "@/components/student/TodayStrip";
 import { deckCounts } from "@/lib/flashcards";
+import { nextAction } from "@/lib/dashboardNext";
 import { newPerDayOf } from "@/lib/preferences";
 import { cardProgress, criteriaChange, weeklyActivity } from "@/lib/studentStats";
+import { NoticesCard } from "@/components/dashboard/NoticesCard";
+import { activeNotices } from "@/lib/notices";
+import { InFlightCard } from "@/components/dashboard/InFlightCard";
+import { LatestAudit } from "@/components/dashboard/LatestAudit";
+import { WhatToWorkOn } from "@/components/dashboard/WhatToWorkOn";
 import { CardProgress } from "@/components/dashboard/CardProgress";
 import { CriteriaChange } from "@/components/dashboard/CriteriaChange";
 import { TodayWork } from "@/components/dashboard/TodayWork";
@@ -40,12 +44,6 @@ const CRITERIA = [
   { key: "vocabulary", label: "Vocabulary" },
   { key: "confidence", label: "Confidence" },
 ] as const;
-
-const IN_FLIGHT_LABEL = {
-  PENDING: "Waiting for a teacher",
-  IN_REVIEW: "Being reviewed now",
-  RETURNED: "Sent back — try again",
-} as const;
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -125,42 +123,16 @@ export default async function DashboardPage() {
   const cards = await deckCounts(studentId!, { kind: "WORD" }, newPerDayOf(prefRow?.preferences));
 
   // Independent of everything above, so they run together.
-  const [activity, cardStats] = await Promise.all([weeklyActivity(studentId!), cardProgress(studentId!)]);
+  const [activity, cardStats, notices] = await Promise.all([
+    weeklyActivity(studentId!),
+    cardProgress(studentId!),
+    activeNotices(),
+  ]);
 
   const dates = recent.map((r) => r.createdAt);
   const streak = streakDays(dates);
   const today = Math.min(sentToday(dates), DAILY_GOAL);
-  const next = toRedo
-    ? {
-        eyebrow: "Action needed",
-        title: `Re-record “${toRedo.exercise.title}”`,
-        body: "Your teacher sent this back. The reason and tips are on the next screen.",
-        href: `/feedback/${toRedo.id}`,
-        cta: "Open it",
-      }
-    : cards.due > 0 || cards.newLeft > 0
-      ? {
-          eyebrow: "Flashcards",
-          title: cards.due > 0 ? `Review ${cards.due} word${cards.due === 1 ? "" : "s"}` : `Learn ${cards.newLeft} new words`,
-          body: cards.due > 0 ? "These are due today. Reviewing on time is what makes them stick." : "Today's new words are waiting.",
-          href: "/flashcards",
-          cta: "Open flashcards",
-        }
-    : nextExercise
-      ? {
-          eyebrow: `Next up · Level ${nextExercise.module.level}`,
-          title: nextExercise.title,
-          body: "A new exercise you have not tried yet.",
-          href: `/practice/${nextExercise.id}`,
-          cta: "Start",
-        }
-      : {
-          eyebrow: "Keep going",
-          title: "Practise again",
-          body: "You have tried every exercise. Repeat one and compare the audits.",
-          href: "/modules",
-          cta: "Choose one",
-        };
+  const next = nextAction({ toRedo, cards, nextExercise });
 
   const scored = reviewed.filter((s) => s.feedback !== null);
 
@@ -212,33 +184,8 @@ export default async function DashboardPage() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="flex flex-col gap-4">
-          {inFlight.length > 0 ? (
-            <Card>
-              <CardTitle>With a teacher</CardTitle>
-              <ul className="mt-3 divide-y divide-border border-y border-border">
-                {inFlight.map((s) => (
-                  <li
-                    key={s.id}
-                    className="flex items-center justify-between gap-3 py-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-sm text-ink">
-                        {s.exercise.title}
-                      </p>
-                      <p className="mt-0.5 text-xs text-ink-muted">
-                        Sent {s.createdAt.toLocaleDateString("en-IN")}
-                      </p>
-                    </div>
-                    <Badge
-                      variant={s.status === "RETURNED" ? "error" : "neutral"}
-                    >
-                      {IN_FLIGHT_LABEL[s.status as keyof typeof IN_FLIGHT_LABEL]}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          ) : null}
+          <NoticesCard notices={notices} />
+          <InFlightCard items={inFlight} />
 
           <Card>
             <CardTitle>Your average, audit by audit</CardTitle>
@@ -261,63 +208,11 @@ export default async function DashboardPage() {
             </div>
           </Card>
 
-          {latest ? (
-            <Card>
-              <CardTitle>Your latest audit</CardTitle>
-              <p className="mt-1 text-sm text-ink-muted">
-                {latest.exercise.title} ·{" "}
-                {latest.createdAt.toLocaleDateString("en-IN")}
-              </p>
-              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
-                {CRITERIA.map((c) => (
-                  <div key={c.key}>
-                    <p className="font-mono text-lg font-bold text-ink">
-                      {latest.feedback![c.key]}
-                    </p>
-                    <p className="text-[9px] uppercase tracking-wider text-ink-muted">
-                      {c.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              {/* The teacher's own words, trimmed: the full audit with its
-                  timestamped notes is one tap away. */}
-              <p className="mt-4 line-clamp-3 text-sm text-ink-muted">“{latest.feedback!.summary}”</p>
-              <Link href={`/feedback/${latest.id}`} className="mt-4 inline-block">
-                <Button variant="outline" size="sm">
-                  Read it in full
-                </Button>
-              </Link>
-            </Card>
-          ) : null}
+          {latest ? <LatestAudit latest={{ ...latest, feedback: latest.feedback! }} /> : null}
         </div>
 
         <aside className="flex flex-col gap-4">
-          <Card>
-            <CardTitle>What to work on</CardTitle>
-            {weakest ? (
-              <>
-                <p className="mt-2 text-sm text-ink-muted">
-                  Across your audits, {weakest.label.toLowerCase()} is your
-                  lowest score at {weakest.mean.toFixed(1)} out of 10. That is
-                  the one worth practising next.
-                </p>
-                <Link href="/modules" className="mt-4 inline-block">
-                  <Button size="sm">Pick an exercise</Button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <p className="mt-2 text-sm text-ink-muted">
-                  Send your first recording and a teacher will tell you exactly
-                  what to work on.
-                </p>
-                <Link href="/modules" className="mt-4 inline-block">
-                  <Button size="sm">Browse modules</Button>
-                </Link>
-              </>
-            )}
-          </Card>
+          <WhatToWorkOn weakest={weakest} />
 
           <Card>
             <CardTitle>Flashcards</CardTitle>

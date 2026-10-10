@@ -2,15 +2,17 @@
 // link, both good for ten minutes.
 //
 // It deliberately answers the same way whether or not an account exists for
-// the address. Sign-in by email also creates the account, so there is nothing
-// to hide today — but a different reply per address is the habit that leaks
-// who is registered the day that stops being true.
+// the address. On the student door sign-in also creates the account, so there
+// is nothing to hide there — but the teacher and admin doors only admit
+// existing accounts, and a different reply per address would leak who has one.
 
 import { NextResponse } from "next/server";
 
 import { appUrl } from "@/lib/appUrl";
 
 import { issueEmailLogin } from "@/lib/emailLogin";
+import { PORTAL_ROLE } from "@/lib/portals";
+import { prisma } from "@/lib/prisma";
 import { sendLoginEmail } from "@/lib/email";
 import { emailLoginRequestSchema } from "@/lib/validations";
 
@@ -30,7 +32,19 @@ export async function POST(req: Request) {
     );
   }
 
-  const { email } = parsed.data;
+  const { email, portal } = parsed.data;
+
+  // The student door creates accounts, so it always sends. The teacher and
+  // admin doors only send to an account that could use them, and answer the
+  // same either way — "no such teacher here" would confirm who is registered,
+  // and an admin address must not be probe-able from the public internet.
+  if (portal !== "student") {
+    const account = await prisma.user.findUnique({ where: { email }, select: { role: true } });
+    const admitted =
+      portal === "admin" ? account?.role === PORTAL_ROLE.admin : account !== null;
+    if (!admitted) return NextResponse.json({ ok: true });
+  }
+
   const issued = await issueEmailLogin(email);
   if (!issued.ok) {
     return NextResponse.json(
@@ -39,7 +53,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const url = `${appUrl(req)}/login/link?token=${encodeURIComponent(issued.linkToken)}`;
+  const url = `${appUrl(req)}/login/link?token=${encodeURIComponent(issued.linkToken)}&portal=${portal}`;
 
   try {
     await sendLoginEmail(email, issued.code, url);

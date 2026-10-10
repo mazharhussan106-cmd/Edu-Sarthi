@@ -9,6 +9,8 @@
 
 import { z } from "zod";
 
+import { PORTALS } from "@/lib/portals";
+
 // bcrypt silently truncates at 72 bytes. Without this cap, two different long
 // passwords can hash identically and both unlock the account.
 const MAX_PASSWORD_BYTES = 72;
@@ -47,14 +49,20 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
+// Which sign-in door the request came through. Defaults to student so callers
+// that predate the separate doors keep working. It is a hint that can only make
+// a sign-in stricter: lib/auth.ts refuses a role the door does not admit.
+const portal = z.enum(PORTALS).default("student");
+
 export const loginSchema = z.object({
   email,
   password: z.string().min(1, "Enter your password"),
+  portal,
 });
 
 // --- Passwordless email sign-in -------------------------------------------
 
-export const emailLoginRequestSchema = z.object({ email });
+export const emailLoginRequestSchema = z.object({ email, portal });
 
 export const emailCodeSchema = z.object({
   email,
@@ -62,9 +70,10 @@ export const emailCodeSchema = z.object({
     .string()
     .trim()
     .regex(/^\d{6}$/, "Enter the 6-digit code from your email"),
+  portal,
 });
 
-export const emailLinkSchema = z.object({ token: z.string().min(20).max(200) });
+export const emailLinkSchema = z.object({ token: z.string().min(20).max(200), portal });
 
 export const verifyCodeSchema = z.object({
   code: z

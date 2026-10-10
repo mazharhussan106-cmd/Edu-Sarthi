@@ -13,6 +13,7 @@ import { authConfig } from "@/lib/auth.config";
 import { prisma } from "@/lib/prisma";
 import { emailCodeSchema, emailLinkSchema, loginSchema } from "@/lib/validations";
 import { redeemCode, redeemLink, userForProvenEmail } from "@/lib/emailLogin";
+import { PORTAL_ROLE, type Portal, type PortalRole } from "@/lib/portals";
 import {
   clearLoginAttempts,
   isRateLimited,
@@ -32,6 +33,42 @@ class BadEmailCode extends CredentialsSignin {
 }
 class Suspended extends CredentialsSignin {
   code = "suspended";
+}
+// The account is real and the credentials were right, but this is the wrong
+// door for its role. The code carries the role so the page can name the right
+// door without the server sending a message string.
+class WrongPortal extends CredentialsSignin {
+  constructor(role: PortalRole) {
+    super();
+    this.code = `portal-${role.toLowerCase()}`;
+  }
+}
+
+// Refuses a role the door does not admit. The admin door answers like a wrong
+// password and counts as a failed attempt, so it never confirms that an admin
+// account exists at that address; the other doors tell a correctly-signed-in
+// person which door to use instead.
+async function checkPortal(portal: Portal, role: PortalRole, email: string) {
+  if (role === PORTAL_ROLE[portal]) return;
+  if (portal === "admin") {
+    await recordFailedLogin(email);
+    throw new InvalidCredentials();
+  }
+  throw new WrongPortal(role);
+}
+
+// Finds the account a proven inbox signs in to. Only the student door may
+// create an account; the teacher and admin doors admit existing accounts and
+// nothing else, or anyone could mint one by asking for a code there.
+async function userForPortal(email: string, portal: Portal) {
+  if (portal !== "student") {
+    const existing = await prisma.user.findUnique({ where: { email }, select: { role: true } });
+    if (!existing) throw new BadEmailCode();
+    await checkPortal(portal, existing.role, email);
+  }
+  const user = await userForProvenEmail(email);
+  if (portal === "student") await checkPortal(portal, user.role, email);
+  return user;
 }
 
 // Every provider ends here, so this is the one place a suspended account is
@@ -79,13 +116,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        portal: { label: "Portal", type: "text" },
       },
 
       async authorize(raw) {
         const parsed = loginSchema.safeParse(raw);
         if (!parsed.success) throw new InvalidCredentials();
 
-        const { email, password } = parsed.data;
+        const { email, password, portal } = parsed.data;
 
         // Before the lookup and before bcrypt, on purpose. bcrypt at cost 12
         // takes ~100ms; letting an attacker trigger it without limit is a
@@ -108,6 +146,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new InvalidCredentials();
         }
 
+        // Before clearing the attempt counter: a refused admin-door attempt
+        // has to keep counting against the address.
+        await checkPortal(portal, user.role, email);
         await clearLoginAttempts(email);
 
         // Unverified accounts sign in and are then held at /verify by
@@ -126,12 +167,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         code: { label: "Code", type: "text" },
+        portal: { label: "Portal", type: "text" },
       },
       async authorize(raw) {
         const parsed = emailCodeSchema.safeParse(raw);
         if (!parsed.success) throw new BadEmailCode();
 
-        const { email, code } = parsed.data;
+        const { email, code, portal } = parsed.data;
         if (await isRateLimited(email)) throw new TooManyAttempts();
 
         const redeemed = await redeemCode(email, code);
@@ -141,7 +183,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         await clearLoginAttempts(email);
-        return sessionUser(await userForProvenEmail(redeemed.email));
+        return sessionUser(await userForPortal(redeemed.email, portal));
       },
     }),
 
@@ -149,7 +191,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // token is 32 random bytes, so there is nothing to guess.
     Credentials({
       id: "email-link",
-      credentials: { token: { label: "Token", type: "text" } },
+      credentials: {
+        token: { label: "Token", type: "text" },
+        portal: { label: "Portal", type: "text" },
+      },
       async authorize(raw) {
         const parsed = emailLinkSchema.safeParse(raw);
         if (!parsed.success) throw new BadEmailCode();
@@ -157,7 +202,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const redeemed = await redeemLink(parsed.data.token);
         if (!redeemed) throw new BadEmailCode();
 
-        return sessionUser(await userForProvenEmail(redeemed.email));
+        return sessionUser(await userForPortal(redeemed.email, parsed.data.portal));
       },
     }),
   ],

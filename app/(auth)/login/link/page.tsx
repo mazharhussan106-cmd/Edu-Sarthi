@@ -13,10 +13,15 @@ import { Suspense, useState } from "react";
 import { getSession, signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/Button";
+import { PORTAL_PATH, parsePortal, signInErrorMessage } from "@/lib/portals";
 
 function LinkSignIn() {
   const router = useRouter();
-  const token = useSearchParams().get("token") ?? "";
+  const params = useSearchParams();
+  const token = params.get("token") ?? "";
+  // Which door asked for this email. Without it a teacher's link would be
+  // tried as a student sign-in and refused.
+  const portal = parsePortal(params.get("portal"));
   const [error, setError] = useState<string | null>(
     token ? null : "This link is incomplete. Open it again from the email.",
   );
@@ -25,9 +30,13 @@ function LinkSignIn() {
   async function go() {
     setBusy(true);
     setError(null);
-    const result = await signIn("email-link", { token, redirect: false });
+    const result = await signIn("email-link", { token, portal, redirect: false });
     if (result?.error) {
-      setError("This link has expired or was already used. Ask for a new one on the sign-in page.");
+      setError(
+        result.code?.startsWith("portal-") || result.code === "suspended"
+          ? signInErrorMessage(result.code, "code")
+          : "This link has expired or was already used. Ask for a new one on the sign-in page.",
+      );
       setBusy(false);
       return;
     }
@@ -52,7 +61,7 @@ function LinkSignIn() {
         <Button onClick={() => void go()} disabled={busy || !token}>
           {busy ? "Signing in…" : "Continue"}
         </Button>
-        <Link href="/login" className="text-xs text-ink-muted hover:text-accent">
+        <Link href={PORTAL_PATH[portal]} className="text-xs text-ink-muted hover:text-accent">
           Back to sign in
         </Link>
       </div>

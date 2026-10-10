@@ -1,9 +1,10 @@
-// Owns the sign-in screen. Two ways in: a six-digit code sent to the email
-// (the default, and the only one a new student needs), or email and password.
+// Owns the sign-in form shared by the student, teacher and admin doors: an
+// emailed six-digit code, or email and password.
 //
-// It deliberately does NOT decide where to send the user after sign-in. That
-// comes from the session, so the rule lives in one place rather than being
-// duplicated between here and middleware.
+// It deliberately does NOT decide how a door looks (components/auth/PortalShell
+// does) or who a door admits (lib/auth.ts does). The `portal` it sends is a hint
+// that can only make sign-in stricter; the landing page after sign-in comes
+// from the session's role, so that rule stays in one place.
 
 "use client";
 
@@ -16,6 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { PORTAL_COPY, signInErrorMessage, type Portal } from "@/lib/portals";
 import {
   emailCodeSchema,
   emailLoginRequestSchema,
@@ -24,7 +26,7 @@ import {
 
 type Method = "code" | "password";
 
-export default function LoginPage() {
+export function PortalLogin({ portal }: { portal: Portal }) {
   const router = useRouter();
   const [method, setMethod] = useState<Method>("code");
   const [email, setEmail] = useState("");
@@ -37,7 +39,7 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   // Mirrors the server's 60s resend window so the button is visibly disabled
-  // instead of failing with a 429 the student has to read.
+  // instead of failing with a 429 the user has to read.
   useEffect(() => {
     if (cooldown <= 0) return;
     const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
@@ -57,7 +59,7 @@ export default function LoginPage() {
   async function sendCode() {
     setError(null);
     setNotice(null);
-    const parsed = emailLoginRequestSchema.safeParse({ email });
+    const parsed = emailLoginRequestSchema.safeParse({ email, portal });
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Enter a valid email address.");
       return;
@@ -82,7 +84,7 @@ export default function LoginPage() {
       } else {
         setCodeSent(true);
         setCooldown(60);
-        setNotice("Code sent. Check your inbox — and the spam folder.");
+        setNotice("If this address can sign in here, a code is on its way. Check the inbox and the spam folder.");
       }
     } catch {
       setError("Could not reach the server. Check your connection and try again.");
@@ -93,7 +95,7 @@ export default function LoginPage() {
   async function submitCode(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const parsed = emailCodeSchema.safeParse({ email, code });
+    const parsed = emailCodeSchema.safeParse({ email, code, portal });
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Check the code and try again.");
       return;
@@ -102,13 +104,7 @@ export default function LoginPage() {
     setBusy(true);
     const result = await signIn("email-code", { ...parsed.data, redirect: false });
     if (result?.error) {
-      setError(
-        result.code === "throttled"
-          ? "Too many attempts. Wait a few minutes and try again."
-          : result.code === "suspended"
-            ? "This account is suspended. Email support@edusarthi.com for help."
-            : "That code is not right or has expired. Check the email, or send a new one.",
-      );
+      setError(signInErrorMessage(result.code, "code"));
       setBusy(false);
       return;
     }
@@ -120,7 +116,7 @@ export default function LoginPage() {
     setError(null);
     // Same schema the server enforces. This only saves a round trip — the
     // server never trusts that this ran.
-    const parsed = loginSchema.safeParse({ email, password });
+    const parsed = loginSchema.safeParse({ email, password, portal });
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Check your details.");
       return;
@@ -129,15 +125,7 @@ export default function LoginPage() {
     setBusy(true);
     const result = await signIn("credentials", { ...parsed.data, redirect: false });
     if (result?.error) {
-      // Identical wording for a wrong email and a wrong password. Telling
-      // them apart would confirm which addresses have accounts.
-      setError(
-        result.code === "throttled"
-          ? "Too many attempts. Wait a few minutes and try again."
-          : result.code === "suspended"
-            ? "This account is suspended. Email support@edusarthi.com for help."
-            : "Email or password is not correct.",
-      );
+      setError(signInErrorMessage(result.code, "password"));
       setBusy(false);
       return;
     }
@@ -166,12 +154,18 @@ export default function LoginPage() {
     </div>
   );
 
+  const errorText = error ? (
+    // assertive: the user has just pressed a button and is waiting on the
+    // result, so interrupting is the correct behaviour here.
+    <p role="alert" aria-live="assertive" className="text-xs text-error">
+      {error}
+    </p>
+  ) : null;
+
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-ink">Sign in</h1>
-      <p className="mt-1 text-sm text-ink-muted">
-        New here? Enter your email — the same code creates your account.
-      </p>
+      <h1 className="font-display text-2xl font-bold text-ink">{PORTAL_COPY[portal].title}</h1>
+      <p className="mt-1 text-sm text-ink-muted">{PORTAL_COPY[portal].intro}</p>
 
       <SegmentedControl
         label="Sign in with"
@@ -212,11 +206,7 @@ export default function LoginPage() {
             </div>
           ) : null}
 
-          {error ? (
-            <p role="alert" aria-live="assertive" className="text-xs text-error">
-              {error}
-            </p>
-          ) : null}
+          {errorText}
           {notice ? (
             <p aria-live="polite" className="text-xs text-success">
               {notice}
@@ -258,13 +248,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {error ? (
-            // assertive: the user has just pressed a button and is waiting on
-            // the result, so interrupting is the correct behaviour here.
-            <p role="alert" aria-live="assertive" className="text-xs text-error">
-              {error}
-            </p>
-          ) : null}
+          {errorText}
           <Button type="submit" disabled={busy}>
             {busy ? "Signing in…" : "Sign in"}
           </Button>
@@ -274,12 +258,14 @@ export default function LoginPage() {
         </form>
       )}
 
-      <p className="mt-6 text-xs text-ink-muted">
-        Prefer a password?{" "}
-        <Link href="/register" className="font-medium text-accent hover:underline">
-          Create an account with one
-        </Link>
-      </p>
+      {portal === "student" ? (
+        <p className="mt-6 text-xs text-ink-muted">
+          Prefer a password?{" "}
+          <Link href="/register" className="font-medium text-accent hover:underline">
+            Create an account with one
+          </Link>
+        </p>
+      ) : null}
     </div>
   );
 }

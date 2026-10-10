@@ -17,6 +17,8 @@ An English spoken-communication training platform: students record or upload, te
 
 ## Decisions that must not be undone
 
+- **Three sign-in doors (10 Oct 2026):** `/student/login`, `/teacher/login`, `/admin/login`, each with its own look (`components/auth/PortalShell.tsx`) and one shared form (`PortalLogin.tsx`). Config and wording: `lib/portals.ts`. The role check is server-side in `lib/auth.ts` (`checkPortal`): the wrong door refuses and names the right one (student/teacher); the **admin door answers like a wrong password and is never named to non-admins**. Only the student door may create an account; teacher and admin doors admit existing accounts only, and `/api/auth/email-login` sends no code (same reply) when the address cannot use that door. `/login` redirects to `/student/login`; `/login/link` (one-tap email link) still lives there and carries `?portal=`. `/admin/login` is `noindex` and linked from nowhere — obscurity only, the real guard is the role check plus `proxy.ts`. Not tested against a real database yet.
+
 - **One card.** Words, chunks, grammar and every deck card use the EduSarthi card in `components/flashcards/`: navy header band, three sides that turn, text that fits the screen, Known / Unknown / Remark bar, Day 1·3·7·15·30·60 review. Mockups: `docs/flashcard-v2-cards.png`, `docs/flashcard-built.png`, `docs/chunk-cards.png`. Plan for chunks (the pattern to copy): `docs/CHUNK-PLAN.md`.
 - Built-in cards have `deckId = null`. Anything that picks "the next built-in card", counts built-in cards, or opens a card by code must filter on that, or student-made and imported deck cards leak into everyone's daily session.
 - Card code from an uploaded Excel file is only ever **shown**, never run by the server.

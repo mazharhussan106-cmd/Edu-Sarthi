@@ -1,7 +1,7 @@
 // Owns choosing which flashcard a student sees next, and the counts around it.
 //
 // Order: cards whose review is due (oldest due first), then new cards in the
-// sheet's order, up to NEW_PER_DAY a day. When both run out the session is
+// sheet's order, up to the student's daily limit (default NEW_PER_DAY). When both run out the session is
 // done for today; "keep going" lifts the new-card limit on request.
 //
 // Only built-in cards (deckId null) count here. Student-made cards are Word
@@ -64,7 +64,7 @@ function wordWhere(deck: Deck) {
   return { kind: deck.kind, deckId: null, ...(deck.category ? { category: deck.category } : {}) };
 }
 
-export async function deckCounts(userId: string, deck: Deck) {
+export async function deckCounts(userId: string, deck: Deck, newPerDay = NEW_PER_DAY) {
   const { kind } = deck;
   const word = wordWhere(deck);
   const now = new Date();
@@ -83,7 +83,7 @@ export async function deckCounts(userId: string, deck: Deck) {
     tagged.filter((t) => t[k]).reduce((n, t) => n + t._count, 0);
   return {
     due,
-    newLeft: Math.max(0, NEW_PER_DAY - newToday),
+    newLeft: Math.max(0, newPerDay - newToday),
     known,
     total,
     lists: { important: sum("important"), favourite: sum("favourite"), doubt: sum("doubt"), confident: sum("confident") },
@@ -95,6 +95,7 @@ export async function nextCardId(
   deck: Deck,
   extra: boolean,
   skip: string[] = [],
+  newPerDay = NEW_PER_DAY,
 ): Promise<string | null> {
   const now = new Date();
   const notSkipped = skip.length ? { code: { notIn: skip } } : {};
@@ -109,7 +110,7 @@ export async function nextCardId(
     const newToday = await prisma.cardState.count({
       where: { userId, reviews: { gt: 0 }, createdAt: { gte: startOfTodayIst(now) }, word: { kind: deck.kind, deckId: null } },
     });
-    if (newToday >= NEW_PER_DAY) return null;
+    if (newToday >= newPerDay) return null;
   }
 
   const fresh = await prisma.word.findFirst({

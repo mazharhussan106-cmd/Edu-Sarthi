@@ -22,6 +22,7 @@ import { ScoreTrend, type TrendPoint } from "@/components/dashboard/ScoreTrend";
 import { DAILY_GOAL, sentToday, streakDays } from "@/lib/progress";
 import { TodayStrip } from "@/components/student/TodayStrip";
 import { deckCounts } from "@/lib/flashcards";
+import { newPerDayOf } from "@/lib/preferences";
 
 // Anything reflecting user state must not be cached, or one student's view is
 // served to everyone until it expires.
@@ -114,7 +115,8 @@ export default async function DashboardPage() {
     }),
   ]);
 
-  const cards = await deckCounts(studentId!, { kind: "WORD" });
+  const prefRow = await prisma.user.findUnique({ where: { id: studentId! }, select: { preferences: true } });
+  const cards = await deckCounts(studentId!, { kind: "WORD" }, newPerDayOf(prefRow?.preferences));
 
   const dates = recent.map((r) => r.createdAt);
   const streak = streakDays(dates);

@@ -16,6 +16,7 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Switch } from "@/components/ui/Switch";
 import { attrFromTheme, THEMES } from "@/lib/theme";
 import { TEXT_SIZES, type TextSize } from "@/lib/textSize";
+import { NEW_PER_DAY_OPTIONS } from "@/lib/preferences";
 
 const THEME_OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
@@ -23,6 +24,7 @@ export type PreferenceState = {
   emailOnAudit: boolean;
   autoplayAudit: boolean;
   textSize: TextSize;
+  newPerDay: number;
 };
 
 export function SettingsForm({
@@ -61,7 +63,7 @@ export function SettingsForm({
     }
   }
 
-  async function savePreference(key: keyof PreferenceState, value: boolean | string) {
+  async function savePreference(key: keyof PreferenceState, value: boolean | string | number) {
     setPrefs((p) => ({ ...p, [key]: value }));
     setNotice(null);
 
@@ -115,6 +117,16 @@ export function SettingsForm({
             else document.documentElement.setAttribute("data-text", v);
             void savePreference("textSize", v);
           }}
+        />
+      </div>
+
+      <div className="mt-4 border-t border-border pt-4">
+        <SegmentedControl
+          label="New cards per day"
+          description="How many new flashcards you learn each day, on top of the ones due for review. Takes effect on your next card."
+          options={NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: String(n) }))}
+          value={String(prefs.newPerDay)}
+          onValueChange={(v) => void savePreference("newPerDay", Number(v))}
         />
       </div>
 

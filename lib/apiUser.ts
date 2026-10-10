@@ -12,6 +12,7 @@
 import { NextResponse } from "next/server";
 import type { Role } from "@prisma/client";
 
+import { isRevoked } from "@/lib/activeUser";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -28,7 +29,7 @@ export async function requireUser(opts: { verified?: boolean } = {}): Promise<Ga
   if (!row || row.suspendedAt) {
     return { ok: false, res: NextResponse.json({ error: "This account cannot do that right now. Contact support from the Support page." }, { status: 403 }) };
   }
-  if (row.sessionsValidFrom && (session?.user?.loginAt ?? 0) < row.sessionsValidFrom.getTime()) {
+  if (isRevoked(session?.user?.loginAt, row.sessionsValidFrom)) {
     return { ok: false, res: NextResponse.json({ error: "You were signed out of all devices. Sign in again." }, { status: 401 }) };
   }
   if (opts.verified && !row.emailVerified) {

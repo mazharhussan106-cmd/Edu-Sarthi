@@ -14,6 +14,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { claimSchema, feedbackSchema, holdSchema, returnSchema } from "@/lib/validations";
 import { queueScope, releaseExpiredClaims } from "@/lib/claims";
+import { isRevoked } from "@/lib/activeUser";
 import { notifyAuditReady } from "@/lib/notify";
 
 class ClaimLost extends Error {}
@@ -32,9 +33,9 @@ export async function POST(req: Request) {
   // has demoted or suspended cannot keep claiming and auditing on an old token.
   const current = await prisma.user.findUnique({
     where: { id: teacherId },
-    select: { role: true, suspendedAt: true },
+    select: { role: true, suspendedAt: true, sessionsValidFrom: true },
   });
-  if (!current || current.suspendedAt || (current.role !== "TEACHER" && current.role !== "ADMIN")) {
+  if (!current || current.suspendedAt || isRevoked(session.user.loginAt, current.sessionsValidFrom) || (current.role !== "TEACHER" && current.role !== "ADMIN")) {
     return NextResponse.json({ error: "You do not have access to this." }, { status: 403 });
   }
 

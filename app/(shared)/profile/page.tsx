@@ -21,7 +21,7 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { DataRights, NameForm } from "@/components/student/AccountActions";
 import { displayId } from "@/lib/publicId";
 import { badgesFor } from "@/lib/badges";
-import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { prefsOf } from "@/lib/preferences";
 import { streakDays } from "@/lib/progress";
 import { ProfileGoals } from "@/components/student/ProfileGoals";
 
@@ -76,8 +76,7 @@ export default async function ProfilePage() {
         prisma.deck.count({ where: { ownerId: userId } }),
         prisma.deck.count({ where: { ownerId: userId, shareToken: { not: null } } }),
       ]);
-  const stored = PREFERENCE_SCHEMA.partial().safeParse(user.preferences ?? {});
-  const prefs = { ...DEFAULT_PREFERENCES, ...(stored.success ? stored.data : {}) };
+  const prefs = prefsOf(user.preferences);
   const badges = extras
     ? badgesFor({
         submissions: submissionCount,

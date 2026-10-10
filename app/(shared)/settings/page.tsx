@@ -13,7 +13,7 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
-import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { prefsOf } from "@/lib/preferences";
 
 export const revalidate = 0;
 
@@ -26,14 +26,9 @@ export default async function SettingsPage() {
     select: { theme: true, preferences: true },
   });
 
-  // Parsed loosely and layered over the defaults. A row written before a
-  // preference existed is missing that key, and partial() lets it through
-  // rather than falling back to defaults for everything.
-  const stored = PREFERENCE_SCHEMA.partial().safeParse(user?.preferences ?? {});
-  const preferences = {
-    ...DEFAULT_PREFERENCES,
-    ...(stored.success ? stored.data : {}),
-  };
+  // Each key parsed on its own over the defaults, so one retired value does
+  // not reset the rest.
+  const preferences = prefsOf(user?.preferences);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">

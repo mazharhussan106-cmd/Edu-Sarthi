@@ -75,3 +75,16 @@ export function newPerDayOf(stored: unknown): number {
   const parsed = PREFERENCE_SCHEMA.pick({ newPerDay: true }).partial().safeParse(stored ?? {});
   return (parsed.success && parsed.data.newPerDay) || DEFAULT_PREFERENCES.newPerDay;
 }
+
+/// Every preference, each parsed on its own over the defaults. One stored value
+/// this version no longer accepts (a retired card colour) loses only itself,
+/// instead of failing the whole object and silently resetting the rest.
+export function prefsOf(stored: unknown): Preferences {
+  const raw = stored && typeof stored === "object" ? (stored as Record<string, unknown>) : {};
+  const out: Record<string, unknown> = { ...DEFAULT_PREFERENCES };
+  for (const key of Object.keys(DEFAULT_PREFERENCES) as (keyof Preferences)[]) {
+    const parsed = PREFERENCE_SCHEMA.shape[key].safeParse(raw[key]);
+    if (parsed.success) out[key] = parsed.data;
+  }
+  return out as Preferences;
+}

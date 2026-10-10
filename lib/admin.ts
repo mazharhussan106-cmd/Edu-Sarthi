@@ -8,6 +8,7 @@
 
 import type { Prisma } from "@prisma/client";
 
+import { isRevoked } from "@/lib/activeUser";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -15,7 +16,8 @@ export async function requireAdmin(): Promise<{ id: string } | null> {
   const session = await auth();
   const id = session?.user?.id;
   if (!id || session.user.role !== "ADMIN") return null;
-  const row = await prisma.user.findUnique({ where: { id }, select: { role: true, suspendedAt: true } });
+  const row = await prisma.user.findUnique({ where: { id }, select: { role: true, suspendedAt: true, sessionsValidFrom: true } });
+  if (row && isRevoked(session.user.loginAt, row.sessionsValidFrom)) return null;
   return row?.role === "ADMIN" && !row.suspendedAt ? { id } : null;
 }
 

@@ -3,8 +3,10 @@
 // attribute in the first paint, or the page would jump size after loading.
 //
 // It deliberately does NOT hold the saved preference. The stored copy lives in
-// the user's preferences JSON (lib/preferences.ts) so it follows them to a new
-// device; this cookie is only the per-device copy the server render can read.
+// the user's preferences JSON (lib/preferences.ts). This cookie is only the
+// per-device copy the server render can read, and it is written when the
+// setting is changed on that device, so a new device starts at the default
+// until the student changes it there.
 
 export const TEXT_SIZE_COOKIE = "textSize";
 

@@ -8,7 +8,7 @@
 import { appUrl } from "@/lib/appUrl";
 import { sendAuditReady } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { prefsOf } from "@/lib/preferences";
 
 export async function notifyAuditReady(submissionId: string, req?: Request): Promise<void> {
   try {
@@ -19,12 +19,8 @@ export async function notifyAuditReady(submissionId: string, req?: Request): Pro
     const student = row?.student;
     if (!student?.email || !student.emailVerified) return;
 
-    // Loose read, layered over defaults: a row older than the setting has no
-    // key, and "no key" must mean the default (on), not "off".
-    const stored = PREFERENCE_SCHEMA.partial().safeParse(student.preferences ?? {});
-    const wants = stored.success
-      ? (stored.data.emailOnAudit ?? DEFAULT_PREFERENCES.emailOnAudit)
-      : DEFAULT_PREFERENCES.emailOnAudit;
+    // "No key" must mean the default (on), not "off": prefsOf layers over defaults.
+    const wants = prefsOf(student.preferences).emailOnAudit;
     if (!wants) return;
 
     await sendAuditReady(student.email, `${appUrl(req)}/feedback/${submissionId}`);

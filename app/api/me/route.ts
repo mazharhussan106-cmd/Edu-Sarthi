@@ -8,6 +8,7 @@
 
 import { NextResponse } from "next/server";
 
+import { isRevoked } from "@/lib/activeUser";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { mediaKeys } from "@/lib/decks";
@@ -22,6 +23,12 @@ export async function GET() {
   const userId = session?.user?.id;
   if (!userId) {
     return NextResponse.json({ error: "Your session has expired. Sign in and try again." }, { status: 401 });
+  }
+  // Revocation only, not requireUser(): a suspended student still has the right
+  // to their data, but a thief's token from a signed-out device must not.
+  const revokedRow = await prisma.user.findUnique({ where: { id: userId }, select: { sessionsValidFrom: true } });
+  if (isRevoked(session.user.loginAt, revokedRow?.sessionsValidFrom ?? null)) {
+    return NextResponse.json({ error: "You were signed out of all devices. Sign in again." }, { status: 401 });
   }
 
   // An explicit select, not the whole row: the password hash is "stored
@@ -86,6 +93,12 @@ export async function DELETE(req: Request) {
   const userId = session?.user?.id;
   if (!userId) {
     return NextResponse.json({ error: "Your session has expired. Sign in and try again." }, { status: 401 });
+  }
+  // Revocation only, not requireUser(): a suspended student still has the right
+  // to their data, but a thief's token from a signed-out device must not.
+  const revokedRow = await prisma.user.findUnique({ where: { id: userId }, select: { sessionsValidFrom: true } });
+  if (isRevoked(session.user.loginAt, revokedRow?.sessionsValidFrom ?? null)) {
+    return NextResponse.json({ error: "You were signed out of all devices. Sign in again." }, { status: 401 });
   }
   if (session.user.role !== "STUDENT") {
     return NextResponse.json(

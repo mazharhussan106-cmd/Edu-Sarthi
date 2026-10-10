@@ -18,10 +18,10 @@ export default async function SuspendedPage({
       <main className="mx-auto max-w-md px-6 py-16">
         <h1 className="font-display text-2xl font-bold text-ink">You were signed out</h1>
         <p className="mt-3 text-sm text-ink-muted">
-          This session was ended from “Sign out of all devices”. Sign out here, then sign in again.
+          This session was ended from “Sign out of all devices”. We are taking you to the sign-in page. If that does not happen, press the button.
         </p>
         <div className="mt-6">
-          <SignOutButton />
+          <SignOutButton auto />
         </div>
       </main>
     );

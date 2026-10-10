@@ -11,7 +11,7 @@
 
 import { signOut } from "next-auth/react";
 import { Settings } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Theme } from "@prisma/client";
 
 import { Button } from "@/components/ui/Button";
@@ -20,7 +20,7 @@ import { attrFromTheme, THEMES } from "@/lib/theme";
 
 const OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
-export function SettingsMenu({ initialTheme }: { initialTheme: Theme }) {
+export function SettingsMenu({ initialTheme, panel }: { initialTheme: Theme; panel?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const [warning, setWarning] = useState<string | null>(null);
@@ -89,14 +89,23 @@ export function SettingsMenu({ initialTheme }: { initialTheme: Theme }) {
       </Button>
 
       {open ? (
-        <div className="absolute right-0 z-50 mt-2 w-72 rounded-xl border border-border bg-surface-raised p-4 shadow-lg shadow-shadow">
-          <SegmentedControl
+        <div
+          className={
+            panel
+              // The full settings are tall, so the panel scrolls inside the
+              // screen instead of running off the bottom of a phone. On a
+              // phone it spans the width; from sm up it hangs off the button.
+              ? "fixed inset-x-3 top-16 z-50 max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain rounded-xl border border-border bg-surface-raised p-4 shadow-lg shadow-shadow sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[24rem] sm:max-h-[calc(100dvh-6rem)]"
+              : "absolute right-0 z-50 mt-2 w-72 rounded-xl border border-border bg-surface-raised p-4 shadow-lg shadow-shadow"
+          }
+        >
+          {panel ?? <SegmentedControl
             label="Theme"
             description="Applies straight away."
             options={OPTIONS}
             value={theme}
             onValueChange={(v) => handleThemeChange(v as Theme)}
-          />
+          />}
 
           {warning ? (
             <p aria-live="polite" className="mt-2 text-xs text-ink-muted">

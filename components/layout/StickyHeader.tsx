@@ -13,7 +13,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Theme } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
@@ -30,6 +30,7 @@ export function StickyHeader({
   stats,
   search,
   more,
+  settingsPanel,
   theme,
   homeHref,
 }: {
@@ -37,6 +38,8 @@ export function StickyHeader({
   stats?: ReactNode;
   search?: ReactNode;
   more?: readonly MenuGroup[];
+  /** Full settings, rendered on the server; replaces the small theme-only dropdown. */
+  settingsPanel?: ReactNode;
   theme: Theme;
   homeHref: string;
 }) {
@@ -104,11 +107,6 @@ export function StickyHeader({
             EduSarthi
           </Link>
 
-          {/* Right after the name, ahead of the nav and the actions. Passed
-              in (a server-rendered node) so only roles that want search get
-              it, and the Suspense is required by useSearchParams inside. */}
-          {search ? <Suspense fallback={<div className="flex-1" />}>{search}</Suspense> : null}
-
           <NavLinks links={links} className="hidden md:flex" />
 
           {/* Above 1400px the stats slot into row 1 between the nav and the
@@ -116,11 +114,13 @@ export function StickyHeader({
           {merged && stats ? (
             <div className="ml-auto flex items-center gap-6">{stats}</div>
           ) : (
-            <div className={search ? "" : "ml-auto"} />
+            <div className="ml-auto" />
           )}
 
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            <SettingsMenu initialTheme={theme} />
+          <div className="flex shrink-0 items-center gap-1">
+            {/* Search, then settings, then the menu, all at the right. */}
+            {search}
+            <SettingsMenu initialTheme={theme} panel={settingsPanel} />
             <MobileMenu links={links} more={more} />
           </div>
         </div>

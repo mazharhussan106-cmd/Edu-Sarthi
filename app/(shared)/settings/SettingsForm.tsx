@@ -25,6 +25,8 @@ export type PreferenceState = {
   autoplayAudit: boolean;
   textSize: TextSize;
   newPerDay: number;
+  hideHindi: boolean;
+  autoSpeak: boolean;
 };
 
 export function SettingsForm({
@@ -101,6 +103,23 @@ export function SettingsForm({
           description="Off by default, so opening an audit on a bus stays quiet."
           checked={prefs.autoplayAudit}
           onCheckedChange={(v) => void savePreference("autoplayAudit", v)}
+        />
+        <Switch
+          label="Hide Hindi meanings on cards"
+          description="Hides the Hindi boxes so you think in English. The Hindi to English practice question stays."
+          checked={prefs.hideHindi}
+          onCheckedChange={(v) => {
+            // Applied now, like the text size, then saved.
+            if (v) document.documentElement.setAttribute("data-hindi", "off");
+            else document.documentElement.removeAttribute("data-hindi");
+            void savePreference("hideHindi", v);
+          }}
+        />
+        <Switch
+          label="Say each word when its card opens"
+          description="Off by default. Uses the recording, or your phone's Indian English voice."
+          checked={prefs.autoSpeak}
+          onCheckedChange={(v) => void savePreference("autoSpeak", v)}
         />
       </div>
 

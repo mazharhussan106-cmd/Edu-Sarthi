@@ -12,6 +12,7 @@ import { Inter, JetBrains_Mono, Sora } from "next/font/google";
 
 import { ServiceWorker } from "@/components/layout/ServiceWorker";
 import { attrFromCookie, THEME_COOKIE } from "@/lib/theme";
+import { HINDI_COOKIE, hindiAttrFromCookie } from "@/lib/hindiToggle";
 import { TEXT_SIZE_COOKIE, textAttrFromCookie } from "@/lib/textSize";
 import "./globals.css";
 
@@ -59,6 +60,7 @@ export default async function RootLayout({
   // alternative is a visible flash of the wrong theme on every load.
   const cookieStore = await cookies();
   const theme = attrFromCookie(cookieStore.get(THEME_COOKIE)?.value);
+  const hindi = hindiAttrFromCookie(cookieStore.get(HINDI_COOKIE)?.value);
   const textSize = textAttrFromCookie(cookieStore.get(TEXT_SIZE_COOKIE)?.value);
 
   return (
@@ -66,6 +68,7 @@ export default async function RootLayout({
       lang="en"
       data-theme={theme}
       data-text={textSize}
+      data-hindi={hindi}
       className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       {/* Browser extensions — Grammarly especially — inject attributes into

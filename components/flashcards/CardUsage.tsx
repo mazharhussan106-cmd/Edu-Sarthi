@@ -47,7 +47,8 @@ function Box({ tone, children, cols = 1 }: { tone: Tone; children: ReactNode; co
 function Field({ tone, label, children }: { tone: Tone; label: string; children?: ReactNode }) {
   if (!children) return null;
   return (
-    <div className="px-[0.6em] py-[0.35em]">
+    // data-hindi lets the "Hide Hindi meanings" setting hide this box by CSS.
+    <div data-hindi={label.startsWith("Hindi") ? "" : undefined} className="px-[0.6em] py-[0.35em]">
       <p className={cn("text-[0.8em] font-bold", TEXT[tone])}>{label}</p>
       <div className="text-[0.9em] leading-snug text-ink">{children}</div>
     </div>

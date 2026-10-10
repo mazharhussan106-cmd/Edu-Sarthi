@@ -21,6 +21,8 @@ export const PREFERENCE_SCHEMA = z.object({
   textSize: z.enum(TEXT_SIZE_VALUES),
   cardColor: z.enum(CARD_COLOR_VALUES),
   newPerDay: z.number().int().min(5).max(50),
+  hideHindi: z.boolean(),
+  autoSpeak: z.boolean(),
 });
 
 export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
@@ -31,6 +33,10 @@ export const DEFAULT_PREFERENCES: Preferences = {
   textSize: "normal",
   cardColor: "plain" as CardColor,
   newPerDay: 10,
+  hideHindi: false,
+  // Off by default for the same reason as autoplayAudit: a phone that speaks
+  // on every card is a surprise on a bus.
+  autoSpeak: false,
 };
 
 /// Choices offered in settings. A short list, not a free number: a student who

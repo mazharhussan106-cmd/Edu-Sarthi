@@ -129,6 +129,7 @@ export default async function FlashcardsPage({
             skip={skip}
             cardColor={cardColor}
             tallTop={k.kind === "CHUNK"}
+            autoSpeak={(prefs.success && prefs.data.autoSpeak) || false}
             chunk={
               extras
                 ? {

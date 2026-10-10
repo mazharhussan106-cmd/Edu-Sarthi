@@ -14,7 +14,24 @@ import { Button } from "@/components/ui/Button";
 import { callApi } from "@/components/decks/deckClient";
 
 /// A link copy sends the share token; a library or institute copy sends the deck id.
-export function CopyDeckButton({ token, deckId, institute, signedIn }: { token?: string; deckId?: string; institute?: boolean; signedIn: boolean }) {
+export function CopyDeckButton({
+  token,
+  deckId,
+  institute,
+  signedIn,
+  label = "Copy to my decks",
+  then = "deck",
+  size,
+}: {
+  token?: string;
+  deckId?: string;
+  institute?: boolean;
+  signedIn: boolean;
+  label?: string;
+  /** Where to go after the copy: the deck page, or straight into studying it. */
+  then?: "deck" | "study";
+  size?: "sm" | "md";
+}) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,12 +52,12 @@ export function CopyDeckButton({ token, deckId, institute, signedIn }: { token?:
       setBusy(false);
       return setError(res.error);
     }
-    router.push(`/decks/${res.data.id}`);
+    router.push(then === "study" ? `/decks/${res.data.id}/study` : `/decks/${res.data.id}`);
   }
 
   return (
     <div>
-      <Button disabled={busy} onClick={copy}>{busy ? "Copying…" : "Copy to my decks"}</Button>
+      <Button size={size} disabled={busy} onClick={copy}>{busy ? "Importing…" : label}</Button>
       {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
     </div>
   );

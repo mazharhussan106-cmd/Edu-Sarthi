@@ -95,7 +95,7 @@ export function SettingsMenu({ initialTheme, panel }: { initialTheme: Theme; pan
               // The full settings are tall, so the panel scrolls inside the
               // screen instead of running off the bottom of a phone. On a
               // phone it spans the width; from sm up it hangs off the button.
-              ? "fixed inset-x-3 top-16 z-50 max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain rounded-xl border border-border bg-surface-raised p-4 shadow-lg shadow-shadow sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[24rem] sm:max-h-[calc(100dvh-6rem)]"
+              ? "fixed inset-x-3 top-16 z-50 max-h-[calc(100dvh-9rem)] overflow-y-auto overscroll-contain rounded-xl border border-border bg-surface-raised p-4 shadow-lg shadow-shadow sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[24rem] sm:max-h-[calc(100dvh-6rem)]"
               : "absolute right-0 z-50 mt-2 w-72 rounded-xl border border-border bg-surface-raised p-4 shadow-lg shadow-shadow"
           }
         >

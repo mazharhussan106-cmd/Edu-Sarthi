@@ -30,6 +30,10 @@ export const authConfig = {
       if (user) {
         token.role = user.role;
         token.emailVerified = user.emailVerified;
+        // Stamped once, at sign-in, and never refreshed. The JWT's own `iat`
+        // moves forward every time Auth.js re-issues the cookie, which would
+        // let a signed-out device slip back in as "newly issued".
+        token.loginAt = Date.now();
       }
 
       // After verifying an email the JWT is stale, and the client calls
@@ -45,6 +49,7 @@ export const authConfig = {
         session.user.id = token.sub as string;
         session.user.role = token.role;
         session.user.emailVerified = token.emailVerified;
+        session.user.loginAt = token.loginAt;
       }
 
       return session;

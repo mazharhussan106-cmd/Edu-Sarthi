@@ -19,10 +19,22 @@ export async function ensureActiveUser(allowed?: readonly Role[]): Promise<void>
   const session = await auth();
   const id = session?.user?.id;
   if (!id) return;
-  const row = await prisma.user.findUnique({ where: { id }, select: { suspendedAt: true, role: true } });
+  const row = await prisma.user.findUnique({ where: { id }, select: { suspendedAt: true, role: true, sessionsValidFrom: true } });
   // A deleted account and a suspended one are both sent out the same way.
   if (!row || row.suspendedAt) redirect("/suspended");
+  // A token with no loginAt predates this feature, so it counts as old.
+  if (isRevoked(session?.user?.loginAt, row.sessionsValidFrom)) {
+    redirect("/suspended?why=signed-out");
+  }
   if (allowed && !allowed.includes(row.role)) {
     redirect(row.role === "ADMIN" ? "/admin" : row.role === "TEACHER" ? "/queue" : "/dashboard");
   }
+}
+
+/// True when this sign-in predates "Sign out of all devices". A token without
+/// loginAt predates the feature and counts as old, but only matters once the
+/// account has actually revoked something. One definition, used by every
+/// route that reads auth() directly, so none can forget it.
+export function isRevoked(loginAt: number | undefined, validFrom: Date | null): boolean {
+  return !!validFrom && (loginAt ?? 0) < validFrom.getTime();
 }

@@ -22,6 +22,12 @@ import { ScoreTrend, type TrendPoint } from "@/components/dashboard/ScoreTrend";
 import { DAILY_GOAL, sentToday, streakDays } from "@/lib/progress";
 import { TodayStrip } from "@/components/student/TodayStrip";
 import { deckCounts } from "@/lib/flashcards";
+import { newPerDayOf } from "@/lib/preferences";
+import { cardProgress, criteriaChange, weeklyActivity } from "@/lib/studentStats";
+import { CardProgress } from "@/components/dashboard/CardProgress";
+import { CriteriaChange } from "@/components/dashboard/CriteriaChange";
+import { TodayWork } from "@/components/dashboard/TodayWork";
+import { WeeklyActivity } from "@/components/dashboard/WeeklyActivity";
 
 // Anything reflecting user state must not be cached, or one student's view is
 // served to everyone until it expires.
@@ -88,6 +94,7 @@ export default async function DashboardPage() {
             fluency: true,
             vocabulary: true,
             confidence: true,
+            summary: true,
           },
         },
       },
@@ -114,7 +121,11 @@ export default async function DashboardPage() {
     }),
   ]);
 
-  const cards = await deckCounts(studentId!, { kind: "WORD" });
+  const prefRow = await prisma.user.findUnique({ where: { id: studentId! }, select: { preferences: true } });
+  const cards = await deckCounts(studentId!, { kind: "WORD" }, newPerDayOf(prefRow?.preferences));
+
+  // Independent of everything above, so they run together.
+  const [activity, cardStats] = await Promise.all([weeklyActivity(studentId!), cardProgress(studentId!)]);
 
   const dates = recent.map((r) => r.createdAt);
   const streak = streakDays(dates);
@@ -193,6 +204,11 @@ export default async function DashboardPage() {
       </p>
 
       <TodayStrip next={next} streak={streak} today={today} goal={DAILY_GOAL} />
+      <TodayWork
+        due={cards.due}
+        newLeft={cards.newLeft}
+        redo={inFlight.filter((s) => s.status === "RETURNED").length}
+      />
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="flex flex-col gap-4">
@@ -231,6 +247,20 @@ export default async function DashboardPage() {
             </div>
           </Card>
 
+          <Card>
+            <CardTitle>This week</CardTitle>
+            <div className="mt-4">
+              <WeeklyActivity days={activity} />
+            </div>
+          </Card>
+
+          <Card>
+            <CardTitle>Rubric: first audit to latest</CardTitle>
+            <div className="mt-3">
+              <CriteriaChange rows={criteriaChange(scored.map((s) => s.feedback!))} />
+            </div>
+          </Card>
+
           {latest ? (
             <Card>
               <CardTitle>Your latest audit</CardTitle>
@@ -250,6 +280,9 @@ export default async function DashboardPage() {
                   </div>
                 ))}
               </div>
+              {/* The teacher's own words, trimmed: the full audit with its
+                  timestamped notes is one tap away. */}
+              <p className="mt-4 line-clamp-3 text-sm text-ink-muted">“{latest.feedback!.summary}”</p>
               <Link href={`/feedback/${latest.id}`} className="mt-4 inline-block">
                 <Button variant="outline" size="sm">
                   Read it in full
@@ -284,6 +317,13 @@ export default async function DashboardPage() {
                 </Link>
               </>
             )}
+          </Card>
+
+          <Card>
+            <CardTitle>Flashcards</CardTitle>
+            <div className="mt-3">
+              <CardProgress data={cardStats} />
+            </div>
           </Card>
 
           <Card>

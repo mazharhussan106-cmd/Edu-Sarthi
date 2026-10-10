@@ -15,13 +15,20 @@ import type { Theme } from "@prisma/client";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Switch } from "@/components/ui/Switch";
 import { attrFromTheme, THEMES } from "@/lib/theme";
+import { TEXT_SIZES, type TextSize } from "@/lib/textSize";
+import { NEW_PER_DAY_OPTIONS } from "@/lib/preferences";
 
 const THEME_OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
 export type PreferenceState = {
   emailOnAudit: boolean;
   autoplayAudit: boolean;
-  largerText: boolean;
+  textSize: TextSize;
+  newPerDay: number;
+  emailReminder: boolean;
+  dataSaver: boolean;
+  hideHindi: boolean;
+  autoSpeak: boolean;
 };
 
 export function SettingsForm({
@@ -60,7 +67,7 @@ export function SettingsForm({
     }
   }
 
-  async function savePreference(key: keyof PreferenceState, value: boolean) {
+  async function savePreference(key: keyof PreferenceState, value: boolean | string | number) {
     setPrefs((p) => ({ ...p, [key]: value }));
     setNotice(null);
 
@@ -88,10 +95,16 @@ export function SettingsForm({
 
       <div className="mt-2 divide-y divide-border border-t border-border">
         <Switch
-          label="Email me when an audit arrives"
-          description="One email per audit. Nothing else is sent to you."
+          label="Email me when a teacher returns my audit"
+          description="One email per audit, with a link. The scores stay behind sign-in."
           checked={prefs.emailOnAudit}
           onCheckedChange={(v) => void savePreference("emailOnAudit", v)}
+        />
+        <Switch
+          label="Daily flashcard reminder email"
+          description="One email around 7 pm India time, only on days when cards are due. The time is fixed for now."
+          checked={prefs.emailReminder}
+          onCheckedChange={(v) => void savePreference("emailReminder", v)}
         />
         <Switch
           label="Start playing when I open an audit"
@@ -100,10 +113,57 @@ export function SettingsForm({
           onCheckedChange={(v) => void savePreference("autoplayAudit", v)}
         />
         <Switch
-          label="Larger text"
-          description="Increases body text across the site."
-          checked={prefs.largerText}
-          onCheckedChange={(v) => void savePreference("largerText", v)}
+          label="Data saver for recordings"
+          description="New recordings are made at lower quality so they upload faster on slow data. Playback is not changed."
+          checked={prefs.dataSaver}
+          onCheckedChange={(v) => {
+            if (v) document.documentElement.setAttribute("data-saver", "on");
+            else document.documentElement.removeAttribute("data-saver");
+            void savePreference("dataSaver", v);
+          }}
+        />
+        <Switch
+          label="Hide Hindi meanings on cards"
+          description="Hides the Hindi boxes so you think in English. The Hindi to English practice question stays."
+          checked={prefs.hideHindi}
+          onCheckedChange={(v) => {
+            // Applied now, like the text size, then saved.
+            if (v) document.documentElement.setAttribute("data-hindi", "off");
+            else document.documentElement.removeAttribute("data-hindi");
+            void savePreference("hideHindi", v);
+          }}
+        />
+        <Switch
+          label="Say each word when its card opens"
+          description="Off by default. Uses the recording, or your phone's Indian English voice."
+          checked={prefs.autoSpeak}
+          onCheckedChange={(v) => void savePreference("autoSpeak", v)}
+        />
+      </div>
+
+      <div className="mt-4 border-t border-border pt-4">
+        <SegmentedControl
+          label="Text size"
+          description="A− smaller, A normal, A+ larger. Cards get a larger minimum size too."
+          options={TEXT_SIZES}
+          value={prefs.textSize}
+          onValueChange={(v) => {
+            // Applied to the live page first, like the theme, so the change is
+            // visible under the finger before the save returns.
+            if (v === "normal") document.documentElement.removeAttribute("data-text");
+            else document.documentElement.setAttribute("data-text", v);
+            void savePreference("textSize", v);
+          }}
+        />
+      </div>
+
+      <div className="mt-4 border-t border-border pt-4">
+        <SegmentedControl
+          label="New cards per day"
+          description="How many new flashcards you learn each day, on top of the ones due for review. Takes effect on your next card."
+          options={NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: String(n) }))}
+          value={String(prefs.newPerDay)}
+          onValueChange={(v) => void savePreference("newPerDay", Number(v))}
         />
       </div>
 

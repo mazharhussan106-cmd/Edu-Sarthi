@@ -14,3 +14,42 @@ export const STUDENT_LINKS: readonly NavLink[] = [
   { href: "/class", label: "Class" },
   { href: "/profile", label: "Profile" },
 ];
+
+export type MenuGroup = { heading: string; items: readonly NavLink[] };
+
+/// The menu (hamburger) sections, below the primary links. Kept apart from
+/// STUDENT_LINKS so the bottom bar and header row stay at five destinations;
+/// everything else lives one tap away here.
+export const STUDENT_MORE: readonly MenuGroup[] = [
+  {
+    heading: "Study",
+    items: [
+      { href: "/modules", label: "Practice modules" },
+      { href: "/decks", label: "My decks" },
+      { href: "/library", label: "Library" },
+      { href: "/institute", label: "Institute" },
+    ],
+  },
+  {
+    heading: "You",
+    items: [
+      { href: "/progress", label: "Progress and reports" },
+      { href: "/settings", label: "Settings" },
+    ],
+  },
+  {
+    heading: "Help",
+    items: [
+      { href: "/help", label: "Help and FAQ" },
+      { href: "/support", label: "Contact support" },
+    ],
+  },
+  {
+    heading: "About",
+    items: [
+      { href: "/about", label: "About EduSarthi" },
+      { href: "/legal/terms", label: "Terms" },
+      { href: "/legal/privacy", label: "Privacy" },
+    ],
+  },
+];

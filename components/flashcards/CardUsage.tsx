@@ -28,14 +28,14 @@ const EDGE: Record<Tone, string> = {
   teal: "border-tag-teal/35", amber: "border-tag-amber/35", navy: "border-tag-navy/35",
 };
 
-function Box({ tone, children, cols = 1 }: { tone: Tone; children: ReactNode; cols?: 1 | 2 }) {
+function Box({ tone, children, cols = 1 }: { tone: Tone; children: ReactNode; cols?: 1 | 2 | 3 }) {
   return (
     <div
       className={cn(
-        "rounded-[0.6em] border-[1.3px]",
+        "overflow-hidden rounded-[0.6em] border-[1.3px]",
         EDGE[tone],
-        cols === 2
-          ? "grid grid-cols-2 [&>*+*]:border-l [&>*+*]:border-border"
+        cols === 2 || cols === 3
+          ? cn("grid [&>*+*]:border-l [&>*+*]:border-border", cols === 2 ? "grid-cols-2" : "grid-cols-3")
           : "[&>*+*]:border-t [&>*+*]:border-dashed [&>*+*]:border-border",
       )}
     >
@@ -47,9 +47,10 @@ function Box({ tone, children, cols = 1 }: { tone: Tone; children: ReactNode; co
 function Field({ tone, label, children }: { tone: Tone; label: string; children?: ReactNode }) {
   if (!children) return null;
   return (
-    <div className="px-[0.6em] py-[0.35em]">
-      <p className={cn("text-[0.72em] font-bold", TEXT[tone])}>{label}</p>
-      <div className="text-[0.78em] leading-snug text-ink">{children}</div>
+    // data-hindi lets the "Hide Hindi meanings" setting hide this box by CSS.
+    <div data-hindi={label.startsWith("Hindi") ? "" : undefined} className="px-[0.6em] py-[0.35em]">
+      <p className={cn("text-[0.8em] font-bold", TEXT[tone])}>{label}</p>
+      <div className="text-[0.9em] leading-snug text-ink">{children}</div>
     </div>
   );
 }
@@ -122,19 +123,16 @@ export function CardUsage({ d }: { d: WordDetails }) {
         <Field tone="teal" label="Prefix / Root / Suffix">{d.prefix_root_suffix}</Field>
       </Box>
 
-      <Box tone="blue" cols={2}>
+      <Box tone="blue" cols={3}>
         <Field tone="green" label="Where It’s Used"><Items raw={d.where_it_s_used} /></Field>
         <Field tone="blue" label="Register & Tone">{tone.length ? tone.map((t) => <p key={t}>{t}</p>) : null}</Field>
-      </Box>
-
-      <div className="flex items-end justify-between">
-        <p className="text-[0.62em] text-ink-muted">tap = turn over · pinch = zoom</p>
         {/* "Please turn over": the owner asked for a visible sign that a
-            third side follows. */}
-        <span className="rounded-tl-[0.8em] bg-saffron/25 px-[0.6em] py-[0.25em] font-display text-[0.7em] font-extrabold text-tag-saffron">
-          PTO ↻
-        </span>
-      </div>
+            third side follows, now a box of its own in this row. */}
+        <div className="flex flex-col items-center justify-center bg-saffron/25 px-[0.4em] py-[0.35em] text-center">
+          <span className="font-display text-[0.9em] font-extrabold text-tag-saffron">PTO ↻</span>
+          <span className="text-[0.6em] text-ink-muted">tap = turn · pinch = zoom</span>
+        </div>
+      </Box>
     </div>
   );
 }

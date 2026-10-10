@@ -1,13 +1,12 @@
-// Owns the top of the Flashcard tab: the search box, then one scrolling row
+// Owns the top of the Flashcard tab: one scrolling row
 // with the card kinds (Words, Chunk, Grammar), the "skipped" chip, the
 // student's remark lists and today's counts; on the Chunk tab, a second row
 // with the chunk types (Frames, Prepositions, …).
 //
-// Kept to as few short rows as possible so the card gets most of a phone
+// Search moved to the header (HeaderSearch). Kept to as few short rows as possible so the card gets most of a phone
 // screen. A server component: it only links, it never fetches.
 
 import Link from "next/link";
-import { Search } from "lucide-react";
 
 import { CHUNK_TYPES } from "@/lib/chunkCard";
 import { cn } from "@/lib/utils";
@@ -34,7 +33,6 @@ const chip = "shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium";
 export function DeckTopBar({
   k,
   type,
-  q,
   list,
   base,
   skipCount,
@@ -43,7 +41,6 @@ export function DeckTopBar({
 }: {
   k: DeckKind;
   type: string | null;
-  q: string;
   list: ListKey | undefined;
   base: string;
   skipCount: number;
@@ -52,22 +49,7 @@ export function DeckTopBar({
 }) {
   return (
     <>
-      <form action="/flashcards" className="relative">
-        <input type="hidden" name="kind" value={k.value} />
-        {type ? <input type="hidden" name="type" value={type} /> : null}
-        <label htmlFor="card-search" className="sr-only">Search {k.noun}s</label>
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist" aria-hidden="true" />
-        <input
-          id="card-search"
-          name="q"
-          type="search"
-          defaultValue={q}
-          placeholder={`Search a ${k.noun} or ID`}
-          className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
-        />
-      </form>
-
-      <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
         <nav aria-label="Card kind" className="flex shrink-0 gap-1.5">
           {DECK_KINDS.map((x) => (
             <Link

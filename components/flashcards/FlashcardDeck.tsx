@@ -56,6 +56,7 @@ export function FlashcardDeck({
   skip,
   cardColor,
   chunk,
+  autoSpeak = false,
   tallTop = false,
 }: {
   word: DeckWord;
@@ -68,6 +69,8 @@ export function FlashcardDeck({
   chunk?: ChunkExtras;
   /** The Chunk tab has one more row of chips above the card. */
   tallTop?: boolean;
+  /** Say the word when each card opens (a setting, off by default). */
+  autoSpeak?: boolean;
 }) {
   const router = useRouter();
   const [side, setSide] = useState<0 | 1 | 2>(0);
@@ -104,6 +107,15 @@ export function FlashcardDeck({
     synth.cancel();
     synth.speak(u);
   }
+
+  // Browsers only let a page speak after the student has touched it, so the
+  // very first card after a fresh load may stay silent; every later card, which
+  // follows a tap on Known / Unknown, speaks.
+  useEffect(() => {
+    if (autoSpeak) speak();
+    // speak() is rebuilt each render; the card changing is the only trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word.code, autoSpeak]);
 
   async function mark(known: boolean) {
     setBusy(true);

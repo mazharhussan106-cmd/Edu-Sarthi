@@ -14,6 +14,7 @@ import { Mic, Square, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { baseType, extensionFor, pickRecordingType, readDuration } from "@/lib/media";
+import { SAVER_BITRATE, SAVER_VIDEO } from "@/lib/dataSaver";
 
 type State = "idle" | "recording" | "done";
 
@@ -123,10 +124,14 @@ export function Recorder({
       return;
     }
 
+    // Read from <html> at the moment of recording, so a change made in
+    // Settings applies to the very next take without a reload.
+    const saver = document.documentElement.dataset.saver === "on";
+
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia(
-        kind === "VIDEO" ? { audio: true, video: true } : { audio: true },
+        kind === "VIDEO" ? { audio: true, video: saver ? SAVER_VIDEO : true } : { audio: true },
       );
     } catch (err) {
       // Denial is the common case and is not an error worth logging. The
@@ -147,7 +152,7 @@ export function Recorder({
     streamRef.current = stream;
     chunksRef.current = [];
 
-    const recorder = new MediaRecorder(stream, { mimeType });
+    const recorder = new MediaRecorder(stream, saver ? { mimeType, ...SAVER_BITRATE } : { mimeType });
     recorderRef.current = recorder;
 
     recorder.ondataavailable = (e) => {

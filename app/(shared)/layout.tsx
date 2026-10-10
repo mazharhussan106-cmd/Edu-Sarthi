@@ -14,7 +14,8 @@ import { Footer } from "@/components/layout/Footer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
 import { staffNav } from "@/lib/staffNav";
 import { BottomNav } from "@/components/layout/BottomNav";
-import { STUDENT_LINKS } from "@/lib/studentNav";
+import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { STUDENT_LINKS, STUDENT_MORE } from "@/lib/studentNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 
 export default async function SharedLayout({
@@ -32,6 +33,8 @@ export default async function SharedLayout({
       <StickyHeader
         links={isTeacher ? staffNav(session?.user?.role).links : STUDENT_LINKS}
         theme={theme}
+        search={isTeacher ? undefined : <HeaderSearch />}
+        more={isTeacher ? undefined : STUDENT_MORE}
         homeHref={isTeacher ? staffNav(session?.user?.role).home : "/dashboard"}
       />
       <div className="flex-1">{children}</div>

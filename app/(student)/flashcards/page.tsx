@@ -17,7 +17,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
 import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/chunkCard";
-import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { prefsOf } from "@/lib/preferences";
 import { chunkExtras, deckCounts, nextCardId, PRACTICE_TITLE, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
 import { ComingSoon, DeckDone, DeckResults } from "@/components/flashcards/DeckMessages";
@@ -47,10 +47,10 @@ export default async function FlashcardsPage({
   const type = k.kind === "CHUNK" && isChunkType(sp.type) ? sp.type : null;
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { preferences: true } });
-  // Read loosely: a stored value this version no longer offers falls back to
-  // its default instead of throwing away the student's other settings.
-  const prefs = PREFERENCE_SCHEMA.partial().safeParse(user?.preferences ?? {});
-  const cardColor = (prefs.success && prefs.data.cardColor) || DEFAULT_PREFERENCES.cardColor;
+  // Each key is read on its own: a stored value this version no longer offers
+  // falls back to its default without throwing away the other settings.
+  const prefs = prefsOf(user?.preferences);
+  const { cardColor, newPerDay } = prefs;
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
@@ -58,7 +58,7 @@ export default async function FlashcardsPage({
   const withMore = sp.more === "1" ? `${base}&more=1` : base;
   const skip = parseSkip(sp.skip);
   const deck = { kind: k.kind, category: type ?? undefined };
-  const counts = k.ready ? await deckCounts(userId, deck) : null;
+  const counts = k.ready ? await deckCounts(userId, deck, newPerDay) : null;
 
   let body: React.ReactNode;
   if (!k.ready) {
@@ -85,7 +85,7 @@ export default async function FlashcardsPage({
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
   } else {
-    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip));
+    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip, newPerDay));
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
 
     if (!word) {
@@ -94,6 +94,7 @@ export default async function FlashcardsPage({
           skipCount={skip.length}
           allSeen={!!counts && counts.known >= counts.total}
           noun={k.noun}
+          newPerDay={newPerDay}
           skipHref={withMore}
           moreHref={`${base}&more=1`}
         />
@@ -127,6 +128,7 @@ export default async function FlashcardsPage({
             skip={skip}
             cardColor={cardColor}
             tallTop={k.kind === "CHUNK"}
+            autoSpeak={prefs.autoSpeak}
             chunk={
               extras
                 ? {
@@ -148,7 +150,6 @@ export default async function FlashcardsPage({
       <DeckTopBar
         k={k}
         type={type}
-        q={q}
         list={list}
         base={base}
         skipCount={skip.length}

@@ -13,13 +13,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Theme } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { NavLinks, type NavLink } from "@/components/layout/NavLinks";
 import { SettingsMenu } from "@/components/layout/SettingsMenu";
+import type { MenuGroup } from "@/lib/studentNav";
 
 const MERGE_QUERY = "(min-width: 1400px)";
 const COLLAPSE_AFTER_PX = 24;
@@ -27,11 +28,15 @@ const COLLAPSE_AFTER_PX = 24;
 export function StickyHeader({
   links,
   stats,
+  search,
+  more,
   theme,
   homeHref,
 }: {
   links: readonly NavLink[];
   stats?: ReactNode;
+  search?: ReactNode;
+  more?: readonly MenuGroup[];
   theme: Theme;
   homeHref: string;
 }) {
@@ -99,6 +104,11 @@ export function StickyHeader({
             EduSarthi
           </Link>
 
+          {/* Right after the name, ahead of the nav and the actions. Passed
+              in (a server-rendered node) so only roles that want search get
+              it, and the Suspense is required by useSearchParams inside. */}
+          {search ? <Suspense fallback={<div className="flex-1" />}>{search}</Suspense> : null}
+
           <NavLinks links={links} className="hidden md:flex" />
 
           {/* Above 1400px the stats slot into row 1 between the nav and the
@@ -106,12 +116,12 @@ export function StickyHeader({
           {merged && stats ? (
             <div className="ml-auto flex items-center gap-6">{stats}</div>
           ) : (
-            <div className="ml-auto" />
+            <div className={search ? "" : "ml-auto"} />
           )}
 
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <SettingsMenu initialTheme={theme} />
-            <MobileMenu links={links} />
+            <MobileMenu links={links} more={more} />
           </div>
         </div>
 

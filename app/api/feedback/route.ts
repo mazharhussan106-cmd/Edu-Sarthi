@@ -14,6 +14,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { claimSchema, feedbackSchema, holdSchema, returnSchema } from "@/lib/validations";
 import { queueScope, releaseExpiredClaims } from "@/lib/claims";
+import { notifyAuditReady } from "@/lib/notify";
 
 class ClaimLost extends Error {}
 
@@ -208,6 +209,10 @@ export async function POST(req: Request) {
       { status: 500 },
     );
   }
+
+  // After the transaction, not inside it: an email is not part of what must
+  // commit together, and a slow mail server would hold the database open.
+  await notifyAuditReady(submissionId, req);
 
   return NextResponse.json({ ok: true });
 }

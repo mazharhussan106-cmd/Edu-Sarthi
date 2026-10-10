@@ -21,6 +21,7 @@ export const PREFERENCE_SCHEMA = z.object({
   textSize: z.enum(TEXT_SIZE_VALUES),
   cardColor: z.enum(CARD_COLOR_VALUES),
   newPerDay: z.number().int().min(5).max(50),
+  emailReminder: z.boolean(),
   hideHindi: z.boolean(),
   autoSpeak: z.boolean(),
 });
@@ -33,6 +34,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   textSize: "normal",
   cardColor: "plain" as CardColor,
   newPerDay: 10,
+  // Off until the student opts in: nobody gets a daily email they never asked for.
+  emailReminder: false,
   hideHindi: false,
   // Off by default for the same reason as autoplayAudit: a phone that speaks
   // on every card is a surprise on a bus.

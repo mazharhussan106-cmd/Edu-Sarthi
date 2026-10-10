@@ -25,6 +25,7 @@ export type PreferenceState = {
   autoplayAudit: boolean;
   textSize: TextSize;
   newPerDay: number;
+  emailReminder: boolean;
   hideHindi: boolean;
   autoSpeak: boolean;
 };
@@ -93,10 +94,16 @@ export function SettingsForm({
 
       <div className="mt-2 divide-y divide-border border-t border-border">
         <Switch
-          label="Email me when an audit arrives"
-          description="One email per audit. Nothing else is sent to you."
+          label="Email me when a teacher returns my audit"
+          description="One email per audit, with a link. The scores stay behind sign-in."
           checked={prefs.emailOnAudit}
           onCheckedChange={(v) => void savePreference("emailOnAudit", v)}
+        />
+        <Switch
+          label="Daily flashcard reminder email"
+          description="One email around 7 pm India time, only on days when cards are due. The time is fixed for now."
+          checked={prefs.emailReminder}
+          onCheckedChange={(v) => void savePreference("emailReminder", v)}
         />
         <Switch
           label="Start playing when I open an audit"

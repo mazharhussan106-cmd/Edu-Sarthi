@@ -101,3 +101,21 @@ export async function sendDeckDecision(to: string, title: string, outcome: "appr
   const html = `<p>${headline}.</p>${reason ? `<p><b>Reviewer’s note:</b> ${reason.replace(/[<>&]/g, " ")}</p>` : ""}<p>${next}</p>`;
   await send(to, headline, text, html);
 }
+
+/// Tells a student their recording has been audited. Links to the audit, never
+/// quotes it: scores and notes stay behind sign-in.
+export async function sendAuditReady(to: string, url: string) {
+  const subject = "Your teacher has returned your audit";
+  const text = `Your teacher has audited your recording.\n\nOpen it here: ${url}\n\nYou get this email because "Email me when an audit arrives" is on in Settings. You can switch it off there.`;
+  const html = `<p>Your teacher has audited your recording.</p><p><a href="${url}">Open your audit</a></p><p style="color:#666;font-size:12px">You get this email because “Email me when an audit arrives” is on in Settings. You can switch it off there.</p>`;
+  await send(to, subject, text, html);
+}
+
+/// The once-a-day study nudge. Only sent when cards are actually due, so it is
+/// never a "come back" email with nothing behind it.
+export async function sendStudyReminder(to: string, due: number, url: string) {
+  const subject = `${due} flashcard${due === 1 ? " is" : "s are"} due for review today`;
+  const text = `${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.\n\nStart here: ${url}\n\nYou get this email because the daily reminder is on in Settings. You can switch it off there.`;
+  const html = `<p>${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.</p><p><a href="${url}">Start reviewing</a></p><p style="color:#666;font-size:12px">You get this email because the daily reminder is on in Settings. You can switch it off there.</p>`;
+  await send(to, subject, text, html);
+}

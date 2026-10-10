@@ -12,6 +12,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyCodeSchema } from "@/lib/validations";
 import { issueVerificationCode, verifyCode } from "@/lib/verification";
+import { isRevoked } from "@/lib/activeUser";
 import { sendVerificationCode } from "@/lib/email";
 
 const bodySchema = z.discriminatedUnion("action", [
@@ -26,6 +27,12 @@ export async function POST(req: Request) {
       { error: "Your session has expired. Please sign in again." },
       { status: 401 },
     );
+  }
+
+  // Same revocation rule as every other route that reads auth() directly.
+  const account = await prisma.user.findUnique({ where: { id: session.user.id }, select: { sessionsValidFrom: true } });
+  if (isRevoked(session.user.loginAt, account?.sessionsValidFrom ?? null)) {
+    return NextResponse.json({ error: "You were signed out of all devices. Sign in again." }, { status: 401 });
   }
 
   let body: unknown;

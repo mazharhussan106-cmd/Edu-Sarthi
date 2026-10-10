@@ -90,15 +90,15 @@ export function FlashcardDeck({
     if (h[h.length - 1] !== word.code) writeHistory([...h, word.code]);
   }, [word.code]);
 
-  function speak() {
+  function speak(quiet = false) {
     if (word.audioUrl) {
-      void new Audio(word.audioUrl).play().catch(() => setMessage("The recording would not play. Check the volume and try again."));
+      void new Audio(word.audioUrl).play().catch(() => quiet || setMessage("The recording would not play. Check the volume and try again."));
       return;
     }
     // The phone's own voice until recorded audio exists. Indian English
     // first, so the model matches what students hear around them.
     const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
-    if (!synth) return setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
+    if (!synth) return quiet || setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
     const u = new SpeechSynthesisUtterance(chunk ? sayable(word.text) : word.text);
     const voices = synth.getVoices();
     u.voice = voices.find((v) => v.lang === "en-IN") ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
@@ -112,7 +112,8 @@ export function FlashcardDeck({
   // very first card after a fresh load may stay silent; every later card, which
   // follows a tap on Known / Unknown, speaks.
   useEffect(() => {
-    if (autoSpeak) speak();
+    // Quiet: an automatic attempt that fails should not put an error on every card.
+    if (autoSpeak) speak(true);
     // speak() is rebuilt each render; the card changing is the only trigger.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word.code, autoSpeak]);
@@ -166,7 +167,7 @@ export function FlashcardDeck({
     stage: state.stage,
     dueLabel: state.dueAt ? describeDue(new Date(state.dueAt)) : null,
     recordHref,
-    onSpeak: speak,
+    onSpeak: () => speak(),
     backToFront: (
       <button type="button" onClick={() => setSide(0)} className="self-center rounded-full px-3 py-1 text-xs text-ink-muted hover:bg-hover">
         ↻ Back to the front

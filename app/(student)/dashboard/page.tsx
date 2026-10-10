@@ -23,6 +23,8 @@ import { deckCounts } from "@/lib/flashcards";
 import { nextAction } from "@/lib/dashboardNext";
 import { newPerDayOf } from "@/lib/preferences";
 import { cardProgress, criteriaChange, weeklyActivity } from "@/lib/studentStats";
+import { NoticesCard } from "@/components/dashboard/NoticesCard";
+import { activeNotices } from "@/lib/notices";
 import { InFlightCard } from "@/components/dashboard/InFlightCard";
 import { LatestAudit } from "@/components/dashboard/LatestAudit";
 import { WhatToWorkOn } from "@/components/dashboard/WhatToWorkOn";
@@ -121,7 +123,11 @@ export default async function DashboardPage() {
   const cards = await deckCounts(studentId!, { kind: "WORD" }, newPerDayOf(prefRow?.preferences));
 
   // Independent of everything above, so they run together.
-  const [activity, cardStats] = await Promise.all([weeklyActivity(studentId!), cardProgress(studentId!)]);
+  const [activity, cardStats, notices] = await Promise.all([
+    weeklyActivity(studentId!),
+    cardProgress(studentId!),
+    activeNotices(),
+  ]);
 
   const dates = recent.map((r) => r.createdAt);
   const streak = streakDays(dates);
@@ -178,6 +184,7 @@ export default async function DashboardPage() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_280px]">
         <div className="flex flex-col gap-4">
+          <NoticesCard notices={notices} />
           <InFlightCard items={inFlight} />
 
           <Card>

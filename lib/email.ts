@@ -27,7 +27,21 @@ async function send(to: string, subject: string, text: string, html: string) {
     return;
   }
 
-  await sgMail.send({ to, from: FROM, subject, text, html });
+  try {
+    await sgMail.send({ to, from: FROM, subject, text, html });
+  } catch (err) {
+    // Callers swallow this and show a generic "could not send" message, so
+    // without a log line the real reason (unverified sender, revoked key, daily
+    // limit) is invisible in Vercel. Status and SendGrid's own messages only —
+    // never the key, and never the recipient.
+    const e = err as { code?: number; response?: { body?: { errors?: { message?: string }[] } } };
+    console.error(
+      "SendGrid send failed",
+      e.code,
+      e.response?.body?.errors?.map((x) => x.message).join(" | "),
+    );
+    throw err;
+  }
 }
 
 export async function sendVerificationCode(to: string, code: string) {

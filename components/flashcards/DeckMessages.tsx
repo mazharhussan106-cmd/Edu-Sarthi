@@ -5,7 +5,6 @@
 import Link from "next/link";
 
 import { Card } from "@/components/ui/Card";
-import { NEW_PER_DAY } from "@/lib/srs";
 
 export type ResultRow = { code: string; text: string; gloss: string; meta: string };
 
@@ -52,10 +51,12 @@ export function DeckDone({
   skipCount,
   allSeen,
   noun,
+  newPerDay,
   skipHref,
   moreHref,
 }: {
   skipCount: number;
+  newPerDay: number;
   allSeen: boolean;
   noun: string;
   skipHref: string;
@@ -69,7 +70,7 @@ export function DeckDone({
       <p className="mt-1 text-sm text-ink-muted">
         {skipCount
           ? `You skipped ${skipCount} card${skipCount === 1 ? "" : "s"} with ›. Go through them now, or come back later.`
-          : `No reviews are due and today’s ${NEW_PER_DAY} new ${noun}s are done. Coming back tomorrow is what makes them stick.`}
+          : `No reviews are due and today’s ${newPerDay} new ${noun}s are done. Coming back tomorrow is what makes them stick.`}
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         {skipCount ? (

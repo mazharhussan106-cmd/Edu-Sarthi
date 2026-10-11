@@ -15,7 +15,9 @@
 
 import { useLayoutEffect, useState, type RefObject } from "react";
 
-const MIN_PX = 8;
+import { cardFloorScale } from "@/lib/textSize";
+
+const DEFAULT_MIN_PX = 8;
 const MAX_PX = 17;
 
 export function useFitFont(
@@ -23,6 +25,9 @@ export function useFitFont(
   content: RefObject<HTMLElement | null>,
   active: boolean,
   key: unknown,
+  // Side 2 is dense; letting it shrink to 8px made it unreadable, so it asks
+  // for a higher floor and scrolls instead of shrinking further.
+  minPx: number = DEFAULT_MIN_PX,
 ): { overflow: boolean } {
   const [overflow, setOverflow] = useState(false);
 
@@ -40,13 +45,17 @@ export function useFitFont(
 
     function fit() {
       if (!b || !c) return;
+      // Read at fit time, not render time: the attribute is on <html>, outside
+      // React, and changes with the setting.
+      const scale = cardFloorScale(document.documentElement.dataset.text);
+      const floor = minPx * scale;
       const fits = (px: number) => {
         c.style.fontSize = `${px}px`;
         return c.scrollHeight <= b.clientHeight;
       };
-      if (fits(MAX_PX)) return setOverflow(false);
-      let lo = MIN_PX;
-      let hi = MAX_PX;
+      if (fits(MAX_PX * scale)) return setOverflow(false);
+      let lo = floor;
+      let hi = MAX_PX * scale;
       // Seven halvings get within 0.1px, finer than a phone can render.
       for (let i = 0; i < 7; i++) {
         const mid = (lo + hi) / 2;
@@ -63,7 +72,7 @@ export function useFitFont(
     ro.observe(b);
     void document.fonts?.ready.then(fit);
     return () => ro.disconnect();
-  }, [box, content, active, key]);
+  }, [box, content, active, key, minPx]);
 
   return { overflow };
 }

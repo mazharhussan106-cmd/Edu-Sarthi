@@ -1,0 +1,52 @@
+# Loads the subject flashcard decks in content/fde-flashcards (Linux, Docker,
+# GitHub, Power BI, LLM APIs and the rest — 20 decks) into the live library,
+# so they show on the Explore page grouped by subject:
+#   Actions → "Load flashcard decks" → Run workflow.
+#
+# It runs prisma/import-decks.ts, which does exactly what Admin → Import does
+# for each workbook. Safe to run again after a workbook changes: decks are found
+# by title and cards by ID, so nothing is duplicated and students keep their
+# progress.
+#
+# It deliberately does NOT change the tables — run "Database setup" first on a
+# new database. The decks belong to the site admin: set the repository variable
+# ADMIN_EMAIL (Settings → Secrets and variables → Actions → Variables) to pick
+# which admin, or leave it unset to use the oldest admin account.
+
+name: Load flashcard decks
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: database-setup
+  cancel-in-progress: false
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      ADMIN_EMAIL: ${{ vars.ADMIN_EMAIL }}
+    steps:
+      - name: Check the secrets are set
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$DIRECT_URL" ]; then
+            echo "::error::Add DATABASE_URL and DIRECT_URL under Settings → Secrets and variables → Actions, then run this again."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Load the decks
+        run: npx tsx prisma/import-decks.ts

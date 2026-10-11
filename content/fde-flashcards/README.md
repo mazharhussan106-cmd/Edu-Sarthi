@@ -2,7 +2,7 @@
 
 Owns: the card source text and the final, audited Excel workbook for the 16
 Forward Deployed Engineer decks plus the earlier GitHub (`en`), Power BI (`pbi`),
-API Integration (`api`) and Supabase (`sup`) decks — 20 decks, 876 cards.
+API Integration (`api`) and Supabase (`sup`) decks — 20 decks, 884 cards.
 Does not own: the app's import code (see `lib/xlsxImport.ts`) or the Python and
 SQL decks from earlier chats, which are not in this repository.
 

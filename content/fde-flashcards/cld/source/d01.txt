@@ -1,0 +1,252 @@
+deck.title: Cloud Basics – Beginner to Advanced Flashcards
+deck.subject: Cloud computing (AWS first, Azure and GCP mapped)
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: cloud
+type: topic56
+
+@CLD-001
+topic: 01 Basics
+level: Beginner
+term: IaaS, PaaS and SaaS
+cue: Which three service models differ in how much of the stack you manage yourself?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Companies wanted to rent computing instead of buying it, and providers offered it at different levels of finished product, from raw servers to complete applications.
+pro_tip: Ask who patches the operating system. That one question tells you which model you are in.
+memory_story: IaaS is renting an empty kitchen, PaaS is renting a kitchen with a chef's tools set up, and SaaS is ordering the finished meal.
+visual: A layered stack where the shaded part you manage shrinks from IaaS to SaaS.
+emotion: The relief of handing the boring maintenance to someone else.
+definition: IaaS rents virtual infrastructure such as servers and networks, PaaS rents a platform for running your code without managing servers, and SaaS delivers a finished application over the internet.
+explanation: With IaaS, such as AWS EC2, you manage the operating system and everything above it. With PaaS, such as Elastic Beanstalk, App Service or App Engine, you deploy code and the provider runs the servers. With SaaS, such as Gmail or Salesforce, you only use the product. The more the provider manages, the less control and the less work you have.
+simple_explain: IaaS gives you servers, PaaS gives you a place to run code, SaaS gives you the finished app. Each step hands more work to the provider.
+analogy: IaaS is an empty rented kitchen, PaaS is a kitchen with tools ready, and SaaS is a meal delivered to your table.
+formula_rule: More provider management = less control for you, and less work for you.
+example_1: Launching an EC2 virtual machine and installing your own web server on it.
+example_2: Deploying a Python app to a platform service that handles servers for you.
+example_3: Using a hosted email service through a web browser.
+related: cloud vs on-premises, shared responsibility, virtual machines
+word_family: infrastructure, platform, software, service, managed
+where_used: Choosing hosting | Planning budgets | Customer architecture talks
+mini_conversation: A: Do we patch the operating system ourselves? | B: Only if we pick IaaS. A platform service patches it for us.
+misconception: ✗ SaaS and PaaS are the same because both are managed → ✓ PaaS runs your code, while SaaS is a finished product you simply use
+contrast: IaaS vs PaaS: with IaaS you manage the operating system, with PaaS you only manage your code and data.
+avoid: Do not choose IaaS only for control if nobody on the team wants to patch servers.
+memory_trick: Infrastructure, platform, software, each hands over more.
+real_project: Moving a customer script from a rented server to a managed platform to avoid patching work.
+real_interview: An interviewer may ask: What is the difference between IaaS, PaaS and SaaS?
+real_daily: It is like cooking in a rented kitchen versus ordering delivery.
+mcq_question: Which model leaves you managing the operating system?
+mcq_options: A) SaaS B) None of them C) IaaS D) PaaS
+mcq_answer: C
+mcq_why: IaaS gives you virtual hardware, so everything above it is yours.
+fill_blank: With ____ you only use the finished product through a browser → SaaS
+apply: A team wants to run code without managing any servers. Which model fits? → PaaS
+explain_task: Explain the three service models in three lines.
+own_task: Name one product you use that is SaaS and one service that is IaaS.
+
+@CLD-002
+topic: 01 Basics
+level: Beginner
+term: Regions and availability zones
+cue: Which two ideas describe where in the world your cloud resources physically run, and how they survive a failure?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: One data centre can fail or be far from users, so providers built groups of separate data centres in many parts of the world.
+pro_tip: Spread important services over at least two availability zones in one region.
+memory_story: A region is a city, and availability zones are separate buildings in that city with their own power.
+visual: A map with a region circle and three separate buildings inside it.
+emotion: The comfort of knowing one building failing will not stop your app.
+definition: A region is a geographic area containing several availability zones, and an availability zone is one or more isolated data centres with independent power and networking.
+explanation: Resources are created in a chosen region, such as ap-south-1 in Mumbai. Zones inside a region are connected with fast links, so you can run copies of a service in several zones. Data does not leave a region unless you move it. Azure calls them regions and availability zones, and GCP calls them regions and zones. Not every service exists in every region.
+simple_explain: Pick a region close to your users and rules, and spread copies across zones inside it for resilience.
+analogy: A region is a city, and zones are separate buildings with their own power supply.
+formula_rule: Region = location. Zone = isolated data centre inside it.
+example_1: Running a web server in two zones of Mumbai so one can fail safely.
+example_2: Storing customer data only in a region that meets local law.
+example_3: Choosing a nearby region to reduce latency for users.
+related: disaster recovery, latency, data residency, load balancers
+word_family: region, zone, data centre, latency, resilience
+where_used: Architecture design | Compliance | Cost and speed decisions
+mini_conversation: A: If one data centre burns down, are we down? | B: Not if we run in two zones.
+misconception: ✗ Data automatically copies to every region → ✓ Data stays in the chosen region unless you set up replication
+contrast: Region vs zone: a region is a whole area, a zone is one isolated location inside it.
+avoid: Do not put every copy of a critical service in a single zone.
+memory_trick: Regions are cities, zones are buildings inside.
+real_project: Placing a customer database in a regional location to meet their data residency rule.
+real_interview: An interviewer may ask: How do you make an application survive a data centre failure?
+real_daily: It is like keeping backups in separate buildings of one city.
+mcq_question: What is an availability zone?
+mcq_options: A) An isolated data centre inside a region B) A billing plan C) A country's border D) A type of server
+mcq_answer: A
+mcq_why: Zones have independent power and networking inside one region.
+fill_blank: Data stays in one region unless you configure ____ → replication
+apply: You want a service to survive one building failing. What do you spread across? → Availability zones
+explain_task: Explain regions and zones to a customer in three lines.
+own_task: Find the region closest to you and note two services it offers.
+
+@CLD-003
+topic: 01 Basics
+level: Beginner
+term: Shared responsibility model
+cue: Which model says what the provider secures and what you must secure?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Customers kept assuming the cloud was secured entirely by the provider, so providers published a clear split of duties.
+pro_tip: The provider secures the cloud itself, and you secure what you put in it.
+memory_story: The landlord secures the building, and you lock your own apartment door.
+visual: A line dividing provider duties at the bottom from customer duties at the top.
+emotion: The sobering clarity of knowing which part is yours.
+definition: The shared responsibility model divides security duties, so the provider secures the underlying infrastructure and the customer secures their data, access and configuration.
+explanation: The provider handles buildings, hardware and the virtualisation layer. You handle identity and access, data, encryption choices, network rules and, with IaaS, the operating system. Many cloud breaches come from customer misconfiguration, such as a public storage bucket or an exposed key. The line moves up as you use more managed services.
+simple_explain: The provider protects the cloud, and you protect what you place in it and how you configure it.
+analogy: The landlord secures the building, and you lock your own door.
+formula_rule: Provider = security of the cloud. Customer = security in the cloud.
+example_1: A provider securing the data centre while you set the storage permissions.
+example_2: A leaked access key causing a breach, which is the customer's duty.
+example_3: A managed database where the provider patches the engine but you control who can connect.
+related: IAM, least privilege, encryption, secrets
+word_family: responsibility, security, configuration, compliance, provider
+where_used: Security reviews | Customer questions | Audits
+mini_conversation: A: Is our data safe because we are on AWS? | B: Only if we set permissions and encryption correctly.
+misconception: ✗ The cloud provider secures everything, including my settings → ✓ You remain responsible for access, data and configuration
+contrast: Security of the cloud vs security in the cloud: the first is the provider's job, the second is yours.
+avoid: Do not assume a default setting is safe without checking it.
+memory_trick: Provider secures the cloud, you secure contents.
+real_project: Fixing a public bucket found in a review, which was a customer-side mistake.
+real_interview: An interviewer may ask: Who is responsible when a storage bucket is left public?
+real_daily: It is like the landlord securing the building while you lock your door.
+mcq_question: Who is responsible for who can access your stored data?
+mcq_options: A) The internet B) The provider only C) No one D) The customer
+mcq_answer: D
+mcq_why: Access configuration is on the customer's side of the line.
+fill_blank: The provider secures the cloud, and you secure what is ____ it → in
+apply: A public bucket leaks data. Whose duty was it to prevent it? → The customer's
+explain_task: Explain the shared responsibility model in three lines.
+own_task: List three things you must secure even on a managed database.
+
+@CLD-004
+topic: 01 Basics
+level: Beginner
+term: Pay-as-you-go pricing
+cue: Which pricing idea means you pay for what you use rather than buying equipment upfront?
+category: Core concept
+frequency: High
+importance: 4
+origin: Buying servers meant a large upfront cost and unused capacity, so clouds introduced metered billing by the hour or second.
+pro_tip: Turn off or delete what you are not using, because idle resources keep billing.
+memory_story: Pay-as-you-go is a taxi meter, and buying servers is buying a car.
+visual: A meter ticking next to a running server icon.
+emotion: The freedom of paying only for what you need.
+definition: Pay-as-you-go pricing charges for the resources and time you actually use, with options to commit for a lower price.
+explanation: Compute is often billed per second, storage per gigabyte per month, and data leaving the cloud per gigabyte. Savings plans or reserved capacity give a discount for committing. Spot capacity is cheaper but can be taken back. Free tiers have limits and expire. Forgotten resources are the most common surprise on a bill.
+simple_explain: You are billed for usage, so stop what you do not need and set budget alerts.
+analogy: It is like a taxi meter instead of buying a car.
+formula_rule: Cost = quantity used × price per unit × time.
+example_1: A test server that costs money only while it is switched on.
+example_2: A stored backup billed per gigabyte per month.
+example_3: A discount for committing to steady usage for a year.
+related: cost alerts, tagging, spot instances, cleanup
+word_family: metered, billing, reserved, spot, commitment
+where_used: Budget planning | Cost reviews | Customer estimates
+mini_conversation: A: Why is the bill high? | B: A forgotten test server ran all month.
+misconception: ✗ If I stop using a service it stops costing money → ✓ Resources keep billing until you stop or delete them
+contrast: On-demand vs reserved: on-demand has no commitment, reserved is cheaper for steady use.
+avoid: Do not leave test resources running after a demo.
+memory_trick: Idle resources still ring the meter.
+real_project: Deleting forgotten test resources after a bill alert and saving the monthly budget.
+real_interview: An interviewer may ask: How do you control cloud cost?
+real_daily: It is like a taxi meter that runs until you get out.
+mcq_question: Which is most likely to cause a surprise bill?
+mcq_options: A) A tag B) A forgotten running resource C) A budget alert D) A free tier limit
+mcq_answer: B
+mcq_why: Unused resources keep accumulating charges.
+fill_blank: Capacity that can be taken back at short notice is called ____ capacity → spot
+apply: A demo ended, but the server is still running. What should you do? → Stop or delete it
+explain_task: Explain pay-as-you-go in two lines.
+own_task: Write three habits that stop surprise cloud bills.
+
+@CLD-005
+topic: 01 Basics
+level: Beginner
+term: Cloud vs on-premises
+cue: Which two ways of running servers differ in who owns and maintains the hardware?
+category: Core concept
+frequency: High
+importance: 4
+origin: Organisations once had to own every server, and the cloud offered a rented alternative with different trade-offs.
+pro_tip: Compare on cost over several years, control and rules, not just on price today.
+memory_story: On-premises is owning a house, and the cloud is renting a flat with services included.
+visual: A server room on one side and a cloud icon on the other.
+emotion: The weight lifted when you stop maintaining hardware.
+definition: On-premises means running servers you own in your own location, while cloud means renting computing resources from a provider over the internet.
+explanation: On-premises gives full control and can suit strict rules or steady heavy workloads, but needs upfront cost and staff. Cloud gives fast setup, easy scaling and no hardware to maintain, but ongoing fees and dependence on a provider. Hybrid setups mix both. Many customers keep sensitive systems on-premises and connect them to the cloud.
+simple_explain: Cloud rents capacity on demand, on-premises owns it. Many companies use both.
+analogy: On-premises is owning a house, cloud is renting a flat with services included.
+formula_rule: Own = control and upfront cost. Rent = speed and ongoing cost.
+example_1: A hospital keeping patient records on its own servers.
+example_2: A start-up renting servers for a new product launch.
+example_3: A bank linking its own data centre to a cloud analytics service.
+related: hybrid cloud, regions, compliance, shared responsibility
+word_family: on-premises, hybrid, colocation, capacity, ownership
+where_used: Customer discovery | Migration planning | Architecture reviews
+mini_conversation: A: Why can we not move everything to the cloud? | B: Some data must stay in our own data centre by rule.
+misconception: ✗ The cloud is always cheaper than on-premises → ✓ It depends on usage, because steady heavy loads can cost less on owned hardware
+contrast: Cloud vs on-premises: cloud is flexible and rented, on-premises is owned and controlled.
+avoid: Do not recommend a move without checking rules and total cost.
+memory_trick: Own the house, or rent the flat.
+real_project: Designing a link between a customer's own servers and a cloud analytics service.
+real_interview: An interviewer may ask: When would a customer stay on-premises?
+real_daily: It is like owning a house versus renting a furnished flat.
+mcq_question: What is a hybrid setup?
+mcq_options: A) A mix of on-premises and cloud B) Only cloud C) Only on-premises D) Two clouds only
+mcq_answer: A
+mcq_why: Hybrid combines your own systems with cloud resources.
+fill_blank: Servers you own in your own building are called on-____ → premises
+apply: A customer must keep data in its own building but wants cloud analytics. What setup? → Hybrid
+explain_task: Explain cloud versus on-premises in three lines.
+own_task: List two reasons a customer might keep a system on-premises.
+
+@CLD-006
+topic: 01 Basics
+level: Intermediate
+term: Well-architected ideas
+cue: Which set of design principles guides building cloud systems that are reliable, secure and efficient?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Teams kept repeating the same design mistakes, so providers published checklists of good practice organised into pillars.
+pro_tip: Use the pillars as a review checklist before launching anything for a customer.
+memory_story: The pillars are the supports under a roof, and removing one makes the building lean.
+visual: Six pillars holding up a roof labelled workload.
+emotion: The confidence of a design that was checked against a list.
+definition: Well-architected frameworks are published sets of best-practice pillars, such as operational excellence, security, reliability, performance, cost and sustainability, used to review cloud designs.
+explanation: AWS lists six pillars, and Azure and Google Cloud publish similar frameworks. Each pillar has questions, such as whether backups are tested or access is least privilege. A review finds risks before they become incidents. You do not need perfection in every pillar, but you should make each trade-off on purpose.
+simple_explain: Check the design against reliability, security, cost, performance, operations and sustainability before shipping.
+analogy: The pillars are supports under a roof. Remove one and the building leans.
+formula_rule: Review each pillar and decide the trade-off on purpose.
+example_1: Asking whether a database has tested backups, under reliability.
+example_2: Checking that nothing has more access than it needs, under security.
+example_3: Reviewing monthly spend against budget, under cost.
+related: least privilege, disaster recovery, cost alerts, monitoring
+word_family: pillar, framework, review, trade-off, best practice
+where_used: Design reviews | Launch checks | Customer audits
+mini_conversation: A: Is this design ready to ship? | B: Let us review it against the pillars first.
+misconception: ✗ A well-architected design never fails → ✓ It reduces risk, but failures still happen and must be planned for
+contrast: Pillars vs rules: pillars guide trade-offs, they are not strict laws.
+avoid: Do not skip security or cost review just to launch faster.
+memory_trick: Review every pillar, then choose trade-offs knowingly.
+real_project: Reviewing a customer pipeline against the pillars and finding missing alerts.
+real_interview: An interviewer may ask: What does a well-architected review check?
+real_daily: It is like a checklist for supports under a roof.
+mcq_question: Which is one of the pillars?
+mcq_options: A) Fashion B) Typing speed C) Reliability D) Colour
+mcq_answer: C
+mcq_why: Reliability, security, cost, performance, operations and sustainability are pillars.
+fill_blank: A published checklist of design best practice is called a well-____ framework → architected
+apply: You are about to launch. What do you review the design against? → The framework pillars
+explain_task: Explain the well-architected idea in three lines.
+own_task: Pick two pillars and write one question for each.

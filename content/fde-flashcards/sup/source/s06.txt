@@ -1,0 +1,237 @@
+
+@SUP-035
+type: topic56
+topic: 06 Storage
+level: Beginner
+term: Storage buckets
+cue: In Supabase Storage, what is the top-level container for files, such as one for avatars and one for documents?
+category: Storage concept
+frequency: Very high
+importance: 5
+origin: Files need to be grouped and protected differently, so storage organises them into named buckets, each with its own rules.
+pro_tip: Create separate buckets for public images and private documents, so their rules stay simple.
+memory_story: A bucket is a labelled cupboard, and each file is a folder inside it.
+visual: A cupboard labelled avatars with files and folders inside.
+emotion: The tidiness of keeping files in clearly named places.
+definition: A bucket is a named container in Supabase Storage that holds files and folders and can be public or private.
+explanation: You create buckets in the dashboard or with SQL or the client. Files inside have a path such as user1/avatar.png. Each bucket can have size limits, allowed file types, and a public or private setting. Access to private buckets is controlled by storage policies.
+simple_explain: Make a bucket for each kind of file, like avatars or lesson-audio. Inside it you store files under paths, and choose whether the bucket is public.
+analogy: It is like a labelled cupboard where each file is a folder inside.
+formula_rule: Bucket → folders → files
+example_1: A public bucket named avatars for profile pictures.
+example_2: A private bucket named recordings for student audio.
+example_3: A bucket with a limit on file size.
+related: upload, public vs private buckets, storage policies, signed URLs
+word_family: bucket, object, path, folder, policy
+where_used: Images | Audio and video | Documents
+mini_conversation: A: Where do I keep uploaded images? | B: Create a storage bucket and upload them there.
+misconception: ✗ Buckets are folders inside the database tables → ✓ Buckets are containers in Storage, separate from tables, though their metadata lives in the database
+contrast: Bucket vs folder: a bucket is the top-level container, a folder is a path inside it.
+avoid: Do not mix public and private files in one bucket.
+memory_trick: A bucket is a cupboard for files.
+real_project: Creating a private bucket for all student speaking recordings.
+real_interview: An interviewer may ask: What is a storage bucket?
+real_daily: It is like a labelled cupboard.
+mcq_question: What is the top-level container in Supabase Storage?
+mcq_options: A) Bucket B) Index C) Policy D) Table
+mcq_answer: A
+mcq_why: Files are stored inside buckets.
+fill_blank: A file in a bucket is addressed by its ____ → path
+apply: How would you keep public pictures apart from private documents? → Use separate buckets with different settings
+explain_task: Explain buckets in three lines.
+own_task: List the buckets for an app with avatars, audio and reports.
+
+@SUP-036
+type: code56
+topic: 06 Storage
+level: Beginner
+term: Uploading a file
+cue: Which supabase-js call uploads a file to a bucket under a chosen path?
+kind: JavaScript method
+frequency: Very high
+importance: 5
+origin: Apps need to accept pictures and documents from users, so the storage client uploads a file to a bucket in a single call.
+pro_tip: Put each user's files under a folder named after their user id, so policies can match the folder.
+memory_story: Uploading is posting a parcel into a labelled cupboard at a specific shelf path.
+visual: A file leaving the browser and arriving at a path in a bucket.
+emotion: The pleasure of seeing an uploaded picture appear.
+meaning: storage.from(bucket).upload(path, file) saves a file at the given path in a bucket.
+code: const { data, error } = await supabase.storage¶  .from("avatars")¶  .upload("user-123/avatar.png", file, { upsert: true, contentType: "image/png" });¶if (error) throw error;
+output: The file is saved at user-123/avatar.png in the avatars bucket.
+explanation: By default upload fails if a file already exists at that path, and upsert true replaces it. The path is the object's name, and folders are part of it. The call must pass the bucket's storage policies, so a user may only upload where a policy allows. Always check the error value.
+simple_explain: Choose the bucket, give a path, and pass the file. Use a folder per user and handle errors, since policies may refuse the upload.
+analogy: It is like posting a parcel into a labelled cupboard at a specific shelf path.
+syntax: supabase.storage.from("bucket").upload("path/name.ext", file, options)
+anatomy: from = which bucket | upload = save | path = the object name | options = upsert, contentType
+example_1: await supabase.storage.from("avatars").upload("user-123/avatar.png", file);
+example_2: await supabase.storage.from("recordings").upload(`${userId}/lesson1.webm`, blob);
+example_3: await supabase.storage.from("avatars").remove(["user-123/avatar.png"]);
+variation: { upsert: true }   // replace an existing file¶{ cacheControl: "3600" }   // set caching
+used_with: buckets, storage policies, public URL, signed URL
+related: buckets, storage policies, signed URLs
+alternatives: Uploading through your own server with the service role
+where_used: Profile pictures | Audio uploads | Document submission
+mini_conversation: A: My upload fails because the file already exists. | B: Use upsert true to replace it, or choose a new path.
+misconception: ✗ Anyone can upload to any bucket with the client key → ✓ Uploads must pass storage policies, and without a matching policy they are refused
+confused_with: upload vs update: upload creates a file (or replaces it with upsert), update replaces an existing file.
+avoid: Do not upload without checking the returned error.
+wrong_code: await supabase.storage.upload("avatars", "avatar.png", file);
+right_code: await supabase.storage.from("avatars").upload("user-123/avatar.png", file);
+memory_trick: from picks the bucket, upload picks the path.
+real_project: Letting students upload recordings into their own folder.
+real_interview: An interviewer may ask: How would you restrict who can upload to a bucket?
+real_daily: It is like posting a parcel to a shelf in a cupboard.
+mcq_question: Which part of the chain picks the bucket?
+mcq_options: A) data B) from C) upload D) path
+mcq_answer: B
+mcq_why: from("bucket") selects the bucket.
+fill_blank: await supabase.storage.from("avatars").____("a/b.png", file); → upload
+hindi_to_task: Upload a file to the avatars bucket at user-1/me.png.
+task_answer: await supabase.storage.from("avatars").upload("user-1/me.png", file);
+own_task: Write an upload function that stores a file under the user's folder.
+practice_question: What does upsert true do?
+practice_answer: It replaces a file that already exists at that path.
+
+@SUP-037
+type: topic56
+topic: 06 Storage
+level: Beginner
+term: Public vs private buckets
+cue: Which bucket setting decides whether anyone with the link can open a file or access needs permission?
+category: Storage concept
+frequency: Very high
+importance: 5
+origin: Some files, such as logos, should open for anyone, while others, such as reports, must stay private, so each bucket is either public or private.
+pro_tip: Make a bucket public only when every file in it may be seen by anybody.
+memory_story: A public bucket is a notice board, and a private bucket is a locked cupboard with a guest list.
+visual: A file with an open link on one side and a locked file on the other.
+emotion: The care of deciding who may see a file.
+definition: Files in a public bucket can be fetched by anyone who knows the URL, while files in a private bucket need permission through policies or a signed URL.
+explanation: For public buckets, getPublicUrl builds the address, and no login is needed to read the file, though uploads still need policies. For private buckets, reads go through the API with a valid session and a matching policy, or through a time-limited signed URL. Use private buckets for personal data.
+simple_explain: Public means anyone with the link can open it. Private means you need a logged-in user with permission, or a temporary signed link.
+analogy: A public bucket is a notice board, and a private bucket is a locked cupboard with a guest list.
+formula_rule: Public = open by URL. Private = policy or signed URL.
+example_1: A public bucket for product images.
+example_2: A private bucket for student recordings.
+example_3: A public logo bucket where only admins can upload.
+related: buckets, signed URLs, storage policies
+word_family: public, private, getPublicUrl, signed URL, policy
+where_used: Website images | Personal documents | Recordings
+mini_conversation: A: Can users open each other's recordings by guessing the link? | B: Not if the bucket is private and guarded by policies.
+misconception: ✗ Making a bucket public only allows the owner to see it → ✓ A public bucket lets anyone with the URL read its files
+contrast: Public vs private bucket: public files open by link, private files need permission.
+avoid: Do not put personal data in a public bucket.
+memory_trick: Public is open to all, private needs a pass.
+real_project: Keeping profile pictures public while keeping student recordings private.
+real_interview: An interviewer may ask: How do you serve private files safely?
+real_daily: It is like a notice board versus a locked cupboard.
+mcq_question: Who can read a file in a public bucket?
+mcq_options: A) Nobody B) Anyone with the URL C) Only admins D) Only the uploader
+mcq_answer: B
+mcq_why: Public buckets serve files to anyone who has the link.
+fill_blank: A private file can be shared temporarily with a ____ URL → signed
+apply: Which bucket type should hold personal recordings? → A private bucket
+explain_task: Explain public and private buckets in three lines.
+own_task: Choose public or private for five kinds of files and say why.
+
+@SUP-038
+type: code56
+topic: 06 Storage
+level: Intermediate
+term: Signed URLs
+cue: How do you give someone a temporary link to a file in a private bucket?
+kind: JavaScript method
+frequency: High
+importance: 4
+origin: Private files should not be open forever, so Supabase can create a link that works only for a limited time.
+pro_tip: Create the signed URL on demand with a short life, instead of storing it.
+memory_story: A signed URL is a visitor pass that stops working after a set time.
+visual: A link with a clock on it that expires.
+emotion: The comfort of sharing a file without making it public.
+meaning: createSignedUrl returns a link that lets anyone with it read one private file until it expires.
+code: const { data, error } = await supabase.storage¶  .from("recordings")¶  .createSignedUrl("user-123/lesson1.webm", 60);¶if (error) throw error;¶console.log(data.signedUrl);
+output: A long URL that opens the file for the next sixty seconds.
+explanation: The second argument is the number of seconds the link stays valid. The caller must have permission to read the file through policies, so a stranger cannot create links to other users' files. Anyone who holds the link can open the file until it expires, so keep lifetimes short and avoid logging links.
+simple_explain: Ask for a signed URL with an expiry in seconds. Use it right away, for example as the source of an audio player, and let it expire.
+analogy: It is like a visitor pass that stops working after a set time.
+syntax: supabase.storage.from("bucket").createSignedUrl("path", seconds)
+anatomy: createSignedUrl = make a temporary link | path = which file | seconds = how long it lasts
+example_1: await supabase.storage.from("recordings").createSignedUrl("a/b.webm", 60);
+example_2: await supabase.storage.from("reports").createSignedUrl("2026/report.pdf", 300);
+example_3: await supabase.storage.from("recordings").createSignedUrls(["a.webm", "b.webm"], 60);
+variation: createSignedUploadUrl("path")   // a link that allows one upload
+used_with: private buckets, storage policies, audio and video players
+related: public vs private buckets, storage policies, upload
+alternatives: Making the bucket public, if the files are not sensitive
+where_used: Private downloads | Audio playback | Document sharing
+mini_conversation: A: I want to play a private recording in the browser. | B: Create a signed URL for a few minutes and use it as the audio source.
+misconception: ✗ A signed URL stays valid forever → ✓ A signed URL expires after the time you give it
+confused_with: Signed URL vs public URL: a signed URL expires and needs permission to create, a public URL is permanent.
+avoid: Do not create very long-lived signed URLs for sensitive files.
+wrong_code: await supabase.storage.from("recordings").createSignedUrl("user-123/lesson1.webm");
+right_code: await supabase.storage.from("recordings").createSignedUrl("user-123/lesson1.webm", 60);
+memory_trick: A signed URL always expires after a while.
+real_project: Playing a student's private recording through a link that lasts a few minutes.
+real_interview: An interviewer may ask: How do you share a private file temporarily?
+real_daily: It is like a visitor pass that expires.
+mcq_question: What is the second argument of createSignedUrl?
+mcq_options: A) The file size B) The bucket C) The user id D) How many seconds the link lasts
+mcq_answer: D
+mcq_why: It sets the lifetime of the link in seconds.
+fill_blank: The second argument of createSignedUrl sets the expiry time in ____ → seconds
+hindi_to_task: Create a signed link for reports/a.pdf that lasts five minutes.
+task_answer: await supabase.storage.from("reports").createSignedUrl("a.pdf", 300);
+own_task: Write code that gets a signed URL and puts it in an audio element.
+practice_question: Who can open a signed URL?
+practice_answer: Anyone who holds it, until it expires.
+
+@SUP-039
+type: code56
+topic: 06 Storage
+level: Advanced
+term: Storage policies
+cue: Which policies control who may upload, read, update or delete files, and which table do they apply to?
+kind: SQL statement
+frequency: High
+importance: 5
+origin: Files need the same kind of rules as table rows, so Storage keeps file records in a table and lets you write RLS policies on it.
+pro_tip: Use the folder name as the owner, such as a folder named after the user id, and match it in the policy.
+memory_story: Storage policies are the rules on the cupboard door, checking who is allowed to put in or take out.
+visual: A policy matching the first folder of a file path with the logged-in user's id.
+emotion: The relief of file access following the same rules as data.
+meaning: Storage policies are RLS policies on the storage.objects table that decide which users may act on which files.
+code: create policy "Users upload to own folder" on storage.objects¶  for insert to authenticated¶  with check (¶    bucket_id = 'avatars'¶    and (storage.foldername(name))[1] = (select auth.uid())::text¶  );
+output: A logged-in user can upload only to a path whose first folder equals their own user id, in the avatars bucket.
+explanation: Every file is a row in storage.objects with its bucket_id and name. The helper storage.foldername(name) returns the folder parts of the path, and the first part is at position one. Without a matching policy, uploads and private reads are refused. You can write separate policies for select, insert, update and delete.
+simple_explain: Write a policy on storage.objects that checks the bucket and the folder. Put each user's files in a folder named after their id, and the policy enforces it.
+analogy: It is like rules on the cupboard door, checking who may put in or take out.
+syntax: create policy name on storage.objects for operation to role using or with check (condition);
+anatomy: storage.objects = table of files | bucket_id = which bucket | storage.foldername(name) = folder parts of the path
+example_1: with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = (select auth.uid())::text)
+example_2: using (bucket_id = 'recordings' and (storage.foldername(name))[1] = (select auth.uid())::text)
+example_3: create policy "Public read avatars" on storage.objects for select using (bucket_id = 'avatars');
+variation: for delete using (...)   // control who may delete¶to anon   // allow logged-out users
+used_with: buckets, auth.uid(), upload, signed URLs
+related: Row Level Security, upload, public vs private buckets
+alternatives: Uploading through a server that uses the service role
+where_used: User folders | Private recordings | Admin-only uploads
+mini_conversation: A: Users get a policy error when uploading. | B: Add an insert policy on storage.objects that matches the user's folder.
+misconception: ✗ Bucket settings alone control who can upload → ✓ Uploads and private reads need policies on storage.objects too
+confused_with: Table policy vs storage policy: table policies guard rows, storage policies guard file objects in storage.objects.
+avoid: Do not write storage policies that ignore the bucket id.
+wrong_code: create policy "upload" on storage.objects for insert with check (true);
+right_code: create policy "upload own" on storage.objects for insert to authenticated with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = (select auth.uid())::text);
+memory_trick: Folder name equals user id.
+real_project: Letting each student upload and read only their own recordings.
+real_interview: An interviewer may ask: How do you restrict file access per user?
+real_daily: It is like rules on a cupboard door.
+mcq_question: On which table are storage policies written?
+mcq_options: A) storage.objects B) pg_class C) auth.users D) public.todos
+mcq_answer: A
+mcq_why: Every file is a row in storage.objects.
+fill_blank: storage.____(name) returns the folders of a file path → foldername
+hindi_to_task: Allow anyone to read files in the public-images bucket.
+task_answer: create policy "Public read" on storage.objects for select using (bucket_id = 'public-images');
+own_task: Write a policy that lets users delete only their own files.
+practice_question: Which helper function splits a path into folders?
+practice_answer: storage.foldername(name)

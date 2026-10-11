@@ -44,6 +44,9 @@ function cellText(v: ExcelJS.CellValue): string {
     if ("richText" in v) return v.richText.map((r) => r.text).join("");
     if ("result" in v) return cellText(v.result as ExcelJS.CellValue);
     if ("text" in v) return String(v.text);
+    // Excel stores a typed "#DIV/0!" or "#N/A" as an error value, not text.
+    // Spreadsheet decks teach those codes, so the code itself is the answer.
+    if ("error" in v) return String(v.error);
     return "";
   }
   return String(v).replace(/\r\n/g, "\n").trim();

@@ -1,0 +1,348 @@
+
+@SUP-015
+type: topic56
+topic: 03 API and client
+level: Beginner
+term: Auto-generated REST API (PostgREST)
+cue: Which Supabase component turns your tables into ready-to-use HTTP endpoints without any backend code?
+category: API concept
+frequency: Very high
+importance: 5
+origin: Writing endpoints for every table is repetitive, so Supabase uses PostgREST to build a REST API directly from the database structure.
+pro_tip: Use the client library for normal work, and remember the same API can be called with plain HTTP when needed.
+memory_story: PostgREST is a translator that turns every table into an address you can call over the web.
+visual: A table on one side and a matching URL path with GET and POST arrows on the other.
+emotion: The delight of an API appearing the moment a table exists.
+definition: PostgREST is the service that automatically exposes your Postgres tables and views as a REST API, with access controlled by database roles and Row Level Security.
+explanation: A table named todos becomes available at a path such as /rest/v1/todos. GET reads rows, POST inserts, PATCH updates and DELETE removes, and query parameters filter and sort. Requests are made as a database role, so RLS policies decide which rows are visible. The supabase-js library builds these calls for you.
+simple_explain: Make a table and the API exists. You read and write it with normal HTTP calls or with supabase-js, and the database rules decide who can see what.
+analogy: It is like a translator that turns every table into a web address.
+formula_rule: Table → /rest/v1/table_name → GET, POST, PATCH, DELETE
+example_1: GET /rest/v1/todos returns the rows of the todos table.
+example_2: POST /rest/v1/todos with a JSON body inserts a row.
+example_3: GET /rest/v1/todos?done=eq.false filters the rows.
+related: supabase-js, Row Level Security, REST, filters
+word_family: PostgREST, REST, endpoint, role, schema
+where_used: Every Supabase app | Quick prototypes | Mobile and web clients
+mini_conversation: A: Do I need to write endpoints for my tables? | B: No, Supabase generates the REST API from your tables automatically.
+misconception: ✗ The auto API is open to everyone once a table exists → ✓ Access is controlled by database roles and Row Level Security, so enable RLS on exposed tables
+contrast: PostgREST vs a custom backend: PostgREST exposes tables with rules in the database, a custom backend codes every endpoint.
+avoid: Do not expose a table to the API without RLS.
+memory_trick: A table becomes an endpoint.
+real_project: Reading and writing tasks from a web app with no custom server code.
+real_interview: An interviewer may ask: How does Supabase provide an API for your tables?
+real_daily: It is like a translator turning tables into web addresses.
+mcq_question: What makes the REST API of a Supabase project?
+mcq_options: A) PostgREST B) CSS C) Excel D) Docker only
+mcq_answer: A
+mcq_why: PostgREST generates the REST API from your Postgres schema.
+fill_blank: A GET request on a table's endpoint ____ its rows → reads
+apply: How do you stop strangers reading a table through the API? → Enable Row Level Security with suitable policies
+explain_task: Explain the automatic REST API in three lines.
+own_task: Write the HTTP calls you would use to list and create tasks.
+
+@SUP-016
+type: code56
+topic: 03 API and client
+level: Beginner
+term: createClient (supabase-js setup)
+cue: Which function from the supabase-js library gives your code a connection object to talk to a project?
+kind: JavaScript function
+frequency: Very high
+importance: 5
+origin: Your code needs one reusable object that knows the project URL and key, so the library offers createClient to build it.
+pro_tip: Create the client once in a small module and import it wherever you need it.
+memory_story: createClient is plugging your app into the project with one cable carrying the address and the pass.
+visual: A code file creating one object that other files import.
+emotion: The satisfaction of the very first query working.
+meaning: createClient builds a Supabase client from the project URL and key, which you use to call the database, auth, storage and functions.
+code: import { createClient } from "@supabase/supabase-js";¶const supabase = createClient(¶  process.env.NEXT_PUBLIC_SUPABASE_URL,¶  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY¶);¶export default supabase;
+output: A client object named supabase that your code uses for every Supabase call.
+explanation: Install the package with npm install @supabase/supabase-js. The client reads the URL and client key, and exposes helpers such as from for tables, auth for login, storage for files and rpc for functions. Server code that needs the service role key should use a separate client, created only on the server.
+simple_explain: Install the library, call createClient with your URL and key, and keep the result in one module. Then use it for every call.
+analogy: It is like plugging your app into the project with one cable that carries the address and the pass.
+syntax: createClient(supabaseUrl, supabaseKey)
+anatomy: createClient = make the client | supabaseUrl = project address | supabaseKey = client key
+example_1: const supabase = createClient(url, anonKey);
+example_2: const admin = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY);
+example_3: import supabase from "./lib/supabase";
+variation: createBrowserClient and createServerClient from @supabase/ssr   // for frameworks with server rendering
+used_with: environment variables, auth, from, rpc
+related: project URL and keys, environment variables, server-side auth
+alternatives: Calling the REST API directly with fetch
+where_used: Every JavaScript app on Supabase | Server and browser code | Scripts
+mini_conversation: A: How do I connect my app to Supabase? | B: Install supabase-js and call createClient with the URL and key.
+misconception: ✗ I should create a new client for every single query → ✓ Create the client once and reuse it, except for separate server-side admin clients
+confused_with: Browser client vs admin client: the browser client uses the anon key, the admin client uses the service role key on a server.
+avoid: Do not create a client with the service role key in browser code.
+wrong_code: const supabase = createClient(process.env.SUPABASE_SERVICE_ROLE_KEY);
+right_code: const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+memory_trick: One client, created once, reused everywhere.
+real_project: Keeping the client in a single file that all components import.
+real_interview: An interviewer may ask: How do you initialise supabase-js?
+real_daily: It is like plugging your app in with one cable.
+mcq_question: Which two things does createClient need?
+mcq_options: A) A region and a bucket B) A username and a file C) A table name and a row D) The project URL and a key
+mcq_answer: D
+mcq_why: The client needs to know which project and how to authenticate.
+fill_blank: The function that builds the client object is called ____ → createClient
+hindi_to_task: Create a client from the URL and the anon key variables.
+task_answer: const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+own_task: Write a small module that exports the client.
+practice_question: Which package contains createClient?
+practice_answer: @supabase/supabase-js
+
+@SUP-017
+type: code56
+topic: 03 API and client
+level: Beginner
+term: select (reading rows)
+cue: Which supabase-js call reads rows from a table, and what does it return?
+kind: JavaScript method
+frequency: Very high
+importance: 5
+origin: Reading data is the most common job of an app, so the client wraps the REST API in a readable chain starting with from and select.
+pro_tip: Choose only the columns you need in select, instead of asking for everything.
+memory_story: select is asking the shop assistant to bring only the items you name.
+visual: A call chain from a table name to a result holding rows and an error slot.
+emotion: The thrill of seeing your own rows appear in the console.
+meaning: from(table).select(columns) reads rows and resolves to an object with data and error.
+code: const { data, error } = await supabase¶  .from("todos")¶  .select("id, title")¶  .limit(10);¶if (error) throw error;¶console.log(data);
+output: An array such as [{ id: 1, title: "Buy milk" }, { id: 2, title: "Study" }].
+explanation: supabase-js does not throw when a query fails, it returns an error object, so you must check error. Without a filter, select returns all rows the policies allow, up to a server limit. You list columns as a string, and can include related tables such as profiles(full_name).
+simple_explain: Call from with the table name and select with the columns. You get back data and error, so always check the error before using the data.
+analogy: It is like asking the shop assistant to bring only the items you name.
+syntax: await supabase.from("table").select("col1, col2")
+anatomy: from = which table | select = which columns | data = the rows | error = the problem, if any
+example_1: await supabase.from("todos").select("*");
+example_2: await supabase.from("todos").select("id, title");
+example_3: await supabase.from("todos").select("id, title, done");
+variation: .single()   // expect exactly one row¶.limit(10)   // at most ten rows
+used_with: limit, filters, order, error handling
+related: filters and ordering, createClient, joins
+alternatives: A GET request to the REST API
+where_used: Lists | Detail pages | Dashboards
+mini_conversation: A: My list is undefined. | B: You must destructure data and check error, since the call returns an object with both.
+misconception: ✗ supabase-js throws an error when a query fails → ✓ It returns an error object, so you must check error yourself
+confused_with: data vs error: data holds the rows on success, error holds the problem on failure.
+avoid: Do not use the data before checking error.
+wrong_code: const todos = await supabase.from("todos").select("*");
+right_code: const { data: todos, error } = await supabase.from("todos").select("*");
+memory_trick: Always check error before using data.
+real_project: Listing a user's lessons and showing a message if error is set.
+real_interview: An interviewer may ask: How does supabase-js report errors?
+real_daily: It is like asking an assistant to bring only the items you name.
+mcq_question: What does select return in supabase-js?
+mcq_options: A) An object with data and error B) A string C) A boolean D) Only an array
+mcq_answer: A
+mcq_why: The result is an object holding data and error.
+fill_blank: const { data, ____ } = await supabase.from("todos").select("*"); → error
+hindi_to_task: Read the title column of all todos.
+task_answer: const { data, error } = await supabase.from("todos").select("title");
+own_task: Write a query that reads the name and price of products.
+practice_question: What does .single() expect from a query?
+practice_answer: Exactly one row.
+
+@SUP-018
+type: code56
+topic: 03 API and client
+level: Beginner
+term: insert (adding rows)
+cue: Which supabase-js call adds a new row to a table, and how do you get the created row back?
+kind: JavaScript method
+frequency: Very high
+importance: 5
+origin: Apps constantly create records, so the client offers an insert method that sends a POST to the table's endpoint.
+pro_tip: Chain select after insert when you need the new row, including its generated id.
+memory_story: Insert is dropping a new card into the filing box, and select asks for a copy of the card back.
+visual: An object flying into a table and a copy of the new row returning.
+emotion: The satisfaction of watching a record appear in the dashboard.
+meaning: from(table).insert(values) adds one or more rows, and chaining select returns the created rows.
+code: const { data, error } = await supabase¶  .from("todos")¶  .insert({ title: "Buy milk" })¶  .select();¶if (error) throw error;¶console.log(data[0].id);
+output: The id generated for the new row, such as 3.
+explanation: insert accepts one object or an array of objects. In the current library versions it does not return the created rows unless you add select. Columns with defaults, such as ids and timestamps, are filled by the database. The insert must satisfy Row Level Security policies and table constraints.
+simple_explain: Pass an object with the column values to insert. Add select to get the new row back with its generated id.
+analogy: It is like dropping a new card into a filing box and asking for a copy back.
+syntax: await supabase.from("table").insert(values).select()
+anatomy: insert = add rows | values = an object or array of objects | select = return the created rows
+example_1: await supabase.from("todos").insert({ title: "Buy milk" });
+example_2: await supabase.from("todos").insert([{ title: "A" }, { title: "B" }]);
+example_3: const { data } = await supabase.from("todos").insert({ title: "Study" }).select();
+variation: .upsert({ id: 1, title: "New" })   // insert or update if the id exists
+used_with: select, RLS policies, constraints, error handling
+related: select, update and delete, Row Level Security
+alternatives: A POST request to the REST API
+where_used: Forms | Creating records | Bulk imports
+mini_conversation: A: I inserted a row but data is empty. | B: Add select after insert to get the new row back.
+misconception: ✗ insert always returns the new row → ✓ Without select, insert returns no rows, so chain select when you need them
+confused_with: insert vs upsert: insert always adds, upsert adds or updates when the key exists.
+avoid: Do not ignore errors, since a policy may block the insert.
+wrong_code: const { data } = await supabase.from("todos").insert({ title: "Buy milk" });
+right_code: const { data } = await supabase.from("todos").insert({ title: "Buy milk" }).select();
+memory_trick: Insert adds the row, select returns it.
+real_project: Creating a new lesson and showing it immediately using the returned row.
+real_interview: An interviewer may ask: How do you insert several rows at once?
+real_daily: It is like dropping a card in a filing box and asking for a copy back.
+mcq_question: How do you get the inserted row back?
+mcq_options: A) Use limit B) Chain select after insert C) Use rpc D) Call delete
+mcq_answer: B
+mcq_why: select after insert returns the created rows.
+fill_blank: await supabase.from("todos").____({ title: "Buy milk" }); → insert
+hindi_to_task: Insert two todos titled A and B in one call.
+task_answer: await supabase.from("todos").insert([{ title: "A" }, { title: "B" }]);
+own_task: Write an insert for a note and read back its id.
+practice_question: What does upsert do?
+practice_answer: It inserts a row, or updates it if the key already exists.
+
+@SUP-019
+type: code56
+topic: 03 API and client
+level: Beginner
+term: update and delete
+cue: Which supabase-js calls change or remove existing rows, and why must you add a filter to them?
+kind: JavaScript method
+frequency: Very high
+importance: 5
+origin: Records change and disappear, so the client offers update and delete, which act on whichever rows match the filter you attach.
+pro_tip: Always add a filter such as eq("id", value), or the call can affect every row that your policies allow.
+memory_story: Update and delete are a pen and an eraser, and the filter is your finger pointing at which line to use them on.
+visual: A pointer selecting one row before a change is applied.
+emotion: The care of double-checking the filter before pressing run.
+meaning: update changes values in rows that match a filter, and delete removes rows that match a filter.
+code: await supabase.from("todos").update({ done: true }).eq("id", 1);¶await supabase.from("todos").delete().eq("id", 1);
+output: The todo with id 1 is marked done, and then it is removed from the table.
+explanation: Both methods need filters such as eq to pick the rows. Without a filter, the change could apply to many rows, and some setups reject it for safety. Row Level Security still applies, so a policy may block the change, and you will see zero affected rows or an error. Chain select to read the changed rows.
+simple_explain: Say what to change, then say which row. Without the filter you may touch far more than you meant.
+analogy: Update and delete are a pen and an eraser, and the filter is your finger pointing at the line.
+syntax: await supabase.from("table").update(values).eq("col", value)
+anatomy: update(values) = new values | delete() = remove | eq = which rows
+example_1: await supabase.from("todos").update({ title: "New" }).eq("id", 5);
+example_2: await supabase.from("todos").delete().eq("id", 5);
+example_3: await supabase.from("todos").delete().in("id", [1, 2, 3]);
+variation: .update({ done: true }).eq("user_id", userId).select()   // return the changed rows
+used_with: eq, in, RLS policies, select
+related: filters, Row Level Security, insert
+alternatives: A PATCH or DELETE request to the REST API
+where_used: Editing records | Removing records | Clean-up jobs
+mini_conversation: A: I deleted without a filter and lost many rows. | B: Always add a filter like eq on the id before running delete.
+misconception: ✗ update and delete affect only one row by default → ✓ They affect every row that matches the filter, so a missing filter can change many rows
+confused_with: update vs insert: update changes existing rows, insert adds new ones.
+avoid: Never run delete without checking the filter.
+wrong_code: await supabase.from("todos").delete();
+right_code: await supabase.from("todos").delete().eq("id", 1);
+memory_trick: No filter, no safe delete.
+real_project: Marking a single task done with update and eq on its id.
+real_interview: An interviewer may ask: What happens if you call delete without a filter?
+real_daily: It is like a pen and an eraser pointed at one line.
+mcq_question: Which method picks the rows to change?
+mcq_options: A) insert B) from C) eq D) createClient
+mcq_answer: C
+mcq_why: eq filters rows by a column value.
+fill_blank: await supabase.from("todos").update({ done: true }).____("id", 1); → eq
+hindi_to_task: Delete the todo whose id is 7.
+task_answer: await supabase.from("todos").delete().eq("id", 7);
+own_task: Write an update that renames a note with a given id.
+practice_question: Which filter method matches a list of values?
+practice_answer: in
+
+@SUP-020
+type: code56
+topic: 03 API and client
+level: Intermediate
+term: Filters, ordering and pagination
+cue: Which chained methods let you pick matching rows, sort them, and read them a page at a time?
+kind: JavaScript method
+frequency: Very high
+importance: 5
+origin: Real lists need narrowing, sorting and paging, so the client offers filter methods that turn into query parameters on the REST API.
+pro_tip: Use range for pagination, and order by a stable column such as created_at so pages do not shuffle.
+memory_story: Filters, order and range are the sieve, the sorting tray and the page cutter of your query.
+visual: A long list narrowing, sorting and slicing into the first ten rows.
+emotion: The satisfaction of a tidy list that loads quickly.
+meaning: Methods such as eq, gt, ilike and in filter rows, order sorts them, and limit or range choose how many to read.
+code: const { data } = await supabase¶  .from("todos")¶  .select("*")¶  .eq("done", false)¶  .order("created_at", { ascending: false })¶  .range(0, 9);
+output: The ten newest todos that are not done.
+explanation: Common filters are eq, neq, gt, gte, lt, lte, like, ilike, in and is. order sorts by a column and accepts ascending false for newest first. range takes zero-based start and end positions, so range(0, 9) returns the first ten rows. limit sets a maximum count.
+simple_explain: Chain a filter to narrow rows, order to sort them, and range to take a page. Change the numbers in range to load the next page.
+analogy: It is like a sieve, a sorting tray and a page cutter on your query.
+syntax: .eq("col", value).order("col", { ascending }).range(from, to)
+anatomy: eq = equals | order = sort | range = zero-based page window
+example_1: .gt("price", 100)
+example_2: .ilike("title", "%milk%")
+example_3: .in("status", ["open", "paid"])
+variation: .range(10, 19)   // the second page of ten¶.or("done.eq.true,priority.gt.2")   // either condition
+used_with: select, limit, count, indexes
+related: select, pagination, indexes
+alternatives: A database function called with rpc for complex filters
+where_used: Lists and tables | Search boxes | Infinite scroll
+mini_conversation: A: How do I show the newest ten items? | B: Order by created_at descending and use range 0 to 9.
+misconception: ✗ range(1, 10) returns the first ten rows → ✓ range uses zero-based positions, so range(0, 9) returns the first ten rows
+confused_with: limit vs range: limit sets a maximum count, range picks a start and end position.
+avoid: Do not paginate without a stable order.
+wrong_code: .range(1, 10)
+right_code: .range(0, 9)
+memory_trick: Range starts counting at zero.
+real_project: Loading a feed in pages of twenty with order and range.
+real_interview: An interviewer may ask: How do you paginate results in supabase-js?
+real_daily: It is like a sieve, a sorting tray and a page cutter.
+mcq_question: Which call returns the first ten rows?
+mcq_options: A) range(9, 9) B) range(10, 0) C) range(1, 10) D) range(0, 9)
+mcq_answer: D
+mcq_why: Positions start at zero, so 0 to 9 is ten rows.
+fill_blank: Sort newest first with .order("created_at", { ascending: ____ }) → false
+hindi_to_task: Read todos that are done, newest first.
+task_answer: await supabase.from("todos").select("*").eq("done", true).order("created_at", { ascending: false });
+own_task: Write a query for the second page of ten products under a price limit.
+practice_question: Which filter does a case-insensitive text match?
+practice_answer: ilike
+
+@SUP-021
+type: code56
+topic: 03 API and client
+level: Advanced
+term: RPC (database functions)
+cue: How do you call a Postgres function you wrote from your app, so heavy logic runs inside the database?
+kind: JavaScript method
+frequency: Medium
+importance: 4
+origin: Some work, such as multi-step updates or aggregates, is faster and safer inside the database, so Supabase lets the client call Postgres functions through the API.
+pro_tip: Use functions for multi-step changes that must succeed or fail together, and keep security in mind.
+memory_story: RPC is dialling the database's own helper by name and passing it the numbers it needs.
+visual: A function name with arguments going to the database and a result coming back.
+emotion: The power of running complex logic next to the data.
+meaning: rpc calls a stored Postgres function by name with arguments and returns its result.
+code: -- SQL¶create function total_todos(owner uuid) returns bigint language sql as $$¶  select count(*) from todos where user_id = owner;¶$$;¶// JavaScript¶const { data, error } = await supabase.rpc("total_todos", { owner: userId });
+output: The number of todos that belong to the given user.
+explanation: You write the function in SQL or PL/pgSQL, and it appears in the API as a callable endpoint. Arguments are passed as an object whose keys match the parameter names. Functions run with the caller's rights by default, and security definer functions run with the owner's rights, which needs great care.
+simple_explain: Write a function in the database, then call it by name with rpc. It is useful for heavy or multi-step logic that should happen close to the data.
+analogy: It is like dialling the database's own helper by name and passing it the numbers it needs.
+syntax: await supabase.rpc("function_name", { arg: value })
+anatomy: rpc = call a function | "function_name" = its name | { arg: value } = named arguments
+example_1: await supabase.rpc("total_todos", { owner: userId });
+example_2: await supabase.rpc("search_lessons", { term: "api" });
+example_3: create function add_one(x int) returns int language sql as $$ select x + 1 $$;
+variation: security definer   // runs with the owner's rights, use carefully¶language plpgsql   // for procedural logic with variables
+used_with: SQL functions, PL/pgSQL, RLS, transactions
+related: database functions and triggers, REST API, Row Level Security
+alternatives: Several client calls or an edge function
+where_used: Aggregates | Multi-step updates | Search functions
+mini_conversation: A: I need to update three tables together safely. | B: Put the steps in a database function and call it with rpc.
+misconception: ✗ Functions called through rpc always bypass Row Level Security → ✓ By default they run with the caller's rights, and only security definer functions run with the owner's rights
+confused_with: rpc vs edge function: rpc runs inside the database, an edge function runs your own server code outside it.
+avoid: Do not make a function security definer without understanding the risk.
+wrong_code: await supabase.rpc("total_todos", userId);
+right_code: await supabase.rpc("total_todos", { owner: userId });
+memory_trick: rpc passes named arguments in an object.
+real_project: Calling a function that moves points between two users in one transaction.
+real_interview: An interviewer may ask: When would you use a database function instead of several client calls?
+real_daily: It is like dialling a helper by name and giving it numbers.
+mcq_question: How are arguments passed to rpc?
+mcq_options: A) As a table B) As a single string C) As an object with named keys D) As a CSS rule
+mcq_answer: C
+mcq_why: Keys in the object match the function's parameter names.
+fill_blank: await supabase.____("total_todos", { owner: userId }); → rpc
+hindi_to_task: Call a database function named total_notes with no arguments.
+task_answer: await supabase.rpc("total_notes");
+own_task: Write a SQL function that returns the number of lessons in a course.
+practice_question: What does security definer change about a function?
+practice_answer: It makes the function run with its owner's rights instead of the caller's.

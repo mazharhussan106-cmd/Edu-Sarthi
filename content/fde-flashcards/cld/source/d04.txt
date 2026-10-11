@@ -1,0 +1,328 @@
+
+@CLD-026
+topic: 05 Cloud Networking
+level: Beginner
+term: VPC
+cue: Which virtual network is your own private section of the cloud?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Resources from many customers share the same data centres, so each customer needs an isolated network of their own.
+pro_tip: Plan the address range early, because changing it later is painful.
+memory_story: A VPC is your own fenced plot of land inside a huge city.
+visual: A rectangle labelled VPC holding subnets and servers.
+emotion: The comfort of a private space you control.
+definition: A virtual private cloud is a logically isolated network in the cloud, with its own IP range, subnets, routing and security rules.
+explanation: You choose a private address range in CIDR form, such as 10.0.0.0/16. Inside it you create subnets, route tables, gateways and firewalls. Nothing outside can reach your resources unless you allow it. Different VPCs can be linked by peering or transit services. Azure calls it a virtual network, and GCP also uses VPC.
+simple_explain: A VPC is your private network in the cloud. You design its addresses and rules.
+analogy: It is your own fenced plot of land in a huge city.
+formula_rule: VPC = address range + subnets + routes + rules.
+example_1: A VPC with public subnets for web servers and private ones for databases.
+example_2: Separate VPCs for production and testing.
+example_3: Peering two VPCs so they can talk privately.
+related: subnets, route tables, security groups, gateways
+word_family: VPC, CIDR, subnet, peering, isolation
+where_used: Network design | Security | Hybrid connections
+mini_conversation: A: Can other customers see our servers? | B: No, they are inside our own VPC.
+misconception: ✗ Resources in a VPC are automatically reachable from the internet → ✓ They are private unless you add a gateway and rules
+contrast: VPC vs subnet: a VPC is the whole network, a subnet is a slice of it.
+avoid: Do not use overlapping address ranges between networks you may connect.
+memory_trick: VPC is your private fenced plot.
+real_project: Designing separate address ranges so a customer network could connect without clashes.
+real_interview: An interviewer may ask: What is a VPC?
+real_daily: It is like a fenced plot inside a big city.
+mcq_question: What defines a VPC's address space?
+mcq_options: A) A region name B) A CIDR range C) A password D) A bucket
+mcq_answer: B
+mcq_why: A CIDR block sets the private addresses available.
+fill_blank: A VPC address range is written in ____ notation → CIDR
+apply: You need an isolated private network in the cloud. What do you create? → A VPC
+explain_task: Explain a VPC in three lines.
+own_task: Choose an address range for a VPC and say why.
+
+@CLD-027
+topic: 05 Cloud Networking
+level: Beginner
+term: Subnets
+cue: Which slices of a VPC separate public-facing and private resources?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Not everything should be reachable, so a network is cut into smaller parts with different rules.
+pro_tip: Put databases in private subnets and only entry points in public ones.
+memory_story: Subnets are rooms in your house, with a front hall open to visitors and a bedroom kept private.
+visual: A VPC split into a public and a private block in each zone.
+emotion: The tidy calm of clear boundaries.
+definition: A subnet is a range of IP addresses inside a VPC, located in one availability zone, and is public or private depending on its routing.
+explanation: A subnet is public if its route table sends internet traffic to an internet gateway. A private subnet has no direct route in from the internet. Each subnet sits in one zone, so teams create matching subnets in several zones. Smaller ranges such as /24 are common. Some addresses in each subnet are reserved by the provider.
+simple_explain: Split a VPC into public and private subnets, in more than one zone.
+analogy: Subnets are rooms in a house, with a front hall for visitors and a private bedroom.
+formula_rule: Public subnet = route to internet gateway. Private subnet = no direct route.
+example_1: A public subnet holding a load balancer.
+example_2: A private subnet holding application servers.
+example_3: A database subnet with no internet route.
+related: VPC, route tables, internet gateway, NAT gateway
+word_family: subnet, public, private, CIDR, zone
+where_used: Network layout | Security design | High availability
+mini_conversation: A: Why is the database not reachable from outside? | B: It is in a private subnet with no route out.
+misconception: ✗ A subnet is public just because it is named public → ✓ It is public only if its route table points to an internet gateway
+contrast: Public vs private subnet: the difference is the route to the internet gateway.
+avoid: Do not place databases in public subnets.
+memory_trick: Route to the gateway makes it public.
+real_project: Moving a database from a public to a private subnet after a security review.
+real_interview: An interviewer may ask: What makes a subnet public?
+real_daily: It is like a front hall versus a private bedroom.
+mcq_question: What makes a subnet public?
+mcq_options: A) Its name B) A tag C) A route to an internet gateway D) A larger range
+mcq_answer: C
+mcq_why: The route table decides whether it reaches the internet directly.
+fill_blank: Each subnet lives in a single availability ____ → zone
+apply: Where should a database live? → In a private subnet
+explain_task: Explain public and private subnets in three lines.
+own_task: Sketch a layout with two zones and four subnets.
+
+@CLD-028
+topic: 05 Cloud Networking
+level: Intermediate
+term: Route tables
+cue: Which rules tell network traffic where to go next?
+category: Core concept
+frequency: High
+importance: 4
+origin: A network needs directions for packets, so each subnet is tied to a table that maps destination ranges to next stops.
+pro_tip: When traffic does not flow, check the route table before anything else.
+memory_story: A route table is a road sign listing which way to go for each destination.
+visual: A table of destination ranges and targets.
+emotion: The relief of spotting a missing route.
+definition: A route table is a set of rules that maps destination address ranges to targets such as a local network, an internet gateway or a NAT gateway.
+explanation: The local route allows traffic inside the VPC. A route of 0.0.0.0/0 to an internet gateway sends all other traffic to the internet. A route of 0.0.0.0/0 to a NAT gateway sends it out for private subnets. The most specific matching route wins. Each subnet is associated with one route table.
+simple_explain: Routes say where each destination goes. The most specific route wins.
+analogy: It is like a road sign listing which way to go for each destination.
+formula_rule: Destination range → target. Most specific match wins.
+example_1: 0.0.0.0/0 pointing to an internet gateway for a public subnet.
+example_2: 0.0.0.0/0 pointing to a NAT gateway for a private subnet.
+example_3: A route to a peered VPC range.
+related: subnets, internet gateway, NAT gateway, peering
+word_family: route, target, destination, local, default route
+where_used: Troubleshooting | Network design | Hybrid links
+mini_conversation: A: The server cannot reach the internet. | B: Check whether its route table has a default route.
+misconception: ✗ Security groups control where traffic is routed → ✓ Route tables decide the path, and security groups decide what is allowed
+contrast: Route table vs security group: one directs traffic, the other filters it.
+avoid: Do not add 0.0.0.0/0 routes without understanding where they lead.
+memory_trick: Routes choose the road, firewalls choose who passes.
+real_project: Fixing a private subnet by adding a default route to a NAT gateway.
+real_interview: An interviewer may ask: A server cannot reach the internet. What do you check?
+real_daily: It is like road signs showing which way to go.
+mcq_question: What does 0.0.0.0/0 mean in a route?
+mcq_options: A) All other destinations B) Only the local network C) One address D) Nothing
+mcq_answer: A
+mcq_why: It is the default route that matches every address.
+fill_blank: The route for all other destinations is the ____ route → default
+apply: A private subnet needs outbound internet. Which route target? → A NAT gateway
+explain_task: Explain route tables in three lines.
+own_task: Write the routes a public subnet needs.
+
+@CLD-029
+topic: 05 Cloud Networking
+level: Intermediate
+term: Internet and NAT gateways
+cue: Which two gateways connect a VPC to the internet, and how do they differ?
+category: Core concept
+frequency: High
+importance: 5
+origin: Some servers must be reachable from the internet and others must only reach out, so two kinds of gateway exist.
+pro_tip: Put the NAT gateway in a public subnet, and point private routes at it.
+memory_story: An internet gateway is a front door, and a NAT gateway is a one-way exit for people inside.
+visual: Arrows showing two-way traffic through one gateway and outbound-only through the other.
+emotion: The clarity of a clean path in and out.
+definition: An internet gateway allows two-way traffic between public subnets and the internet, and a NAT gateway lets private resources start outbound connections while blocking inbound ones.
+explanation: Public resources need a public address and a route to the internet gateway. Private resources, such as servers needing updates, use a NAT gateway placed in a public subnet. NAT hides their private addresses and allows only replies back in. NAT gateways are billed hourly and per gigabyte, so they are a cost to watch.
+simple_explain: Internet gateway = in and out. NAT gateway = out only, for private subnets.
+analogy: An internet gateway is a front door, and a NAT gateway is a one-way exit.
+formula_rule: Public subnet → internet gateway. Private subnet → NAT gateway → internet gateway.
+example_1: A web server reached through an internet gateway.
+example_2: A private server downloading updates through NAT.
+example_3: A database that has no path to the internet at all.
+related: route tables, subnets, security groups, VPC endpoints
+word_family: gateway, NAT, outbound, inbound, public IP
+where_used: Network design | Updates | Cost review
+mini_conversation: A: The private server cannot download updates. | B: Add a NAT gateway and a route to it.
+misconception: ✗ A NAT gateway lets the internet connect in to private servers → ✓ It allows only outbound connections and their replies
+contrast: Internet vs NAT gateway: one allows two-way traffic, the other outbound only.
+avoid: Do not forget that NAT gateways have an hourly cost.
+memory_trick: NAT lets you out but not them in.
+real_project: Adding NAT so private workers could fetch packages without a public address.
+real_interview: An interviewer may ask: How do private servers reach the internet?
+real_daily: It is like a front door versus a one-way exit.
+mcq_question: Which gateway allows only outbound connections for private subnets?
+mcq_options: A) Load balancer B) Internet gateway C) NAT gateway D) Route table
+mcq_answer: C
+mcq_why: NAT allows outbound traffic and the replies to it.
+fill_blank: A NAT gateway is placed in a ____ subnet → public
+apply: Private servers need to download updates. What do you add? → A NAT gateway
+explain_task: Explain the two gateway types in three lines.
+own_task: List the pieces needed for a private server to reach the internet.
+
+@CLD-030
+topic: 05 Cloud Networking
+level: Intermediate
+term: Security groups and network ACLs
+cue: Which two firewalls filter traffic at the instance and subnet levels?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Routing alone does not decide what is allowed, so virtual firewalls were added at different levels.
+pro_tip: Use security groups as your main tool, and reference other groups instead of IP ranges.
+memory_story: A security group is a bouncer at each room, and a network ACL is the gate at the building.
+visual: A subnet boundary with a gate, and a bouncer at each server.
+emotion: The ease of opening exactly one port.
+definition: A security group is a stateful firewall attached to an instance, and a network ACL is a stateless firewall attached to a subnet.
+explanation: Security groups allow rules only, and everything not allowed is denied. Because they are stateful, return traffic is allowed automatically. Network ACLs have numbered allow and deny rules, and since they are stateless you must allow return traffic yourself. Security groups can refer to other groups, such as allowing the web group to reach the database group. Azure uses network security groups.
+simple_explain: Security groups guard each server and remember connections. ACLs guard whole subnets and do not.
+analogy: A security group is a bouncer at each room, and an ACL is the gate at the building.
+formula_rule: Security group = stateful, allow only. ACL = stateless, allow and deny.
+example_1: A rule allowing port 443 from anywhere to the web group.
+example_2: A rule allowing database port 5432 only from the app group.
+example_3: An ACL rule blocking one hostile address range.
+related: VPC, subnets, bastion hosts, least privilege
+word_family: stateful, stateless, rule, port, inbound
+where_used: Server protection | Troubleshooting | Audits
+mini_conversation: A: I cannot reach the app on port 8080. | B: Check whether the security group allows that port.
+misconception: ✗ Opening port 22 to the whole world is fine for convenience → ✓ It invites attacks, so restrict it or use a session manager
+contrast: Security group vs ACL: stateful at the instance, stateless at the subnet.
+avoid: Do not open sensitive ports to 0.0.0.0/0.
+memory_trick: Groups remember connections, ACLs forget them.
+real_project: Restricting the database port to the app security group instead of a wide range.
+real_interview: An interviewer may ask: What is the difference between a security group and a network ACL?
+real_daily: It is like a bouncer per room and a gate at the building.
+mcq_question: Which firewall is stateful?
+mcq_options: A) Network ACL B) Internet gateway C) Route table D) Security group
+mcq_answer: D
+mcq_why: Return traffic is allowed automatically for security groups.
+fill_blank: A security group denies everything that is not ____ → allowed
+apply: Only the app servers should reach the database. How do you write the rule? → Allow the app security group
+explain_task: Explain security groups and ACLs in three lines.
+own_task: Write rules for a three-tier web app.
+
+@CLD-031
+topic: 05 Cloud Networking
+level: Intermediate
+term: Load balancers
+cue: Which service spreads incoming traffic across several servers?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: One server cannot handle all users or survive failure, so a front service shares requests across healthy copies.
+pro_tip: Always set a health check path so unhealthy servers are removed.
+memory_story: A load balancer is a host who seats guests at free tables.
+visual: One entry point fanning out to three servers.
+emotion: The comfort of traffic going only to healthy servers.
+definition: A load balancer distributes incoming traffic across multiple targets and sends it only to those that pass health checks.
+explanation: Application load balancers work at layer 7 and can route by path or host name. Network load balancers work at layer 4 and are very fast. It terminates TLS if you attach a certificate. Together with auto scaling it keeps services available. Azure and GCP provide equivalent load balancers.
+simple_explain: Put a load balancer in front, register servers behind it, and set health checks.
+analogy: It is like a host seating guests at free tables.
+formula_rule: One address → many healthy targets.
+example_1: Routing /api to one group and /web to another.
+example_2: Removing a failed server from rotation automatically.
+example_3: Terminating HTTPS at the balancer.
+related: auto scaling, health checks, DNS, TLS
+word_family: balancer, target, health check, listener, layer 7
+where_used: Web apps | APIs | High availability
+mini_conversation: A: One server died but users saw no error. | B: The load balancer stopped sending it traffic.
+misconception: ✗ A load balancer makes a single server faster → ✓ It spreads load over several servers and does not speed up one
+contrast: Layer 7 vs layer 4: layer 7 understands HTTP paths, layer 4 only sees connections.
+avoid: Do not skip health checks on targets.
+memory_trick: One front door, many healthy rooms.
+real_project: Putting a load balancer in front of two API servers to avoid downtime during deploys.
+real_interview: An interviewer may ask: How does a load balancer know a server is down?
+real_daily: It is like a host seating guests at free tables.
+mcq_question: Which load balancer can route by URL path?
+mcq_options: A) Application load balancer B) Route table C) NAT D) Network load balancer
+mcq_answer: A
+mcq_why: Layer 7 balancers understand HTTP details.
+fill_blank: A balancer removes servers that fail their ____ check → health
+apply: You must route /api and /web to different servers. Which balancer? → An application load balancer
+explain_task: Explain load balancers in three lines.
+own_task: Choose a health check path for a web API.
+
+@CLD-032
+topic: 05 Cloud Networking
+level: Intermediate
+term: DNS (Route 53)
+cue: Which service turns names like example.com into addresses and can route traffic?
+category: Core concept
+frequency: High
+importance: 4
+origin: People remember names, not numbers, so DNS maps names to addresses, and cloud DNS adds routing and health features.
+pro_tip: Use low TTL values before a migration and raise them afterwards.
+memory_story: DNS is the phone book of the internet, and Route 53 is a smart operator.
+visual: A name flowing through a lookup into an address.
+emotion: The satisfaction of a domain that finally points to the right place.
+definition: Cloud DNS, such as AWS Route 53, hosts DNS records for your domains and can route traffic by weight, location or health.
+explanation: Records include A for IPv4 addresses, AAAA for IPv6, CNAME for aliases, MX for mail and TXT for text. TTL says how long answers are cached. Alias records can point to cloud resources such as a load balancer. Routing policies allow failover between regions. DNS changes may take time to spread because of caches.
+simple_explain: Create records that map names to addresses, and choose how long answers are cached.
+analogy: It is the phone book of the internet with a smart operator.
+formula_rule: Name → record → address, cached for the TTL.
+example_1: An A record pointing a name to a server address.
+example_2: A CNAME pointing www to the main name.
+example_3: Failover routing to a backup region.
+related: load balancers, CDN, networking basics, TLS certificates
+word_family: record, TTL, zone, alias, resolver
+where_used: Websites | Migrations | Failover
+mini_conversation: A: I changed the record but users still see the old site. | B: The old answer is cached until the TTL ends.
+misconception: ✗ DNS changes take effect everywhere instantly → ✓ Cached answers last until their TTL expires
+contrast: A vs CNAME: A maps a name to an address, CNAME maps a name to another name.
+avoid: Do not set a very high TTL just before a planned change.
+memory_trick: Lower the TTL before you move.
+real_project: Lowering the TTL a day before moving a site and then switching the record.
+real_interview: An interviewer may ask: Why do DNS changes take time to apply?
+real_daily: It is like a phone book with a smart operator.
+mcq_question: Which record type maps a name to an IPv4 address?
+mcq_options: A) TXT B) A C) MX D) NS
+mcq_answer: B
+mcq_why: An A record holds an IPv4 address.
+fill_blank: The time an answer may be cached is called the ____ → TTL
+apply: You will move a site tomorrow. What should you lower today? → The TTL
+explain_task: Explain DNS records in three lines.
+own_task: List four record types and their jobs.
+
+@CLD-033
+topic: 05 Cloud Networking
+level: Intermediate
+term: CDN
+cue: Which service caches your content at locations near users to make delivery faster?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Distance adds delay, so providers placed caches around the world that serve popular content close to users.
+pro_tip: Set proper cache headers so the network can keep content for the right time.
+memory_story: A CDN is a chain of local shops stocking your product instead of one far warehouse.
+visual: A world map with small cache points near users.
+emotion: The delight of a page loading fast anywhere.
+definition: A content delivery network, such as CloudFront, caches copies of your content at edge locations and serves it from the one nearest the user.
+explanation: The first request goes to the origin, such as a bucket or server, and the result is cached at the edge. Later requests are served locally. It reduces load and cost at the origin and adds protection features. Cache invalidation removes old copies. It also terminates HTTPS close to the user. Azure Front Door and Cloud CDN are equivalents.
+simple_explain: Put a CDN in front of static content so users get it from a nearby cache.
+analogy: It is a chain of local shops stocking your product instead of one far warehouse.
+formula_rule: Edge cache hit = fast. Miss = fetch from origin once.
+example_1: Serving images and scripts from edge locations.
+example_2: Invalidating a cached file after an update.
+example_3: A private bucket served only through the CDN.
+related: object storage, DNS, load balancers, TLS
+word_family: edge, cache, origin, invalidation, latency
+where_used: Websites | Media delivery | Downloads
+mini_conversation: A: Users far away see a slow site. | B: Put a CDN in front of the static files.
+misconception: ✗ A CDN only works for images and video → ✓ It can cache many kinds of content and also accelerate dynamic requests
+contrast: Origin vs edge: the origin holds the source, edges hold cached copies.
+avoid: Do not cache private or personalised responses publicly.
+memory_trick: Edge serves copies, origin owns the source.
+real_project: Putting a CDN in front of a static site to cut load times for overseas users.
+real_interview: An interviewer may ask: How does a CDN improve performance?
+real_daily: It is like local shops stocking your product.
+mcq_question: Where is cached content served from?
+mcq_options: A) Your laptop B) A database C) An edge location near the user D) The origin only
+mcq_answer: C
+mcq_why: Edge locations hold copies close to users.
+fill_blank: Removing a cached file early is called cache ____ → invalidation
+apply: Users abroad see slow static files. What do you add? → A CDN
+explain_task: Explain a CDN in three lines.
+own_task: List three things that should not be cached publicly.

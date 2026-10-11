@@ -1,0 +1,396 @@
+deck.title: GitHub – Beginner to Advanced Flashcards
+deck.subject: Git & GitHub
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: git
+type: code56
+
+@GIT-001
+type: topic56
+topic: 01 Basics
+level: Beginner
+term: GitHub
+cue: Which platform lets you store code online, share it, and work on it together with other people?
+category: Code hosting platform
+frequency: Very high
+importance: 5
+origin: GitHub launched in 2008 to host Git repositories online, and Microsoft bought it in 2018.
+pro_tip: Create a repository even for small projects so old code is never lost.
+memory_story: Git is a diary that remembers every change, and GitHub is the online cupboard where that diary is kept for others to read.
+visual: A huge online locker room where every project has its own locker and friends enter with a key.
+emotion: The relief of finding your code safe even after your laptop breaks.
+definition: GitHub is a website that stores Git repositories online so people can work on code together.
+explanation: Git keeps the history of your code on your own computer. GitHub keeps that history on the internet, so you have a backup and a team can collaborate through pull requests, issues and reviews.
+simple_explain: Git runs on your laptop and GitHub lives on the internet. You push your code there, and friends can read it or change it with your permission.
+analogy: It works like Google Drive, but built for code, with a record of every change and a way to review work.
+formula_rule: Local work (Git): commit → Send online (GitHub): push → Ask for review: pull request
+example_1: A student keeps a portfolio website on GitHub so recruiters can see it.
+example_2: A contributor fixes a bug in an open-source project and sends a pull request.
+example_3: A team builds separate features on branches and merges them after review.
+related: Git, repository, branch, pull request
+word_family: repository, commit, push, pull, fork, issue
+where_used: Software teams | Open-source projects | Portfolios and job applications
+mini_conversation: A: My code is only on my laptop, how do I share it with the team? | B: Create a repository on GitHub, push your code, and send them the link.
+misconception: ✗ Git and GitHub are the same thing → ✓ Git is a tool that runs on your computer, while GitHub is a website built around it (GitLab and Bitbucket are alternatives)
+contrast: GitHub vs Git: Git is the version control tool, GitHub is the online platform that hosts it.
+avoid: Never commit passwords, API keys or private tokens to a repository.
+memory_trick: Git keeps the history, and Hub is where everyone meets.
+real_project: Keeping the team code on GitHub, reviewing it through pull requests, and then merging it into the main branch.
+real_interview: An interviewer may ask: What is the difference between Git and GitHub, and what is a pull request?
+real_daily: It is like a shared notebook that records who changed what.
+mcq_question: Which GitHub feature sends your bug fix to a project owner for review?
+mcq_options: A) git init B) git status C) Pull request D) Fork delete
+mcq_answer: C
+mcq_why: A pull request sends your changes to the owner for review and merging; the other options do not do that.
+fill_blank: Git is a tool, and ____ is the online hosting service built around it → GitHub
+apply: What is the first step to put a project folder on GitHub? → Create a new repository on GitHub, then push your code
+explain_task: Explain the difference between Git and GitHub to a friend in three lines.
+own_task: Create a public repository under your name and write two lines about yourself in its README.md.
+
+@GIT-002
+type: topic56
+topic: 01 Basics
+level: Beginner
+term: Repository (repo)
+cue: What do we call the place that holds all of a project's files together with the full history of their changes?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: A repository is a storehouse; in Git it is the project folder plus its full history, kept inside a hidden folder named .git.
+pro_tip: Keep one project per repository instead of mixing unrelated things together.
+memory_story: A repo is a safe that holds not just your files but every earlier version of them, ready to be taken out at any time.
+visual: A folder with a hidden folder inside it that holds a whole photo album of old versions.
+emotion: The comfort of knowing an old version can come back if you make a mistake.
+definition: A repository is a project folder whose files and the record of all their changes are stored together by Git.
+explanation: A local repository lives on your computer and a remote repository lives on GitHub. You keep them in sync with push and pull. The hidden .git folder inside the project holds the complete history.
+simple_explain: A repository is your project folder as Git sees it. It holds your files and a record of every commit, so you can return to any earlier version.
+analogy: Like a book file that keeps a copy of every earlier edit of every page.
+formula_rule: Repository = project files + .git folder (history)
+example_1: A website folder containing index.html, style.css and a .git folder is a repository.
+example_2: The page github.com/username/notes is a remote repository.
+example_3: A clone of that page on your laptop is a local repository with the full history.
+related: Git, .git folder, remote, clone
+word_family: local repo, remote repo, bare repo, monorepo
+where_used: Every software project | Open-source libraries | Documentation and notes
+mini_conversation: A: Where is the project code kept? | B: In a GitHub repository, I will send you the link so you can clone it.
+misconception: ✗ A repository is just a folder of files → ✓ A repository also holds the full commit history inside .git, so deleting .git erases the history
+contrast: Folder vs repository: a folder holds only files, a repository holds files plus their complete history.
+avoid: Do not edit or delete the hidden .git folder by hand.
+memory_trick: Repo means Remembering Every Past Object.
+real_project: Keeping each microservice in its own repository so different teams can release independently.
+real_interview: An interviewer may ask: What is the difference between a local and a remote repository?
+real_daily: It is like a family album where every year's photos are kept in order.
+mcq_question: What turns an ordinary folder into a Git repository?
+mcq_options: A) Naming the folder repo B) The hidden .git folder C) A README.md file D) A .txt extension
+mcq_answer: B
+mcq_why: The .git folder holds the history and settings; nothing else makes a folder a repository.
+fill_blank: A repository keeps its full history inside the hidden ____ folder → .git
+apply: What happens if you delete the .git folder from a project? → The folder becomes ordinary again and the full commit history is lost
+explain_task: Explain the difference between a local and a remote repository to a friend.
+own_task: Write in your own words the steps to turn an old project folder into a repository.
+
+@GIT-003
+topic: 01 Basics
+level: Beginner
+term: git config
+cue: Which setting do you have to make once so that your name and email appear on every commit?
+kind: Git command
+frequency: High
+importance: 5
+origin: Git stamps each commit with an author name and email, so it asks for them first, and the config command saves them to a settings file.
+pro_tip: Set it once with --global and every repo on your computer will use the same name and email.
+memory_story: The first time you visit a shop you write your name in its register, and git config is that first page.
+visual: A register where every page carries a stamp with the same name and email.
+emotion: The pride of seeing your own name on your very first commit.
+meaning: git config sets or shows Git settings such as your name and email.
+code: git config --global user.name "Asha Verma"¶git config --global user.email "asha@example.com"¶git config --global init.defaultBranch main
+output: (no output; the settings are saved in ~/.gitconfig)
+explanation: Config exists at three levels: system, global (for your user) and local (for one repository). A narrower level overrides a wider one. The name and email are stored on each commit as its author.
+simple_explain: This tells Git who you are. Write it once with --global and every project on your computer will show the same name on commits.
+analogy: It is like entering your name and account when you set up a new phone.
+syntax: git config [--global|--local|--system] <key> <value>
+anatomy: git config = command | --global = for all repos | user.name = key | "Asha Verma" = value
+example_1: git config --global user.name "Asha Verma"
+example_2: git config --local user.email "asha@office.com"
+example_3: git config --list --show-origin
+variation: git config user.name   # show only the name¶git config --global --edit   # open the file in an editor
+used_with: --global, --local, user.name, user.email
+related: .gitconfig, git init, git commit
+alternatives: Editing the ~/.gitconfig file directly
+word_family: git config, git init, git clone, git remote, git status
+where_used: Setting up a new computer | Keeping work and personal email separate | CI machines
+mini_conversation: A: My commits show the wrong name. | B: Check git config user.name and set the correct name.
+misconception: ✗ git config --global applies to only one repo → ✓ --global applies to every repo for your user account, and --local is the one for a single repo
+confused_with: --global vs --local: global applies to all repositories, local applies to the current repository only.
+avoid: Do not commit with your personal email in a work repo without thinking.
+wrong_code: git config user.name = Asha
+right_code: git config --global user.name "Asha"
+memory_trick: Global is the whole house, local is just one room.
+real_project: Setting the name, email and default branch on a new laptop so commits carry the right author.
+real_interview: An interviewer may ask: What are the three levels of git config?
+real_daily: It is like setting your name and account once on a new phone.
+mcq_question: Which command sets the email for the current repository only?
+mcq_options: A) git config --local user.email x B) git config --global user.email x C) git push user.email x D) git init user.email x
+mcq_answer: A
+mcq_why: --local changes only the current repo, while --global applies to all of them.
+fill_blank: To set your name for every repository on this computer, run git config ____ user.name "Asha" → --global
+hindi_to_task: Set your name to Ravi for all repositories.
+task_answer: git config --global user.name "Ravi"
+own_task: Configure your name and email on your computer and check them with git config --list.
+practice_question: What does this command set? git config --global init.defaultBranch main
+practice_answer: New repositories will start with a branch named main.
+
+@GIT-004
+topic: 01 Basics
+level: Beginner
+term: git init
+cue: Which command brings an ordinary folder under Git so it can start recording history?
+kind: Git command
+frequency: High
+importance: 5
+origin: Init means initialize, and this command creates the hidden .git folder that turns a folder into a repository.
+pro_tip: Create a .gitignore right after git init in a new project folder.
+memory_story: Init opens a fresh register and writes on page one: history starts here.
+visual: A hidden little locker suddenly appears inside an empty folder.
+emotion: The freshness you feel before writing the first line of a new project.
+meaning: git init creates a new, empty Git repository in the current folder.
+code: mkdir myapp¶cd myapp¶git init
+output: Initialized empty Git repository in /home/asha/myapp/.git/
+explanation: It creates a .git folder holding the config, objects and branches. Files are not tracked yet; you add them with git add and git commit.
+simple_explain: Run git init in a folder and Git starts watching it. But no file is tracked yet, so you still have to add your files.
+analogy: It is like buying a new diary and writing start on its first page.
+syntax: git init [directory]
+anatomy: git init = command | [directory] = optional folder name
+example_1: git init
+example_2: git init website-project
+example_3: git init --initial-branch=main
+variation: git init -b main   # name the branch main¶git init --bare   # server repo with no working files
+used_with: git add, git commit, git remote add
+related: git clone, .git folder, git status
+alternatives: Create a repo on GitHub, then git clone it
+word_family: git init, git clone, git add, git commit, git status
+where_used: Starting a new project | Putting an old folder under version control | Tutorials and practice
+mini_conversation: A: My folder gives an error when I run git status. | B: You probably never ran git init there, so run it first.
+misconception: ✗ After git init your files are tracked automatically → ✓ git init only creates an empty repository, and you track files with git add
+confused_with: git init vs git clone: init creates a new empty repo, clone copies an existing repo.
+avoid: Do not run git init again inside a folder that is already a Git repository.
+wrong_code: git init myapp.git push
+right_code: git init myapp
+memory_trick: Init is initialize, a brand new start.
+real_project: Running git init locally before putting a new side project on GitHub.
+real_interview: An interviewer may ask: What does git init create inside the .git folder?
+real_daily: It is like writing your name on page one of a new notebook.
+mcq_question: Which command turns a brand new empty folder into a Git repository for the first time?
+mcq_options: A) git merge B) git push C) git clone D) git init
+mcq_answer: D
+mcq_why: Init creates a new empty repo, while clone copies an existing one.
+fill_blank: git ____ myapp → init
+hindi_to_task: Create a new Git repository named website.
+task_answer: git init website
+own_task: Make a test folder on your laptop, run git init in it, and look at the .git folder.
+practice_question: What will git status show right after git init?
+practice_answer: It will say No commits yet and that no file is tracked.
+
+@GIT-005
+topic: 01 Basics
+level: Beginner
+term: git clone
+cue: How do you bring a whole project and its history from GitHub onto your own computer?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: A clone is a copy; this command makes a full copy of a remote repository with its history and sets the origin remote for you.
+pro_tip: For a huge repo use --depth 1 to take only the latest commit, which downloads much faster.
+memory_story: Put a whole book in a photocopier and copy every page, and that is a clone.
+visual: A thick book sits on a table next to an identical second book.
+emotion: The excitement of opening a new project and running it on your own machine.
+meaning: git clone makes a full local copy of a remote repository, history included.
+code: git clone https://github.com/octocat/Hello-World.git¶cd Hello-World¶git log --oneline -3
+output: Cloning into 'Hello-World'...¶remote: Enumerating objects: 13, done.¶Receiving objects: 100% (13/13), done.¶(then the three latest commits, one per line, as short hash and message)
+explanation: Clone creates a new folder, downloads all files and the .git history, and names the remote origin. You can start working straight away.
+simple_explain: Clone downloads the GitHub project to your laptop. The full history comes with it, and a remote named origin is set up automatically.
+analogy: It is like a photocopy of a friend's whole notebook, page by page.
+syntax: git clone <url> [folder]
+anatomy: git clone = command | <url> = address of the repo | [folder] = optional new folder name
+example_1: git clone https://github.com/octocat/Hello-World.git
+example_2: git clone git@github.com:octocat/Hello-World.git my-copy
+example_3: git clone --depth 1 https://github.com/torvalds/linux.git
+variation: git clone -b dev <url>   # check out dev first (all branches still downloaded)¶git clone --single-branch -b dev <url>   # download only dev¶git clone --depth 1 <url>   # only the latest commit
+used_with: HTTPS, SSH, --depth, -b
+related: git init, git fetch, git remote
+alternatives: Downloading a ZIP from GitHub (no history)
+word_family: git clone, git init, git pull, git fetch, git remote
+where_used: Joining a new project | Reading open-source code | Setting up a new laptop
+mini_conversation: A: How do I get the project code? | B: Take the repo link, run git clone, and then cd into the folder.
+misconception: ✗ Downloading a ZIP and git clone are the same thing → ✓ A ZIP gives only the files, while a clone also brings the history and the remote connection
+confused_with: git clone vs git pull: clone brings a full copy the first time, pull brings new changes into an existing copy.
+avoid: Do not clone a repository inside another cloned repository.
+wrong_code: git clone octocat/Hello-World
+right_code: git clone https://github.com/octocat/Hello-World.git
+memory_trick: Clone means copy it all, then work on your own side.
+real_project: A new team member cloning the repo on day one to run the project locally.
+real_interview: An interviewer may ask: What is the difference between a clone and a fork?
+real_daily: It is like getting a full copy of a recipe book for your own kitchen.
+mcq_question: Which command brings an existing GitHub repository to your computer for the first time?
+mcq_options: A) git commit B) git clone C) git status D) git init
+mcq_answer: B
+mcq_why: Clone copies the whole remote repo, whereas init creates a new empty one.
+fill_blank: git ____ https://github.com/octocat/Hello-World.git → clone
+hindi_to_task: Clone the Hello-World repository into a folder called demo.
+task_answer: git clone https://github.com/octocat/Hello-World.git demo
+own_task: Clone a small open-source repo, read its README, and say in one line what it does.
+practice_question: What happens when you run git clone <url> new-name?
+practice_answer: The repo is cloned into a folder called new-name instead of the name taken from the URL.
+
+@GIT-006
+topic: 01 Basics
+level: Beginner
+term: git status
+cue: How do you see at a glance which files have changed and which are ready to be committed?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: Status means current condition; in Git it compares the working folder, the staging area and the last commit, which is why developers run it constantly.
+pro_tip: Make it a habit to run git status before every commit.
+memory_story: A doctor checks your condition before doing anything, and git status is that check before you do anything.
+visual: A notice board where changed files are written in red and ready files in green.
+emotion: The confidence of knowing everything is in order before you commit.
+meaning: git status tells you which files are modified, staged or untracked.
+code: echo "hello" > notes.txt¶git status
+output: On branch main¶Untracked files:¶  (use "git add <file>..." to include in what will be committed)¶        notes.txt
+explanation: Status shows three groups: staged (ready to commit), modified (changed but not staged) and untracked (Git does not know the file yet). It changes nothing; it only reports.
+simple_explain: git status is a report on which files are new, changed, or already added for the next commit. It changes nothing, so run it freely.
+analogy: It is like checking your admit card before an exam.
+syntax: git status [-s]
+anatomy: git status = command | -s = short format
+example_1: git status
+example_2: git status -s
+example_3: git status --branch --short
+variation: git status -sb   # short format with the branch¶git status --ignored   # also show ignored files
+used_with: git add, git commit, git diff
+related: git diff, git add, .gitignore
+alternatives: The source control panel in your IDE
+word_family: git status, git add, git diff, git log, git commit
+where_used: Before every commit | After a merge | Whenever you are confused
+mini_conversation: A: I do not know which file I changed. | B: Run git status and it will tell you everything.
+misconception: ✗ git status makes files ready to commit → ✓ git status only shows information, and you make files ready with git add
+confused_with: git status vs git log: status shows the current state, log shows past commits.
+avoid: Do not run git add . without looking at the status first.
+wrong_code: git status add notes.txt
+right_code: git add notes.txt
+memory_trick: Status means stop and look before you act.
+real_project: Spotting stray debug files with git status just before committing.
+real_interview: An interviewer may ask: What is the difference between untracked, modified and staged?
+real_daily: It is like checking your bag before you leave for a trip.
+mcq_question: You create a new file that Git has never seen. In which category will git status show it?
+mcq_options: A) Committed B) Ignored C) Staged D) Untracked
+mcq_answer: D
+mcq_why: A file that was never added to Git is untracked.
+fill_blank: git ____ -s → status
+hindi_to_task: Show a short summary of the changes.
+task_answer: git status -s
+own_task: Create a new file, run git status, and write down in your own words which category it is in.
+practice_question: You git add a file and then change it again. How does git status show it?
+practice_answer: Both ways: the old change as staged and the new change as modified.
+
+@GIT-007
+topic: 01 Basics
+level: Beginner
+term: git add
+cue: How do you put a changed file into the staging area so it is ready for the next commit?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: Git keeps a staging area before commit so you can choose exactly which changes to save, and git add is how you put changes into it.
+pro_tip: Use git add -p to look at each change and avoid committing unwanted things by mistake.
+memory_story: You put items in a shopping trolley and pay at the counter; add is the trolley and commit is the counter.
+visual: A shopping trolley holding only a few chosen files while the rest stay on the shelf.
+emotion: The sense of control as only the files you picked go into the trolley.
+meaning: git add puts changes into the staging area so they are included in the next commit.
+code: git add index.html¶git add src/¶git status -s
+output: A  index.html¶A  src/app.js
+explanation: The staging area is a middle place where you decide what goes into the commit. You can add one file, one folder, or everything with a dot. If a file changes after you add it, you must add it again.
+simple_explain: With git add you tell Git this change goes into the next commit. A file you did not add will not be committed, even if it changed.
+analogy: It is like a shop trolley: only what you put in it goes to the billing counter.
+syntax: git add <path>
+anatomy: git add = command | <path> = file or folder | . = everything
+example_1: git add index.html
+example_2: git add src/ tests/
+example_3: git add -p
+variation: git add .   # all changes¶git add -A   # new, changed and deleted¶git add *.js   # only js files
+used_with: git status, git commit, -p, .
+related: git commit, git restore --staged, .gitignore
+alternatives: git commit -a (only already tracked files)
+word_family: git add, git status, git commit, git restore, git diff
+where_used: Before every commit | Committing selected changes | Tracking a new file
+mini_conversation: A: I changed the file but it did not go into the commit. | B: You did not run git add, so add it first and then commit.
+misconception: ✗ A changed file automatically goes into the next commit → ✓ Only changes that were staged with git add go into a commit
+confused_with: git add vs git commit: add puts changes in staging, commit writes them into history permanently.
+avoid: Do not use git add . blindly, it may add secrets or large files.
+wrong_code: git add commit index.html
+right_code: git add index.html
+memory_trick: Add means place it in the trolley.
+real_project: Using git add -p to split one piece of work into separate, clean commits.
+real_interview: An interviewer may ask: What is the staging area and why does it exist?
+real_daily: It is like packing items in a bag before the trip has started.
+mcq_question: If you run git add and then edit the same file again, what goes into the next commit?
+mcq_options: A) Only the first (staged) change B) Nothing C) Only the new change D) Both changes
+mcq_answer: A
+mcq_why: A commit takes the version that was staged at the time of add; the new change needs another add.
+fill_blank: git ____ index.html → add
+hindi_to_task: Put only style.css into staging.
+task_answer: git add style.css
+own_task: Change two files, stage only one with git add, and confirm it with git status.
+practice_question: What does git add . do?
+practice_answer: It stages all new and changed files in the current folder, except ignored ones.
+
+@GIT-008
+topic: 01 Basics
+level: Beginner
+term: git commit
+cue: How do you write staged changes into history as a permanent snapshot?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: A commit is a promise to save; Git stores each commit with a unique hash so you can return to that snapshot at any time.
+pro_tip: Keep commits small and about one thing, which makes review and revert easy.
+memory_story: A commit is like taking a photo: the project stays exactly as it looked at that moment, forever.
+visual: A camera takes a picture of the project at each stage and sticks it into an album.
+emotion: The relief of knowing a piece of your work is now safe.
+meaning: git commit saves staged changes into history as a snapshot with a message.
+code: git add index.html¶git commit -m "Add homepage heading"
+output: [main 3f2a9c1] Add homepage heading¶ 1 file changed, 1 insertion(+)
+explanation: A commit adds a snapshot of the staging area to history and gives it a hash. It exists only on your computer for now; pushing is what sends it to GitHub.
+simple_explain: A commit makes a save point of your work, with a message. It is on your laptop only, and you need a separate push to send it online.
+analogy: It is like a save point in a game that you can return to later.
+syntax: git commit -m "<message>"
+anatomy: git commit = command | -m = write the message inline | "<message>" = short description of the change
+example_1: git commit -m "Fix login redirect bug"
+example_2: git commit -am "Update footer links"
+example_3: git commit
+variation: git commit -am "msg"   # add tracked files and commit¶git commit --amend   # change the last commit¶git commit --allow-empty -m "trigger CI"
+used_with: git add, -m, -a, --amend
+related: git log, git push, git revert
+alternatives: The commit button in an IDE
+word_family: git commit, git add, git log, git revert, git reset
+where_used: Daily work | Small steps of a feature | Saving a bug fix
+mini_conversation: A: I finished my work, what now? | B: Run git add and git commit, then push it.
+misconception: ✗ Running git commit sends the code to GitHub → ✓ A commit is saved only in your local repository, and you need git push to send it to GitHub
+confused_with: git commit vs git push: commit makes a local snapshot, push sends it to the remote.
+avoid: Do not write useless messages like fix or asdf.
+wrong_code: git commit "Add heading"
+right_code: git commit -m "Add heading"
+memory_trick: Commit is the camera click, push is sending the album.
+real_project: Committing each small step of a feature so review and rollback are easy.
+real_interview: An interviewer may ask: What is a commit hash?
+real_daily: It is like saving a checkpoint after finishing each level of a game.
+mcq_question: After git commit, which step is still needed if you want the code on GitHub?
+mcq_options: A) git config B) git init C) git push D) git add
+mcq_answer: C
+mcq_why: A commit is local, and you need push to send it to the remote.
+fill_blank: git ____ -m "Add header" → commit
+hindi_to_task: Save the staged changes with the message Add navbar.
+task_answer: git commit -m "Add navbar"
+own_task: Change a file, add it, commit it, and look at your commit with git log.
+practice_question: Name one big difference between git commit -am "msg" and git add . followed by git commit -m "msg".
+practice_answer: -am stages only already tracked files, so new untracked files are not added.

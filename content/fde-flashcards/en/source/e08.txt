@@ -1,0 +1,288 @@
+
+@GIT-050
+topic: 07 GitHub Platform
+level: Advanced
+term: GitHub Actions
+cue: Which GitHub feature runs your tests, builds and deployments automatically when you push or open a PR?
+kind: CI/CD platform
+frequency: Very high
+importance: 5
+origin: Running tests and deployments by hand was slow and error-prone, so GitHub added workflows inside the repository that run on events.
+pro_tip: Start by writing one small test workflow and running it on a PR.
+memory_story: Actions is a robot that runs the tests the moment you push and hands you the receipt.
+visual: A robot works through a line of tasks and sets a green or red mark on each push.
+emotion: The calm of seeing tests run on their own for every PR.
+meaning: GitHub Actions runs automatic work from a workflow file when events happen in a repository.
+code: name: CI¶on: [push, pull_request]¶jobs:¶  test:¶    runs-on: ubuntu-latest¶    steps:¶      - uses: actions/checkout@v4¶      - run: npm ci¶      - run: npm test
+output: This workflow runs on each push and shows pass or fail in the Actions tab.
+explanation: A workflow is a YAML file in .github/workflows/. It says on which event, which jobs and which steps. Jobs run on a runner machine such as ubuntu-latest. Secrets live in repository secrets. Check the Marketplace for the current checkout version.
+simple_explain: You write a YAML file in .github/workflows saying when and what to run. After that GitHub runs it by itself on every push.
+analogy: It is like a robot that checks each newly arrived item and hands you a receipt.
+syntax: on: <event> → jobs: <job>: runs-on, steps
+anatomy: on = when it runs | jobs = the work | runs-on = which machine | steps = each command
+example_1: on: push (run the tests on every push)
+example_2: on: pull_request (check PRs)
+example_3: on: schedule cron (a build every night)
+variation: on: workflow_dispatch   # run by hand¶strategy: matrix   # test on many versions
+used_with: YAML, secrets, runner, matrix
+related: pull request, branch protection, secrets, releases
+alternatives: Jenkins, GitLab CI, CircleCI
+word_family: workflow, job, step, runner, action
+where_used: CI testing | Deploys | Release automation
+mini_conversation: A: No tests run on my PR. | B: Add a workflow file under .github/workflows and it will run on each PR.
+misconception: ✗ GitHub Actions is only for building code → ✓ Actions can automate anything on any event: labels, releases, deploys, issue triage
+confused_with: workflow vs job: a workflow is the whole file, a job is a group of tasks inside it.
+avoid: Do not write secrets in a workflow file, use repository secrets.
+wrong_code: on push: runs-on ubuntu
+right_code: on: push
+memory_trick: Actions means things happen automatically for you.
+real_project: Running tests and lint on every PR and merging only when they pass.
+real_interview: An interviewer may ask: What is the difference between a workflow, a job and a step?
+real_daily: It is like a robot that checks every new item and hands over a receipt.
+mcq_question: In which folder are workflow files kept in a repository?
+mcq_options: A) .github/workflows B) .git/workflows C) workflows/ D) .actions/
+mcq_answer: A
+mcq_why: GitHub runs the YAML files inside .github/workflows.
+fill_blank: The key that says when a workflow runs is ____ → on
+hindi_to_task: Write the line that runs a workflow on every push.
+task_answer: on: push
+own_task: Make a small workflow that runs echo hello on every push.
+practice_question: How do you use secrets safely in a workflow?
+practice_answer: Keep them in repository secrets and read them with ${{ secrets.NAME }}.
+
+@GIT-051
+topic: 07 GitHub Platform
+level: Intermediate
+term: GitHub Releases
+cue: How do you officially publish a version on GitHub with a name, notes and downloadable files?
+kind: GitHub feature
+frequency: Medium
+importance: 3
+origin: A tag alone does not tell users what is new, so GitHub Releases adds release notes and downloadable files on top of a tag.
+pro_tip: Write a changelog in each release and follow semantic versioning.
+memory_story: A release is the launch of a new product that arrives with a small note about what is inside.
+visual: A page shows a version number, notes, and files to download below.
+emotion: Pride at getting a new version into people's hands.
+meaning: A GitHub Release is a version page built on a tag with notes and files.
+code: git tag -a v1.2.0 -m "Search added"¶git push origin v1.2.0¶gh release create v1.2.0 --generate-notes
+output: https://github.com/asha/notes/releases/tag/v1.2.0
+explanation: A release is a page attached to a tag. You can write the notes by hand or have GitHub generate them, and attach built files. You can mark a release as a pre-release for an early version.
+simple_explain: Put a tag and then build a release on it. Users see what is new in the notes and can download built files straight away.
+analogy: It is like launching a new product with a small note inside the box.
+syntax: gh release create <tag> [--generate-notes]
+anatomy: gh release create = make a release | <tag> = the version tag | --generate-notes = write notes automatically
+example_1: gh release create v1.0.0 --generate-notes
+example_2: gh release create v1.1.0 dist/app.zip --notes "Bug fixes"
+example_3: gh release create v2.0.0-beta.1 --prerelease
+variation: gh release list   # see releases¶gh release delete v1.0.0
+used_with: git tag, gh CLI, semantic versioning, changelog
+related: git tag, GitHub Actions, changelog
+alternatives: A bare tag, or a package registry
+word_family: release, tag, changelog, pre-release, asset
+where_used: Software launches | Open-source libraries | Download links
+mini_conversation: A: How do we tell users about the new version? | B: Make a GitHub Release with notes and files.
+misconception: ✗ A release and a tag are the same thing → ✓ A tag is just a label on a commit, while a release is a page on top of it with notes and files
+confused_with: tag vs release: a tag names a commit, a release is a page on it with notes and files.
+avoid: Do not change a tag that has been pushed in order to make a release.
+wrong_code: gh release v1.0.0
+right_code: gh release create v1.0.0
+memory_trick: A release is a tag with a receipt.
+real_project: Making an automatic release for every version with built files attached.
+real_interview: An interviewer may ask: What is the difference between a tag and a release?
+real_daily: It is like placing a small note inside a new product's box.
+mcq_question: What does a release usually add that a tag does not have?
+mcq_options: A) Collaborators B) Issues C) A branch D) Notes and downloadable files
+mcq_answer: D
+mcq_why: A release adds notes and files on top of a tag.
+fill_blank: A release marked as an early, not-final version is made with the ____ flag → --prerelease
+hindi_to_task: Make a release for v1.0.0 with auto-generated notes.
+task_answer: gh release create v1.0.0 --generate-notes
+own_task: Put a tag on your repo and make a release from it.
+practice_question: How do you attach built files to a release?
+practice_answer: Give the file path with gh release create, or upload them on the web page.
+
+@GIT-052
+topic: 07 GitHub Platform
+level: Intermediate
+term: GitHub Pages
+cue: Which GitHub feature hosts your static website for free straight from a repository?
+kind: GitHub feature
+frequency: Medium
+importance: 3
+origin: Developers should not need a separate server for a small website or project docs, so GitHub lets files in a repository be served directly as a website.
+pro_tip: Create a repo named username.github.io for your portfolio.
+memory_story: Pages is a notice board that shows your repo files straight to the world.
+visual: A repo folder turns directly into a website.
+emotion: Pride at seeing your own website live.
+meaning: GitHub Pages hosts the static files (HTML, CSS, JS) of a repository as a website.
+code: git switch -c gh-pages¶git push origin gh-pages
+output: After you choose the gh-pages branch under Settings > Pages, the site appears at https://asha.github.io/notes/
+explanation: In Settings under Pages you choose a branch and folder, and GitHub hosts those files on github.io. Only static files work, not server-side code. A custom domain can be added too.
+simple_explain: Put HTML files in a repo and turn on Pages. In a few minutes your website is live at username.github.io.
+analogy: It is like a signboard in front of a shop that everyone outside can see.
+syntax: Settings → Pages → Source: choose a branch and folder
+anatomy: Source = which branch | folder = / or /docs | URL = username.github.io/repo
+example_1: Hosting a personal portfolio at username.github.io.
+example_2: Hosting a library's docs from the /docs folder.
+example_3: Making a blog with Jekyll or another static site generator.
+variation: Custom domain: add a CNAME file or set the domain in Settings
+used_with: HTML, Jekyll, custom domain, Actions
+related: GitHub Actions, README, static site
+alternatives: Netlify, Vercel, Cloudflare Pages
+word_family: Pages, static site, domain, deploy, Jekyll
+where_used: Portfolios | Project docs | Small websites
+mini_conversation: A: Where should I host my website? | B: Turn on GitHub Pages, it is free and easy.
+misconception: ✗ A backend with a database can run on GitHub Pages → ✓ Pages hosts only static files, and a server or database needs separate hosting
+confused_with: GitHub vs GitHub Pages: GitHub stores the code, Pages turns that code into a website.
+avoid: Do not keep private or secret things in a Pages repo, the site can be public.
+wrong_code: git push origin pages-site --host
+right_code: git push origin gh-pages
+memory_trick: Pages means a public website straight from the repo.
+real_project: Hosting a library's docs on GitHub Pages for free.
+real_interview: An interviewer may ask: What kind of content can GitHub Pages host?
+real_daily: It is like a signboard that everyone can see in front of a shop.
+mcq_question: What kind of content can GitHub Pages host?
+mcq_options: A) Only a database B) Static files (HTML, CSS, JS) C) A full backend server D) Only video
+mcq_answer: B
+mcq_why: Pages serves only static files.
+fill_blank: A Pages site usually appears at ____ .github.io → username
+hindi_to_task: Push your gh-pages branch to GitHub.
+task_answer: git push origin gh-pages
+own_task: Make a small HTML page and put it live on GitHub Pages.
+practice_question: How do you add a custom domain to Pages?
+practice_answer: Enter the domain in Settings and set a CNAME or A records in your DNS.
+
+@GIT-053
+topic: 07 GitHub Platform
+level: Intermediate
+term: GitHub CLI (gh)
+cue: Which official command-line tool lets you handle PRs, issues and releases from the terminal?
+kind: CLI tool
+frequency: Medium
+importance: 4
+origin: Opening the browser again and again to make PRs and issues was slow, so GitHub made an official tool called gh to do the same work in the terminal.
+pro_tip: Run gh auth login once and the token hassle is over.
+memory_story: gh is a small remote control that runs the GitHub browser from the terminal.
+visual: Typing gh pr create in the terminal makes a PR appear.
+emotion: The speed of finishing work without leaving the terminal.
+meaning: gh is GitHub's command-line tool for handling PRs, issues and releases from the terminal.
+code: gh auth login¶gh repo clone asha/notes¶gh pr create --title "Add search" --body "Adds search box"
+output: https://github.com/asha/notes/pull/17
+explanation: gh logs in to your GitHub account and can clone repos, open PRs, check out PRs, view issues and make releases. It does not replace git, it only brings GitHub features to the terminal.
+simple_explain: With gh you handle PRs and issues from the terminal instead of the browser. For commits you still use git.
+analogy: It is like a remote control that does many TV jobs without getting up.
+syntax: gh <command> <subcommand> [flags]
+anatomy: gh = the tool | pr/issue/repo/release = the area | create/list = the action
+example_1: gh pr create --fill
+example_2: gh issue list --assignee @me
+example_3: gh pr checkout 17
+variation: gh pr merge 17 --squash¶gh run watch   # follow an Actions run
+used_with: gh auth login, PR, issues, Actions
+related: git, GitHub Actions, pull request
+alternatives: The browser, or GitHub Desktop
+word_family: gh, git, pr, issue, release
+where_used: Daily PR work | Scripts | CI automation
+mini_conversation: A: I have to open the browser every time. | B: Run gh pr create and it is done from the terminal.
+misconception: ✗ gh is the new name of git and replaces it → ✓ gh is for GitHub features, and you still use git for commits
+confused_with: git vs gh: git is version control, gh is a tool for GitHub features such as PRs and issues.
+avoid: Do not paste your login token into a screenshot.
+wrong_code: gh commit -m "Add search"
+right_code: git commit -m "Add search"
+memory_trick: gh is GitHub operated by your hand.
+real_project: Listing open issues every night with a script.
+real_interview: An interviewer may ask: What is the difference between git and gh?
+real_daily: It is like a remote that does many TV jobs without getting up.
+mcq_question: Which command opens a PR from the terminal?
+mcq_options: A) gh pr create B) git pr open C) gh commit pr D) git push pr
+mcq_answer: A
+mcq_why: gh pr create opens a new PR.
+fill_blank: gh ____ create --fill → pr
+hindi_to_task: Check out the code of PR 17 from the terminal.
+task_answer: gh pr checkout 17
+own_task: Log in with gh auth login and look at an issue with gh issue list.
+practice_question: How do you squash-merge a PR with gh?
+practice_answer: gh pr merge <number> --squash
+
+@GIT-054
+type: topic56
+topic: 07 GitHub Platform
+level: Intermediate
+term: GitHub Projects
+cue: Which part of GitHub lets you plan work by putting issues and PRs on a board or table?
+category: GitHub feature
+frequency: Medium
+importance: 3
+origin: A long list of issues makes planning hard, so GitHub added a Kanban board and a table where the state of the work shows at a glance.
+pro_tip: Start with simple columns such as To do, In progress and Done.
+memory_story: Projects is a big wall board where slips (issues) move from one column to the next.
+visual: A board with three columns where slips slide from To do to Done.
+emotion: The clarity of seeing the state of the work at a glance.
+definition: GitHub Projects puts issues and PRs on a board, table or roadmap to plan work and show its status.
+explanation: Projects supports custom fields (status, priority, iteration), filters and views. Items link to issues and PRs, and their status can update automatically. It works at organisation level across many repos.
+simple_explain: In Projects you place your issues on a board and move them from To do to Done, so the whole team can see the state of the work.
+analogy: It is like a wall of slips in a shop showing the state of each job.
+formula_rule: Issues → project board → change the status → Done
+example_1: Putting ten sprint issues on a board with an iteration field.
+example_2: Showing features by quarter in the roadmap view.
+example_3: Filtering work by priority and assignee in the table view.
+related: issues, pull request, milestone, labels
+word_family: project, board, view, field, iteration
+where_used: Team planning | Sprint tracking | Open-source roadmaps
+mini_conversation: A: Where should we track all our work? | B: Make a board in GitHub Projects and add the issues.
+misconception: ✗ GitHub Projects can show issues from only one repo → ✓ Projects works at organisation level and can show issues and PRs of many repos on one board
+contrast: Projects vs Issues: an issue records one piece of work, Projects plans many pieces and shows their status.
+avoid: Do not clutter the board with too many columns and fields.
+memory_trick: Projects is a board of slips.
+real_project: Putting all the sprint's issues on one board and tracking their status.
+real_interview: An interviewer may ask: What is the difference between GitHub Projects and Issues?
+real_daily: It is like a wall of slips showing where each job stands.
+mcq_question: What style is the board view of Projects?
+mcq_options: A) Email B) Kanban C) Terminal D) Spreadsheet-only
+mcq_answer: B
+mcq_why: The board view is Kanban-like, with items moving between columns.
+fill_blank: The state of work on a board is shown by the ____ field → status
+apply: How do you split work by time period? → Add an iteration field
+explain_task: Explain in three lines when Projects is useful.
+own_task: Put five issues of your repo on a board and sort them into To do, In progress and Done.
+
+@GIT-055
+type: topic56
+topic: 07 GitHub Platform
+level: Intermediate
+term: LICENSE and CONTRIBUTING.md
+cue: Which two files in a public repo say how others may use the code and how they can contribute?
+category: Open-source files
+frequency: Medium
+importance: 4
+origin: Without a licence all rights stay with the author, so open-source projects keep a LICENSE file and a CONTRIBUTING.md so people know what they may do.
+pro_tip: Choose a licence from GitHub as soon as you make a public repo, and MIT or Apache 2.0 are common.
+memory_story: LICENSE is the shop's rule book on how to use the goods, and CONTRIBUTING says how to help.
+visual: Two notices, one says what you may do and the other how to help.
+emotion: The honest feeling of giving others clear rules.
+definition: LICENSE says how others may use your code, and CONTRIBUTING.md says what the rules for contributing are.
+explanation: MIT is very permissive, Apache 2.0 gives patent protection, and GPL is copyleft (changes must use the same licence). Without a licence nobody may use the code by default. CONTRIBUTING.md holds rules for branches, tests and PRs.
+simple_explain: Keep a licence in every public repo, or people cannot use the code properly. In CONTRIBUTING, say how a newcomer can help.
+analogy: It is like a shop's rule book plus a list of ways to help.
+formula_rule: Public repo = LICENSE + README + CONTRIBUTING
+example_1: An MIT-licensed library that any company can use.
+example_2: A GPL project whose changes must stay GPL.
+example_3: A CONTRIBUTING.md that says run the tests before a PR.
+related: README, open-source, pull request, code of conduct
+word_family: license, MIT, Apache, GPL, contributing
+where_used: Open-source projects | Libraries | Community repos
+mini_conversation: A: Can I use this library in my product? | B: Check the LICENSE file, it says what is allowed.
+misconception: ✗ Code in a public repo can be used by anyone even with no licence → ✓ With no licence all rights stay with the author, so a licence is needed
+contrast: MIT vs GPL: MIT is very permissive, GPL makes changes keep the same licence.
+avoid: Do not use someone's code without reading its licence.
+memory_trick: A licence is a written rule, and contributing is the path to help.
+real_project: Adding an MIT licence and CONTRIBUTING.md to a new open-source library.
+real_interview: An interviewer may ask: What is the difference between the MIT and GPL licences?
+real_daily: It is like the rule book of a shop that says how goods may be used.
+mcq_question: Which licence forces changes to keep the same licence?
+mcq_options: A) Apache B) BSD C) GPL D) MIT
+mcq_answer: C
+mcq_why: GPL is a copyleft licence, so derived work is also GPL.
+fill_blank: The rules for contributing are written in the ____ file → CONTRIBUTING.md
+apply: Which two files would you add at once to a new public repo? → LICENSE and README.md
+explain_task: Explain in three lines why a licence is needed.
+own_task: Choose a licence for one of your repos and write down why.

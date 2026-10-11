@@ -1,0 +1,328 @@
+
+@REQ-023
+topic: 04 Documentation
+level: Intermediate
+term: Handover document
+cue: Which document lets another team take over your work without you?
+category: Document
+frequency: High
+importance: 5
+origin: People change roles and projects end, so everything the next team needs must be written down and checked.
+pro_tip: Do the handover as a short walkthrough, and then ask the receiver to run something themselves.
+memory_story: A handover document is the baton that must be handed over, not dropped.
+visual: A folder with architecture, access, runbook, contacts and open issues.
+emotion: The pride of leaving work in good hands.
+definition: A handover document gives a receiving team what they need to own a system or project, including what was built, how it works, how to run and fix it, who to contact, and what remains open.
+explanation: Include a summary of goals and the final scope, an architecture sketch, where code and configuration live, how access is granted without sharing secrets, links to the runbook and decision log, known issues, planned next steps and contacts. Walk through it with the receiving team and let them try the main tasks. Agree a short period of support after the handover.
+simple_explain: Write everything a new team needs to run and fix what you built.
+analogy: A handover document is the baton that must be handed over, not dropped.
+formula_rule: What, how, where, who, what is open.
+example_1: A list of systems with owners and contacts.
+example_2: Links to the runbook and decision log.
+example_3: A list of known issues and next steps.
+related: README, runbook, decision log, meeting notes
+word_family: handover, ownership, access, contacts, support period
+where_used: Project end | Role changes | Customer go-live
+mini_conversation: A: Who owns the integration after you leave? | B: The customer's team, using the handover document and a walkthrough.
+misconception: ✗ A handover is a one-hour meeting → ✓ It needs documents, a walkthrough and the receiver trying tasks
+contrast: Handover vs README: full ownership transfer versus a start guide.
+avoid: Do not hand over passwords in a document.
+memory_trick: Document it, walk through it, let them try.
+real_project: A walkthrough plus a document let a customer team own an integration alone.
+real_interview: An interviewer may ask: How do you hand over a project to a customer?
+real_daily: It is like handing over a house with keys, manuals and neighbour contacts.
+mcq_question: What proves a handover worked?
+mcq_options: A) A slide B) A long email C) The receiver runs tasks alone D) A signed photo
+mcq_answer: C
+mcq_why: Real ownership shows when the receiver can operate it.
+fill_blank: A short period of help after handover is a ____ period → support
+apply: A project ends and a customer team takes over. What do you prepare? → A handover document and a walkthrough
+explain_task: Explain what a handover document should include.
+own_task: List the ten headings of a handover document for an integration.
+
+@REQ-024
+topic: 05 Communication
+level: Beginner
+term: Demos
+cue: How do you show your work so the customer sees its value?
+category: Skill
+frequency: Very high
+importance: 5
+origin: Customers judge by what they see, so a clear demo shows value quickly and builds trust.
+pro_tip: Rehearse with real data and have a backup plan if the live system fails.
+memory_story: A demo is a short story where the customer's problem gets solved on screen.
+visual: A screen showing a customer's problem and its solution in three steps.
+emotion: The pride of showing a working solution.
+definition: A demo is a short, prepared walkthrough that shows the customer's own problem being solved, focusing on outcomes they care about rather than every feature.
+explanation: Start with the customer's goal in their words, show the main workflow end to end, and finish by connecting it to their success measures. Use realistic data that the customer recognises. Keep it short and leave time for questions. Prepare for failure with screenshots or a recorded video as backup. Note questions and follow-ups for later.
+simple_explain: Show the customer's problem being solved, not a tour of every button.
+analogy: A demo is a short story where the customer's problem gets solved on screen.
+formula_rule: Goal, workflow, outcome, questions.
+example_1: Starting with the weekly report that takes two days.
+example_2: Showing the same report built automatically.
+example_3: Using a backup recording when the network fails.
+related: discovery calls, success measures, status updates, expectation setting
+word_family: demo, walkthrough, backup, outcome, feedback
+where_used: Proposals | Reviews | Go-live
+mini_conversation: A: Should I show every feature? | B: Show only the path that solves their problem.
+misconception: ✗ A good demo shows every feature → ✓ A good demo shows the customer's problem solved
+contrast: Demo vs training: a short proof of value versus teaching people to use the tool.
+avoid: Do not demo with untested data or without a backup plan.
+memory_trick: Their problem, your solution, short.
+real_project: A rehearsed demo on the customer's sample data won approval for the next phase.
+real_interview: An interviewer may ask: How do you prepare a customer demo?
+real_daily: It is like telling a short story where the hero solves their problem.
+mcq_question: What should a demo start with?
+mcq_options: A) The customer's goal B) The price list C) The code D) A joke
+mcq_answer: A
+mcq_why: It connects the demo to what the customer cares about.
+fill_blank: A recorded video used if the live demo fails is a ____ plan → backup
+apply: A customer wants to see what you built. What do you show first? → Their problem and goal
+explain_task: Explain how you would plan a ten-minute demo.
+own_task: Plan a ten-minute demo in five steps for a reporting automation.
+
+@REQ-025
+topic: 05 Communication
+level: Beginner
+term: Status updates
+cue: How do you keep customers and managers informed without long meetings?
+category: Skill
+frequency: Very high
+importance: 5
+origin: Silence breeds worry, so short regular updates build trust even when progress is slow.
+pro_tip: Send updates on a fixed rhythm, and lead with what changed and what you need.
+memory_story: A postcard from the road tells friends where you are and what is next.
+visual: A short message with done, next, blockers and asks.
+emotion: The calm of people who know where things stand.
+definition: A status update is a short, regular message that says what was done, what comes next, what is blocking progress, and what help or decisions are needed.
+explanation: Keep it brief and consistent. Use plain language rather than internal jargon. Include a clear overall status, such as on track, at risk or blocked, with a reason. Mention dates and decisions needed with names. Share bad news early. Link to detail for people who want it, but make the first lines readable on their own.
+simple_explain: Tell people what is done, what is next, what is stuck and what you need.
+analogy: A status update is a short postcard from the project.
+formula_rule: Status, done, next, blockers, asks.
+example_1: Status at risk because test access is late.
+example_2: A request for a decision by Friday.
+example_3: A list of next week's three goals.
+related: success measures, bad news, expectation setting, assumptions and risks
+word_family: status, blocker, ask, update, rhythm
+where_used: Weekly reports | Customer emails | Stand-ups
+mini_conversation: A: Why did nobody tell us it was delayed? | B: We should have flagged it in the last update.
+misconception: ✗ No news is good news → ✓ Silence makes customers assume the worst
+contrast: Status vs report: a short update versus a full analysis.
+avoid: Do not hide a blocker until it becomes a crisis.
+memory_trick: Done, next, blocked, and what you need.
+real_project: Weekly three-line updates kept a customer calm during a data delay.
+real_interview: An interviewer may ask: How do you communicate project progress?
+real_daily: It is like a short message saying where you are on a journey.
+mcq_question: Which item belongs in a status update?
+mcq_options: A) Blockers and asks B) Long code C) Private notes D) Gossip
+mcq_answer: A
+mcq_why: The reader needs to know what could stop progress and what is needed.
+fill_blank: Something that stops progress is a ____ → blocker
+apply: Test access is late and the date may slip. How do you report it? → As at risk, with the reason and the ask
+explain_task: Explain what a good status update contains.
+own_task: Write a five-line weekly status update for an imagined project.
+
+@REQ-026
+topic: 05 Communication
+level: Intermediate
+term: Saying no
+cue: How do you decline a request without damaging the relationship?
+category: Skill
+frequency: High
+importance: 4
+origin: Teams cannot do everything, and a clear respectful no is better than a yes that later fails.
+pro_tip: Say no to the request, but yes to the need, by offering an alternative.
+memory_story: A good no is a signpost that points to another road.
+visual: A closed door beside an open door labelled option.
+emotion: The courage to protect quality while staying kind.
+definition: Saying no well means declining a request clearly and kindly, explaining the reason, and offering options such as a different approach, a later date or a trade-off.
+explanation: First show you understood the need, then say what you cannot do and why, focusing on facts such as time, risk or policy. Offer two or three alternatives. Avoid vague maybes that raise hopes. Check the decision with your manager when it affects commitments. Record the outcome so the customer sees it was considered.
+simple_explain: Decline clearly, give the reason, and suggest what you can do instead.
+analogy: A good no is a signpost that points to another road.
+formula_rule: Understand, decline, reason, alternatives, confirm.
+example_1: Declining a custom feature but offering a workaround.
+example_2: Moving a request to the next release.
+example_3: Declining a shortcut that breaks a security rule.
+related: change requests, expectation setting, bad news, security and data questions
+word_family: decline, alternative, boundary, reason, option
+where_used: Customer calls | Scope talks | Escalations
+mini_conversation: A: Can you ship it tomorrow? | B: Not safely, but we can ship a smaller part tomorrow.
+misconception: ✗ Saying yes always keeps the customer happy → ✓ A false yes damages trust when it fails
+contrast: A flat no vs a helpful no: closing the door versus offering another route.
+avoid: Do not say maybe when you mean no.
+memory_trick: No to the ask, yes to the need.
+real_project: Offering a smaller first release kept a customer after a firm no on the full request.
+real_interview: An interviewer may ask: How do you decline an unrealistic customer request?
+real_daily: It is like politely turning down a dish and suggesting another.
+mcq_question: What makes a no more helpful?
+mcq_options: A) Blaming others B) Offering alternatives C) Being vague D) Staying silent
+mcq_answer: B
+mcq_why: Options show you still want to solve their need.
+fill_blank: A different route you propose after declining is an ____ → alternative
+apply: A customer asks for a risky shortcut. What do you do? → Decline it, explain why and offer a safe option
+explain_task: Explain how to say no while keeping trust.
+own_task: Write a polite refusal with two alternatives for a request to ship in one day.
+
+@REQ-027
+topic: 05 Communication
+level: Intermediate
+term: Delivering bad news
+cue: How do you tell a customer that something has gone wrong?
+category: Skill
+frequency: High
+importance: 5
+origin: Problems are certain in real projects, and trust depends far more on how you report them than on the problem itself.
+pro_tip: Tell them early, in person or by call for serious issues, and bring a plan.
+memory_story: Bad news is a spoiled meal, and a quick honest apology with a replacement saves the evening.
+visual: A message with what happened, impact, cause, fix and next steps.
+emotion: The courage to be honest early.
+definition: Delivering bad news means telling the affected people promptly and honestly what happened, what the impact is, what you are doing, and when they will hear next.
+explanation: State the facts without excuses or blame, and say what is known and unknown. Explain the effect on the customer and the immediate fix. Offer a clear next update time and keep it. For serious issues use a call first, then a written summary. Afterwards run a review of the cause and share what will change.
+simple_explain: Say what happened, what it means, what you are doing, and when you will update them.
+analogy: Bad news is a spoiled meal, and a quick honest apology with a replacement saves the evening.
+formula_rule: Facts, impact, action, next update.
+example_1: Calling a customer about a failed overnight job.
+example_2: Sharing a plan after a missed date.
+example_3: Sending a written summary after a serious incident.
+related: status updates, runbook, postmortems, expectation setting
+word_family: apology, impact, transparency, incident, follow-up
+where_used: Incidents | Delays | Escalations
+mini_conversation: A: Should we wait until we have a fix before telling them? | B: No, tell them now and say when the next update will come.
+misconception: ✗ Waiting until the problem is solved is kinder → ✓ Early honesty protects trust
+contrast: Early honesty vs late disclosure: trust kept versus trust broken.
+avoid: Do not guess causes or blame others in the first message.
+memory_trick: Early, honest, with a plan.
+real_project: A same-hour call about a failed load kept a customer's trust through a bad week.
+real_interview: An interviewer may ask: Tell me about a time you gave a customer bad news.
+real_daily: It is like telling a friend straight away that a plan has changed.
+mcq_question: When should bad news be shared?
+mcq_options: A) Never B) After a month C) Only in writing later D) As early as possible
+mcq_answer: D
+mcq_why: Early information lets the customer plan and keeps trust.
+fill_blank: Giving people a fixed time for your following message is a promise of the ____ update → next
+apply: An overnight job failed and customers are affected. What is your first step? → Tell them promptly with facts and a plan
+explain_task: Explain how to deliver bad news well.
+own_task: Draft a message for a delayed delivery that covers all four parts of the formula.
+
+@REQ-028
+topic: 05 Communication
+level: Intermediate
+term: Expectation setting
+cue: How do you make sure both sides expect the same thing?
+category: Skill
+frequency: High
+importance: 5
+origin: Most disappointment comes from a gap between what was expected and what was delivered, not from the work itself.
+pro_tip: Repeat back what you heard, and write down what will and will not happen by when.
+memory_story: Expectation setting is tuning two radios to the same station before the song starts.
+visual: Two thought bubbles being aligned into one shared picture.
+emotion: The ease of everyone knowing what to expect.
+definition: Expectation setting is the practice of agreeing clearly, and in writing, what will be delivered, when, with what limits, and what the customer must do.
+explanation: Use plain words, examples and dates. Describe not only the best case but the likely and the limits. Confirm the customer's understanding by asking them to say it back. Revisit expectations at each milestone, and when facts change, update them early. Promise only what you control, and say what depends on others.
+simple_explain: Make sure both sides have the same picture of what will happen and when.
+analogy: Expectation setting is tuning two radios to the same station before the song starts.
+formula_rule: Say it, write it, check it back, revisit it.
+example_1: Telling a customer that the first release has limited reports.
+example_2: Confirming who provides test data and by when.
+example_3: Updating a date when a dependency slips.
+related: scoping, saying no, status updates, demos
+word_family: expectation, alignment, limits, dependency, confirmation
+where_used: Kick-off | Demos | Go-live
+mini_conversation: A: I thought it would do everything. | B: Let us review the scope we agreed and what the first release includes.
+misconception: ✗ Under-promising is enough → ✓ Clear, shared understanding matters more
+contrast: Expectation vs promise: what someone believes versus what was agreed.
+avoid: Do not leave limits unsaid hoping nobody asks.
+memory_trick: Say it, write it, check it.
+real_project: A written first-release list prevented disappointment at the first customer demo.
+real_interview: An interviewer may ask: How do you manage customer expectations?
+real_daily: It is like telling guests what dinner will be before they arrive.
+mcq_question: How do you confirm that someone understood the plan?
+mcq_options: A) Ignore it B) Send more slides C) Ask them to say it back D) Hope so
+mcq_answer: C
+mcq_why: Repeating it back shows any gap in understanding.
+fill_blank: Things that depend on other people are called ____ → dependencies
+apply: A customer assumes the first release does everything. What do you do? → Review the agreed scope and limits with them
+explain_task: Explain how you would set expectations at kick-off.
+own_task: Write a short expectation note for a first release that has three limits.
+
+@REQ-029
+topic: 05 Communication
+level: Intermediate
+term: Working on site and remotely
+cue: How does working in person differ from working remotely with a customer?
+category: Skill
+frequency: Medium
+importance: 4
+origin: Customer work happens in offices and over video, and each setting needs its own habits for trust and clarity.
+pro_tip: Confirm access, network and equipment before the day, and agree how to communicate when remote.
+memory_story: On site you lend your presence, remotely you lend your clarity.
+visual: A laptop in a customer office beside a laptop on a video call.
+emotion: The ease of preparation done well.
+definition: Working on site means joining the customer's location and rules in person, while working remotely means using calls, screen sharing and written messages, and both need preparation, clear access and agreed communication.
+explanation: On site, you learn how people really work, but you must follow site rules, security badges and network limits. Prepare accounts, chargers and offline copies. Remotely, write more, summarise calls in text, share screens carefully, and avoid long silences. In both, protect customer data, lock your screen and follow the customer's policies for devices and recording.
+simple_explain: Prepare access and tools in advance, follow the customer's rules, and communicate clearly.
+analogy: On site you lend your presence, remotely you lend your clarity.
+formula_rule: Prepare access, follow rules, communicate clearly, protect data.
+example_1: Requesting a visitor badge and network access before the visit.
+example_2: Writing a recap after a video call.
+example_3: Closing private windows before sharing a screen.
+related: security and data questions, status updates, stakeholder map, expectation setting
+word_family: on site, remote, access, policy, screen sharing
+where_used: Customer visits | Video calls | Workshops
+mini_conversation: A: I cannot get on the guest network on site. | B: Ask for access before the visit, and keep an offline copy of your demo.
+misconception: ✗ Remote work needs less preparation → ✓ It needs more writing and clearer communication
+contrast: On site vs remote: shared space and rules versus screens and written clarity.
+avoid: Do not share a screen that shows private tabs or notifications.
+memory_trick: Prepare access, follow rules, write clearly.
+real_project: Early network access requests saved a day of waiting on a customer visit.
+real_interview: An interviewer may ask: How do you work with a customer remotely?
+real_daily: It is like preparing your bag before a trip and checking the address.
+mcq_question: What should you check before a customer site visit?
+mcq_options: A) Access and network B) Lunch menu C) Music D) Favourite colour
+mcq_answer: A
+mcq_why: Missing access wastes the visit.
+fill_blank: Showing your display to others during a video call is called screen ____ → sharing
+apply: You will visit a customer site next week. What do you arrange first? → Badge, accounts and network access
+explain_task: Explain two habits for each of on-site and remote work.
+own_task: Write a pre-visit checklist of six items for a customer site.
+
+@REQ-030
+topic: 05 Communication
+level: Advanced
+term: Security and data questions from customers
+cue: How do you answer customers' questions about security and data safely?
+category: Skill
+frequency: High
+importance: 5
+origin: Customers must trust you with their data, so security questions come early, and wrong or overclaimed answers can cause serious harm.
+pro_tip: Answer only what you know, point to official documents, and bring in the security team for the rest.
+memory_story: Security answers are signed statements, so only sign what you can prove.
+visual: A questionnaire with answers linked to official policy documents.
+emotion: The responsibility of being trusted with data.
+definition: Handling security and data questions means giving accurate, documented answers about how data is stored, accessed and protected, and escalating anything you cannot verify to the right team.
+explanation: Typical questions cover where data lives, who can see it, encryption, retention, access logs, subprocessors and incident handling. Use approved documents such as security whitepapers or policies instead of guessing. Never overclaim certifications or promises. Ask the customer why they need the data and share the least necessary. Record answers and the source for future questions.
+simple_explain: Answer only what you can prove, link to official documents, and escalate the rest.
+analogy: Security answers are signed statements, so only sign what you can prove.
+formula_rule: Know, document, do not overclaim, escalate.
+example_1: Linking the official security document for encryption questions.
+example_2: Asking the security team about data retention.
+example_3: Asking a customer to share only the fields needed.
+related: stakeholder map, expectation setting, working on site and remotely, saying no
+word_family: security, privacy, retention, encryption, escalation
+where_used: Onboarding | Questionnaires | Reviews
+mini_conversation: A: Are we certified for this standard? | B: Do not guess, ask the security team and quote their document.
+misconception: ✗ A confident guess is better than saying I will check → ✓ A wrong security answer can be a serious breach of trust
+contrast: Verified answer vs guess: sourced from a document versus remembered from a chat.
+avoid: Do not claim certifications or protections you cannot prove.
+memory_trick: Prove it, point to it, or escalate it.
+real_project: Linking approved documents shortened a customer security review.
+real_interview: An interviewer may ask: What would you do if a customer asks a security question you cannot answer?
+real_daily: It is like signing a statement only when you have seen the evidence.
+mcq_question: What should you do when unsure about a security answer?
+mcq_options: A) Change the topic B) Guess C) Escalate to the security team D) Ignore the question
+mcq_answer: C
+mcq_why: Accurate answers need the right owner.
+fill_blank: Sharing only the data fields that are needed follows the principle of data ____ → minimisation
+apply: A customer asks about data retention and you are unsure. What do you do? → Ask the security team and quote their document
+explain_task: Explain how to answer a customer's security questionnaire responsibly.
+own_task: Write a short reply policy for security questions that you will follow.

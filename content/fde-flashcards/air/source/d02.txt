@@ -1,0 +1,510 @@
+
+@AIR-008
+type: code56
+topic: 02 Writing DAGs
+level: Beginner
+term: Defining a DAG
+cue: How do you write the Python file that declares a DAG and its settings?
+kind: Airflow code
+frequency: Very high
+importance: 5
+origin: Workflows are code, so a DAG file declares the workflow with an id, a start date, a schedule and default arguments.
+pro_tip: Use the DAG context manager and give every DAG a clear id and tags.
+memory_story: A DAG definition is the cover page of a project that lists its name, owner and calendar.
+visual: A Python file with a DAG block and tasks nested inside it.
+emotion: The pleasure of seeing your DAG appear in the interface.
+meaning: A DAG is defined with the DAG class, usually as a context manager, with a dag_id, start_date, schedule, catchup setting, default arguments and tags.
+code: from datetime import datetime, timedelta¶from airflow import DAG¶from airflow.operators.empty import EmptyOperator¶default_args = {"owner": "data", "retries": 2, "retry_delay": timedelta(minutes=5)}¶with DAG(¶    dag_id="daily_sales",¶    start_date=datetime(2026, 10, 1),¶    schedule="0 2 * * *",¶    catchup=False,¶    default_args=default_args,¶    tags=["sales"],¶) as dag:¶    start = EmptyOperator(task_id="start")
+output: The DAG daily_sales appears in the interface, scheduled for 02:00 UTC, with two retries per task.
+explanation: The dag_id must be unique. start_date marks the first logical date, and should be a fixed past date, not now. catchup controls whether past missed runs are created. default_args apply to every task unless overridden. The DAG file is imported often, so it must not contain slow code or network calls at the top level. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Give the DAG an id, a fixed start date, a schedule and default arguments, and keep the file light.
+analogy: A DAG definition is the cover page of a project listing its name, owner and calendar.
+syntax: with DAG(dag_id=..., start_date=..., schedule=..., catchup=False) as dag:
+anatomy: dag_id = unique name | start_date = first logical date | schedule = when | default_args = shared settings
+example_1: DAG("weekly_report", start_date=datetime(2026, 1, 1), schedule="@weekly")
+example_2: default_args={"email_on_failure": False}
+example_3: with DAG(..., max_active_runs=1) as dag:
+variation: @dag(schedule="@daily", start_date=datetime(2026, 1, 1))   // the decorator form
+used_with: operators, TaskFlow API, tags
+related: DAGs, tasks and operators, catchup and backfill, TaskFlow API
+alternatives: The @dag decorator
+where_used: Every DAG file | Templates | Standards
+mini_conversation: A: Why did the DAG start hundreds of runs? | B: Catchup was on with an old start date, so set catchup to false.
+misconception: ✗ start_date can be datetime.now() → ✓ It should be a fixed past date, since a moving date confuses the scheduler
+confused_with: start_date vs first run: the first run happens after the first interval completes.
+avoid: Do not use a moving start date.
+wrong_code: DAG("x", start_date=datetime.now(), schedule="@daily")
+right_code: DAG("x", start_date=datetime(2026, 10, 1), schedule="@daily", catchup=False)
+memory_trick: Fixed start date, catchup chosen on purpose.
+real_project: Standardising DAG templates with default arguments gave every pipeline the same retries.
+real_interview: An interviewer may ask: Why avoid datetime.now as a start date?
+real_daily: It is like the cover page of a project.
+mcq_question: Which argument sets the DAG's unique name?
+mcq_options: A) task_id B) owner C) tags D) dag_id
+mcq_answer: D
+mcq_why: dag_id identifies the DAG.
+fill_blank: The argument that controls creating past missed runs is ____ → catchup
+hindi_to_task: Define a daily DAG called reports with catchup off.
+task_answer: with DAG("reports", start_date=datetime(2026, 10, 1), schedule="@daily", catchup=False) as dag:
+own_task: Write a DAG definition with two retries and a five minute delay.
+practice_question: Why keep top-level DAG code light?
+practice_answer: The scheduler imports the file very often.
+
+@AIR-009
+type: code56
+topic: 02 Writing DAGs
+level: Beginner
+term: PythonOperator and BashOperator
+cue: Which two operators run a Python function and a shell command?
+kind: Airflow code
+frequency: Very high
+importance: 5
+origin: Most workflows need to run code or commands, so two simple operators cover the common cases.
+pro_tip: Pass values through op_kwargs or templated fields instead of hard-coding them.
+memory_story: PythonOperator calls a function, and BashOperator types a command in a terminal.
+visual: Two task boxes, one labelled Python and one labelled shell.
+emotion: The ease of running your first task.
+meaning: PythonOperator runs a Python callable with arguments, and BashOperator runs a bash command that can include templated values.
+code: from airflow.operators.python import PythonOperator¶from airflow.operators.bash import BashOperator¶def clean(table, **context):¶    print("cleaning", table, context["ds"])¶with DAG("demo", start_date=datetime(2026, 10, 1), schedule="@daily", catchup=False) as dag:¶    t1 = BashOperator(task_id="extract", bash_command="python extract.py --date {{ ds }}")¶    t2 = PythonOperator(task_id="clean", python_callable=clean, op_kwargs={"table": "orders"})¶    t1 >> t2
+output: The extract command runs with the logical date, then the clean function prints orders and the date.
+explanation: The Python callable receives op_kwargs and, if it accepts them, context values such as ds. The Bash command is a template, so double-brace expressions are filled at run time. Exit code zero means success, and any other code fails the task. Returning a value from a Python callable stores it as an XCom. Heavy dependencies belong in virtual environments or containers. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Use PythonOperator for functions and BashOperator for commands, and pass values with kwargs and templates.
+analogy: PythonOperator calls a function, and BashOperator types a command in a terminal.
+syntax: PythonOperator(task_id=..., python_callable=fn, op_kwargs={...})
+anatomy: python_callable = function | op_kwargs = arguments | bash_command = text with templates
+example_1: BashOperator(task_id="ls", bash_command="ls -l /data")
+example_2: PythonOperator(task_id="p", python_callable=lambda: 42)
+example_3: BashOperator(task_id="b", bash_command="echo {{ ds }}")
+variation: @task def clean(): ...   // the TaskFlow version of a Python task
+used_with: templating, XCom, retries
+related: tasks and operators, TaskFlow API, templating, XCom
+alternatives: TaskFlow API | KubernetesPodOperator
+where_used: Scripts | Glue tasks | Small jobs
+mini_conversation: A: My Python task cannot find the library. | B: Install it on the workers or run the task in a virtual environment.
+misconception: ✗ A BashOperator command can only be plain text → ✓ It can use templates filled with run-time values
+confused_with: PythonOperator vs BashOperator: one runs a function in Airflow's environment, the other runs a shell command.
+avoid: Do not hard-code dates in commands.
+wrong_code: BashOperator(task_id="b", bash_command="python run.py --date 2026-10-01")
+right_code: BashOperator(task_id="b", bash_command="python run.py --date {{ ds }}")
+memory_trick: Templates keep dates out of the code.
+real_project: Replacing hard-coded dates with ds templates made reruns process the correct day.
+real_interview: An interviewer may ask: How do you pass a date to a task?
+real_daily: It is like calling a function and typing a command.
+mcq_question: What does exit code zero mean for a Bash task?
+mcq_options: A) Skip B) Success C) Retry D) Failure
+mcq_answer: B
+mcq_why: Exit code zero means success and most other codes fail the task (99 marks it skipped by default).
+fill_blank: The argument that points to the function in PythonOperator is python_____ → callable
+hindi_to_task: Run echo hello as a Bash task.
+task_answer: BashOperator(task_id="hello", bash_command="echo hello")
+own_task: Write a Python task that prints the logical date.
+practice_question: How does a Bash task signal failure?
+practice_answer: By exiting with a non-zero code.
+
+@AIR-010
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: TaskFlow API
+cue: Which decorator style turns plain Python functions into tasks with automatic data passing?
+kind: Airflow code
+frequency: Very high
+importance: 5
+origin: Wiring operators and XComs by hand was verbose, so the TaskFlow API lets you write tasks as normal functions that return values.
+pro_tip: Use TaskFlow for Python logic and keep returned values small.
+memory_story: TaskFlow is writing the workflow as ordinary Python and letting Airflow draw the arrows.
+visual: Decorated functions calling each other and forming a graph.
+emotion: The pleasure of workflows that read like normal code.
+meaning: The TaskFlow API uses the @dag and @task decorators so functions become tasks, return values pass automatically as XComs, and calling one task with another's output creates a dependency.
+code: from airflow.decorators import dag, task¶from datetime import datetime¶@dag(schedule="@daily", start_date=datetime(2026, 10, 1), catchup=False)¶def sales():¶    @task¶    def extract():¶        return {"rows": 120}¶    @task¶    def load(info):¶        print("loading", info["rows"])¶    load(extract())¶sales()
+output: The extract task returns a dictionary, and the load task receives it and prints loading 120.
+explanation: Calling load with the result of extract both passes the data and sets extract before load. Values pass as XComs, so they must be small and serialisable. The decorator form needs the function to be called at the end to register the DAG. Operators and decorated tasks can be mixed in one DAG. Multiple outputs can be unpacked. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Decorate functions with @task, return values, and pass them into other tasks.
+analogy: TaskFlow is writing the workflow as ordinary Python and letting Airflow draw the arrows.
+syntax: @task def f(): return value | g(f())
+anatomy: @dag = defines DAG | @task = defines task | return = XCom value | call chain = dependency
+example_1: @task(retries=3) def risky(): ...
+example_2: @task(multiple_outputs=True) def split(): return {"a": 1, "b": 2}
+example_3: a >> b   // mix with classic dependencies
+variation: @task.virtualenv(requirements=["pandas"]) def f(): ...   // an isolated environment
+used_with: XCom, DAG definition, PythonOperator
+related: PythonOperator and BashOperator, XCom, defining a DAG, passing data by reference
+alternatives: Classic operators
+where_used: Modern DAGs | Python-heavy pipelines | Tutorials
+mini_conversation: A: How do I pass the file name to the next task? | B: Return it from the first task and use it as the argument.
+misconception: ✗ TaskFlow tasks pass any amount of data efficiently → ✓ Values travel as XComs in the database, so keep them small
+confused_with: TaskFlow vs PythonOperator: TaskFlow is the decorator style with automatic data passing.
+avoid: Do not return large data frames between tasks.
+wrong_code: @task def extract(): return big_dataframe
+right_code: @task def extract(): return "s3://bucket/raw/2026-10-01.parquet"
+memory_trick: Return small pointers to data, never the payloads.
+real_project: Converting classic operators to TaskFlow halved the code of a Python-heavy DAG.
+real_interview: An interviewer may ask: How does TaskFlow pass data between tasks?
+real_daily: It is like writing normal Python and letting Airflow draw the arrows.
+mcq_question: How does TaskFlow pass data between tasks?
+mcq_options: A) Through global variables B) Through emails C) Through XComs automatically D) Through logs
+mcq_answer: C
+mcq_why: Return values are stored as XComs.
+fill_blank: Decorating a function with the at sign and the word ____ turns it into a unit of work in the modern style → task
+hindi_to_task: Make a function a task that returns the number 5.
+task_answer: @task def five(): return 5
+own_task: Write two tasks where the second uses the first's output.
+practice_question: Why keep returned values small?
+practice_answer: They are stored in the metadata database.
+
+@AIR-011
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: XCom
+cue: Which mechanism lets tasks share small pieces of data with each other?
+kind: Airflow code
+frequency: High
+importance: 5
+origin: Tasks run on different machines and cannot share memory, so Airflow stores small messages in the database for later tasks to read.
+pro_tip: Pass references such as file paths and ids, not the data itself.
+memory_story: XCom is a note passed between desks, not a truck of cargo.
+visual: A small note travelling from one task to another.
+emotion: The relief of passing a value without a shared file.
+meaning: An XCom is a small value pushed by one task and pulled by another, stored in the metadata database under a key, with the return value saved automatically.
+code: def push(**context):¶    context["ti"].xcom_push(key="path", value="s3://b/raw/2026-10-01.csv")¶def pull(**context):¶    path = context["ti"].xcom_pull(task_ids="push_task", key="path")¶    print(path)¶BashOperator(task_id="use", bash_command="echo {{ ti.xcom_pull(task_ids='push_task', key='path') }}")
+output: The path pushed by the first task is read by the second and printed.
+explanation: XComs are meant for small metadata such as ids, counts and paths. Large values slow the database and may hit size limits. A custom XCom backend can store payloads in object storage and keep only a reference. Each XCom belongs to a task and a run. In TaskFlow, push and pull happen through return values and arguments.
+simple_explain: Push small values from one task and pull them in another, or use TaskFlow returns.
+analogy: XCom is a note passed between desks, not a truck of cargo.
+syntax: ti.xcom_push(key, value) | ti.xcom_pull(task_ids, key)
+anatomy: ti = task instance | key = label | task_ids = which task's value | return_value = default key
+example_1: ti.xcom_pull(task_ids="extract")
+example_2: {{ ti.xcom_pull(task_ids='count_rows', key='total') }}
+example_3: return "s3://bucket/file.csv"
+variation: BaseXCom custom backend   // store large values in object storage
+used_with: TaskFlow API, templating, sensors
+related: TaskFlow API, templating, passing data by reference, PythonOperator and BashOperator
+alternatives: Object storage handoff | databases
+where_used: Passing paths | Counts | Flags
+mini_conversation: A: The metadata database is growing fast. | B: Large XComs are the cause, so pass file paths instead.
+misconception: ✗ XCom is the right place to move large datasets → ✓ It is for small metadata, and large data should live in storage
+confused_with: XCom vs Variable: an XCom belongs to one run, a Variable is global configuration.
+avoid: Do not push large payloads into XCom.
+wrong_code: ti.xcom_push(key="df", value=big_dataframe.to_json())
+right_code: ti.xcom_push(key="path", value="s3://bucket/raw/orders.parquet")
+memory_trick: Notes travel by XCom, cargo by storage.
+real_project: Replacing dataframes in XCom with file paths removed database bloat.
+real_interview: An interviewer may ask: What should you not put in XCom?
+real_daily: It is like a note passed between desks.
+mcq_question: What should XCom hold?
+mcq_options: A) Large datasets B) Backups C) Videos D) Small metadata such as paths
+mcq_answer: D
+mcq_why: It is stored in the database, so keep it small.
+fill_blank: The object used to push and pull XComs is the task ____ → instance
+hindi_to_task: Read the value returned by the task extract.
+task_answer: ti.xcom_pull(task_ids="extract")
+own_task: Write a task that pushes a row count and one that reads it.
+practice_question: Where are XComs stored?
+practice_answer: In the metadata database.
+
+@AIR-012
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: Templating with Jinja
+cue: How do you insert run dates and values into commands and queries at run time?
+kind: Airflow code
+frequency: Very high
+importance: 5
+origin: Tasks must act on the period they belong to, so many fields are templates that Airflow fills in with run-time values.
+pro_tip: Use the logical date macros rather than the current time, so reruns work.
+memory_story: Templating is a form letter where the date and name are filled in just before posting.
+visual: A command with double-brace placeholders turning into real dates.
+emotion: The comfort of reruns that process the right day.
+meaning: Airflow renders templated fields with Jinja, replacing expressions such as ds, data_interval_start and params with values for the specific run.
+code: load_sql = BashOperator(¶    task_id="load_day",¶    bash_command="psql -c \"DELETE FROM sales WHERE day = '{{ ds }}'; INSERT INTO sales SELECT * FROM stg WHERE day = '{{ ds }}';\"",¶)¶other = BashOperator(task_id="range", bash_command="echo {{ data_interval_start }} to {{ data_interval_end }}")
+output: The commands run with the date of the specific DAG run filled in.
+explanation: Common variables include ds for the logical date as text, ts for the timestamp, and data_interval_start and data_interval_end for the period. Only fields listed as template fields are rendered. Macros offer helpers such as ds_add. Using logical dates, not now, keeps runs repeatable. Params let users supply values when triggering manually.
+simple_explain: Put expressions in double braces, and Airflow fills them for each run.
+analogy: Templating is a form letter where the date and name are filled in just before posting.
+syntax: {{ ds }} | {{ data_interval_start }} | {{ params.name }}
+anatomy: ds = logical date | data_interval_start and end = period | params = user values | macros = helpers
+example_1: {{ macros.ds_add(ds, -7) }}
+example_2: {{ params.region }}
+example_3: {{ dag_run.conf.get("force") }}
+variation: template_fields = ("sql",)   // make your own operator field templated
+used_with: BashOperator, SQL operators, idempotency
+related: PythonOperator and BashOperator, data intervals, idempotency, variables
+alternatives: Python code reading the context
+where_used: SQL tasks | File names | Incremental loads
+mini_conversation: A: Reruns process today's data instead of the original day. | B: Use the logical date template instead of the current time.
+misconception: ✗ Every task argument is templated → ✓ Only fields declared as template fields are rendered
+confused_with: ds vs now: ds is the logical date of the run, now is the real current time.
+avoid: Do not use the current time in tasks that may be rerun.
+wrong_code: bash_command="python run.py --date $(date +%F)"
+right_code: bash_command="python run.py --date {{ ds }}"
+memory_trick: Logical date, not clock time.
+real_project: Replacing now with ds made backfills reproduce the original days exactly.
+real_interview: An interviewer may ask: What is the difference between ds and the current date?
+real_daily: It is like a form letter filled in just before posting.
+mcq_question: Which variable is the logical date as text?
+mcq_options: A) ds B) today C) now D) clock
+mcq_answer: A
+mcq_why: ds gives the logical date in year-month-day form.
+fill_blank: Templates use the language ____ → Jinja
+hindi_to_task: Use the logical date in a command.
+task_answer: bash_command="echo {{ ds }}"
+own_task: Write a SQL string that loads only the data interval of the run.
+practice_question: Why prefer logical dates over the current time?
+practice_answer: Reruns must process the same period as the original run.
+
+@AIR-013
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: Variables
+cue: Which Airflow feature stores configuration values that DAGs can read at run time?
+kind: Airflow code
+frequency: High
+importance: 4
+origin: Settings change without code releases, so Airflow offers global key-value variables that DAGs can read and operators can template.
+pro_tip: Read variables inside tasks or templates, not at the top of the DAG file.
+memory_story: Variables are a shared settings board that any DAG can read.
+visual: A simple key-value list shown in the web interface.
+emotion: The ease of changing a setting without redeploying code.
+meaning: Variables are global key-value pairs stored in Airflow, set in the interface, CLI or environment, and read with Variable.get or with a template expression.
+code: from airflow.models import Variable¶def run(**context):¶    region = Variable.get("sales_region", default_var="in")¶    print(region)¶BashOperator(task_id="t", bash_command="echo {{ var.value.sales_region }}")¶# CLI: airflow variables set sales_region eu
+output: The task prints the current region from the variable, or in if it is not set.
+explanation: Calling Variable.get at the top level of a DAG file hits the database every time the file is parsed, which is expensive, so read variables inside tasks or in templates. Variables with names containing words such as password or secret are masked in the interface. Secrets should live in a secrets backend, not plain variables. JSON values can be read as objects. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Store settings as variables, and read them inside tasks or templates.
+analogy: Variables are a shared settings board that any DAG can read.
+syntax: Variable.get("key", default_var=...) | {{ var.value.key }}
+anatomy: key = name | default_var = fallback | var.value = template access | var.json = JSON access
+example_1: Variable.get("config", deserialize_json=True)
+example_2: {{ var.json.config.threshold }}
+example_3: export AIRFLOW_VAR_SALES_REGION=eu
+variation: AIRFLOW_VAR_NAME   // set a variable through the environment
+used_with: templating, secrets backends, connections
+related: templating, connections and hooks, secrets backends, DAG definition
+alternatives: Config files in the DAG folder | secrets backends
+where_used: Feature switches | Thresholds | Environment settings
+mini_conversation: A: Parsing is slow and the database is busy. | B: A Variable.get at the top of the file runs on every parse, so move it into the task.
+misconception: ✗ Variables are a safe place for passwords → ✓ Secrets belong in a secrets backend or a connection
+confused_with: Variable vs Connection: variables hold values, connections hold credentials for systems.
+avoid: Do not read variables at the top level of DAG files.
+wrong_code: REGION = Variable.get("sales_region")   # runs on every parse
+right_code: def run(): region = Variable.get("sales_region")
+memory_trick: Read variables inside the task, not the file top.
+real_project: Moving variable reads into tasks reduced scheduler database load noticeably.
+real_interview: An interviewer may ask: Why avoid Variable.get at the top of a DAG file?
+real_daily: It is like a shared settings board.
+mcq_question: Where should Variable.get be called?
+mcq_options: A) Inside a task or template B) At the top of the file C) In comments D) In every import
+mcq_answer: A
+mcq_why: The top level runs on every parse.
+fill_blank: A fallback value for a missing variable is the ____ argument → default_var
+hindi_to_task: Read the variable region with a default of in.
+task_answer: Variable.get("region", default_var="in")
+own_task: Set a variable from the CLI and use it in a template.
+practice_question: Why are secrets not stored as plain variables?
+practice_answer: A secrets backend protects and audits them better.
+
+@AIR-014
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: Connections and hooks
+cue: How does Airflow store the credentials for outside systems and use them in code?
+kind: Airflow code
+frequency: Very high
+importance: 5
+origin: Tasks need to log in to databases and services, so connections hold the details and hooks give code a ready client.
+pro_tip: Reference connections by id and keep secrets out of DAG files.
+memory_story: A connection is an address-book entry with a login, and a hook is the phone that dials it.
+visual: A connection id feeding a hook that opens a database client.
+emotion: The comfort of credentials kept in one controlled place.
+meaning: A connection stores host, login, password, schema and extras under a connection id, and a hook is a Python class that uses a connection to talk to a system.
+code: from airflow.providers.postgres.hooks.postgres import PostgresHook¶def count_rows(**context):¶    hook = PostgresHook(postgres_conn_id="warehouse")¶    rows = hook.get_first("SELECT COUNT(*) FROM sales WHERE day = %s", parameters=(context["ds"],))¶    print(rows[0])¶# create: airflow connections add warehouse --conn-uri postgresql://user:pass@host:5432/db
+output: The task connects with the warehouse connection and prints the number of rows for the logical date.
+explanation: Connections can be created in the interface, the CLI, environment variables or a secrets backend. Operators take a connection id argument and use hooks inside. A custom task can use the hook to run queries or get a client. Secrets should come from a secrets backend in production. Use parameters in queries, not string joins, to prevent injection.
+simple_explain: Create a connection once, refer to it by id, and use hooks in code.
+analogy: A connection is an address-book entry with a login, and a hook is the phone that dials it.
+syntax: PostgresHook(postgres_conn_id="id") | conn_id="id"
+anatomy: conn_id = name | hook = client helper | extra = JSON settings | secrets backend = safe storage
+example_1: S3Hook(aws_conn_id="aws_default")
+example_2: export AIRFLOW_CONN_WAREHOUSE='postgresql://user:pass@host:5432/db'
+example_3: SQLExecuteQueryOperator(task_id="q", conn_id="warehouse", sql="SELECT 1")
+variation: HttpHook(http_conn_id="api")   // for REST services
+used_with: secrets backends, providers, SQL operators
+related: variables, secrets backends, tasks and operators, credentials
+alternatives: Environment variables | secrets managers
+where_used: Database tasks | Cloud storage | APIs
+mini_conversation: A: Where do the warehouse credentials live? | B: In an Airflow connection, ideally from the secrets backend.
+misconception: ✗ Credentials belong in the DAG file → ✓ Use connections so secrets stay out of code
+confused_with: Connection vs hook: a connection holds the details, a hook uses them.
+avoid: Do not build SQL by joining strings with user input.
+wrong_code: conn = psycopg2.connect("host=db user=admin password=secret")
+right_code: hook = PostgresHook(postgres_conn_id="warehouse")
+memory_trick: A connection stores details, a hook connects.
+real_project: Moving passwords out of DAG files into connections passed a customer security review.
+real_interview: An interviewer may ask: What is the difference between a connection and a hook?
+real_daily: It is like an address-book entry and a phone.
+mcq_question: What does a hook do?
+mcq_options: A) Stores passwords B) Uses a connection to talk to a system C) Renders templates D) Schedules DAGs
+mcq_answer: B
+mcq_why: Hooks wrap the client for an outside system.
+fill_blank: Operators refer to a connection by its ____ → id
+hindi_to_task: Create a Postgres hook using the connection warehouse.
+task_answer: hook = PostgresHook(postgres_conn_id="warehouse")
+own_task: Write a task that runs a count query with a hook.
+practice_question: Where can connections be stored in production?
+practice_answer: In a secrets backend.
+
+@AIR-015
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: Sensors
+cue: Which operators wait for a file, a time or an outside event before the DAG continues?
+kind: Airflow code
+frequency: High
+importance: 4
+origin: Some workflows depend on things happening outside Airflow, so sensors poll for a condition and succeed when it becomes true.
+pro_tip: Use deferrable sensors or reschedule mode so waiting does not block a worker slot.
+memory_story: A sensor is a person waiting at the door until the parcel arrives.
+visual: A task repeatedly checking for a file and turning green when it appears.
+emotion: The relief of a pipeline that waits patiently.
+meaning: A sensor is an operator that repeatedly checks a condition, such as a file existing, and succeeds when it is met or fails after a timeout.
+code: from airflow.sensors.filesystem import FileSensor¶wait = FileSensor(¶    task_id="wait_for_file",¶    filepath="/data/in/orders_{{ ds }}.csv",¶    poke_interval=60,¶    timeout=60 * 60 * 6,¶    mode="reschedule",¶)¶wait >> load
+output: The sensor checks every minute for up to six hours, and the load starts only after the file appears.
+explanation: In poke mode the sensor holds a worker slot while waiting, which wastes capacity. Reschedule mode releases the slot between checks. Deferrable sensors hand the waiting to the triggerer. Always set a timeout so a missing file eventually fails and alerts. Provider packages offer sensors for cloud storage, databases and external DAGs. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Use a sensor to wait for an event, set a timeout, and free the worker while waiting.
+analogy: A sensor is a person waiting at the door until the parcel arrives.
+syntax: Sensor(task_id=..., poke_interval=..., timeout=..., mode="reschedule")
+anatomy: poke_interval = check gap | timeout = give up time | mode = poke or reschedule
+example_1: S3KeySensor(bucket_key="s3://b/raw/{{ ds }}.csv", aws_conn_id="aws")
+example_2: ExternalTaskSensor(external_dag_id="upstream", external_task_id="done")
+example_3: TimeDeltaSensor(delta=timedelta(hours=1))
+variation: S3KeySensor(deferrable=True)   // wait through the triggerer
+used_with: file arrivals, upstream DAGs, deferrable operators
+related: tasks and operators, triggers, pools and concurrency, retries and timeouts
+alternatives: Event-driven datasets | webhooks
+where_used: File drops | Partner feeds | Cross-DAG waits
+mini_conversation: A: Workers are all busy waiting for files. | B: Switch the sensors to reschedule or deferrable mode.
+misconception: ✗ A sensor with no timeout is safe → ✓ The default timeout is seven days, which can hold a worker slot for a week, so set a realistic timeout
+confused_with: poke vs reschedule: poke holds a slot, reschedule frees it between checks.
+avoid: Do not leave sensors without a timeout.
+wrong_code: FileSensor(task_id="w", filepath="/data/in.csv")   # defaults hold a slot
+right_code: FileSensor(task_id="w", filepath="/data/in.csv", mode="reschedule", timeout=3600)
+memory_trick: Reschedule mode frees the slot while you wait.
+real_project: Switching sensors to reschedule mode freed worker slots during long partner delays.
+real_interview: An interviewer may ask: What is the difference between poke and reschedule mode?
+real_daily: It is like waiting at the door for a parcel.
+mcq_question: Which mode frees the worker slot between checks?
+mcq_options: A) poke B) hold C) busy D) reschedule
+mcq_answer: D
+mcq_why: Reschedule releases the slot while waiting.
+fill_blank: A limit after which a sensor fails is its ____ → timeout
+hindi_to_task: Wait for an S3 file, checking every five minutes.
+task_answer: S3KeySensor(task_id="w", bucket_key="s3://b/f.csv", poke_interval=300, mode="reschedule")
+own_task: Write a sensor with a timeout of two hours.
+practice_question: Why set a timeout on a sensor?
+practice_answer: So a missing event eventually fails and alerts.
+
+@AIR-016
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: Branching
+cue: How does a DAG choose between different paths at run time?
+kind: Airflow code
+frequency: Medium
+importance: 4
+origin: Some workflows need to decide at run time, so a branch task returns which path to follow and skips the rest.
+pro_tip: Set the join task's trigger rule so it still runs after skipped branches.
+memory_story: Branching is a road sign that sends traffic left or right, and the other road is closed.
+visual: One task splitting into two paths with one greyed out.
+emotion: The pleasure of workflows that adapt.
+meaning: A branch operator runs a function that returns the task id or ids to follow, and tasks on the other branches are skipped.
+code: from airflow.decorators import task¶@task.branch¶def choose(ds=None):¶    return "full_load" if ds.endswith("-01") else "incremental_load"¶full = EmptyOperator(task_id="full_load")¶inc = EmptyOperator(task_id="incremental_load")¶done = EmptyOperator(task_id="done", trigger_rule="none_failed_min_one_success")¶choose() >> [full, inc] >> done
+output: On the first day of each month the full load runs, otherwise the incremental load runs, and done runs either way.
+explanation: Skipped tasks propagate their skipped state downstream, so a join after a branch would also skip under the default trigger rule. Using none_failed_min_one_success lets it run when at least one branch succeeded and none failed. Branch functions can return lists to follow several paths. Short circuit operators stop the rest of a path when a condition is false. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Return the next task id from a branch task, and relax the join's trigger rule.
+analogy: Branching is a road sign sending traffic left or right, with the other road closed.
+syntax: @task.branch def pick(): return "task_id"
+anatomy: return value = chosen task id | skipped = unused branch | trigger_rule = join behaviour
+example_1: BranchPythonOperator(task_id="b", python_callable=pick)
+example_2: ShortCircuitOperator(task_id="check", python_callable=lambda: is_business_day())
+example_3: trigger_rule="all_done"
+variation: @task.short_circuit def should_run(): return False   // skip all downstream tasks
+used_with: trigger rules, dependencies, conditions
+related: dependencies, trigger rules, TaskFlow API, task groups
+alternatives: Separate DAGs
+where_used: Conditional loads | Holidays | Full versus incremental runs
+mini_conversation: A: The final task was skipped after branching. | B: Change its trigger rule so skipped branches do not block it.
+misconception: ✗ Tasks after a branch always run → ✓ Skips propagate unless the join task uses a suitable trigger rule
+confused_with: Branch vs short circuit: branch picks between paths, short circuit stops a path.
+avoid: Do not leave the join task on the default trigger rule.
+wrong_code: done = EmptyOperator(task_id="done")   # skipped when a branch is skipped
+right_code: done = EmptyOperator(task_id="done", trigger_rule="none_failed_min_one_success")
+memory_trick: Join tasks need a relaxed trigger rule.
+real_project: Branching between full and incremental loads removed the need for two separate DAGs.
+real_interview: An interviewer may ask: Why was my task after the branch skipped?
+real_daily: It is like a road sign that closes one road.
+mcq_question: What does a branch function return?
+mcq_options: A) A password B) A number C) The task id or ids to follow D) A date
+mcq_answer: C
+mcq_why: The returned ids define the chosen path.
+fill_blank: The state given to tasks on the unused path is ____ → skipped
+hindi_to_task: Make the join task run even when one branch was skipped.
+task_answer: done = EmptyOperator(task_id="done", trigger_rule="none_failed_min_one_success")
+own_task: Write a branch that picks weekday or weekend processing.
+practice_question: Why does a join after a branch get skipped by default?
+practice_answer: Skipped states propagate downstream under the default trigger rule.
+
+@AIR-017
+type: code56
+topic: 02 Writing DAGs
+level: Intermediate
+term: Task groups
+cue: How do you group related tasks visually and logically in a large DAG?
+kind: Airflow code
+frequency: Medium
+importance: 3
+origin: Large DAGs become hard to read, so task groups bundle related tasks into collapsible boxes without changing how they run.
+pro_tip: Use task groups to organise, and use separate DAGs when parts have different schedules.
+memory_story: A task group is a folder that holds related tasks in the graph.
+visual: A collapsible box in the graph containing several tasks.
+emotion: The tidiness of a graph that fits on one screen.
+meaning: A task group is a context manager that groups tasks in the interface, prefixes their ids with the group name, and lets you set dependencies on the group as a whole.
+code: from airflow.utils.task_group import TaskGroup¶with DAG("sales", start_date=datetime(2026, 10, 1), schedule="@daily", catchup=False) as dag:¶    with TaskGroup("extract") as extract:¶        a = EmptyOperator(task_id="orders")¶        b = EmptyOperator(task_id="customers")¶    load = EmptyOperator(task_id="load")¶    extract >> load
+output: The graph shows one collapsible extract group with two tasks, followed by load.
+explanation: Task groups affect only layout and ids, such as extract.orders, not scheduling. They can be nested. Dependencies set on the group connect all its entry and exit tasks. They replace the older SubDAGs, which had performance problems. Dynamic task mapping can create tasks inside groups. Written for Airflow 2.x imports; in Airflow 3 they move to airflow.sdk and apache-airflow-providers-standard.
+simple_explain: Wrap related tasks in a TaskGroup to keep the graph readable.
+analogy: A task group is a folder that holds related tasks in the graph.
+syntax: with TaskGroup("name") as group:
+anatomy: TaskGroup = folder | group_id prefix = task id | group >> task = dependency
+example_1: with TaskGroup("transform") as tg:
+example_2: tg1 >> tg2
+example_3: task_id becomes extract.orders
+variation: @task_group def extract(): ...   // the decorator form
+used_with: dependencies, large DAGs, dynamic task mapping
+related: dependencies, DAG definition, dynamic task mapping, branching
+alternatives: Separate DAGs | SubDAGs in old versions
+where_used: Large DAGs | Many tables | Readable graphs
+mini_conversation: A: The graph has sixty tasks and is unreadable. | B: Group them with task groups by stage.
+misconception: ✗ Task groups run tasks in parallel automatically → ✓ They only organise tasks, and dependencies decide the order
+confused_with: Task group vs SubDAG: groups are visual, SubDAGs were separate DAGs and are discouraged.
+avoid: Do not use SubDAGs in new work.
+wrong_code: SubDagOperator(task_id="sub", subdag=build_sub())
+right_code: with TaskGroup("sub") as sub:
+memory_trick: Groups tidy the graph, they do not change execution.
+real_project: Grouping sixty tasks by stage made a large DAG reviewable on one screen.
+real_interview: An interviewer may ask: What is the difference between task groups and SubDAGs?
+real_daily: It is like a folder in a file explorer.
+mcq_question: What does a task group change?
+mcq_options: A) The retries B) The schedule C) Layout and task id prefixes D) The executor
+mcq_answer: C
+mcq_why: Groups are organisational.
+fill_blank: Tasks inside a group get the group name as an id ____ → prefix
+hindi_to_task: Group two tasks under the name load.
+task_answer: with TaskGroup("load") as load:¶    a = EmptyOperator(task_id="a")¶    b = EmptyOperator(task_id="b")
+own_task: Group four tasks into two groups and connect them.
+practice_question: Do task groups change the order in which tasks run?
+practice_answer: No, only dependencies decide the order.

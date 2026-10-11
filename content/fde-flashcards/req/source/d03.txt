@@ -1,0 +1,328 @@
+
+@REQ-015
+topic: 03 Requirements
+level: Intermediate
+term: Assumptions and risks
+cue: How do you record what you are guessing and what could go wrong?
+category: Technique
+frequency: High
+importance: 5
+origin: Plans rest on things nobody has checked yet, and unwritten assumptions turn into surprises at the worst moment.
+pro_tip: Give each assumption an owner and a date by which it will be checked.
+memory_story: Assumptions are the loose planks in a bridge, and a risk list tells you where to test them.
+visual: A table with assumption, owner, check date and a risk rating.
+emotion: The calm of surprises named early.
+definition: An assumption is something treated as true without proof, and a risk is an uncertain event that could harm the project, and both are recorded with an owner and a plan.
+explanation: Typical assumptions are that data will be available by a date, that test accounts exist or that an API can handle the load. Risks are rated by likelihood and impact, with an action to reduce them. Review the list at every status meeting. An assumption that turns out false becomes an issue and may trigger a change request.
+simple_explain: Write down what you are guessing and what could go wrong, and check them early.
+analogy: Assumptions are the loose planks in a bridge, and a risk list tells you where to test them.
+formula_rule: Assumption, owner, check date; risk, likelihood, impact, action.
+example_1: Assuming the customer will provide sample data by Friday.
+example_2: A risk that the security review takes longer than planned.
+example_3: An assumption that the existing API allows bulk export.
+related: scoping, estimating, change requests, status updates
+word_family: assumption, risk, issue, likelihood, mitigation
+where_used: Proposals | Planning | Status meetings
+mini_conversation: A: We assumed the data would be clean. | B: That should have been on the risk list with a check date.
+misconception: ✗ Risks are only worth listing if they are likely → ✓ High-impact risks matter even when unlikely
+contrast: Risk vs issue: something that might happen versus something that already has.
+avoid: Do not leave assumptions unwritten and unchecked.
+memory_trick: Name it, own it, check it early.
+real_project: Checking a data assumption in week one prevented a month of rework.
+real_interview: An interviewer may ask: How do you manage project risks?
+real_daily: It is like checking the weather forecast before a trip.
+mcq_question: What should each assumption have?
+mcq_options: A) A colour B) A price C) A nickname D) An owner and a check date
+mcq_answer: D
+mcq_why: Without an owner and date, assumptions are never verified.
+fill_blank: A risk that has already happened becomes an ____ → issue
+apply: A plan relies on data arriving Friday. What do you record? → An assumption with an owner and a check date
+explain_task: Explain the difference between an assumption, a risk and an issue.
+own_task: Write five assumptions and two risks for an integration project.
+
+@REQ-016
+topic: 03 Requirements
+level: Intermediate
+term: Change requests
+cue: How do you handle new asks after the scope is agreed?
+category: Process
+frequency: High
+importance: 4
+origin: Requirements always change, so a light process is needed to judge each change on cost, time and value.
+pro_tip: Treat a change as a normal event, and respond with options rather than a flat refusal.
+memory_story: A change request is a toll gate where new work is weighed before entering the road.
+visual: A form with change, reason, effort, impact and decision.
+emotion: The fairness of a transparent trade-off.
+definition: A change request is a recorded proposal to alter agreed scope, which is assessed for effort, risk and value, then approved, rejected or scheduled.
+explanation: Record what is asked, why, who asked and the effect on time, cost and other work. Offer options, such as swapping it with another item, moving the date, or adding it later. Get a decision from someone with authority and write it down. Small changes may need only a quick note, while large ones need formal agreement.
+simple_explain: Write down each new ask, show what it costs, and get a clear decision.
+analogy: A change request is a toll gate where new work is weighed before entering the road.
+formula_rule: Record, assess, offer options, decide, update the plan.
+example_1: A customer asks for an extra report after kick-off.
+example_2: Swapping a low-value feature for a new request.
+example_3: Moving a go-live date to include extra security checks.
+related: scoping, estimating, saying no, decision log
+word_family: change, impact, approval, trade-off, baseline
+where_used: Delivery | Contracts | Status meetings
+mini_conversation: A: Can you add this by next week? | B: We can, if we swap it with another item or move the date.
+misconception: ✗ Saying yes to every change keeps customers happy → ✓ Unmanaged changes often lead to late, poor delivery
+contrast: Change request vs bug: new wanted behaviour versus a mistake against the agreement.
+avoid: Do not accept scope changes in hallway conversations.
+memory_trick: Record it, price it, decide it, update it.
+real_project: A written trade-off kept an on-time launch when a late request arrived.
+real_interview: An interviewer may ask: How do you manage scope changes?
+real_daily: It is like adding a stop to a trip and checking the time and fuel.
+mcq_question: What should you do with a new request after scope is agreed?
+mcq_options: A) Delete the plan B) Accept it secretly C) Assess it and record a decision D) Ignore it
+mcq_answer: C
+mcq_why: A recorded decision protects the plan and the relationship.
+fill_blank: Offering to swap a new item for an old one is a ____ → trade-off
+apply: A customer wants an extra report next week without moving the date. What do you offer? → A trade-off, such as swapping another item
+explain_task: Explain a simple change request process.
+own_task: Draw a one-page change request form with five fields.
+
+@REQ-017
+topic: 03 Requirements
+level: Intermediate
+term: Estimating
+cue: How do you give a realistic time or effort for work you have not done yet?
+category: Technique
+frequency: High
+importance: 5
+origin: Customers need dates, but early estimates are uncertain, so estimates must be honest about what is known and unknown.
+pro_tip: Give a range with the assumptions behind it, and refine as facts arrive.
+memory_story: An estimate is a weather forecast, a range with confidence, not a promise.
+visual: A bar showing a range from best case to worst case.
+emotion: The honesty of admitting uncertainty without losing trust.
+definition: Estimating is predicting the effort or time needed for work, usually as a range with stated assumptions, and improving the estimate as more is learned.
+explanation: Break the work into small pieces, estimate each, and add time for testing, reviews, waiting on others and surprises. Use past similar work as evidence. State what the estimate assumes and what would change it. Estimates are not commitments, but dates agreed with a customer become expectations, so communicate the uncertainty plainly.
+simple_explain: Give a range, say what you assumed, and update it as you learn.
+analogy: An estimate is a weather forecast, a range with confidence, not a promise.
+formula_rule: Break down, range, assumptions, buffer, refine.
+example_1: Two to four days for an integration, assuming test access.
+example_2: Adding review and testing time to a build estimate.
+example_3: Re-estimating after the first sample of data arrives.
+related: scoping, assumptions and risks, change requests, status updates
+word_family: estimate, range, buffer, assumption, uncertainty
+where_used: Proposals | Planning | Status updates
+mini_conversation: A: How long will the integration take? | B: Two to four days, if test access arrives by Monday.
+misconception: ✗ An estimate is a promise → ✓ It is a forecast with stated assumptions
+contrast: Estimate vs commitment: a forecast versus an agreed delivery date.
+avoid: Do not give a single number without assumptions.
+memory_trick: Give a range, state the assumptions, refine.
+real_project: A range with clear assumptions kept trust when test access arrived late.
+real_interview: An interviewer may ask: How do you estimate unfamiliar work?
+real_daily: It is like forecasting a journey time with traffic.
+mcq_question: What makes an estimate more honest?
+mcq_options: A) A range with assumptions B) A promise C) One exact number D) A secret date
+mcq_answer: A
+mcq_why: It shows uncertainty and what could change the answer.
+fill_blank: Extra time added for surprises is called a ____ → buffer
+apply: A customer asks for a date on unfamiliar work. What do you give? → A range with assumptions
+explain_task: Explain how to give an honest estimate.
+own_task: Estimate a small task as a range, and list its three assumptions.
+
+@REQ-018
+topic: 04 Documentation
+level: Beginner
+term: README
+cue: Which file tells a newcomer what a project is and how to start?
+category: Document
+frequency: Very high
+importance: 5
+origin: People arrive at a repository without context, so a front-door file explains what it is, how to run it and where to get help.
+pro_tip: Test the README by asking a colleague to follow it without your help.
+memory_story: A README is the front door sign and the welcome mat of a project.
+visual: A file with sections for what, setup, usage and contacts.
+emotion: The welcome of clear first steps.
+definition: A README is the first file a reader sees in a project, explaining its purpose, how to install and run it, how to use it, and who to contact.
+explanation: A good README starts with one clear sentence on purpose, then gives setup steps in order, a small usage example, configuration notes without secrets, and links to deeper documents. Keep it short and current. Out-of-date setup steps are worse than none. Update it whenever setup changes, and treat it as part of the code review.
+simple_explain: It is the first page that tells people what the project is and how to run it.
+analogy: A README is the front door sign and the welcome mat of a project.
+formula_rule: What, setup, usage, config, contacts.
+example_1: A one-line purpose at the top.
+example_2: Numbered setup steps that work on a fresh machine.
+example_3: A link to the runbook for operations.
+related: technical spec, runbook, handover document, decision log
+word_family: README, setup, usage, onboarding, markdown
+where_used: Repositories | Customer handover | Onboarding
+mini_conversation: A: How do I run this? | B: Follow the README, and tell me if any step fails.
+misconception: ✗ Documentation can wait until the end → ✓ A short README helps from the first day
+contrast: README vs technical spec: how to start versus how it is designed.
+avoid: Do not put passwords or keys in a README.
+memory_trick: Purpose first, steps next, secrets never.
+real_project: A tested README let a customer's engineer run the integration without a call.
+real_interview: An interviewer may ask: What belongs in a good README?
+real_daily: It is like the instructions on the box of a flat-pack cabinet.
+mcq_question: What should a README never contain?
+mcq_options: A) Contacts B) Setup steps C) Secrets and keys D) A purpose line
+mcq_answer: C
+mcq_why: Files are shared and stored widely, so secrets must stay out.
+fill_blank: A good README begins with the project's ____ → purpose
+apply: A new engineer cannot start the project. Which file should have helped? → The README
+explain_task: Explain what a good README contains.
+own_task: Write a README outline of six headings for a small integration.
+
+@REQ-019
+topic: 04 Documentation
+level: Intermediate
+term: Technical spec
+cue: Which document explains how a solution will be built and why?
+category: Document
+frequency: High
+importance: 4
+origin: Before building, teams need a shared plan that others can review, so mistakes are caught on paper instead of in code.
+pro_tip: Keep it short and focus on decisions, interfaces and risks, not every detail.
+memory_story: A technical spec is the blueprint that is reviewed before the walls go up.
+visual: A document with goal, design, interfaces, risks and open questions.
+emotion: The clarity of a plan everyone has read.
+definition: A technical specification describes the goal, the proposed design, key interfaces and data flows, alternatives considered, risks, and open questions for a piece of work.
+explanation: A spec lets reviewers challenge the design before effort is spent. It should name what is out of scope, show how components connect, and state how the result will be tested. Alternatives and the reason for the choice help future readers. Keep it versioned and update it when the design changes, or label it as the original plan.
+simple_explain: Write down how you plan to build it so others can check the plan first.
+analogy: A technical spec is the blueprint that is reviewed before the walls go up.
+formula_rule: Goal, design, interfaces, alternatives, risks, tests.
+example_1: A diagram of data moving from the customer system to the product.
+example_2: A list of API calls and expected responses.
+example_3: A section on options considered and why one was chosen.
+related: README, decision log, scoping, estimating
+word_family: spec, design, interface, alternative, review
+where_used: Design reviews | Integrations | Onboarding
+mini_conversation: A: Should we start coding now? | B: Share a short spec first so the customer's engineers can check it.
+misconception: ✗ A spec must be long to be useful → ✓ A short, clear spec is easier to review
+contrast: Spec vs README: a design plan versus a how to run guide.
+avoid: Do not leave a spec out of date without saying so.
+memory_trick: Plan on paper, review, then build.
+real_project: A two-page spec exposed a wrong data assumption before any code was written.
+real_interview: An interviewer may ask: What goes into a technical design document?
+real_daily: It is like a floor plan reviewed before construction.
+mcq_question: What helps future readers understand a design choice?
+mcq_options: A) A logo B) Alternatives considered C) Bigger fonts D) A longer title
+mcq_answer: B
+mcq_why: It shows why the chosen design beat the others.
+fill_blank: A short, reviewed design plan is called a technical ____ → spec
+apply: You plan a custom integration. What do you write before coding? → A short technical spec
+explain_task: Explain what belongs in a technical spec.
+own_task: Outline a one-page spec for moving a customer's weekly report to automation.
+
+@REQ-020
+topic: 04 Documentation
+level: Intermediate
+term: Runbook
+cue: Which document tells someone exactly what to do when something goes wrong?
+category: Document
+frequency: High
+importance: 5
+origin: Problems often happen at night or when the builder is away, so steps must be written for a person who did not build the system.
+pro_tip: Write each step so a tired person at three in the morning could follow it.
+memory_story: A runbook is the emergency card in the aeroplane seat pocket.
+visual: A numbered page of symptoms, checks and fixes.
+emotion: The calm of knowing what to do under pressure.
+definition: A runbook is a step-by-step guide for operating a system and handling known problems, listing symptoms, checks, fixes, escalation contacts and how to confirm recovery.
+explanation: Organise by symptom, such as job did not run, then give the checks in order, the fix, and how to confirm it worked. Include who to contact if the steps fail and where logs are. Keep commands copy-ready, and test the runbook in a calm moment. Review it after every incident, and mark owners and last-reviewed dates.
+simple_explain: Write the exact steps to follow when the system has a known problem.
+analogy: A runbook is the emergency card in the aeroplane seat pocket.
+formula_rule: Symptom, checks, fix, confirm, escalate.
+example_1: Steps to restart a failed nightly job.
+example_2: How to check where logs are for an integration.
+example_3: Who to call if the fix does not work.
+related: README, handover document, postmortems, five whys
+word_family: runbook, symptom, escalation, recovery, owner
+where_used: Operations | Handover | On-call
+mini_conversation: A: The nightly job failed again. | B: Check the runbook entry for it before you escalate.
+misconception: ✗ Only the builder needs to know how to fix things → ✓ Others must be able to recover the system from written steps
+contrast: Runbook vs README: operating and fixing versus setup and use.
+avoid: Do not write steps that need hidden knowledge.
+memory_trick: Symptom, check, fix, confirm, escalate.
+real_project: A runbook let the customer's team restart a failed job without calling anyone.
+real_interview: An interviewer may ask: What would you put in a runbook?
+real_daily: It is like an emergency card with the exact steps to follow.
+mcq_question: How is a runbook best organised?
+mcq_options: A) By author B) By alphabet only C) By colour D) By symptom
+mcq_answer: D
+mcq_why: People start from what they see going wrong.
+fill_blank: The step that checks that a fix really worked is the ____ step → confirm
+apply: A job fails at night and the builder is away. What helps the on-call person? → A runbook
+explain_task: Explain what a good runbook entry contains.
+own_task: Write a runbook entry for a failed nightly import in six steps.
+
+@REQ-021
+topic: 04 Documentation
+level: Intermediate
+term: Decision log
+cue: Which record keeps a history of what was decided and why?
+category: Document
+frequency: High
+importance: 4
+origin: Months later nobody remembers why a choice was made, so decisions are written down with their reasons.
+pro_tip: Record the date, the decision, the reason, the alternatives and who agreed.
+memory_story: A decision log is the ship's logbook of choices made at sea.
+visual: A table with date, decision, reason, alternatives and owner.
+emotion: The comfort of a clear paper trail.
+definition: A decision log is a dated list of important decisions, each with its reason, alternatives considered, owner and status, so later readers know why things are as they are.
+explanation: Log decisions that affect scope, design, cost or risk. When a decision changes, mark the old entry as superseded and link to the new one, rather than deleting it. This avoids repeating old debates and helps new team members. Share the log with the customer where decisions involve them, so there is agreement on what was chosen.
+simple_explain: Write down what was decided, why, and by whom.
+analogy: A decision log is the ship's logbook of choices made at sea.
+formula_rule: Date, decision, reason, alternatives, owner, status.
+example_1: Choosing a nightly import over a live feed, with the reason.
+example_2: Marking an earlier choice as superseded.
+example_3: Recording that the customer approved a data retention period.
+related: technical spec, change requests, meeting notes, handover document
+word_family: decision, rationale, superseded, owner, history
+where_used: Projects | Handover | Audits
+mini_conversation: A: Why did we choose the nightly import? | B: It is in the decision log with the alternatives.
+misconception: ✗ Decisions are obvious and need no record → ✓ They are forgotten or disputed without a record
+contrast: Decision log vs meeting notes: final choices versus a record of discussion.
+avoid: Do not delete old decisions when they change.
+memory_trick: Log the choice and the reason.
+real_project: A decision log ended a repeated argument about a data retention period.
+real_interview: An interviewer may ask: Why keep a decision log?
+real_daily: It is like a diary of why you chose each route.
+mcq_question: How should a changed decision be handled?
+mcq_options: A) Hide it B) Delete it C) Ignore it D) Mark it superseded and add the new one
+mcq_answer: D
+mcq_why: The history shows how and why choices changed.
+fill_blank: An old decision replaced by a new one is marked ____ → superseded
+apply: A customer asks why you chose a nightly import. Where do you look? → The decision log
+explain_task: Explain what each decision log entry should contain.
+own_task: Write three decision log entries for a customer project you know.
+
+@REQ-022
+topic: 04 Documentation
+level: Beginner
+term: Meeting notes
+cue: How do you turn a meeting into a useful written record?
+category: Document
+frequency: Very high
+importance: 4
+origin: Verbal agreements fade and are remembered differently, so notes make decisions and actions visible to everyone.
+pro_tip: Send the notes within a day, and highlight decisions and actions with owners and dates.
+memory_story: Meeting notes are the receipt that proves what was agreed.
+visual: A page with attendees, decisions, actions and dates.
+emotion: The reassurance of an agreed record.
+definition: Meeting notes are a short written record of who attended, what was discussed, which decisions were made, and which actions are owned by whom and due when.
+explanation: Capture decisions and actions first, then key points and open questions. Use names and dates for every action. Send the notes soon after, and invite corrections. Do not record sensitive remarks that do not belong in a shared document. For customer meetings, notes also serve as confirmation of scope and expectations.
+simple_explain: Write down decisions and actions, with names and dates, and send them quickly.
+analogy: Meeting notes are the receipt that proves what was agreed.
+formula_rule: Attendees, decisions, actions with owner and date, open questions.
+example_1: A list of actions with names and due dates.
+example_2: A decision to use a nightly import.
+example_3: An open question about data access.
+related: decision log, status updates, handover document, expectation setting
+word_family: notes, action, owner, decision, follow-up
+where_used: Customer meetings | Project reviews | Workshops
+mini_conversation: A: What did we agree on the call? | B: It is in the notes I sent yesterday.
+misconception: ✗ Everyone remembers the same decisions → ✓ People remember meetings differently without a record
+contrast: Notes vs decision log: a record of one meeting versus a permanent list of decisions.
+avoid: Do not write notes that name no owner for an action.
+memory_trick: Decisions first, then actions, owners and dates.
+real_project: Prompt notes with named owners got a stuck data request moving within days.
+real_interview: An interviewer may ask: How do you follow up after a customer meeting?
+real_daily: It is like keeping a receipt after a purchase.
+mcq_question: What must each action in the notes have?
+mcq_options: A) A colour B) An owner and a date C) A long story D) A joke
+mcq_answer: B
+mcq_why: Without both, actions are easily forgotten.
+fill_blank: A task assigned in a meeting is recorded as an ____ → action
+apply: A call ends with several tasks. What do you send afterwards? → Notes with decisions and actions with owners and dates
+explain_task: Explain how to write useful meeting notes.
+own_task: Write sample notes with two decisions and three actions for an imagined kick-off.

@@ -1,0 +1,252 @@
+deck.title: CI/CD – Beginner to Advanced Flashcards
+deck.subject: CI/CD and GitHub Actions
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: yaml
+type: topic56
+
+@CICD-001
+topic: 01 Ideas
+level: Beginner
+term: CI vs continuous delivery vs continuous deployment
+cue: Which three practices differ in how far automation goes between a code change and production?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Teams that merged code only occasionally suffered painful, risky releases, so they began integrating, testing and releasing in small automatic steps.
+pro_tip: Say which one you mean, because many people use CI/CD as one word for all three.
+memory_story: CI checks the ingredients, delivery plates the dish, and deployment serves it without asking the manager.
+visual: A pipeline arrow with three marked stopping points along it.
+emotion: The calm of small releases instead of one terrifying big one.
+definition: Continuous integration merges and tests code often, continuous delivery keeps every build ready to release with a manual approval, and continuous deployment releases every passing build automatically.
+explanation: CI builds and tests each change soon after it is pushed. Continuous delivery adds an automated path to a release-ready package, but a person decides when to ship. Continuous deployment removes that decision, so every change that passes goes live. The difference is the human approval at the end. Strong tests are the price of full automation.
+simple_explain: CI tests every change, delivery makes it ready to ship, deployment ships it for you.
+analogy: CI checks the ingredients, delivery plates the dish, and deployment serves it without asking the manager.
+formula_rule: CI = test often. Delivery = ready to release. Deployment = released automatically.
+example_1: A pull request that runs the test suite automatically.
+example_2: A build that waits for a manager to click approve before going live.
+example_3: A change that goes live minutes after merging with no clicks.
+related: pipeline stages, triggers, environments, approvals
+word_family: integration, delivery, deployment, pipeline, automation
+where_used: Software teams | Customer projects | Release planning
+mini_conversation: A: Do we ship every merge automatically? | B: Only after a manual approval, so that is delivery, not deployment.
+misconception: ✗ Continuous delivery and continuous deployment are the same thing → ✓ Delivery needs a human approval to release, while deployment does not
+contrast: Delivery vs deployment: delivery waits for a human decision, deployment does not.
+avoid: Do not automate releases before the tests can be trusted.
+memory_trick: Test often, ready always, release automatically.
+real_project: Moving a customer integration from monthly manual releases to a tested pipeline with approval.
+real_interview: An interviewer may ask: What is the difference between continuous delivery and continuous deployment?
+real_daily: It is like checking ingredients, plating a dish and serving it.
+mcq_question: What is the main difference between delivery and deployment?
+mcq_options: A) There is no difference B) A person approves the release in delivery C) Deployment has no code D) Delivery has no tests
+mcq_answer: B
+mcq_why: Deployment ships automatically, while delivery waits for approval.
+fill_blank: Merging and testing code often is called continuous ____ → integration
+apply: Every passing change must go live with no clicks. Which practice is this? → Continuous deployment
+explain_task: Explain the three practices in three lines.
+own_task: Decide which one fits a bank and which one fits a small web shop.
+
+@CICD-002
+topic: 01 Ideas
+level: Beginner
+term: Pipeline stages
+cue: Which ordered steps does code pass through between a commit and a running release?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Teams repeated the same manual steps for every release, so they wrote those steps down as an ordered, automatic pipeline.
+pro_tip: Put the fastest checks first so a broken change fails in seconds, not minutes.
+memory_story: A pipeline is a factory conveyor belt where each station inspects the product before it moves on.
+visual: Boxes labelled build, test, scan, package and deploy joined by arrows.
+emotion: The satisfaction of watching every stage turn green.
+definition: A pipeline is an automated sequence of stages, such as build, test, scan, package and deploy, where each stage runs only if the one before it succeeded.
+explanation: A stage groups jobs that do one kind of work. Failure stops the pipeline, so bad changes do not reach later stages. Stages can run in parallel when they do not depend on each other. The pipeline definition is stored as code in the repository. Short feedback time is a key quality of a good pipeline.
+simple_explain: A pipeline runs build, test, scan and deploy in order, and stops at the first failure.
+analogy: It is a factory conveyor belt where each station inspects the product before it moves on.
+formula_rule: Commit → build → test → scan → package → deploy, stop on failure.
+example_1: A pipeline that lints code first and fails in ten seconds.
+example_2: Unit tests and security scans running side by side.
+example_3: A deploy stage that runs only on the main branch.
+related: triggers, build artifacts, environments, quality gates
+word_family: stage, job, step, gate, artifact
+where_used: Every CI system | Release automation | Reviews
+mini_conversation: A: The deploy ran even though tests failed. | B: The stages were not chained, so add a dependency.
+misconception: ✗ A pipeline only needs one big script that does everything → ✓ Separate stages give clear feedback, parallel work and reuse
+contrast: Stage vs job: a stage is a phase of the pipeline, a job is one unit of work inside it.
+avoid: Do not put slow tests before quick linting.
+memory_trick: Fast checks first, slow checks later.
+real_project: Reordering stages so lint and unit tests failed fast before the slow integration tests.
+real_interview: An interviewer may ask: What stages would you put in a pipeline?
+real_daily: It is like a conveyor belt with an inspector at each station.
+mcq_question: What happens when an early stage fails?
+mcq_options: A) The code deploys B) They all run anyway C) Later stages do not run D) The repo is deleted
+mcq_answer: C
+mcq_why: Stages depend on the success of the one before.
+fill_blank: Where the pipeline is defined as code in the repo is a ____ file → workflow
+apply: Linting takes ten seconds and integration tests take ten minutes. Which goes first? → Linting
+explain_task: Explain pipeline stages in three lines.
+own_task: Draw a pipeline for a Python API with five stages.
+
+@CICD-003
+topic: 01 Ideas
+level: Beginner
+term: Triggers
+cue: Which events start a pipeline run automatically?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: Nobody wants to start a build by hand every time, so pipelines listen for events such as pushes and pull requests.
+pro_tip: Run tests on pull requests and deploy only on merges to the main branch.
+memory_story: A trigger is the doorbell that wakes the pipeline.
+visual: An event arrow, such as a push, pointing at a pipeline box.
+emotion: The ease of builds starting on their own.
+definition: A trigger is an event, such as a push, a pull request, a tag, a schedule or a manual click, that starts a pipeline.
+explanation: Triggers can be filtered by branch, path or tag. A path filter avoids running backend tests when only documentation changed. Scheduled triggers run nightly jobs. Manual triggers allow on-demand deployments or maintenance. Webhooks from other systems can also start runs. Pull request triggers run on code from a fork with fewer permissions.
+simple_explain: Choose which events start the pipeline, and filter them so only relevant changes run it.
+analogy: It is the doorbell that wakes the pipeline.
+formula_rule: Event + filter = when the pipeline runs.
+example_1: Running tests on every pull request.
+example_2: Deploying only when a version tag is pushed.
+example_3: A nightly scheduled data refresh.
+related: GitHub Actions workflows, branches, environments, schedules
+word_family: event, push, pull request, schedule, webhook
+where_used: Workflow design | Cost control | Release automation
+mini_conversation: A: Why did docs changes run the whole test suite? | B: There is no path filter on the trigger.
+misconception: ✗ Pipelines can only start when code is pushed → ✓ They can also start on schedules, tags, manual clicks and webhooks
+contrast: Push trigger vs pull request trigger: one runs on pushed commits, the other on proposed merges.
+avoid: Do not trigger expensive jobs for every small docs change.
+memory_trick: Events start it, filters narrow it.
+real_project: Adding path filters so documentation edits no longer ran heavy integration tests.
+real_interview: An interviewer may ask: When should a deployment run?
+real_daily: It is like a doorbell that wakes the pipeline.
+mcq_question: Which trigger suits a nightly job?
+mcq_options: A) A star B) A push C) A comment D) A schedule
+mcq_answer: D
+mcq_why: Scheduled triggers run at set times.
+fill_blank: A trigger that starts only for chosen branches uses a branch ____ → filter
+apply: You want deployments only for version tags. Which trigger? → A tag push
+explain_task: Explain triggers in three lines.
+own_task: List three triggers and what each is good for.
+
+@CICD-004
+topic: 01 Ideas
+level: Beginner
+term: Build artifacts
+cue: Which outputs of a build are saved and passed to later stages or releases?
+category: Core concept
+frequency: High
+importance: 4
+origin: Rebuilding the same code in every stage risks differences, so one build is saved and reused through the pipeline.
+pro_tip: Build once, then deploy that same artifact to every environment.
+memory_story: An artifact is the sealed box that travels down the line instead of being rebuilt at each station.
+visual: A sealed package moving through test and production stages.
+emotion: The trust of shipping exactly what was tested.
+definition: A build artifact is a file or package produced by a build, such as a container image, a zip or a wheel, that is stored and promoted through later stages.
+explanation: Artifacts include binaries, images, test reports and coverage files. They are stored in an artifact repository or container registry, and versioned, usually with the commit hash. Promoting the same artifact from test to production ensures that what was tested is what ships. Artifacts should be immutable, meaning never changed after creation.
+simple_explain: Build once, store the result with a version, and deploy the same thing everywhere.
+analogy: It is a sealed box that travels down the line instead of being rebuilt at each station.
+formula_rule: Build once, version it, promote it unchanged.
+example_1: A container image tagged with the commit hash.
+example_2: A test report uploaded for download.
+example_3: A Python package published to a private index.
+related: registries, environments, release tagging, caching
+word_family: artifact, package, image, version, immutable
+where_used: Releases | Rollbacks | Auditing
+mini_conversation: A: The production build behaves differently from staging. | B: It was rebuilt, so promote the tested artifact instead.
+misconception: ✗ Rebuilding for each environment is safer → ✓ Rebuilding can introduce differences, so promote the same artifact
+contrast: Artifact vs source code: the artifact is the built result, the source is the input.
+avoid: Do not overwrite a published artifact version.
+memory_trick: Build once, promote many times.
+real_project: Promoting one tagged image from staging to production to avoid environment surprises.
+real_interview: An interviewer may ask: Why build only once in a pipeline?
+real_daily: It is like a sealed box passed down the line.
+mcq_question: Why promote the same artifact between environments?
+mcq_options: A) What was tested is exactly what ships B) It saves disk space only C) It avoids logging D) It removes tests
+mcq_answer: A
+mcq_why: A rebuilt artifact may differ from the tested one.
+fill_blank: An artifact that is never changed after creation is called ____ → immutable
+apply: Staging works but production fails after a rebuild. What should you change? → Promote the same artifact
+explain_task: Explain build artifacts in three lines.
+own_task: List four artifacts a pipeline for a web API might produce.
+
+@CICD-005
+topic: 01 Ideas
+level: Intermediate
+term: Environments
+cue: Which separate places do changes pass through before reaching real users?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: Testing directly on live systems is dangerous, so teams set up copies of the system where changes are tried safely first.
+pro_tip: Keep staging as similar to production as you can afford.
+memory_story: Environments are rehearsal rooms before the stage performance.
+visual: Three boxes labelled dev, staging and production linked by arrows.
+emotion: The comfort of finding bugs before customers do.
+definition: Environments are separate deployments of the same application, such as development, staging and production, each with its own configuration and data.
+explanation: Development is for quick changes, staging mirrors production for final checks, and production serves real users. Configuration, such as database addresses and keys, differs by environment and is kept outside the code. Production data should not be copied to lower environments without masking. Protected environments can require approvals.
+simple_explain: Try changes in dev and staging, then release to production with the same artifact and different settings.
+analogy: Environments are rehearsal rooms before the stage performance.
+formula_rule: Same artifact, different configuration per environment.
+example_1: A staging database that is a masked copy of production.
+example_2: A production environment that requires approval before deploying.
+example_3: A temporary preview environment per pull request.
+related: build artifacts, configuration, approvals, secrets
+word_family: dev, staging, production, configuration, promotion
+where_used: Release flow | Testing | Customer projects
+mini_conversation: A: Can I test on production? | B: No, test on staging, which mirrors it.
+misconception: ✗ Staging does not need to resemble production → ✓ The closer it is, the more bugs it catches before release
+contrast: Staging vs production: staging is a rehearsal copy, production serves real users.
+avoid: Do not copy raw personal data into test environments.
+memory_trick: Rehearse in staging, perform in production.
+real_project: Adding a staging environment that caught a configuration bug before a customer launch.
+real_interview: An interviewer may ask: Why do you need a staging environment?
+real_daily: It is like a rehearsal room before the stage.
+mcq_question: What should differ between environments?
+mcq_options: A) Configuration such as addresses and keys B) The code version C) The tests D) The language
+mcq_answer: A
+mcq_why: The same artifact runs with environment-specific settings.
+fill_blank: Moving a build from staging to production is called ____ → promotion
+apply: You need to catch config bugs before release. What do you add? → A staging environment
+explain_task: Explain environments in three lines.
+own_task: List what should differ between staging and production.
+
+@CICD-006
+topic: 01 Ideas
+level: Advanced
+term: DORA metrics
+cue: Which four measures describe how well a team delivers software?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Research on thousands of teams found a small set of measures that separate high performers from the rest.
+pro_tip: Use the metrics to find bottlenecks, not to rank individual people.
+memory_story: DORA metrics are the four dials on a delivery dashboard.
+visual: Four dials: frequency, lead time, failure rate and recovery time.
+emotion: The motivation of watching your numbers improve.
+definition: The DORA metrics are deployment frequency, lead time for changes, change failure rate, failed deployment recovery time (formerly time to restore service) and, in newer guidance, rework rate.
+explanation: Deployment frequency shows how often you release. Lead time measures the time from commit to production. Change failure rate is the share of releases causing a problem. Failed deployment recovery time (formerly time to restore) measures how fast you recover. Fast and stable go together, because small, frequent changes are easier to test and fix. Numbers can be gamed if used as targets for people.
+simple_explain: Measure how often, how fast, how safely and how quickly you recover.
+analogy: They are four dials on a delivery dashboard.
+formula_rule: Speed (frequency, lead time) + stability (failure rate, restore time).
+example_1: Deploying several times a day with a lead time under an hour.
+example_2: A rollback fixing a bad release in ten minutes.
+example_3: A change failure rate of five percent.
+related: pipeline stages, rollbacks, monitoring, small batches
+word_family: frequency, lead time, failure rate, recovery, delivery
+where_used: Team reviews | Improvement plans | Engineering reports
+mini_conversation: A: How do we know the pipeline improved things? | B: Compare lead time and failure rate before and after.
+misconception: ✗ Releasing faster always means lower quality → ✓ Small frequent releases often improve stability
+contrast: Speed vs stability metrics: frequency and lead time measure speed, failure rate and restore time measure stability.
+avoid: Do not use DORA numbers to rank individuals.
+memory_trick: Two for speed, two for stability.
+real_project: Tracking lead time to show the customer that the new pipeline cut release time.
+real_interview: An interviewer may ask: What are the DORA metrics?
+real_daily: It is like four dials on a dashboard.
+mcq_question: Which metric measures time from commit to production?
+mcq_options: A) Change failure rate B) Deployment frequency C) Lead time for changes D) Failed deployment recovery time
+mcq_answer: C
+mcq_why: Lead time covers the span from commit to release.
+fill_blank: The share of releases that cause problems is the change ____ rate → failure
+apply: You want to know how quickly you recover from incidents. Which metric? → Failed deployment recovery time
+explain_task: Explain the four DORA metrics in three lines.
+own_task: Write how you would measure lead time in your own pipeline.

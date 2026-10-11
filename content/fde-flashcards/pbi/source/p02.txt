@@ -1,0 +1,462 @@
+
+@PBI-010
+topic: 02 Power Query
+level: Beginner
+term: Power Query Editor
+cue: Which window inside Power BI lets you clean and reshape data before it is loaded into the model?
+category: Data preparation tool
+frequency: Very high
+importance: 5
+origin: Real-world data is messy, so Microsoft added a dedicated editor where cleaning steps can be recorded and replayed on every refresh.
+pro_tip: Do all your cleaning here, not in the report, so every refresh repeats the same steps.
+memory_story: The editor is a car wash that the data drives through before it enters the showroom.
+visual: A window with a table in the middle, a list of steps on the right and a list of queries on the left.
+emotion: The satisfaction of watching a messy table become tidy with a few clicks.
+definition: The Power Query Editor is the tool where you connect to data, clean and transform it, and then load it into the model.
+explanation: You open it with Transform Data. It records each action as a step written in the M language. Because the steps are saved, the same cleaning runs again automatically on each refresh, so you never repeat the work.
+simple_explain: Power Query is the cleaning room. You remove bad rows, fix types and reshape tables, and every action is remembered so it runs again when data refreshes.
+analogy: It works like a car wash that every car passes through before entering the showroom.
+formula_rule: Connect → transform (steps recorded) → load to the model
+example_1: Removing blank rows from an Excel export.
+example_2: Splitting a full name column into first name and last name.
+example_3: Changing a text column of dates into a proper date column.
+related: Applied Steps, M language, query folding, Transform Data
+word_family: query, step, transform, load, refresh
+where_used: Data cleaning | Combining files | Preparing models
+mini_conversation: A: The monthly file has extra header rows every time. | B: Remove them in Power Query once, and the step will repeat on each refresh.
+misconception: ✗ Cleaning in Power Query changes the original source file → ✓ Power Query never alters the source, it only shapes the copy that is loaded
+contrast: Power Query vs DAX: Power Query shapes data before loading, DAX calculates on the loaded model.
+avoid: Do not clean data by hand in the source file when Power Query can do it repeatably.
+memory_trick: Power Query is the wash before the showroom.
+real_project: Cleaning a monthly sales export in Power Query so it loads in the same shape every time.
+real_interview: An interviewer may ask: What is Power Query used for in Power BI?
+real_daily: It is like a car wash that every car passes through before the showroom.
+mcq_question: Does cleaning data in Power Query change the original source file?
+mcq_options: A) Only for Excel B) Only for databases C) No, it only shapes the loaded copy D) Yes, it overwrites it
+mcq_answer: C
+mcq_why: Power Query reads from the source and never writes back to it.
+fill_blank: Each change you make in Power Query is recorded as a ____ → step
+apply: Where should you remove blank rows so it repeats on every refresh? → In Power Query
+explain_task: Explain what Power Query does in three lines.
+own_task: List three cleaning actions you would perform on a messy sales file.
+
+@PBI-011
+topic: 02 Power Query
+level: Beginner
+term: Applied Steps
+cue: Which panel on the right of the Power Query Editor lists every transformation in the order it ran?
+category: Data preparation tool
+frequency: Very high
+importance: 4
+origin: To repeat cleaning on every refresh, Power Query must remember each action, so it lists them in order as named steps.
+pro_tip: Rename steps to describe what they do, so you can read the query like a recipe later.
+memory_story: Applied Steps is a recipe card that lists every step you took in order.
+visual: A vertical list of named steps with a small gear beside each one.
+emotion: The comfort of being able to click back to any earlier stage.
+definition: Applied Steps is the ordered list of transformations that Power Query will run, one after another, every time the data refreshes.
+explanation: Each click that changes the data adds a step. Clicking an earlier step shows the data as it was then, and you can delete, rename or reorder steps. Deleting a step that later steps depend on can cause errors.
+simple_explain: Applied Steps shows your cleaning actions in order, like a recipe. You can go back, change or remove any step.
+analogy: It is like a recipe card listing each cooking step in order.
+formula_rule: Source → step 2 → step 3 → … each one feeds the next
+example_1: Source, Promoted Headers and Changed Type listed in order.
+example_2: Clicking the Promoted Headers step to see the table before types were changed.
+example_3: Deleting a Removed Columns step to bring a column back.
+related: Power Query Editor, M language, query folding, transform
+word_family: step, query, source, navigation, transform
+where_used: Reviewing cleaning logic | Fixing errors | Documenting a query
+mini_conversation: A: One column vanished from my table. | B: Check Applied Steps and delete the Removed Columns step to bring it back.
+misconception: ✗ Applied Steps only record what happened and cannot be changed → ✓ You can rename, reorder, edit or delete steps, and the query reruns with the new order
+contrast: Applied Steps vs Undo: Undo removes your last action once, Applied Steps keeps the whole editable history.
+avoid: Do not delete an early step without checking the steps that depend on it.
+memory_trick: Steps run top to bottom like a recipe.
+real_project: Reading Applied Steps to find which step changed a column's type wrongly.
+real_interview: An interviewer may ask: How does Power Query remember what you did to the data?
+real_daily: It is like a recipe card with the cooking steps in order.
+mcq_question: What happens if you delete an early step that later steps depend on?
+mcq_options: A) The source is deleted B) Power BI closes C) Nothing changes D) Later steps may show errors
+mcq_answer: D
+mcq_why: Later steps build on earlier ones, so removing one can break them.
+fill_blank: The right-hand panel that lists your transformations is called ____ Steps → Applied
+apply: How do you see the table as it looked before a later step? → Click the earlier step in Applied Steps
+explain_task: Explain in three lines why Applied Steps are useful.
+own_task: Open a query and rename three steps so they describe what they do.
+
+@PBI-012
+topic: 02 Power Query
+level: Beginner
+term: Data types
+cue: Why must a column be marked as Whole Number, Text or Date in Power Query before you build calculations on it?
+category: Data preparation concept
+frequency: Very high
+importance: 5
+origin: Computers treat numbers, text and dates differently, so each column needs a declared type for sorting, maths and time functions to work.
+pro_tip: Check types as the first step after loading, because a wrong type causes most strange totals.
+memory_story: Data types are labels on jars that tell you whether you hold sugar, salt or flour.
+visual: Small icons such as 123, ABC and a calendar sit at the top of each column.
+emotion: The relief when a column finally sorts and adds the right way.
+definition: A data type tells Power BI what kind of values a column holds, such as whole number, decimal, text, date or true/false.
+explanation: The icon beside each column header shows its type. A number stored as text cannot be summed, and a date stored as text cannot be used in time intelligence. You set types with the type icon or Transform, Data Type, and Power Query adds a Changed Type step.
+simple_explain: Types tell Power BI what is inside a column. If a number is stored as text it cannot be added, so always check the icons at the top of the columns.
+analogy: It is like labelling kitchen jars so you do not put salt in your tea.
+formula_rule: Number icon 123 → maths works, text icon ABC → no maths, calendar icon → date functions work
+example_1: Changing Amount from text to Decimal Number so it can be summed.
+example_2: Changing OrderDate from text to Date so it can be grouped by month.
+example_3: Changing an IsPaid column to True/False.
+related: Applied Steps, Date table, DAX, locale
+word_family: type, text, number, date, boolean
+where_used: First step after loading | Fixing wrong totals | Preparing date columns
+mini_conversation: A: My sales total shows zero. | B: The Amount column is probably Text, change it to a number type.
+misconception: ✗ If a column looks like numbers, Power BI can add them → ✓ A column must have a number data type, because text that looks like numbers cannot be summed
+contrast: Text vs number: text sorts alphabetically and cannot be added, numbers sort numerically and can be summed.
+avoid: Do not leave dates as text, time intelligence will not work.
+memory_trick: Type decides what the column can do.
+real_project: Changing the type of an imported Amount column so the sales total became correct.
+real_interview: An interviewer may ask: Why are data types important in Power BI?
+real_daily: It is like labelling jars so that you never mix up salt and sugar.
+mcq_question: A Sales Amount column is stored as text. What problem will you face?
+mcq_options: A) It cannot be summed correctly B) It will be faster C) Nothing D) It becomes a date
+mcq_answer: A
+mcq_why: Text values cannot be aggregated as numbers.
+fill_blank: A column of dates stored as text should be changed to the ____ data type → Date
+apply: Why might a total show zero or an error? → The column may be stored as text instead of a number
+explain_task: Explain why data types matter in three lines.
+own_task: Open a file and write down the data type of each column and whether it is right.
+
+@PBI-013
+type: code56
+topic: 02 Power Query
+level: Beginner
+term: Remove duplicates and errors (Table.Distinct)
+cue: How do you keep only one row for each key value, and drop rows that contain errors, in Power Query?
+kind: Power Query M function
+frequency: High
+importance: 4
+origin: Exports often repeat rows or contain broken values, so Power Query has built-in steps that remove them and record the step.
+pro_tip: Choose the key columns before removing duplicates, because Power Query only compares the columns you select.
+memory_story: It is a sieve that lets one copy of each item through and catches the broken ones.
+visual: A table where a repeated row is crossed out and a row with an error mark is removed.
+emotion: The calm of knowing each order appears only once.
+meaning: Table.Distinct keeps one row for each unique combination of the chosen columns, and Table.RemoveRowsWithErrors drops rows that hold errors.
+code: let¶    Source = Sales,¶    NoDuplicates = Table.Distinct(Source, {"OrderID"}),¶    NoErrors = Table.RemoveRowsWithErrors(NoDuplicates, {"Amount"})¶in¶    NoErrors
+output: A table with each OrderID once and without rows where Amount had an error.
+explanation: Table.Distinct compares only the columns you list. If you give no column list it compares whole rows. Remove Errors checks the columns you select for error values and removes those rows. Both are recorded as Applied Steps.
+simple_explain: Select the key column and choose Remove Duplicates, and Power Query keeps the first row for each value. Use Remove Errors to drop rows with broken values.
+analogy: It is like a sieve that lets one copy of each item through and catches the broken ones.
+syntax: Table.Distinct(table, {"Column"})
+anatomy: Table.Distinct = function | table = the data | {"Column"} = columns that must be unique
+example_1: Table.Distinct(Sales, {"OrderID"})
+example_2: Table.Distinct(Customers, {"Email"})
+example_3: Table.RemoveRowsWithErrors(Sales, {"Amount"})
+variation: Table.Distinct(Sales)   // whole rows must match¶Table.RemoveRowsWithErrors(Sales)   // check every column
+used_with: Table.RemoveRowsWithErrors, Table.SelectRows, Applied Steps
+related: Merge queries, Keep Rows, Group By
+alternatives: Group By to count or keep one row per key
+where_used: Cleaning exports | Preparing dimension tables | Fixing repeated records
+mini_conversation: A: Each customer appears three times in my list. | B: Select the CustomerID column and use Remove Duplicates to keep one row each.
+misconception: ✗ Remove Duplicates compares every column of the row → ✓ It compares only the columns you selected, so choose the key column first
+confused_with: Remove Duplicates vs Remove Errors: the first drops repeated keys, the second drops rows with error values.
+avoid: Do not remove duplicates on only part of a key and lose different valid rows.
+wrong_code: Table.Distinct(Sales, OrderID)
+right_code: Table.Distinct(Sales, {"OrderID"})
+memory_trick: Distinct keeps one of each.
+real_project: Removing duplicate customer rows before using the table as a dimension.
+real_interview: An interviewer may ask: How does Remove Duplicates decide which rows are duplicates?
+real_daily: It is like keeping only one copy of each key in a contact list.
+mcq_question: When you select only the CustomerID column and choose Remove Duplicates, what is compared?
+mcq_options: A) Nothing B) The whole row C) Only the first column D) Only the CustomerID values
+mcq_answer: D
+mcq_why: Remove Duplicates compares the selected columns.
+fill_blank: Table.____(Sales, {"OrderID"}) → Distinct
+hindi_to_task: Keep one row per CustomerID in the Customers table.
+task_answer: Table.Distinct(Customers, {"CustomerID"})
+own_task: Take a small table with repeated rows and remove the duplicates on a key column.
+practice_question: What does Table.Distinct(Sales) do when you give no column list?
+practice_answer: It removes rows that are identical across all columns.
+
+@PBI-014
+type: code56
+topic: 02 Power Query
+level: Intermediate
+term: Merge queries (joins)
+cue: How do you combine two tables side by side using a matching column, like a SQL join?
+kind: Power Query M function
+frequency: Very high
+importance: 5
+origin: Related data sits in separate tables such as orders and customers, so Power Query lets you join them on a shared key, just as a database join does.
+pro_tip: Check the join kind first, because Left Outer is the one you usually want for adding columns to a main table.
+memory_story: A merge is two sheets taped side by side, matched row by row on one shared ID.
+visual: Two tables joined by a line between their ID columns, with new columns appearing on the left table.
+emotion: The thrill of seeing customer names appear next to each order.
+meaning: A merge joins two queries into one by matching key columns, using a chosen join kind.
+code: let¶    Merged = Table.NestedJoin(Orders, {"CustomerID"}, Customers, {"CustomerID"}, "Customer", JoinKind.LeftOuter),¶    Expanded = Table.ExpandTableColumn(Merged, "Customer", {"Name"}, {"Customer Name"})¶in¶    Expanded
+output: Each order row now has a Customer Name column taken from the Customers table.
+explanation: The merge adds a column that holds the matching rows of the second table, which you then expand to pick the columns you want. Join kinds are Left Outer, Right Outer, Full Outer, Inner, Left Anti and Right Anti, and they decide which rows are kept.
+simple_explain: Merge Queries lets you pick two tables and the column they share. Choose a join kind, and then expand the new column to bring in the fields you need.
+analogy: It is like taping two sheets side by side and matching rows by an ID.
+syntax: Table.NestedJoin(left, {key}, right, {key}, "NewColumn", JoinKind.LeftOuter)
+anatomy: left and right = the two tables | {key} = matching columns | JoinKind = which rows to keep
+example_1: Table.NestedJoin(Orders, {"CustomerID"}, Customers, {"CustomerID"}, "Customer", JoinKind.LeftOuter)
+example_2: Table.NestedJoin(Orders, {"ProductID"}, Products, {"ProductID"}, "Product", JoinKind.Inner)
+example_3: Table.NestedJoin(Orders, {"CustomerID"}, Customers, {"CustomerID"}, "Match", JoinKind.LeftAnti)
+variation: JoinKind.LeftOuter   // all left rows, matches from right¶JoinKind.Inner   // only matching rows¶JoinKind.LeftAnti   // left rows with no match
+used_with: Table.ExpandTableColumn, JoinKind, Append queries
+related: Append queries, relationships, star schema
+alternatives: Create a relationship in the model instead of merging
+where_used: Adding lookup columns | Finding unmatched records | Building dimension tables
+mini_conversation: A: I need the customer name next to each order. | B: Merge Orders with Customers on CustomerID using a Left Outer join and expand the Name column.
+misconception: ✗ A merge stacks two tables on top of each other → ✓ A merge joins tables side by side by matching a key, while Append is what stacks rows
+confused_with: Merge vs Append: merge adds columns by matching a key, append adds rows by stacking tables.
+avoid: Do not merge when a model relationship would do, it makes the table heavier.
+wrong_code: Table.NestedJoin(Orders, {"CustomerID"}, Customers, "Customer", JoinKind.LeftOuter)
+right_code: Table.NestedJoin(Orders, {"CustomerID"}, Customers, {"CustomerID"}, "Customer", JoinKind.LeftOuter)
+memory_trick: Merge matches by key, side by side.
+real_project: Merging an Orders query with a Customers query to add region information.
+real_interview: An interviewer may ask: What join kinds does Power Query offer, and what does each return?
+real_daily: It is like matching two lists of names by an ID number.
+mcq_question: Which join kind keeps all rows from the first table and only the matching rows from the second?
+mcq_options: A) Full Outer B) Right Anti C) Left Outer D) Inner
+mcq_answer: C
+mcq_why: Left Outer keeps every left row and adds matches from the right.
+fill_blank: After a merge you ____ the new column to bring in the fields you need → expand
+hindi_to_task: Find the orders whose customer is not found in the Customers table.
+task_answer: Table.NestedJoin(Orders, {"CustomerID"}, Customers, {"CustomerID"}, "Match", JoinKind.LeftAnti)
+own_task: Merge two small tables on an ID column and expand one column from the second.
+practice_question: Which join kind returns only the rows that match in both tables?
+practice_answer: Inner join (JoinKind.Inner).
+
+@PBI-015
+type: code56
+topic: 02 Power Query
+level: Beginner
+term: Append queries (Table.Combine)
+cue: How do you stack the rows of several tables with the same columns into one long table?
+kind: Power Query M function
+frequency: High
+importance: 4
+origin: Data often arrives in separate monthly or regional files with identical layouts, so Power Query can stack them into one table instead of copying and pasting.
+pro_tip: Make sure the column names match exactly, otherwise Power Query creates extra columns filled with nulls.
+memory_story: Appending is stacking sheets of paper on top of each other to make one tall pile.
+visual: Two tables with the same headers placed one above the other and merged into one.
+emotion: The relief of combining twelve monthly files into one table with a single step.
+meaning: Append queries stacks the rows of two or more tables into a single table.
+code: let¶    Combined = Table.Combine({Sales2024, Sales2025})¶in¶    Combined
+output: One table that contains all rows of Sales2024 followed by all rows of Sales2025.
+explanation: Table.Combine takes a list of tables and lines up columns by name. Columns that do not exist in some tables are added and filled with null. You can append a whole folder of files too.
+simple_explain: Append puts one table underneath another. It matches columns by their names, so keep the names identical.
+analogy: It is like stacking sheets of paper to make one long pile.
+syntax: Table.Combine({Table1, Table2})
+anatomy: Table.Combine = function | {Table1, Table2} = list of tables to stack
+example_1: Table.Combine({Sales2024, Sales2025})
+example_2: Table.Combine({NorthSales, SouthSales, EastSales})
+example_3: Table.Combine({Sales2024, Sales2025, Sales2026})
+variation: Table.Combine({A, B, C})   // any number of tables¶Append as New   // create a new query instead of changing one
+used_with: Merge queries, Folder connector, Table.PromoteHeaders
+related: Merge queries, Folder, Combine Files
+alternatives: Combine Files from a folder
+where_used: Monthly files | Regional data | Yearly archives
+mini_conversation: A: I have twelve monthly sales files. | B: Append them into one table so you can report on the whole year.
+misconception: ✗ Append adds new columns from the second table → ✓ Append adds rows, and it matches columns by name
+confused_with: Append vs Merge: append stacks rows, merge joins columns by a key.
+avoid: Do not append tables whose column names differ by spelling or spacing.
+wrong_code: Table.Combine(Sales2024, Sales2025)
+right_code: Table.Combine({Sales2024, Sales2025})
+memory_trick: Append means adding rows underneath the first table.
+real_project: Appending regional sales tables into one company-wide sales table.
+real_interview: An interviewer may ask: What is the difference between Append and Merge?
+real_daily: It is like stacking sheets of paper into one tall pile.
+mcq_question: You have the same table for January and February. Which operation puts them into one table?
+mcq_options: A) Append B) Merge C) Pivot D) Split
+mcq_answer: A
+mcq_why: Append stacks rows of tables with the same columns.
+fill_blank: Table.____({Jan, Feb}) → Combine
+hindi_to_task: Stack the tables North and South into one table.
+task_answer: Table.Combine({North, South})
+own_task: Append two small tables and check the row count equals the sum of both.
+practice_question: What happens to a column that exists in only one of the appended tables?
+practice_answer: It is added to the result and filled with null for rows from the other table.
+
+@PBI-016
+type: code56
+topic: 02 Power Query
+level: Intermediate
+term: Pivot and Unpivot
+cue: Which transformation turns many month columns into rows so the table becomes tall and easy to analyse?
+kind: Power Query M function
+frequency: High
+importance: 4
+origin: Spreadsheets often spread values across many columns such as months, but reporting works best when each value sits in its own row, so unpivoting reshapes the data.
+pro_tip: Use Unpivot Other Columns so new month columns added later are picked up automatically.
+memory_story: Unpivot is tipping a wide table onto its side so it stands tall like a list.
+visual: A wide table with columns Jan, Feb, Mar turns into a tall table with Month and Sales columns.
+emotion: The satisfaction of turning a messy spreadsheet layout into clean rows.
+meaning: Unpivot turns columns into rows, and Pivot turns row values into columns.
+code: let¶    Unpivoted = Table.UnpivotOtherColumns(Source, {"Product"}, "Month", "Sales")¶in¶    Unpivoted
+output: A table with the columns Product, Month and Sales, with one row for each product and month.
+explanation: A wide table with a column per month is hard to chart. Unpivot Other Columns keeps the columns you name and turns the rest into two columns, an attribute column and a value column. Pivot does the opposite, spreading unique values into new columns.
+simple_explain: Unpivot makes a wide table tall. Pick the columns to keep, and all the others become Month and Sales rows. Pivot goes the other way.
+analogy: It is like tipping a wide table on its side so it becomes a tall list.
+syntax: Table.UnpivotOtherColumns(table, {keepColumns}, "AttributeName", "ValueName")
+anatomy: keepColumns = columns that stay | "AttributeName" = new column for old headers | "ValueName" = new column for values
+example_1: Table.UnpivotOtherColumns(Source, {"Product"}, "Month", "Sales")
+example_2: Table.UnpivotOtherColumns(Budget, {"Department", "Year"}, "Quarter", "Amount")
+example_3: Table.UnpivotColumns(Source, {"Jan", "Feb", "Mar"}, "Month", "Sales")
+variation: Table.UnpivotColumns(Source, {"Jan", "Feb"}, "Month", "Sales")   // only named columns¶Table.Pivot(...)   // rows back to columns
+used_with: Table.PromoteHeaders, Changed Type, Group By
+related: Transpose, Group By, star schema
+alternatives: Transpose for a simple flip
+where_used: Spreadsheet-style exports | Budget tables | Preparing data for charts
+mini_conversation: A: My file has one column for every month. | B: Unpivot the month columns so you get a Month column and a Sales column.
+misconception: ✗ Unpivot and Transpose do the same thing → ✓ Unpivot turns chosen columns into attribute and value rows, while Transpose flips the whole table
+confused_with: Unpivot vs Transpose: unpivot makes a tidy tall table, transpose swaps rows and columns.
+avoid: Do not unpivot specific month names if new months will be added, use Unpivot Other Columns.
+wrong_code: Table.UnpivotOtherColumns(Source, "Product", "Month", "Sales")
+right_code: Table.UnpivotOtherColumns(Source, {"Product"}, "Month", "Sales")
+memory_trick: Unpivot makes the table tall.
+real_project: Unpivoting a budget spreadsheet with one column per month so it can be charted by month.
+real_interview: An interviewer may ask: Why would you unpivot a table in Power Query?
+real_daily: It is like tipping a wide table onto its side to make a list.
+mcq_question: Which option best keeps working when new month columns are added later?
+mcq_options: A) Unpivot Columns B) Unpivot Other Columns C) Pivot D) Transpose
+mcq_answer: B
+mcq_why: Unpivot Other Columns turns every column except the ones you keep.
+fill_blank: Table.Unpivot____Columns keeps the named columns and unpivots the rest → Other
+hindi_to_task: Keep the Region column and unpivot every other column into Quarter and Revenue.
+task_answer: Table.UnpivotOtherColumns(Source, {"Region"}, "Quarter", "Revenue")
+own_task: Take a table with month columns and unpivot it into Month and Sales.
+practice_question: What are the two new columns that unpivot creates by default?
+practice_answer: An Attribute column holding the old headers and a Value column holding the values.
+
+@PBI-017
+type: code56
+topic: 02 Power Query
+level: Intermediate
+term: M language (let … in)
+cue: Which language sits behind every Power Query step, and how does its let … in structure work?
+kind: Query language
+frequency: High
+importance: 4
+origin: Power Query needed a formula language that could describe each data step in order, so Microsoft created M, a functional language built around let and in.
+pro_tip: Open the Advanced Editor to read how the steps you clicked are written in M.
+memory_story: A let block is a list of named steps, and in names the one you want returned.
+visual: A block of code where each line has a name on the left and a formula on the right.
+emotion: The confidence of understanding what the clicks really produce.
+meaning: M is Power Query's formula language, where let defines named steps and in returns the final one.
+code: let¶    Source = {1, 2, 3},¶    Doubled = List.Transform(Source, each _ * 2)¶in¶    Doubled
+output: {2, 4, 6}
+explanation: Each name in the let section is a step that can use earlier steps. The in section says which step is the query result. M is case-sensitive, so Table.Distinct is not the same as table.distinct. The each keyword makes a small function and the underscore stands for the current item.
+simple_explain: M code is a list of named steps inside let. The line after in tells Power Query which step to return. Every click you make writes a step like this for you.
+analogy: It is like a recipe where each step has a name and the last line says which dish to serve.
+syntax: let Step1 = ..., Step2 = ... in Step2
+anatomy: let = start the steps | Step1 = Expression = a named step | in = the step to return
+example_1: let Source = {1, 2, 3} in Source
+example_2: let Total = List.Sum({10, 20, 30}) in Total
+example_3: let Name = Text.Upper("sales") in Name
+variation: each _ * 2   // a short function over each item¶#"Changed Type"   // a step name with spaces needs #""
+used_with: Advanced Editor, each, List functions, Table functions
+related: Applied Steps, DAX, query folding
+alternatives: Use the buttons and let Power Query write the M code
+where_used: Custom columns | Advanced Editor | Reusable functions
+mini_conversation: A: Where can I see the code behind my steps? | B: Open the Advanced Editor and you will see the M code.
+misconception: ✗ M and DAX are the same language → ✓ M shapes data in Power Query before loading, while DAX calculates on the loaded model
+confused_with: M vs DAX: M prepares data, DAX analyses it.
+avoid: Do not forget that M is case-sensitive.
+wrong_code: Let Source = {1, 2, 3} In Source
+right_code: let Source = {1, 2, 3} in Source
+memory_trick: let names the steps, in picks the result.
+real_project: Editing M code in the Advanced Editor to add a custom step the buttons could not do.
+real_interview: An interviewer may ask: What is the difference between M and DAX?
+real_daily: It is like a recipe whose last line names the dish to serve.
+mcq_question: In an M query, which keyword says which step is returned as the result?
+mcq_options: A) each B) step C) in D) let
+mcq_answer: C
+mcq_why: The in keyword names the expression that the query returns.
+fill_blank: M code is written between the ____ and in keywords → let
+hindi_to_task: Write an M query that returns the sum of 10, 20 and 30.
+task_answer: let Total = List.Sum({10, 20, 30}) in Total
+own_task: Open the Advanced Editor on one of your queries and identify the let, the steps and the in line.
+practice_question: What does the underscore mean in each _ * 2?
+practice_answer: It stands for the current item being processed.
+
+@PBI-018
+type: topic56
+topic: 02 Power Query
+level: Intermediate
+term: Parameters
+cue: What can you create in Power Query to hold a value such as a server name or a date that you can change in one place?
+category: Power Query feature
+frequency: Medium
+importance: 3
+origin: Hard-coding values like file paths into many queries makes changes painful, so Power Query lets you store such values in named parameters.
+pro_tip: Use a parameter for the file path or server name so you can switch from test to live data in one place.
+memory_story: A parameter is a labelled dial that you turn once to change many queries.
+visual: A control panel with named dials that feed into several queries.
+emotion: The ease of changing one value instead of editing ten queries.
+definition: A parameter is a named value in Power Query that queries and filters can use, and that you can change without editing the queries.
+explanation: You create parameters with Manage Parameters, choosing a name, a type and a current value. Queries can refer to them in file paths, filters or custom columns. Parameters are also used for incremental refresh and in templates.
+simple_explain: Make a parameter once, such as FolderPath, and use it everywhere. When the folder changes, you change one value and all queries follow.
+analogy: It is like a dial on a control panel that changes many machines at once.
+formula_rule: Manage Parameters → name + type + value → use it in queries
+example_1: A FilePath parameter that holds the location of the sales file.
+example_2: A ServerName parameter used to switch between test and production databases.
+example_3: A StartDate parameter that filters a table to recent dates.
+related: incremental refresh, templates, Power Query Editor
+word_family: parameter, value, query, template
+where_used: Switching environments | Incremental refresh | Reusable templates
+mini_conversation: A: The file moved to a new folder. | B: If it were stored in a parameter you would only change that one value.
+misconception: ✗ Parameters are only used in DAX → ✓ Power Query parameters are used in queries, filters and file paths before the data loads
+contrast: Parameter vs hard-coded value: a parameter is changed in one place, a hard-coded value must be edited in every query.
+avoid: Do not paste the same file path into many queries.
+memory_trick: A parameter is a dial you turn once.
+real_project: Using a server parameter to move a report from a test database to production.
+real_interview: An interviewer may ask: Where have you used parameters in Power BI?
+real_daily: It is like a dial on a control panel that changes many machines at once.
+mcq_question: Which feature lets you change a file path in one place for many queries?
+mcq_options: A) Parameter B) Bookmark C) Tooltip D) Slicer
+mcq_answer: A
+mcq_why: A parameter stores a value that queries reuse.
+fill_blank: You create named reusable values in Power Query with Manage ____ → Parameters
+apply: How would you switch a report between test and live servers easily? → Store the server name in a parameter
+explain_task: Explain in three lines why parameters are useful.
+own_task: Create a parameter for a file path and use it in one query.
+
+@PBI-019
+type: topic56
+topic: 02 Power Query
+level: Advanced
+term: Query folding
+cue: What is it called when Power Query turns your steps into one native query that the data source runs itself?
+category: Performance concept
+frequency: Medium
+importance: 4
+origin: Pulling a whole table into Power BI just to filter it is slow, so Power Query tries to translate steps into the source's own language so the database does the work.
+pro_tip: Put steps that can fold, such as filters and column removal, early, before steps that break folding.
+memory_story: Folding is handing the whole job to a specialist at the source instead of carrying all the data home to do it yourself.
+visual: A chain of steps squashed into a single SQL query sent to the database.
+emotion: The pleasure of a refresh that finishes in seconds.
+definition: Query folding is when Power Query translates your steps into a single query that the data source runs, so less data travels to Power BI.
+explanation: When folding works, steps like filtering rows and removing columns become part of a SQL statement. Some steps, such as adding an index or certain custom functions, can break folding, and later steps then run inside Power BI. You can right-click a step and choose View Native Query to check.
+simple_explain: Folding means the database does the filtering and shaping, and only the result comes to Power BI. It makes refreshes much faster, and you can check it with View Native Query.
+analogy: It is like asking the warehouse to pack the exact order instead of carrying everything home to sort it.
+formula_rule: Foldable steps early → database does the work → faster refresh
+example_1: A filter step that becomes a WHERE clause in the SQL sent to the database.
+example_2: Removing columns that becomes a narrower SELECT list.
+example_3: An added index column that breaks folding so later steps run locally.
+related: Import vs DirectQuery, incremental refresh, Applied Steps
+word_family: folding, native query, SQL, pushdown
+where_used: Large databases | Refresh performance | Incremental refresh
+mini_conversation: A: My refresh from SQL takes an hour. | B: Check whether query folding is broken, and move the filter steps earlier.
+misconception: ✗ Query folding works for every data source → ✓ Folding mainly works with sources that have their own query language, such as relational databases, and not with plain Excel or CSV files
+contrast: Folded vs not folded: with folding the source does the work, without it Power BI downloads the data and does the work itself.
+avoid: Do not add steps that break folding before filters on a huge table.
+memory_trick: Folding means the source does the work.
+real_project: Reordering steps so filters folded into SQL and a nightly refresh dropped from an hour to minutes.
+real_interview: An interviewer may ask: What is query folding and how do you check it?
+real_daily: It is like asking a warehouse to pack the exact order instead of carrying everything home.
+mcq_question: How can you check whether a step folds back to the source?
+mcq_options: A) Applied Steps colour B) Refresh twice C) Add a slicer D) View Native Query
+mcq_answer: D
+mcq_why: If View Native Query is available for the step, it folds.
+fill_blank: Right-click a step and choose View ____ Query to check folding → Native
+apply: Why should filters usually come early in the steps? → So they can fold and the source sends less data
+explain_task: Explain query folding in three lines.
+own_task: Open a query on a database table and check whether each step can show a native query.

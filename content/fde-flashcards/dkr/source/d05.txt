@@ -1,0 +1,357 @@
+
+@DKR-040
+type: code56
+topic: 05 Docker Compose
+level: Advanced
+term: Compose watch and dev workflow
+cue: How do you get automatic updates in a running container while you edit code?
+kind: Compose concept
+frequency: Medium
+importance: 3
+origin: Rebuilding by hand after every edit is slow, so Compose can watch files and sync or rebuild automatically.
+pro_tip: Use sync for source files and rebuild only when dependency files change.
+memory_story: Watch is a helper who photographs every change and updates the container.
+visual: A file change in the editor appearing inside the container.
+emotion: The delight of instant feedback while coding.
+meaning: Compose watch monitors files and, based on rules in develop.watch, syncs them into the container, restarts it or rebuilds the image.
+code: services:¶  web:¶    build: .¶    develop:¶      watch:¶        - action: sync¶          path: ./src¶          target: /app/src¶        - action: rebuild¶          path: package.json
+output: Editing a file in src is copied into the container at once, and changing package.json triggers an image rebuild.
+explanation: Run docker compose watch, or up --watch. sync copies changed files, rebuild creates a new image, and sync+restart copies and restarts the process. Rules use paths relative to the Compose file. It avoids bind mounts, so host and container files stay separate.
+simple_explain: Declare watch rules, run compose watch, and edit code freely.
+analogy: It is like a helper who photographs each change and updates the room.
+syntax: develop: watch: - action: sync|rebuild|sync+restart path: target:
+anatomy: action = what to do | path = what to watch | target = where inside the container
+example_1: action: sync+restart
+example_2: ignore: [node_modules/]
+example_3: docker compose up --watch
+variation: docker compose watch   // run only the watcher
+used_with: Dockerfile, bind mounts, hot reload tools
+related: Bind mounts, Compose commands, override files
+alternatives: Bind mounts with a dev server
+where_used: Local development | Frontend work | API work
+mini_conversation: A: Every change needs a rebuild. | B: Use compose watch so changes sync automatically.
+misconception: ✗ Compose watch replaces the Dockerfile → ✓ It only syncs or rebuilds around the Dockerfile you already have
+confused_with: Watch vs bind mount: watch copies on change, a bind mount shares the folder.
+avoid: Do not watch huge folders such as node_modules.
+wrong_code: develop:¶  watch: ./src
+right_code: develop:¶  watch:¶    - action: sync¶      path: ./src¶      target: /app/src
+memory_trick: Sync for code, rebuild for dependencies.
+real_project: Syncing source into the dev container while rebuilding on lockfile changes.
+real_interview: An interviewer may ask: How do you speed up the dev loop with Compose?
+real_daily: It is like a helper updating the room after each change.
+mcq_question: Which action is right when a dependency file changes?
+mcq_options: A) sync B) stop C) ignore D) rebuild
+mcq_answer: D
+mcq_why: New dependencies need a freshly built image.
+fill_blank: Source files are copied into the container with action ____ → sync
+hindi_to_task: Start the stack with file watching enabled.
+task_answer: docker compose up --watch
+own_task: Write a watch rule that syncs ./src into /app/src.
+practice_question: What is the difference between sync and rebuild?
+practice_answer: Sync copies files, rebuild creates a new image.
+
+@DKR-041
+type: code56
+topic: 06 Security and Operations
+level: Intermediate
+term: Image scanning
+cue: How do you find known vulnerabilities in an image before shipping it?
+kind: Security practice
+frequency: High
+importance: 5
+origin: Images contain many packages with known flaws, so scanners compare the contents against vulnerability databases.
+pro_tip: Scan in CI and fail the build on high-severity findings that have a fix.
+memory_story: A scanner is an inspector reading the ingredient list for recalled items.
+visual: A report with severity colours for each package.
+emotion: The reassurance of a clean report before release.
+meaning: Image scanning lists the packages inside an image and reports those with known security vulnerabilities.
+code: docker scout cves myapp:1.0¶trivy image --severity HIGH,CRITICAL myapp:1.0
+output: A list of vulnerable packages is shown with severity, installed version and fixed version.
+explanation: Scanners read the layers and match packages against databases. Small base images have fewer packages and fewer findings. Rebuild regularly because new flaws are published daily. Some findings have no fix yet and need judgement. Docker Scout and Trivy are common tools.
+simple_explain: Scan every image, fix what has a patch, and prefer small bases.
+analogy: It is like an inspector checking an ingredient list for recalled items.
+syntax: trivy image [--severity levels] image
+anatomy: severity = how serious | fixed version = upgrade target | base image = main source of findings
+example_1: docker scout quickview myapp:1.0
+example_2: trivy image alpine:3.20
+example_3: trivy image --exit-code 1 --severity CRITICAL myapp:1.0
+variation: trivy fs .   // scan project files instead of an image
+used_with: CI pipelines, base image choice, registries
+related: FROM, Docker in CI, secrets
+alternatives: Registry built-in scanning
+where_used: CI | Release checks | Audits
+mini_conversation: A: The scan lists forty issues. | B: Switch to a slim base and update packages first.
+misconception: ✗ A clean scan today stays clean forever → ✓ New vulnerabilities appear over time, so scan regularly
+confused_with: Scanning vs testing: scanning finds known package flaws, testing checks your logic.
+avoid: Do not ignore critical findings that have a fix available.
+wrong_code: docker scan myapp --fix-everything
+right_code: trivy image --severity HIGH,CRITICAL myapp:1.0
+memory_trick: Small image, short list, safer ship.
+real_project: Adding a scan step that failed the pipeline on critical fixable findings.
+real_interview: An interviewer may ask: How do you keep container images secure?
+real_daily: It is like an inspector checking for recalled ingredients.
+mcq_question: Which choice usually reduces the number of findings?
+mcq_options: A) Running as root B) A larger base image C) Skipping updates D) A smaller base image
+mcq_answer: D
+mcq_why: Fewer packages mean fewer known vulnerabilities.
+fill_blank: Scans compare image packages with a database of known ____ → vulnerabilities
+hindi_to_task: Scan myapp:1.0 for high and critical issues with Trivy.
+task_answer: trivy image --severity HIGH,CRITICAL myapp:1.0
+own_task: Make a scan command that fails the pipeline on critical findings.
+practice_question: Why rebuild images regularly?
+practice_answer: New vulnerabilities are found and fixed in base images over time.
+
+@DKR-042
+type: code56
+topic: 06 Security and Operations
+level: Intermediate
+term: Secrets
+cue: How should passwords and tokens reach a container without being baked into the image?
+kind: Security practice
+frequency: Very high
+importance: 5
+origin: Anything written in a Dockerfile stays in the image layers forever, so secrets need a separate path at build time and run time.
+pro_tip: Use build secrets for build time and mounted secret files for run time.
+memory_story: A secret is a key handed over at the door, never carved into the wall.
+visual: A token passed in without appearing in any layer.
+emotion: The peace of knowing the key is not in the image.
+meaning: Secrets are sensitive values supplied at build or run time through secret mounts or files, so they never appear in image layers or history.
+code: docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .¶RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
+output: The token is available only while that RUN step executes, and it does not appear in the final image.
+explanation: ENV and ARG values are visible in image history and metadata. A RUN secret mount exposes the value as a temporary file for one step. At run time Compose and Swarm can mount secrets as files under /run/secrets. Apps then read the file, which is safer than a plain environment variable.
+simple_explain: Never put secrets in ENV, ARG or COPY. Mount them just in time.
+analogy: It is like handing over a key at the door instead of carving it into the wall.
+syntax: RUN --mount=type=secret,id=name command
+anatomy: --secret = pass at build | --mount=type=secret = use in a step | /run/secrets = run-time file location
+example_1: docker build --secret id=token,env=TOKEN -t app .
+example_2: secrets: [db_password]
+example_3: cat /run/secrets/db_password
+variation: docker history --no-trunc myapp   // shows build commands and ARG/ENV values, not file contents
+used_with: Compose secrets, CI variables, ENV and ARG
+related: ENV and ARG, env files, image scanning
+alternatives: Cloud secret managers
+where_used: Private packages | Database passwords | API keys
+mini_conversation: A: I used ARG for my token. | B: It is visible in the image history, so use a secret mount.
+misconception: ✗ Deleting a secret file in a later layer removes it → ✓ It stays in the earlier layer and can still be extracted
+confused_with: Build secret vs ARG: a secret is not stored in layers, ARG values are recorded.
+avoid: Do not copy .env or key files into an image.
+wrong_code: ARG NPM_TOKEN¶RUN npm config set //registry:_authToken=$NPM_TOKEN
+right_code: RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
+memory_trick: Layers remember everything you write.
+real_project: Replacing a build ARG token with a secret mount after finding it in history.
+real_interview: An interviewer may ask: Why is ARG unsafe for passwords?
+real_daily: It is like handing over a key at the door.
+mcq_question: Where do run-time secrets appear in a container file system?
+mcq_options: A) /run/secrets B) /etc/passwd C) /tmp/image D) /usr/bin
+mcq_answer: A
+mcq_why: Secret files are mounted under /run/secrets.
+fill_blank: A build step reads a sensitive value through a mount of type ____ → secret
+hindi_to_task: Check the image history for secrets passed as ARG or ENV.
+task_answer: docker history --no-trunc myapp
+own_task: Pass a token to a build as a secret instead of an ARG.
+practice_question: Why is deleting a file in a later layer not enough?
+practice_answer: Earlier layers still contain it.
+
+@DKR-043
+type: code56
+topic: 06 Security and Operations
+level: Intermediate
+term: Resource limits
+cue: How do you stop one container from using all the memory or CPU of a machine?
+kind: Operations practice
+frequency: High
+importance: 4
+origin: Containers share the host, so one runaway process can starve the others unless you set limits.
+pro_tip: Always set a memory limit in production, and watch for out-of-memory kills.
+memory_story: Limits are portion sizes at a shared buffet.
+visual: A bar showing a container capped at 512 megabytes.
+emotion: The calm of knowing one bug cannot take down the server.
+meaning: Resource limits cap the memory and CPU a container may use, and a container that exceeds its memory limit is killed.
+code: docker run -d --memory 512m --cpus 1.5 --name api myapi¶docker stats --no-stream api
+output: The container starts with the caps, and stats shows its current CPU and memory use against the limit.
+explanation: --memory sets a hard ceiling, and going over it makes the kernel kill the process, which often shows as exit code 137 (confirm with docker inspect --format '{{.State.OOMKilled}}' api). --cpus limits CPU time. Without limits one container can use everything. In Compose, these live under deploy.resources or mem_limit.
+simple_explain: Set memory and CPU limits, and watch stats to choose sensible values.
+analogy: It is like portion sizes at a shared buffet.
+syntax: docker run --memory size --cpus number image
+anatomy: --memory = RAM cap | --cpus = CPU share | exit code 137 = killed for memory
+example_1: docker run --memory 256m alpine
+example_2: docker update --memory 1g api
+example_3: docker stats
+variation: docker run --memory-reservation 256m myapi   // soft target
+used_with: monitoring, Compose, orchestrators
+related: docker ps, logging and monitoring, Kubernetes
+alternatives: Orchestrator quotas
+where_used: Production | Shared servers | Cost control
+mini_conversation: A: The container keeps dying with 137. | B: It hit its memory limit, so raise it or fix the leak.
+misconception: ✗ A container can only use what its image needs → ✓ Without limits it may use all host memory and CPU
+confused_with: Memory limit vs reservation: the limit is a hard cap, a reservation is a soft target.
+avoid: Do not leave production containers without a memory limit.
+wrong_code: docker run --ram 512 myapi
+right_code: docker run --memory 512m myapi
+memory_trick: 137 means killed, often out of memory.
+real_project: Finding a leak because the API was repeatedly killed at its limit.
+real_interview: An interviewer may ask: What does exit code 137 mean?
+real_daily: It is like portion sizes at a shared buffet.
+mcq_question: What happens when a container exceeds its memory limit?
+mcq_options: A) It slows down B) It is killed C) Nothing D) It gets more memory
+mcq_answer: B
+mcq_why: The kernel stops the process at the hard cap.
+fill_blank: Live usage numbers are shown by docker ____ → stats
+hindi_to_task: Run api with a 512 MB memory limit.
+task_answer: docker run -d --memory 512m myapi
+own_task: Show one reading of CPU and memory for the container api.
+practice_question: Which exit code often means a memory kill?
+practice_answer: 137
+
+@DKR-044
+type: code56
+topic: 06 Security and Operations
+level: Intermediate
+term: HEALTHCHECK
+cue: How does Docker know whether the app inside a running container is actually working?
+kind: Dockerfile instruction
+frequency: High
+importance: 4
+origin: A running process is not always a working service, so Docker can run a small test regularly and record the result.
+pro_tip: Make the check cheap and test the real service, such as a health URL.
+memory_story: A health check is a doctor who tests the pulse every few seconds.
+visual: Status moving from starting to healthy or unhealthy.
+emotion: The trust of a service that reports its own condition.
+meaning: HEALTHCHECK defines a command that Docker runs periodically, and the container is marked healthy, unhealthy or starting based on the result.
+code: HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD curl -f http://localhost:8000/health || exit 1
+output: After three failed checks the status becomes unhealthy, and docker ps shows it next to the container.
+explanation: Exit code 0 means healthy and 1 means unhealthy. Docker alone only reports the status, while Compose and orchestrators can act on it. The tool used in the check must exist in the image, so slim images may need wget or a small script. A start period gives slow apps time to boot.
+simple_explain: Add a cheap command that proves the service answers, and Docker tracks the result.
+analogy: It is like a doctor checking the pulse at regular intervals.
+syntax: HEALTHCHECK [--interval=t] [--timeout=t] [--retries=n] CMD command
+anatomy: --interval = how often | --timeout = limit per check | --retries = failures allowed | CMD = the test
+example_1: HEALTHCHECK CMD wget -q --spider http://localhost/ || exit 1
+example_2: HEALTHCHECK --start-period=20s CMD node healthcheck.js
+example_3: docker inspect --format "{{.State.Health.Status}}" web
+variation: HEALTHCHECK NONE   // disable an inherited check
+used_with: depends_on, orchestrators, monitoring
+related: depends_on and health checks, docker ps, logging and monitoring
+alternatives: Compose healthcheck | Orchestrator probes
+where_used: Web services | Databases | Orchestrated platforms
+mini_conversation: A: The container is up but the app is stuck. | B: Add a health check so Docker flags it.
+misconception: ✗ A running container is always a working one → ✓ The process may be alive while the service is broken
+confused_with: Running vs healthy: running means the process exists, healthy means it passes its check.
+avoid: Do not use a check that needs a tool missing from the image.
+wrong_code: HEALTHCHECK curl http://localhost/
+right_code: HEALTHCHECK CMD curl -f http://localhost/ || exit 1
+memory_trick: Zero exit is healthy, one is not.
+real_project: Adding a health URL so the orchestrator restarted stuck API containers.
+real_interview: An interviewer may ask: How is a health check different from a running container?
+real_daily: It is like a doctor checking the pulse regularly.
+mcq_question: Which exit code marks a health check as passed?
+mcq_options: A) 1 B) 2 C) 0 D) 137
+mcq_answer: C
+mcq_why: Zero means success, one means failure.
+fill_blank: The status of a failing check is called ____ → unhealthy
+hindi_to_task: Add a health check that requests /health every 30 seconds.
+task_answer: HEALTHCHECK --interval=30s CMD curl -f http://localhost:8000/health || exit 1
+own_task: Print the health status of the container web using inspect.
+practice_question: Why can a health check fail even if the app is fine?
+practice_answer: The check tool, such as curl, may be missing from the image.
+
+@DKR-045
+type: code56
+topic: 06 Security and Operations
+level: Intermediate
+term: Log drivers and rotation
+cue: How do you stop container logs from filling the disk or send them elsewhere?
+kind: Operations practice
+frequency: Medium
+importance: 4
+origin: Container logs grow without limit by default, so Docker lets you choose how they are stored and when they rotate.
+pro_tip: Always set max-size and max-file on the default json-file driver.
+memory_story: Rotation is a notebook that discards the oldest page when full.
+visual: A log file capped at a fixed size.
+emotion: The relief of a disk that no longer fills silently.
+meaning: A log driver decides where container logs go, and options such as max-size and max-file cap and rotate the local files.
+code: docker run -d --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 myapi
+output: Logs are kept in at most three files of ten megabytes each, and the oldest is replaced when full.
+explanation: The default json-file driver keeps logs on disk without a cap. Setting the options globally in daemon.json protects every container. Other drivers send logs to syslog, journald or cloud services. With some remote drivers docker logs cannot read the output anymore.
+simple_explain: Cap local logs or ship them to a central system.
+analogy: It is like a notebook that discards the oldest page when full.
+syntax: docker run --log-driver driver --log-opt key=value image
+anatomy: --log-driver = destination | max-size = file size cap | max-file = number of files
+example_1: docker info --format "{{.LoggingDriver}}"
+example_2: docker run --log-driver none alpine
+example_3: logging: driver: json-file options: max-size: "10m"
+variation: /etc/docker/daemon.json   // set defaults for all containers
+used_with: docker logs, monitoring, Compose
+related: docker logs, logging and monitoring, resource limits
+alternatives: Sidecar log shippers
+where_used: Servers | Production | Compliance
+mini_conversation: A: The server disk is full of container logs. | B: Set max-size and max-file.
+misconception: ✗ Container logs rotate automatically → ✓ The default driver keeps growing unless you set limits
+confused_with: Log driver vs docker logs: the driver decides storage, the command only reads it.
+avoid: Do not leave log files uncapped on production servers.
+wrong_code: docker run --log-opt max=10m myapi
+right_code: docker run --log-opt max-size=10m myapi
+memory_trick: Size and count keep the disk safe.
+real_project: Capping logs after a chatty service filled the server disk overnight.
+real_interview: An interviewer may ask: Why can container logs fill a disk?
+real_daily: It is like a notebook that drops its oldest page.
+mcq_question: Which option limits the size of each log file?
+mcq_options: A) max-lines B) max-age C) max-size D) max-count
+mcq_answer: C
+mcq_why: max-size caps one file, max-file caps how many.
+fill_blank: The default local log driver is called ____ → json-file
+hindi_to_task: Run myapi with three log files of 10 MB each.
+task_answer: docker run -d --log-opt max-size=10m --log-opt max-file=3 myapi
+own_task: Check which logging driver the Docker daemon uses.
+practice_question: Where do you set log defaults for all containers?
+practice_answer: In daemon.json.
+
+@DKR-046
+type: code56
+topic: 06 Security and Operations
+level: Beginner
+term: Cleaning up with prune
+cue: Which commands reclaim disk space from unused Docker objects?
+kind: CLI command
+frequency: High
+importance: 4
+origin: Builds and tests leave stopped containers, old images and unused networks behind, so Docker offers prune commands to clear them.
+pro_tip: Check docker system df first so you know what you are about to remove.
+memory_story: Prune is a gardener cutting dead branches and leaving the living ones.
+visual: A disk usage chart shrinking after cleanup.
+emotion: The satisfaction of getting gigabytes back.
+meaning: docker prune commands delete unused objects, such as stopped containers, dangling images, networks and optionally volumes.
+code: docker system df¶docker image prune -a¶docker container prune¶docker system prune --volumes
+output: Disk usage is shown, then unused images and containers are deleted, and the last command also removes unused volumes.
+explanation: system df shows how much space each object type uses. image prune removes only dangling images unless you add -a. system prune combines several cleanups. Adding --volumes also deletes unused volumes, which may contain data. Each command asks for confirmation unless -f is added.
+simple_explain: Look with system df, then prune only what you understand.
+analogy: It is like a gardener cutting dead branches and leaving living ones.
+syntax: docker system prune [-a] [--volumes] [-f]
+anatomy: -a = all unused images | --volumes = include volumes | -f = skip prompt | df = show usage
+example_1: docker builder prune
+example_2: docker network prune
+example_3: docker volume prune
+variation: docker system prune --filter "until=24h"   // only objects older than a day
+used_with: docker images, docker ps, CI cleanup
+related: docker images, docker stop and rm, volumes
+alternatives: Manual rm and rmi commands
+where_used: Build servers | Developer laptops | CI runners
+mini_conversation: A: The CI runner is out of disk. | B: Prune old images and build cache.
+misconception: ✗ docker system prune is always safe → ✓ With --volumes it can delete data you still need
+confused_with: image prune vs image prune -a: the first removes dangling images, the second all unused ones.
+avoid: Do not add --volumes on a machine that holds database data.
+wrong_code: docker system prune --all-data
+right_code: docker system prune --volumes
+memory_trick: Look at df before you prune.
+real_project: Scheduling a nightly prune on the CI runner to avoid full disks.
+real_interview: An interviewer may ask: How do you reclaim disk space in Docker?
+real_daily: It is like a gardener removing only the dead branches.
+mcq_question: Which option makes the combined cleanup command also delete unused storage areas?
+mcq_options: A) --volumes B) --force C) --all D) --deep
+mcq_answer: A
+mcq_why: Volumes are skipped unless that flag is given.
+fill_blank: Disk usage by object type is shown by docker system ____ → df
+hindi_to_task: Show how much space Docker is using.
+task_answer: docker system df
+own_task: Remove build cache older than 24 hours.
+practice_question: What does image prune remove without -a?
+practice_answer: Only dangling images.

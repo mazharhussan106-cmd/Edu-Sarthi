@@ -1,0 +1,416 @@
+deck.title: SSO and Identity – Beginner to Advanced Flashcards
+deck.subject: Single sign-on, OAuth, OpenID Connect, SAML and identity
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: bash
+type: topic56
+
+@SSO-001
+topic: 01 Basics
+level: Beginner
+term: Authentication vs authorisation
+cue: Which two questions separate proving who you are from deciding what you may do?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Early systems mixed login and permissions, which caused confusion and flaws, so the two ideas were separated.
+pro_tip: Always say which one you mean, since many bugs come from confusing them.
+memory_story: Authentication is showing your passport at the border, and authorisation is the visa that says where you may go.
+visual: A door with an ID check and then a list of allowed rooms.
+emotion: The clarity of separating identity from permission.
+definition: Authentication verifies who a user or system is, and authorisation decides which actions and resources that identity is allowed to use.
+explanation: Authentication uses passwords, codes, keys or biometrics. Authorisation uses roles, scopes, policies and attributes. A user can be authenticated but still denied. OAuth is about authorisation, while OpenID Connect adds authentication. HTTP status 401 means not authenticated, and 403 means not allowed.
+simple_explain: Authentication answers who you are, authorisation answers what you can do.
+analogy: Authentication is showing your passport, and authorisation is the visa for where you may go.
+formula_rule: AuthN = who. AuthZ = what.
+example_1: Logging in with a password and a code.
+example_2: A user who can read but not delete records.
+example_3: A 403 error after a successful login.
+related: SSO, MFA, RBAC vs ABAC, scopes and claims
+word_family: authentication, authorisation, identity, permission, access
+where_used: Every application | Security reviews | API design
+mini_conversation: A: The user logged in but sees an error. | B: They are authenticated but not authorised for that page.
+misconception: ✗ Logging in gives access to everything → ✓ Authorisation still decides what each identity may do
+contrast: 401 vs 403: 401 means not authenticated, 403 means authenticated but not allowed.
+avoid: Do not check only that a user is logged in before sensitive actions.
+memory_trick: Who are you, then what may you do.
+real_project: Separating the two checks fixed a page that let any logged-in user view admin data.
+real_interview: An interviewer may ask: What is the difference between authentication and authorisation?
+real_daily: It is like a passport and a visa.
+mcq_question: Which status means the caller is known but not allowed?
+mcq_options: A) 301 B) 401 C) 200 D) 403
+mcq_answer: D
+mcq_why: 403 is forbidden after identification.
+fill_blank: Verifying who someone is is called ____ → authentication
+apply: A logged-in user opens an admin page and is blocked. Which check failed? → Authorisation
+explain_task: Explain the two ideas in three lines.
+own_task: Give one example of each in an online shop.
+
+@SSO-002
+topic: 01 Basics
+level: Beginner
+term: Identity provider and service provider
+cue: Which two roles divide who proves identity and who relies on that proof?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Separating login from each application lets one trusted system manage identities while many apps use it.
+pro_tip: Learn the names in each protocol, such as relying party and service provider.
+memory_story: The identity provider is the passport office, and the service provider is the border that trusts its passports.
+visual: A user, an identity provider box and an application box with arrows between them.
+emotion: The ease of one login for many apps.
+definition: An identity provider authenticates users and issues proof of identity, and a service provider, also called a relying party or client, trusts that proof to grant access to its application.
+explanation: Examples of identity providers are Microsoft Entra ID, Okta and Google. The application redirects the user to the provider, which authenticates them and returns a signed assertion or token. A trust relationship, set up with metadata and keys, lets the app verify it. SAML uses the terms IdP and SP, and OIDC uses provider and relying party.
+simple_explain: The identity provider logs people in, and apps trust its answer.
+analogy: The identity provider is the passport office, and the service provider is the border that trusts its passports.
+formula_rule: IdP issues proof, SP verifies and trusts it.
+example_1: A company login page run by Entra ID.
+example_2: A SaaS app trusting that company login.
+example_3: Google acting as identity provider for a small app.
+related: what SSO is, SAML flow, OpenID Connect, directory services
+word_family: IdP, SP, relying party, trust, metadata
+where_used: Enterprise apps | SaaS integrations | Customer onboarding
+mini_conversation: A: Who stores the passwords for our app users? | B: The identity provider does, our app never sees them.
+misconception: ✗ The application checks the user's password itself with SSO → ✓ The identity provider checks it and the app trusts the result
+contrast: IdP vs SP: one proves identity, the other relies on it.
+avoid: Do not trust assertions without verifying their signature.
+memory_trick: The IdP proves, and the SP relies on it.
+real_project: Connecting a customer's identity provider let their staff sign in without new passwords.
+real_interview: An interviewer may ask: What is the role of an identity provider?
+real_daily: It is like a passport office and a border.
+mcq_question: Which party authenticates the user in SSO?
+mcq_options: A) The service provider B) The identity provider C) The browser D) The database
+mcq_answer: B
+mcq_why: The identity provider performs the login.
+fill_blank: Another name for the app that trusts the provider in OIDC is the relying ____ → party
+apply: A customer wants staff to use their company login in your app. What do you set up? → Trust with their identity provider
+explain_task: Explain IdP and SP in three lines.
+own_task: Draw the three parties in an SSO login.
+
+@SSO-003
+topic: 01 Basics
+level: Beginner
+term: What SSO is
+cue: Which approach lets one login give access to many applications?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: People forget many passwords and companies struggle to manage them, so one central login was created for all apps.
+pro_tip: Combine SSO with MFA, because one stolen login now opens many doors.
+memory_story: SSO is one key card that opens every door in the office building.
+visual: One login screen leading to several app icons.
+emotion: The comfort of signing in once for the whole day.
+definition: Single sign-on lets a user authenticate once with an identity provider and then access multiple applications without logging in again for each.
+explanation: The first login creates a session at the identity provider. When another app asks for proof, the provider can answer using that session with no new password. Benefits are fewer passwords, central control, easier offboarding and consistent MFA. The risk is concentration, so the provider must be strongly protected.
+simple_explain: Log in once, and reach many apps through the central identity provider.
+analogy: SSO is one key card that opens every door in the building.
+formula_rule: One session at the IdP, many apps trust it.
+example_1: Opening email, chat and HR apps after one login.
+example_2: Disabling one account to remove access everywhere.
+example_3: Enforcing MFA once at the provider.
+related: identity provider, MFA, sessions, single logout
+word_family: SSO, session, federation, central login, trust
+where_used: Enterprises | SaaS | Education
+mini_conversation: A: Do users type passwords in every app? | B: No, with SSO they log in once at the provider.
+misconception: ✗ SSO means the same password is used everywhere → ✓ Apps never see the password, and they trust the provider's proof
+contrast: SSO vs password reuse: SSO uses one trusted login, reuse copies a secret into many places.
+avoid: Do not use SSO without MFA on the identity provider.
+memory_trick: One login, many doors, one strong lock.
+real_project: Rolling out SSO cut password reset tickets for a customer.
+real_interview: An interviewer may ask: What are the benefits and risks of SSO?
+real_daily: It is like one key card for a building.
+mcq_question: What is the main idea of SSO?
+mcq_options: A) One login for many apps B) Many logins for one app C) No login D) Shared passwords
+mcq_answer: A
+mcq_why: Apps trust a single identity provider.
+fill_blank: A user's logged-in state at the provider is a ____ → session
+apply: A user leaves the company. How does SSO help? → Disable one account to remove access everywhere
+explain_task: Explain SSO in three lines.
+own_task: List three benefits and two risks of SSO.
+
+@SSO-004
+topic: 01 Basics
+level: Beginner
+term: MFA in identity systems
+cue: How is a second factor added to the login for all connected apps?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Passwords alone are weak, so identity providers require a second proof for every sign-in.
+pro_tip: Prefer phishing-resistant factors such as passkeys and hardware keys.
+memory_story: MFA is the second lock on the one door that guards the whole building.
+visual: A password prompt followed by an authenticator approval.
+emotion: The assurance that a stolen password is not enough.
+definition: Multi-factor authentication at the identity provider requires two or more independent proofs, such as a password plus a one-time code, a push approval or a hardware key.
+explanation: With SSO, MFA is enforced once at the provider and covers all apps. Policies can require stronger factors for risky sign-ins or admin apps. Weak factors such as SMS can be intercepted. Recovery options must be protected, since attackers target them. Conditional access can consider device, location and risk.
+simple_explain: Enforce MFA at the identity provider so every app is protected.
+analogy: MFA is the second lock on the one door that guards the whole building.
+formula_rule: Know + have + are, with strong factors preferred.
+example_1: An authenticator app code after the password.
+example_2: A hardware key required for admins.
+example_3: A conditional access rule for sign-ins from new countries.
+related: what SSO is, passkeys, sessions, conditional access
+word_family: MFA, factor, authenticator, hardware key, conditional access
+where_used: Identity providers | Admin access | Compliance
+mini_conversation: A: Do we need MFA in every app? | B: No, enforce it at the identity provider.
+misconception: ✗ SMS codes are as strong as hardware keys → ✓ SMS can be intercepted or swapped, so stronger factors are better
+contrast: Phishing-resistant vs one-time codes: the first cannot be tricked into approving a fake site.
+avoid: Do not leave recovery paths weaker than the login.
+memory_trick: Strong second lock at the shared door.
+real_project: Requiring hardware keys for admins closed a major account takeover risk.
+real_interview: An interviewer may ask: Which MFA methods are strongest?
+real_daily: It is like a second lock on the main door.
+mcq_question: Where should MFA be enforced with SSO?
+mcq_options: A) At the browser only B) In every app separately C) At the identity provider D) Nowhere
+mcq_answer: C
+mcq_why: One policy covers all apps.
+fill_blank: Rules that consider device and location use ____ access → conditional
+apply: Admin accounts need the strongest protection. What do you require? → Hardware keys or passkeys
+explain_task: Explain MFA with SSO in three lines.
+own_task: Rank four MFA methods from weakest to strongest.
+
+@SSO-005
+topic: 01 Basics
+level: Beginner
+term: Sessions
+cue: How does an application remember that you are logged in?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: HTTP forgets requests, so a session ties repeated requests to one authenticated user.
+pro_tip: Set short lifetimes for sensitive apps and mark cookies secure and HttpOnly.
+memory_story: A session is a wristband given at the entrance that you show at every ride.
+visual: A browser sending a cookie with each request.
+emotion: The ease of staying logged in safely.
+definition: A session is the period during which a user remains authenticated, tracked by a session cookie or token that the server validates on each request.
+explanation: After login the server creates a session id stored in a cookie or issues a token. The cookie should be Secure, HttpOnly and SameSite to reduce theft and cross-site misuse. Sessions expire after idle time or a maximum lifetime. With SSO there are two sessions, one at the identity provider and one at each app, with separate lifetimes.
+simple_explain: A session cookie proves you logged in, and it should be protected and short lived.
+analogy: A session is a wristband given at the entrance that you show at every ride.
+formula_rule: Login creates a session, each request proves it.
+example_1: A cookie named session with HttpOnly set.
+example_2: Logging out after thirty minutes idle.
+example_3: An app session lasting while the IdP session expires.
+related: what SSO is, token lifetimes, single logout, CSRF
+word_family: session, cookie, HttpOnly, SameSite, idle timeout
+where_used: Web apps | SSO | Security reviews
+mini_conversation: A: I signed out of the app but the identity provider still logs me in. | B: There are two sessions, one in each place.
+misconception: ✗ Logging out of one app ends all sessions → ✓ Each app and the provider keep their own sessions
+contrast: IdP session vs app session: the provider's session may outlive the app's.
+avoid: Do not store session ids in places scripts can read.
+memory_trick: Secure, HttpOnly, SameSite on every cookie.
+real_project: Setting cookie flags stopped session theft through a script injection test.
+real_interview: An interviewer may ask: How do you protect session cookies?
+real_daily: It is like a wristband shown at every ride.
+mcq_question: Which cookie flag stops scripts reading it?
+mcq_options: A) SameSite B) Path C) Secure D) HttpOnly
+mcq_answer: D
+mcq_why: HttpOnly hides it from JavaScript.
+fill_blank: A cookie sent only over HTTPS has the ____ flag → Secure
+apply: A cookie must not be readable by page scripts. Which flag? → HttpOnly
+explain_task: Explain sessions in three lines.
+own_task: Write a cookie policy for a banking app.
+
+@SSO-006
+topic: 01 Basics
+level: Intermediate
+term: Directory services: LDAP and Active Directory
+cue: Which systems store users, groups and credentials centrally for organisations?
+category: Core concept
+frequency: High
+importance: 4
+origin: Organisations need one place to manage people and computers, so directory services store them and answer queries.
+pro_tip: Learn the distinguished name format, since LDAP queries use it.
+memory_story: A directory is the company phone book that also decides who may sign in.
+visual: A tree of users and groups under an organisation.
+emotion: The tidiness of one central directory.
+definition: A directory service stores identities, groups and attributes in a hierarchy, with LDAP as the standard query protocol and Active Directory as Microsoft's widely used implementation.
+explanation: Entries have a distinguished name such as cn=asha,ou=staff,dc=example,dc=com. Applications can bind to the directory to check credentials or search for groups. Active Directory also provides Kerberos login for Windows networks. Cloud systems such as Entra ID sync with or replace it. LDAP should always use encryption.
+simple_explain: A directory holds users and groups, and apps query it through LDAP.
+analogy: A directory is the company phone book that also decides who may sign in.
+formula_rule: Directory = users + groups + attributes in a tree.
+example_1: A search for members of the engineering group.
+example_2: A Windows login checked by Active Directory.
+example_3: Entra Connect syncing users to the cloud.
+related: identity provider, groups and roles, SCIM, Kerberos
+word_family: LDAP, Active Directory, DN, bind, Kerberos
+where_used: Enterprises | Legacy apps | Hybrid identity
+mini_conversation: A: Our old app logs in against LDAP. | B: Use LDAPS or move it to the identity provider.
+misconception: ✗ LDAP and Active Directory are the same → ✓ LDAP is a protocol, and Active Directory is a product that uses it
+contrast: LDAP vs Active Directory: protocol versus product.
+avoid: Do not send LDAP binds in clear text.
+memory_trick: LDAP is the language, AD is the library.
+real_project: Replacing direct LDAP logins with the identity provider removed passwords from the app.
+real_interview: An interviewer may ask: What is LDAP?
+real_daily: It is like a company phone book.
+mcq_question: What is LDAP?
+mcq_options: A) A web server B) A directory query protocol C) A cloud D) A database engine
+mcq_answer: B
+mcq_why: It is the standard way to query directories.
+fill_blank: The unique name of a directory entry is its ____ name → distinguished
+apply: A legacy app needs to authenticate users against the company directory. Which protocol? → LDAP over TLS
+explain_task: Explain directory services in three lines.
+own_task: Write a distinguished name for a user in the sales unit.
+
+@SSO-007
+topic: 02 Protocols
+level: Intermediate
+term: SAML flow and assertions
+cue: How does SAML move a user from an app to the identity provider and back with a signed statement?
+category: Core concept
+frequency: High
+importance: 5
+origin: Enterprises needed browser-based SSO between organisations, so SAML defined XML assertions passed through the browser.
+pro_tip: Always verify the signature, audience and time window of the assertion.
+memory_story: SAML is a sealed letter from the passport office carried by the traveller to the border.
+visual: Redirects between browser, app and identity provider with an assertion.
+emotion: The understanding of a flow that looks magical at first.
+definition: SAML is an XML-based standard where the service provider redirects the browser to the identity provider, which authenticates the user and returns a signed assertion containing the identity and attributes.
+explanation: In the SP-initiated flow, the app sends an authentication request, the user logs in at the IdP, and the IdP posts a response with a signed assertion to the app's assertion consumer service URL. The app checks signature, issuer, audience, validity times and the request id. Metadata files exchange entity ids, endpoints and certificates. Assertions are typically valid for minutes.
+simple_explain: The app redirects to the IdP, the user logs in, and a signed assertion returns to the app.
+analogy: SAML is a sealed letter from the passport office carried by the traveller to the border.
+formula_rule: Redirect, login, signed assertion, verify.
+example_1: An SP-initiated login from a SaaS app.
+example_2: An IdP-initiated login from a company portal.
+example_3: An assertion with email and group attributes.
+related: identity provider, JWT validation, certificate rotation, clock skew
+word_family: assertion, ACS, entity id, metadata, audience
+where_used: Enterprise SaaS | Federation | Customer SSO setups
+mini_conversation: A: The login returns an invalid audience error. | B: The entity id in the app does not match the IdP configuration.
+misconception: ✗ The assertion can be trusted if it came through the user's browser → ✓ Only the verified signature makes it trustworthy
+contrast: SP-initiated vs IdP-initiated: the app starts the first, the provider portal starts the second.
+avoid: Do not skip signature or audience checks.
+memory_trick: Check signature, issuer, audience and time.
+real_project: Fixing an audience mismatch got a customer's SAML login working.
+real_interview: An interviewer may ask: What does an app verify in a SAML assertion?
+real_daily: It is like a sealed letter carried by the traveller.
+mcq_question: What must an app verify first on an assertion?
+mcq_options: A) The signature B) The file size C) The font D) The colour
+mcq_answer: A
+mcq_why: A valid signature proves it came from the IdP.
+fill_blank: The app URL that receives the assertion is the assertion ____ service → consumer
+apply: A login fails with an audience error. What do you check? → The entity id values on both sides
+explain_task: Explain the SAML flow in three lines.
+own_task: List the fields you must exchange when setting up SAML.
+
+@SSO-008
+topic: 02 Protocols
+level: Intermediate
+term: OAuth 2.0 grants
+cue: Which flows let an app obtain an access token, and when is each used?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Apps needed to access user data without handling passwords, so OAuth defined flows for getting tokens with limited rights.
+pro_tip: Use the authorisation code flow with PKCE for user logins, and client credentials for machine to machine calls.
+memory_story: OAuth is a valet key that opens the car but not the glove box.
+visual: A client, a user, an authorisation server and an API with token arrows.
+emotion: The relief of delegating access without sharing passwords.
+definition: OAuth 2.0 is an authorisation framework with grants such as authorisation code with PKCE for users, client credentials for services and refresh tokens, which give clients access tokens with limited scopes.
+explanation: In the authorisation code flow, the user logs in at the authorisation server and the app exchanges a short-lived code for tokens. The implicit and password grants are deprecated. Client credentials suit backend calls with no user. Device code suits televisions and command line tools. Tokens carry scopes that limit what they allow.
+simple_explain: Use code with PKCE for users, client credentials for services, and avoid implicit and password grants.
+analogy: OAuth is a valet key that opens the car but not the glove box.
+formula_rule: User present = code with PKCE. No user = client credentials.
+example_1: A web app signing in a user with code flow.
+example_2: A backend job calling an API with client credentials.
+example_3: A TV app using device code.
+related: OpenID Connect, PKCE, scopes and claims, refresh tokens
+word_family: grant, access token, scope, authorisation server, client
+where_used: APIs | Mobile apps | Integrations
+mini_conversation: A: Can our backend job use a user login flow? | B: No, use client credentials since no user is present.
+misconception: ✗ OAuth is an authentication protocol → ✓ OAuth is for authorisation, and OpenID Connect adds authentication
+contrast: Code flow vs client credentials: one acts for a user, the other for the app itself.
+avoid: Do not use the implicit or password grants.
+memory_trick: A user means code, no user means credentials.
+real_project: Moving from the password grant to the code flow removed passwords from a client app.
+real_interview: An interviewer may ask: Which OAuth flow would you use for a single page app?
+real_daily: It is like a valet key.
+mcq_question: Which grant suits a backend with no user?
+mcq_options: A) Password B) Device code C) Client credentials D) Implicit
+mcq_answer: C
+mcq_why: The app authenticates as itself.
+fill_blank: A limited right in a token is called a ____ → scope
+apply: A mobile app signs users in. Which flow? → Authorisation code with PKCE
+explain_task: Explain OAuth grants in three lines.
+own_task: Match three apps to their best grant.
+
+@SSO-009
+topic: 02 Protocols
+level: Intermediate
+term: OpenID Connect and ID tokens
+cue: Which layer on OAuth tells an app who the user is?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: OAuth gave access but no standard way to learn the user's identity, so OpenID Connect added an ID token.
+pro_tip: Use the ID token to learn who logged in, and the access token only to call APIs.
+memory_story: The ID token is the name badge, and the access token is the key card.
+visual: An authorisation response containing an ID token and an access token.
+emotion: The clarity of a standard login on top of OAuth.
+definition: OpenID Connect is an identity layer on OAuth 2.0 that returns a signed JWT ID token with claims about the authenticated user, using the openid scope.
+explanation: The app requests the openid scope plus profile or email. The ID token contains claims such as issuer, subject, audience, expiry and nonce. The app validates it and creates its own session. A discovery document at a well-known URL lists endpoints and keys. The userinfo endpoint returns more claims.
+simple_explain: Ask for the openid scope, validate the ID token, and read the user's claims.
+analogy: The ID token is the name badge, and the access token is the key card.
+formula_rule: OIDC = OAuth + ID token + openid scope.
+example_1: Scope: openid profile email.
+example_2: A discovery document at /.well-known/openid-configuration.
+example_3: Claims sub, iss, aud, exp and nonce.
+related: OAuth grants, JWT validation, scopes and claims, PKCE
+word_family: OIDC, ID token, claim, discovery, nonce
+where_used: Modern logins | Social login | Enterprise SSO
+mini_conversation: A: Which token tells us the user's email? | B: The ID token, since the access token is for APIs.
+misconception: ✗ The access token proves who the user is → ✓ The ID token carries identity, the access token is for the API
+contrast: ID token vs access token: identity for the app versus permission for the API.
+avoid: Do not use an access token as proof of login.
+memory_trick: ID token for identity, access token for APIs.
+real_project: Reading the discovery document simplified connecting a new OIDC provider.
+real_interview: An interviewer may ask: What is the difference between an ID token and an access token?
+real_daily: It is like a name badge and a key card.
+mcq_question: Which scope value turns an OAuth request into an identity request?
+mcq_options: A) openid B) admin C) write D) read
+mcq_answer: A
+mcq_why: The openid scope triggers the identity layer.
+fill_blank: The claim holding a stable user identifier is ____ → sub
+apply: An app needs to know who logged in. Which token do you read? → The ID token
+explain_task: Explain OpenID Connect in three lines.
+own_task: List five claims in an ID token and their meaning.
+
+@SSO-010
+topic: 02 Protocols
+level: Advanced
+term: Scopes and claims
+cue: Which two ideas describe what a token allows and what facts it states about the user?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Tokens must be limited and descriptive, so scopes restrict what a client may do and claims carry facts about the subject.
+pro_tip: Request only the fewest scopes that you need.
+memory_story: Scopes are the rooms a key card opens, and claims are the details printed on the badge.
+visual: A token decoded into scopes and claims.
+emotion: The satisfaction of reading a token and understanding it.
+definition: Scopes are permissions requested by a client and granted in a token, and claims are statements in a token about the user or the token, such as email, roles, issuer and expiry.
+explanation: A scope like read:orders lets the client read orders only. Claims may include groups or roles that the API uses for decisions. The audience claim says which API the token is meant for. Do not put sensitive data in tokens that clients can read. Custom claims should be documented and kept small.
+simple_explain: Scopes limit what the client can do, and claims describe the user and the token.
+analogy: Scopes are the rooms a key card opens, and claims are the details printed on the badge.
+formula_rule: Scopes = allowed actions. Claims = facts.
+example_1: scope: read:orders write:orders
+example_2: claim roles: ["admin"]
+example_3: claim aud: https://api.example.com
+related: OAuth grants, OpenID Connect, JWT validation, RBAC vs ABAC
+word_family: scope, claim, audience, role, subject
+where_used: APIs | Authorisation | Token design
+mini_conversation: A: Why can the app read orders but not delete them? | B: The token has only the read scope.
+misconception: ✗ Claims in a token are private → ✓ Anyone holding the token can read them, so keep sensitive data out
+contrast: Scope vs claim: scope is permission, claim is information.
+avoid: Do not put secrets in tokens.
+memory_trick: Scopes limit access, claims describe the user.
+real_project: Narrowing scopes cut what a leaked token could do.
+real_interview: An interviewer may ask: What is the difference between a scope and a claim?
+real_daily: It is like rooms a key card opens and the badge details.
+mcq_question: Which tells an API what the token is meant for?
+mcq_options: A) The colour B) The file name C) The audience claim D) The font
+mcq_answer: C
+mcq_why: The aud claim names the intended recipient.
+fill_blank: A claim naming the intended API is ____ → aud
+apply: A client only needs to read data. What do you request? → A read scope only
+explain_task: Explain scopes and claims in three lines.
+own_task: Design a small set of scopes for an orders API.

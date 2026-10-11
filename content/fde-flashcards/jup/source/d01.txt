@@ -1,0 +1,252 @@
+deck.title: Jupyter Notebook – Beginner to Advanced Flashcards
+deck.subject: Working with Jupyter notebooks for data and AI work
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: bash
+type: topic56
+
+@JUP-001
+topic: 01 Basics
+level: Beginner
+term: What Jupyter is
+cue: Which tool mixes live code, results and notes in one document?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Analysts needed a place to run code in small steps, see results straight away and explain them in the same file.
+pro_tip: Use a notebook to explore and explain, and move stable code into normal scripts.
+memory_story: A Jupyter notebook is a lab book where every experiment sits beside its written notes.
+visual: A page with a code box, its output below it, and a paragraph of notes.
+emotion: The joy of seeing a result right after typing the code.
+definition: Jupyter is an open-source environment where you write code in cells, run it step by step, and keep the code, outputs and explanations together in a single notebook file.
+explanation: A notebook is a JSON file with the extension ipynb. It stores cells of code and text and the outputs that came from running them. The code itself runs in a separate process called a kernel. This makes notebooks great for exploring data, teaching and sharing findings, but less suited to long-running production jobs.
+simple_explain: It is a document where you can run code a little at a time and see the answer below it.
+analogy: A Jupyter notebook is a lab book where every experiment sits beside its written notes.
+formula_rule: Notebook = cells + kernel + saved outputs.
+example_1: Cleaning a customer file and plotting the result for a meeting.
+example_2: A teacher sharing a worked tutorial with runnable steps.
+example_3: A data scientist testing three model ideas on a sample.
+related: cells, kernels, JupyterLab, Colab
+word_family: notebook, cell, kernel, output, ipynb
+where_used: Data analysis | Teaching | Prototyping
+mini_conversation: A: Can I see the chart next to the code? | B: Yes, use a notebook so both stay together.
+misconception: ✗ A notebook is only for beginners → ✓ Professionals use notebooks daily for exploration and reports
+contrast: Notebook vs script: a notebook runs in steps with visible results, a script runs top to bottom in one go.
+avoid: Do not treat a notebook as a finished production program.
+memory_trick: Code, result and notes live together on one page.
+real_project: A customer review notebook let a client see each cleaning step and its effect.
+real_interview: An interviewer may ask: Why do data teams use notebooks?
+real_daily: It is like a lab diary with live experiments.
+mcq_question: What does a notebook store besides the code?
+mcq_options: A) Nothing else B) Only passwords C) Only images of the screen D) Outputs and notes
+mcq_answer: D
+mcq_why: Outputs and text cells are saved in the file with the code.
+fill_blank: A notebook file uses the extension ____ → ipynb
+apply: A colleague wants to see your analysis steps and charts together. What do you share? → A notebook
+explain_task: Explain what Jupyter is in three lines.
+own_task: List two jobs where a notebook is better than a plain script.
+
+@JUP-002
+topic: 01 Basics
+level: Beginner
+term: Cells
+cue: Which building blocks make up a notebook?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Splitting work into small blocks lets you run, fix and rerun one piece without restarting everything.
+pro_tip: Keep each code cell to one clear step so a failure is easy to find.
+memory_story: Cells are Lego bricks, and you can rebuild one brick without breaking the whole wall.
+visual: A vertical stack of boxes, some with code and some with text.
+emotion: The comfort of fixing one small block at a time.
+definition: A cell is a single block in a notebook, and it holds either code to run, markdown text to read, or raw text that is never processed.
+explanation: Running a code cell sends its code to the kernel and shows the result below the cell. Markdown cells render as formatted text. Each code cell shows a number in square brackets after it has run, which tells you the order in which cells were executed, not the order on the page.
+simple_explain: A cell is one box of code or text that you can run on its own.
+analogy: Cells are Lego bricks, and you can rebuild one brick without breaking the whole wall.
+formula_rule: One cell, one step, one visible result.
+example_1: A cell that loads a file and nothing else.
+example_2: A cell that filters rows and prints the count.
+example_3: A text cell that explains why rows were removed.
+related: markdown cells, kernels, running order, shortcuts
+word_family: cell, code cell, markdown cell, raw cell, execution count
+where_used: Every notebook | Teaching | Reports
+mini_conversation: A: My notebook is one huge cell. | B: Split it into steps so each result can be checked.
+misconception: ✗ Cells always run in the order they appear → ✓ You can run them in any order, and the kernel keeps whatever state results
+contrast: Code cell vs markdown cell: one runs through the kernel, the other only displays formatted text.
+avoid: Do not put loading, cleaning, modelling and plotting in a single cell.
+memory_trick: Small cells fail small and fix fast.
+real_project: Splitting a 200 line cell into steps helped a client spot a bad filter in minutes.
+real_interview: An interviewer may ask: What types of cells does a notebook have?
+real_daily: It is like paragraphs in a document, each doing one job.
+mcq_question: Which cell type is only displayed as formatted text?
+mcq_options: A) Markdown B) Kernel C) Code D) Output
+mcq_answer: A
+mcq_why: Markdown cells render text and never run code.
+fill_blank: The number in square brackets beside a code cell shows its execution ____ → count
+apply: You need to explain a filtering step above its code. Which cell do you add? → A markdown cell
+explain_task: Explain the difference between code and markdown cells.
+own_task: Split one long analysis into five clearly named cells on paper.
+
+@JUP-003
+topic: 01 Basics
+level: Beginner
+term: Kernels
+cue: Which engine actually runs the code you type in a notebook?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Keeping the language engine separate from the page lets one interface work with many languages and machines.
+pro_tip: When strange errors appear, restart the kernel before changing any code.
+memory_story: The notebook is the steering wheel and the kernel is the engine under the bonnet.
+visual: A notebook page connected by a cable to a box labelled kernel.
+emotion: The relief of a fresh start after a confusing session.
+definition: A kernel is a separate process that executes the code from your cells, holds all variables in memory, and sends results back to the notebook interface.
+explanation: Each open notebook is attached to one kernel, such as an IPython kernel for Python. Variables, imported modules and loaded data live in that kernel's memory until it stops or restarts. Interrupting stops a running cell, while restarting clears all memory. Which Python the kernel uses decides which packages you can import.
+simple_explain: The kernel is the program that runs your code and remembers your variables.
+analogy: The notebook is the steering wheel and the kernel is the engine under the bonnet.
+formula_rule: Notebook shows, kernel runs and remembers.
+example_1: A variable that still exists after you delete the cell that made it.
+example_2: Interrupting a cell stuck in an endless loop.
+example_3: Choosing a kernel linked to a project environment.
+related: running order, virtual environments, restart and run all, remote kernels
+word_family: kernel, interrupt, restart, memory, state
+where_used: Every notebook | Debugging | Environment setup
+mini_conversation: A: The import works in my terminal but not in the notebook. | B: The kernel may use a different Python, so check its environment.
+misconception: ✗ Closing the browser tab stops the kernel → ✓ The kernel can keep running until you shut it down
+contrast: Interrupt vs restart: interrupt stops one running cell, restart wipes the whole memory.
+avoid: Do not trust results after a long session without restarting the kernel once.
+memory_trick: Steering wheel on the page, engine in the kernel.
+real_project: A hidden variable in an old session gave wrong totals until the kernel was restarted.
+real_interview: An interviewer may ask: What happens to variables when a kernel restarts?
+real_daily: It is like switching a computer off and on to clear glitches.
+mcq_question: What does a kernel hold in memory?
+mcq_options: A) Only the file name B) Your variables and imports C) The screen colour D) The browser history
+mcq_answer: B
+mcq_why: State from run cells lives in the kernel process.
+fill_blank: Stopping one stuck cell without losing variables is called an ____ → interrupt
+apply: A cell has run for ten minutes with no end and you want to keep your data. What do you do? → Interrupt the kernel
+explain_task: Explain what a kernel does in three lines.
+own_task: Write which package list your kernel would see if it used another environment.
+
+@JUP-004
+topic: 01 Basics
+level: Beginner
+term: Running order and hidden state
+cue: Why can a notebook give different answers when cells run in a different order?
+category: Common problem
+frequency: Very high
+importance: 5
+origin: Because the kernel remembers everything, results depend on the order cells ran, not on how the page looks.
+pro_tip: Before sharing a notebook, restart the kernel and run all cells from the top.
+memory_story: Hidden state is a messy desk where you cannot tell which paper you used last.
+visual: Numbers 3, 1, 2 next to cells showing they were run out of order.
+emotion: The worry of results nobody can reproduce.
+definition: Hidden state is memory in the kernel that was created by earlier or deleted cells, so the visible code on the page no longer explains the current results.
+explanation: If you run cell five, edit cell two and run cell three, variables may contain values the page does not show. Deleting a cell does not delete what it created. The execution counts reveal the real order. A notebook is only trustworthy if it also works from a clean kernel running top to bottom.
+simple_explain: The kernel remembers things the page no longer shows, so results can differ from the code you see.
+analogy: Hidden state is a messy desk where you cannot tell which paper you used last.
+formula_rule: Good notebook = same result after restart and run all.
+example_1: A total that changes because an old filter cell was run twice.
+example_2: A function still working after its definition cell was deleted.
+example_3: A colleague getting an error on a notebook that worked for you.
+related: restart and run all, reproducibility, kernels, execution count
+word_family: state, order, execution count, reproducible, stale
+where_used: Debugging | Code review | Sharing
+mini_conversation: A: It works for me but fails for you. | B: Restart the kernel and run everything from the top to find the gap.
+misconception: ✗ If every cell shows output, the notebook is correct → ✓ Outputs may come from an older run or a different order
+contrast: Page order vs run order: the first is what you see, the second is what happened.
+avoid: Do not share a notebook that has never been run from a clean start.
+memory_trick: If it fails after restart, it was never right.
+real_project: A report notebook failed for the client until a missing import cell was added.
+real_interview: An interviewer may ask: What problem does hidden state cause in notebooks?
+real_daily: It is like a recipe that only works because of an ingredient you forgot to write down.
+mcq_question: What is the best test of whether a notebook is reliable?
+mcq_options: A) Delete old cells B) Increase font size C) Restart and run all D) Add more outputs
+mcq_answer: C
+mcq_why: A clean run proves the page alone produces the results.
+fill_blank: Numbers shown beside code cells reveal the actual run ____ → order
+apply: Your totals look wrong after many edits. What do you try first? → Restart the kernel and run all cells
+explain_task: Explain hidden state to a new colleague.
+own_task: Describe one way hidden state could give two analysts different results.
+
+@JUP-005
+topic: 01 Basics
+level: Beginner
+term: Notebook vs JupyterLab
+cue: Which two interfaces open the same notebook files?
+category: Tool choice
+frequency: High
+importance: 4
+origin: The classic notebook interface kept things simple, and JupyterLab grew into a fuller workspace.
+pro_tip: Start with JupyterLab if you work with several files, terminals and notebooks at once.
+memory_story: The classic notebook is a single desk, and JupyterLab is a whole office with many rooms.
+visual: One simple page beside a window with a file tree, tabs and a terminal.
+emotion: The comfort of having files and terminal in one window.
+definition: Jupyter Notebook is the simpler single-document interface, while JupyterLab is a richer workspace with a file browser, tabs, terminals, text editors and side-by-side notebooks.
+explanation: Both open the same ipynb files and use the same kernels. JupyterLab lets you drag cells between notebooks, view CSV files, open a terminal and arrange panels. Newer releases of the classic notebook are built on top of Lab components, so the gap is narrowing. Editors such as VS Code can also open notebooks directly.
+simple_explain: Both open the same notebooks, but JupyterLab gives you more tools in one window.
+analogy: The classic notebook is a single desk, and JupyterLab is a whole office with many rooms.
+formula_rule: Same files and kernels, different workspace.
+example_1: Opening a notebook and a terminal side by side.
+example_2: Previewing a CSV file next to the analysis.
+example_3: Using VS Code to edit the same notebook file.
+related: cells, kernels, Colab, hosted options
+word_family: Lab, classic notebook, workspace, file browser, extension
+where_used: Local setups | Training | Data teams
+mini_conversation: A: Do I need to convert my files for JupyterLab? | B: No, both open the same ipynb files.
+misconception: ✗ JupyterLab needs a different file format → ✓ Both use the same ipynb files
+contrast: Notebook vs JupyterLab: one document at a time versus a full workspace.
+avoid: Do not assume the look of an interface changes how your code runs.
+memory_trick: Same files, same kernel, different room.
+real_project: A team moved to JupyterLab to keep terminal and notebook in one window on customer laptops.
+real_interview: An interviewer may ask: How is JupyterLab different from the classic notebook?
+real_daily: It is like choosing between a notepad and a full office suite.
+mcq_question: Which file type opens in both interfaces?
+mcq_options: A) ipynb B) exe C) mp3 D) docx
+mcq_answer: A
+mcq_why: Both interfaces are front ends for the same notebook files.
+fill_blank: A richer interface with a file browser and terminal tabs is called ____ → JupyterLab
+apply: You need a terminal and three files open together. Which interface fits? → JupyterLab
+explain_task: Explain the difference between the two interfaces.
+own_task: List three panels you would open in JupyterLab for a data task.
+
+@JUP-006
+topic: 01 Basics
+level: Beginner
+term: Colab and hosted notebooks
+cue: Which options let you run notebooks without installing anything locally?
+category: Tool choice
+frequency: High
+importance: 4
+origin: Installing Python, packages and drivers is a barrier, so hosted services provide ready-made notebook environments in the browser.
+pro_tip: Check what data leaves your machine before using any hosted notebook with customer data.
+memory_story: A hosted notebook is a rented workshop, ready to use but not your own building.
+visual: A browser window connected to a cloud server.
+emotion: The ease of starting with nothing to install.
+definition: Hosted notebooks are notebook environments run by a provider such as Google Colab, cloud data platforms or a company JupyterHub, so code runs on remote machines and you work through a browser.
+explanation: They are quick for learning, sharing and light experiments, and some offer accelerators for model work. The trade-offs are limited session time, files that may disappear when a session ends, package installs that must be repeated, and data being processed on someone else's servers. Features, limits and pricing differ by provider and change often, so read the provider's documentation.
+simple_explain: A hosted notebook runs in the cloud, so you only need a browser.
+analogy: A hosted notebook is a rented workshop, ready to use but not your own building.
+formula_rule: Convenience gained, control and privacy to be checked.
+example_1: Opening a tutorial notebook from a link and running it at once.
+example_2: A team using a shared JupyterHub server.
+example_3: Running a heavy model step on a hosted machine with extra power.
+related: Jupyter, remote kernels, secrets in notebooks, sharing
+word_family: hosted, cloud, session, runtime, JupyterHub
+where_used: Learning | Prototyping | Shared teams
+mini_conversation: A: Can I use customer data in a free hosted notebook? | B: Check the data rules first, because it leaves our machines.
+misconception: ✗ Hosted notebooks keep my files forever → ✓ Files and installs may vanish when the session ends
+contrast: Local vs hosted: your own machine and control versus someone else's machine and convenience.
+avoid: Do not upload customer data to a service you have not approved.
+memory_trick: Easy start, but check where the data goes.
+real_project: A workshop used hosted notebooks so every learner started with the same setup.
+real_interview: An interviewer may ask: What are the risks of hosted notebooks?
+real_daily: It is like using a rented desk instead of your own office.
+mcq_question: What should you check before using customer data in a hosted notebook?
+mcq_options: A) The font B) The mouse speed C) The tab colour D) Where the data is processed
+mcq_answer: D
+mcq_why: Hosted code and data run on a provider's servers.
+fill_blank: A shared notebook server for a company is often called a Jupyter____ → Hub
+apply: A learner cannot install Python on a locked laptop. What can they use? → A hosted notebook in the browser
+explain_task: Explain two benefits and two risks of hosted notebooks.
+own_task: Write a short rule for what data may be used in hosted notebooks.

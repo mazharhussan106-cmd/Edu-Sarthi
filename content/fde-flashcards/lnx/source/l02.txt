@@ -1,0 +1,807 @@
+
+@LNX-016
+type: code56
+topic: 03 Text tools
+level: Beginner
+term: grep
+cue: Which command searches inside files for lines that match a word or pattern?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Searching text is a daily job, so Unix has a tool whose name comes from an old editor command meaning globally search a regular expression and print.
+pro_tip: Combine -r with -n to search a whole folder and see line numbers.
+memory_story: grep is a highlighter pen that picks out only the lines you care about.
+visual: A long log with only the lines containing the word error highlighted.
+emotion: The satisfaction of finding the one error line in thousands.
+meaning: grep prints the lines of its input that match a pattern.
+code: grep "error" app.log¶grep -i -n "timeout" app.log¶grep -r "API_KEY" ./config¶grep -v "^#" settings.conf¶grep -c "200" access.log
+output: Lines containing error, matching lines with numbers ignoring case, matches across a folder, all lines that do not start with a hash, and a count of lines containing 200.
+explanation: Common flags are -i to ignore case, -n to show line numbers, -r to search folders, -v to invert the match, -c to count, and -E for extended regular expressions. -A and -B show lines after and before a match. grep reads files or the output of other commands through a pipe.
+simple_explain: Give grep a pattern and a file. It prints only the matching lines, and flags change how it matches and what it shows.
+analogy: It is like a highlighter pen that picks out only the lines you care about.
+syntax: grep [options] pattern [files]
+anatomy: -i = ignore case | -n = line numbers | -r = recursive | -v = invert | -c = count
+example_1: grep -n "Exception" server.log
+example_2: grep -r "TODO" src/
+example_3: ps aux | grep nginx
+variation: grep -E "error|fail" app.log   // either word¶grep -A 3 -B 3 "crash" app.log   // three lines of context around each match
+used_with: pipes, find, tail, regular expressions
+related: sed, awk, find, pipes
+alternatives: ripgrep (rg) for faster searches
+where_used: Reading logs | Searching code | Filtering command output
+mini_conversation: A: Which file contains the database password setting? | B: Run grep -r "DB_PASSWORD" on the config folder.
+misconception: ✗ grep searches for file names → ✓ grep searches inside files for matching text, and find searches for file names
+confused_with: grep vs find: grep looks inside files, find looks for files.
+avoid: Do not paste secrets that grep shows into chats or tickets.
+wrong_code: grep app.log "error"
+right_code: grep "error" app.log
+memory_trick: Pattern first, then the file.
+real_project: Filtering a customer's log for one request id to find a failure.
+real_interview: An interviewer may ask: How do you search all files in a folder for a word?
+real_daily: It is like a highlighter that picks out the lines you care about.
+mcq_question: Which flag makes grep ignore upper and lower case?
+mcq_options: A) -i B) -n C) -v D) -c
+mcq_answer: A
+mcq_why: -i ignores case differences.
+fill_blank: grep -____ pattern file prints only lines that do not match → v
+hindi_to_task: Count the lines containing the word failed in deploy.log.
+task_answer: grep -c "failed" deploy.log
+own_task: Search a log for three different words and compare the counts.
+practice_question: Which flag shows line numbers with each match?
+practice_answer: -n
+
+@LNX-017
+type: code56
+topic: 03 Text tools
+level: Intermediate
+term: sed
+cue: Which stream editor replaces, deletes or prints lines of text as it flows through, without opening an editor?
+kind: Command
+frequency: High
+importance: 4
+origin: Editing the same change into many files by hand is slow, so sed applies editing commands to a stream of text automatically.
+pro_tip: Test a sed command without -i first, and only then change the file in place.
+memory_story: sed is an editor that works on a conveyor belt, changing each line as it passes.
+visual: Lines moving along a belt, with one word swapped as each passes a station.
+emotion: The power of changing a thousand lines with one command.
+meaning: sed applies editing commands, most often substitution, to each line of its input.
+code: sed 's/staging/production/g' app.conf¶sed -n '5,10p' app.log¶sed '/^#/d' settings.conf¶sed -i 's/8080/9090/' server.conf
+output: The text with every staging replaced by production, only lines five to ten, the file without comment lines, and server.conf changed in place from 8080 to 9090.
+explanation: The most common command is s/old/new/, with g to replace every match on a line. A command can be limited to a line range or to lines matching a pattern. -n with p prints only selected lines, and d deletes lines. The -i flag edits the file in place, and on macOS it needs an argument such as -i ''. Keep a backup before using -i.
+simple_explain: Use sed to replace text with s/old/new/g, delete lines with d, or print a range with -n and p. Add -i only when you are sure.
+analogy: It is like an editor on a conveyor belt that changes each line as it passes.
+syntax: sed 's/old/new/g' file
+anatomy: s = substitute | g = all matches on the line | -n and p = print selected lines | d = delete | -i = edit in place
+example_1: sed 's/foo/bar/' notes.txt
+example_2: sed '1d' data.csv
+example_3: sed -n '/ERROR/p' app.log
+variation: sed -i.bak 's/a/b/' file   // keep a backup copy¶sed 's#/old/path#/new/path#g' file   // use another separator for paths
+used_with: grep, awk, pipes, regular expressions
+related: grep, awk, tr
+alternatives: perl or an editor for complex changes
+where_used: Config edits | Log clean-up | Bulk text changes
+mini_conversation: A: I need to change a hostname in fifty config files. | B: Use sed -i with a substitution, after testing it without -i.
+misconception: ✗ sed always changes the file you give it → ✓ sed prints the changed text and leaves the file alone unless you use -i
+confused_with: sed vs awk: sed edits text by patterns, awk works with fields and calculations.
+avoid: Do not use -i without a backup or version control.
+wrong_code: sed 's/old/new' file
+right_code: sed 's/old/new/' file
+memory_trick: The s command swaps old text for new text.
+real_project: Replacing a database host across configuration files before a customer go-live.
+real_interview: An interviewer may ask: How do you replace text in a file from the command line?
+real_daily: It is like an editor on a conveyor belt.
+mcq_question: What does the g at the end of s/a/b/g do?
+mcq_options: A) Gives a report B) Goes to the next file C) Greps the file D) Replaces every match on a line
+mcq_answer: D
+mcq_why: Without g only the first match on each line is replaced.
+fill_blank: sed ____ file.txt edits the file in place → -i
+hindi_to_task: Print only lines 3 to 6 of notes.txt.
+task_answer: sed -n '3,6p' notes.txt
+own_task: Replace one word in a copy of a file, and compare the result with diff.
+practice_question: Which sed command deletes lines that start with a hash?
+practice_answer: sed '/^#/d' file
+
+@LNX-018
+type: code56
+topic: 03 Text tools
+level: Intermediate
+term: awk
+cue: Which tool treats each line as fields so that you can print columns, filter by values and add numbers?
+kind: Command
+frequency: High
+importance: 4
+origin: Reports in columns needed a small language for splitting lines into fields, and awk was named after its three creators and does exactly that.
+pro_tip: Use -F to set the field separator, such as -F, for CSV-like data.
+memory_story: awk is a spreadsheet for text, with columns named dollar one, dollar two and so on.
+visual: A line split into numbered columns, with column three summed at the end.
+emotion: The thrill of a quick report from raw text.
+meaning: awk splits each line into fields and runs small programs on them, such as printing columns or summing values.
+code: awk '{print $1, $3}' access.log¶awk -F, '{print $2}' users.csv¶awk '$3 > 100' sales.txt¶awk '{sum += $3} END {print sum}' sales.txt
+output: The first and third columns of each line, the second column of a comma-separated file, only rows whose third column is above 100, and the total of the third column.
+explanation: Fields are called $1, $2 and so on, and $0 is the whole line. A program is made of pattern and action pairs. BEGIN runs before the first line and END runs after the last. NR is the line number and NF is the number of fields. By default fields are separated by whitespace.
+simple_explain: awk treats a line as columns. Print columns with $1 and $2, filter with a condition, and total numbers with a variable and END.
+analogy: It is like a spreadsheet for text, with columns named $1, $2 and so on.
+syntax: awk 'pattern {action}' file
+anatomy: $1 = first field | -F, = comma separator | NR = line number | END = after the last line
+example_1: awk '{print $NF}' file
+example_2: awk -F: '{print $1}' /etc/passwd
+example_3: awk 'NR > 1 {n++} END {print n}' data.csv
+variation: awk '$2 == "ERROR" {c++} END {print c}' log   // count matches¶awk 'BEGIN {print "Report"} {print $1}' file   // header line
+used_with: grep, sort, pipes, CSV files
+related: sed, cut, grep
+alternatives: Python or pandas for bigger tasks
+where_used: Quick reports | Log analysis | Column extraction
+mini_conversation: A: I need the total of the amount column in this text file. | B: Use awk to add up the third field and print it in END.
+misconception: ✗ awk numbers columns from zero → ✓ awk fields start at $1, and $0 means the whole line
+confused_with: awk vs cut: cut only extracts fields, awk can also calculate and filter.
+avoid: Do not use awk for real CSV files with quoted commas, use a proper CSV tool.
+wrong_code: awk {print $1} file
+right_code: awk '{print $1}' file
+memory_trick: $1 is the first column and $0 is the whole line.
+real_project: Summing a column of a text export to check totals with a customer.
+real_interview: An interviewer may ask: How do you print the second column of a file?
+real_daily: It is like a spreadsheet made of text.
+mcq_question: In awk, what does $0 represent?
+mcq_options: A) The whole line B) The first field C) The last field D) The line number
+mcq_answer: A
+mcq_why: $0 holds the entire input line.
+fill_blank: The special variable ____ holds the number of fields in a line → NF
+hindi_to_task: Print the first field of every line in names.txt.
+task_answer: awk '{print $1}' names.txt
+own_task: Use awk to total one column of a small data file.
+practice_question: Which block runs after the last line is read?
+practice_answer: END
+
+@LNX-019
+type: code56
+topic: 03 Text tools
+level: Intermediate
+term: cut, sort and uniq
+cue: Which three small tools take columns, put lines in order, and count or remove repeated lines?
+kind: Command
+frequency: High
+importance: 4
+origin: Counting how often something occurs needs extraction, ordering and grouping, and Unix gave one small tool for each so they can be chained.
+pro_tip: uniq only removes neighbouring duplicates, so always sort first.
+memory_story: cut slices a column, sort lines everyone up, and uniq counts the people standing next to each other.
+visual: A list passing through three stations until it shows counts of each item.
+emotion: The pleasure of a ranked list built from one line.
+meaning: cut extracts fields, sort orders lines, and uniq collapses or counts repeated adjacent lines.
+code: cut -d, -f1 visits.csv | sort | uniq -c | sort -nr | head -5
+output: The five values that occur most often in the first column, each with its count.
+explanation: cut -d sets the delimiter and -f picks the fields. sort orders lines alphabetically, and -n sorts numerically, -r reverses, and -k picks a sort column. uniq -c prefixes each distinct line with its count, but only joins lines that are next to each other, so the input must be sorted. This pattern is a classic way to find the top values.
+simple_explain: Cut the column, sort it, count the repeats with uniq -c, sort the counts, and take the top few.
+analogy: cut slices a column, sort lines everyone up, and uniq counts neighbours.
+syntax: cut -d, -f1 file | sort | uniq -c | sort -nr
+anatomy: cut -d, -f1 = first comma field | uniq -c = count repeats | sort -nr = largest number first
+example_1: sort -n numbers.txt
+example_2: sort -t, -k2 data.csv
+example_3: sort file | uniq -d
+variation: sort -u file   // sort and remove duplicates¶cut -c1-10 file   // first ten characters
+used_with: pipes, awk, head, grep
+related: awk, wc, pipes
+alternatives: awk, or pandas for bigger data
+where_used: Top-N reports | Duplicate checks | Log summaries
+mini_conversation: A: Which IP address appears most in the log? | B: Cut the column, sort, uniq -c, then sort the counts.
+misconception: ✗ uniq removes all duplicates from any file → ✓ uniq only collapses duplicates that are next to each other, so sort the input first
+confused_with: sort -u vs uniq: sort -u sorts and removes duplicates itself, uniq needs sorted input.
+avoid: Do not use uniq without sorting.
+wrong_code: cut -f1 -d, data.csv | uniq -c
+right_code: cut -f1 -d, data.csv | sort | uniq -c
+memory_trick: Always sort your data before you uniq.
+real_project: Finding the most frequent error messages in a customer's log.
+real_interview: An interviewer may ask: How do you find the most common value in a column?
+real_daily: It is like lining everyone up and counting those standing together.
+mcq_question: Why must the input to uniq be sorted?
+mcq_options: A) uniq cannot read files B) uniq only joins adjacent duplicates C) uniq deletes sorted lines D) uniq needs numbers
+mcq_answer: B
+mcq_why: uniq compares each line only with the one before it.
+fill_blank: uniq -____ puts the number of repeats in front of each line → c
+hindi_to_task: Sort a file numerically from largest to smallest.
+task_answer: sort -nr numbers.txt
+own_task: Build a top-three list of the most common words in a text file.
+practice_question: Which sort flag orders numbers by value?
+practice_answer: -n
+
+@LNX-020
+type: code56
+topic: 03 Text tools
+level: Beginner
+term: wc
+cue: Which command counts the lines, words and bytes of its input?
+kind: Command
+frequency: High
+importance: 3
+origin: People often need just a quick count of lines in a file or in command output, so a tiny counting tool was added.
+pro_tip: Pipe any command into wc -l to count how many results it produced.
+memory_story: wc is a clicker counter that you hold up to the text.
+visual: A counter showing a number beside a file.
+emotion: The ease of a quick sanity check on size.
+meaning: wc counts lines, words and characters or bytes in files or piped text.
+code: wc -l app.log¶wc -w essay.txt¶ls | wc -l¶wc -c data.bin
+output: The number of lines in app.log, the number of words, the number of entries in the folder, and the size in bytes.
+explanation: With no flags wc prints lines, words and bytes. -l counts lines, -w counts words, and -c counts bytes. Counting lines is the most common use, to check how many records a file holds or how many matches a command found.
+simple_explain: Use wc -l to count lines, and pipe into it to count anything a command prints.
+analogy: It is like a clicker counter held up to the text.
+syntax: wc [-l] [-w] [-c] [file]
+anatomy: -l = lines | -w = words | -c = bytes
+example_1: wc -l users.csv
+example_2: grep "error" app.log | wc -l
+example_3: find . -type f | wc -l
+variation: wc -m file   // count characters¶wc -l *.csv   // lines of each file and a total
+used_with: grep, find, pipes
+related: grep, find, pipes
+alternatives: grep -c for counting matches
+where_used: Row counts | Sanity checks | Log statistics
+mini_conversation: A: How many records are in this export? | B: Run wc -l on the file, and subtract one for the header.
+misconception: ✗ wc -l counts the number of words → ✓ wc -l counts lines, and wc -w counts words
+confused_with: wc -l vs grep -c: wc -l counts input lines, grep -c counts lines that match.
+avoid: Do not forget the header line when counting records.
+wrong_code: wc --lines-only file
+right_code: wc -l file
+memory_trick: The l flag is for lines.
+real_project: Checking that an exported file has the expected number of rows.
+real_interview: An interviewer may ask: How do you count the lines of a file?
+real_daily: It is like a clicker counter.
+mcq_question: Which flag counts lines?
+mcq_options: A) -m B) -w C) -l D) -c
+mcq_answer: C
+mcq_why: -l stands for lines.
+fill_blank: ls | wc -l counts the ____ in a folder → entries
+hindi_to_task: Count the lines of users.csv.
+task_answer: wc -l users.csv
+own_task: Count how many files are in three different folders.
+practice_question: Which flag counts words?
+practice_answer: -w
+
+@LNX-021
+type: code56
+topic: 03 Text tools
+level: Intermediate
+term: tr
+cue: Which command translates or deletes single characters in a stream, such as changing case or removing carriage returns?
+kind: Command
+frequency: Medium
+importance: 3
+origin: Simple character swaps needed a very small filter, so tr translates or removes characters in text that flows through it.
+pro_tip: Use tr -d '\r' to clean Windows line endings from a file before processing it.
+memory_story: tr is a character swapper at a gate, changing or removing each character as it passes.
+visual: Lowercase letters going in and uppercase letters coming out.
+emotion: The relief of fixing line endings in one line.
+meaning: tr replaces, squeezes or deletes characters read from standard input.
+code: echo "hello" | tr 'a-z' 'A-Z'¶tr -d '\r' < windows.txt > unix.txt¶echo "a    b" | tr -s ' '
+output: HELLO, a copy of the file with carriage returns removed, and a string where repeated spaces are squeezed into one.
+explanation: tr works on characters, not on words or patterns, and it only reads standard input, so you use a pipe or a redirect. -d deletes the characters in the set, and -s squeezes repeated characters into one. Sets can be ranges such as a-z, and special characters such as \n and \r are written with a backslash.
+simple_explain: tr swaps one set of characters for another, or deletes them. It reads only from a pipe or a redirected file.
+analogy: It is like a character swapper at a gate that changes each character as it passes.
+syntax: tr [options] set1 [set2]
+anatomy: set1 = characters to find | set2 = replacements | -d = delete | -s = squeeze repeats
+example_1: tr 'A-Z' 'a-z' < in.txt
+example_2: tr -d '[:digit:]' < data.txt
+example_3: tr ',' '\n' < list.txt
+variation: tr '[:lower:]' '[:upper:]'   // character classes¶tr -cd 'a-z0-9'   // keep only letters and digits
+used_with: pipes, redirection, sed
+related: sed, cut, pipes
+alternatives: sed for replacing words
+where_used: Case changes | Line ending fixes | Splitting lists
+mini_conversation: A: The script fails on a file from Windows. | B: Strip the carriage returns with tr -d '\r'.
+misconception: ✗ tr replaces whole words → ✓ tr works on individual characters only, and sed is the tool for words
+confused_with: tr vs sed: tr changes single characters, sed changes patterns and words.
+avoid: Do not pass a file name to tr, since it only reads standard input.
+wrong_code: tr 'a-z' 'A-Z' file.txt
+right_code: tr 'a-z' 'A-Z' < file.txt
+memory_trick: tr reads only from a pipe or a redirect.
+real_project: Cleaning carriage returns from files that came from a Windows system.
+real_interview: An interviewer may ask: How do you convert text to upper case on the command line?
+real_daily: It is like a character swapper at a gate.
+mcq_question: What does tr -d '\r' do?
+mcq_options: A) Sorts lines B) Replaces words C) Deletes carriage return characters D) Reads a file
+mcq_answer: C
+mcq_why: -d deletes the characters in the set.
+fill_blank: tr reads only from standard ____ → input
+hindi_to_task: Convert the text in notes.txt to upper case.
+task_answer: tr 'a-z' 'A-Z' < notes.txt
+own_task: Clean a text file of repeated spaces with tr -s.
+practice_question: Which flag squeezes repeated characters into one?
+practice_answer: -s
+
+@LNX-022
+type: code56
+topic: 03 Text tools
+level: Beginner
+term: Pipes
+cue: Which symbol sends the output of one command straight into the input of the next?
+kind: Shell feature
+frequency: Very high
+importance: 5
+origin: Unix was built from small tools that do one job, and pipes let you join them so that big tasks come from small parts.
+pro_tip: Build a pipeline step by step, running it after each added command to see the intermediate result.
+memory_story: A pipe is a hose that connects the output of one machine to the input of the next.
+visual: Boxes joined by arrows with a vertical bar between each.
+emotion: The joy of solving a task by chaining small tools.
+meaning: The pipe symbol | connects the standard output of one command to the standard input of the next.
+code: pgrep -c nginx¶cat access.log | cut -d' ' -f1 | sort | uniq -c | sort -nr | head
+output: The number of nginx processes, and the ten most frequent values of the first field of the access log.
+explanation: Each command in a pipeline runs at the same time, and data flows between them without temporary files. Only standard output is piped, and error messages go to the screen unless redirected. The exit status of a pipeline is normally that of the last command, and set -o pipefail changes that in scripts.
+simple_explain: Use a vertical bar to feed one command's output into the next. Small tools combine into powerful one-liners.
+analogy: It is like a hose that connects the output of one machine to the input of the next.
+syntax: command1 | command2 | command3
+anatomy: | = pipe | each command reads the previous one's output
+example_1: ls -l | less
+example_2: history | grep ssh
+example_3: dmesg | tail -20
+variation: command 2>&1 | grep error   // pipe errors too¶set -o pipefail   // fail if any step fails
+used_with: grep, sort, wc, redirection
+related: redirection, xargs, grep
+alternatives: Temporary files, which are slower and messier
+where_used: Everyday shell work | Log analysis | Scripts
+mini_conversation: A: How do I count nginx processes? | B: Use pgrep -c nginx, or pipe ps into grep [n]ginx and then into wc -l.
+misconception: ✗ A pipe passes both output and error messages → ✓ A pipe passes only standard output, and errors need 2>&1 to be piped
+confused_with: Pipe vs redirection: a pipe feeds another command, a redirect writes to or reads from a file.
+avoid: Do not ignore the exit status of a pipeline in scripts.
+wrong_code: ps aux > grep nginx
+right_code: ps aux | grep nginx
+memory_trick: A pipe sends output onward to a command.
+real_project: Chaining grep, sort and uniq to summarise errors in a log.
+real_interview: An interviewer may ask: What does the pipe operator do?
+real_daily: It is like a hose joining one machine to the next.
+mcq_question: What does a pipe connect?
+mcq_options: A) Two users B) Two files C) Two disks D) Output of one command to input of the next
+mcq_answer: D
+mcq_why: The pipe passes standard output into the next command's input.
+fill_blank: The pipe symbol is the vertical ____ → bar
+hindi_to_task: Count how many files are in the current folder using a pipe.
+task_answer: ls | wc -l
+own_task: Build a three-step pipeline that finds the most common word in a file.
+practice_question: Which stream does a pipe carry by default?
+practice_answer: Standard output
+
+@LNX-023
+type: code56
+topic: 03 Text tools
+level: Intermediate
+term: Redirection
+cue: Which operators send command output to a file, append to it, separate errors, or feed a file into a command?
+kind: Shell feature
+frequency: Very high
+importance: 5
+origin: Programs write to standard streams, so the shell lets you point those streams at files instead of the screen.
+pro_tip: Send noise to /dev/null with > /dev/null 2>&1 when you only care about the exit status.
+memory_story: Redirection turns the tap's spout to fill a bucket instead of the sink.
+visual: Arrows from a command to a file, to another file for errors, and from a file into a command.
+emotion: The control of deciding where output goes.
+meaning: Operators such as >, >>, < and 2> connect the standard input, output and error streams to files.
+code: ls > files.txt¶echo "run done" >> log.txt¶sort < names.txt¶command 2> errors.txt¶command > all.txt 2>&1¶command > /dev/null 2>&1
+output: A file listing, a line appended to a log, sorted input from a file, only errors saved to a file, both output and errors saved together, and everything discarded.
+explanation: Every program has three streams: standard input (0), standard output (1) and standard error (2). > writes and replaces the file, >> appends, < reads from a file, and 2> redirects errors. 2>&1 sends errors to the same place as output. /dev/null discards anything written to it.
+simple_explain: Use > to save output, >> to add to a file, and 2> to save errors. Remember that > overwrites the file.
+analogy: It is like turning the tap's spout to fill a bucket instead of the sink.
+syntax: command > file  |  command >> file  |  command < file  |  command 2> file
+anatomy: > = overwrite | >> = append | < = input | 2> = errors | 2>&1 = errors to output
+example_1: echo hello > greeting.txt
+example_2: ./job.sh >> job.log 2>&1
+example_3: grep error app.log > errors_only.txt
+variation: command &> file   // Bash shortcut for both streams¶tee file   // write to a file and to the screen
+used_with: pipes, cron jobs, logs, scripts
+related: pipes, cat, cron
+alternatives: tee for writing to a file and the screen at once
+where_used: Cron jobs | Logs | Saving results
+mini_conversation: A: My cron job's errors are not saved. | B: Redirect both streams with > job.log 2>&1.
+misconception: ✗ > adds to the end of a file → ✓ > replaces the whole file, and >> appends
+confused_with: > vs >>: > overwrites, >> appends.
+avoid: Do not use > on a file you want to keep.
+wrong_code: echo "done" > log.txt   # meant to add a line
+right_code: echo "done" >> log.txt
+memory_trick: One arrow overwrites, two arrows append.
+real_project: Saving the output and errors of a nightly job to a log file.
+real_interview: An interviewer may ask: What does 2>&1 mean?
+real_daily: It is like turning a tap's spout to fill a bucket.
+mcq_question: Which operator appends to a file?
+mcq_options: A) The double greater-than sign B) The less-than sign C) The pipe D) The single greater-than sign
+mcq_answer: A
+mcq_why: >> adds to the end of the file instead of replacing it.
+fill_blank: The special file /dev/____ discards everything written to it → null
+hindi_to_task: Save the output of ls into list.txt, replacing the old file.
+task_answer: ls > list.txt
+own_task: Run a failing command and save its errors in a separate file.
+practice_question: What does 2>&1 do?
+practice_answer: It sends the error stream to the same place as standard output.
+
+@LNX-024
+type: code56
+topic: 03 Text tools
+level: Advanced
+term: xargs
+cue: Which command turns lines from its input into arguments for another command?
+kind: Command
+frequency: Medium
+importance: 3
+origin: Some commands read arguments and not input, so xargs bridges the gap and builds command lines from a list.
+pro_tip: Use find with -print0 and xargs -0 so names with spaces are handled safely.
+memory_story: xargs is a loader that takes items off a conveyor belt and hands them to a worker.
+visual: A list of names turning into one long command line.
+emotion: The power of applying a command to hundreds of items.
+meaning: xargs reads items from standard input and runs a command with them as arguments.
+code: find . -name "*.tmp" | xargs rm¶find . -name "*.log" -print0 | xargs -0 gzip¶cat hosts.txt | xargs -n 1 ping -c 1¶echo "a b c" | xargs -I {} echo item {}
+output: All .tmp files removed, all log files compressed safely, one ping to each host, and the single line item a b c.
+explanation: By default xargs puts as many items as fit on one command line. -n 1 runs the command once per item, -I {} lets you place each item anywhere in the command, and -P runs several jobs in parallel. File names with spaces break the default behaviour, so pair find -print0 with xargs -0.
+simple_explain: Pipe a list into xargs and it runs your command with that list as arguments. Use -0 for safe file names.
+analogy: It is like a loader that takes items off a belt and hands them to a worker.
+syntax: command | xargs [options] command
+anatomy: -n = items per command | -I {} = placeholder | -0 = null-separated input | -P = parallel jobs
+example_1: ls *.txt | xargs wc -l
+example_2: cat ids.txt | xargs -n 1 curl -s
+example_3: find . -type f -print0 | xargs -0 grep -l "TODO"
+variation: xargs -P 4 -n 1 command   // four at a time¶xargs -t command   // print each command before running it
+used_with: find, grep, pipes
+related: find, pipes, grep
+alternatives: find -exec, or a for loop
+where_used: Bulk actions | Parallel jobs | Clean-up scripts
+mini_conversation: A: rm says the argument list is too long. | B: Use find with xargs, which splits the list into smaller batches.
+misconception: ✗ xargs and a pipe do the same job → ✓ A pipe feeds standard input, while xargs turns input lines into arguments
+confused_with: xargs vs find -exec: both run a command per match, xargs can batch and run in parallel.
+avoid: Do not use xargs rm on names with spaces without -0.
+wrong_code: find . -name "*.log" | xargs gzip
+right_code: find . -name "*.log" -print0 | xargs -0 gzip
+memory_trick: xargs turns lines into arguments.
+real_project: Running a health check against a list of customer hosts in parallel.
+real_interview: An interviewer may ask: Why is xargs useful?
+real_daily: It is like a loader that hands items to a worker.
+mcq_question: What does xargs do?
+mcq_options: A) Lists files B) Turns input lines into command arguments C) Sorts text D) Changes permissions
+mcq_answer: B
+mcq_why: xargs builds a command from the items it reads.
+fill_blank: xargs -____ 1 runs the command once per item → n
+hindi_to_task: Run ping once for every host name in hosts.txt.
+task_answer: cat hosts.txt | xargs -n 1 ping -c 1
+own_task: Use xargs to count the lines of every text file in a folder.
+practice_question: Which pair of options handles file names with spaces?
+practice_answer: find -print0 together with xargs -0
+
+@LNX-025
+type: code56
+topic: 04 Users and permissions
+level: Beginner
+term: Users and groups (whoami, id, groups)
+cue: Which commands show who you are on the system and which groups you belong to?
+kind: Command
+frequency: High
+importance: 4
+origin: Linux is a multi-user system, so every process and file belongs to a user and to groups, which decide what each may do.
+pro_tip: Run id on a customer machine first, to see which groups give you access to logs and services.
+memory_story: Users are people with a badge, and groups are teams that share permissions.
+visual: A badge with a name and several team stickers.
+emotion: The clarity of knowing which identity you have.
+meaning: whoami prints the current user, id shows user and group numbers, and groups lists group names.
+code: whoami¶id¶groups¶cat /etc/group¶sudo usermod -aG docker asha
+output: The user name, the user id and group ids, the list of group names, all groups on the system, and the user asha added to the docker group.
+explanation: Every user has a numeric id (UID) and a primary group, and may belong to other groups. Accounts are listed in /etc/passwd and groups in /etc/group. Adding a user to a group, such as docker, takes effect after the user logs in again. The root user has UID 0 and unrestricted power.
+simple_explain: Every file and process has an owner and a group. Use id to see yours, and add users to groups to share access.
+analogy: Users are people with badges, and groups are teams that share permissions.
+syntax: whoami  |  id [user]  |  groups [user]
+anatomy: UID = user number | GID = group number | -aG = append to groups
+example_1: id asha
+example_2: groups
+example_3: getent group sudo
+variation: sudo adduser bob   // create a user on Debian families¶sudo useradd -m bob   // create a user with a home folder
+used_with: permissions, sudo, chown
+related: permissions, sudo, chown
+alternatives: A directory service such as LDAP for many machines
+where_used: Access control | Customer servers | Shared folders
+mini_conversation: A: I cannot read the log folder. | B: Check id, since you may need to be in the adm group.
+misconception: ✗ Group changes take effect immediately in my current session → ✓ New group membership usually needs a new login session
+confused_with: whoami vs id: whoami prints just the name, id shows numbers and groups.
+avoid: Do not use usermod -G without -a, since it replaces all your groups. Membership of the docker group is effectively root access, so grant it carefully.
+wrong_code: sudo usermod -G docker asha
+right_code: sudo usermod -aG docker asha
+memory_trick: Use -a with -G to append.
+real_project: Adding a deployment user to the docker group on a customer host.
+real_interview: An interviewer may ask: How do you add a user to a group?
+real_daily: It is like a badge with team stickers.
+mcq_question: Which command prints the team memberships of the current user?
+mcq_options: A) groups B) users C) logins D) whoami
+mcq_answer: A
+mcq_why: groups prints the group names of a user.
+fill_blank: The administrator account has user id ____ → 0
+hindi_to_task: Show your user id and groups.
+task_answer: id
+own_task: Find out which groups your user belongs to and what each one allows.
+practice_question: Where are user accounts listed?
+practice_answer: /etc/passwd
+
+@LNX-026
+type: topic56
+topic: 04 Users and permissions
+level: Beginner
+term: Read, write and execute permissions
+cue: How do the nine characters in a listing such as rwxr-xr-- say who may read, change or run a file?
+category: Security concept
+frequency: Very high
+importance: 5
+origin: A shared system must stop users from reading or changing each other's files, so Unix gives every file three permission sets for its owner, its group and everyone else.
+pro_tip: Memorise the numbers four, two and one for read, write and execute, since chmod uses them.
+memory_story: Permissions are three locks on every file, one each for the owner, the team and the public.
+visual: Nine boxes in three groups of three, with r, w and x filled in or empty.
+emotion: The relief of finally reading a permission string at a glance.
+definition: Each file has read (r), write (w) and execute (x) permissions for its owner, its group and others, shown as nine characters after the file type in ls -l.
+explanation: In -rwxr-xr--, the first dash means a regular file, then come the owner, group and others sets. r is worth 4, w is 2 and x is 1, so rwx is 7, r-x is 5 and r-- is 4, giving 754. For a directory, read lets you list names, write lets you create or delete entries, and execute lets you enter it. Without execute on a script, you cannot run it directly.
+simple_explain: Three groups of three letters: owner, group, others. Each can have r for read, w for write, x for run. Add up 4, 2 and 1 to get the number form.
+analogy: It is like three locks on every file, for the owner, the team and the public.
+formula_rule: r = 4, w = 2, x = 1. rwxr-xr-- = 754
+example_1: -rw-r--r-- (644) is a normal text file everyone can read.
+example_2: -rwxr-xr-x (755) is a script everyone can run.
+example_3: drwx------ (700) is a private folder.
+related: chmod, chown, umask, sudo
+word_family: permission, owner, group, others, execute
+where_used: Every file | Security checks | Deployment problems
+mini_conversation: A: I get permission denied when I run the script. | B: It probably lacks the execute bit, so use chmod +x.
+misconception: ✗ The execute permission on a folder lets you run it → ✓ On a folder, execute means you may enter it and reach the files inside
+contrast: File vs folder execute: on a file it means run, on a folder it means enter.
+avoid: Do not give 777 to fix a permission error.
+memory_trick: Four, two, one, for read, write and execute.
+real_project: Reading ls -l output to find why a service cannot write to its log folder.
+real_interview: An interviewer may ask: What does the permission 755 mean?
+real_daily: It is like three locks on every file.
+mcq_question: What number is the permission rw-r--r--?
+mcq_options: A) 755 B) 777 C) 600 D) 644
+mcq_answer: D
+mcq_why: rw- is 6, r-- is 4 and r-- is 4.
+fill_blank: The execute permission has the value ____ → 1
+apply: A script gives permission denied. What is likely missing? → The execute permission
+explain_task: Explain read, write and execute permissions in three lines.
+own_task: Write the number for three permission strings of your choice.
+
+@LNX-027
+type: code56
+topic: 04 Users and permissions
+level: Beginner
+term: chmod
+cue: Which command changes who may read, write or run a file, using letters or numbers?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Permissions must be adjustable, so chmod changes the mode bits of files, either by symbolic letters or by numbers.
+pro_tip: Use chmod u+x script.sh to make a script runnable without touching other permissions.
+memory_story: chmod is the locksmith who changes the locks on a file.
+visual: A file with its permission string changing after a command.
+emotion: The satisfaction of fixing a permission denied error properly.
+meaning: chmod changes the permission bits of files and folders.
+code: chmod +x deploy.sh¶chmod 644 notes.txt¶chmod 755 script.sh¶chmod u=rw,g=r,o= secret.txt¶chmod -R 750 /srv/app
+output: deploy.sh becomes executable, notes.txt becomes read and write for the owner and read for others, script.sh gets 755, secret.txt is owner read and write plus group read, and the app folder tree gets 750.
+explanation: Symbolic mode uses u for user, g for group, o for others and a for all, with + to add, - to remove and = to set. Numeric mode sets all three sets at once. -R applies the change to everything inside a folder. Only the owner or root can change permissions.
+simple_explain: Use a number such as 644 or 755 to set everything at once, or letters like u+x to change just one thing.
+analogy: It is like a locksmith who changes the locks on a file.
+syntax: chmod mode file
+anatomy: u g o a = who | + - = = add, remove, set | r w x = what | 755 = numeric mode
+example_1: chmod u+x run.sh
+example_2: chmod go-rwx private.key
+example_3: chmod 600 ~/.ssh/id_ed25519
+variation: chmod -R u+rwX folder   // capital X adds execute only to folders and runnable files¶chmod --reference=a b   // copy permissions from another file
+used_with: ls -l, chown, umask
+related: permissions, chown, umask
+alternatives: ACLs for finer control
+where_used: Scripts | SSH keys | Web and app folders
+mini_conversation: A: How do I make this script executable? | B: Run chmod +x on it.
+misconception: ✗ chmod 777 is a harmless fix for permission errors → ✓ 777 lets anyone change the file, which is a security risk, so find the real cause
+confused_with: chmod vs chown: chmod changes what may be done, chown changes who owns the file.
+avoid: Do not run chmod -R 777 on a folder.
+wrong_code: chmod 777 /etc/ssh/ssh_config
+right_code: chmod 644 /etc/ssh/ssh_config
+memory_trick: chmod changes the mode, not the owner.
+real_project: Making deployment scripts runnable and private keys owner-only.
+real_interview: An interviewer may ask: What does chmod 600 mean?
+real_daily: It is like a locksmith changing the locks.
+mcq_question: Which command makes a script executable?
+mcq_options: A) chown +x script.sh B) ls +x script.sh C) chmod +x script.sh D) run script.sh
+mcq_answer: C
+mcq_why: chmod +x adds the execute permission.
+fill_blank: chmod 600 gives read and write to the ____ only → owner
+hindi_to_task: Give the owner read and write, and everyone else no permissions, on private.txt.
+task_answer: chmod 600 private.txt
+own_task: Set three files to 600, 644 and 755 and check with ls -l.
+practice_question: What does the -R flag do?
+practice_answer: It applies the change recursively to everything inside a folder.
+
+@LNX-028
+type: code56
+topic: 04 Users and permissions
+level: Intermediate
+term: chown
+cue: Which command changes the owner and group of a file or a whole folder tree?
+kind: Command
+frequency: High
+importance: 4
+origin: Files must belong to the right account for services to use them, so chown transfers ownership to a user and group.
+pro_tip: Services often fail because their folder is owned by root, so check ownership with ls -l first.
+memory_story: chown hands the deed of a file to a new owner.
+visual: A listing where the owner and group names change.
+emotion: The relief when a service can finally write to its folder.
+meaning: chown changes the owner and optionally the group of files and directories.
+code: sudo chown asha notes.txt¶sudo chown asha:developers project/¶sudo chown -R www-data:www-data /var/www/site¶sudo chgrp staff report.txt
+output: notes.txt is owned by asha, project is owned by user asha and group developers, the whole site folder is owned by www-data, and report.txt gets the group staff.
+explanation: The format is owner:group, and either part can be left out. Only root can give files away to another user, so chown usually needs sudo. -R changes everything below a folder. chgrp changes only the group. Wrong ownership is one of the most common reasons for permission denied errors from services.
+simple_explain: Use chown user:group path to set who owns something, and -R for a whole tree. You usually need sudo.
+analogy: It is like handing the deed of a file to a new owner.
+syntax: chown [-R] owner[:group] path
+anatomy: owner:group = new owner and group | -R = recursive | chgrp = group only
+example_1: sudo chown -R app:app /opt/app
+example_2: sudo chown :staff shared.txt
+example_3: sudo chown www-data upload/
+variation: chown --reference=a b   // copy ownership from another file¶chown -h link   // change a symbolic link itself
+used_with: chmod, ls -l, services, sudo
+related: chmod, users and groups, services
+alternatives: Running the service as the file owner
+where_used: Web folders | Application data | Deployments
+mini_conversation: A: The app cannot write to its upload folder. | B: Check the owner, and use chown to give it to the app user.
+misconception: ✗ Any user can give their files to someone else → ✓ Only root can change the owner of a file, which is why chown usually needs sudo
+confused_with: chown vs chmod: chown changes the owner, chmod changes the permissions.
+avoid: Do not run chown -R on a path stored in a variable that might be empty.
+wrong_code: chown -R app /
+right_code: chown -R app:app /opt/app
+memory_trick: chown changes who owns it.
+real_project: Giving the web server user ownership of an upload folder.
+real_interview: An interviewer may ask: A service cannot write to a folder. What do you check?
+real_daily: It is like handing the deed of a property to a new owner.
+mcq_question: Which command changes the owner of a file?
+mcq_options: A) chroot B) chown C) chmod D) chcon
+mcq_answer: B
+mcq_why: chown changes the owner and group.
+fill_blank: In chown asha:staff file, staff is the ____ → group
+hindi_to_task: Give the folder data to the user deploy and the group deploy, recursively.
+task_answer: sudo chown -R deploy:deploy data
+own_task: Check the owners of three folders and explain why they are set that way.
+practice_question: Why does chown usually need sudo?
+practice_answer: Because only root may change the owner of a file.
+
+@LNX-029
+type: code56
+topic: 04 Users and permissions
+level: Beginner
+term: sudo
+cue: Which command runs a single command with administrator rights, after checking that you are allowed to?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Working as root all the time is dangerous, so sudo lets trusted users run individual commands with elevated rights and records that they did.
+pro_tip: Prefer sudo for a single command over switching to a root shell, so mistakes stay small.
+memory_story: sudo is a temporary visitor pass to the manager's office, used for one task at a time.
+visual: A normal user prompt, and a command carrying a gold pass.
+emotion: The care of knowing you hold extra power.
+meaning: sudo runs a command as another user, by default root, if the sudoers rules allow it.
+code: sudo apt update¶sudo systemctl restart nginx¶sudo -u postgres psql¶sudo -l¶sudo visudo
+output: The package list is updated as root, the nginx service restarts, a database shell opens as the postgres user, the list of commands you may run is shown, and the sudoers file opens safely for editing.
+explanation: sudo reads rules from /etc/sudoers, which should only be edited with visudo because it checks the syntax. -u runs the command as another user. It asks for your password, not root's, and logs what you ran. A wrong sudoers file can lock everyone out, which is why visudo exists.
+simple_explain: Put sudo before a command that needs admin rights. It asks for your own password and leaves a record in the logs.
+analogy: It is like a temporary pass to the manager's office, used for one task.
+syntax: sudo [-u user] command
+anatomy: sudo = run with elevated rights | -u = run as another user | -l = list allowed commands
+example_1: sudo reboot
+example_2: sudo tail /var/log/auth.log
+example_3: sudo -u www-data touch /var/www/test
+variation: sudo -i   // open a root shell, use with care¶sudo !!   // repeat the last command with sudo
+used_with: systemctl, apt, visudo
+related: users and groups, chown, systemd
+alternatives: su, or running as root directly, which is less safe
+where_used: Installing software | Restarting services | Reading protected files
+mini_conversation: A: Permission denied when restarting the service. | B: Run it with sudo.
+misconception: ✗ sudo asks for the root password → ✓ sudo asks for your own password and checks the sudoers rules
+confused_with: sudo vs su: sudo runs one command with your password, su switches to another user with that user's password.
+avoid: Do not edit /etc/sudoers with a normal editor.
+wrong_code: sudo vim /etc/sudoers
+right_code: sudo visudo
+memory_trick: One command at a time, with sudo.
+real_project: Restarting a customer's service with sudo without ever logging in as root.
+real_interview: An interviewer may ask: What is the difference between sudo and su?
+real_daily: It is like a temporary pass to the manager's office.
+mcq_question: Which command safely edits the sudoers file?
+mcq_options: A) vim only B) nano /etc/passwd C) cat D) visudo
+mcq_answer: D
+mcq_why: visudo checks the syntax before saving.
+fill_blank: sudo -u ____ psql runs psql as the database user → postgres
+hindi_to_task: Restart the nginx service with administrator rights.
+task_answer: sudo systemctl restart nginx
+own_task: Run sudo -l and write what you are allowed to do.
+practice_question: Whose password does sudo ask for?
+practice_answer: Your own password.
+
+@LNX-030
+type: code56
+topic: 04 Users and permissions
+level: Intermediate
+term: umask
+cue: Which setting decides the default permissions of newly created files and folders by removing bits from a base mode?
+kind: Command
+frequency: Medium
+importance: 3
+origin: New files need sensible starting permissions, so the system subtracts a mask from the full permissions to get the defaults.
+pro_tip: A umask of 027 is a common stricter choice, which hides new files from other users.
+memory_story: The umask is a stencil of permissions that are always blocked.
+visual: A full set of permissions with a stencil covering some of them.
+emotion: The calm of having predictable default permissions.
+meaning: umask is a mask of permission bits that are removed from the default mode of new files and folders.
+code: umask¶umask 027¶touch a.txt && mkdir d¶ls -ld a.txt d
+output: The current mask such as 0022, then after setting 027 a new file is created with 640 and a new directory with 750.
+explanation: New files start from 666 and new directories from 777, then the mask bits are removed. With umask 022, files become 644 and folders 755. With 027, files become 640 and folders 750. The mask applies only to the current shell and its children, unless set in a startup file. New files never get execute by default.
+simple_explain: Take the starting permissions and remove the mask bits. Umask 022 gives files 644 and folders 755.
+analogy: It is like a stencil of permissions that are always blocked.
+syntax: umask [mask]
+anatomy: files start at 666 | folders start at 777 | the mask bits are removed
+example_1: umask 022
+example_2: umask 077
+example_3: umask 002
+variation: umask -S   // show the mask in symbolic form¶set umask in ~/.bashrc to make it permanent
+used_with: chmod, touch, mkdir
+related: permissions, chmod, shell startup files
+alternatives: Setting permissions explicitly with chmod
+where_used: Shared servers | Security hardening | Service accounts
+mini_conversation: A: New files are readable by everyone. | B: Set a stricter umask such as 027 or 077.
+misconception: ✗ umask adds permissions to new files → ✓ umask removes permission bits from the default mode
+confused_with: umask vs chmod: umask sets defaults for future files, chmod changes existing files.
+avoid: Do not rely on umask alone for secrets, set the permissions explicitly.
+wrong_code: umask 755
+right_code: umask 022
+memory_trick: The mask removes, it never adds.
+real_project: Setting umask 077 for a service account that creates private files.
+real_interview: An interviewer may ask: What does a umask of 022 mean?
+real_daily: It is like a stencil of blocked permissions.
+mcq_question: With umask 022, what permission does a new file get?
+mcq_options: A) 644 B) 755 C) 777 D) 600
+mcq_answer: A
+mcq_why: 666 minus 022 gives 644.
+fill_blank: The starting mode for new files is ____ before the mask is applied → 666
+hindi_to_task: Set a mask so new files are readable only by the owner.
+task_answer: umask 077
+own_task: Create a file and folder under three different masks and compare the modes.
+practice_question: What mode does a new directory get with umask 027?
+practice_answer: 750
+
+@LNX-031
+type: code56
+topic: 04 Users and permissions
+level: Intermediate
+term: SSH key file permissions
+cue: Why does SSH refuse a private key that other users can read, and what permissions should the key and the .ssh folder have?
+kind: Security practice
+frequency: High
+importance: 5
+origin: A private key that others can read is no longer private, so SSH checks the permissions and refuses to use a key that is too open.
+pro_tip: If you see UNPROTECTED PRIVATE KEY FILE, run chmod 600 on the key.
+memory_story: A private key left readable is a house key left under the doormat for everyone.
+visual: A warning message with a key file and its permission string.
+emotion: The relief of fixing a stubborn SSH error in one line.
+meaning: SSH requires private keys to be readable only by their owner, and the .ssh folder to be private as well.
+code: chmod 700 ~/.ssh¶chmod 600 ~/.ssh/id_ed25519¶chmod 644 ~/.ssh/id_ed25519.pub¶chmod 600 ~/.ssh/authorized_keys
+output: The folder is private to the owner, the private key is read and write for the owner only, the public key is readable, and authorized_keys is owner-only.
+explanation: SSH prints a warning that permissions are too open and ignores the key when group or others can read it. The .ssh folder should be 700, private keys 600 and the authorized_keys file 600. Public keys can be 644 since they are meant to be shared. The same rules apply on the server side for the account you log in to.
+simple_explain: Keep the .ssh folder at 700 and private keys at 600. SSH will not use a key that other users can read.
+analogy: It is like a house key that must not be left under the doormat.
+syntax: chmod 700 ~/.ssh  |  chmod 600 private_key
+anatomy: 700 = owner only, with access to the folder | 600 = owner read and write | 644 = public key
+example_1: chmod 600 ~/.ssh/id_rsa
+example_2: ssh -i key.pem user@host
+example_3: chmod 400 key.pem
+variation: chmod 400 key.pem   // read only for the owner, common for downloaded keys¶ls -l ~/.ssh   // check all modes
+used_with: ssh, scp, authorized_keys, chmod
+related: chmod, ssh keys, permissions
+alternatives: ssh-agent to hold keys in memory
+where_used: Logging into servers | Cloud virtual machines | Git over SSH
+mini_conversation: A: SSH says my key has permissions that are too open. | B: Run chmod 600 on the private key file.
+misconception: ✗ The public key must also be 600 → ✓ The public key may be readable, and only the private key must be private
+confused_with: Private key vs public key permissions: the private key needs 600, the public key can be 644.
+avoid: Do not copy a private key to a shared folder.
+wrong_code: chmod 777 ~/.ssh/id_ed25519
+right_code: chmod 600 ~/.ssh/id_ed25519
+memory_trick: Six hundred for the private key.
+real_project: Fixing a downloaded cloud key so it can be used to log in.
+real_interview: An interviewer may ask: Why does SSH reject a key with open permissions?
+real_daily: It is like a house key that must not be left under the doormat.
+mcq_question: Which mode is right for a private SSH key?
+mcq_options: A) 666 B) 600 C) 777 D) 755
+mcq_answer: B
+mcq_why: Only the owner should read and write the private key.
+fill_blank: The .ssh folder should have mode ____ → 700
+hindi_to_task: Make the key file key.pem readable only by you.
+task_answer: chmod 400 key.pem
+own_task: Check the permissions in your own .ssh folder and fix anything too open.
+practice_question: Which mode do many cloud providers suggest for a downloaded key?
+practice_answer: 400

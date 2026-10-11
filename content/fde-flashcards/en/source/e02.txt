@@ -1,0 +1,372 @@
+
+@GIT-009
+type: topic56
+topic: 01 Basics
+level: Beginner
+term: Commit message
+cue: What is the short line written with every commit that explains why the change was made?
+category: Good practice
+frequency: Very high
+importance: 4
+origin: Whoever reads the history, even you six months later, has to understand why a change happened, so Git asks for a message with every commit.
+pro_tip: Keep the first line under 50 characters and write it as a command, like Add login form.
+memory_story: A commit message is the short note on a receipt that still explains the purchase a year later.
+visual: A small label under every photo that makes the album easy to read.
+emotion: The relief of finding a clear message when you are hunting an old mistake.
+definition: A commit message is a short text saying what changed in a commit and why.
+explanation: A good message states what changed on the first line and, when needed, explains why after a blank line. This makes git log, reviews and reverts far easier.
+simple_explain: Write the message as if explaining to the next developer. Messages like fix or update are useless, while Fix crash when cart is empty is a message that helps.
+analogy: It is like a diary line noting what happened on that day.
+formula_rule: First line (under 50 characters, as a command) → blank line → details (why)
+example_1: Fix crash when the cart is empty
+example_2: Add email validation to signup form
+example_3: Remove unused legacy payment code
+related: git commit, git log, conventional commits
+word_family: commit, subject line, body, changelog
+where_used: Code review | Writing a changelog | Hunting bugs
+mini_conversation: A: Why was this commit made? | B: Read the message, it says it was made to fix the refund bug.
+misconception: ✗ Writing update or changes as the commit message is enough → ✓ The message should say what changed and why, such as Fix refund total rounding
+contrast: Good vs bad message: a good message names the work, a bad one just says something changed.
+avoid: Do not write angry or joking messages, they stay in the history forever.
+memory_trick: Say what and why, short and as a command.
+real_project: Agreeing a commit message format in the team so the changelog can be generated automatically.
+real_interview: An interviewer may ask: What does a good commit message look like?
+real_daily: It is like writing a note on why the fridge holds certain food.
+mcq_question: Which of these commit messages is the most useful?
+mcq_options: A) changes done B) Fix crash on empty cart checkout C) update D) fixed stuff
+mcq_answer: B
+mcq_why: It says what was fixed and where, while the others are very vague.
+fill_blank: Keep the first line of a commit message in the imperative and under ____ characters → 50
+apply: Write a good commit message for adding a navbar. → Add responsive navbar to homepage
+explain_task: Explain in two lines why a good commit message matters.
+own_task: Read your last three commit messages and rewrite one of them to be better.
+
+@GIT-010
+topic: 01 Basics
+level: Beginner
+term: git remote (origin)
+cue: Which command and default name link your local repository to the repository on GitHub?
+kind: Git command
+frequency: High
+importance: 5
+origin: Remote means far away; Git can connect one repository to many others, and after a clone the first remote is named origin by default.
+pro_tip: Always check with git remote -v where a push will go.
+memory_story: A remote is like a phone number linking your repo to GitHub, and origin is the name saved for that number.
+visual: A cable runs from a laptop through the clouds to a big server.
+emotion: The thrill of seeing your local and online repos connected for the first time.
+meaning: git remote manages the names and addresses that connect a local repository to online ones.
+code: git remote add origin https://github.com/asha/notes.git¶git remote -v
+output: origin  https://github.com/asha/notes.git (fetch)¶origin  https://github.com/asha/notes.git (push)
+explanation: A remote is a name and URL pair. The name origin is only a convention and you can call it anything. Push and pull use the name to know where to go.
+simple_explain: A remote gives your local repo the address of the repo on GitHub. Origin is a short name for that address, so you do not type the full URL every time.
+analogy: It is like saving someone's number in your phone under the name Dad.
+syntax: git remote add <name> <url>
+anatomy: git remote add = command | <name> = short name (usually origin) | <url> = address of the online repo
+example_1: git remote add origin https://github.com/asha/notes.git
+example_2: git remote set-url origin git@github.com:asha/notes.git
+example_3: git remote rename origin github
+variation: git remote -v   # list all remotes¶git remote remove old   # remove a remote
+used_with: git push, git pull, git fetch, origin
+related: git clone, git push, upstream
+alternatives: A clone sets the remote automatically
+word_family: git remote, git push, git pull, git fetch, git clone
+where_used: Connecting a new repo to GitHub | Changing the URL (HTTPS to SSH) | Adding upstream to a fork
+mini_conversation: A: Push gives me a no remote error. | B: You have not added a remote, so run git remote add origin first.
+misconception: ✗ origin is a fixed Git word that cannot be changed → ✓ Origin is only a customary name that can be anything, and git remote rename can change it
+confused_with: origin vs upstream: origin is your own remote, upstream is usually the original project you forked.
+avoid: Do not add a remote with the wrong URL, check it with git remote -v.
+wrong_code: git remote origin https://github.com/asha/notes.git
+right_code: git remote add origin https://github.com/asha/notes.git
+memory_trick: Origin is the Online Route Into Github.
+real_project: Adding a remote before pushing a local project to GitHub for the first time.
+real_interview: An interviewer may ask: What is origin, and can it be renamed?
+real_daily: It is like saving a contact under a short name.
+mcq_question: Which command lists all connected remotes with their URLs?
+mcq_options: A) git remote -v B) git status -r C) git config -r D) git log -remote
+mcq_answer: A
+mcq_why: git remote -v is the verbose list showing each remote's name and URL.
+fill_blank: git remote ____ origin https://github.com/asha/notes.git → add
+hindi_to_task: Connect https://github.com/asha/notes.git under the name origin.
+task_answer: git remote add origin https://github.com/asha/notes.git
+own_task: Run git remote -v in one of your repos and say what the fetch and push URLs are.
+practice_question: What is the command to change the URL of origin from HTTPS to SSH?
+practice_answer: git remote set-url origin git@github.com:asha/notes.git
+
+@GIT-011
+topic: 01 Basics
+level: Beginner
+term: git push
+cue: Which command sends your local commits to the repository on GitHub?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: Push means to shove forward; the command shoves your local commits into the remote repository so others can see them.
+pro_tip: Run git push -u origin main the first time, and after that a plain git push is enough.
+memory_story: You hand your parcel over the counter and it travels to GitHub's warehouse.
+visual: Boxes of commits ride a conveyor belt from a laptop up into the clouds.
+emotion: The joy of seeing your work safe online.
+meaning: git push sends local commits to a remote repository.
+code: git push -u origin main
+output: Enumerating objects: 5, done.¶To https://github.com/asha/notes.git¶ * [new branch]      main -> main¶branch 'main' set up to track 'origin/main'.
+explanation: Push sends only committed changes, never uncommitted ones. If the remote has new commits you do not have, the push is rejected and you must pull first. The -u flag links your branch with origin/main.
+simple_explain: Push sends your commits to GitHub. If someone pushed before you, Git stops you, so run git pull first and then push again.
+analogy: It is like sending the day's accounts to head office before closing the shop.
+syntax: git push [-u] <remote> <branch>
+anatomy: git push = command | -u = set tracking | <remote> = origin | <branch> = main
+example_1: git push -u origin main
+example_2: git push origin feature/login
+example_3: git push origin --delete old-branch
+variation: git push   # when tracking is set¶git push --tags   # send all tags¶git push origin HEAD   # send the current branch
+used_with: origin, -u, --tags, --delete
+related: git pull, git fetch, git commit
+alternatives: Committing directly in the GitHub web editor
+word_family: git push, git pull, git fetch, git commit, git remote
+where_used: Daily work | Before opening a pull request | Backup
+mini_conversation: A: I pushed but it was rejected. | B: The remote has new commits, so pull them first and then push again.
+misconception: ✗ git push uploads all files at once even if I did not commit → ✓ Push sends only committed changes, and uncommitted work stays on your machine
+confused_with: git push vs git commit: commit makes a local snapshot, push sends it online.
+avoid: Do not force push to a shared branch without thinking.
+wrong_code: git push origin
+right_code: git push origin main
+memory_trick: Push means send the parcel upward.
+real_project: Pushing a feature branch and then opening a pull request.
+real_interview: An interviewer may ask: Why can a push be rejected and how do you fix it?
+real_daily: It is like sending the day's accounts to head office in the evening.
+mcq_question: A push is rejected because the remote has new commits. What is the right next step?
+mcq_options: A) git init B) Clone again C) Delete .git D) git pull, then push again
+mcq_answer: D
+mcq_why: First bring in the remote's new commits and merge them with yours, then push.
+fill_blank: git ____ -u origin main → push
+hindi_to_task: Send the feature-login branch to origin.
+task_answer: git push origin feature-login
+own_task: Make a new commit, push it to your GitHub repo, and look at it in the browser.
+practice_question: What does the -u flag do in git push?
+practice_answer: It links the local branch to the remote branch, so later a plain git push and git pull are enough.
+
+@GIT-012
+topic: 01 Basics
+level: Beginner
+term: git pull
+cue: How do you bring new commits from the remote into your current branch with a single command?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: Pull means to drag toward you; the command drags new remote commits and merges them into your current branch.
+pro_tip: Run git pull before you start work so you do not build on old code.
+memory_story: You tug a rope and your friend's latest work comes toward you.
+visual: One end of a rope is tied to GitHub and you are pulling it toward yourself.
+emotion: The comfort of having the team's latest work with you.
+meaning: git pull fetches new commits from the remote and merges them into the current branch.
+code: git pull origin main
+output: From https://github.com/asha/notes¶ * branch            main       -> FETCH_HEAD¶Updating 3f2a9c1..8b7d1e2¶Fast-forward¶ README.md | 2 ++
+explanation: Pull really does two jobs: first git fetch to get new commits, then git merge to combine them. If both sides changed the same file you may get a merge conflict.
+simple_explain: Pull brings GitHub's new commits to your laptop and mixes them with your work. If both of you changed the same line, you get a conflict that you fix by hand.
+analogy: It is like downloading the latest group notes and merging them with your own.
+syntax: git pull [<remote> <branch>]
+anatomy: git pull = command | <remote> = origin | <branch> = main
+example_1: git pull
+example_2: git pull origin develop
+example_3: git pull --rebase
+variation: git pull --rebase   # rebase instead of merge¶git pull --ff-only   # only move straight ahead
+used_with: git fetch, git merge, --rebase
+related: git fetch, git merge, git push
+alternatives: Running git fetch and then git merge separately
+word_family: git pull, git fetch, git merge, git push, git clone
+where_used: Start of the day | Before pushing | Updating a branch
+mini_conversation: A: My code does not show my friend's work. | B: Run git pull and it will arrive from the remote.
+misconception: ✗ git pull only looks at what is new and changes nothing → ✓ Pull brings the remote commits and also merges them into your branch, so your files change
+confused_with: git pull vs git fetch: pull fetches and merges, fetch only fetches.
+avoid: Do not pull blindly with uncommitted changes.
+wrong_code: git pull -u origin main
+right_code: git pull origin main
+memory_trick: Pull means pull it near and merge.
+real_project: Running git pull --rebase every morning so the history stays clean.
+real_interview: An interviewer may ask: What is the difference between git pull and git fetch?
+real_daily: It is like downloading group notes and combining them with yours.
+mcq_question: Which two commands combined make up git pull?
+mcq_options: A) clone and status B) init and add C) fetch and merge D) commit and push
+mcq_answer: C
+mcq_why: Pull first fetches and then merges.
+fill_blank: git ____ origin main → pull
+hindi_to_task: Bring the new changes from origin's main branch.
+task_answer: git pull origin main
+own_task: Make a change on GitHub in your browser and bring it to your laptop with git pull.
+practice_question: What happens if both sides changed the same line during a pull?
+practice_answer: A merge conflict appears and you must resolve it by hand.
+
+@GIT-013
+topic: 01 Basics
+level: Beginner
+term: git log
+cue: How do you see the list of all commits made so far, by whom and when?
+kind: Git command
+frequency: Very high
+importance: 4
+origin: A log is a ledger; Git records every commit in its history and this command shows the whole record from newest to oldest.
+pro_tip: git log --oneline --graph --all shows a map of your branches at a glance.
+memory_story: It is like turning back the pages of a diary where every entry has a date and a name.
+visual: A long list where each line shows a short code and a message.
+emotion: The pleasure of reading the whole story of old work in one place.
+meaning: git log shows the commit history with authors and messages.
+code: git log --oneline -3
+output: 8b7d1e2 Fix refund rounding¶3f2a9c1 Add homepage heading¶a1c4e90 Initial commit
+explanation: Log starts from the newest commit. Each commit has a hash, an author, a date and a message. Options let you shorten the list, filter it, or draw it as a graph.
+simple_explain: git log shows who changed what in the project, and when. For a long list add --oneline so each commit takes just one line.
+analogy: It is like the entries in a bank passbook where every transaction is written.
+syntax: git log [options]
+anatomy: git log = command | --oneline = one line per commit | -3 = only three commits
+example_1: git log --oneline
+example_2: git log --author="Asha" --since="2 weeks ago"
+example_3: git log --graph --oneline --all
+variation: git log -p -2   # with the changes¶git log -- src/app.js   # history of one file¶git log --stat
+used_with: --oneline, --graph, --author, -p
+related: git blame, git show, git reflog
+alternatives: The Commits tab on GitHub
+word_family: git log, git show, git diff, git blame, git reflog
+where_used: Finding the source of a bug | Code review | Writing release notes
+mini_conversation: A: When did this line change? | B: Run git log -p on that file and every change will show.
+misconception: ✗ git log shows the full history of every branch at once → ✓ git log shows only the current branch, and you need --all to include every branch
+confused_with: git log vs git reflog: log shows the commit history, reflog shows every move HEAD made, including lost commits.
+avoid: Do not open the whole log of a huge repo without --oneline or -n.
+wrong_code: git log --short
+right_code: git log --oneline
+memory_trick: Log means a ledger of the whole history.
+real_project: Making a list of new changes before a release with git log --oneline v1.0..HEAD.
+real_interview: An interviewer may ask: How do you see the full history of a single file?
+real_daily: It is like reading each entry of a passbook.
+mcq_question: Which option shows each commit on a single line?
+mcq_options: A) --all B) --oneline C) --stat D) --short
+mcq_answer: B
+mcq_why: --oneline shows the hash and message on one line.
+fill_blank: git log ____ -5 → --oneline
+hindi_to_task: Show the last five commits, one per line.
+task_answer: git log --oneline -5
+own_task: Run git log --graph --oneline --all on your project and look at the map of your branches.
+practice_question: What command shows only Asha's commits?
+practice_answer: git log --author="Asha"
+
+@GIT-014
+type: topic56
+topic: 01 Basics
+level: Beginner
+term: README.md
+cue: Which file shows first on a repository's home page and introduces the project?
+category: Documentation
+frequency: Very high
+importance: 4
+origin: README means read me; by old tradition it was the first file in a project, and GitHub shows it automatically on the repo page.
+pro_tip: Always write what the project does, how to run it, and how to contribute.
+memory_story: A README is the signboard outside a shop that tells you what is inside.
+visual: A big board hangs at a shop door showing the shop's name and goods.
+emotion: The relief a new visitor feels when they understand the project at once.
+definition: README.md is a Markdown file that introduces a project, explains how to install it, and shows how to use it.
+explanation: GitHub shows README.md on the repository home page automatically. In Markdown you can write headings, lists and code blocks. A good README saves new people a lot of time.
+simple_explain: The README is the first page of your project. Whoever opens the repo reads it first, so say what it is, how to run it, and how to help.
+analogy: It is like the signboard outside a shop or the cover of a book.
+formula_rule: README = Name + What it does + Install + Use + Contribute
+example_1: A calculator project's README says to run npm install and npm start.
+example_2: An open-source library's README shows a screenshot and usage code.
+example_3: A personal profile repository's README introduces its owner with links.
+related: Markdown, LICENSE, CONTRIBUTING.md
+word_family: README, LICENSE, CONTRIBUTING, CHANGELOG
+where_used: Every repository | Open-source libraries | Portfolio projects
+mini_conversation: A: How do I run this project? | B: The README has the install and run steps, look there.
+misconception: ✗ A README is not needed because the code explains itself → ✓ Without a README a newcomer cannot understand the project, so even a short README should always be there
+contrast: README vs code comments: a README introduces the whole project, comments explain only a piece of code.
+avoid: Never write passwords or private keys in a README.
+memory_trick: README says Read Everything About Documents Me first.
+real_project: Giving a new developer the setup steps in the README for onboarding.
+real_interview: An interviewer may ask: What should a good README contain?
+real_daily: It is like the quick-start guide that comes with a new gadget.
+mcq_question: Which file does GitHub show automatically on the repository home page?
+mcq_options: A) package.json B) .gitignore C) index.html D) README.md
+mcq_answer: D
+mcq_why: GitHub renders README.md on the repo page.
+fill_blank: A README is usually written in the ____ format → Markdown
+apply: How would you show install steps in a README? → Write the commands inside a code block with triple backticks
+explain_task: Tell a friend in three lines why a README matters.
+own_task: Write a five-line README for one of your projects: name, what it does, install, use, license.
+
+@GIT-015
+type: topic56
+topic: 01 Basics
+level: Beginner
+term: .gitignore
+cue: Which file tells Git not to track certain files or folders?
+category: Config file
+frequency: Very high
+importance: 5
+origin: Projects have files such as build output and secrets that must never enter history, so Git reads a .gitignore file listing patterns to skip.
+pro_tip: Add a .gitignore template for your language as soon as you create a repo.
+memory_story: A .gitignore is a list of what is not wanted, and it stops those things at the gate.
+visual: A guard at a gate holds a list of the files that may not enter.
+emotion: The peace of mind that secrets will not be committed by accident.
+definition: .gitignore is a text file that lists patterns of files and folders Git will not track.
+explanation: You write entries such as *.log, node_modules/ or .env. It only affects untracked files; a file that is already committed needs git rm --cached first.
+simple_explain: In .gitignore you list the files Git must not look at, such as passwords, logs or huge folders. A file that was already committed is not ignored.
+analogy: It is like a list at the door of things not allowed inside.
+formula_rule: Write one pattern per line: *.log, build/, .env
+example_1: Writing node_modules/ ignores the whole dependency folder.
+example_2: Writing .env keeps your secrets file out of Git.
+example_3: Writing *.log ignores every log file in any folder.
+related: git status, git rm --cached, .env
+word_family: ignore, pattern, glob, untracked
+where_used: Every project | Protecting secrets | Skipping large build folders
+mini_conversation: A: My .env file went to GitHub. | B: It should have been in .gitignore first, so now run git rm --cached .env and change your keys.
+misconception: ✗ Writing a file name in .gitignore also removes an already committed file from Git → ✓ .gitignore stops only untracked files, and you must run git rm --cached to stop tracking one already committed
+contrast: .gitignore vs git rm: gitignore blocks new files, git rm stops tracking an existing one.
+avoid: Do not rely on ignoring secrets after you have already committed them.
+memory_trick: Ignore means keep it at the gate.
+real_project: Ignoring node_modules and .env on day one of a new React project.
+real_interview: An interviewer may ask: How do you ignore a file that was already committed?
+real_daily: It is like a short list of what will not go in the travel bag.
+mcq_question: A file is already committed. What happens when you add it to .gitignore?
+mcq_options: A) The file disappears from history B) Git crashes C) The file stays tracked D) The repo becomes private
+mcq_answer: C
+mcq_why: .gitignore has no effect on a tracked file until you run git rm --cached.
+fill_blank: To ignore your secrets file, write ____ in .gitignore → .env
+apply: What command stops tracking a committed .env file? → git rm --cached .env
+explain_task: Explain in three lines when .gitignore does not work.
+own_task: Make a .gitignore for your project that includes .env and the node_modules or build folder.
+
+@GIT-016
+type: topic56
+topic: 01 Basics
+level: Beginner
+term: Public vs Private repository
+cue: Which setting decides whether a repo on GitHub can be seen by everyone or only by chosen people?
+category: Visibility setting
+frequency: High
+importance: 4
+origin: Open source needs code that everybody can see, but companies and individuals also need to hide work, so GitHub lets a repository be public or private.
+pro_tip: Start private and go public only when ready, after checking for secrets.
+memory_story: A public repo is a notice board at a crossroads, and a private repo is your own cupboard with the key in your pocket.
+visual: A glass window everyone can look through, and a locked door only chosen people can enter.
+emotion: The control of choosing when to show your work.
+definition: A public repo is visible to anyone, and a private repo is visible only to people the owner allows.
+explanation: Anyone can view and clone a public repo, but only people with permission can edit it. A private repo is visible only to the owner and collaborators. Visibility can be changed later, but once public the history is visible too.
+simple_explain: Public means anyone on the internet can read it. Private means only people you allow. Before making it public, check that no secrets are in the history.
+analogy: It is the difference between a public notice board and a locked cupboard.
+formula_rule: Public = everyone can see, Private = only allowed people
+example_1: An open-source library is public so the world can use it.
+example_2: A company backend is private and visible only to employees.
+example_3: A student keeps an assignment private until it is submitted.
+related: collaborators, fork, secrets, open-source
+word_family: public, private, internal, visibility
+where_used: Open-source | Company code | Personal projects
+mini_conversation: A: Can anyone see my repo? | B: Check the visibility in Settings, if it is public then yes.
+misconception: ✗ A public repo lets anyone edit it → ✓ A public repo lets everyone read and clone it, but changes need permission or a reviewed pull request
+contrast: Public vs private: public is visible to all, private only to allowed people.
+avoid: Do not make a repo public by accident while it still holds secrets.
+memory_trick: Public is for the whole world, Private is for people I permit.
+real_project: Building a new product in a private repo and later making only the library part public.
+real_interview: An interviewer may ask: What would you do if a secret was committed to a public repo?
+real_daily: It is like the difference between a notice board and a locked cupboard.
+mcq_question: A repo is public. What can a random stranger do with it?
+mcq_options: A) View, clone and fork it B) Remove collaborators C) Edit the main branch directly D) Change the settings
+mcq_answer: A
+mcq_why: A public repo lets everyone read and fork it, but not edit it.
+fill_blank: A repo visible only to allowed people is called ____ → private
+apply: What do you check before making a repo public? → That no secrets or keys are in the history
+explain_task: Explain the difference between a public and a private repo in two lines.
+own_task: Check the visibility of one of your repos and write whether it should be public and why.

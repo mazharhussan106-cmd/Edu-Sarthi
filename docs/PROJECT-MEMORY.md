@@ -18,6 +18,7 @@ An English spoken-communication training platform: students record or upload, te
 ## Decisions that must not be undone
 
 - **One card.** Words, chunks, grammar and every deck card use the EduSarthi card in `components/flashcards/`: navy header band, three sides that turn, text that fits the screen, Known / Unknown / Remark bar, Day 1·3·7·15·30·60 review. Mockups: `docs/flashcard-v2-cards.png`, `docs/flashcard-built.png`, `docs/chunk-cards.png`. Plan for chunks (the pattern to copy): `docs/CHUNK-PLAN.md`.
+- **Flashcards are always written in English.** Every flashcard deck made by any chat or by the flashcard-maker skill (explanations, memory stories, analogies, mini conversations, practice questions) is written in plain English, not Hinglish. Commands and code stay as they are. Owner's instruction, 6 Oct 2026; supersedes the skill's default of Hinglish for Hindi speakers.
 - Built-in cards have `deckId = null`. Anything that picks "the next built-in card", counts built-in cards, or opens a card by code must filter on that, or student-made and imported deck cards leak into everyone's daily session.
 - Card code from an uploaded Excel file is only ever **shown**, never run by the server.
 - Public decks are reviewed by an admin first; institute decks stay inside the institute; imported 56-point cards are read-only in the app (edit the sheet, upload again, same ID updates).
@@ -59,6 +60,14 @@ Settings (page and the header gear) now has **Share EduSarthi** (phone share she
 ## Flashcard phone layout: lesson (10 Oct)
 
 The card must sit in a box of **definite height** (`h-[calc(100dvh-7.25rem-…)]` on the page, `absolute inset-0` inside the flex-1 wrapper). A `min-h` or auto height lets the box grow to its content, so `useFitFont` always sees "it fits", never shrinks the text and never scrolls. Verified with a local Postgres + Playwright at 448×900: card fills the screen, Known bar ends 6px above the bottom nav, side 2 scrolls inside the card. Side 2's smallest font is 12px.
+
+## Subject decks on Explore (11 Oct, branch claude/gifted-brown-tzvr5h)
+
+The 21 non-English decks in `content/fde-flashcards/` (924 cards: Microsoft Excel, Linux, Docker, Kubernetes, CI/CD, Cloud, Networking, Logging, SSO, JS/TS, API Integration, GitHub, Supabase, Power BI, ETL, Airflow, Jupyter, LLM APIs, RAG, AI Evaluation, Requirements) are loaded by **`prisma/import-decks.ts`**. It reuses the Admin → Import code, so each deck is owned by the admin, public and approved, and shows on **/explore** under six subjects (tags): data, programming, cloud and networking, infrastructure, artificial intelligence, career skills. Re-running updates in place.
+
+**To make them live:** merge, then run **Actions → "Load flashcard decks"** (`.github/workflows/flashcard-decks.yml`). An admin account must already exist; set the repository variable `ADMIN_EMAIL` to choose which one (otherwise the oldest admin). Verified on a local Postgres: 20 decks, 884 cards, idempotent; Explore lists them and "Import and study" opens the Docker deck on the standard card.
+
+Not included: the Python and SQL decks (their workbooks are not in the repo — upload them in Admin → Import with a tag such as `programming` or `data`). The Excel deck (40 cards, first made on `claude/happy-galileo-167f8x`) now lives in `content/fde-flashcards/xl/`, audited and listed under data. Its XL-023 answer `#DIV/0!` was saved by Excel as an error value and the importer read it as empty; `lib/xlsxCards.ts` now reads error cells as their code.
 
 ## Starting a new chat
 

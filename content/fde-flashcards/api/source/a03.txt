@@ -1,0 +1,536 @@
+
+@API-016
+topic: 03 Data formats
+level: Beginner
+term: JSON
+cue: Which lightweight text format, built from curly braces and square brackets, do most web APIs use to send data?
+category: Data format
+frequency: Very high
+importance: 5
+origin: JSON grew out of JavaScript's object syntax in the early 2000s and became popular because it is easy for people to read and for programs to parse.
+pro_tip: Use a JSON formatter or your browser's viewer to read long responses more easily.
+memory_story: JSON is a neatly labelled box of boxes, where every item has a name tag.
+visual: Curly braces holding named fields, with a square-bracket list inside one of them.
+emotion: The ease of reading data that looks almost like plain English.
+definition: JSON is a text format for data made of objects (name and value pairs), arrays (lists), strings, numbers, true or false, and null.
+explanation: Objects use curly braces with double-quoted keys, arrays use square brackets, and values can be nested. JSON has no comments, no trailing commas and no single quotes for strings. Almost every language can convert JSON text into its own objects.
+simple_explain: JSON writes data as named fields. For example {"name": "Asha", "age": 21} is an object with two fields, and a list is written in square brackets.
+analogy: It is like a labelled box that can hold smaller labelled boxes.
+formula_rule: {"key": value} for objects, [a, b] for lists
+example_1: {"name": "Asha", "age": 21} is an object.
+example_2: ["red", "green", "blue"] is an array of strings.
+example_3: {"user": {"id": 7, "tags": ["new", "vip"]}} nests an object and an array.
+related: parsing JSON, Content-Type, REST, XML
+word_family: object, array, key, value, null
+where_used: Almost every web API | Configuration files | Data exchange
+mini_conversation: A: My JSON will not parse. | B: Check for single quotes or a trailing comma, since JSON allows neither.
+misconception: ✗ JSON allows single quotes and comments like JavaScript → ✓ JSON requires double quotes for keys and strings and allows no comments or trailing commas
+contrast: JSON vs a JavaScript object: JSON is text with strict rules, a JavaScript object lives in memory.
+avoid: Do not hand-write JSON with trailing commas.
+memory_trick: JSON needs double quotes and no trailing commas.
+real_project: Reading a JSON response from an orders API and showing the items in a table.
+real_interview: An interviewer may ask: What data types does JSON support?
+real_daily: It is like a labelled box that can hold smaller labelled boxes.
+mcq_question: Which of these is a rule of valid JSON?
+mcq_options: A) A trailing comma is allowed B) Comments may be added anywhere C) Keys and text values use double quotes D) Keys may be written without quotes
+mcq_answer: C
+mcq_why: JSON needs double-quoted keys and no trailing commas.
+fill_blank: In JSON a list of values is written inside square ____ → brackets
+apply: How do you write a list of three colours in JSON? → ["red", "green", "blue"]
+explain_task: Explain JSON in three lines.
+own_task: Write a JSON object that describes a book with a title, author and tags.
+
+@API-017
+type: code56
+topic: 03 Data formats
+level: Beginner
+term: Parsing JSON and reading nested data
+cue: How do you turn a JSON text from an API into an object and pull out a value from deep inside it?
+kind: JavaScript technique
+frequency: Very high
+importance: 5
+origin: APIs send data as text, and your code needs real objects to work with, so languages provide a parser that converts one into the other.
+pro_tip: Use optional chaining (?.) to read deep values without crashing when something is missing.
+memory_story: Parsing is unpacking a parcel, and nested reading is opening the boxes inside until you reach the item.
+visual: A text string turning into a tree of fields, with a path highlighted down to one value.
+emotion: The pleasure of reaching exactly the value you wanted.
+meaning: JSON.parse converts JSON text into a JavaScript object, and dot or bracket notation reads values inside it.
+code: const text = '{"user": {"name": "Asha", "tags": ["new", "vip"]}}';¶const data = JSON.parse(text);¶console.log(data.user.name);¶console.log(data.user.tags[0]);
+output: Asha¶new
+explanation: JSON.parse throws an error if the text is not valid JSON, so wrap it in try and catch when the source is not trusted. Object fields are read with dots, and array items by index starting at zero. With fetch, response.json() does the parsing for you.
+simple_explain: Parse the text once to get an object, then walk down with dots and indexes. Use optional chaining when a field may be missing.
+analogy: It is like opening a parcel and then the smaller boxes inside it.
+syntax: JSON.parse(text)  |  object.field.subfield[index]
+anatomy: JSON.parse = text to object | . = go into a field | [0] = first item of an array
+example_1: const data = JSON.parse('{"id": 7}');
+example_2: console.log(data.user?.address?.city);
+example_3: const first = data.items[0].name;
+variation: JSON.stringify(data)   // object back to text¶data?.user?.email ?? "none"   // safe read with a default
+used_with: fetch, response.json(), optional chaining, try and catch
+related: JSON, fetch, error handling
+alternatives: response.json() when using fetch
+where_used: Reading API responses | Config files | Test data
+mini_conversation: A: My code crashes reading the city. | B: The address may be missing, so use optional chaining like data.user?.address?.city.
+misconception: ✗ JSON.parse accepts any text → ✓ JSON.parse throws an error when the text is not valid JSON
+confused_with: JSON.parse vs JSON.stringify: parse turns text into an object, stringify turns an object into text.
+avoid: Do not read deep fields without checking they exist.
+wrong_code: const data = JSON.stringify('{"id": 7}');
+right_code: const data = JSON.parse('{"id": 7}');
+memory_trick: Parse unpacks the text, stringify packs it again.
+real_project: Parsing an orders response and reading the first item's price.
+real_interview: An interviewer may ask: What happens if you parse invalid JSON?
+real_daily: It is like opening a parcel and then the smaller boxes inside.
+mcq_question: Which function turns JSON text into an object?
+mcq_options: A) JSON.merge B) JSON.stringify C) JSON.read D) JSON.parse
+mcq_answer: D
+mcq_why: JSON.parse converts text into an object.
+fill_blank: const data = JSON.____(text) → parse
+hindi_to_task: Read the first tag from the object data.user.tags.
+task_answer: console.log(data.user.tags[0]);
+own_task: Parse a small JSON string and print one nested value.
+practice_question: What does data?.user?.city return if user is missing?
+practice_answer: undefined, without throwing an error.
+
+@API-018
+topic: 03 Data formats
+level: Intermediate
+term: XML
+cue: Which older tag-based format do some enterprise and SOAP APIs still use instead of JSON?
+category: Data format
+frequency: Medium
+importance: 2
+origin: XML was standardised in the late 1990s as a flexible way to describe data with custom tags, and it dominated enterprise web services before JSON became popular.
+pro_tip: You may meet XML in older banking, government and enterprise integrations, so learn to read it even if you prefer JSON.
+memory_story: XML is a form where every field is wrapped in an opening and closing tag.
+visual: Nested angle-bracket tags such as user, name and email, each closed properly.
+emotion: The calm of recognising an old format instead of fearing it.
+definition: XML is a text format that wraps data in opening and closing tags, such as <name>Asha</name>, and is used by SOAP and some older APIs.
+explanation: Every element has a start and end tag and elements nest inside each other. XML can also carry attributes and namespaces, which makes it verbose compared with JSON. SOAP is a protocol that sends XML messages over HTTP with a strict structure.
+simple_explain: XML wraps each value in tags, like <name>Asha</name>. It is wordier than JSON, but you will still find it in older systems.
+analogy: It is like a form where every answer is placed between a start label and an end label.
+formula_rule: <tag>value</tag>
+example_1: <user><name>Asha</name></user> nests a name inside a user.
+example_2: A SOAP request that wraps its data in an XML envelope.
+example_3: An RSS feed, which is an XML file listing articles.
+related: JSON, SOAP, Content-Type, parsing
+word_family: tag, element, attribute, namespace, SOAP
+where_used: Legacy enterprise APIs | SOAP services | Feeds such as RSS
+mini_conversation: A: This bank API returns tags, not JSON. | B: It uses XML, so set the Accept header and use an XML parser.
+misconception: ✗ XML is obsolete and never used → ✓ XML is still used in many enterprise, banking and feed integrations
+contrast: JSON vs XML: JSON is shorter and easier to read, XML is more verbose but supports attributes and strict schemas.
+avoid: Do not parse XML with regular expressions, use a real XML parser.
+memory_trick: XML closes every tag it opens.
+real_project: Integrating with a legacy partner system that only offers a SOAP service.
+real_interview: An interviewer may ask: How do JSON and XML differ?
+real_daily: It is like a form where every answer sits between a start and an end label.
+mcq_question: How is a value written in XML?
+mcq_options: A) In a table B) Between opening and closing tags C) After an equals sign D) Inside curly braces
+mcq_answer: B
+mcq_why: XML wraps values in matching tags.
+fill_blank: The protocol that sends XML messages over HTTP is called ____ → SOAP
+apply: A legacy API returns tags instead of JSON. What format is it likely using? → XML
+explain_task: Explain XML in three lines.
+own_task: Write an XML snippet for a book with a title and an author.
+
+@API-019
+topic: 03 Data formats
+level: Intermediate
+term: Form data vs JSON bodies
+cue: Which two common body formats differ as key=value pairs joined by ampersands and as structured text with braces?
+category: Data format
+frequency: Medium
+importance: 3
+origin: HTML forms were built first and send simple key and value pairs, while modern APIs needed nested data, so JSON bodies became the norm for APIs.
+pro_tip: Use JSON for APIs unless the provider documentation asks for form encoding or file uploads.
+memory_story: Form data is a flat list on a slip, while JSON is a filing cabinet with folders.
+visual: One line of key=value pairs beside a nested block of braces.
+emotion: The relief of choosing the format the documentation expects.
+definition: Form encoding sends flat key and value pairs, such as name=Asha&age=21, while a JSON body sends structured data, and multipart form data is used for files.
+explanation: application/x-www-form-urlencoded is the default for simple HTML forms. multipart/form-data lets you send files together with fields. application/json suits nested objects and lists. Some older or auth endpoints, such as certain OAuth token endpoints, expect form encoding, so always follow the docs.
+simple_explain: Forms send flat pairs, JSON sends structured data, and multipart sends files. Pick the one the API documentation asks for.
+analogy: Form data is a flat list on a slip, and JSON is a filing cabinet with folders.
+formula_rule: urlencoded = flat pairs. JSON = nested. multipart = files.
+example_1: name=Asha&age=21 sent as form-encoded data.
+example_2: {"name": "Asha", "tags": ["new"]} sent as JSON.
+example_3: A profile photo uploaded as multipart form data.
+related: request body, Content-Type, JSON, OAuth
+word_family: urlencoded, multipart, JSON, form, upload
+where_used: Login forms | File uploads | OAuth token requests
+mini_conversation: A: The token endpoint rejects my JSON. | B: It may expect form-encoded data, so check the docs and Content-Type.
+misconception: ✗ Every API accepts JSON bodies → ✓ Some endpoints expect form-encoded or multipart bodies, so follow the documentation
+contrast: JSON vs form encoding: JSON handles nested data, form encoding handles flat pairs.
+avoid: Do not guess the body format, read the endpoint's documentation.
+memory_trick: Form is flat, JSON is nested, multipart is for files.
+real_project: Uploading a profile photo as multipart form data alongside a user id.
+real_interview: An interviewer may ask: When would you use multipart form data?
+real_daily: It is like a flat slip versus a filing cabinet with folders.
+mcq_question: Which format is used to upload files together with fields?
+mcq_options: A) application/xml B) application/json C) multipart/form-data D) text/plain
+mcq_answer: C
+mcq_why: Multipart form data can carry files and fields.
+fill_blank: Flat key and value pairs joined by ampersands are called form-____ → urlencoded
+apply: A token endpoint rejects your JSON body. What may it expect? → Form-encoded data
+explain_task: Explain form data and JSON bodies in three lines.
+own_task: Write one example body each in form encoding and in JSON for the same user.
+
+@API-020
+type: code56
+topic: 04 Authentication
+level: Beginner
+term: API key
+cue: Which simple secret string do many providers give you so they can recognise your application on every call?
+kind: Authentication method
+frequency: Very high
+importance: 5
+origin: Providers need to know who is calling in order to limit usage and bill for it, so they issue each developer a unique key to send with requests.
+pro_tip: Send the key in a header rather than in the URL, since URLs are often logged and shared.
+memory_story: An API key is a library card number that tells the library who is borrowing.
+visual: A request carrying a small key tag in its header as it travels to the server.
+emotion: The satisfaction of your first authenticated call working.
+meaning: An API key is a secret string that identifies your application to the API provider and is sent with each request.
+code: const res = await fetch("https://api.example.com/v1/weather?city=Delhi", {¶  headers: { "X-API-Key": process.env.WEATHER_API_KEY }¶});
+output: The server checks the key and, if it is valid, returns the weather data.
+explanation: The header name varies by provider, such as X-API-Key or a documented custom name, and some providers use a query parameter instead. A key usually identifies the app and its plan, not an individual user. Anyone holding the key can use your quota, so keep it secret and rotate it if leaked.
+simple_explain: You get a key when you sign up, and send it with every request. The provider uses it to know who you are and to apply your limits.
+analogy: It is like a library card number that tells the library who is borrowing.
+syntax: headers: { "X-API-Key": key }
+anatomy: X-API-Key = the header name (varies by provider) | key = your secret value
+example_1: headers: { "X-API-Key": process.env.MAPS_KEY }
+example_2: curl -H "X-API-Key: $WEATHER_KEY" https://api.example.com/v1/weather
+example_3: A provider that expects the key as a query parameter named api_key.
+variation: ?api_key=abc123   // some providers, but URLs get logged¶Authorization: Bearer <key>   // some providers use this header
+used_with: environment variables, HTTPS, rate limiting, headers
+related: Bearer token, secrets, rate limiting
+alternatives: OAuth 2.0 when the app acts for a user
+where_used: Public APIs | Maps and weather services | Server-to-server calls
+mini_conversation: A: Can I put the API key in my website's JavaScript? | B: No, anyone can read it there, so call the API from your server.
+misconception: ✗ An API key is safe to put in front-end code → ✓ Anyone can read front-end code, so keys must stay on the server or be restricted by the provider
+confused_with: API key vs OAuth token: a key identifies your app, an OAuth token represents a user's permission.
+avoid: Do not commit an API key into a public repository.
+wrong_code: fetch("https://api.example.com/v1/weather?city=Delhi&key=MY_REAL_KEY_123")
+right_code: fetch("https://api.example.com/v1/weather?city=Delhi", { headers: { "X-API-Key": process.env.WEATHER_API_KEY } })
+memory_trick: A key names the app, so keep it secret.
+real_project: Calling a weather API from a backend using a key stored in an environment variable.
+real_interview: An interviewer may ask: How do you keep an API key secure?
+real_daily: It is like a library card number that tells the library who is borrowing.
+mcq_question: What does an API key usually identify?
+mcq_options: A) Your application B) Your password C) Your browser D) Your internet provider
+mcq_answer: A
+mcq_why: A key identifies the calling application and its plan.
+fill_blank: Keys are best sent in a request ____ rather than in the URL → header
+hindi_to_task: Call the weather endpoint with a key read from the environment variable WEATHER_API_KEY.
+task_answer: fetch("https://api.example.com/v1/weather?city=Delhi", { headers: { "X-API-Key": process.env.WEATHER_API_KEY } })
+own_task: Write where you would store an API key for a small project.
+practice_question: Why is putting a key in a URL a risk?
+practice_answer: URLs are often logged and shared, so the key can leak.
+
+@API-021
+topic: 04 Authentication
+level: Beginner
+term: Basic authentication
+cue: Which simple scheme sends a username and password as one encoded string in the Authorization header?
+category: Authentication method
+frequency: Medium
+importance: 3
+origin: Early web servers needed a very simple way to check a username and password, so Basic authentication defined a standard header for them.
+pro_tip: Use Basic authentication only over HTTPS, since the credentials are not encrypted.
+memory_story: Basic auth is writing your username and password on a postcard in a code anyone can read.
+visual: A header holding the word Basic followed by a jumble of letters that decodes to a username and password.
+emotion: The caution of knowing a simple scheme is easy to misuse.
+definition: Basic authentication joins the username and password with a colon, encodes them with Base64, and sends them as Authorization: Basic followed by that text.
+explanation: Base64 is an encoding, not encryption, so anyone who sees the header can decode it. Over HTTPS the whole request is encrypted in transit, which makes Basic acceptable for simple internal tools. Many modern APIs use API keys or tokens instead.
+simple_explain: Basic auth sends your username and password in a simple encoded form on every request. It is easy to use but only safe over HTTPS.
+analogy: It is like writing your login on a postcard in a code anyone can read.
+formula_rule: Authorization: Basic base64(username:password)
+example_1: Authorization: Basic YXNoYTpzZWNyZXQ= is the encoded form of asha:secret.
+example_2: curl -u asha:secret https://api.example.com/v1/me makes curl build the header.
+example_3: A legacy internal tool that still uses Basic authentication behind HTTPS.
+related: HTTPS, Bearer token, API key, Base64
+word_family: Basic, Base64, Authorization, credentials
+where_used: Simple internal APIs | Legacy services | Quick tests
+mini_conversation: A: Is Base64 enough to hide the password? | B: No, it is only an encoding, so use HTTPS and prefer tokens.
+misconception: ✗ Base64 encryption makes Basic authentication secure on its own → ✓ Base64 is only an encoding that anyone can decode, so HTTPS is essential
+contrast: Basic auth vs token auth: Basic sends the password every time, tokens send a temporary proof.
+avoid: Do not use Basic authentication over plain HTTP.
+memory_trick: Basic means encoded, not hidden.
+real_project: Using Basic authentication with a service account on an internal reporting API.
+real_interview: An interviewer may ask: Why is Basic authentication considered weak?
+real_daily: It is like writing a login on a postcard in a code anyone can read.
+mcq_question: What does Base64 do to the credentials in Basic authentication?
+mcq_options: A) Deletes them B) Encodes them, not encrypts C) Hashes them D) Encrypts them strongly
+mcq_answer: B
+mcq_why: Base64 is reversible encoding, so it gives no protection by itself.
+fill_blank: Basic authentication should only be used over ____ → HTTPS
+apply: How can curl add Basic authentication to a request? → With the -u username:password option
+explain_task: Explain Basic authentication in three lines.
+own_task: Write why a token is a better choice than Basic authentication for a public API.
+
+@API-022
+type: code56
+topic: 04 Authentication
+level: Beginner
+term: Bearer token
+cue: Which credential do you place after the word Bearer in the Authorization header to prove you may call a protected endpoint?
+kind: Authentication method
+frequency: Very high
+importance: 5
+origin: Sending a long-lived password on every request is risky, so APIs issue temporary tokens that the caller simply bears along with each request.
+pro_tip: Build one helper that adds the Authorization header, so you never forget it on a call.
+memory_story: A bearer token is a ticket, and whoever holds the ticket gets in.
+visual: A request carrying a ticket stub in its header as it passes a gate.
+emotion: The satisfaction of a protected endpoint finally answering with data.
+meaning: A bearer token is a credential sent in the Authorization header as Bearer followed by the token, and whoever holds it can use the API.
+code: const res = await fetch("https://api.example.com/v1/me", {¶  headers: { Authorization: `Bearer ${token}` }¶});¶console.log(res.status);
+output: 200 when the token is valid, or 401 when it is missing or expired.
+explanation: The token is usually obtained after logging in or through OAuth. It often expires after a short time. Because anyone who steals it can use it, it must only travel over HTTPS and must never be logged or exposed in URLs.
+simple_explain: You first get a token, then send it as Authorization: Bearer plus the token on every call. The server checks it and decides whether to let you in.
+analogy: It is like a ticket, where whoever holds it gets in.
+syntax: Authorization: Bearer <token>
+anatomy: Authorization = the header | Bearer = the scheme | <token> = the credential
+example_1: headers: { Authorization: `Bearer ${token}` }
+example_2: curl -H "Authorization: Bearer $TOKEN" https://api.example.com/v1/me
+example_3: A mobile app that adds the stored token to every request through one function.
+variation: Authorization: Bearer eyJhbGciOi...   // a JWT used as a bearer token
+used_with: OAuth 2.0, JWT, HTTPS, refresh token
+related: OAuth 2.0, JWT, access token
+alternatives: API key or Basic authentication
+where_used: Most modern APIs | Mobile apps | Single-page apps
+mini_conversation: A: My call returns 401 even though I logged in. | B: Check that the token is sent as Authorization: Bearer plus the token, and that it has not expired.
+misconception: ✗ A bearer token is safe to log or share since it is temporary → ✓ Whoever holds a valid bearer token can use it, so never log or share it
+confused_with: Bearer token vs API key: a token is usually temporary and tied to a user or session, a key usually identifies an application.
+avoid: Do not send a token over plain HTTP.
+wrong_code: headers: { Authorization: token }
+right_code: headers: { Authorization: `Bearer ${token}` }
+memory_trick: Bearer means whoever bears it gets in.
+real_project: Adding a Bearer header to every call through a shared request helper.
+real_interview: An interviewer may ask: How do you send a token to a protected API?
+real_daily: It is like a ticket, where whoever holds it gets in.
+mcq_question: What is the correct format of the Authorization header for a bearer token?
+mcq_options: A) Authorization: <token> B) Bearer: Authorization C) Token: Bearer D) Authorization: Bearer <token>
+mcq_answer: D
+mcq_why: The scheme word Bearer is followed by a space and the token.
+fill_blank: Authorization: ____ abc123 → Bearer
+hindi_to_task: Send the token stored in the variable token with a request to /v1/me.
+task_answer: fetch("https://api.example.com/v1/me", { headers: { Authorization: `Bearer ${token}` } })
+own_task: Write a small function that adds a Bearer header to any request.
+practice_question: What does a 401 usually suggest when you send a bearer token?
+practice_answer: The token is missing, invalid or expired.
+
+@API-023
+type: topic56
+topic: 04 Authentication
+level: Intermediate
+term: OAuth 2.0
+cue: Which standard lets a user allow an app to access their data on another service without sharing their password?
+category: Authorisation framework
+frequency: Very high
+importance: 5
+origin: Apps used to ask users for their passwords to read data from other services, which was dangerous, so OAuth was created to grant limited access through tokens instead.
+pro_tip: Use the authorization code flow, with PKCE for apps that cannot keep a secret, rather than older shortcuts.
+memory_story: OAuth is a hotel key card that opens only your room and expires, instead of handing over the master key.
+visual: A user clicking Allow on a provider's screen, after which the app receives a limited key.
+emotion: The comfort of granting access without giving away a password.
+definition: OAuth 2.0 is an authorisation framework in which a user grants an app limited access to their data on another service, and the app receives tokens instead of the user's password.
+explanation: In the authorization code flow, the app sends the user to the provider to log in and approve the requested scopes. The provider sends back a short-lived code, and the app exchanges it for an access token and often a refresh token. PKCE adds protection for apps that cannot store a secret, such as mobile and single-page apps.
+simple_explain: The user logs in at the provider, not at your app, and approves what you may do. Your app then gets a token with only those permissions.
+analogy: It is like a hotel key card that opens only your room and expires.
+formula_rule: User approves at the provider → app gets a code → app exchanges it for tokens
+example_1: A scheduling app asking permission to read your calendar.
+example_2: A website offering Sign in with a big provider's account.
+example_3: A mobile app using the authorization code flow with PKCE.
+related: access token, refresh token, scopes, JWT
+word_family: authorization code, PKCE, client id, client secret, redirect URI
+where_used: Sign in with another account | Third-party app access | Enterprise integrations
+mini_conversation: A: Can our app read the user's files? | B: Only if the user approves through OAuth and we get a token with the right scopes.
+misconception: ✗ OAuth is a way to log users in → ✓ OAuth is about authorisation, meaning what an app may do, and login on top of it uses OpenID Connect
+contrast: Authorisation vs authentication: OAuth says what an app may access, authentication proves who the user is.
+avoid: Do not put a client secret inside a mobile or browser app.
+memory_trick: OAuth lets a user say yes without sharing a password.
+real_project: Letting users connect their calendar to a scheduling app through OAuth.
+real_interview: An interviewer may ask: Explain the authorization code flow in OAuth 2.0.
+real_daily: It is like a hotel key card that opens only your room.
+mcq_question: In OAuth 2.0, what does the app receive instead of the user's password?
+mcq_options: A) A token B) A cookie banner C) A database D) A username
+mcq_answer: A
+mcq_why: OAuth gives the app a token with limited permissions.
+fill_blank: The extra protection for apps that cannot keep a secret is called ____ → PKCE
+apply: How does a user allow an app to read their calendar without sharing a password? → Through an OAuth consent screen at the provider
+explain_task: Explain OAuth 2.0 in three lines.
+own_task: Write the steps of the authorization code flow for a calendar app.
+
+@API-024
+type: topic56
+topic: 04 Authentication
+level: Intermediate
+term: Access token vs refresh token
+cue: Which token is used on API calls and expires quickly, and which longer-lived one is used only to get a new one?
+category: Authentication concept
+frequency: High
+importance: 4
+origin: Short-lived tokens limit the damage of theft, but asking users to log in again is annoying, so a second token was added to fetch new access tokens quietly.
+pro_tip: Store the refresh token more carefully than the access token, because it can mint new access tokens.
+memory_story: The access token is a day pass for the gate, and the refresh token is the membership card you use to get a new day pass.
+visual: A short-dated ticket for the gate beside a long-dated card kept in a safe.
+emotion: The ease of staying logged in without the risk of a permanent key.
+definition: An access token is a short-lived credential sent with API calls, and a refresh token is a longer-lived credential used only to obtain new access tokens.
+explanation: Access tokens often last minutes or hours. When one expires and the API returns 401, the client sends the refresh token to the token endpoint and receives a new access token, and sometimes a new refresh token. If the refresh token is revoked or expired, the user must log in again.
+simple_explain: The access token opens the API but expires soon. The refresh token quietly gets a new access token so the user does not log in again.
+analogy: The access token is a day pass, and the refresh token is the membership card used to get another day pass.
+formula_rule: Access token = used for calls, short life. Refresh token = used to get new access tokens, longer life.
+example_1: An API call fails with 401 because the access token expired.
+example_2: The app sends the refresh token to the token endpoint and receives a new access token.
+example_3: A user logs in again because the refresh token was revoked.
+related: OAuth 2.0, Bearer token, JWT, 401
+word_family: access token, refresh token, expiry, token endpoint, revoke
+where_used: Mobile apps | OAuth integrations | Long-running sessions
+mini_conversation: A: Users get logged out every hour. | B: Use the refresh token to get a new access token quietly when the old one expires.
+misconception: ✗ The refresh token should be sent with every API call → ✓ The refresh token is sent only to the token endpoint, and the access token is the one used on API calls
+contrast: Access vs refresh token: the access token calls the API, the refresh token only gets new access tokens.
+avoid: Do not send the refresh token to the API endpoints.
+memory_trick: Access opens the door, refresh gets a new key.
+real_project: Refreshing an expired access token automatically after a 401 response.
+real_interview: An interviewer may ask: Why do we need both an access token and a refresh token?
+real_daily: It is like a day pass for the gate and a card to get a new day pass.
+mcq_question: Which token should be sent with every API call?
+mcq_options: A) The refresh token B) Neither C) The access token D) Both always
+mcq_answer: C
+mcq_why: Only the access token is sent to API endpoints.
+fill_blank: A longer-lived token used only to get new access tokens is a ____ token → refresh
+apply: A call returns 401 because the token expired. What do you do? → Use the refresh token to get a new access token
+explain_task: Explain the two token types in three lines.
+own_task: Write the sequence of calls when an access token expires.
+
+@API-025
+type: topic56
+topic: 04 Authentication
+level: Intermediate
+term: Scopes and permissions
+cue: Which setting in an OAuth request limits what the resulting token is allowed to do?
+category: Authentication concept
+frequency: High
+importance: 4
+origin: Granting full access to an account for a small task is dangerous, so OAuth lets providers define narrow permissions that apps ask for individually.
+pro_tip: Ask only for the scopes your feature really needs, since users and reviewers trust small requests more.
+memory_story: Scopes are the list of rooms a key card may open.
+visual: A consent screen with a short list of tick boxes such as read calendar and read email.
+emotion: The assurance that an app has only the access it needs.
+definition: A scope is a named permission, such as read:calendar, that limits what an access token can do.
+explanation: The app lists scopes in its authorisation request, the user sees and approves them, and the issued token carries only those scopes. If the API receives a call that needs a scope the token lacks, it replies with 403 Forbidden or an insufficient scope error. Names are defined by each provider.
+simple_explain: Scopes say what the token may do. If your token only has a read scope, a request to change data will be rejected.
+analogy: It is like a list of rooms that a key card may open.
+formula_rule: Request scopes → user approves → token carries only those scopes
+example_1: A token with the scope read:profile can read a profile but not change it.
+example_2: A request for a write scope is refused with 403 when the token only has read.
+example_3: A consent screen that lists three requested permissions.
+related: OAuth 2.0, access token, 403 Forbidden, least privilege
+word_family: scope, permission, consent, least privilege
+where_used: OAuth requests | Consent screens | API authorisation
+mini_conversation: A: My app gets 403 when updating events. | B: Your token may only have a read scope, so request the write scope as well.
+misconception: ✗ A token with valid login can do anything on the account → ✓ A token can do only what its scopes allow, even for a valid user
+contrast: Scope vs role: a scope limits what a token can do, a role describes what a user is.
+avoid: Do not request every scope just in case.
+memory_trick: Scopes are the rooms the key card opens.
+real_project: Requesting only read access to a calendar for a reminder app.
+real_interview: An interviewer may ask: What is the principle of least privilege?
+real_daily: It is like a key card that opens only some rooms.
+mcq_question: What does a 403 response often mean for an OAuth token?
+mcq_options: A) The server is down B) The body is empty C) The token lacks the needed scope D) The URL is wrong
+mcq_answer: C
+mcq_why: The token is valid but not permitted to do that action.
+fill_blank: A named permission that limits what a token can do is called a ____ → scope
+apply: Your token cannot update data. What should you check? → Whether the token has a write scope
+explain_task: Explain scopes in three lines.
+own_task: Choose the smallest scopes for an app that only shows a user's name.
+
+@API-026
+type: topic56
+topic: 04 Authentication
+level: Advanced
+term: JWT (JSON Web Token)
+cue: Which compact token with three dot-separated parts carries signed claims about a user?
+category: Authentication concept
+frequency: High
+importance: 4
+origin: Servers wanted tokens that carry their own information and can be checked without a database lookup, so JSON Web Tokens combined data and a signature in one string.
+pro_tip: Always verify the signature and the expiry on the server, and never trust a token you have only decoded.
+memory_story: A JWT is a sealed letter whose wax seal proves it was not altered, though the letter itself can be read.
+visual: Three coloured sections separated by dots, labelled header, payload and signature.
+emotion: The curiosity of decoding a token and seeing the claims inside.
+definition: A JWT is a token made of a header, a payload of claims and a signature, joined by dots, which a server can verify without storing the session.
+explanation: Each part is Base64URL encoded. The payload holds claims such as the user id (sub), the expiry (exp) and the issuer (iss). The signature, made with a secret or a private key, proves the content was not changed. A normal signed JWT is not encrypted, so anyone holding it can read the payload.
+simple_explain: A JWT carries data and a signature. The server checks the signature to trust it. Do not put secrets inside, because the payload can be read by anyone.
+analogy: It is like a sealed letter whose wax seal proves it was not altered, though the letter can be read.
+formula_rule: header.payload.signature
+example_1: A payload with sub, exp and iss claims.
+example_2: A server rejecting a token because the exp claim is in the past.
+example_3: A token used as a Bearer token in the Authorization header.
+related: Bearer token, OAuth 2.0, Base64, signature
+word_family: header, payload, claims, signature, exp, sub
+where_used: API authentication | Single sign-on | Microservices
+mini_conversation: A: Can I store the user's password in the JWT payload? | B: No, the payload is only encoded, so anyone with the token can read it.
+misconception: ✗ A JWT is encrypted so its contents are secret → ✓ A signed JWT is only encoded and signed, so its contents can be read by anyone who holds it
+contrast: Signed vs encrypted: a signature proves the data was not altered, encryption hides the data.
+avoid: Do not put secrets or sensitive personal data in a JWT payload.
+memory_trick: JWT is signed, not secret.
+real_project: Checking the exp claim and signature of each incoming token on the server.
+real_interview: An interviewer may ask: What are the three parts of a JWT?
+real_daily: It is like a sealed letter whose seal proves it was not altered.
+mcq_question: What proves that a JWT has not been altered?
+mcq_options: A) The signature B) The cookie C) The header name D) The URL
+mcq_answer: A
+mcq_why: The signature is checked by the server to confirm the content was unchanged.
+fill_blank: A JWT has a header, a payload and a ____ → signature
+apply: Why should you not store secrets in a JWT payload? → Because the payload is only encoded and can be read by anyone
+explain_task: Explain the three parts of a JWT in three lines.
+own_task: Write which claims you would put in a token for a login session.
+
+@API-027
+type: code56
+topic: 04 Authentication
+level: Beginner
+term: Keeping secrets safe (environment variables)
+cue: Where should an API key or token live so that it never ends up in your source code or repository?
+kind: Security practice
+frequency: Very high
+importance: 5
+origin: Keys committed to code get copied into repositories and logs, and bots scan public repos for them, so secrets are kept outside the code in the environment.
+pro_tip: Add .env to .gitignore before creating the file, and keep a .env.example with fake values for teammates.
+memory_story: Secrets belong in a locked drawer outside the shop window, and the code only knows which drawer to open.
+visual: A code file with an arrow pointing to a separate locked file that is not in the repository.
+emotion: The peace of mind that comes from not leaking a key by accident.
+meaning: Environment variables keep secrets outside the code, and the program reads them at run time.
+code: # .env (kept out of git)¶API_KEY=abc123¶# .gitignore¶.env¶// app.js¶const key = process.env.API_KEY;
+output: The program reads the key from the environment, and the key never appears in the committed code.
+explanation: Put secrets in environment variables, locally through a .env file that is ignored by git, and in production through your host's secret settings. If a secret is ever committed, treat it as leaked and rotate it, because deleting the file does not remove it from history. Front-end code cannot hide secrets at all.
+simple_explain: Write the key in a .env file, add that file to .gitignore, and read it in code with process.env. If it ever leaks, replace the key.
+analogy: It is like keeping valuables in a locked drawer, and the code only knows which drawer to open.
+syntax: process.env.NAME
+anatomy: process.env = the environment object | NAME = the variable's name
+example_1: const key = process.env.API_KEY;
+example_2: A hosting dashboard where you add the variable instead of editing code.
+example_3: A .env.example file that lists names with fake values.
+variation: dotenv loads .env into process.env in Node projects¶A secret manager service for larger teams
+used_with: .gitignore, dotenv, API key, deployment settings
+related: API key, .gitignore, leaked secret
+alternatives: A cloud secret manager
+where_used: Local development | Deployment | Every integration with a key
+mini_conversation: A: I committed my API key by mistake. | B: Rotate the key now, because removing the file does not erase it from history.
+misconception: ✗ Deleting a committed secret from the file makes it safe → ✓ A committed secret stays in history, so you must rotate the key
+confused_with: Environment variable vs hard-coded value: one is supplied outside the code, the other is written into it.
+avoid: Do not put secrets in front-end code or public repositories.
+wrong_code: const key = "abc123";
+right_code: const key = process.env.API_KEY;
+memory_trick: Secrets live outside the code.
+real_project: Keeping a payment provider key in the hosting dashboard and never in the repository.
+real_interview: An interviewer may ask: How do you manage secrets in an application?
+real_daily: It is like keeping valuables in a locked drawer outside the shop window.
+mcq_question: Where should an API key be stored?
+mcq_options: A) In the README B) In front-end code C) In a public repo D) In an environment variable
+mcq_answer: D
+mcq_why: Environment variables keep secrets out of the source code.
+fill_blank: Add the file .env to ____ so it is not committed → .gitignore
+hindi_to_task: Read a key named PAYMENT_KEY from the environment.
+task_answer: const key = process.env.PAYMENT_KEY;
+own_task: Set up a .env file and .gitignore entry for a small project.
+practice_question: What must you do if a key was committed to a repository?
+practice_answer: Rotate the key, because it stays in the history.

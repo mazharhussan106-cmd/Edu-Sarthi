@@ -1,0 +1,408 @@
+
+@TS-053
+type: code56
+topic: 05 React Basics
+level: Beginner
+term: Components
+cue: Which building blocks make up a React interface, and how are they written?
+kind: React concept
+frequency: Very high
+importance: 5
+origin: Large screens are easier to build from small reusable pieces, so React describes a page as a tree of components.
+pro_tip: Start component names with a capital letter, and keep each one focused on one job.
+memory_story: Components are building blocks that snap together to make a page.
+visual: A page split into nested boxes named header, list and card.
+emotion: The satisfaction of reusing one piece in many places.
+meaning: A component is a function that returns a description of part of the interface, and components can contain other components.
+code: function Greeting({ name }: { name: string }) {¶  return <p>Hello {name}</p>;¶}¶export default function App() {¶  return (¶    <main>¶      <Greeting name="Asha" />¶      <Greeting name="Ravi" />¶    </main>¶  );¶}
+output: Two greeting paragraphs, Hello Asha and Hello Ravi, appear inside main.
+explanation: A component returns JSX, which React turns into page elements. Names must start with a capital letter, or React treats them as plain HTML tags. A component should be pure, which means the same input gives the same output. Small components are easier to test and reuse. Components can live in their own files and be imported.
+simple_explain: Write small functions that return JSX, and combine them into a page.
+analogy: Components are building blocks that snap together to make a page.
+syntax: function Name(props) { return <jsx />; }
+anatomy: function = component | props = inputs | return = the interface
+example_1: <Button label="Save" />
+example_2: <Card><Title /></Card>
+example_3: export function Header() { return <h1>Edusarthi</h1>; }
+variation: const Tag = ({ text }: { text: string }) => <span>{text}</span>;   // arrow style
+used_with: JSX, props, state
+related: JSX, props, state, lists and keys
+alternatives: Class components in older code
+where_used: Every React app | Design systems | Pages
+mini_conversation: A: My custom tag renders as plain HTML. | B: Start the component name with a capital letter.
+misconception: ✗ A component can have any name → ✓ It must start with a capital letter so React can tell it from an HTML tag
+confused_with: Component vs element: a component is a function, an element is what it returns.
+avoid: Do not define components inside other components.
+wrong_code: function greeting() { return <p>Hi</p>; }
+right_code: function Greeting() { return <p>Hi</p>; }
+memory_trick: A capital letter means a component here.
+real_project: Splitting a long page into small components made each piece easy to test.
+real_interview: An interviewer may ask: What is a React component?
+real_daily: It is like a block that snaps into a bigger build.
+mcq_question: What must a component name start with?
+mcq_options: A) A capital letter B) An underscore C) A number D) A lowercase letter
+mcq_answer: A
+mcq_why: React treats lowercase names as HTML tags.
+fill_blank: A component returns an interface description written in ____ → JSX
+hindi_to_task: Write a component that shows a heading with your name.
+task_answer: function Hello() { return <h1>Asha</h1>; }
+own_task: Create two components and use one inside the other.
+practice_question: Why capitalise component names?
+practice_answer: Lowercase names are treated as HTML tags.
+
+@TS-054
+type: code56
+topic: 05 React Basics
+level: Beginner
+term: JSX
+cue: Which syntax lets you write interface markup inside JavaScript?
+kind: React concept
+frequency: Very high
+importance: 5
+origin: Interfaces mix structure and logic, so JSX lets you write HTML-like markup directly inside JavaScript code.
+pro_tip: Put JavaScript expressions in curly braces, and remember that JSX is not a string.
+memory_story: JSX is plain HTML that has put on a JavaScript costume for the day.
+visual: Markup with curly braces holding live values.
+emotion: The joy of seeing structure and logic side by side.
+meaning: JSX is a syntax extension that looks like HTML, is compiled into JavaScript calls, and allows expressions inside curly braces.
+code: const user = { name: "Asha", unread: 3 };¶const view = (¶  <section className="card">¶    <h2>{user.name.toUpperCase()}</h2>¶    <p>{user.unread} new message{user.unread === 1 ? "" : "s"}</p>¶    <img src="/a.png" alt="Profile" />¶  </section>¶);
+output: A section with the name in capitals and the text 3 new messages is described.
+explanation: JSX must return one root element, or a fragment written as empty angle brackets. Attributes use camelCase, such as className and onClick. Self-closing tags need a slash. Only expressions work inside braces, not statements such as if. Text in JSX is escaped, which helps against injection.
+simple_explain: Write markup, use braces for JavaScript, and return one root.
+analogy: JSX is HTML wearing a JavaScript costume.
+syntax: <tag attr={value}>{expression}</tag>
+anatomy: { } = JavaScript inside markup | className = class | fragment = a wrapper with no element
+example_1: <button onClick={() => save()}>Save</button>
+example_2: <>{title}{subtitle}</>
+example_3: <input disabled={!ready} />
+variation: <label htmlFor="email">Email</label>   // for becomes htmlFor
+used_with: components, props, events
+related: components, props, conditional rendering, lists and keys
+alternatives: Template strings | other view libraries
+where_used: Every React component | UI code | Pages
+mini_conversation: A: Why does class not work on my element? | B: In JSX the attribute is className.
+misconception: ✗ JSX is a string of HTML → ✓ It is compiled into JavaScript function calls
+confused_with: JSX vs HTML: JSX uses className, camelCase and requires closed tags.
+avoid: Do not put statements inside curly braces.
+wrong_code: <div class="box">Hi</div>
+right_code: <div className="box">Hi</div>
+memory_trick: JSX uses className, not class.
+real_project: Replacing string-built markup with JSX removed an injection risk.
+real_interview: An interviewer may ask: Is JSX HTML?
+real_daily: It is like HTML in a JavaScript costume.
+mcq_question: Which attribute sets the CSS class in JSX?
+mcq_options: A) cssClass B) className C) class D) styleClass
+mcq_answer: B
+mcq_why: class is a reserved word in JavaScript.
+fill_blank: JavaScript inside JSX goes in curly ____ → braces
+hindi_to_task: Show the value of count inside a paragraph.
+task_answer: <p>{count}</p>
+own_task: Write JSX that shows a name and a conditional plural word.
+practice_question: Why must JSX return a single root?
+practice_answer: A function can return only one value, so wrap siblings in a parent or fragment.
+
+@TS-055
+type: code56
+topic: 05 React Basics
+level: Beginner
+term: Props
+cue: Which inputs pass data from a parent component to a child?
+kind: React concept
+frequency: Very high
+importance: 5
+origin: Reusable components need different data each time, so props pass values from parent to child like function arguments.
+pro_tip: Treat props as read-only, and type them with an interface.
+memory_story: Props are the instructions a parent hands to a child before work starts.
+visual: An arrow carrying values from a parent box to a child box.
+emotion: The ease of reusing one component with new data.
+meaning: Props are the read-only inputs of a component, passed as attributes in JSX and received as an object.
+code: interface CardProps { title: string; count?: number; onOpen: () => void; children?: React.ReactNode }¶function Card({ title, count = 0, onOpen, children }: CardProps) {¶  return (¶    <div>¶      <h3>{title} ({count})</h3>¶      {children}¶      <button onClick={onOpen}>Open</button>¶    </div>¶  );¶}¶<Card title="Inbox" count={4} onOpen={() => alert("open")}>Latest mail</Card>
+output: A card shows Inbox (4), the text Latest mail and an Open button.
+explanation: Data flows down from parents to children only. A child must never change its props, and instead calls a function prop to ask the parent to change state. The special children prop holds whatever is placed between the tags. Defaults can be set in destructuring. TypeScript interfaces make props self-documenting.
+simple_explain: Pass data down with props, and pass functions down to send events up.
+analogy: Props are the instructions a parent hands to a child before work starts.
+syntax: <Child name={value} onClick={fn} /> | function Child({ name }) { }
+anatomy: props = inputs | children = nested content | callback prop = event upward
+example_1: <Avatar src={user.photo} size={40} />
+example_2: <List items={items} />
+example_3: <Modal onClose={() => setOpen(false)} />
+variation: <Card {...cardProps} />   // spread an object as props
+used_with: state, events, TypeScript
+related: components, state, JSX, lists and keys
+alternatives: Context for deeply shared data
+where_used: Every component | Design systems | Forms
+mini_conversation: A: Can the child change the title it received? | B: No, props are read-only, so call a function prop.
+misconception: ✗ A child can modify its props → ✓ Props are read-only, and changes belong to the parent
+confused_with: Props vs state: props come from the parent, state belongs to the component.
+avoid: Never change the props you receive.
+wrong_code: function Card(props) { props.title = "x"; }
+right_code: function Card({ title, onRename }) { return <button onClick={() => onRename("x")}>{title}</button>; }
+memory_trick: Data flows down, events flow up.
+real_project: Passing a callback prop let a form child report saves to its parent page.
+real_interview: An interviewer may ask: How does a child tell a parent something happened?
+real_daily: It is like a note of instructions to a helper.
+mcq_question: In which direction do props flow?
+mcq_options: A) Between siblings B) Both ways C) From child to parent D) From parent to child
+mcq_answer: D
+mcq_why: React data flow is one-way and downward.
+fill_blank: The prop that holds nested content is called ____ → children
+hindi_to_task: Pass a name prop to a Greeting component.
+task_answer: <Greeting name="Asha" />
+own_task: Create a child with a callback prop that the parent handles.
+practice_question: How does a child send data up?
+practice_answer: It calls a function passed down as a prop.
+
+@TS-056
+type: code56
+topic: 05 React Basics
+level: Beginner
+term: State
+cue: Which hook lets a component remember a value that changes and redraw when it does?
+kind: React concept
+frequency: Very high
+importance: 5
+origin: Interfaces change over time, so components need a memory that triggers a redraw when it changes.
+pro_tip: Never change state directly, always use the setter function.
+memory_story: State is a component's notebook, and the setter is the pen that makes it re-read the page.
+visual: A counter value with a button that updates it.
+emotion: The thrill of the screen updating from one click.
+meaning: useState returns the current value and a setter function, and calling the setter stores a new value and re-renders the component.
+code: import { useState } from "react";¶export function Counter() {¶  const [count, setCount] = useState(0);¶  return (¶    <button onClick={() => setCount(c => c + 1)}>¶      Clicked {count} times¶    </button>¶  );¶}
+output: The button text starts at Clicked 0 times and increases with every click.
+explanation: State is private to each component instance. Updating state schedules a re-render, and the new value is seen on the next render. When the new value depends on the old one, pass a function to the setter. Objects and arrays must be replaced with new copies, not mutated. Related values may be grouped in one object or a reducer.
+simple_explain: Use useState for values that change, and update them only through the setter.
+analogy: State is a component's notebook, and the setter is the pen that makes it re-read the page.
+syntax: const [value, setValue] = useState(initial)
+anatomy: value = current | setValue = updater | initial = first value
+example_1: const [name, setName] = useState("");
+example_2: setItems(prev => [...prev, newItem]);
+example_3: setUser({ ...user, age: 29 });
+variation: useReducer(reducer, initial)   // for more complex state
+used_with: events, props, effects
+related: props, useEffect, components, JSX
+alternatives: useReducer | external stores
+where_used: Forms | Toggles | Counters
+mini_conversation: A: The list does not update when I push an item. | B: You mutated the array, so set a new copy.
+misconception: ✗ Setting state changes the variable immediately → ✓ The new value appears on the next render
+confused_with: State vs variable: a normal variable resets on every render, state is kept.
+avoid: Do not mutate state objects or arrays.
+wrong_code: items.push(x); setItems(items);
+right_code: setItems([...items, x]);
+memory_trick: New copy in, never mutate.
+real_project: Replacing array mutations with copies fixed a list that refused to update.
+real_interview: An interviewer may ask: Why must state updates be immutable?
+real_daily: It is like a notebook that triggers a re-read.
+mcq_question: What does calling the setter do?
+mcq_options: A) Reloads the page B) Deletes the component C) Stores the value and re-renders D) Changes the props
+mcq_answer: C
+mcq_why: The setter triggers a new render with the new value.
+fill_blank: The hook that adds state to a function component is ____ → useState
+hindi_to_task: Create a state value called open that starts as false.
+task_answer: const [open, setOpen] = useState(false);
+own_task: Build a toggle button that switches between on and off.
+practice_question: Why pass a function to the setter?
+practice_answer: It uses the latest value when the update depends on the old one.
+
+@TS-057
+type: code56
+topic: 05 React Basics
+level: Intermediate
+term: useEffect
+cue: Which hook runs code after rendering, such as fetching data or subscribing to events?
+kind: React concept
+frequency: Very high
+importance: 5
+origin: Some work, such as network calls and timers, does not belong in rendering, so effects run it after the screen updates.
+pro_tip: List every value used inside the effect in its dependency array, and return a cleanup function.
+memory_story: An effect is a side errand that runs after the main job is done.
+visual: A render followed by an effect that runs when a dependency changes.
+emotion: The relief of understanding why an effect ran twice.
+meaning: useEffect runs a function after render, re-runs it when listed dependencies change, and can return a cleanup function that runs before the next effect or on unmount.
+code: useEffect(() => {¶  const id = setInterval(() => setSeconds(s => s + 1), 1000);¶  return () => clearInterval(id);¶}, []);¶useEffect(() => {¶  document.title = `Unread ${count}`;¶}, [count]);
+output: A timer ticks once per second and stops on unmount, and the page title follows count.
+explanation: An empty array runs the effect once after the first render. Without an array it runs after every render. Cleanup prevents leaks, such as leftover timers and listeners. In development, strict mode runs effects twice on purpose to expose missing cleanup. Do not use effects to compute values that can be calculated during render.
+simple_explain: Use effects for side work, list dependencies, and clean up after yourself.
+analogy: An effect is a side errand that runs after the main job is done.
+syntax: useEffect(() => { ...; return cleanup; }, [dependencies])
+anatomy: function = the effect | return = cleanup | array = when to re-run
+example_1: useEffect(() => { load(); }, [id]);
+example_2: useEffect(() => { window.addEventListener("resize", f); return () => window.removeEventListener("resize", f); }, []);
+example_3: useEffect(() => { log("every render"); });
+variation: useLayoutEffect(fn, deps)   // runs before the browser paints
+used_with: state, fetch, timers
+related: state, fetching data, components, timers
+alternatives: Event handlers | data libraries
+where_used: Subscriptions | Timers | Data loading
+mini_conversation: A: My effect runs on every render. | B: You left out the dependency array.
+misconception: ✗ An empty dependency array means the effect never reads fresh values → ✓ It runs once, so values used inside may become stale
+confused_with: Effect vs event handler: handlers respond to user actions, effects sync with outside systems.
+avoid: Do not leave out cleanup for timers and listeners.
+wrong_code: useEffect(() => { fetchData(id); }, []);   // misses id
+right_code: useEffect(() => { fetchData(id); }, [id]);
+memory_trick: Every used value belongs in the array.
+real_project: Adding cleanup to an effect stopped a memory leak from leftover listeners.
+real_interview: An interviewer may ask: When does useEffect run?
+real_daily: It is like a side errand after the main job.
+mcq_question: When does an effect with an empty array run?
+mcq_options: A) On every render B) Once after the first render C) On every click D) Never
+mcq_answer: B
+mcq_why: No dependencies means no re-runs.
+fill_blank: The function returned from an effect is called ____ → cleanup
+hindi_to_task: Run a function when the id changes.
+task_answer: useEffect(() => { load(id); }, [id]);
+own_task: Write an effect that adds and removes a resize listener.
+practice_question: Why do effects run twice in development strict mode?
+practice_answer: To expose missing cleanup logic.
+
+@TS-058
+type: code56
+topic: 05 React Basics
+level: Beginner
+term: Lists and keys
+cue: How do you render many items from an array, and why does each need a key?
+kind: React concept
+frequency: Very high
+importance: 5
+origin: Interfaces often show lists, and React needs a stable identity per item to update the right one efficiently.
+pro_tip: Use a unique stable id as the key, not the array index.
+memory_story: A key is a name tag on each item so React can recognise it after the list changes.
+visual: A list of rows each tagged with an id.
+emotion: The comfort of lists that update correctly.
+meaning: You render a list by mapping an array to elements, and each element needs a unique, stable key prop so React can track it between renders.
+code: const users = [{ id: 7, name: "Asha" }, { id: 9, name: "Ravi" }];¶return (¶  <ul>¶    {users.map(u => (¶      <li key={u.id}>{u.name}</li>¶    ))}¶  </ul>¶);
+output: A bullet list with Asha and Ravi, each tracked by its id.
+explanation: Keys need to be unique among siblings, and they should stay with the same item. Index keys cause bugs when items are reordered or removed, because state can attach to the wrong row. The key is not passed to the component as a prop. When items have no id, create one when the data is created.
+simple_explain: Map the array to elements and give each a unique id as key.
+analogy: A key is a name tag on each item so React recognises it after the list changes.
+syntax: {items.map(item => <Item key={item.id} {...item} />)}
+anatomy: map = one element per item | key = stable identity | id = best key source
+example_1: {rows.map(r => <Row key={r.id} row={r} />)}
+example_2: {tags.map(t => <span key={t}>{t}</span>)}
+example_3: {items.length === 0 ? <p>Empty</p> : <List items={items} />}
+variation: <Fragment key={id}>...</Fragment>   // keys on fragments
+used_with: components, state, conditional rendering
+related: components, state, conditional rendering, array methods
+alternatives: Virtualised lists for huge data
+where_used: Tables | Menus | Feeds
+mini_conversation: A: Typing in one row changes another row after sorting. | B: You used the index as the key, so use a stable id.
+misconception: ✗ The array index is always a fine key → ✓ It breaks when the list is reordered or filtered
+confused_with: key vs id prop: key is for React only, id is data you pass yourself.
+avoid: Do not use random values as keys.
+wrong_code: {items.map((x, i) => <Row key={i} item={x} />)}
+right_code: {items.map(x => <Row key={x.id} item={x} />)}
+memory_trick: Stable ids make safe keys.
+real_project: Switching from index keys to ids fixed inputs that kept the wrong text after sorting.
+real_interview: An interviewer may ask: Why does React need keys?
+real_daily: It is like a name tag on each item.
+mcq_question: What makes a good key?
+mcq_options: A) The array index B) The item colour C) A unique stable id D) A random number each render
+mcq_answer: C
+mcq_why: It identifies the same item across renders.
+fill_blank: Each item in a mapped list needs a unique ____ → key
+hindi_to_task: Render a list of names with keys.
+task_answer: {names.map(n => <li key={n}>{n}</li>)}
+own_task: Render a list of users that shows a message when the list is empty.
+practice_question: Why can index keys cause bugs?
+practice_answer: Reordering makes state attach to the wrong item.
+
+@TS-059
+type: code56
+topic: 05 React Basics
+level: Beginner
+term: Conditional rendering
+cue: How do you show different content depending on state or props?
+kind: React concept
+frequency: Very high
+importance: 4
+origin: Interfaces change with data, such as loading and error states, so components choose what to show using normal JavaScript conditions.
+pro_tip: Handle loading, error and empty states explicitly.
+memory_story: Conditional rendering is a stage manager who decides which scene appears.
+visual: A branch with a loading view and a loaded view.
+emotion: The calm of an interface that explains every state.
+meaning: Conditional rendering uses if statements, the ternary operator or the and operator to decide which JSX to return.
+code: function Inbox({ loading, error, messages }: { loading: boolean; error?: string; messages: string[] }) {¶  if (loading) return <p>Loading...</p>;¶  if (error) return <p role="alert">{error} Try again.</p>;¶  return messages.length ? <ul>{messages.map(m => <li key={m}>{m}</li>)}</ul> : <p>No messages yet.</p>;¶}
+output: One of four views appears: loading, an error with advice, a list or an empty note.
+explanation: Early returns keep components readable. The ternary suits choosing between two views, and the and operator suits showing or hiding one. Beware that zero in count && view renders the zero. Hide elements with null, which renders nothing. Every error message should tell the user what to do next.
+simple_explain: Use early returns for states, ternaries for either-or, and and for show-or-hide.
+analogy: Conditional rendering is a stage manager who decides which scene appears.
+syntax: if (cond) return <A />; | cond ? <A /> : <B /> | cond && <A />
+anatomy: early return = states | ternary = two options | && = show or nothing
+example_1: {isAdmin && <AdminPanel />}
+example_2: {user ? <Welcome /> : <Login />}
+example_3: if (!data) return null;
+variation: {count > 0 && <Badge n={count} />}   // avoids rendering a bare zero
+used_with: state, props, fetching data
+related: JSX, state, lists and keys, fetching data
+alternatives: Separate components per state
+where_used: Loading states | Permissions | Empty views
+mini_conversation: A: A zero shows on the screen. | B: count and the view renders zero, so compare with greater than zero.
+misconception: ✗ cond && view always renders nothing when false → ✓ If cond is zero, the zero is rendered
+confused_with: null vs undefined return: a component may return null, but returning undefined was an error in older versions.
+avoid: Do not leave loading and error states unhandled.
+wrong_code: {count && <Badge n={count} />}
+right_code: {count > 0 && <Badge n={count} />}
+memory_trick: Compare numbers before using and.
+real_project: Adding clear loading and error views stopped users seeing a blank screen.
+real_interview: An interviewer may ask: How do you render different content in React?
+real_daily: It is like a stage manager choosing the scene.
+mcq_question: What does a component return to render nothing?
+mcq_options: A) null B) a space C) zero D) a number
+mcq_answer: A
+mcq_why: Returning null renders nothing.
+fill_blank: The short form for either-or in JSX uses the ____ operator → ternary
+hindi_to_task: Show a message only when loading is true.
+task_answer: {loading && <p>Loading...</p>}
+own_task: Write a component with loading, error and empty states.
+practice_question: Why does count && view sometimes show a zero?
+practice_answer: Zero is falsy, but React still renders the number zero.
+
+@TS-060
+type: code56
+topic: 05 React Basics
+level: Intermediate
+term: Fetching data in React
+cue: How do you load data from an API into a component and handle each state?
+kind: React concept
+frequency: Very high
+importance: 5
+origin: Most interfaces show server data, so components need a pattern to load, show progress, handle errors and avoid stale results.
+pro_tip: Cancel or ignore outdated requests, and use a data library for anything beyond a simple case.
+memory_story: Fetching is sending an order and showing a waiting sign until it arrives.
+visual: A component moving from loading to loaded or failed.
+emotion: The pleasure of a screen that always shows what is happening.
+meaning: A component keeps data, loading and error state, loads data in an effect, and cancels the request if the component changes or unmounts.
+code: function Users() {¶  const [users, setUsers] = useState<User[]>([]);¶  const [state, setState] = useState<"loading" | "error" | "done">("loading");¶  useEffect(() => {¶    const ctrl = new AbortController();¶    fetch("/api/users", { signal: ctrl.signal })¶      .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })¶      .then(data => { setUsers(data); setState("done"); })¶      .catch(e => { if (e.name !== "AbortError") setState("error"); });¶    return () => ctrl.abort();¶  }, []);¶  if (state === "loading") return <p>Loading...</p>;¶  if (state === "error") return <p role="alert">Could not load users. Check your connection and retry.</p>;¶  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;¶}
+output: The screen shows loading, then either the user list or a helpful error message.
+explanation: The effect starts the request, and the cleanup aborts it if the component unmounts, which avoids updating state on a gone component and stops races between old and new requests. Check response.ok, since fetch does not reject on error statuses. Libraries such as TanStack Query add caching, retries and deduplication. Server components in newer frameworks can load data without effects.
+simple_explain: Track loading, error and data, fetch in an effect, and abort on cleanup.
+analogy: Fetching is sending an order and showing a waiting sign until it arrives.
+syntax: useEffect(() => { fetch(...).then(...); return () => ctrl.abort(); }, [deps])
+anatomy: state = data, loading, error | AbortController = cancel | cleanup = abort on unmount
+example_1: const { data, isLoading } = useQuery({ queryKey: ["users"], queryFn: loadUsers });
+example_2: setState("loading") before a new request
+example_3: if (!res.ok) throw new Error(`HTTP ${res.status}`);
+variation: const data = await fetch(url).then(r => r.json());   // in a server component
+used_with: state, useEffect, conditional rendering
+related: useEffect, state, fetch, conditional rendering
+alternatives: TanStack Query | SWR | server components
+where_used: Dashboards | Lists | Detail pages
+mini_conversation: A: Old results flash after I change the filter. | B: Abort the previous request in the effect cleanup.
+misconception: ✗ Data fetching always belongs in useEffect → ✓ Data libraries and server components often handle it better
+confused_with: Loading vs empty: loading means waiting, empty means a finished request with no items.
+avoid: Do not ignore errors or leave the user on a blank screen.
+wrong_code: useEffect(async () => { await load(); }, []);
+right_code: useEffect(() => { load(); }, []);
+memory_trick: Loading, error, data, always show all three.
+real_project: Adding abort and error states fixed a flickering list during fast filter changes.
+real_interview: An interviewer may ask: How do you avoid race conditions when fetching in an effect?
+real_daily: It is like an order with a waiting sign.
+mcq_question: Why abort a request in the effect cleanup?
+mcq_options: A) To speed up the server B) To save memory only C) To hide errors D) To avoid stale or unmounted updates
+mcq_answer: D
+mcq_why: Old requests must not overwrite newer results.
+fill_blank: The browser API used to cancel a fetch is AbortController and its ____ → signal
+hindi_to_task: Show a loading message until the data arrives.
+task_answer: if (state === "loading") return <p>Loading...</p>;
+own_task: Add an error state with a retry hint to a data component.
+practice_question: Can an effect callback be async directly?
+practice_answer: No, it must return a cleanup function or nothing.

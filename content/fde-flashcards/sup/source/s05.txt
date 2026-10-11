@@ -1,0 +1,279 @@
+
+@SUP-029
+type: topic56
+topic: 05 Row Level Security
+level: Intermediate
+term: Row Level Security (RLS)
+cue: Which Postgres feature lets the database itself decide which rows each user may read or change?
+category: Security
+frequency: Very high
+importance: 5
+origin: Browsers talk to the database through an open API, so the rules about who sees what must live in the database, and Postgres provides row-level policies for exactly this.
+pro_tip: Turn on RLS for every table in an exposed schema, and write policies before launching.
+memory_story: RLS is a guard at each row, checking your badge before letting you see or change it.
+visual: A table where each row has a lock that opens only for the matching user.
+emotion: The calm of knowing a user cannot read another user's data.
+definition: Row Level Security is a Postgres feature in which policies attached to a table decide, for each row, whether the current user may select, insert, update or delete it.
+explanation: When RLS is enabled on a table, access through the API is denied by default until you add policies. A policy is a rule such as auth.uid() = user_id. The anon and authenticated roles are subject to it, while the service role bypasses it. This is what makes it safe for the browser to call the database directly with the client key.
+simple_explain: RLS puts rules on rows. Turn it on, then write policies like each user can see only their own rows, and the database enforces them for every request.
+analogy: It is like a guard at each row who checks your badge before letting you see or change it.
+formula_rule: Enable RLS → no access → add policies → access only where a policy allows
+example_1: A todos table where users see only rows with their own user_id.
+example_2: A public blog table where everyone can read but only authors can write.
+example_3: A private messages table visible only to sender and receiver.
+related: policies, auth.uid(), anon vs service role key, Supabase Auth
+word_family: RLS, policy, role, USING, WITH CHECK
+where_used: Every table exposed to the API | Multi-user apps | Data privacy
+mini_conversation: A: Can users read each other's tasks through the API? | B: Not if RLS is on with a policy that matches each user's own rows.
+misconception: ✗ The client key is enough to protect data without RLS → ✓ The client key is public, so RLS is what actually keeps data safe
+contrast: RLS vs app-level checks: RLS is enforced by the database for every request, app checks can be bypassed.
+avoid: Do not expose a table to the API with RLS turned off.
+memory_trick: RLS guards every single row for you.
+real_project: Making each learner's progress rows visible only to that learner.
+real_interview: An interviewer may ask: Why is RLS important in Supabase?
+real_daily: It is like a guard checking your badge at every row.
+mcq_question: What happens to API access on a table with RLS enabled but no policies?
+mcq_options: A) Everyone can read B) The table is deleted C) Access is denied D) Only admins can read
+mcq_answer: C
+mcq_why: With RLS on, access is denied until a policy allows it.
+fill_blank: RLS rules are written as ____ on a table → policies
+apply: How do you let users see only their own rows? → Enable RLS and add a policy comparing auth.uid() with the row's user id
+explain_task: Explain Row Level Security in three lines.
+own_task: Write the rule in words for a notes table that only owners may read.
+
+@SUP-030
+type: code56
+topic: 05 Row Level Security
+level: Intermediate
+term: Enabling RLS on a table
+cue: Which SQL statement switches on Row Level Security so that policies start to apply?
+kind: SQL statement
+frequency: Very high
+importance: 5
+origin: A table created with SQL is open until you protect it, so RLS has to be explicitly enabled before policies take effect.
+pro_tip: Enable RLS right after creating each table, so it is never exposed unprotected by mistake.
+memory_story: Enabling RLS is locking the door, and policies are the keys you hand out afterwards.
+visual: A table icon with a padlock being closed.
+emotion: The relief of locking the door before anyone walks in.
+meaning: alter table ... enable row level security turns on RLS, after which only rows allowed by policies are accessible to the API roles.
+code: alter table todos enable row level security;
+output: RLS is on for todos, and without policies the API returns no rows to anon and authenticated users.
+explanation: Tables made in the dashboard's Table Editor usually offer an option to enable RLS, but tables made with SQL do not have it enabled by default. After enabling, add policies for each operation you want to allow. The table owner and roles with bypass privileges are not restricted.
+simple_explain: Run the statement once per table. After that, nothing is readable or writable through the API until you add policies.
+analogy: It is like locking the door, with policies as the keys you hand out afterwards.
+syntax: alter table table_name enable row level security;
+anatomy: alter table = change the table | enable row level security = turn RLS on
+example_1: alter table todos enable row level security;
+example_2: alter table profiles enable row level security;
+example_3: alter table todos force row level security;
+variation: alter table todos disable row level security;   // turn it off, risky¶force row level security   // also applies to the table owner
+used_with: policies, SQL Editor, API exposure
+related: Row Level Security, policies, SQL Editor
+alternatives: The RLS toggle in the Table Editor
+where_used: Every new table | Security reviews | Migrations
+mini_conversation: A: I created a table with SQL and anyone can read it. | B: You forgot to enable row level security on it.
+misconception: ✗ Tables created with SQL are protected automatically → ✓ RLS must be enabled for each table you create with SQL
+confused_with: enable vs force: enable applies to API roles, force also applies to the table owner.
+avoid: Do not leave exposed tables without RLS.
+wrong_code: alter table todos enable rls;
+right_code: alter table todos enable row level security;
+memory_trick: Create the table, then lock the table.
+real_project: Putting the enable statement in every create table migration.
+real_interview: An interviewer may ask: What is the default access of a table after enabling RLS?
+real_daily: It is like locking the door before handing out keys.
+mcq_question: What do you do first to make policies take effect?
+mcq_options: A) Enable row level security B) Create a bucket C) Rename the table D) Create an index
+mcq_answer: A
+mcq_why: Policies only apply after RLS is enabled.
+fill_blank: alter table todos enable row level ____; → security
+hindi_to_task: Enable RLS on the notes table.
+task_answer: alter table notes enable row level security;
+own_task: Write the statements to create and protect a table.
+practice_question: What can API users do on an RLS table that has no policies?
+practice_answer: Nothing, access is denied until policies allow it.
+
+@SUP-031
+type: code56
+topic: 05 Row Level Security
+level: Intermediate
+term: Policies (USING and WITH CHECK)
+cue: Which two clauses of a policy decide which existing rows a user may see, and which new values they may write?
+kind: SQL statement
+frequency: Very high
+importance: 5
+origin: Reading and writing need different checks, so policies have a clause for choosing visible rows and another for validating new or changed rows.
+pro_tip: Wrap auth.uid() as (select auth.uid()) in policies so Postgres can cache it and run faster.
+memory_story: USING decides what you may look at, and WITH CHECK decides what you may put in.
+visual: One filter on existing rows and another gate on rows being written.
+emotion: The satisfaction of a rule that stops a cheat before it lands.
+meaning: USING filters which existing rows a policy applies to, and WITH CHECK validates the values of rows being inserted or updated.
+code: create policy "Users read own todos" on todos¶  for select to authenticated¶  using ((select auth.uid()) = user_id);¶create policy "Users insert own todos" on todos¶  for insert to authenticated¶  with check ((select auth.uid()) = user_id);
+output: Logged-in users can read only their own rows and can only insert rows whose user_id is their own.
+explanation: Select and delete use USING because they act on existing rows. Insert uses WITH CHECK because it validates new rows. Update can use both: USING picks the rows you may edit, and WITH CHECK validates what the row becomes. You can write separate policies per operation, or one policy for all.
+simple_explain: Use USING to say which rows are visible or editable. Use WITH CHECK to say what a new or changed row is allowed to look like.
+analogy: USING decides what you may look at, and WITH CHECK decides what you may put in.
+syntax: create policy name on table for operation to role using (condition) with check (condition);
+anatomy: for = which operation | to = which role | using = existing rows | with check = new values
+example_1: using ((select auth.uid()) = user_id)
+example_2: with check ((select auth.uid()) = user_id)
+example_3: create policy "Public read" on posts for select using (true);
+variation: for all using (...) with check (...)   // one policy for every operation¶to anon, authenticated   // apply to both roles
+used_with: auth.uid(), enable row level security, roles
+related: Row Level Security, auth.uid(), enabling RLS
+alternatives: Database functions that check access
+where_used: Every multi-user table | Public read tables | Private data
+mini_conversation: A: Users can insert rows for other users. | B: Add a WITH CHECK clause that matches user_id to the logged-in user.
+misconception: ✗ USING alone protects inserts → ✓ Inserts are validated by WITH CHECK, so an insert policy needs that clause
+confused_with: USING vs WITH CHECK: USING filters existing rows, WITH CHECK validates written values.
+avoid: Do not write an insert policy without WITH CHECK.
+wrong_code: create policy "insert own" on todos for insert using (auth.uid() = user_id);
+right_code: create policy "insert own" on todos for insert to authenticated with check ((select auth.uid()) = user_id);
+memory_trick: USING looks, WITH CHECK writes.
+real_project: Allowing learners to insert and read only their own progress rows.
+real_interview: An interviewer may ask: What is the difference between USING and WITH CHECK?
+real_daily: It is like what you may look at and what you may put in.
+mcq_question: Which clause validates new rows on insert?
+mcq_options: A) LIMIT B) USING C) ORDER BY D) WITH CHECK
+mcq_answer: D
+mcq_why: WITH CHECK validates the values being written.
+fill_blank: A select policy uses the ____ clause → using
+hindi_to_task: Write a select policy that lets users read only rows where user_id equals their id.
+task_answer: create policy "read own" on todos for select to authenticated using ((select auth.uid()) = user_id);
+own_task: Write read, insert, update and delete policies for a notes table.
+practice_question: Which clause does an update policy use to pick editable rows?
+practice_answer: USING
+
+@SUP-032
+type: code56
+topic: 05 Row Level Security
+level: Intermediate
+term: auth.uid() and auth.jwt()
+cue: Which helper functions let a policy read the current user's id or claims from the request's token?
+kind: SQL function
+frequency: Very high
+importance: 5
+origin: A policy must know who is asking, so Supabase exposes helpers that read the logged-in user's id and claims from the JWT.
+pro_tip: Compare auth.uid() with a user_id column, and use auth.jwt() for custom claims such as roles.
+memory_story: auth.uid() reads the name on the wristband, and auth.jwt() reads everything printed on it.
+visual: A token being opened and its user id passed to the policy.
+emotion: The satisfaction of a rule that always knows who is asking.
+meaning: auth.uid() returns the id of the current user, and auth.jwt() returns the full set of token claims.
+code: create policy "Owner can update" on profiles¶  for update to authenticated¶  using ((select auth.uid()) = id)¶  with check ((select auth.uid()) = id);¶select auth.uid();
+output: auth.uid() returns the current user's uuid, or null when nobody is logged in.
+explanation: The function reads the sub claim of the JWT sent with the request. For logged-out users it returns null, so a comparison fails and no rows match. auth.jwt() returns the whole token as JSON, so you can read claims, such as app metadata, in policies. In the SQL Editor you are usually a powerful role, so auth.uid() may be null there.
+simple_explain: Policies use auth.uid() to compare the row's owner with the person making the request. Logged-out users give null, so they match nothing.
+analogy: auth.uid() reads the name on the wristband, and auth.jwt() reads everything printed on it.
+syntax: auth.uid()  |  auth.jwt() ->> 'claim'
+anatomy: auth.uid() = current user id | auth.jwt() = all claims as JSON | ->> = read one claim as text
+example_1: using ((select auth.uid()) = id)
+example_2: using ((select auth.jwt() ->> 'email') = owner_email)
+example_3: using ((select auth.uid()) is not null)
+variation: auth.role()   // the database role from the token, older style¶(auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'   // a role stored in app metadata
+used_with: policies, JWT, Supabase Auth
+related: policies, sessions and JWT, Row Level Security
+alternatives: A profiles table with a role column
+where_used: Every RLS policy | Admin checks | Per-user filters
+mini_conversation: A: My policy returns no rows in the SQL Editor. | B: In the editor auth.uid() is often null, so test through the client as a real user.
+misconception: ✗ auth.uid() works the same in the SQL Editor as in the app → ✓ The SQL Editor usually runs with a powerful role and no user token, so auth.uid() may be null there
+confused_with: auth.uid() vs auth.jwt(): the first gives only the user id, the second gives all claims.
+avoid: Do not trust claims that users can edit themselves, such as user metadata, for authorisation.
+wrong_code: using (auth.uid = user_id)
+right_code: using ((select auth.uid()) = user_id)
+memory_trick: auth.uid() asks who is calling.
+real_project: Limiting each profile row to its owner with auth.uid().
+real_interview: An interviewer may ask: How does a policy know the current user?
+real_daily: It is like reading the name on a wristband.
+mcq_question: What does auth.uid() return for a logged-out request?
+mcq_options: A) A random id B) null C) An empty table D) The admin id
+mcq_answer: B
+mcq_why: Without a token there is no user, so the result is null.
+fill_blank: auth.____() returns the full token claims as JSON → jwt
+hindi_to_task: Select the current user's id.
+task_answer: select auth.uid();
+own_task: Write a policy that lets a user read the row whose id equals their user id.
+practice_question: Where does auth.uid() read the id from?
+practice_answer: From the sub claim of the request's JWT.
+
+@SUP-033
+type: topic56
+topic: 05 Row Level Security
+level: Advanced
+term: Bypassing RLS (service role and postgres role)
+cue: Which key and roles ignore Row Level Security, and when is it correct to use them?
+category: Security concept
+frequency: High
+importance: 5
+origin: Trusted back-end jobs sometimes need full access to every row, so some roles are allowed to bypass RLS, and these must be kept out of untrusted code.
+pro_tip: Use the service role only on a server you control, and do your own checks in that code.
+memory_story: The master key opens every door, so it stays locked in the manager's office, never in a visitor's hands.
+visual: A master key inside a locked server room, far from the browser.
+emotion: The responsibility of holding the master key.
+definition: The service role key and the postgres role bypass Row Level Security, so they can read and write every row regardless of policies.
+explanation: Browser and app users run as the anon or authenticated role, so policies apply. The service role key makes requests as a role that bypasses RLS, which is useful for admin tasks, cron jobs and trusted server code. Direct database connections, such as those used by tools like Prisma with the postgres user, also bypass RLS, so authorisation must then be handled in your own code.
+simple_explain: Anything that connects as the service role or the database owner ignores your policies. Keep such access on trusted servers and check permissions yourself there.
+analogy: The master key opens every door, so it stays in the manager's office.
+formula_rule: anon or authenticated = RLS applies. service role or postgres = RLS bypassed.
+example_1: A nightly server job using the service role to clean old rows.
+example_2: An admin script that reads every user's rows.
+example_3: An ORM connecting as the postgres user, which ignores policies.
+related: anon vs service role key, Prisma and Supabase, Row Level Security
+word_family: bypass, service_role, postgres, owner, admin
+where_used: Server jobs | Admin tools | ORM connections
+mini_conversation: A: Our ORM can read every row, ignoring the policies. | B: It connects as a role that bypasses RLS, so check access in your own code.
+misconception: ✗ RLS protects data against every kind of connection → ✓ Roles that bypass RLS, such as the service role and the postgres user, ignore policies
+contrast: App role vs service role: the app role obeys policies, the service role ignores them.
+avoid: Do not use the service role in code that runs for end users in the browser.
+memory_trick: Master keys bypass the guards.
+real_project: Using the service role only in a server cron job that cleans expired rows.
+real_interview: An interviewer may ask: Which roles bypass RLS in Supabase?
+real_daily: It is like a master key that opens every door.
+mcq_question: Which key makes requests that ignore RLS?
+mcq_options: A) The anon key B) A signed URL C) The service role key D) A magic link
+mcq_answer: C
+mcq_why: The service role bypasses Row Level Security.
+fill_blank: Browser users run as the anon or ____ role → authenticated
+apply: An ORM connects as postgres. How do you protect data? → Enforce authorisation in your own server code
+explain_task: Explain which roles bypass RLS in three lines.
+own_task: List two places where bypassing RLS is appropriate and two where it is not.
+
+@SUP-034
+type: topic56
+topic: 05 Row Level Security
+level: Advanced
+term: Testing RLS policies
+cue: How do you check that a policy really blocks other users, given that the SQL Editor often bypasses RLS?
+category: Security practice
+frequency: Medium
+importance: 5
+origin: A policy that is wrong either leaks data or blocks users, and the dashboard tools can hide this, so policies need testing as real users.
+pro_tip: Test with at least two users and the anon role, and try to read and write each other's rows.
+memory_story: Testing a policy is trying to pick your own lock from outside.
+visual: Two user sessions trying to read each other's rows, and one being refused.
+emotion: The confidence of a lock you have actually tried to break.
+definition: Testing RLS means trying real reads and writes as different users and roles, such as an owner, a stranger and an anonymous visitor, and checking that only the allowed ones succeed.
+explanation: The SQL Editor usually runs as a powerful role, so results there do not show what users experience. Test through supabase-js signed in as test users, or use the dashboard's option to run queries as another role or user, or set the role and token claims in SQL. Automated tests can create users and assert results. Also check that insert and update cannot assign rows to someone else.
+simple_explain: Make two test users and an anonymous client. Try every operation as each, and confirm that strangers get nothing and cannot write to another user's rows.
+analogy: It is like trying to pick your own lock from outside.
+formula_rule: Test as owner, stranger and anonymous visitor for every operation
+example_1: User A reading user B's todos and getting an empty list.
+example_2: An anonymous client trying to insert and being refused.
+example_3: A test that checks a user cannot change user_id to someone else's.
+related: policies, auth.uid(), SQL Editor, service role bypass
+word_family: test, impersonate, role, policy, assertion
+where_used: Before launch | Pull request checks | Security reviews
+mini_conversation: A: My policy works in the SQL Editor. | B: The editor bypasses RLS, so test it signed in as a normal user.
+misconception: ✗ If a query works in the SQL Editor then the policy is correct → ✓ The SQL Editor often bypasses RLS, so you must test as real users
+contrast: Editor test vs client test: the editor may ignore policies, a client test shows what users really get.
+avoid: Do not ship policies you have only tried as an admin.
+memory_trick: Test as the user, not as the admin.
+real_project: Writing automated tests that sign in as two users and check isolation.
+real_interview: An interviewer may ask: How do you test Row Level Security?
+real_daily: It is like trying to pick your own lock from outside.
+mcq_question: Why can an SQL Editor test mislead you about RLS?
+mcq_options: A) It cannot run SQL B) It deletes policies C) It only reads D) It may run as a role that bypasses RLS
+mcq_answer: D
+mcq_why: A powerful role ignores policies, hiding mistakes.
+fill_blank: You should test as the owner, a stranger and an ____ visitor → anonymous
+apply: How can you prove user A cannot read user B's rows? → Sign in as A with the client and query B's rows expecting none
+explain_task: Explain how to test RLS in three lines.
+own_task: Write three tests for a todos policy.

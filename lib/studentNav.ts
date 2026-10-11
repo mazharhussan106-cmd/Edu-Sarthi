@@ -24,6 +24,7 @@ export const STUDENT_MORE: readonly MenuGroup[] = [
   {
     heading: "Study",
     items: [
+      { href: "/explore", label: "Explore flashcards" },
       { href: "/modules", label: "Practice modules" },
       { href: "/decks", label: "My decks" },
       { href: "/library", label: "Library" },

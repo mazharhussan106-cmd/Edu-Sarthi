@@ -109,7 +109,7 @@ export default async function FlashcardsPage({
         word.kind !== "WORD" ? chunkExtras(word) : null,
       ]);
       body = (
-        <div className="mt-2 flex flex-1 flex-col md:block">
+        <div className="mt-2 flex min-h-0 flex-1 flex-col md:block">
           <FlashcardDeck
             key={word.id}
             word={word}
@@ -148,10 +148,12 @@ export default async function FlashcardsPage({
   return (
     <main
       // A column exactly one phone screen tall (minus the header and the
-      // bottom bar): the card stretches to fill it and the controls end up at
-      // its foot, directly above the navigation. 7.25rem is the header (3.5rem)
+      // bottom bar). The HEIGHT is fixed, not a minimum: the card measures its
+      // box to fit its text, and a box that grows with its content never
+      // overflows, so nothing would fit or scroll. The controls end up at the
+      // foot, directly above the navigation. 7.25rem is the header (3.5rem)
       // plus the bottom bar (3.5rem) plus their borders.
-      className="mx-auto flex min-h-[calc(100dvh-7.25rem-env(safe-area-inset-bottom,0px))] max-w-2xl flex-col px-3 pb-1 pt-3 sm:px-6 sm:pt-6 md:block md:min-h-0 md:pb-4"
+      className="mx-auto flex h-[calc(100dvh-7.25rem-env(safe-area-inset-bottom,0px))] max-w-2xl flex-col px-3 pb-1 pt-3 sm:px-6 sm:pt-6 md:block md:h-auto md:pb-4"
     >
       <DeckTopBar
         k={k}

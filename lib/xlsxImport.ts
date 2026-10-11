@@ -66,20 +66,18 @@ export async function importDeck(
   const existing = new Set(taken.map((t) => t.code));
   let created = 0;
   let updated = 0;
-  // In small batches outside any transaction: 200+ upserts in one would hit the
-  // pooler's transaction timeout, and each upsert is safe to repeat.
-  for (let i = 0; i < cards.length; i += 20) {
-    await Promise.all(
-      cards.slice(i, i + 20).map((c) => {
-        const d = wordData(c);
-        existing.has(c.id) ? updated++ : created++;
-        return prisma.word.upsert({
-          where: { code: c.id },
-          create: { ...d, code: c.id, kind: "WORD", deckId: deck!.id, ownerId: adminId },
-          update: d,
-        });
-      }),
-    );
+  // One at a time and outside any transaction. The live pool has
+  // connection_limit=1, so parallel upserts only queue for that one connection
+  // and time out after 10 s (P2024); a transaction of 200+ would hit the
+  // pooler's timeout instead. Each upsert is safe to repeat.
+  for (const c of cards) {
+    const d = wordData(c);
+    await prisma.word.upsert({
+      where: { code: c.id },
+      create: { ...d, code: c.id, kind: "WORD", deckId: deck.id, ownerId: adminId },
+      update: d,
+    });
+    existing.has(c.id) ? updated++ : created++;
   }
   await logAdmin(adminId, "Imported flashcards from Excel", "deck", deck.id, { title: meta.title, created, updated });
   return { ok: true, deckId: deck.id, created, updated };

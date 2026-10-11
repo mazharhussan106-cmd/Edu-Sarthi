@@ -703,7 +703,7 @@ mini_conversation: A: When I scroll down I forget which column is Marks and whic
 misconception: ✗ Freeze Panes keeps the cell you click frozen → ✓ It freezes the rows above and the columns to the left of the selected cell, not the cell itself
 confused_with: Freeze Panes vs Split: Freeze Panes locks the top or left part in place, while Split makes separate scrollable windows in the same sheet.
 avoid: Do not freeze too many rows or columns, because the frozen part can fill the whole screen on a small phone or laptop.
-wrong_code: Click row 1 and then Freeze Panes with C5 selected by mistake
+wrong_code: Click C5 by mistake > View tab > Freeze Panes > Freeze Panes (rows 1 to 4 and columns A and B freeze, not just the heading row)
 right_code: View tab > Freeze Panes > Freeze Top Row (or click A2 and choose Freeze Panes)
 memory_trick: Freeze what is Above and to the Left of the cell you click.
 real_project: A clerk freezes the top row of a 2,000-row fee sheet so column headings are always visible while entering data.
@@ -1196,10 +1196,10 @@ word_family: IFERROR, IFNA, ISERROR, ISERR, ISNA, IF
 where_used: Percentage columns that divide by zero | Lookups for names that may be missing | Dashboards that must look clean
 mini_conversation: A: My percent column shows #DIV/0! in empty rows, how can I hide it? | B: Wrap the formula in IFERROR and give an empty text like "" as the second argument.
 misconception: ✗ IFERROR fixes the real problem in the formula → ✓ IFERROR only hides the error message; the wrong data or formula is still there
-confused_with: IFERROR vs IFNA: IFERROR catches every error type, while IFNA catches only #N/A, so IFNA is safer when you only expect a missing lookup.
+confused_with: IFERROR vs IFNA: IFERROR catches every error type, while IFNA (Excel 2013 or later) catches only #N/A, so IFNA is safer when you only expect a missing lookup.
 avoid: Do not wrap a whole big formula in IFERROR without testing it first, because it can hide real mistakes.
-wrong_code: A1: 10¶B1: 0¶C1: =IFERROR("Error",A1/B1)
-right_code: A1: 10¶B1: 0¶C1: =IFERROR(A1/B1,"Error")
+wrong_code: A1: 10¶B1: 2¶C1: =IFERROR("Error",A1/B1) (always shows Error, even though 10/2 works)
+right_code: A1: 10¶B1: 2¶C1: =IFERROR(A1/B1,"Error") (shows 5)
 memory_trick: Try first, rescue second: formula first, fallback second.
 real_project: A sales report uses IFERROR around its growth percent so that new products with no old sales do not show errors.
 real_interview: Interview question: what is the difference between IFERROR and IFNA, and when would you pick IFNA?
@@ -1473,7 +1473,7 @@ mini_conversation: A: My ID is in column B but the name is in column A, VLOOKUP 
 misconception: ✗ INDEX and MATCH are only a harder way to write VLOOKUP → ✓ They can look in any direction and keep working when columns are inserted, which VLOOKUP's fixed column number cannot
 confused_with: INDEX vs MATCH: INDEX gives the value at a position, while MATCH gives the position of a value.
 avoid: Do not leave out the 0 in MATCH on unsorted data, because Excel may pick a wrong row instead of an exact match.
-wrong_code: A1: Asha¶A2: Ravi¶A3: Meena¶B1: 50¶B2: 70¶B3: 60¶D1: =INDEX(B1:B3,MATCH("Ravi",A1:A3))
+wrong_code: A1: Asha¶A2: Ravi¶A3: Meena¶B1: 50¶B2: 70¶B3: 60¶D1: =INDEX(B1:B3,MATCH("Ravi",A1:A3)) (match_type defaults to 1, an approximate match that assumes A1:A3 is sorted A to Z; on this unsorted list it can return the wrong row)
 right_code: A1: Asha¶A2: Ravi¶A3: Meena¶B1: 50¶B2: 70¶B3: 60¶D1: =INDEX(B1:B3,MATCH("Ravi",A1:A3,0))
 memory_trick: MATCH finds the spot, INDEX fetches the stuff at that spot.
 real_project: An analyst uses INDEX and MATCH to pull a product price by code even when the code column sits to the right of the price column.
@@ -1730,7 +1730,7 @@ meaning: TEXT changes a number or date into text shown in the format you choose.
 native_meaning: नंबर या तारीख को चुने हुए फ़ॉर्मेट में टेक्स्ट बनाना
 code: A1: 3.14159¶B1: =TEXT(A1,"0.00")¶B2: =TEXT(0.256,"0%")¶B3: =TEXT(DATE(2024,8,15),"dd-mm-yyyy")
 output: B1 shows 3.14¶B2 shows 26%¶B3 shows 15-08-2024
-explanation: TEXT takes a value and a format code in quotes. It returns text that looks the way the code says, so 0.00 means two decimals and 0% means percentage. The result is text, so you cannot add it up like a number.
+explanation: TEXT takes a value and a format code in quotes. It returns text that looks the way the code says, so 0.00 means two decimals and 0% means percentage. The result is text, so you cannot add it up like a number. Format codes such as dd-mm-yyyy and dddd are for English-language Excel; other languages use their own codes.
 simple_explain: TEXT ka kaam hai number ya date ko aapke pasand ke style me dikhana. Jaise 0.256 ko 26% likhna. Lekin result text ban jata hai, isliye uspar sum nahi chalta.
 analogy: Like putting a price in a printed price tag: the tag looks nice, but you cannot do maths on the paper any more.
 syntax: =TEXT(value, format_text)
@@ -2170,7 +2170,7 @@ meaning: Power Query imports data, cleans it with recorded steps, and loads the 
 native_meaning: डेटा लाना, साफ़ करना और हर बार एक क्लिक में दोबारा चलाना
 code: A1: Name¶A2: Asha¶A3: Ravi¶A4: Asha¶A5: Meena¶Steps: click any cell in A1:A5 > Data tab > From Table/Range > OK > select the Name column > Home tab > Remove Rows > Remove Duplicates > Close & Load
 output: A new sheet shows a table with three names: Asha, Ravi and Meena
-explanation: Power Query opens its own editor where each action becomes a step in the Applied Steps list on the right. When you choose Close & Load, the result is written to a sheet as a table. Your original data is not changed.
+explanation: Power Query opens its own editor where each action becomes a step in the Applied Steps list on the right. When you choose Close & Load, the result is written to a sheet as a table. Your original values are not changed, although From Table/Range first turns the range into an Excel Table.
 simple_explain: Power Query me aap ek baar saaf karne ke steps banate ho, aur Excel unhe yaad rakhta hai. Agli baar naya data aaye to Refresh All dabao aur wahi saare steps dobara chal jate hain.
 analogy: Like a recipe card: you write the steps once and can cook the same dish again with new ingredients.
 syntax: Data tab > Get Data (or From Table/Range, or From Text/CSV) > Power Query Editor > Close & Load
@@ -2185,7 +2185,7 @@ alternatives: Manual clean-up, Text to Columns, Remove Duplicates on the Data ta
 word_family: Power Query, Get & Transform, Applied Steps, Query, Refresh All, M language
 where_used: Monthly CSV imports | Combining many files into one table | Cleaning exported data before a PivotTable
 mini_conversation: A: Every month I get a new export and clean the same columns by hand. | B: Record the clean-up in Power Query once, and next month just click Refresh All.
-misconception: ✗ Power Query changes my original data table → ✓ It reads the source and writes a new result table, so the original data stays as it was
+misconception: ✗ Power Query changes my original data → ✓ It reads the source and writes a new result table; the source values stay the same (From Table/Range only turns the range into an Excel Table first)
 confused_with: Power Query vs a macro: Power Query records data-cleaning steps that refresh with new data, while a macro (VBA) records any clicks and keystrokes in Excel as code.
 avoid: Do not edit the loaded result table by hand, because the next refresh will overwrite your changes.
 wrong_code: Clean the new month's file by hand again, and then paste it over the old data every time

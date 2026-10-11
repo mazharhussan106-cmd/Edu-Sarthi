@@ -2,7 +2,7 @@
 
 Owns: the card source text and the final, audited Excel workbook for the 16
 Forward Deployed Engineer decks plus the earlier GitHub (`en`), Power BI (`pbi`),
-API Integration (`api`) and Supabase (`sup`) decks — 20 decks, 884 cards.
+API Integration (`api`), Supabase (`sup`) and Microsoft Excel (`xl`) decks — 21 decks, 924 cards.
 Does not own: the app's import code (see `lib/xlsxImport.ts`) or the Python and
 SQL decks from earlier chats, which are not in this repository.
 
@@ -16,7 +16,7 @@ The plan, the build status and the audit record live in `docs/FDE-FLASHCARD-PLAN
 tools/                 the build and audit scripts used to make the workbooks
 ```
 
-Deck folders: `lnx dkr cld cicd net ts etl air k8s obs sso llm rag evl jup req pbi api sup en`.
+Deck folders: `lnx dkr cld cicd net ts etl air k8s obs sso llm rag evl jup req pbi api sup en xl`.
 
 ## Rebuilding a deck
 

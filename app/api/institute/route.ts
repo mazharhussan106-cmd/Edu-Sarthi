@@ -16,7 +16,7 @@ import {
 import { instituteActionSchema } from "@/lib/instituteSchemas";
 
 export async function POST(req: Request) {
-  const gate = await requireUser({ verified: true });
+  const gate = await requireUser({ verified: true, member: true });
   if (!gate.ok) return gate.res;
   const userId = gate.id;
 

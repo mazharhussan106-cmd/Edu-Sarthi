@@ -6,6 +6,7 @@
 
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 
@@ -13,6 +14,7 @@ import { authConfig } from "@/lib/auth.config";
 import { prisma } from "@/lib/prisma";
 import { emailCodeSchema, emailLinkSchema, loginSchema } from "@/lib/validations";
 import { redeemCode, redeemLink, userForProvenEmail } from "@/lib/emailLogin";
+import { createGuestUser } from "@/lib/guest";
 import {
   clearLoginAttempts,
   isRateLimited,
@@ -33,6 +35,9 @@ class BadEmailCode extends CredentialsSignin {
 class Suspended extends CredentialsSignin {
   code = "suspended";
 }
+class GuestBusy extends CredentialsSignin {
+  code = "guest-busy";
+}
 
 // Every provider ends here, so this is the one place a suspended account is
 // refused — after the credential check, so the message reveals nothing to
@@ -44,6 +49,7 @@ function sessionUser(user: {
   role: "STUDENT" | "TEACHER" | "ADMIN";
   emailVerified: Date | null;
   suspendedAt: Date | null;
+  isGuest: boolean;
 }) {
   if (user.suspendedAt) throw new Suspended();
   return {
@@ -52,6 +58,7 @@ function sessionUser(user: {
     email: user.email,
     role: user.role,
     emailVerified: user.emailVerified,
+    isGuest: user.isGuest,
   };
 }
 
@@ -59,6 +66,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   callbacks: {
     ...authConfig.callbacks,
+    // Google only. Everything about who the person is comes from our own row,
+    // never from Google's profile: the account is found or made by
+    // userForProvenEmail, the same function the email code uses, so the two
+    // paths cannot disagree about a password set by a pre-registrant.
+    async signIn({ account, profile }) {
+      if (account?.provider !== "google") return true;
+
+      const email = typeof profile?.email === "string" ? profile.email.trim().toLowerCase() : "";
+      // Linking by email is only safe when Google says it checked the inbox.
+      if (!email || profile?.email_verified !== true) return false;
+
+      const user = await userForProvenEmail(email);
+      if (user.suspendedAt) return false;
+
+      if (!user.name && typeof profile.name === "string" && profile.name.trim()) {
+        await prisma.user.update({ where: { id: user.id }, data: { name: profile.name.trim().slice(0, 80) } });
+      }
+      return true;
+    },
     // On update() the browser's payload is ignored; the account's own row is
     // the only source for "verified" and for the role.
     async jwt(params) {
@@ -75,6 +101,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   adapter: PrismaAdapter(prisma),
   providers: [
+    // Present only when both keys are set, so the site still builds and runs
+    // before Google is configured; the login page asks /api/auth/providers
+    // and shows the button only if this is here.
+    ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
+      ? [
+          Google({
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET,
+            // Safe here because signIn() above only lets verified Google
+            // emails through and has already dealt with any older password.
+            allowDangerousEmailAccountLinking: true,
+          }),
+        ]
+      : []),
+
+    // "Continue as guest". Takes no input: it makes a study-only account.
+    Credentials({
+      id: "guest",
+      credentials: {},
+      async authorize() {
+        const guest = await createGuestUser();
+        if (!guest) throw new GuestBusy();
+        return sessionUser(guest);
+      },
+    }),
+
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },

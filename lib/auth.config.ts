@@ -30,6 +30,8 @@ export const authConfig = {
       if (user) {
         token.role = user.role;
         token.emailVerified = user.emailVerified;
+        // `?? false`: a row from before guests existed has no value to copy.
+        token.isGuest = user.isGuest ?? false;
         // Stamped once, at sign-in, and never refreshed. The JWT's own `iat`
         // moves forward every time Auth.js re-issues the cookie, which would
         // let a signed-out device slip back in as "newly issued".
@@ -49,6 +51,7 @@ export const authConfig = {
         session.user.id = token.sub as string;
         session.user.role = token.role;
         session.user.emailVerified = token.emailVerified;
+        session.user.isGuest = token.isGuest ?? false;
         session.user.loginAt = token.loginAt;
       }
 

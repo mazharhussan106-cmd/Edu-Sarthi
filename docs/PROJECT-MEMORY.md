@@ -76,3 +76,15 @@ Not included: the Python and SQL decks (their workbooks are not in the repo — 
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.
+
+## Google sign-in and guest (11 Oct, branch `claude/trusting-noether-n3dhu1`)
+
+Done: **Continue with Google** and **Continue as guest** under the login and register forms (`components/auth/SocialSignIn.tsx`), for every role from one page.
+
+- **Google** (`lib/auth.ts`): shown only when `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` are set (the login page asks `/api/auth/providers`). The `signIn` callback accepts only a Google-verified email, then finds or makes the account with `userForProvenEmail` (the same function the email code uses), so an existing teacher/admin keeps their role, a new email becomes STUDENT, a suspended account is refused, and a password set by someone who registered the address first is removed. No role ever comes from Google. Google users are verified on arrival, so they skip the email code.
+- **Guest** (`lib/guest.ts`, `Credentials` provider id `guest`): a real, anonymous STUDENT row with the existing `User.isGuest = true` (no schema change). Capped at 300 new guests per hour. Guests can study flashcards and keep progress; `requireUser({ member: true })` in `lib/apiUser.ts` refuses them on upload-url, submissions, institute, decks (create, cards, media, report, like). The proxy lets a guest open /login and /register to upgrade.
+- Tested locally against a real Postgres: guest sign-in, session `isGuest`, 403 on member routes, flashcards still allowed, admin/teacher pages redirect, password sign-in unchanged. **Google itself was not exercised** (needs real Google keys).
+
+Needs before Google works live: create an OAuth client in Google Cloud Console, redirect URI `https://<site>/api/auth/callback/google`, put the ID and secret in Vercel as `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`, redeploy.
+
+Not done, by choice: deleting old guest rows (needs a check of what cascades first), hiding guests from the teacher Students list and admin counts, friendlier guest messages inside Explore's "Import and study".

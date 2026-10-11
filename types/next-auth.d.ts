@@ -14,6 +14,8 @@ declare module "next-auth" {
       id: string;
       role: Role;
       emailVerified: Date | null;
+      /** A guest: study-only, no recordings, no decks. See lib/guest.ts. */
+      isGuest: boolean;
       /** When this sign-in happened (ms); compared with sessionsValidFrom. */
       loginAt?: number;
     } & DefaultSession["user"];
@@ -22,6 +24,7 @@ declare module "next-auth" {
   interface User {
     role: Role;
     emailVerified: Date | null;
+    isGuest: boolean;
   }
 }
 
@@ -32,6 +35,7 @@ declare module "@auth/core/jwt" {
   interface JWT {
     role: Role;
     emailVerified: Date | null;
+    isGuest: boolean;
     loginAt?: number;
   }
 }
@@ -40,6 +44,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     role: Role;
     emailVerified: Date | null;
+    isGuest: boolean;
     loginAt?: number;
   }
 }

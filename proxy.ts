@@ -72,11 +72,15 @@ export default auth((req) => {
   // Verified users have no business on the auth pages. Without this, the back
   // button after signing in lands on a login form for an account already
   // signed in.
+  // A guest is the exception for /login and /register: that is where a guest
+  // goes to upgrade to a real account, and bouncing them back would trap them.
+  const upgradePage = user.isGuest && (pathname === "/login" || pathname === "/register");
   if (
-    pathname === "/verify" ||
-    pathname === "/login" ||
-    pathname === "/register" ||
-    pathname === "/forgot-password"
+    !upgradePage &&
+    (pathname === "/verify" ||
+      pathname === "/login" ||
+      pathname === "/register" ||
+      pathname === "/forgot-password")
   ) {
     return redirect(homeFor(user.role));
   }

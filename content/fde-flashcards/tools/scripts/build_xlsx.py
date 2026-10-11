@@ -54,9 +54,9 @@ WIDE = {"definition", "explanation", "what", "causes", "effects", "steps", "work
 
 
 def put(cell, v, formula=False):
-    """Write a value; text that starts with = + - @ is forced to text so Excel never reads it as a formula."""
+    """Write a value; text that starts with = + - @ # is forced to text so Excel never reads it as a formula or an error value such as #DIV/0!."""
     cell.value = v
-    if not formula and isinstance(v, str) and v[:1] in "=+-@":
+    if not formula and isinstance(v, str) and v[:1] in "=+-@#":
         cell.data_type = "s"
 
 

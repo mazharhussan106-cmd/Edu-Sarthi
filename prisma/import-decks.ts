@@ -1,5 +1,5 @@
 // Loads the subject flashcard decks in content/fde-flashcards (Linux, Docker,
-// GitHub, Power BI, LLM APIs, …) into the library as published EduSarthi decks,
+// GitHub, Excel, Power BI, LLM APIs, …) into the library as published EduSarthi decks,
 // so they appear on the Explore page grouped by subject.
 //
 // It reuses the admin Excel import (lib/xlsxCards to read and check, then
@@ -39,6 +39,7 @@ const DECKS: { dir: string; file: string; title: string; tag: string; descriptio
   { dir: "api", file: "API Integration Flashcards.xlsx", title: "API Integration", tag: "programming", description: "HTTP, REST, authentication, errors, retries, webhooks and testing an integration." },
   { dir: "en", file: "GitHub Flashcards English.xlsx", title: "GitHub", tag: "programming", description: "Git basics to advanced: branches, merging, pull requests, Actions, releases and fixing mistakes." },
   { dir: "sup", file: "Supabase Flashcards.xlsx", title: "Supabase", tag: "programming", description: "Postgres, auth, row level security, storage, edge functions and connecting an app." },
+  { dir: "xl", file: "Excel Flashcards.xlsx", title: "Microsoft Excel", tag: "data", description: "Cells, formulas, lookups, logic, charts, pivot tables and cleaning data, from first steps to advanced." },
   { dir: "pbi", file: "Power BI Flashcards.xlsx", title: "Power BI", tag: "data", description: "Power Query, data modelling, DAX, visuals, publishing and row level security." },
   { dir: "etl", file: "ETL and Data Pipelines Flashcards.xlsx", title: "ETL and Data Pipelines", tag: "data", description: "Extract, transform and load, data quality, reliability and pipeline design." },
   { dir: "air", file: "Airflow Flashcards.xlsx", title: "Apache Airflow", tag: "data", description: "DAGs, operators, scheduling, retries and running Airflow well (written for Airflow 2, with Airflow 3 notes)." },

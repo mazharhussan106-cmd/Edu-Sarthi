@@ -1,6 +1,6 @@
 # Customer-support English cards — plan and 10 samples (13 Oct 2026)
 
-Status: **design only, nothing built in the app yet.** Written after the owner's answers below. Update this file when anything is decided.
+Status: **design only, nothing built in the app yet.** Mockup of one card: `docs/support-card.png` (source `docs/support-card-mockup.html`). Written after the owner's answers below. Update this file when anything is decided.
 
 ## Owner's answers (13 Oct 2026)
 
@@ -30,14 +30,24 @@ Voice cards add: stress/pace tip and a "sound polite on the phone" note. Chat ca
 
 ## Build order (after the owner agrees)
 
-1. **Data** — a 56-point-style workbook (`content/support-cards/`) with fields above; same importer path as the Excel decks (admin Import page) so no new code is needed for the first batch.
+1. **Data** — a workbook in `content/support-cards/` (one sheet per channel), exported to `support.json` (see Plan check 1).
 2. **Content scale** — suggested first release: 3 channels × 3 levels × 20 cards = **180 cards** (≈ 120 Say, 60 Understand), grouped by situation: greeting, verify, hold, apologise, clarify, refuse politely, escalate, next steps, close.
 3. **App** — Support chip + channel tabs + level filter + badge (only if the admin importer is not enough). More than 6 files → plan and approval first.
 4. **Teacher check** — every card is a draft until a verified teacher marks it checked (same rule as the Hindi drafts on chunk cards).
 
+## Plan check (13 Oct 2026) — corrections
+
+1. **The Excel importer is the wrong road for this section.** It makes a *Library deck*, not a Support chip with Voice/Chat/Email tabs, and it only knows the 56-point fields — "Ask next", "Replies you may hear", "Situation", "Call stage" would be dropped. Decision: build Support **the way Chunk and Grammar were built** — rows in the `Word` table with a new kind `SUPPORT` (additive enum value, no data loss), a JSON file in `content/support-cards/`, an import script added to the Database setup button, and the chunk card components reused. The workbook stays the editing source.
+2. **"Record yourself for audit" does not appear on admin-imported library decks** (only on verified-teacher decks). The chunk route above gets it for free, as chunk cards already have it.
+3. **Listening ("Understand it") cards** use the browser's built-in voice, which the cards already use for 🔊; "Slow" = the same voice at a lower rate. It cannot imitate a real angry or accented customer — say so in the app, and add recorded audio later if needed.
+4. **Email cards** cannot be "said". Side 3 for email: write your reply in a box (not saved) and *Send a photo/text for audit* instead of a voice recording. Needs the owner's yes.
+5. Sample 4 wording changed: "May I know…" is common in Indian English but sounds odd to many international customers → "Could you tell me what the issue is…".
+6. More than 6 files will change in the app → plan and approval before the code step (CLAUDE.md rule).
+
+Decided: `[Company]` stays as the placeholder everywhere.
+
 ## Open questions for the owner
 
-- Company name placeholder: `[Company]` everywhere (recommended), or a real brand?
 - Accent / pronunciation guidance for Indian speakers (like chunk cards) — include on Voice cards? (Recommended: yes.)
 - Is a separate audio recording per card wanted (needs a voice artist or text-to-speech), or is the browser's built-in voice enough?
 
@@ -48,7 +58,7 @@ Voice cards add: stress/pace tip and a "sound polite on the phone" note. Chat ca
 | 1 | Voice · Basic · Say | "Thank you for calling [Company]. How can I help you today?" | कॉल करने के लिए धन्यवाद। मैं आज आपकी कैसे मदद कर सकता/सकती हूँ? | First line of every call | ✗ "What do you want?" → ✓ "How can I help you today?" |
 | 2 | Voice · Basic · Say | "Could you hold for a moment, please? I'll check that for you." | क्या आप एक पल होल्ड कर सकते हैं? मैं यह देखता/देखती हूँ। | Need time to look something up | ✗ "Wait." → ✓ "Could you hold…, please?" (ask, don't order) |
 | 3 | Voice · Basic · Say | "May I have your name and registered mobile number, please?" | क्या मैं आपका नाम और रजिस्टर्ड मोबाइल नंबर ले सकता/सकती हूँ? | Verifying the caller | ✗ "Tell me your number." → ✓ "May I have…, please?" |
-| 4 | Voice · Basic · Understand | Customer: "I want to speak to your manager." | ग्राहक आपके मैनेजर से बात करना चाहता है। | Customer is upset or wants a higher authority | Ask next: "May I know what the issue is, so I can help you or pass it on correctly?" |
+| 4 | Voice · Basic · Understand | Customer: "I want to speak to your manager." | ग्राहक आपके मैनेजर से बात करना चाहता है। | Customer is upset or wants a higher authority | Ask next: "Could you tell me what the issue is, so I can help you or pass it on to the right person?" |
 | 5 | Voice · Intermediate · Say | "I'm sorry for the inconvenience this has caused you." | इससे आपको जो परेशानी हुई उसके लिए मुझे खेद है। | After a mistake or delay | ✗ "Sorry for your problem." → ✓ "…the inconvenience this has caused you." |
 | 6 | Voice · Intermediate · Understand | Customer: "I've been charged twice for the same thing." | मुझसे एक ही चीज़ के दो बार पैसे काटे गए हैं। | Billing complaint | Ask next: "Could you tell me the date and the amount of both charges?" |
 | 7 | Voice · Advanced · Say | "I understand how frustrating this must be, and I want to get it resolved for you today." | मैं समझता/समझती हूँ कि यह कितना निराशाजनक होगा, और मैं इसे आज ही हल करना चाहता/चाहती हूँ। | Angry customer | Don't promise what you can't do: say "I want to", not "I will definitely" unless sure |

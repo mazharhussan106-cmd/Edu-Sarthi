@@ -1,0 +1,1159 @@
+@CSV-B-001
+id: CSV-B-001
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Opening
+sentence: Thank you for calling [Company]. This is Priya. How can I help you today?
+speaker: Agent
+situation: The phone rings and you pick up the first call of your shift; you know nothing yet about the caller.
+recall_cue: A new call connects. Which three things do you say in your first breath, and in what order?
+stress: THANK-you-for-CALL-ing-[COM-pa-ny] · this-is-PRI-ya · how-can-i-HELP-you-to-DAY
+linking: thank_you → "thang-kyoo" · this_is → "thi-siz" · help_you → "hel-pyoo"
+intonation: Warm and steady on the greeting, with a short pause after the company name and again after your name. "How can I help you today?" is a wh- question, so let it fall gently at the end; do not rush it.
+indian_pron_tip: "Thank" and "this" both start with "th". For "thank", put the tongue tip lightly between the teeth and blow (not "tank"); for "this", use the same tongue position with voice (not "dis"). Minimal pairs: thin / tin (for "thank"), then / den (for "this").
+register: Neutral
+tone: Warm, welcoming, ready
+importance: 5
+customer_emotion: Hopeful but unsure whether they have reached the right place.
+memory_hook: Think of opening a shop door: you thank them for coming in, show your name badge, then ask how you can help.
+hindi_meaning: [Company] को कॉल करने के लिए धन्यवाद। मेरा नाम प्रिया है। आज मैं आपकी क्या मदद कर सकता/सकती हूँ?
+hindi_roman: [Company] ko call karne ke liye dhanyavaad. Mera naam Priya hai. Aaj main aapki kya madad kar sakta/sakti hoon?
+simple_meaning: Thanks for phoning this company. My name is Priya. What would you like help with?
+why_it_works: In one breath the caller learns they reached the right company, hears a real person's name, and is invited to explain. "How can I help" assumes you will help, which sounds far more willing than "What is your problem?"
+key_chunk: How can I help you ___?
+grammar_pattern: Thank you for + verb-ing · This is + name · How can I + base verb …?
+grammar_note: After "Thank you for", use the -ing form: "for calling", not "for call".
+tone_note: Saying your name makes you a person, not a machine. A flat, fast "Hello, tell me" sounds like you want the call to end quickly.
+watch_out: ✗ Thank you for calling to [Company]. I am Priya. How I can help you? → ✓ Thank you for calling [Company]. This is Priya. How can I help you today?
+dont_say: "Hello, tell me." — it skips the company name and your name, and sounds like an order.
+positive_swap: Instead of "Yes, tell me your problem", say "How can I help you today?"
+alt_1: Good morning, you're through to [Company]. My name is Priya. How can I help?
+alt_2: Hi, thanks for calling [Company]. Priya speaking. What can I do for you today?
+more_formal: Good afternoon, and thank you for calling [Company]. My name is Priya. How may I assist you today?
+ask_next: Sure, I can look into that. Could I start with your name, please?
+replies_you_may_hear: Hi, I'm calling about my order. · Is this the billing team? · My internet has stopped working.
+if_customer_pushes: Customer: "Is this a real person? I've been waiting ages." → Agent: "Yes, I'm Priya, a real person, and I'm sorry about the wait. How can I help you today?"
+cultural_note: Many Indian agents say "Myself Priya" or open with "Yes, tell me". International callers may not expect these; they expect "This is Priya" or "My name is Priya", with the company name first.
+channel_note: Chat: "Hi, I'm Priya from [Company]. How can I help today?" Email: greet the customer by name and get to the point; no phone-style opening.
+when_not_to_use: When you call the customer back, do not say "Thank you for calling"; say "Hi, this is Priya from [Company], returning your call."
+mini_conversation: Customer: Hello? | Agent: Thank you for calling [Company]. This is Priya. How can I help you today? | Customer: Hi, my parcel hasn't arrived. | Agent: I'm sorry to hear that. Could I have your order number, please?
+source_rule: Open with thanks, the company name and an offer of help, and give your own name.
+fill_blank: Thank you ____ calling [Company]. This is Priya. How can I help you today?
+fill_answer: for
+mcq_question: A call has just connected. Which opening is the most welcoming and complete?
+mcq_options: A) Good morning, [Company] customer service. Yes, please tell me your problem. | B) Hello, [Company] customer service, Priya here. What is the problem today? | C) Thank you for calling [Company]. This is Priya. How can I help you today? | D) Hello, this is [Company]. Please give me your name and order number.
+mcq_answer: C
+mcq_why: C thanks the caller and gives the company, your name and an offer of help. A and B ask for "the problem" bluntly, and D starts with a demand for details and skips your name.
+reorder_task: help / today / I / can / How / you
+reorder_answer: How can I help you today
+hindi_to_english: [Company] ko call karne ke liye shukriya, mera naam Rahul hai. Main aaj aapki kya madad kar sakta hoon?
+hindi_to_english_answer: Thank you for calling [Company]. This is Rahul. How can I help you today?
+whats_next_customer: Hi, I'm calling because I was charged twice.
+whats_next_reply: I'm sorry you've been charged twice. I'll look into it for you. Could I have your name, please?
+role_play: Partner A phones [Company] about a late delivery. Partner B answers with thanks, the company name, their own name and an offer of help, then asks for A's name.
+record_task: Record your full opening three times: once normally, once smiling, once slowly. Submit the one that sounds the warmest.
+self_check: Did you say the company name and your own name? · Did "today" fall at the end? · Did "thank" start with a soft "th", not "t"?
+
+@CSV-B-002
+id: CSV-B-002
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Verify
+sentence: Could I have your full name, please?
+speaker: Agent
+situation: The caller has said they need help with a refund, and you need their name to find their account.
+recall_cue: You need to know who you are speaking to. How do you ask without sounding like a police officer?
+stress: could-i-HAVE · your-FULL-NAME · PLEASE
+linking: could_I → "cu-dai" · have_your → "ha-vyor" · full_name → "ful-naym" (short "u" as in "put", not "fool"; no pause between the words)
+intonation: A polite request shaped like a yes/no question, so rise slightly on "please?". Slow down on "full name" so it is heard clearly.
+indian_pron_tip: "Have" ends in a real /v/: top teeth touch the lower lip, not "haw" or "hab". Practise the pair vest / west so "have" does not slide into a w-sound.
+register: Neutral
+tone: Polite, simple request
+importance: 5
+customer_emotion: Neutral and ready to give details, but wants the call to move fast.
+memory_hook: Imagine holding out an open hand for a business card: "Could I have…" asks for it, it does not grab.
+hindi_meaning: क्या मुझे आपका पूरा नाम मिल सकता है?
+hindi_roman: Kya mujhe aapka poora naam mil sakta hai?
+simple_meaning: Please tell me your first name and your surname.
+why_it_works: "Could I have" is a soft, standard request that international callers hear every day. Asking for the full name up front saves a second question later when two accounts share a first name.
+key_chunk: Could I have your ___, please?
+grammar_pattern: Could + I + have + your + noun, please?
+grammar_note: "Could I have…?" asks to receive something; it is softer than "Give me…" or "Tell me…".
+tone_note: The question form and "please" make it polite. "Name?" or "Tell your name" sounds like a form being filled in, not a person helping.
+watch_out: ✗ Can you tell your full name? → ✓ Could I have your full name, please?
+dont_say: "Tell me your good name." — "good name" echoes Hindi "shubh naam"; international callers may find it odd, and it sounds like an order.
+positive_swap: Instead of "Tell me your name", say "Could I have your full name, please?"
+alt_1: Can I take your name, please?
+alt_2: Who am I speaking with today?
+more_formal: Before we go further, could you give me your full name as it appears on the account?
+ask_next: Thank you, Ms Okafor. Could you spell your surname for me, please?
+replies_you_may_hear: It's James Walker. · Sarah, Sarah Jones. · Why do you need my name?
+if_customer_pushes: Customer: "Why do you need my name? Just fix it." → Agent: "I understand you want this sorted quickly. I need your name to find your account, so I can see exactly what happened."
+cultural_note: "Your good name" and "May I know your name?" are common Indian English forms. International callers may not expect them; switch to "Could I have your name?" or "Who am I speaking with?"
+channel_note: Chat: "Could I have your full name, please?" works as is. Email: the name is usually in the signature, so do not ask; use it in your greeting.
+when_not_to_use: Do not ask again if the caller already gave their name in the first sentence; use it instead: "Thanks, Mr Walker."
+mini_conversation: Customer: I need help with a refund. | Agent: Sure. Could I have your full name, please? | Customer: It's Anna Brooks. | Agent: Thank you, Ms Brooks. Let me find your account.
+source_rule: Verification: ask only for what you need, and state the purpose when the caller asks why.
+fill_blank: Could I have your full name, ____?
+fill_answer: please
+mcq_question: Which way of asking for the caller's name sounds most natural to an international customer?
+mcq_options: A) Please tell me your name quickly. | B) Could I have your full name, please? | C) What is your name? I need it now. | D) First give your name, then I will help.
+mcq_answer: B
+mcq_why: B is a soft, standard request. A and C are orders, and D sets a condition instead of asking.
+reorder_task: name / I / your / please / Could / full / have
+reorder_answer: Could I have your full name please
+hindi_to_english: Kya main aapka poora naam jaan sakti hoon?
+hindi_to_english_answer: Could I have your full name, please?
+whats_next_customer: It's Daniel O'Brien.
+whats_next_reply: Thank you, Mr O'Brien. Let me check the spelling: O, apostrophe, B-R-I-E-N. Is that right?
+role_play: Partner A calls to change a delivery address. Partner B asks for A's full name, repeats it back, and asks A to spell the surname.
+record_task: Record yourself asking for the caller's name, then thanking them by name, as if the caller said "Anna Brooks".
+self_check: Did your voice rise a little on "please?" · Did you ask with "Could I have..." rather than "Tell me"? · Did "have" end in a clear "v"?
+
+@CSV-B-003
+id: CSV-B-003
+channel: Voice
+level: Basic
+cefr: B1
+kind: Say it
+call_stage: Verify
+sentence: To protect your account, could you confirm your registered mobile number or email address?
+speaker: Agent
+situation: Before you can discuss a billing question, you must check that the caller is the account holder.
+recall_cue: Before sharing any account details, you must check who the caller is. What reason do you give first, and what do you ask for?
+stress: to-pro-TECT-your-ac-COUNT · could-you-con-FIRM · your-REG-is-tered-MO-bile-NUM-ber · or-E-mail-ad-DRESS
+linking: protect_your → "pro-tek-chor" · confirm_your → "con-fur-myor" · email_address → "ee-may-la-dress"
+intonation: Keep your voice level, or rise a little, after "account" and pause, so the caller hears that the request is still coming. In "mobile number or email address", rise on "number" and fall on "address" to show there are two choices.
+indian_pron_tip: Final clusters: "protect" ends in "-kt" and "registered" ends in "-rd". Say pro-TEKT and REJ-is-terd with the last sound clear; dropping it ("pro-tek", "REJ-is-ter") makes the words harder to catch on a phone line.
+register: Neutral
+tone: Calm, reassuring, clear
+importance: 5
+customer_emotion: Slightly impatient, and may wonder why they must prove who they are.
+memory_hook: A bank locker needs two keys: first show why (to keep it safe), then ask for the second key (their number).
+hindi_meaning: आपके अकाउंट की सुरक्षा के लिए, क्या आप अपना रजिस्टर्ड मोबाइल नंबर या ईमेल पता कन्फ़र्म कर सकते हैं?
+hindi_roman: Aapke account ki suraksha ke liye, kya aap apna registered mobile number ya email address confirm kar sakte hain?
+simple_meaning: So that nobody else can use your account, please tell me the phone number or email linked to it.
+why_it_works: Putting the reason first turns a check into something done for the customer, not against them. Offering two options lets them use whichever one they remember.
+key_chunk: To protect your account, could you confirm your ___?
+grammar_pattern: To + base verb (purpose), could + you + confirm + noun?
+grammar_note: "To protect…" at the start explains why; it means "so that I can protect…".
+tone_note: The reason makes it feel like care, not suspicion. "Give your number first, then I'll talk" sounds like you think they are lying.
+watch_out: ✗ For protect your account, could you confirm registered mobile number or email? → ✓ To protect your account, could you confirm your registered mobile number or email address?
+dont_say: "I can't tell you anything until you verify." — it sounds like a threat and gives no reason the caller cares about.
+positive_swap: Instead of "I can't help without verification", say "To protect your account, could you confirm your registered mobile number or email address?"
+alt_1: For your security, could you tell me the mobile number on the account?
+alt_2: Just so I know I'm speaking with the account holder, could you confirm your email address?
+more_formal: To keep your account secure, could you please confirm the mobile number or email address registered with us?
+ask_next: Thank you, that matches. Now, how can I help with your bill today?
+replies_you_may_hear: It's 07700 900123. · Which email, my work one or my personal one? · I don't remember which number I used.
+if_customer_pushes: Customer: "I've already given this to the last agent!" → Agent: "I'm sorry to ask again. We check on every call to keep your account safe. Your email address works too, if that's easier."
+cultural_note: "May I know your registered mobile number?" is common on Indian calls. It is grammatical, but international callers may not expect it; they more often hear "Could you confirm…?" or "Could you tell me…?"
+channel_note: Chat: same wording, but never ask for a full card number, PIN, password or one-time code (OTP). Email: ask the customer to reply from the email address registered on the account.
+when_not_to_use: Do not use it if the caller only wants general information, such as opening hours, which needs no account access.
+mini_conversation: Customer: I want to check my last bill. | Agent: To protect your account, could you confirm your registered mobile number or email address? | Customer: It's lucy.grant@example.com. | Agent: Thank you, that matches. Let me open your bill.
+source_rule: Verification: state the purpose ("To protect your account…") and ask only for what you need.
+fill_blank: ____ protect your account, could you confirm your registered mobile number or email address?
+fill_answer: To
+mcq_question: You must verify the caller before discussing their bill. Which line explains the check best?
+mcq_options: A) Before I tell you anything, you will have to prove you are the account holder. | B) To protect your account, could you confirm your registered mobile number or email address? | C) I can't discuss your bill until you give me your registered mobile number or email address. | D) It is company rule, so could you please confirm your registered mobile number or email?
+mcq_answer: B
+mcq_why: B gives a reason the customer cares about. A sounds like a threat, C refuses until the customer complies, and D hides behind "company rule" instead of explaining why.
+reorder_task: account / your / protect / To / could / confirm / you / email / your / address
+reorder_answer: To protect your account could you confirm your email address
+hindi_to_english: Aapke account ki suraksha ke liye, kya aap apna registered email address confirm kar sakte hain?
+hindi_to_english_answer: To protect your account, could you confirm your registered email address?
+whats_next_customer: Why do you need that? I'm the account holder.
+whats_next_reply: I understand, and I'm sorry for the extra step. It's a quick check we do on every call, so nobody else can get into your account.
+role_play: Partner A calls about a high phone bill. Partner B explains the reason for the check, asks for the registered mobile number or email, confirms it matches, then asks how to help.
+record_task: Record the verification line, then the line you say when the number matches, then the line you say when it does not match.
+self_check: Did you give the reason before the request? · Did "address" fall at the end to show a choice? · Did you say the final "t" in "protect"?
+
+@CSV-B-004
+id: CSV-B-004
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Listen & clarify
+sentence: I'm sorry, I didn't catch that. Could you say it again, please?
+speaker: Agent
+situation: The caller said their order number quickly and you missed two of the digits.
+recall_cue: You missed part of what the caller said. How do you ask them to repeat it without blaming them?
+stress: i'm-SOR-ry · i-DID-n't-CATCH-that · could-you-SAY-it-a-GAIN · PLEASE
+linking: sorry_I → "sor-ree-yai" (a small "y" joins the two vowels) · didn't_catch → "didn-catch" · say_it_again → "say-yi-ta-gen"
+intonation: Gentle fall on "catch that", a short pause, then a rise on "please?". Keep the voice soft so it sounds like your miss, not theirs.
+indian_pron_tip: "That" starts with a voiced "th": put the tongue tip between the teeth and add voice. Saying "dat" is a common habit because Hindi has no English-style "th" and uses a "d" or "t" instead; practise then / den.
+register: Neutral
+tone: Apologetic, polite request
+importance: 5
+customer_emotion: Mildly impatient, and may feel they already spoke clearly.
+memory_hook: Their words were a ball thrown to you and you did not catch it: say sorry, then ask them to throw it once more.
+hindi_meaning: माफ़ कीजिए, मैं ठीक से सुन नहीं पाया/पाई। क्या आप फिर से बता सकते हैं?
+hindi_roman: Maaf kijiye, main theek se sun nahin paaya/paayi. Kya aap phir se bata sakte hain?
+simple_meaning: Sorry, I missed what you said. Please say it one more time.
+why_it_works: "I didn't catch that" puts the miss on you, not on the caller's accent or speed. A guessed digit leads to the wrong order later, so asking is always better than guessing.
+key_chunk: I didn't catch ___. Could you say it again, please?
+grammar_pattern: I + didn't + catch + that · Could + you + say + it + again, please?
+grammar_note: "Catch" here means "hear and understand"; use the past "didn't catch" because the words were already said.
+tone_note: Apologising first makes it your problem. "What?" or "Repeat" sounds rude, and "You are not clear" blames the caller.
+watch_out: ✗ Sorry, I am not understanding. Say again please. → ✓ I'm sorry, I didn't catch that. Could you say it again, please?
+dont_say: "Speak properly, I can't understand you." — it blames the caller and can sound like you are judging their accent.
+positive_swap: Instead of "You are not audible", say "I'm sorry, I didn't catch that. Could you say it again, please?"
+alt_1: Sorry, could you repeat the last part, please?
+alt_2: I missed the last two digits. Could you read them out again?
+more_formal: I do apologise, I didn't quite catch that. Would you mind repeating it, please?
+ask_next: Thank you. So that's 4 8 1 7 2. Is that right?
+replies_you_may_hear: Sure, it's 4 8 1 7 2. · Which part did you miss? · I just said it!
+if_customer_pushes: Customer: "I just said it!" → Agent: "I know, and I'm sorry. I want to get the number exactly right so I find the correct order."
+cultural_note: "Repeat once more" and "You are not audible" are common on Indian calls. International callers may hear them as abrupt or formal; "I didn't catch that" is the softer, more expected form.
+channel_note: Chat: hearing is not the issue, but you can ask "Could you check that number again? I can't find it." Email: ask for the missing detail in one clear question.
+when_not_to_use: Do not ask a third time in the same way; ask the caller to spell it or read it slowly, digit by digit.
+mini_conversation: Customer: My order number is four-eight-one-something-two. | Agent: I'm sorry, I didn't catch that. Could you say it again, please? | Customer: Four, eight, one, seven, two. | Agent: Thank you. That's 4 8 1 7 2. Let me find it.
+source_rule: Ask politely for a repeat ("I'm sorry, could you please repeat that?") rather than guess.
+fill_blank: I'm ____ (starts with s), I didn't catch that. Could you say it again, please?
+fill_answer: sorry
+mcq_question: You missed part of the caller's account number. Which response is best?
+mcq_options: A) Your voice is not clear. Please say the number again, and slowly. | B) I'm sorry, I didn't catch that. Could you say it again, please? | C) I think I got most of it, so I'll carry on with the number I heard. | D) Could you speak louder and slower? You are going too fast for me.
+mcq_answer: B
+mcq_why: B apologises and asks politely. C risks opening the wrong account, and A and D put the blame on the caller.
+reorder_task: again / Could / say / it / you / please
+reorder_answer: Could you say it again please
+hindi_to_english: Maaf kijiye, main sun nahin paaya. Kya aap phir se bata sakte hain?
+hindi_to_english_answer: I'm sorry, I didn't catch that. Could you say it again, please?
+whats_next_customer: Sure. It's 4 8 1 7 2.
+whats_next_reply: Thank you, that's much clearer. I've got all five digits now, so let me find your order.
+role_play: Partner A reads a five-digit order number quickly and swallows one digit. Partner B asks for a repeat politely, then reads the full number back to confirm.
+record_task: Record yourself asking for a repeat, then reading back the number 4 8 1 7 2 slowly, digit by digit.
+self_check: Did you say sorry before asking? · Did you avoid "repeat" as a one-word order? · Did "that" start with a soft "th", not "d"?
+
+@CSV-B-005
+id: CSV-B-005
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Listen & clarify
+sentence: Could you spell your email address for me, please?
+speaker: Agent
+situation: The caller has given an unusual email address, and you need it exactly right to send a refund receipt.
+recall_cue: The caller's email has an unusual name in it. What do you ask so that you type it exactly right?
+stress: could-you-SPELL · your-E-mail-ad-DRESS · for-ME · PLEASE
+linking: spell_your → "spel-yor" · email_address → "ee-may-la-dress" · for_me → "fer-mee"
+intonation: One smooth question, rising on "please?". While they spell, say "Yes" or "Got it" after each group so they know you are with them.
+indian_pron_tip: "Spell" starts with an s-cluster: say "spell" straight away, not "ispell" or "su-pell". Some speakers add a vowel before s-clusters (as in "iskul" for school); keep the "s" and "p" together.
+register: Neutral
+tone: Careful, polite request
+importance: 4
+customer_emotion: Patient, but may be tired of spelling their email on every call.
+memory_hook: Picture the letters dropping one by one into your keyboard like coins: one wrong coin and the email bounces.
+hindi_meaning: क्या आप मेरे लिए अपना ईमेल पता स्पेल कर सकते हैं?
+hindi_roman: Kya aap mere liye apna email address spell kar sakte hain?
+simple_meaning: Please say the letters of your email one by one.
+why_it_works: Spelling stops mistakes with names that sound alike, like "Shaw" and "Shore". One wrong letter means the customer never gets the email and has to call back.
+key_chunk: Could you spell ___ for me, please?
+grammar_pattern: Could + you + spell + noun + for me, please?
+grammar_note: "Spell" means say each letter; "for me" makes the request personal and softer.
+tone_note: "For me, please" sounds like you want to get it right for them. "Spell it" on its own sounds like an order.
+watch_out: ✗ Please spelling your email address. → ✓ Could you spell your email address for me, please?
+dont_say: "Your email is not clear, spell it." — it blames the customer for a normal difficulty.
+positive_swap: Instead of "Tell your email ID spelling", say "Could you spell your email address for me, please?"
+alt_1: Could you spell that for me, letter by letter?
+alt_2: Just to get it right, could you spell your email for me?
+more_formal: To make sure the receipt reaches you, would you mind spelling your email address for me?
+ask_next: Thank you. Let me read it back: r-o-s-s-k-a-y at example dot com. Is that right?
+replies_you_may_hear: Sure, it's r-o-s-s-k-a-y at example dot com. · Is it the one on my account? · Didn't I give that already?
+if_customer_pushes: Customer: "It's just my name, it's easy!" → Agent: "It is, and I want to be sure I don't mix up an 'e' and an 'i'. Spelling it now saves you a lost receipt."
+cultural_note: "Email ID" is common in India; international callers usually say "email address" or just "email". Read it back with "at" and "dot", and use clear words for letters (B for Bravo) if needed.
+channel_note: Chat: no spelling needed; ask "Could you type your email here?" Email: you already have it, so do not ask.
+when_not_to_use: Do not ask the caller to spell something already on your screen from verification; read it back and ask for a yes or no instead.
+mini_conversation: Customer: My email is rosskay at example dot com. | Agent: Could you spell your email address for me, please? | Customer: R-O-S-S-K-A-Y at example dot com. | Agent: Thank you. I have rosskay at example dot com. Is that right?
+source_rule: Ask callers to spell names and emails, then read them back.
+fill_blank: Could you spell your email ____ for me, please?
+fill_answer: address
+mcq_question: The caller's surname could be "Shaw" or "Shore". What is the best next step?
+mcq_options: A) Type "Shaw" for now, because it is the more common spelling. | B) Ask, "Could you spell your surname for me, please?" | C) Say, "Sorry, your name is not clear. Please say it again." | D) Ask the caller to send their name by email later.
+mcq_answer: B
+mcq_why: B removes the doubt politely. A is a guess that can put the wrong name on the account, C blames the caller, and D delays the fix and risks losing the detail.
+reorder_task: email / spell / Could / for / you / me / your / address / please
+reorder_answer: Could you spell your email address for me please
+hindi_to_english: Kya aap apne naam ki spelling bata sakte hain?
+hindi_to_english_answer: Could you spell your name for me, please?
+whats_next_customer: Sure. It's t-h-o-m-a-s dot r-e-e-d at example dot com.
+whats_next_reply: Thank you. I have thomas dot reed at example dot com. Is that right?
+role_play: Partner A has the email "lia.devane@example.com" and says it fast. Partner B asks A to spell it, reads it back with "dot" and "at", and confirms.
+record_task: Record yourself asking for the spelling, then reading back the email "lia.devane at example dot com" letter by letter.
+self_check: Did you say "spell" without an extra vowel at the start? · Did you read the email back? · Did you say "email address" in full?
+
+@CSV-B-006
+id: CSV-B-006
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Hold & check
+sentence: Could you hold for about two minutes, please? I'll check your order.
+speaker: Agent
+situation: The customer asked about their order and you need about two minutes to look it up in the system.
+recall_cue: You need a couple of minutes to look something up. What do you ask the caller first, and what do you promise them?
+stress: could-you-HOLD · for-a-BOUT-two-MIN-utes · PLEASE · i'll-CHECK · your-OR-der
+linking: could_you → "cud-joo" · hold_for → "hole-fer" · two_minutes → "too-MIN-its"
+intonation: Rising tone on "please?" because it is a real question. Short pause after it, then a falling, confident tone on "I'll check your order."
+indian_pron_tip: Say "hold" with a long "oh" and a clear final "d"; do not drop it to "hol". "Minutes" is MIN-its, stress on the first part, with a clear final "s".
+register: Neutral
+tone: Polite request, calm
+importance: 5
+customer_emotion: Patient but a little worried about how long this will take.
+memory_hook: Picture pressing a soft pause button on a remote: you ask before you press it, and you promise to press play again.
+hindi_meaning: क्या आप लगभग दो मिनट होल्ड कर सकते हैं? मैं आपका ऑर्डर देखता/देखती हूँ।
+hindi_roman: Kya aap lagbhag do minute hold kar sakte hain? Main aapka order dekhta/dekhti hoon.
+simple_meaning: Please stay on the line for about two minutes while I look at your order.
+why_it_works: It asks permission instead of giving an order, says why the caller is waiting and gives a real time. "A moment" is vague; "about two minutes" lets the caller decide.
+key_chunk: Could you ___, please?
+grammar_pattern: Could + you + base verb + …, please? · I'll + base verb
+grammar_note: "Could you" makes a polite request; "I'll" means you are deciding to do it now.
+tone_note: The question form lets the caller say yes. "Hold on" or "Wait" sounds like an order and can make a worried caller feel ignored.
+watch_out: ✗ Hold the line, I check it. → ✓ Could you hold for about two minutes, please? I'll check your order.
+dont_say: "Wait." or "Hold on." — it is an order, gives no reason, and the caller does not know if you are still there.
+positive_swap: Instead of "Wait, I am checking", say "Could you hold for about two minutes, please? I'll check your order."
+alt_1: Would you mind holding for about two minutes while I look into this?
+alt_2: May I put you on hold for two or three minutes while I check your order?
+more_formal: Would it be all right if I placed you on hold for about two minutes while I review your account?
+ask_next: Thank you for holding. I can see your order — it was dispatched yesterday.
+replies_you_may_hear: Sure, go ahead. · How long will it take? · Can't you just tell me now?
+if_customer_pushes: Customer: "Can't you just tell me now?" → Agent: "I know you'd like it now, and I'll be quick. I need to check one detail so the answer is right. It will take about two minutes."
+cultural_note: Many agents say "One minute, sir" and go silent. International callers expect a reason, a time, and a "thank you for holding" when you return.
+channel_note: Chat: "Let me check that for you. It'll take about two minutes." Email: not needed; say when you will reply instead.
+when_not_to_use: Do not put an angry caller on hold right after they finish complaining; acknowledge their problem first.
+mini_conversation: Customer: My order still hasn't arrived. Can you check it? | Agent: Could you hold for about two minutes, please? I'll check your order. | Customer: Sure. | Agent: Thank you for holding. Your order was dispatched yesterday.
+source_rule: Ask permission before a hold, give the reason and a real time, and thank the caller first when you return.
+fill_blank: Could you hold ____ about two minutes, please? I'll check your order.
+fill_answer: for
+mcq_question: You need to check the order history. Which line puts the caller on hold in the most polite way?
+mcq_options: A) You must hold the line now, because I need to check your order history. | B) Could you hold for about two minutes, please? I'll check your order. | C) Wait, please. I am checking your order now, so do not disconnect the call. | D) Hold on, sir, I will be back soon. I just need to look at a few things.
+mcq_answer: B
+mcq_why: B asks permission, gives a reason and a real time. A and C are orders, and D gives no clear reason and no real time ("soon").
+reorder_task: hold / you / minutes / for / about / Could / two / please
+reorder_answer: Could you hold for about two minutes please
+hindi_to_english: Kya aap lagbhag do minute hold kar sakte hain? Main aapka payment check karta hoon.
+hindi_to_english_answer: Could you hold for about two minutes, please? I'll check your payment.
+whats_next_customer: How long will it take?
+whats_next_reply: About two minutes. If it's going to take longer, I'll come back and tell you before then.
+role_play: Partner A calls about a missing parcel. Partner B asks to put A on hold, checks for two minutes, comes back, thanks A for holding and gives an update.
+record_task: Record yourself saying the sentence, then the "Thank you for holding" line you would say when you return.
+self_check: Did your voice rise on "please?" · Did you say why the caller is waiting? · Did you pronounce the final "d" in "hold"?
+
+@CSV-B-007
+id: CSV-B-007
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Hold & check
+sentence: Thank you for holding, Ms Carter. I've found your order, and it's on its way.
+speaker: Agent
+situation: You return to the line after a two-minute hold with the order update the caller asked for.
+recall_cue: You come back after putting someone on hold. What is the very first thing you say, before any information?
+stress: THANK-you-for-HOLD-ing · ms-CAR-ter · i've-FOUND-your-OR-der · and-it's-ON-its-WAY
+linking: thank_you → "thang-kyoo" · found_your → "foun-jor" · it's_on_its_way → "it-son-it-sway"
+intonation: Warm, slightly lifted energy on "Thank you for holding". Pause after the name. Falling, confident tone on "on its way".
+indian_pron_tip: "Way" starts with a W: round your lips and keep the teeth off the lip; do not say "vay". Minimal pair: west / vest. Also keep the final "d" in "found" before "your".
+register: Neutral
+tone: Grateful, warm, positive
+importance: 5
+customer_emotion: A little restless after waiting, and hoping for good news.
+memory_hook: Coming back from hold is like returning to a guest you left at the door: thank them first, then hand over the parcel.
+hindi_meaning: होल्ड करने के लिए धन्यवाद, मिस कार्टर। मुझे आपका ऑर्डर मिल गया है, और वह रास्ते में है।
+hindi_roman: Hold karne ke liye dhanyavaad, Ms Carter. Mujhe aapka order mil gaya hai, aur woh raaste mein hai.
+simple_meaning: Thanks for waiting. I found your order, and it is being delivered.
+why_it_works: Thanking first rewards the caller's patience and tells them you are back. Using their name and giving the news straight away ends the uncertainty of the wait.
+key_chunk: Thank you for holding, ___. I've found ___.
+grammar_pattern: Thank you for + verb-ing · I've (I have) + past participle
+grammar_note: "I've found" (present perfect) means you have just found it and the result matters now.
+tone_note: The thanks and the name make the wait feel respected. Coming back with "Hello? Yes, so…" sounds like you forgot about them.
+watch_out: ✗ Thank you for hold, Ms Carter. I am finding your order. → ✓ Thank you for holding, Ms Carter. I've found your order.
+dont_say: "Hello? Are you there? Yes, so your order…" — it skips the thanks and sounds disorganised.
+positive_swap: Instead of "Sorry, I took long", say "Thank you for holding, Ms Carter. I've found your order."
+alt_1: Thanks so much for waiting, Ms Carter. I have an update for you.
+alt_2: Thank you for your patience, Ms Carter. Good news: your order has shipped.
+more_formal: Thank you very much for holding, Ms Carter. I have now located your order, and it is on its way to you.
+ask_next: It should reach you by Thursday. Would you like the tracking number?
+replies_you_may_hear: Oh, great, thank you. · When will it arrive? · That took longer than two minutes.
+if_customer_pushes: Customer: "That took a lot longer than two minutes." → Agent: "You're right, and I'm sorry it took longer. The good news is your order is on its way and should arrive by Thursday."
+cultural_note: Some agents come back with "Yes ma'am, I have checked the same." International callers may not expect "the same"; they expect a clear "Thank you for holding", their name, then the news.
+channel_note: Chat: "Thanks for waiting, Ms Carter. I've found your order." Email: there is no hold; thank them for their patience only if your reply is late.
+when_not_to_use: Do not come back with this if you have no update yet; say "Thank you for holding. I need about two more minutes. Is that all right?"
+mini_conversation: Customer: Sure, I'll hold. | Agent: Thank you for holding, Ms Carter. I've found your order, and it's on its way. | Customer: Great! When will it arrive? | Agent: It should reach you by Thursday.
+source_rule: Thank the caller first when you return from hold, before giving information.
+fill_blank: Thank you for holding, Ms Carter. I've found your order, and it's on its ____.
+fill_answer: way
+mcq_question: You come back after a two-minute hold. Which line should you say first?
+mcq_options: A) Hello? Are you still there? I have your order details now. | B) Okay, I have checked your order and it is shipped now, Ms Carter. | C) Sorry, the system is very slow today. I found your order, finally. | D) Thank you for holding, Ms Carter. I've found your order.
+mcq_answer: D
+mcq_why: D thanks the caller first and uses their name. B jumps straight to the news, C blames the system before thanking the caller, and A sounds as if you forgot them.
+reorder_task: order / found / for / Thank / I've / holding / you / your
+reorder_answer: Thank you for holding I've found your order
+hindi_to_english: Hold karne ke liye shukriya. Mujhe aapka payment mil gaya hai.
+hindi_to_english_answer: Thank you for holding. I've found your payment.
+whats_next_customer: Oh good. When will it get here?
+whats_next_reply: The courier is due to deliver on Thursday. I can text you the tracking link if that helps.
+role_play: Partner A waits on hold for an order update. Partner B returns, thanks A by name, gives the update and the delivery day, then offers the tracking number.
+record_task: Record your return-from-hold line twice: once with good news, and once telling the caller you need two more minutes.
+self_check: Did you thank the caller before giving news? · Did you use their name? · Did "way" start with rounded lips, not "v"?
+
+@CSV-B-008
+id: CSV-B-008
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Apologise
+sentence: I'm sorry your parcel arrived late. I'll find out what happened right away.
+speaker: Agent
+situation: The customer says their birthday gift arrived three days after the promised delivery date.
+recall_cue: A parcel came late. How do you apologise for the exact problem and show that you will act?
+stress: i'm-SOR-ry · your-PAR-cel-a-RIVED-LATE · i'll-FIND-OUT · what-HAP-pened · right-a-WAY
+linking: arrived_late → "a-rived-late" (touch the d, then release it into the l) · find_out → "fine-dout" · right_away → "ry-ta-way"
+intonation: Slow, low and sincere on "I'm sorry your parcel arrived late." Pause. Then a firmer, falling tone on "right away" to show action.
+indian_pron_tip: "Arrived" and "happened" end in a final "d" after another consonant: say a-RIVED and HAP-pend, not "a-rive" and "hap-pen". The past tense lives in that last sound.
+register: Neutral
+tone: Sincere, responsible, active
+importance: 5
+customer_emotion: Disappointed and annoyed that a promise was broken.
+memory_hook: A good apology has two hands: one says sorry for the exact thing, the other reaches out to fix it.
+hindi_meaning: मुझे खेद है कि आपका पार्सल देर से पहुँचा। मैं अभी पता करता/करती हूँ कि क्या हुआ।
+hindi_roman: Mujhe khed hai ki aapka parcel der se pahuncha. Main abhi pata karta/karti hoon ki kya hua.
+simple_meaning: I am sorry the package came late. I will check the reason now.
+why_it_works: It names the exact problem, which shows you listened, and pairs the apology with action. In Lewicki, Polin and Lount's 2016 study, taking responsibility ranked first and offering repair second among the parts of an apology; say "we" when the company is at fault: "I'm sorry we didn't deliver on time."
+key_chunk: I'm sorry ___. I'll ___ right away.
+grammar_pattern: I'm sorry + (that) + clause · I'll + base verb
+grammar_note: After "I'm sorry", add the exact problem as a full clause: "I'm sorry your parcel arrived late."
+tone_note: A specific apology sounds real. "Sorry for the inconvenience" sounds scripted, and "It's not my fault" sounds like you are defending yourself.
+watch_out: ✗ Sorry for your parcel delay, I will check what is the matter. → ✓ I'm sorry your parcel arrived late. I'll find out what happened right away.
+dont_say: "Sorry for the inconvenience caused." — it is vague and scripted, and says nothing about what you will do.
+positive_swap: Instead of "That is the courier's fault, not ours", say "I'm sorry your parcel arrived late. I'll find out what happened right away."
+alt_1: I'm really sorry it came late, especially for a birthday. Let me check what went wrong.
+alt_2: I'm sorry we didn't deliver on time. I'll look into it now.
+more_formal: Please accept my apologies for the late delivery of your parcel. I will look into the cause immediately.
+ask_next: Could you give me your order number so I can check the delivery history?
+replies_you_may_hear: Thank you, I appreciate that. · It was a birthday present, it's ruined now. · Sorry doesn't help me.
+if_customer_pushes: Customer: "Sorry doesn't help me." → Agent: "You're right, saying sorry isn't enough. I'm checking the delivery record now so I can tell you what went wrong and what I can do to put it right."
+cultural_note: "Sorry for the inconvenience caused" is a common line in Indian scripts. International customers often hear it as automatic; naming the actual problem sounds sincere.
+channel_note: Chat: "I'm sorry your parcel arrived late. I'll check what happened now." Email: apologise in the first line, then say what you did and what happens next.
+when_not_to_use: Do not promise "right away" if the check needs another team and takes days; say when you will update the customer instead.
+mini_conversation: Customer: My parcel came three days late. | Agent: I'm sorry your parcel arrived late. I'll find out what happened right away. | Customer: Thank you. It was a gift. | Agent: That makes it even more disappointing. Could I have your order number, please?
+source_rule: Apologise specifically and take responsibility, then offer a fix (Lewicki, Polin & Lount, 2016).
+fill_blank: I'm sorry your parcel arrived late. I'll find ____ what happened right away.
+fill_answer: out
+mcq_question: A customer's parcel came three days late. Which apology works best?
+mcq_options: A) Sorry for the inconvenience. We value your patience and will try to improve. | B) I understand, but the courier is responsible for the late delivery, not our company. | C) These things happen sometimes, so please be patient and wait for the next delivery. | D) I'm sorry your parcel arrived late. I'll find out what happened right away.
+mcq_answer: D
+mcq_why: D names the problem and promises action. A is vague and sounds scripted, B pushes the blame onto someone else, and C brushes the problem off.
+reorder_task: late / arrived / sorry / your / I'm / parcel
+reorder_answer: I'm sorry your parcel arrived late
+hindi_to_english: Mujhe khed hai ki aapka refund der se aaya. Main abhi check karta hoon.
+hindi_to_english_answer: I'm sorry your refund came late. I'll check it right now.
+whats_next_customer: It was for my son's birthday. It's too late now.
+whats_next_reply: I'm really sorry it missed his birthday. Let me check the order and see what I can do for you.
+role_play: Partner A's parcel arrived three days late and missed a birthday. Partner B apologises for the exact problem, asks for the order number and says what they will check.
+record_task: Record your apology, then the next line where you ask for the order number. Keep your voice slow and low on the apology.
+self_check: Did you name the exact problem? · Did you say what you will do next? · Did you say the final "d" in "arrived"?
+
+@CSV-B-009
+id: CSV-B-009
+channel: Voice
+level: Basic
+cefr: B1
+kind: Say it
+call_stage: Listen & clarify
+sentence: Let me make sure I have this right: you were charged twice for one order. Is that correct?
+speaker: Agent
+situation: The caller has explained a long billing problem, and you want to check you understood before you act.
+recall_cue: The caller has just explained a long problem. How do you check your understanding before you start fixing anything?
+stress: let-me-make-SURE · i-have-this-RIGHT · you-were-CHARGED-TWICE · for-ONE-OR-der · is-that-cor-RECT
+linking: let_me → "lem-mee" · charged_twice → "charjd-twice" (a quick d, no extra vowel) · that_correct → "tha-cor-rect" (the t of "that" is barely heard)
+intonation: Fall on "right", then pause. Say the summary more slowly, with stress on "twice" and "one". Rise on "correct?" because it is a yes/no question.
+indian_pron_tip: "Charged" ends in two sounds, "j" then "d": say "charjd". Dropping the "d" gives "charge", which sounds like the present tense. Also "this" has a voiced "th", not "dis".
+register: Neutral
+tone: Careful, attentive, checking
+importance: 5
+customer_emotion: Frustrated, and keen to be understood before anything else happens.
+memory_hook: A tailor measures twice and cuts once: you check the problem before you cut into the fix.
+hindi_meaning: मैं पक्का कर लूँ कि मैंने सही समझा है: आपके एक ही ऑर्डर के लिए दो बार पैसे कट गए। क्या यह सही है?
+hindi_roman: Main pakka kar loon ki maine sahi samjha hai: aapke ek hi order ke liye do baar paise kat gaye. Kya yeh sahi hai?
+simple_meaning: I want to check I understood: you paid two times for one order. Yes?
+why_it_works: Saying the problem back shows you listened and lets the caller correct you early. Fixing the wrong problem wastes their time and makes them explain everything again.
+key_chunk: Let me make sure I have this right: ___. Is that correct?
+grammar_pattern: Let me + base verb · you + were + past participle (passive) · Is that + adjective?
+grammar_note: "You were charged" is passive: it says what happened to the caller without blaming anyone.
+tone_note: It sounds careful and respectful. "So what you are saying is…" in a flat voice can sound like you doubt them.
+watch_out: ✗ So you was charged twice for one order, right? → ✓ Let me make sure I have this right: you were charged twice for one order. Is that correct?
+dont_say: "Okay, okay, I understood." — said before the caller finishes, it sounds like you are not listening.
+positive_swap: Instead of "Your problem is not clear", say "Let me make sure I have this right: you were charged twice for one order. Is that correct?"
+alt_1: So, just to check: you paid twice for a single order. Is that right?
+alt_2: Just to check, the money came out of your account twice for one order?
+more_formal: To be sure I have understood, you were charged twice for a single order. Have I got that right?
+ask_next: Thank you. Could you tell me the date of the order so I can find both payments?
+replies_you_may_hear: Yes, exactly. · Not quite, it was two different orders. · Yes, and I want the money back today.
+if_customer_pushes: Customer: "Why are you repeating it? I just told you!" → Agent: "I'm sorry, I know you've just explained it. I'm checking so I fix the right thing first time. You were charged twice, so I'll look at both payments now."
+cultural_note: "You are telling that…" is a common Indian English pattern. International callers more often expect "So, you…" or "If I've understood correctly…", with a clear question at the end.
+channel_note: Chat: "Just to confirm: you were charged twice for one order?" Email: open with a one-line summary, such as "You were charged twice for order 55021."
+when_not_to_use: Do not paraphrase a one-line request like "What are your opening hours?"; just answer it.
+mini_conversation: Customer: I ordered once but my card shows two payments. | Agent: Let me make sure I have this right: you were charged twice for one order. Is that correct? | Customer: Yes, that's it. | Agent: Thank you. Let me find both payments.
+source_rule: Paraphrase before solving: sum up what you heard, then ask a yes/no question so the caller can correct you.
+fill_blank: Let me make ____ I have this right: you were charged twice for one order.
+fill_answer: sure
+mcq_question: The caller has just explained a confusing billing problem. What should you do before you start fixing it?
+mcq_options: A) Start the refund straight away, then explain what you did. | B) Say "Okay, okay, I understand" so they know you are listening. | C) Summarise the problem back to them and ask "Is that correct?" | D) Ask them to email all the details so you can read them properly.
+mcq_answer: C
+mcq_why: C catches misunderstandings early. A may fix the wrong problem, B can sound as if you are not really listening, and D makes the caller do more work.
+reorder_task: right / make / Let / have / sure / me / I / this
+reorder_answer: Let me make sure I have this right
+hindi_to_english: Main confirm kar leti hoon: aapka parcel galat address par gaya, sahi?
+hindi_to_english_answer: Let me make sure I have this right: your parcel went to the wrong address. Is that correct?
+whats_next_customer: Not exactly. I was charged twice, but for two different amounts.
+whats_next_reply: Thank you for correcting me. So there are two payments with different amounts. Let me look at both.
+role_play: Partner A explains, at length, that a subscription renewed twice this month. Partner B listens without interrupting, sums up the problem in one sentence and asks "Is that correct?"
+record_task: Record yourself summing up this problem to the customer in one sentence: they ordered a blue shirt and received a red one. Start with "Let me make sure I have this right" and say "you".
+self_check: Did you sum up in one short sentence? · Did your voice rise on "correct?" · Did you say the final "d" in "charged"?
+
+@CSV-B-010
+id: CSV-B-010
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Verify
+sentence: Could you read me your order number? You'll find it in your confirmation email.
+speaker: Agent
+situation: The caller wants to know where their order is, and you need the order number to search for it.
+recall_cue: You need the caller's order reference to search. What do you ask, and how do you help them find it?
+stress: could-you-READ-me · your-OR-der-NUM-ber · you'll-FIND-it · in-your-con-fir-MA-tion-E-mail
+linking: read_me → "ree-mee" · find_it → "fine-dit" · confirmation_email → "con-fur-may-shun-ee-mayl"
+intonation: Rise on "number?". Pause. Then a falling, helpful tone on "confirmation email", said as a tip, not an order.
+indian_pron_tip: "Number" has its stress on the first part, NUM-ber, with a weak "-ber"; do not give both parts equal beats. In "confirmation", the stress is on "MA" (con-fur-MAY-shun), not on "con".
+register: Neutral
+tone: Helpful, guiding request
+importance: 5
+customer_emotion: Eager for an update, and maybe unsure where the number is.
+memory_hook: The order number is the key to the right locker, and you also tell them which pocket the key is in.
+hindi_meaning: क्या आप मुझे अपना ऑर्डर नंबर पढ़कर बता सकते हैं? यह आपको कन्फ़र्मेशन ईमेल में मिलेगा।
+hindi_roman: Kya aap mujhe apna order number padhkar bata sakte hain? Yeh aapko confirmation email mein milega.
+simple_meaning: Please tell me your order number. It is in the email we sent when you ordered.
+why_it_works: Saying where the number is saves the caller from searching and stops "I don't know it" from becoming a dead end. It shows you are thinking one step ahead for them.
+key_chunk: Could you read me your ___? You'll find it in ___.
+grammar_pattern: Could + you + read + me + noun? · You'll + find + it + in + place
+grammar_note: "You'll find it in…" is a friendly way to say where something is.
+tone_note: Giving the location helps the caller. "Order number?" alone sounds like a form, and "Give order ID first" sounds like a condition.
+watch_out: ✗ Could you read me your order number? You will found it in confirmation email. → ✓ Could you read me your order number? You'll find it in your confirmation email.
+dont_say: "Without order ID I can't do anything." — it blocks the caller and does not help them find the number.
+positive_swap: Instead of "I can't check without the order number", say "Could you read me your order number? You'll find it in your confirmation email."
+alt_1: Do you have your order number handy? It starts with the letters SO.
+alt_2: If you have the confirmation email open, could you read me the order number?
+more_formal: Could you please give me your order number? It appears at the top of your order confirmation email.
+ask_next: Thank you. That's S O 5 5 0 2 1. Let me look that up.
+replies_you_may_hear: Hang on, let me find it. · It's SO55021. · I deleted that email.
+if_customer_pushes: Customer: "I deleted the email." → Agent: "That's fine. I can find your order with your email address or phone number instead."
+cultural_note: "Order ID" and "then only I can check" are common Indian phrasing. International callers usually say "order number" and expect you to offer another way if they cannot find it.
+channel_note: Chat: "Could you share your order number? It's in your confirmation email." Email: ask for it only if it is not already in their message.
+when_not_to_use: Do not ask for the order number if you already found the order during verification; confirm the order on your screen instead.
+mini_conversation: Customer: Where's my order? | Agent: Could you read me your order number? You'll find it in your confirmation email. | Customer: It's SO55021. | Agent: Thank you. Let me look that up for you.
+source_rule: Ask only for what you need, and make it easy for the customer to give it.
+fill_blank: Could you read me your order number? You'll find it ____ your confirmation email.
+fill_answer: in
+mcq_question: The caller is not sure where their order number is. What is the most helpful thing to say?
+mcq_options: A) I can't check your order without the order number. Do you have it? | B) Could you read me your order number, please? I need it to find your order quickly. | C) Could you read me your order number? You'll find it in your confirmation email. | D) Please call us back when you have your order number, and we will help then.
+mcq_answer: C
+mcq_why: C tells the caller where to look. A and D block them, and B asks for the number but does not help them find it.
+reorder_task: number / read / your / Could / me / order / you
+reorder_answer: Could you read me your order number
+hindi_to_english: Kya aap apna order number bata sakte hain? Woh aapke SMS mein hoga.
+hindi_to_english_answer: Could you tell me your order number? You'll find it in your text message.
+whats_next_customer: Which email do you mean? I get a lot of emails from you.
+whats_next_reply: It's the one with the subject "Order confirmed". If you can't find it, I can search with your email address instead.
+role_play: Partner A calls about a late order but cannot find the order number at first. Partner B says where to look and offers to search by email if A still cannot find it.
+record_task: Record yourself asking for the order number, then the backup line you say if the caller has deleted the email.
+self_check: Did you say where to find the number? · Did "number" have stress on the first part? · Did you offer a backup if they cannot find it?
+
+@CSV-B-011
+id: CSV-B-011
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Opening
+sentence: Sure, I can help you with that.
+speaker: Agent
+situation: The caller has just explained that they cannot log in to their account and sounds worried.
+recall_cue: A worried caller has just told you their problem. What short line tells them they are in the right place?
+stress: SURE · i-can-HELP-you · with-THAT
+linking: I_can → "eye-kn" (weak "can") · help_you → "hel-pyoo" · with_that → "wi-that" (one "th" sound)
+intonation: Bright on "Sure", then steady and falling on "that" to sound confident. Do not rise at the end, or it sounds like a question.
+indian_pron_tip: In "with that", the "th" at the end of "with" and the start of "that" join into one soft voiced "th", tongue between the teeth; avoid "wit dat".
+register: Friendly
+tone: Calm, confident reassurance
+importance: 5
+customer_emotion: Worried and unsure whether this call will solve anything.
+memory_hook: It is a friendly hand on the shoulder: seven short words that tell the caller they can relax now.
+hindi_meaning: ज़रूर, मैं इसमें आपकी मदद कर सकता/सकती हूँ।
+hindi_roman: Zaroor, main ismein aapki madad kar sakta/sakti hoon.
+simple_meaning: Yes, I am able to help with this problem.
+why_it_works: It answers the caller's real fear ("Will anyone fix this?") in one breath, before any questions. It promises help, not a result, so it stays honest.
+key_chunk: I can help you with ___.
+grammar_pattern: I + can + help + you + with + noun
+grammar_note: "Help you with" takes a thing: "help you with that", "help you with your login".
+tone_note: Short and warm sounds confident. "I will try" sounds unsure, and "That's not my department" sounds like you want to get rid of them.
+watch_out: ✗ I will try to help you for that. → ✓ Sure, I can help you with that.
+dont_say: "I'll try, but I'm not sure." — it makes a worried caller more worried.
+positive_swap: Instead of "I'll try my best", say "Sure, I can help you with that."
+alt_1: Of course, I can sort that out for you.
+alt_2: Don't worry, let's get you back into your account.
+more_formal: Certainly, I'd be glad to help you with that.
+ask_next: First, could you tell me the email address you use to log in?
+replies_you_may_hear: Oh, thank goodness. · Great, thanks. · The last person said that too.
+if_customer_pushes: Customer: "The last person said that too." → Agent: "I'm sorry it wasn't fixed then. I'll stay with you on this call and tell you each step as I do it."
+cultural_note: "I will try my level best" is a common, kind phrase in India, but international callers may hear "try" as doubt. "I can help you with that" sounds more certain.
+channel_note: Chat: "Sure, I can help you with that." works as is. Email: "I can help with this" fits as the first line after the greeting.
+when_not_to_use: Do not say it when the request belongs to another team; say "The billing team handles this. I'll transfer you and explain your case to them."
+mini_conversation: Customer: I can't log in and I need my invoice today. | Agent: Sure, I can help you with that. | Customer: Oh, good. | Agent: First, could you tell me the email address you use to log in?
+source_rule: Lead with what you can do; use "I can" and "I will", not "we'll try".
+fill_blank: Sure, I can help you ____ that.
+fill_answer: with
+mcq_question: A worried caller has just explained they are locked out. Which first reply builds the most confidence?
+mcq_options: A) I'll try my best, but I can't promise that it will work today. | B) That's a very common problem. It happens to a lot of our customers. | C) Why did you lock yourself out? Did you forget your password? | D) Sure, I can help you with that. Let's get you back into your account.
+mcq_answer: D
+mcq_why: D is certain and kind, and starts the fix. A sounds unsure, B does not say you will help, and C sounds like blame.
+reorder_task: with / can / help / I / that / you
+reorder_answer: I can help you with that
+hindi_to_english: Haan bilkul, main aapki ismein madad kar sakta hoon.
+hindi_to_english_answer: Sure, I can help you with that.
+whats_next_customer: Thank you. I've been trying for an hour.
+whats_next_reply: I'm sorry it's taken so long. Let's fix it together now.
+role_play: Partner A is stressed because they cannot reset a password before a meeting. Partner B reassures A in one line, then asks the first question needed to help.
+record_task: Record the line three times: flat, too excited, and warm and calm. Submit the warm and calm one for audit.
+self_check: Did your voice fall at the end, not rise? · Did you avoid "try"? · Did you follow it with a question that moves the call on?
+
+@CSV-B-012
+id: CSV-B-012
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Listen & clarify
+sentence: Sorry, the line isn't very clear. Could you speak up a little, please?
+speaker: Agent
+situation: The caller's voice keeps breaking up, and you can hear only half of each sentence.
+recall_cue: You can hear only half of what the caller says. How do you tell them, and what do you ask them to do?
+stress: SOR-ry · the-LINE-is-n't-VER-y-CLEAR · could-you-SPEAK-UP · a-LIT-tle · PLEASE
+linking: line_isn't → "lie-nizunt" · speak_up → "spee-kup" · a_little → "uh-lit-ul"
+intonation: A calm fall on "clear", so the caller knows the line is the problem, not them. Rise on "please?". Speak a little slower and louder yourself.
+indian_pron_tip: In "very", the "v" needs your top teeth on your lower lip, not rounded lips (vest / west), so it is not heard as "wery". "Little" is LIT-ul, with a very weak second part.
+register: Neutral
+tone: Calm, practical request
+importance: 4
+customer_emotion: Possibly unaware the line is bad, or frustrated by a weak signal.
+memory_hook: Blame the wire, never the caller: the line is the villain in this sentence.
+hindi_meaning: माफ़ कीजिए, लाइन साफ़ नहीं है। क्या आप थोड़ा ज़ोर से बोल सकते हैं?
+hindi_roman: Maaf kijiye, line saaf nahin hai. Kya aap thoda zor se bol sakte hain?
+simple_meaning: Sorry, the phone sound is bad. Please talk a bit louder.
+why_it_works: It blames the line, not the caller's voice or accent, and gives one easy action. If that fails, offering a callback stops both of you from struggling.
+key_chunk: Sorry, the line isn't very clear. Could you ___, please?
+grammar_pattern: The line + isn't + very + adjective · Could + you + speak up?
+grammar_note: "Speak up" is a phrasal verb that means "speak more loudly".
+tone_note: Naming the line keeps it neutral. "I can't hear you properly" or "Your voice is breaking" can sound like the caller is at fault.
+watch_out: ✗ Please speak loudly, line is not clear. → ✓ Sorry, the line isn't very clear. Could you speak up a little, please?
+dont_say: "Hello? Hello? Hello?" again and again — it sounds panicked and gives the caller nothing to do.
+positive_swap: Instead of "Your voice is breaking", say "Sorry, the line isn't very clear. Could you speak up a little, please?"
+alt_1: I'm sorry, you're breaking up a little. Could you say that again?
+alt_2: The line's quite bad. Could I call you back on this number in a minute?
+more_formal: I'm afraid the line is unclear. Would it be all right if I called you back on the number ending 4417?
+ask_next: That's much better, thank you. You were saying your card was declined?
+replies_you_may_hear: Is that better? · I'm on the train, sorry. · Can you call me back in ten minutes?
+if_customer_pushes: Customer: "I can hear you fine!" → Agent: "I'm glad you can hear me. On my side the line is breaking up a little, so I want to be sure I don't miss anything."
+cultural_note: "You are not audible" is a standard Indian office phrase. International callers rarely use it and may hear it as formal or blaming; "The line isn't very clear" sounds neutral.
+channel_note: Chat and email do not have this problem. If a chat keeps disconnecting, offer email: "If the chat drops, I'll email you the update."
+when_not_to_use: Do not ask the caller to speak up if the line is fine and they are just quiet and upset; slow down and listen instead.
+mini_conversation: Customer: My card was … de… today. | Agent: Sorry, the line isn't very clear. Could you speak up a little, please? | Customer: Is that better? My card was declined today. | Agent: Much better, thank you. Let me check your card.
+source_rule: Tell the caller what is happening, and offer a callback instead of a long struggle.
+fill_blank: Sorry, the line isn't very clear. Could you speak ____ a little, please?
+fill_answer: up
+mcq_question: The caller's voice keeps cutting out. Which response is best first?
+mcq_options: A) Sorry, your voice is breaking. Please speak loudly and clearly. | B) Hello? Hello? Can you hear me? Hello? I can't hear anything. | C) I'm afraid I cannot help you on this line. Please call us again later. | D) Sorry, the line isn't very clear. Could you speak up a little, please?
+mcq_answer: D
+mcq_why: D blames the line and asks for one easy action. A blames the caller's voice, B gives the caller nothing to do, and C gives up before trying a callback.
+reorder_task: up / you / Could / little / speak / a / please
+reorder_answer: Could you speak up a little please
+hindi_to_english: Line kharab hai. Kya main aapko do minute mein call back kar sakta hoon?
+hindi_to_english_answer: The line is quite bad. Could I call you back in two minutes?
+whats_next_customer: Sorry, I'm on the train. Is that better?
+whats_next_reply: Yes, that's much better, thank you. Let's carry on.
+role_play: Partner A calls from a noisy train and the line keeps breaking. Partner B asks A to speak up, and when that fails, offers to call back on A's number in ten minutes.
+record_task: Record the "speak up" line, then the callback offer you would make if the line does not improve.
+self_check: Did you blame the line, not the caller? · Did you offer a callback if it stays bad? · Did "very" start with a clear "v", not "w"?
+
+@CSV-B-013
+id: CSV-B-013
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: Has that fixed the issue for you? Is there anything else I can help with today?
+speaker: Agent
+situation: You have just re-sent the customer's missing e-ticket, and they are checking their inbox while you wait.
+recall_cue: You think the problem is solved and the call is nearly over. Which two questions do you ask, and in which order?
+stress: has-that-FIXED-the-IS-sue-for-YOU · is-there-ANY-thing-ELSE · i-can-HELP-with-to-DAY
+linking: fixed_the → "fikst-the" (the t flows straight into the th) · anything_else → "en-ee-thing-gels" · help_with → "hel-pwith"
+intonation: Rise on "for you?" (yes/no). Pause for the answer. Then rise again on "today?". Leave real silence for the reply.
+indian_pron_tip: "Fixed" ends in "-kst": say "fikst", with the final "t"; do not drop it to "fix". "Anything" has a "th" in the middle: tongue between the teeth, not "anyting".
+register: Neutral
+tone: Caring, checking, open
+importance: 5
+customer_emotion: Relieved, and ready to finish the call soon.
+memory_hook: Like a good doctor: first ask "Does it still hurt?", and only then "Is anything else bothering you?"
+hindi_meaning: क्या इससे आपकी समस्या ठीक हो गई? क्या आज मैं किसी और चीज़ में आपकी मदद कर सकता/सकती हूँ?
+hindi_roman: Kya isse aapki samasya theek ho gayi? Kya aaj main kisi aur cheez mein aapki madad kar sakta/sakti hoon?
+simple_meaning: Is your problem solved now? Do you need help with anything more?
+why_it_works: Checking the fix first avoids assuming the call is resolved; SQM Group notes that "anything else" on its own takes that for granted. The second question lets the caller raise another issue now instead of calling back.
+key_chunk: Has that fixed ___ for you? Is there anything else I can help with?
+grammar_pattern: Has + that + past participle …? · Is there + anything else + I can + base verb …?
+grammar_note: "Has that fixed…?" uses the present perfect to ask about a result right now.
+tone_note: Two open questions sound caring. "Anything else? No? Okay, bye" sounds like you want them gone.
+watch_out: ✗ Anything else, or shall I close the call? → ✓ Has that fixed the issue for you? Is there anything else I can help with today?
+dont_say: "Anything else?" asked quickly before the fix is confirmed — it assumes the problem is solved when it may not be.
+positive_swap: Instead of "So that's all, right?", say "Has that fixed the issue for you? Is there anything else I can help with today?"
+alt_1: Can you see the ticket in your inbox now? If so, is there anything else I can do for you?
+alt_2: Is everything working as it should now? And is there anything else you need today?
+more_formal: Could you confirm that the issue is now resolved? And is there anything further I can assist you with today?
+ask_next: Great. So the ticket is in your inbox, and you can also download it from your account page.
+replies_you_may_hear: Yes, it's working now, thanks. · No, that's everything. · Actually, there's one more thing about my bill.
+if_customer_pushes: Customer: "Actually, I still can't see it." → Agent: "I'm sorry it's still not there. Thank you for telling me. Let's check the email address on your booking together."
+cultural_note: Some scripts close with "Any other query?" straight after a fix. International callers more often hear "Is there anything else I can help you with?", and it works best after you have checked that the fix worked.
+channel_note: Chat: "Is it working now? Is there anything else I can help with?" Email: "Please reply if this hasn't fixed it, or if there's anything else you need."
+when_not_to_use: Do not ask "anything else" on an unresolved call; say what happens next and when you will update the customer instead.
+mini_conversation: Customer: Right, there's a new email from you. | Agent: Has that fixed the issue for you? Is there anything else I can help with today? | Customer: Yes, the ticket's there. And no, that's everything, thanks. | Agent: You're welcome. Thank you for calling [Company].
+source_rule: Check the issue is resolved, then ask "anything else"; never on an unresolved call (SQM Group).
+fill_blank: Has that fixed the issue for you? Is there anything ____ (starts with e) I can help with today?
+fill_answer: else
+mcq_question: You have just re-sent a missing e-ticket. What should you ask before "Is there anything else?"
+mcq_options: A) Has that fixed the issue for you? Can you see the ticket now? | B) I've sent it again, so that's all done. Can I close the call now? | C) Before you go, would you mind rating this call out of five? | D) Why didn't you check your spam folder? Please look there first next time.
+mcq_answer: A
+mcq_why: A checks the fix is real before moving on. B assumes it worked and pushes the caller out, C makes the call about your rating, and D blames the caller.
+reorder_task: else / anything / there / Is / help / I / can / with / today
+reorder_answer: Is there anything else I can help with today
+hindi_to_english: Kya ab aapko ticket dikh raha hai? Aur kuch madad chahiye?
+hindi_to_english_answer: Can you see the ticket now? Is there anything else I can help with?
+whats_next_customer: Yes, one more thing. Can I add my wife's name to the booking?
+whats_next_reply: Of course. Could you give me her full name, please?
+role_play: Partner B has just re-sent Partner A's missing e-ticket. B checks the fix, then asks if there is anything else; A raises a second, small issue that B handles before closing.
+record_task: Record yourself checking the fix and asking "anything else", then the line you say if the caller says it is still not working.
+self_check: Did you check the fix before "anything else"? · Did your voice rise on both questions? · Did you pause long enough for an answer?
+
+@CSV-B-014
+id: CSV-B-014
+channel: Voice
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: Thanks for your time today, Mr Lee. Have a great evening.
+speaker: Agent
+situation: The issue is resolved, the customer has nothing else to ask, and you are ending the call in the evening.
+recall_cue: The issue is fixed and the caller has nothing more. How do you end the call warmly and personally?
+stress: THANKS-for-your-TIME-to-DAY · mis-ter-LEE · have-a-GREAT-EVE-ning
+linking: thanks_for → "thanks-fer" · have_a → "ha-va" · great_evening → "gray-teev-ning"
+intonation: Warm and unhurried, with a smile in the voice. Falling tone on "evening" so it sounds finished. Do not rush the last words.
+indian_pron_tip: "Have" and "evening" both contain a /v/: top teeth on the lower lip. Do not soften them to "haw" or "ee-wning". Minimal pair: vest / west.
+register: Friendly
+tone: Warm, grateful, finished
+importance: 4
+customer_emotion: Satisfied and ready to get on with their day.
+memory_hook: The last line is the taste the caller leaves with, like the last sip of tea, so make it warm.
+hindi_meaning: आज अपना समय देने के लिए धन्यवाद, मिस्टर ली। आपकी शाम अच्छी हो।
+hindi_roman: Aaj apna samay dene ke liye dhanyavaad, Mr Lee. Aapki shaam acchi ho.
+simple_meaning: Thank you for talking with me today. Enjoy your evening.
+why_it_works: It thanks the caller, uses their name once more and wishes them well, so the call ends on a personal note. Matching the time of day shows you are paying attention, not reading a script.
+key_chunk: Thanks for ___ today, ___. Have a great ___.
+grammar_pattern: Thanks for + noun/-ing · Have + a + adjective + noun (a wish)
+grammar_note: "Have a great evening" is a wish, not an order, even though it starts with a verb.
+tone_note: The name and the wish make it personal. A fast "Okay, thank you, bye" sounds like you are rushing to the next call.
+watch_out: ✗ Thanks for your time today, Mr Lee. Have good evening. → ✓ Thanks for your time today, Mr Lee. Have a great evening.
+dont_say: "Okay, bye." — it is too short, sounds rushed, and wastes the good feeling of a solved problem.
+positive_swap: Instead of "Okay, thank you, bye", say "Thanks for your time today, Mr Lee. Have a great evening."
+alt_1: Thanks for calling, Mr Lee. Enjoy the rest of your evening.
+alt_2: It was a pleasure helping you, Mr Lee. Take care.
+more_formal: Thank you for calling [Company], Mr Lee. I hope you have a pleasant evening.
+ask_next: Goodbye, Mr Lee. Thanks again for calling.
+replies_you_may_hear: Thanks, you too. · Cheers, bye. · Thanks for your help, Priya.
+if_customer_pushes: Customer: "Wait, will I get an email about this?" → Agent: "Yes, I've just sent a confirmation to the email address on your account. Is there anything else before you go?"
+cultural_note: "Have a nice day ahead" and "Thanks for your valuable time" are common Indian closings. International callers may not expect them; a simple "Have a great day" or "Enjoy your evening" sounds natural.
+channel_note: Chat: "Thanks for chatting with us, Mr Lee. Have a great evening!" Email: end with "Best regards" and your name.
+when_not_to_use: Do not use a cheerful "Have a great evening" when the call ended without a fix; say "Thank you for your patience, Mr Lee. I'll call you on Friday with an update."
+mini_conversation: Customer: No, that's all, thanks. | Agent: You're welcome. Thanks for your time today, Mr Lee. Have a great evening. | Customer: Thanks, you too. | Agent: Goodbye.
+source_rule: Close with thanks and a courtesy closer such as "Have a great day", fitted to the caller.
+fill_blank: Thanks for your time today, Mr Lee. ____ a great evening.
+fill_answer: Have
+mcq_question: It is 7 pm and the call is resolved. Which closing sounds warmest and most natural?
+mcq_options: A) Okay, that is all then. Thank you very much, bye bye now. | B) Thanks for your time today, Mr Lee. Have a wonderful morning. | C) Your call is now completed. Thank you for contacting [Company]. | D) Thanks for your time today, Mr Lee. Have a great evening.
+mcq_answer: D
+mcq_why: D thanks the caller by name and wishes them a good evening to match the time. B names the wrong time of day, A sounds rushed and C sounds like a machine.
+reorder_task: today / your / Thanks / Lee / time / for / Mr
+reorder_answer: Thanks for your time today Mr Lee
+hindi_to_english: Call karne ke liye shukriya, Ms Patel. Aapka din accha ho.
+hindi_to_english_answer: Thanks for calling, Ms Patel. Have a great day.
+whats_next_customer: Thanks, you too. Bye.
+whats_next_reply: You're welcome, Mr Lee. Goodbye.
+role_play: Partner B has just updated Partner A's delivery address at 6 pm. A says there is nothing else. B closes with thanks, A's name and a wish that fits the time of day.
+record_task: Record three closings: one for the morning, one for the evening, and one for a call that ended without a fix.
+self_check: Did you use the caller's name? · Did your wish match the time of day? · Did "have" and "evening" have a clear "v"?
+
+@CSV-B-015
+id: CSV-B-015
+channel: Voice
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Opening
+sentence: Hello? Can you hear me?
+speaker: Customer
+situation: The call has just connected, but there was a second of silence, or your greeting was cut off on the caller's side.
+recall_cue: A caller says this right after the call connects. What has probably happened, and what do you say first?
+stress: hel-LO · can-you-HEAR-me
+linking: can_you → "ca-nyoo" · hear_me → "hee-uh-mee"
+intonation: The caller's voice rises on both parts and often sounds anxious. Answer with a clear, slightly louder "Yes, I can hear you" that falls at the end.
+indian_pron_tip: In your answer "Yes, I can hear you", say "hear" as HEE-uh, the same as "here"; do not let it slide towards "hair", which is a different word.
+register: Neutral
+tone: Uncertain, checking connection
+importance: 4
+customer_emotion: Unsure and slightly anxious that the call has dropped or that nobody is there.
+memory_hook: The caller is knocking on a door they cannot see; answer quickly so they know someone is home.
+hindi_meaning: हैलो? क्या आप मुझे सुन पा रहे हैं?
+hindi_roman: Hello? Kya aap mujhe sun pa rahe hain?
+simple_meaning: The caller is checking that the line works and that a real person is there.
+why_it_works: It usually means your greeting was cut off, you paused too long, or the line has a delay. The caller needs instant proof that you are there, not the whole script read again from the top.
+key_chunk: Can you hear ___?
+grammar_pattern: Can + you + hear + me? (yes/no question)
+grammar_note: "Can you hear me?" asks about ability right now; answer "Yes, I can."
+tone_note: The caller is not being rude, just unsure. A quick, warm "Yes, I can hear you" fixes it; ignoring it and reading the script sounds robotic.
+watch_out: ✗ Yes, I am hearing you. → ✓ Yes, I can hear you clearly.
+dont_say: "Yes, yes, I'm here, go on." — said fast and flat, it sounds impatient with a normal question.
+positive_swap: Instead of "Yes, yes, tell me", say "Yes, I can hear you clearly. This is Priya from [Company]. How can I help?"
+alt_1: Hello? Is anyone there?
+alt_2: Hi, are you there?
+more_formal: Hello, can you hear me clearly?
+ask_next: Yes, I can hear you clearly. This is Priya from [Company]. How can I help you today?
+replies_you_may_hear: Oh, sorry, there was a delay. · Is this [Company]? · Great. I'm calling about my bill.
+if_customer_pushes: Customer: "Hello? I still can't hear anything!" → Agent (louder and slower): "I'm sorry about that. I can hear you. If you can't hear me, I'll call you back on this number in one minute."
+cultural_note: Some agents answer "Yes, I am hearing you" or "Yes, audible". International callers may not expect these; "Yes, I can hear you" is the usual form, because "hear" is rarely used with -ing in this meaning.
+channel_note: Chat version: "hello?? anyone there" — answer at once: "Hi, I'm here! This is Priya. How can I help?" Email: this does not happen.
+when_not_to_use: Do not answer with only "Yes" and wait; the caller still does not know who you are, so add your name and an offer of help.
+mini_conversation: Customer: Hello? Can you hear me? | Agent: Yes, I can hear you clearly. This is Priya from [Company]. How can I help? | Customer: Oh good. I'm calling about my bill. | Agent: Sure, I can help with that.
+source_rule: Fill dead air quickly: tell the caller you are there and who you are.
+fill_blank: Yes, I ____ hear you clearly. This is Priya from [Company].
+fill_answer: can
+mcq_question: Right after the call connects, the caller says "Hello? Can you hear me?" What is the best reply?
+mcq_options: A) Yes, I am hearing you. Please tell me how I can help you today. | B) Thank you for calling [Company]. This call may be recorded for training purposes. | C) Yes, I can hear you clearly. This is Priya from [Company]. How can I help? | D) Yes, yes, I'm here, go on. Tell me quickly, what do you want to say?
+mcq_answer: C
+mcq_why: C answers the question at once, then gives your name and an offer of help. B restarts the script and ignores what the caller asked, A uses "am hearing", but with "hear" English normally says "can hear", and D sounds impatient.
+reorder_task: hear / clearly / I / you / can / Yes
+reorder_answer: Yes I can hear you clearly
+hindi_to_english: Haan, main aapko saaf sun pa rahi hoon. Bataiye, main kya madad kar sakti hoon?
+hindi_to_english_answer: Yes, I can hear you clearly. How can I help you?
+whats_next_customer: Oh, sorry, there was a delay. I'm calling about my bill.
+whats_next_reply: That's fine. I can help with your bill. Could I have your full name, please?
+role_play: Partner A calls and, after a short silence, says "Hello? Can you hear me?" Partner B answers at once, gives their name and the company, and asks how to help.
+record_task: Record your reply to "Hello? Can you hear me?" at normal speed, then again louder and slower, as if the line is weak.
+self_check: Did you answer the question before anything else? · Did you say "I can hear you", not "I am hearing you"? · Did you give your name?
+
+@CSV-B-016
+id: CSV-B-016
+channel: Voice
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Opening
+sentence: I'm calling about my order.
+speaker: Customer
+situation: A caller opens with this line after your greeting and gives no further detail yet.
+recall_cue: A caller opens with a short line about something they bought. What do they want, and what do you need from them first?
+stress: i'm-CALL-ing-a-BOUT · my-OR-der
+linking: calling_about → "caw-ling-uh-bout" · about_my → "uh-bou-my"
+intonation: Usually neutral and falling; a rise on "order" may mean they expect you to know already. Listen for worry or anger in the voice.
+indian_pron_tip: In your reply, "order" is OR-der with stress on the first part and a weak "-der"; avoid a heavy retroflex "d" that makes it sound like "or-DAR".
+register: Neutral
+tone: Neutral, opening a topic
+importance: 4
+customer_emotion: Could be calm, worried or annoyed; listen to the voice before you decide.
+memory_hook: "My order" is a closed box; your first question is the key that opens it.
+hindi_meaning: मैं अपने ऑर्डर के बारे में कॉल कर रहा/रही हूँ।
+hindi_roman: Main apne order ke baare mein call kar raha/rahi hoon.
+simple_meaning: The caller has a question or problem about something they bought, but has not said what yet.
+why_it_works: The caller has named the topic, not the problem. They might need tracking, a change, a return or a complaint, so you need the order number and one open question before you guess.
+key_chunk: I'm calling about ___.
+grammar_pattern: I'm + calling + about + noun
+grammar_note: "Calling about" means "the reason for my call is".
+tone_note: The line itself is neutral. Answering "What about your order?" sharply sounds impatient; a warm "Sure, I can help" sounds ready.
+watch_out: ✗ Tell me, what is the issue with order? → ✓ Sure, I can help with that. What's happening with your order?
+dont_say: "Which order? We have many orders." — it may be true, but it suggests the caller has wasted your time.
+positive_swap: Instead of "What is your problem with the order?", say "Sure, I can help with that. Could you tell me what's happening with your order?"
+alt_1: Hi, it's about an order I placed last week.
+alt_2: I've got a question about my delivery.
+more_formal: I'm phoning regarding an order I placed on your website.
+ask_next: Sure, I can help with that. Could you give me your order number and tell me what's happening?
+replies_you_may_hear: It hasn't arrived yet. · I want to cancel it. · I got the wrong item.
+if_customer_pushes: Customer: "Can't you just see it? I gave my phone number already." → Agent: "You're right, and I'm sorry to ask again. I can find it from your number. I can see two recent orders; is it the one from Monday?"
+cultural_note: Indian callers may say "I have one query regarding my order"; international callers say "I'm calling about my order" or "It's about my order". Both mean the same thing, so respond to the problem, not the wording.
+channel_note: Chat version: "hi its about my order" — reply: "Hi! I can help with that. Could you share your order number and what's happening?" Email: the subject may just say "Order SO37542", so read the body for the actual problem.
+when_not_to_use: Do not treat it as a tracking question before you ask; the caller may want to cancel, return or complain.
+mini_conversation: Customer: Hi, I'm calling about my order. | Agent: Sure, I can help with that. Could you give me your order number and tell me what's happening? | Customer: It's SO37542, and it hasn't arrived. | Agent: Thank you. Let me check where it is.
+source_rule: Listen fully and ask an open question before solving; do not assume the problem.
+fill_blank: Sure, I can help with that. Could you give me your order number and ____ me what's happening?
+fill_answer: tell
+mcq_question: A caller says only "I'm calling about my order." What should you do first?
+mcq_options: A) Ask for the order number and what is happening with it. | B) Offer a discount on their next order, to keep them happy. | C) Transfer the call to a manager, in case it is serious. | D) Start the cancellation process, in case they want that.
+mcq_answer: A
+mcq_why: They have only named the topic, so you need the order and the real problem first. B, C and D all guess at a request the caller has not made.
+reorder_task: happening / tell / with / me / Could / what's / your / you / order
+reorder_answer: Could you tell me what's happening with your order
+hindi_to_english: Main apne order ke baare mein call kar raha hoon. Woh abhi tak nahin aaya.
+hindi_to_english_answer: I'm calling about my order. It hasn't arrived yet.
+whats_next_customer: It was supposed to come yesterday.
+whats_next_reply: I'm sorry it hasn't arrived. Could I have the order number so I can check where it is?
+role_play: Partner A says only "I'm calling about my order" and waits. Partner B reassures A, asks for the order number and asks an open question to find the real problem (A wants to change the size).
+record_task: Record your reply to "I'm calling about my order", including the open question you use to find the real problem.
+self_check: Did you ask what is happening instead of guessing? · Did you ask for the order number? · Did your tone sound ready to help, not impatient?
+
+@CSV-B-017
+id: CSV-B-017
+channel: Voice
+level: Basic
+cefr: B1
+kind: Understand it
+call_stage: Escalate
+sentence: I want to speak to your manager.
+speaker: Customer
+situation: A customer whose refund has been delayed twice interrupts you with this line.
+recall_cue: An upset caller demands to talk to someone senior. What do they really want, and how do you answer?
+stress: i-WANT-to-SPEAK · to-your-MAN-a-ger
+linking: want_to → "wan-tuh" · speak_to → "spee-ktuh" · your_manager → "yor-man-uh-jer"
+intonation: Usually firm and falling, sometimes loud. Answer more slowly and in a lower voice than the caller, without a rising "but…".
+indian_pron_tip: In your reply, "manager" is MAN-uh-jer, with stress on the first part; avoid "ma-NAY-jar" with the stress in the middle.
+register: Neutral
+tone: Firm, frustrated demand
+importance: 5
+customer_emotion: Frustrated, feels unheard, and doubts that you have the power to help.
+memory_hook: "Manager" often means "Someone, please take me seriously"; answer the feeling before the job title.
+hindi_meaning: मैं आपके मैनेजर से बात करना चाहता/चाहती हूँ।
+hindi_roman: Main aapke manager se baat karna chahta/chahti hoon.
+simple_meaning: The customer wants someone with more authority to handle their problem.
+why_it_works: Usually the caller feels stuck and unheard, not angry at you personally. Acknowledge that, say what you can do now, and if they still ask, arrange it; Zendesk's chat-etiquette guidance is to transfer to a supervisor if the customer asks.
+key_chunk: I want to speak to ___.
+grammar_pattern: I + want + to + base verb
+grammar_note: "Want to + verb" states a clear wish; on the phone it sounds stronger than "I'd like to".
+tone_note: The caller sounds blunt because they are upset. Arguing ("There's no need for that") makes it worse; a calm, honest reply lowers the heat.
+watch_out: ✗ Sir, calm down, manager is not available. → ✓ I can see why you'd want that. Let me arrange it for you.
+dont_say: "My manager will only tell you what I told you." — it dismisses the request and makes the caller feel trapped.
+positive_swap: Instead of "The manager is busy", say "I can see why you'd want that. Let me arrange it, and I'll explain what happens next."
+alt_1: Can I talk to someone senior, please?
+alt_2: Put me through to your supervisor.
+more_formal: I would like to escalate this to your manager, please.
+ask_next: I can see why you'd want that, after two delays. I'll arrange it. Can I first tell you what I can do for you right now?
+replies_you_may_hear: Fine, go on. · No, I want the manager now. · I've already heard enough excuses.
+if_customer_pushes: Customer: "No, I want the manager now." → Agent: "Of course. I'll explain your case to my supervisor so you don't need to repeat it. It will take about three minutes. Could you hold, please?"
+cultural_note: Agents sometimes try to avoid an escalation with lines like "No need for manager, I will help you". International callers see asking for a manager as a normal request, so blocking it tends to make them angrier.
+channel_note: Chat version: "i want to talk to ur manager" — reply: "I understand. I'll pass this to my supervisor now. Could you stay in this chat for a few minutes?" Email: say who will reply and by when.
+when_not_to_use: Do not keep offering your own fix after the caller has asked twice; arrange the escalation then.
+mini_conversation: Customer: I want to speak to your manager. | Agent: I can see why you'd want that, after two delays. I'll arrange it. Can I first tell you what I can do right now? | Customer: Fine, go on. | Agent: I can mark your refund as urgent and call you back by 5 pm today.
+source_rule: Pass to a supervisor if the customer asks (Zendesk chat etiquette); acknowledge the feeling first, never say "calm down".
+fill_blank: I can see ____ you'd want that. I'll arrange it for you.
+fill_answer: why
+mcq_question: A caller says, "I want to speak to your manager." What is the best first reply?
+mcq_options: A) I understand you are upset, but please calm down so that I can help you properly. | B) I'm sorry, but my manager is in meetings all day, so I can't arrange that today. | C) I can see why you'd want that. I'll arrange it. Can I first tell you what I can do right now? | D) There is no need for a manager. I can handle this myself, so please tell me the problem.
+mcq_answer: C
+mcq_why: C acknowledges the feeling, agrees to the request and offers help now. A tells them how to feel, B blocks the request with an excuse, and D refuses what they asked for.
+reorder_task: why / I / can / you'd / see / that / want
+reorder_answer: I can see why you'd want that
+hindi_to_english: Main samajh sakti hoon aap manager se baat kyun karna chahte hain. Main arrange karti hoon.
+hindi_to_english_answer: I can see why you'd want to speak to my manager. I'll arrange it.
+whats_next_customer: Fine. But I don't want to explain everything again.
+whats_next_reply: You won't have to. I'll give my supervisor the details of your two delays before I connect you. Could you hold for about three minutes?
+role_play: Partner A's refund has been delayed twice and A demands a manager. Partner B acknowledges the feeling, offers one concrete action, and when A insists, arranges a warm transfer with a time estimate.
+record_task: Record your reply to "I want to speak to your manager", then your reply when the caller insists a second time.
+self_check: Did you acknowledge the feeling first? · Did you avoid "calm down" and an outright refusal? · Did you give a time for the hold or callback?
+
+@CSV-B-018
+id: CSV-B-018
+channel: Voice
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Listen & clarify
+sentence: My payment didn't go through.
+speaker: Customer
+situation: A customer calls while trying to pay for their phone plan online.
+recall_cue: A customer says their money "didn't go through". What exactly might have happened, and what do you check?
+stress: my-PAY-ment · didn't-go-THROUGH
+linking: didn't_go → "didn-go" · go_through → "go-throo"
+intonation: Usually falling, with the main stress on "through", and often worried. Reply calmly and clearly, with rising yes/no questions to check details.
+indian_pron_tip: When you repeat "through", start with a voiceless "th" (tongue between the teeth, no voice) and say "throo"; it must not sound like "true".
+register: Neutral
+tone: Worried, reporting a problem
+importance: 5
+customer_emotion: Worried about losing money or being charged twice.
+memory_hook: The payment is a parcel stuck at the bank's gate: did it leave the house, or did it never start?
+hindi_meaning: मेरा पेमेंट नहीं हो पाया।
+hindi_roman: Mera payment nahin ho paaya.
+simple_meaning: The customer tried to pay, but the payment failed or they are not sure it worked.
+why_it_works: "Didn't go through" can mean declined with no money taken, or money taken with no confirmation. The real worry is often "Have I lost money?", so ask what they saw and whether money left their account.
+key_chunk: ___ didn't go through.
+grammar_pattern: Subject + didn't + go through (phrasal verb, past)
+grammar_note: "Go through" here means "be accepted and completed".
+tone_note: The customer is worried, not blaming you yet. A calm question shows you understand; "It must be your bank" brushes them off.
+watch_out: ✗ I'm sorry your payment is not go through. Did you saw any error? → ✓ I'm sorry your payment didn't go through. Did you see an error message?
+dont_say: "That's your bank's problem, not ours." — it may not be true, and it leaves a worried customer with nowhere to go.
+positive_swap: Instead of "Payment failed, try again", say "I'm sorry the payment didn't go through. Let me check whether any money was taken."
+alt_1: My card got declined.
+alt_2: It took the money but says the payment failed.
+more_formal: I attempted to make a payment, but the transaction was not completed.
+ask_next: I'm sorry the payment didn't go through. Did you see an error message, and has any money left your account?
+replies_you_may_hear: It just said "transaction failed". · The money's gone from my account though. · I've tried three times.
+if_customer_pushes: Customer: "I've tried three times and you've taken my money!" → Agent: "I understand why that's worrying. Let me check right now whether any payment reached us, and I'll tell you exactly what I see."
+cultural_note: Indian customers often say "payment is failed" or "amount got debited". International customers say "it didn't go through" or "it was declined"; in both cases, listen for whether money actually left the account.
+channel_note: Chat version: "payment didnt go thru" — reply: "Sorry about that! Did you get an error message? Has any money left your account?" Email: ask for the date, the amount and any error text.
+when_not_to_use: Do not assume no money was taken; always ask, because a failed payment can still show as pending on the customer's account.
+mini_conversation: Customer: My payment didn't go through. | Agent: I'm sorry it didn't go through. Did you see an error message, and has any money left your account? | Customer: It said "declined", and nothing's gone. | Agent: Thank you. Let me check on my side that nothing was taken. Then we can try another way to pay.
+source_rule: Listen and ask before you solve; check the facts, then explain the next step clearly.
+fill_blank: I'm sorry the payment didn't go ____. Did you see an error message?
+fill_answer: through
+mcq_question: A customer says "My payment didn't go through." What are they most likely worried about?
+mcq_options: A) Whether money has been taken without the order going through. | B) Whether the shop will give them a discount for the trouble. | C) Whether the agent can explain how card payments work. | D) Whether their order will be delivered to the right address.
+mcq_answer: A
+mcq_why: A failed payment makes many people fear that money has gone without an order. B, C and D are not the first worry when a payment fails.
+reorder_task: through / payment / the / sorry / didn't / I'm / go
+reorder_answer: I'm sorry the payment didn't go through
+hindi_to_english: Kya aapko koi error message dikha? Kya aapke account se paise kate?
+hindi_to_english_answer: Did you see an error message? Has any money left your account?
+whats_next_customer: It says "declined", but my card works everywhere else.
+whats_next_reply: Thank you. Sometimes a bank stops one payment as a safety check, even when the card works elsewhere. Would you like to try once more, or pay with a different card?
+role_play: Partner A's payment for a phone plan failed and A thinks money was taken. Partner B asks what A saw, checks whether money left the account, and explains the next step.
+record_task: Record your reply to "My payment didn't go through", including both questions you ask to understand what happened.
+self_check: Did you ask whether money was taken? · Did you avoid blaming the bank? · Did "through" start with a soft "th"?
+
+@CSV-B-019
+id: CSV-B-019
+channel: Voice
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Hold & check
+sentence: Hang on a sec, let me find it.
+speaker: Customer
+situation: You asked for the order number, and the customer needs a moment to look for it.
+recall_cue: The customer goes off to look for something you asked for. What do they mean, and what do you say?
+stress: HANG-ON · a-SEC · let-me-FIND-it
+linking: hang_on → "hang-gon" · let_me → "lem-mee" · find_it → "fine-dit"
+intonation: Quick and casual, falling at the end; the customer is busy searching. Your reply should be short and relaxed, not hurried.
+indian_pron_tip: Listen for the word after "hang": "hang ON" (short o) means wait, and "hang UP" (u as in cup) means end the call. Say the "ng" in "hang" as one nasal sound, with no hard "g".
+register: Friendly
+tone: Casual, busy, cooperative
+importance: 3
+customer_emotion: Cooperative but a little flustered while searching.
+memory_hook: The customer is rummaging in a drawer; you just keep the light on and wait quietly.
+hindi_meaning: एक सेकंड रुकिए, मैं ढूँढ़ता/ढूँढ़ती हूँ।
+hindi_roman: Ek second rukiye, main dhoondhta/dhoondhti hoon.
+simple_meaning: Please wait a short time while I look for it.
+why_it_works: The customer is asking you to wait, the reverse of a hold. They may feel rushed, so a calm "Take your time" relaxes them, and a gentle check-in after a long silence shows you are still there.
+key_chunk: Hang on a ___.
+grammar_pattern: Hang on (informal phrasal verb) + a sec · Let me + base verb
+grammar_note: "Hang on" means "wait"; "a sec" is short for "a second", but it often means a minute or more.
+tone_note: It is informal but not rude. Do not copy it back; reply politely with "Of course, take your time."
+watch_out: ✗ Okay, fast please, I have other calls. → ✓ Of course, take your time. I'm right here.
+dont_say: "Hurry up, please." — it makes the customer feel rushed, and they may read out the wrong number.
+positive_swap: Instead of "Okay, do it fast", say "Of course, take your time. I'm right here."
+alt_1: Give me a minute, I'll grab it.
+alt_2: One moment, it's in my emails somewhere.
+more_formal: Could you give me a moment, please? I need to find the number.
+ask_next: Of course, take your time. I'm right here.
+replies_you_may_hear: Okay, found it. · Sorry, I can't find it anywhere. · Is it the long number or the short one?
+if_customer_pushes: Customer: "I can't find it anywhere." → Agent: "That's okay, I can find it another way. Could you give me the email address you ordered with?"
+cultural_note: Indian callers might say "One minute, please" or "Just wait". International callers often say "Hang on" or "Bear with me". All mean the same thing: wait, I am looking.
+channel_note: Chat version: "hang on lemme check" — reply: "Sure, take your time." Email: not used; the customer simply replies later.
+when_not_to_use: Do not stay silent for a long time after "Take your time"; if the silence goes on, check in gently: "Any luck finding it?"
+mini_conversation: Customer: Hang on a sec, let me find it. | Agent: Of course, take your time. I'm right here. | Customer: Okay, here it is: SO48210. | Agent: Thank you. Let me pull that up.
+source_rule: Fill silence gently: tell the caller you are there, and check in if the wait goes on.
+fill_blank: Of course, take your ____. I'm right here.
+fill_answer: time
+mcq_question: The customer says "Hang on a sec, let me find it." What do they want?
+mcq_options: A) They want you to wait on the line while they look for it. | B) They want to end the call and phone you back later. | C) They want you to search for it in your system instead. | D) They want to be passed to someone who can find it.
+mcq_answer: A
+mcq_why: "Hang on" means wait, and "let me find it" means they are searching. B confuses "hang on" with "hang up", C swaps who does the searching, and D asks for a transfer nobody mentioned.
+reorder_task: time / your / take / course / Of
+reorder_answer: Of course take your time
+hindi_to_english: Koi baat nahin, aap aaram se dhoondhiye. Main line par hoon.
+hindi_to_english_answer: Of course, take your time. I'm still on the line.
+whats_next_customer: Is it the long number or the short one?
+whats_next_reply: It's the longer one. It starts with the letters SO and it's in the subject line of your confirmation email.
+role_play: Partner B asks for an order number. Partner A says "Hang on a sec, let me find it" and searches for a while. B reassures A, checks in once, and offers another way when A cannot find it.
+record_task: Record your reply to "Hang on a sec, let me find it", then the gentle check-in you say if the silence goes on.
+self_check: Did you sound relaxed, not rushed? · Did you understand "hang on" as "wait", not "hang up"? · Did you offer another way if they cannot find it?
+
+@CSV-B-020
+id: CSV-B-020
+channel: Voice
+level: Basic
+cefr: B1
+kind: Understand it
+call_stage: Difficult customer
+sentence: You already asked me that.
+speaker: Customer
+situation: After a transfer, the customer is asked for their account number a second time.
+recall_cue: An irritated caller says you are repeating a question. What are they feeling, and what do you say next?
+stress: you · al-READ-y · ASKED-me · THAT
+linking: already_asked → "awl-red-ee-askt" · asked_me → "ask-mee"
+intonation: Usually flat and falling, with stress on "already"; it signals irritation. Reply more slowly and softly, without defending yourself.
+indian_pron_tip: "Asked" is one syllable, "askt", ending in s-k-t; avoid "ask" or "aas-ked". Hear it in the customer's line and say it right in yours.
+register: Neutral
+tone: Irritated, impatient
+importance: 5
+customer_emotion: Irritated and tired of repeating themselves; feels the company is not listening.
+memory_hook: Every repeated question is a stone in the customer's shoe; say sorry for the stone, then take it out.
+hindi_meaning: आप यह मुझसे पहले ही पूछ चुके/चुकी हैं।
+hindi_roman: Aap yeh mujhse pehle hi poochh chuke/chuki hain.
+simple_meaning: You asked me this before, and I am annoyed to answer again.
+why_it_works: The customer feels the company does not listen or share notes. CEB/Gartner's customer-effort research found that cutting customer effort predicts loyalty better than "delighting" customers, so apologise, use what they already gave, or give a one-line reason if you must ask again.
+key_chunk: You already ___ that.
+grammar_pattern: You + already + past simple (common in American English) / You have already + past participle (British)
+grammar_note: "Already" means it happened before now; here it carries annoyance.
+tone_note: The customer is blunt because they are frustrated. "It's the process" makes it worse; a short apology and a reason sound respectful.
+watch_out: ✗ Sir, it is the process, you have to tell again. → ✓ You're right, I'm sorry. I can see it in the notes now.
+dont_say: "It's our process to ask again." — it hides behind process and gives no reason the customer cares about.
+positive_swap: Instead of "It's mandatory, please tell again", say "You're right, and I'm sorry you've had to repeat it. I'll use the details you gave earlier."
+alt_1: I've already told the last person this.
+alt_2: Why do I keep having to repeat myself?
+more_formal: I believe I have already provided that information.
+ask_next: You're right, and I'm sorry you've had to repeat it. I have your account number from earlier, so let's carry on.
+replies_you_may_hear: Thank you. · This is the third time today! · Fine, it's 22019.
+if_customer_pushes: Customer: "This is the third time today!" → Agent: "I'm sorry, that's frustrating. I'll add everything to your account notes now so the next person can see it."
+cultural_note: Agents sometimes answer "It's mandatory, please tell again" after a transfer. International customers may not expect this; they expect the details to travel with the transfer, or a reason in plain words if you must ask again.
+channel_note: Chat version: "i already told u that" — reply: "You're right, sorry! I can see it above. Let me carry on." Email: quote what they sent instead of asking again.
+when_not_to_use: Do not ignore it and simply repeat the question; if you truly must ask again for security, say why in one sentence.
+mini_conversation: Customer: You already asked me that. | Agent: You're right, and I'm sorry you've had to repeat it. I have your account number from earlier. | Customer: Okay. So can you fix my bill? | Agent: I'll look at your bill now and tell you what I can do.
+source_rule: Reduce customer effort: do not make the customer repeat themselves (CEB/Gartner effort research).
+fill_blank: You're right, and I'm ____ you've had to repeat it.
+fill_answer: sorry
+mcq_question: After a transfer, the customer says "You already asked me that." What is the best response?
+mcq_options: A) You're right, and I'm sorry you've had to repeat it. I have your details from earlier. | B) It is mandatory to ask again after every transfer, so please repeat it once more. | C) That was a different department, not me, so I have to ask you again myself now. | D) Please be patient, sir. I only need your account number one more time, then I can help.
+mcq_answer: A
+mcq_why: A agrees, apologises and uses the details already given. B hides behind a rule, C blames another team, and D asks again with no reason.
+reorder_task: right / You're / and / sorry / I'm
+reorder_answer: You're right and I'm sorry
+hindi_to_english: Aap sahi keh rahe hain, maaf kijiye. Mere paas aapka number pehle se hai.
+hindi_to_english_answer: You're right, I'm sorry. I already have your number.
+whats_next_customer: Good. So can you sort out my bill now?
+whats_next_reply: I can see an extra charge from March. I'll look at it now and tell you what I can do.
+role_play: Partner A was transferred and is asked for an account number again. A says "You already asked me that." Partner B apologises, uses the earlier details or gives a one-line security reason, and moves on.
+record_task: Record your reply to "You already asked me that" in two versions: one when you have the details, one when you must ask again for security.
+self_check: Did you agree and say sorry first? · Did you avoid "process" and "mandatory"? · Did "asked" end in a clear "kt"?

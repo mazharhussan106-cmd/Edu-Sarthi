@@ -1,0 +1,1159 @@
+@CSV-I-001
+id: CSV-I-001
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Listen & clarify
+sentence: So, if I've understood correctly, your internet stopped working after last night's update. Is that right?
+speaker: Agent
+situation: The caller has spent a minute explaining that their internet died after an update, and you want to confirm the details before you troubleshoot.
+recall_cue: The caller has just told you a long story about a fault. Before you try to fix anything, what do you say to check you heard it right?
+stress: so · if-i've-un-der-STOOD-cor-RECT-ly · your-IN-ter-net-STOPPED-WORK-ing · af-ter-LAST-night's-UP-date · is-that-RIGHT
+linking: if_I've → "i-fyv" · stopped_working → "stopt-WUR-king" · last_night's → "las-NIGHTS" · is_that → "iz-that"
+intonation: Short pause after "So," and after "correctly". Even, falling tone through the summary, then a clear rise on "Is that right?" because it is a real yes/no question. Medium pace.
+indian_pron_tip: "Stopped" is one syllable, "stopt", ending in a clear /t/; do not say "stop-ped". "Working" starts with rounded lips for /w/, with no teeth on the lip as in "v".
+register: Neutral
+tone: Careful, attentive check
+importance: 5
+customer_emotion: Annoyed, and hoping this agent has actually listened.
+memory_hook: Think of a mirror: you hold the customer's own story up to them, and they nod or correct it before you touch a single wire.
+hindi_meaning: तो अगर मैंने सही समझा है, तो कल रात के अपडेट के बाद से आपका इंटरनेट काम नहीं कर रहा है। क्या यह सही है?
+hindi_roman: To agar maine sahi samjha hai, to kal raat ke update ke baad se aapka internet kaam nahin kar raha hai. Kya yeh sahi hai?
+simple_meaning: Let me repeat your problem in my own words: your internet broke after the update. Did I get that right?
+why_it_works: It proves you listened and gives the caller a chance to correct you before you start fixing the wrong thing, which saves time for both of you.
+key_chunk: So, if I've understood correctly, ___. Is that right?
+grammar_pattern: So, if + I've + past participle + adverb, + summary of the problem · Is that right?
+grammar_note: "If I've understood" uses the present perfect because your understanding matters right now.
+tone_note: It sounds careful and humble, as if any mistake would be yours. A flat "So you're saying the internet just died?" can sound as if you doubt the customer.
+watch_out: ✗ If I understand correct, your internet is stopped after update. → ✓ If I've understood correctly, your internet stopped working after last night's update.
+dont_say: "Okay, okay, I got it." It cuts the caller off and gives them no proof that you understood anything.
+positive_swap: Instead of "What is your problem exactly?", say "So, if I've understood correctly, your internet stopped working after the update. Is that right?"
+alt_1: So the internet dropped after last night's update, and it hasn't come back since. Have I got that right?
+alt_2: Just to check I understand, the connection has been down since the update last night. Is that correct?
+more_formal: To make sure I have understood you correctly, your internet service has not worked since last night's update. Is that accurate?
+ask_next: Thanks for confirming. Have you restarted the router since then?
+replies_you_may_hear: Yes, exactly. · Not quite, it was already slow before the update. · Yes, and the TV box isn't working either.
+if_customer_pushes: Customer: "I just told you all that!" → Agent: "You did, and thank you. I just want to be sure of the details, because the fix depends on exactly when it stopped."
+cultural_note: Many Indian agents end statements with "no?" or "isn't it?" as a check. International callers may not expect this; a clear "Is that right?" with a rising tone sounds more natural to them.
+channel_note: Chat: "Just to check: your internet stopped after last night's update. Is that right?" Email: summarise the issue in the first line of your reply.
+when_not_to_use: Do not paraphrase after every sentence of a long story; wait until the caller has finished, then sum up once.
+mini_conversation: Customer: My internet hasn't worked since the update last night. | Agent: So, if I've understood correctly, your internet stopped working after last night's update. Is that right? | Customer: Yes, exactly. | Agent: Thanks for confirming. Let's start by checking the lights on your router.
+source_rule: Paraphrase before solving ("If I've understood correctly, … Is that right?") so the customer can correct you early.
+fill_blank: So, if I've ____ (understand) correctly, your internet stopped working after last night's update. Is that right?
+fill_answer: understood
+mcq_question: The caller has finished describing a fault. Which line best checks your understanding before you start troubleshooting?
+mcq_options: A) Okay, I've got the picture, so let me look at your account and fix it now. | B) Sorry, could you tell me again exactly what the problem is with your internet? | C) If I've understood correctly, your internet stopped after the update. Is that right? | D) I understand completely. There is no need to explain it again, I have noted everything.
+mcq_answer: C
+mcq_why: C repeats the problem in your own words and asks a real yes/no question, so the caller can correct you. A and D claim to understand without checking, and B makes the caller start again.
+reorder_task: correctly / I've / So / understood / if
+reorder_answer: So if I've understood correctly
+hindi_to_english: Agar maine sahi samjha hai, to aapka card kal se kaam nahin kar raha. Kya yeh sahi hai?
+hindi_to_english_answer: If I've understood correctly, your card hasn't worked since yesterday. Is that right?
+whats_next_customer: Not quite, it was slow even before the update.
+whats_next_reply: Thank you for correcting me. So it was slow first, and it stopped completely after the update?
+role_play: Partner A explains a broadband fault in three or four long sentences with one extra detail. Partner B listens without interrupting, then paraphrases the whole problem and asks "Is that right?"
+record_task: Record yourself paraphrasing two different problems that a partner reads to you, each one ending with "Is that right?"
+self_check: Did you wait until the caller had finished? · Did your voice rise on "Is that right?" · Did you say "stopped" as one syllable?
+
+@CSV-I-002
+id: CSV-I-002
+channel: Voice
+level: Intermediate
+cefr: B2
+kind: Say it
+call_stage: Apologise
+sentence: I can see why that's frustrating, especially after waiting all week. Let me sort this out for you right now.
+speaker: Agent
+situation: The customer has waited a week for a technician who never came and is clearly fed up when they explain it.
+recall_cue: A customer has waited a whole week for nothing and sounds fed up. What do you say to show you understand, and what do you do straight after?
+stress: i-can-SEE-why-that's-frus-TRAY-ting · es-PE-cial-ly-af-ter-WAIT-ing-all-WEEK · let-me-SORT-this-OUT · for-you-RIGHT-NOW
+linking: can_see → "kun-SEE" · that's_frustrating → "thats-frus-TRAY-ting" · sort_this_out → "sor-this-OUT" · right_now → "rye-NOW"
+intonation: Slower, warm and level on the empathy part; do not sound cheerful. Falling tone on "week". Small pause, then a firmer, confident fall on "right now".
+indian_pron_tip: Stress "frustrating" on the second syllable: frus-TRAY-ting, not FRUS-tra-ting. Say "that's" with the tongue lightly between the teeth for /ð/, not "dats".
+register: Neutral
+tone: Warm empathy, then action
+importance: 5
+customer_emotion: Fed up, let down and doubting anyone will help.
+memory_hook: Picture a hand on the shoulder followed straight away by rolled-up sleeves: feel it with them, then get to work.
+hindi_meaning: मैं समझ सकता/सकती हूँ कि यह कितना परेशान करने वाला है, ख़ासकर पूरे हफ़्ते इंतज़ार करने के बाद। मैं इसे अभी आपके लिए ठीक करता/करती हूँ।
+hindi_roman: Main samajh sakta/sakti hoon ki yeh kitna pareshan karne wala hai, khaaskar poore hafte intezaar karne ke baad. Main ise abhi aapke liye theek karta/karti hoon.
+simple_meaning: I understand why you are upset after waiting a whole week, and I am going to fix it now.
+why_it_works: It names the feeling and the real reason for it (the long wait), then moves straight to action. Empathy without action sounds like a script.
+key_chunk: I can see why that's ___. Let me ___ for you right now.
+grammar_pattern: I can see why + clause · especially after + verb-ing · Let me + base verb
+grammar_note: "Especially after waiting" uses verb-ing after a preposition, so it is not "after wait".
+tone_note: Naming the customer's real reason makes it personal. "Sorry for the inconvenience" sounds scripted and does not show you heard what happened.
+watch_out: ✗ I can understand why it is frustrating, specially after wait all week. → ✓ I can see why that's frustrating, especially after waiting all week.
+dont_say: "These things happen." It brushes off a week of waiting and offers no fix.
+positive_swap: Instead of "Sorry for the inconvenience, these things happen", say "I can see why that's frustrating. Let me sort this out for you right now."
+alt_1: I completely understand why you're upset after a week of waiting. I'll book you a new visit now.
+alt_2: That must be really frustrating after waiting all week. Let's get this sorted straight away.
+more_formal: I fully understand your frustration after such a long wait, and I will arrange a new appointment for you straight away.
+ask_next: I'm booking the first available technician now. Would tomorrow morning or tomorrow afternoon suit you better?
+replies_you_may_hear: Thank you, finally someone gets it. · I've heard that before. · I don't want sympathy, I want it fixed.
+if_customer_pushes: Customer: "Everyone says they understand." → Agent: "That's fair. So here is exactly what I'm doing: I'm booking a technician for tomorrow and I'll text you the time."
+cultural_note: Indian agents often say "I understand, sir" quickly and repeatedly. International callers may hear that as a script; one specific empathy line, followed by action, sounds more sincere.
+channel_note: Chat: "I can see why that's frustrating after a week of waiting. I'm on it now." Email: put the empathy line first, then the numbered steps you are taking.
+when_not_to_use: Do not use it when the customer is only asking a neutral question, such as how to change a password; it sounds over-the-top.
+mini_conversation: Customer: The engineer was supposed to come on Monday and nobody showed up all week! | Agent: I can see why that's frustrating, especially after waiting all week. Let me sort this out for you right now. | Customer: Okay. What can you do? | Agent: I'm booking the first slot tomorrow and I'll send you the time by text.
+source_rule: Empathy line, then action: never an empathy line on its own ("I can see why that's frustrating. Here's what I'll do.").
+fill_blank: I can see why that's ____ (frustrate), especially after waiting all week.
+fill_answer: frustrating
+mcq_question: An upset customer has waited a week for a technician. Which reply best shows empathy and moves the call forward?
+mcq_options: A) Sorry for the inconvenience caused. Your patience is much appreciated, sir. | B) I can see why that's frustrating. Let me sort this out for you right now. | C) I understand, sir. These delays happen sometimes, so please be patient. | D) I'm sorry to hear that. You can check the technician times on our website.
+mcq_answer: B
+mcq_why: B names the feeling and starts the fix now. A and C are scripted and offer no action, and D sounds sympathetic but sends the customer away to do the work.
+reorder_task: sort / out / Let / now / this / me / right / for / you
+reorder_answer: Let me sort this out for you right now
+hindi_to_english: Main samajh sakta hoon ki yeh kitna pareshan karne wala hai. Main abhi ise theek karta hoon.
+hindi_to_english_answer: I can see why that's upsetting. Let me fix this for you right now.
+whats_next_customer: Fine, but I need it done this week.
+whats_next_reply: Understood. I can see a slot tomorrow morning, between eight and twelve. Shall I book it for you?
+role_play: Partner A is angry that a fridge repair visit was missed twice. Partner B gives one specific empathy line, then offers a new visit with a clear day and time.
+record_task: Record the sentence, then record a version for a missed delivery, keeping the empathy line followed by an action.
+self_check: Did you stress frus-TRAY-ting? · Did your empathy line name the real reason? · Did you follow it with a clear action?
+
+@CSV-I-003
+id: CSV-I-003
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Explain
+sentence: I'll take care of this for you personally, so you won't need to explain it to anyone else.
+speaker: Agent
+situation: The customer has already been passed between two departments and worries they will have to tell the story again.
+recall_cue: The caller fears being passed around again. What do you say to show that you own the problem from now on?
+stress: i'll-TAKE-CARE-of-this · for-you-PER-son-al-ly · so-you-WON'T-need-to-ex-PLAIN-it · to-an-y-one-ELSE
+linking: take_care_of → "tay-KEH-ruv" · care_of_this → "keh-ruv-THIS" · explain_it → "ex-PLAY-nit" · anyone_else → "en-ee-wun-ELSE"
+intonation: Calm, steady and slightly slower than normal. Falling tone on "personally" and on "else", which makes it a firm promise, not a question.
+indian_pron_tip: "Won't" starts with rounded lips for /w/ and has a long "oh": "wohnt", not "vont" and not "want". "This" needs /ð/ with the tongue between the teeth, not "dis".
+register: Neutral
+tone: Confident, reassuring commitment
+importance: 5
+customer_emotion: Tired of being transferred and afraid of starting over again.
+memory_hook: Imagine taking a heavy bag from the customer's hands and saying "I've got it from here": they do not carry it to another desk.
+hindi_meaning: मैं ख़ुद इसका ध्यान रखूँगा/रखूँगी, ताकि आपको किसी और को फिर से समझाना न पड़े।
+hindi_roman: Main khud iska dhyaan rakhoonga/rakhoongi, taaki aapko kisi aur ko phir se samjhana na pade.
+simple_meaning: I will handle this problem myself, so you do not have to tell your story again to another person.
+why_it_works: It shows one person is now responsible and removes the customer's biggest worry, repeating the story. "I'll" is a promise; "we'll try" is not.
+key_chunk: I'll take care of this for you, so you won't need to ___.
+grammar_pattern: I'll + base verb · so + you won't need to + base verb
+grammar_note: "I'll" here is a promise you make now; "so" shows the result for the customer.
+tone_note: Saying "I" instead of "we" or "the team" sounds accountable. "Somebody will look into it" sounds like nobody owns it.
+watch_out: ✗ I will take care for this, you need not explain again. → ✓ I'll take care of this for you personally, so you won't need to explain it to anyone else.
+dont_say: "That's not my department." It passes the problem back to the customer and sounds like you do not care.
+positive_swap: Instead of "We'll try to see what can be done", say "I'll take care of this for you personally, so you won't need to explain it to anyone else."
+alt_1: I'm going to handle this myself from here, so you won't have to repeat any of it.
+alt_2: Leave this with me. I'll look after it, and you won't need to go over it again.
+more_formal: I will take personal responsibility for your case, so there is no need to explain the details to anyone else.
+ask_next: I've got all the notes here. I'll call you by five o'clock today with an update.
+replies_you_may_hear: Thank you, that's a relief. · That's what the last person said. · So you'll call me back yourself?
+if_customer_pushes: Customer: "The last agent promised that too." → Agent: "I understand why you doubt it. I've put my name on your case, and I'll call you myself by five today."
+cultural_note: Indian agents often say "we will look into it" to sound polite and humble. International customers may hear "we" as vague; a clear "I'll" sounds more trustworthy.
+channel_note: Chat: "I'll take care of this for you, so you won't need to explain it again." Email: add your name and a direct way to reach you.
+when_not_to_use: Do not promise this if you know the case must go to another team; tell the customer honestly and do a warm transfer instead.
+mini_conversation: Customer: I've already explained this to two people. | Agent: I'm sorry you've had to explain this twice. I'll take care of this for you personally, so you won't need to explain it to anyone else. | Customer: Okay, thank you. | Agent: I'll call you by five today with an update.
+source_rule: Use "I will" plus a time, instead of "we'll try" or "hopefully soon"; take ownership of the case.
+fill_blank: I'll take care ____ this for you personally, so you won't need to explain it to anyone else.
+fill_answer: of
+mcq_question: A customer has been passed between two teams. Which line takes ownership most clearly?
+mcq_options: A) We'll try to see what can be done and let you know as soon as possible. | B) Somebody from the billing team will look into it and get back to you. | C) I've passed your details to the right team, so they will look into it. | D) I'll take care of this personally, so you won't need to explain it again.
+mcq_answer: D
+mcq_why: D uses "I'll" and removes the need to repeat the story. A is tempting because it sounds helpful, but "try" promises nothing, and B and C hand the case to someone else.
+reorder_task: of / care / take / I'll / for / this / you
+reorder_answer: I'll take care of this for you
+hindi_to_english: Main khud yeh dekh loonga, aapko kisi aur ko batana nahin padega.
+hindi_to_english_answer: I'll look after this myself, so you won't need to tell anyone else.
+whats_next_customer: How do I know you'll actually do it?
+whats_next_reply: I've added my name to your case, and I'll call you myself by five o'clock today.
+role_play: Partner A has been transferred twice about a wrong bill and is tired. Partner B takes ownership with one clear "I'll" sentence and gives a time for the next update.
+record_task: Record the sentence, then add a follow-up promise with a specific time, as you would on a live call.
+self_check: Did you say "I'll" and not "we'll try"? · Did you pronounce "won't" with rounded lips? · Did you give a time after the promise?
+
+@CSV-I-004
+id: CSV-I-004
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Explain
+sentence: Here's what I'm going to do now: first I'll check your last payment, and then I'll reset your account.
+speaker: Agent
+situation: The customer's account is locked after a payment issue, and you are about to start working on it while they stay on the line.
+recall_cue: You are about to start fixing an account. How do you tell the caller the steps you will take, in order, before you go quiet?
+stress: HERE'S-what-i'm-GO-ing-to-do-NOW · FIRST-i'll-CHECK-your-LAST-PAY-ment · and-THEN-i'll-re-SET-your-ac-COUNT
+linking: here's_what → "heerz-wut" · going_to → "gon-nuh" · check_your → "chek-yer" · last_payment → "las-PAY-ment"
+intonation: A short pause after "now:" so the caller knows a list is coming. Slight rise on "payment" (more to come), then a clear fall on "account" (list finished). Unhurried pace.
+indian_pron_tip: Stress "reset" on the second syllable as a verb: re-SET, not REE-set. Say "first" with a clean /st/ at the end and no extra vowel: not "firstu".
+register: Neutral
+tone: Clear, organised signposting
+importance: 4
+customer_emotion: Uncertain and a little anxious about what happens next.
+memory_hook: Picture road signs on a highway: "First exit, then second exit". The caller always knows where the call is going.
+hindi_meaning: अब मैं यह करूँगा/करूँगी: पहले आपका आख़िरी पेमेंट देखूँगा/देखूँगी, और फिर आपका अकाउंट रीसेट करूँगा/करूँगी।
+hindi_roman: Ab main yeh karoonga/karoongi: pehle aapka aakhri payment dekhoonga/dekhoongi, aur phir aapka account reset karoonga/karoongi.
+simple_meaning: I will tell you my plan: step one, check your payment; step two, reset your account.
+why_it_works: Telling the caller the steps before you start explains any silence and makes the call feel controlled. People wait more patiently when they know the plan.
+key_chunk: Here's what I'm going to do: first I'll ___, and then I'll ___.
+grammar_pattern: Here's what + I'm going to + base verb · first + I'll + verb · then + I'll + verb
+grammar_note: "Going to" shows a plan you have already made; "first" and "then" order the steps.
+tone_note: It sounds organised and in control. Going silent while typing, or saying "just wait, I am doing", leaves the caller guessing.
+watch_out: ✗ First I will check your last payment, then I will do reset of your account. → ✓ First I'll check your last payment, and then I'll reset your account.
+dont_say: "Let me do something, hold on." It gives no plan, and the silence that follows feels like being ignored.
+positive_swap: Instead of "Wait, I am checking something", say "Here's what I'm going to do now: first I'll check your last payment, and then I'll reset your account."
+alt_1: Let me explain the next steps: I'll look at your last payment first, then reset the account.
+alt_2: So the plan is this: I'll check the payment, and once that's done I'll reset your account.
+more_formal: I will now take two steps: first, I will review your most recent payment, and then I will reset your account.
+ask_next: It will take about a minute, and I'll tell you what I find as I go.
+replies_you_may_hear: Okay, go ahead. · Will I lose any data? · How long will that take?
+if_customer_pushes: Customer: "Why do you need to check the payment?" → Agent: "The lock was caused by a failed payment, so checking it first helps make sure the lock doesn't come straight back."
+cultural_note: Indian English often uses "firstly … secondly" in speech. International callers may not expect it on the phone; "first … then" sounds more natural and lighter.
+channel_note: Chat: send each step as a short line. Email: number the steps: "1. I checked your last payment. 2. I reset your account."
+when_not_to_use: Do not give a long plan when the fix is one quick step; just say "I'll reset that now."
+mini_conversation: Customer: My account is locked and I can't pay my bill. | Agent: Here's what I'm going to do now: first I'll check your last payment, and then I'll reset your account. | Customer: Okay. | Agent: Your last payment failed because the card expired. I'm resetting the account now.
+source_rule: Be specific about what will happen and when; tell the caller what you are doing so silence is never unexplained.
+fill_blank: Here's what I'm going to do now: first I'll check your last payment, and ____ I'll reset your account.
+fill_answer: then
+mcq_question: You need to do two things on a customer's account. Which line prepares the caller best?
+mcq_options: A) Here's what I'm going to do: first I'll check your last payment, then I'll reset your account. | B) Please hold the line, sir. I am checking a few things in the system for you. | C) I'll sort out your account now. It might take a little while, so thanks for your patience. | D) First checking your payment, second resetting the account, and later I will inform you.
+mcq_answer: A
+mcq_why: A gives a clear plan in order. B and C give no steps, so the silence that follows feels unexplained. D has the right idea but drops its verbs and sounds like a list read from a screen.
+reorder_task: then / reset / and / account / your / I'll
+reorder_answer: and then I'll reset your account
+hindi_to_english: Pehle main aapka order dekhunga, phir main refund shuru karunga.
+hindi_to_english_answer: First I'll check your order, and then I'll start the refund.
+whats_next_customer: Will I lose my saved settings?
+whats_next_reply: As far as I can see, no. Your saved settings stay as they are, and I'll tell you before I change anything else.
+role_play: Partner A calls because a streaming account is locked. Partner B explains two steps with "first" and "then", does them, and reports back after each step.
+record_task: Record the sentence, then record a two-step plan for a different problem, such as a wrong address on an order.
+self_check: Did you pause after "now"? · Did you stress re-SET? · Did your voice fall at the end of the list?
+
+@CSV-I-005
+id: CSV-I-005
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Hold & check
+sentence: Thank you for holding, Mr Rao. I need about five more minutes. Would you like to stay on the line, or shall I call you back?
+speaker: Agent
+situation: You asked for two minutes on hold, but the check is taking longer, so you come back before the time is up.
+recall_cue: Your check is taking longer than you promised. When you come back to the caller, what do you say first, and what choice do you offer?
+stress: THANK-you-for-HOLD-ing · mis-ter-RAO · i-NEED-a-BOUT-FIVE-more-MIN-utes · would-you-like-to-STAY-on-the-LINE · or-shall-i-CALL-you-BACK
+linking: thank_you → "THANG-kyoo" · need_about → "nee-duh-BOUT" · stay_on → "stay-yon" · call_you_back → "kawl-yoo-BACK"
+intonation: Warm fall on "holding". Clear, slower delivery of "five more minutes". On the choice, rise on "line" and fall on "back", which shows these are the only two options.
+indian_pron_tip: "Five" ends in /v/: top teeth lightly on the lower lip, so it is not "faiw" with rounded lips. "Would" starts with /w/: rounded lips and no teeth on the lip, not "vould".
+register: Neutral
+tone: Polite update with choice
+importance: 4
+customer_emotion: Getting impatient and wondering if they have been forgotten.
+memory_hook: Think of a cooking timer: you come back before it rings, say "Thank you", and ask if they want to wait or have the meal delivered later.
+hindi_meaning: होल्ड करने के लिए धन्यवाद, मिस्टर राव। मुझे लगभग पाँच मिनट और चाहिए। क्या आप लाइन पर रहना चाहेंगे, या मैं आपको वापस कॉल करूँ?
+hindi_roman: Hold karne ke liye dhanyavaad, Mister Rao. Mujhe lagbhag paanch minute aur chahiye. Kya aap line par rehna chahenge, ya main aapko wapas call karoon?
+simple_meaning: Thanks for waiting. I need five more minutes. You can wait, or I can phone you later.
+why_it_works: It thanks the caller first, gives an honest new time and hands them control with a real choice. Coming back early shows they were not forgotten.
+key_chunk: I need about ___ more minutes. Would you like to ___, or shall I ___?
+grammar_pattern: Would you like to + base verb, or shall I + base verb?
+grammar_note: "Would you like to" offers a choice; "shall I" offers to do something for them.
+tone_note: Giving a choice respects the caller's time. Leaving them on hold again without a word, or saying "one more minute" repeatedly, feels careless.
+watch_out: ✗ Please be on hold, it will take some more time. → ✓ I need about five more minutes. Would you like to stay on the line, or shall I call you back?
+dont_say: "Just one more minute." said again and again. Callers stop believing it after the first time.
+positive_swap: Instead of "It is still taking time, please hold", say "Thank you for holding. I need about five more minutes. Would you like to stay on the line, or shall I call you back?"
+alt_1: Thanks for waiting, Mr Rao. This needs about five more minutes. Are you happy to hold, or would a callback suit you better?
+alt_2: Thanks for staying with me, Mr Rao, and I'm sorry it's taking longer. I need roughly five more minutes. I can keep you on hold or ring you back, whichever you prefer.
+more_formal: Thank you for your patience, Mr Rao. I will need approximately five more minutes. Would you prefer to remain on the line, or may I call you back?
+ask_next: Of course. Is this the best number to reach you on? I'll call by 3:20 at the latest.
+replies_you_may_hear: I'll hold. · Call me back, please. · Five more? Why is it taking so long?
+if_customer_pushes: Customer: "Why is it taking so long?" → Agent: "I'm sorry it's taking longer than I said. The payment team's system is slow today, and I need their answer before I can confirm anything."
+cultural_note: In India "call you back" is the usual phrase; British callers also say "ring you back". Both are fine on international calls, as long as you add a real time.
+channel_note: Chat: "Thanks for waiting. I need about five more minutes. Is that okay, or shall I email you the answer?" Email: not needed; give a reply time instead.
+when_not_to_use: Do not offer a callback if your team cannot call out; offer only choices you can really keep.
+mini_conversation: Customer: Hello? Are you still there? | Agent: Thank you for holding, Mr Rao. I need about five more minutes. Would you like to stay on the line, or shall I call you back? | Customer: Call me back, please. | Agent: Of course. I'll call you on this number by 3:20.
+source_rule: Long hold: check back before the promised time is up, thank the caller first, and offer a callback instead of a long wait.
+fill_blank: Would you like ____ stay on the line, or shall I call you back?
+fill_answer: to
+mcq_question: Your two-minute hold is turning into seven. What is the best thing to do?
+mcq_options: A) Say nothing and keep checking until you have the full answer. | B) Put the call on mute and keep checking until you have an answer. | C) Return, thank the caller, give a new time and offer a callback. | D) Return and say "just one more minute" so the caller keeps waiting.
+mcq_answer: C
+mcq_why: C keeps the caller informed and gives them a choice. D is tempting because it keeps the call moving, but a repeated "one more minute" sounds untrue. A and B leave the caller in silence.
+reorder_task: back / call / I / shall / you / or
+reorder_answer: or shall I call you back
+hindi_to_english: Intezaar ke liye dhanyavaad. Mujhe paanch minute aur chahiye. Aap hold karenge ya main call back karoon?
+hindi_to_english_answer: Thank you for waiting. I need five more minutes. Would you like to hold, or shall I call you back?
+whats_next_customer: Okay, call me back, but not after four.
+whats_next_reply: Of course. I'll call you on this number by 3:20, well before four.
+role_play: Partner A is on hold about a refund. Partner B returns just before the promised two minutes are up, thanks A, gives a new estimate and offers a choice; A picks a callback and B confirms the time.
+record_task: Record yourself returning from a hold that is running late, with the thank-you, the new time and the choice.
+self_check: Did you thank the caller before the update? · Did you give a real number of minutes? · Did your voice fall on "back" to close the choice?
+
+@CSV-I-006
+id: CSV-I-006
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Transfer
+sentence: I'll connect you to Anita in billing, because she can change your plan directly. I'll brief her first, so you won't need to repeat anything.
+speaker: Agent
+situation: The customer wants a plan change that only the billing team can make, so you are about to do a warm transfer.
+recall_cue: Only another team can fix this. Before you transfer the caller, what three things do you tell them?
+stress: i'll-con-NECT-you-to-a-NEE-ta-in-BILL-ing · be-CAUSE-she-can-CHANGE-your-PLAN-di-RECT-ly · i'll-BRIEF-her-FIRST · so-you-WON'T-need-to-re-PEAT-an-y-thing
+linking: connect_you → "kuh-NEK-chuh" · brief_her → "BREE-fer" · won't_need → "wohn-NEED" · repeat_anything → "ri-PEE-ten-ee-thing"
+intonation: Steady and reassuring. Fall on "directly" and on "anything". Pause briefly between the two sentences so the caller hears both the reason and the promise.
+indian_pron_tip: "Connect" is stressed on the second syllable: con-NECT, not KON-nect. In "anything", the "th" is /θ/ with the tongue between the teeth, not "anyting".
+register: Neutral
+tone: Reassuring, clear handover
+importance: 5
+customer_emotion: Worried about being lost in the system or starting again.
+memory_hook: Picture a relay race where you run alongside and place the baton firmly in the next runner's hand, instead of throwing it over a wall.
+hindi_meaning: मैं आपको बिलिंग टीम की अनीता से जोड़ रहा/रही हूँ, क्योंकि वे सीधे आपका प्लान बदल सकती हैं। मैं पहले उन्हें सब बता दूँगा/दूँगी, ताकि आपको कुछ दोहराना न पड़े।
+hindi_roman: Main aapko billing team ki Anita se jod raha/rahi hoon, kyonki ve seedhe aapka plan badal sakti hain. Main pehle unhe sab bata doonga/doongi, taaki aapko kuch dohrana na pade.
+simple_meaning: I am passing you to Anita because she can change your plan. I will tell her your problem first, so you do not have to say it again.
+why_it_works: It tells the caller who, why and what happens next, and promises a briefing, which removes the fear of repeating everything to a stranger.
+key_chunk: I'll connect you to ___, because ___. I'll brief her first, so ___.
+grammar_pattern: I'll + verb + person + because + reason · I'll + verb + first, so + result
+grammar_note: "Because" gives the reason for the transfer; "so" gives the result for the caller.
+tone_note: Naming the person and the reason shows care. "I am transferring your call" with no reason feels like being passed on to get rid of you.
+watch_out: ✗ I will brief to her first, so you will not need to repeat again. → ✓ I'll brief her first, so you won't need to repeat anything.
+dont_say: "Please hold, I am transferring your call." It gives no name, no reason and no promise about repeating the story.
+positive_swap: Instead of "This is not handled by me, I am transferring", say "I'll connect you to Anita in billing, because she can change your plan directly."
+alt_1: The best person for this is Anita in our billing team. I'll explain your case to her before I put you through.
+alt_2: Anita in billing can make this change for you. I'll give her all the details first, so you can carry on from where we are now.
+more_formal: I will transfer you to my colleague Anita in Billing, who can amend your plan directly. I will brief her beforehand, so there is no need to repeat your details.
+ask_next: Is it all right if I put you on a short hold of about a minute while I speak to her?
+replies_you_may_hear: Okay, thank you. · Can't you do it yourself? · What if I get cut off?
+if_customer_pushes: Customer: "What if I get cut off?" → Agent: "I have your number, so if the call drops I'll call you straight back and connect you again."
+cultural_note: "Concerned department" is common in Indian English. International callers may not expect this phrase; naming the team and the person ("Anita in billing") sounds clearer.
+channel_note: Chat: "I'm passing this chat to Anita in billing. She'll see everything we've written, so you won't need to repeat it." Email: copy the colleague in and introduce them by name.
+when_not_to_use: Do not promise a named person or a briefing if your system only allows a blind transfer to a queue; tell the caller honestly what will happen.
+mini_conversation: Customer: I want to move to the cheaper plan. | Agent: I'll connect you to Anita in billing, because she can change your plan directly. I'll brief her first, so you won't need to repeat anything. | Customer: Great, thanks. | Agent: Is it all right if I put you on a short hold for about a minute while I speak to her?
+source_rule: Transfer: prefer warm. Say who and why, brief the colleague, and introduce the caller and the issue so they do not repeat themselves.
+fill_blank: I'll ____ (starts with b) her first, so you won't need to repeat anything.
+fill_answer: brief
+mcq_question: You need to transfer a caller to the billing team. Which line is the best warm transfer?
+mcq_options: A) Please hold the line, sir. I am transferring your call to the billing department now. | B) I'll connect you to Anita in billing, because she can change your plan. I'll brief her first. | C) I can't change plans myself, so you will need to call the billing team on their direct line. | D) Billing handles plan changes, so I'm passing you over now. They will ask for your details again.
+mcq_answer: B
+mcq_why: B names the person, the reason and the briefing. D gives a reason but admits the caller will have to repeat everything. A gives no name and no reason, and C sends the caller away.
+reorder_task: Anita / connect / I'll / in / you / billing / to
+reorder_answer: I'll connect you to Anita in billing
+hindi_to_english: Main aapko technical team ke Arjun se jodta hoon, kyonki woh yeh theek kar sakte hain.
+hindi_to_english_answer: I'll connect you to Arjun in our technical team, because he can fix this for you.
+whats_next_customer: Can't you just do it yourself?
+whats_next_reply: I wish I could. Plan changes need billing access, and Anita can do it in a few minutes.
+role_play: Partner A wants a refund that only the payments team can approve. Partner B explains who and why, says aloud the one-sentence briefing for the colleague, then hands A over by name.
+record_task: Record the two transfer sentences, then the one-line briefing you would give Anita before connecting the caller.
+self_check: Did you name the person and the team? · Did you give the reason? · Did you stress con-NECT on the second syllable?
+
+@CSV-I-007
+id: CSV-I-007
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Set expectations
+sentence: Your refund will reach your account within five to seven working days, so by next Friday at the latest.
+speaker: Agent
+situation: You have just processed a refund, your system shows the standard five to seven working days for it, and the customer wants to know when the money will arrive.
+recall_cue: The refund is done and the caller asks when they will get the money. How do you give a timeline they can check on a calendar?
+stress: your-RE-fund-will-REACH-your-ac-COUNT · with-IN-FIVE-to-SEV-en-WORK-ing-DAYS · so-by-NEXT-FRI-day · at-the-LATE-est
+linking: refund_will → "REE-fun-wil" · reach_your → "ree-chyer" · five_to_seven → "FYV-tuh-SEV-en" · at_the_latest → "a-thuh-LAY-test"
+intonation: Slow down on the numbers. Fall on "days". Small pause, then a firm fall on "at the latest", which marks the outside date.
+indian_pron_tip: "Seven" has a /v/ in the middle: top teeth on the lower lip, not "sewen". "Within" has /ð/ with the tongue between the teeth, not "widin".
+register: Neutral
+tone: Clear, confident commitment
+importance: 5
+customer_emotion: Wanting certainty about when the money will arrive.
+memory_hook: Picture circling next Friday on a wall calendar in red: the customer leaves the call with one date to watch.
+hindi_meaning: आपका रिफ़ंड पाँच से सात कामकाजी दिनों में आपके खाते में आ जाएगा, यानी ज़्यादा से ज़्यादा अगले शुक्रवार तक।
+hindi_roman: Aapka refund paanch se saat kaamkaaji dinon mein aapke khaate mein aa jaayega, yaani zyaada se zyaada agle Shukravaar tak.
+simple_meaning: The money will be back in your account in five to seven working days, no later than next Friday.
+why_it_works: It turns a vague range into one clear last date, so the customer knows exactly when to worry and when not to call again.
+key_chunk: Your ___ will reach your account within ___, so by ___ at the latest.
+grammar_pattern: Subject + will + verb + within + time period, + so by + day + at the latest
+grammar_note: "Within" means inside that time; "at the latest" means no later than that day.
+tone_note: A specific date sounds honest and in control. "It will come soon" or "hopefully next week" sounds like a guess.
+watch_out: ✗ Your refund will reach to your account in five to seven working days, so by next Friday at latest. → ✓ Your refund will reach your account within five to seven working days, so by next Friday at the latest.
+dont_say: "It will come soon, don't worry." It gives no date, so the customer will call again in two days.
+positive_swap: Instead of "Hopefully you will get it soon", say "Your refund will reach your account within five to seven working days, so by next Friday at the latest."
+alt_1: You should see the money in your account in five to seven working days, by next Friday at the latest.
+alt_2: The refund takes five to seven working days, so please expect it no later than next Friday.
+more_formal: The refund will be credited to your account within five to seven working days, and no later than next Friday.
+ask_next: That's Friday the twenty-third. I'll also email you a confirmation now, with your refund reference number.
+replies_you_may_hear: Okay, that's fine. · Can't it be faster? · What do I do if it hasn't come by then?
+if_customer_pushes: Customer: "Why does it take a whole week?" → Agent: "I know a week feels long. Your bank needs that time to process it, and if it hasn't arrived by Friday, call us with your reference and we'll trace it."
+cultural_note: "Working days" is common in India and the UK; US customers often say "business days". Both are understood, but a named last day ("by next Friday") removes any doubt about weekends and holidays.
+channel_note: Chat: "Your refund will reach your account in 5–7 working days, by Friday 23 October at the latest." Email: write the exact date, not just "next Friday".
+when_not_to_use: Do not give a date you cannot check in the system; say what you know and promise to confirm.
+mini_conversation: Customer: When will I get my money back? | Agent: Your refund will reach your account within five to seven working days, so by next Friday at the latest. | Customer: And if it doesn't? | Agent: I'm emailing you a reference number now. If the money hasn't arrived by then, call us with it and we'll trace it straight away.
+source_rule: Replace vague promises with a clear timeline, a reference number and the next step.
+fill_blank: Your refund will reach your account within five to seven working days, so by next Friday at the ____.
+fill_answer: latest
+mcq_question: A caller asks when their refund will arrive. Which reply sets the clearest expectation?
+mcq_options: A) It should come very soon, so please don't worry. I'll keep an eye on it. | B) Hopefully by early next week, but sometimes banks can be a little slow. | C) Within five to seven working days, so by next Friday at the latest. | D) It depends on your bank, so I can't give you an exact date, I'm afraid.
+mcq_answer: C
+mcq_why: C gives a range and a final date. D may be true, but it gives the customer nothing to plan around, and A and B are guesses.
+reorder_task: latest / by / at / Friday / the / next
+reorder_answer: by next Friday at the latest
+hindi_to_english: Aapka naya card das din ke andar aa jaayega, yaani zyaada se zyaada agle mahine ki paanch tareekh tak.
+hindi_to_english_answer: Your new card will arrive within ten days, so by the fifth of next month at the latest.
+whats_next_customer: What if it still hasn't come by then?
+whats_next_reply: Then please call us with your reference number, and we'll trace the payment with the bank straight away.
+role_play: Partner A has returned a jacket and asks about the money. Partner B gives a time range and a final date, then gives a reference number and says what to do if it is late.
+record_task: Record the sentence, then record a version for a replacement parcel with a different range and a final day.
+self_check: Did you give one final date? · Did you slow down on the numbers? · Did you say "seven" with a clear /v/?
+
+@CSV-I-008
+id: CSV-I-008
+channel: Voice
+level: Intermediate
+cefr: B2
+kind: Say it
+call_stage: Say no politely
+sentence: The order has already shipped, so what I can do is arrange a free return as soon as it reaches you.
+speaker: Agent
+situation: The customer wants to cancel an order, but it has already left the warehouse, so cancelling is no longer possible; your system shows it qualifies for a free return.
+recall_cue: A caller wants to cancel an order that is already on the way. How do you say no without using "can't", and what do you offer?
+stress: the-OR-der-has-al-READ-y-SHIPPED · so-WHAT-i-CAN-do · is-ar-RANGE-a-FREE-re-TURN · as-SOON-as-it-REACH-es-you
+linking: has_already → "ha-zawl-RED-ee" · what_I_can → "wuh-dye-CAN" · arrange_a → "uh-RAIN-juh" · as_soon_as → "uh-SOON-uz"
+intonation: Neutral fall on "shipped", with no apology in the voice yet. Lift and stress "CAN" in "what I can do", then a positive, falling finish on "reaches you".
+indian_pron_tip: "Shipped" is one syllable ending in /pt/: "shipt", not "ship-ped". Stress "arrange" on the second syllable: a-RANGE, and keep the /dʒ/ soft at the end.
+register: Neutral
+tone: Positive, solution-focused refusal
+importance: 5
+customer_emotion: Disappointed and expecting to hear a flat no.
+memory_hook: Picture a closed door with a bright arrow painted on it pointing to the open door next to it: the answer moves straight to the way through.
+hindi_meaning: ऑर्डर पहले ही भेजा जा चुका है, इसलिए मैं यह कर सकता/सकती हूँ कि जैसे ही यह आप तक पहुँचे, मुफ़्त वापसी का इंतज़ाम कर दूँ।
+hindi_roman: Order pehle hi bheja ja chuka hai, isliye main yeh kar sakta/sakti hoon ki jaise hi yeh aap tak pahunche, muft wapsi ka intezaam kar doon.
+simple_meaning: I cannot cancel it because it is already on the way, but I can set up a free return when it arrives.
+why_it_works: It gives the reason in plain words and moves straight to what is possible. The customer hears a solution, not a closed door.
+key_chunk: ___, so what I can do is ___.
+grammar_pattern: Reason clause, + so what I can do is + base verb + …
+grammar_note: "What I can do is" puts the possible action at the end, where the listener remembers it.
+tone_note: Leading with what you can do sounds helpful. "Sorry, we can't cancel it. That's the rule." sounds like you are hiding behind rules.
+watch_out: ✗ Cancellation is not possible as order is dispatched. → ✓ The order has already shipped, so what I can do is arrange a free return.
+dont_say: "No, that's not possible." A bare no ends the conversation and leaves the customer stuck.
+positive_swap: Instead of "We can't cancel it now", say "The order has already shipped, so what I can do is arrange a free return as soon as it reaches you."
+alt_1: It's already on its way to you, but I can set up a free return the day it arrives.
+alt_2: Because it has shipped, the quickest option is a free return once it reaches you, and I can set that up now.
+more_formal: As the order has already been dispatched, I am able to arrange a free return for you as soon as it is delivered.
+ask_next: Would you like me to email you the return label now, so it's ready when the parcel arrives?
+replies_you_may_hear: Okay, that works. · But I don't want it at all. · Will I get all my money back?
+if_customer_pushes: Customer: "But I cancelled within an hour!" → Agent: "I'm sorry, I can see you asked quickly. By then it had already been packed and handed to the courier. The return is free, and you'll get the full amount back."
+cultural_note: "Dispatched" is the usual word in India and the UK; US customers more often say "shipped". Both are understood, so use the word that appears in the customer's order email.
+channel_note: Chat: "Your order has already shipped, so what I can do is set up a free return." Email: give the reason, the alternative and the next step in separate lines.
+when_not_to_use: Do not use it if the order can still be stopped; if cancelling is possible, just cancel it.
+mini_conversation: Customer: I want to cancel my order. | Agent: The order has already shipped, so what I can do is arrange a free return as soon as it reaches you. | Customer: Will I get the full refund? | Agent: Yes, the full amount, once the item is back with us.
+source_rule: Swap "can't" for "can": give the reason in plain words, then lead with what is possible ("What I can do is…").
+fill_blank: The order has already shipped, so what I ____ (am able to) do is arrange a free return.
+fill_answer: can
+mcq_question: A customer asks to cancel an order that has already shipped. Which reply follows positive-language practice best?
+mcq_options: A) I'm sorry, but the order has already shipped, so cancelling it is not possible now. | B) Unfortunately our system does not allow cancellation after dispatch. That is how it works. | C) Sorry, I can't help with that. Once an order has shipped, nobody here can stop it. | D) It has already shipped, so what I can do is arrange a free return when it arrives.
+mcq_answer: D
+mcq_why: D explains why and offers a way forward. A is polite and gives a reason, but it ends on "not possible" with nothing for the customer to do. B hides behind the system, and C is a bare refusal.
+reorder_task: is / can / what / do / I / a / arrange / return / free
+reorder_answer: what I can do is arrange a free return
+hindi_to_english: Aapki booking non-refundable hai, isliye main yeh kar sakta hoon ki aapki date badal doon.
+hindi_to_english_answer: Your booking is non-refundable, so what I can do is change the date for you.
+whats_next_customer: But I don't want to wait for it to arrive.
+whats_next_reply: I understand. If you refuse the parcel at the door, it will come straight back to us, and I'll start your refund as soon as it arrives.
+role_play: Partner A wants a hotel booking refunded after the free-cancellation period. Partner B gives the reason in one plain sentence and offers a date change instead, without saying "can't".
+record_task: Record the sentence, then record a second refusal for a different request, again leading with "What I can do is…".
+self_check: Did you avoid "can't" and "not possible"? · Did you stress "CAN" in "what I can do"? · Did you say "shipped" as one syllable?
+
+@CSV-I-009
+id: CSV-I-009
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Explain
+sentence: The extra twelve dollars on this bill is a roaming charge for data you used abroad on the fourteenth of March.
+speaker: Agent
+situation: The customer is calling because their monthly bill is higher than usual and they do not recognise one charge; you have their itemised bill open on your screen.
+recall_cue: A caller does not recognise an extra amount on their bill. How do you explain exactly what it is and when it happened?
+stress: the-EX-tra-TWELVE-DOL-lars · on-THIS-BILL · is-a-ROAM-ing-CHARGE · for-DA-ta-you-USED-a-BROAD · on-the-four-TEENTH-of-MARCH
+linking: extra_twelve → "ek-struh-TWELV" · charge_for → "charj-fer" · used_abroad → "yoo-zduh-BRAWD" · fourteenth_of → "four-teen-thuv"
+intonation: Calm, matter-of-fact fall on "charge". Slow down for the amount and the date, which are the parts the caller is checking. No defensive rise.
+indian_pron_tip: "Fourteenth" ends in /θ/: tongue between the teeth, "four-TEENTH", not "fourteent". Stress it on the second syllable. "Twelve" ends with a /lv/ cluster: keep the /v/ voiced.
+register: Neutral
+tone: Clear, neutral explanation
+importance: 4
+customer_emotion: Suspicious and worried they are being overcharged.
+memory_hook: Picture a shop receipt with one line circled: amount, what it was for and the date, the three things the caller needs.
+hindi_meaning: इस बिल पर जो बारह डॉलर ज़्यादा हैं, वह चौदह मार्च को विदेश में इस्तेमाल किए गए डेटा का रोमिंग चार्ज है।
+hindi_roman: Is bill par jo barah dollar zyaada hain, woh chaudah March ko videsh mein istemaal kiye gaye data ka roaming charge hai.
+simple_meaning: The extra twelve dollars is because you used mobile data in another country on 14 March.
+why_it_works: It names the amount, the reason and the date in one sentence, so the customer can match it to their own memory and stop worrying.
+key_chunk: The extra ___ on this bill is a ___ charge for ___ on ___.
+grammar_pattern: The extra + amount + on this bill + is + a/an + noun + charge + for + noun clause
+grammar_note: "Data you used" is a short relative clause; "that" is left out, which sounds natural in speech.
+tone_note: A neutral, factual tone sounds honest. "You only used it, that's why it came" sounds like you are blaming the customer.
+watch_out: ✗ This twelve dollars has come because of roaming. → ✓ The extra twelve dollars on this bill is a roaming charge.
+dont_say: "It's in the terms and conditions." It sounds defensive and does not explain the charge.
+positive_swap: Instead of "You used it, so you have to pay", say "The extra twelve dollars on this bill is a roaming charge for data you used abroad on the fourteenth of March."
+alt_1: I can see what that is: twelve dollars for mobile data you used while you were abroad on 14 March.
+alt_2: That twelve-dollar charge is for roaming data, from the fourteenth of March when your phone was outside the country.
+more_formal: The additional charge of twelve dollars relates to mobile data used abroad on 14 March.
+ask_next: Does that match your trip? If you'd like, I can show you travel packs that may be cheaper for your next trip.
+replies_you_may_hear: Oh, right, I was in Dubai that day. · I turned data off, though. · Nobody told me it would cost extra.
+if_customer_pushes: Customer: "I turned roaming off!" → Agent: "Thanks for telling me. Could you stay on the line for about two minutes while I check the usage log for that day?"
+cultural_note: Indian agents often explain bills with "the same has been charged". International customers may not expect that; naming the amount and the reason ("the twelve dollars is…") is clearer.
+channel_note: Chat: "The extra $12 is a roaming charge for data used abroad on 14 March." Email: show the charge as a line with the date and amount.
+when_not_to_use: Do not explain a charge as correct before you have checked it; if you are unsure, say you will check first.
+mini_conversation: Customer: Why is my bill higher this month? | Agent: The extra twelve dollars on this bill is a roaming charge for data you used abroad on the fourteenth of March. | Customer: Oh, I was in Singapore then. | Agent: That explains it. If you travel again, I can tell you about our travel packs.
+source_rule: Plain language: explain the charge in words the customer understands, with the amount, the reason and the date.
+fill_blank: The extra twelve dollars on this bill is a roaming charge ____ data you used abroad on the fourteenth of March.
+fill_answer: for
+mcq_question: A caller asks about an unknown charge. Which explanation is clearest?
+mcq_options: A) It is in the terms and conditions, and I can email you a copy if that helps. | B) The extra twelve dollars is a roaming charge for data you used abroad on 14 March. | C) That is an extra usage charge from this month, added automatically by our billing system. | D) You used mobile data in another country, so you were charged extra. That is normal.
+mcq_answer: B
+mcq_why: B gives the amount, the reason and the date. C is tempting because it sounds official, but it does not say what was charged or when. A points to the rules and D blames the customer.
+reorder_task: charge / a / is / roaming / it
+reorder_answer: it is a roaming charge
+hindi_to_english: Yeh extra paanch dollar late payment ka charge hai, jo das tareekh ke baad laga.
+hindi_to_english_answer: The extra five dollars is a late payment charge, added after the tenth.
+whats_next_customer: Nobody told me it would cost extra.
+whats_next_reply: I'm sorry that wasn't clear. I can turn on roaming alerts, so you get a text before any charge starts.
+role_play: Partner A sees an unexpected $8 charge on a streaming bill. Partner B explains it in one sentence with the amount, the reason and the date, then offers a way to avoid it next time.
+record_task: Record the sentence, then record an explanation of a different charge, such as a late payment fee, with an amount and a date.
+self_check: Did you say the amount, the reason and the date? · Did you pronounce the "th" in "fourteenth"? · Did you sound neutral, not defensive?
+
+@CSV-I-010
+id: CSV-I-010
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Explain
+sentence: Could you unplug the router, wait ten seconds and plug it back in? Then tell me which lights you can see on the front.
+speaker: Agent
+situation: The customer's Wi-Fi is down and you are guiding them through the first troubleshooting step while they stand at the router.
+recall_cue: You want the caller to restart a device and report back. How do you give one clear step and ask what they see?
+stress: could-you-un-PLUG-the-ROU-ter · WAIT-TEN-SEC-onds · and-PLUG-it-BACK-IN · then-TELL-me-which-LIGHTS · you-can-SEE-on-the-FRONT
+linking: unplug_the → "un-PLUG-thuh" · plug_it_back_in → "plu-git-ba-KIN" · tell_me → "TEL-mee" · lights_you → "lyts-yoo"
+intonation: Rise on "back in?" as a request. Pause and let them do it. Then a falling tone on "front", because this is an instruction, not a yes/no question.
+indian_pron_tip: "Seconds" ends in /ndz/: "SEK-undz", not "second" or "secon". "Lights" ends in /ts/; say both sounds clearly so it is not heard as "light".
+register: Neutral
+tone: Patient, step-by-step guidance
+importance: 4
+customer_emotion: Impatient and a bit unsure about the technical steps.
+memory_hook: Picture a doctor saying "Breathe in… now tell me what you feel": one action, then one observation, before the next step.
+hindi_meaning: क्या आप राउटर का प्लग निकालकर दस सेकंड रुकेंगे और फिर लगा देंगे? फिर मुझे बताइए कि सामने कौन-सी लाइटें दिख रही हैं।
+hindi_roman: Kya aap router ka plug nikaalkar das second rukenge aur phir laga denge? Phir mujhe bataiye ki saamne kaun-si lights dikh rahi hain.
+simple_meaning: Please switch the router off at the plug, count to ten, switch it on again, and then tell me which lights are on.
+why_it_works: It gives one clear action with a real time, then asks for a specific observation, so you can diagnose from facts instead of guessing.
+key_chunk: Could you ___? Then tell me what you see on ___.
+grammar_pattern: Could you + verb, + verb + and + verb? · Then tell me + which + noun + you can see
+grammar_note: "Which lights you can see" is an embedded question, so the word order is "you can", not "can you".
+tone_note: "Could you" makes the step a request. "Do this: unplug it" sounds like an order and can feel rude to a stressed caller.
+watch_out: ✗ Then tell me which lights can you see. → ✓ Then tell me which lights you can see.
+dont_say: "Just restart everything and call back." It sends the customer away without checking whether it worked.
+positive_swap: Instead of "You have to restart the router first", say "Could you unplug the router, wait ten seconds and plug it back in?"
+alt_1: Let's try a restart: unplug the router, count to ten and plug it in again. What lights do you see now?
+alt_2: Please switch the router off at the wall for ten seconds, then switch it back on and tell me what the lights are doing.
+more_formal: Would you please disconnect the router for ten seconds, reconnect it, and then describe the lights on the front panel?
+ask_next: Is the light marked "Internet" green, orange or off?
+replies_you_may_hear: Okay, done. They're all flashing. · There's a red light now. · Which one is the router?
+if_customer_pushes: Customer: "I've already restarted it!" → Agent: "That's helpful, thank you, so we can skip that step. Could you tell me which lights you can see on the front right now?"
+cultural_note: Indian agents often say "do one thing, unplug the router". International callers may not expect "do one thing" as a lead-in; a direct "Could you…?" request sounds more natural to them.
+channel_note: Chat: send the step on one line and the question on the next. Email: number each step and ask for a photo of the lights.
+when_not_to_use: Do not ask an older or very stressed caller to do several actions at once; give one step and wait.
+mini_conversation: Customer: My Wi-Fi isn't working at all. | Agent: Could you unplug the router, wait ten seconds and plug it back in? Then tell me which lights you can see on the front. | Customer: Okay… the Internet light is still orange. | Agent: Thanks, that helps. An orange light usually means the router has no internet connection, so I'm going to check your line from my side.
+source_rule: Swap "you have to" for guidance ("Could you…?"); give one clear step, then check the result.
+fill_blank: Could you unplug the router, wait ten seconds and plug it back in? Then tell me which lights you ____ see.
+fill_answer: can
+mcq_question: You want the caller to restart the router and then describe what they see. Which line does this correctly and politely?
+mcq_options: A) Could you unplug the router, wait ten seconds and plug it in? Then tell me which lights can you see. | B) You have to unplug the router for ten seconds. After that, tell me what are the lights doing. | C) Could you unplug the router, wait ten seconds and plug it in? Then call us back if it still fails. | D) Could you unplug the router, wait ten seconds and plug it in? Then tell me which lights you can see.
+mcq_answer: D
+mcq_why: D is a polite request with correct embedded-question order ("which lights you can see"). A has the right idea but uses question order inside the sentence. B uses "you have to" and the same word-order mistake, and C never asks what the caller sees.
+reorder_task: lights / which / me / see / tell / can / you
+reorder_answer: tell me which lights you can see
+hindi_to_english: Kya aap app band karke dobara khol sakte hain? Phir batayiye screen par kya dikh raha hai.
+hindi_to_english_answer: Could you close the app and open it again? Then tell me what you can see on the screen.
+whats_next_customer: All the lights are flashing now.
+whats_next_reply: That's normal while it starts up. Let's give it one more minute, then tell me which ones stay on.
+role_play: Partner A has a TV box with a frozen screen. Partner B gives one restart step with a time, then asks a specific question about what A can see, and decides the next step from the answer.
+record_task: Record yourself guiding a caller through a restart in two sentences, ending with a question about what they see.
+self_check: Did you use "Could you"? · Did you say "which lights you can see" in that order? · Did you pronounce "seconds" with the final /dz/?
+
+@CSV-I-011
+id: CSV-I-011
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Verify
+sentence: Let me read that back to you: ravi dot mehta at example dot com, with "Mehta" spelt M-E-H-T-A. Is that correct?
+speaker: Agent
+situation: The customer has just given their email address for an account update, and you need to confirm it before saving.
+recall_cue: A caller has just told you their email address. What do you say before you save it, and how do you say the "@" sign?
+stress: let-me-READ-that-BACK-to-you · RA-vi-DOT-MEH-ta · at-ex-AM-ple-DOT-COM · spelt-M-E-H-T-A · is-that-cor-RECT
+linking: read_that_back → "ree-dthat-BACK" · at_example → "a-teg-ZAM-pul" · spelt_M → "spel-TEM" · is_that → "iz-that"
+intonation: Slow and even. Pause slightly at each "dot" and "at". Read the spelling as two groups, M-E-H … T-A. Clear rise on "correct?" as a yes/no question.
+indian_pron_tip: Say the /t/ in "dot" and "at" lightly, with the tongue tip just behind the top teeth and not curled back (retroflex "ḍoṭ"). Keep the final /lt/ of "spelt" crisp: "spelt", not "spell".
+register: Neutral
+tone: Careful, precise confirmation
+importance: 5
+customer_emotion: Wanting it right, slightly impatient with the details.
+memory_hook: Picture reading a phone number off a sticky note back to its owner, letter by letter, before you stick it on the fridge.
+hindi_meaning: मैं इसे आपको दोबारा पढ़कर सुनाता/सुनाती हूँ: ravi.mehta@example.com, "Mehta" की स्पेलिंग M-E-H-T-A। क्या यह सही है?
+hindi_roman: Main ise aapko dobara padhkar sunata/sunati hoon: ravi dot mehta at example dot com, "Mehta" ki spelling M-E-H-T-A. Kya yeh sahi hai?
+simple_meaning: I will repeat your email address and spell the hard part. Please tell me if it is right.
+why_it_works: Reading back catches typing mistakes before they cause lost emails and repeat calls. Spelling the tricky part shows exactly where errors usually happen.
+key_chunk: Let me read that back to you: ___. Is that correct?
+grammar_pattern: Let me + base verb + that back to you · Is that correct?
+grammar_note: "Read that back" means repeat what you heard; "spelt" is the British past form of "spell".
+tone_note: Reading back sounds careful and professional. Just saying "Okay, got it" without reading it back skips the check and sounds rushed.
+watch_out: ✗ Let me to read back you the email: ravi dot mehta at example dot com. Is it correct? → ✓ Let me read that back to you: ravi dot mehta at example dot com. Is that correct?
+dont_say: "I've noted it down, it should be fine." If one letter is wrong, the customer never gets the email and blames you.
+positive_swap: Instead of "Email noted, sir", say "Let me read that back to you: ravi dot mehta at example dot com. Is that correct?"
+alt_1: Just to confirm, that's ravi dot mehta at example dot com, M-E-H-T-A?
+alt_2: I'll repeat that to make sure I have it: ravi, dot, mehta, at example dot com. Did I get it right?
+more_formal: To confirm, I have your email address as ravi dot mehta at example dot com, spelt M-E-H-T-A. Could you tell me whether that is correct?
+ask_next: Thank you. I've updated it, and you'll get a confirmation email there in a few minutes.
+replies_you_may_hear: Yes, that's right. · No, it's mehta with a double t. · There's an underscore, not a dot.
+if_customer_pushes: Customer: "I just told you, why repeat it?" → Agent: "Sorry, I know it's an extra step. One wrong letter would stop every email reaching you, so I'd like to be sure."
+cultural_note: Many Indian speakers say "at the rate" for @. International customers may not expect it; "at" is the standard way to say it in an email address.
+channel_note: Chat: no need to read back; ask them to check the address you typed. Email: reply to the address they gave, so it confirms itself.
+when_not_to_use: Do not use it for a full card number or any password; you should not be taking those on a call at all.
+mini_conversation: Customer: It's ravi dot mehta at example dot com. | Agent: Let me read that back to you: ravi dot mehta at example dot com, with "Mehta" spelt M-E-H-T-A. Is that correct? | Customer: Yes, that's right. | Agent: Thank you. I've updated your account.
+source_rule: Verification: confirm details by repeating them back, and ask only for what you need.
+fill_blank: Let me read that back to you: ravi dot mehta ____ example dot com. Is that correct?
+fill_answer: at
+mcq_question: How should you say the "@" sign when reading back an email address to an international caller?
+mcq_options: A) "ravi at the rate example dot com" | B) "ravi at example dot com" | C) "ravi at the rate of example dot com" | D) "ravi at sign example dot com"
+mcq_answer: B
+mcq_why: International callers say "at", as in "ravi at example dot com". A and C are common in India, so they are tempting, but callers abroad may not expect them. D is understood but sounds clumsy.
+reorder_task: back / you / me / that / read / to / let
+reorder_answer: let me read that back to you
+hindi_to_english: Main aapka number dobara padhta hoon: nau-aath-saat-chhe. Kya yeh sahi hai?
+hindi_to_english_answer: Let me read that back: nine-eight-seven-six. Is that correct?
+whats_next_customer: No, it's mehta with an underscore, not a dot.
+whats_next_reply: Thank you. So that's ravi underscore mehta at example dot com. Is that correct now?
+role_play: Partner A gives an email address with a tricky surname and an underscore. Partner B reads it back with "at" and "dot", spells the hard part, and asks A to confirm.
+record_task: Record yourself reading back three email addresses a partner gives you, spelling the hard part of each one.
+self_check: Did you say "at" for the @ sign? · Did you spell the tricky part slowly? · Did your voice rise on "correct?"
+
+@CSV-I-012
+id: CSV-I-012
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Set expectations
+sentence: I'll call you back by four o'clock tomorrow with an update, even if the issue isn't fully fixed by then.
+speaker: Agent
+situation: The fault needs a technical team to investigate overnight, so you cannot solve it on this call.
+recall_cue: You cannot fix the problem on this call. What do you promise the caller about the next contact, and when?
+stress: i'll-CALL-you-BACK · by-FOUR-o'-CLOCK-to-MOR-row · with-an-UP-date · E-ven-if-the-IS-sue · ISN'T-FUL-ly-FIXED-by-THEN
+linking: call_you_back → "kawl-yoo-BACK" · four_o'clock → "faw-ruh-CLOCK" · with_an_update → "wi-thuh-NUP-date" · fixed_by → "fiks-by"
+intonation: Firm, steady fall on "tomorrow". Slight pause before "even if". Falling, honest tone at the end, not apologetic.
+indian_pron_tip: "Fixed" is one syllable ending in /kst/: "fikst", not "fix-ed". "Then" starts with /ð/: tongue between the teeth, not "den".
+register: Neutral
+tone: Honest, committed promise
+importance: 5
+customer_emotion: Frustrated that it is not fixed yet, but willing to wait.
+memory_hook: Picture an alarm clock set for 4:00 with a note "call Mrs Shah": it rings whether the news is good or not yet.
+hindi_meaning: मैं कल चार बजे तक आपको अपडेट के साथ वापस कॉल करूँगा/करूँगी, चाहे तब तक समस्या पूरी तरह ठीक न हुई हो।
+hindi_roman: Main kal chaar baje tak aapko update ke saath wapas call karoonga/karoongi, chahe tab tak samasya poori tarah theek na hui ho.
+simple_meaning: I will phone you tomorrow before four with news, even if the problem is not solved yet.
+why_it_works: It gives a real time and promises contact whatever happens, so the customer does not sit wondering. "Even if" shows honesty about what may not be done.
+key_chunk: I'll call you back by ___ with an update, even if ___.
+grammar_pattern: I'll + verb + by + time + with + noun · even if + present simple (negative)
+grammar_note: After "even if" we use the present simple for the future: "isn't fixed", not "won't be fixed".
+tone_note: A fixed time and "even if" sound trustworthy. "We'll call you when it's done" leaves the customer waiting without a date.
+watch_out: ✗ I will call you back tomorrow till four o'clock. → ✓ I'll call you back by four o'clock tomorrow with an update.
+dont_say: "We'll call you once it's resolved." The customer has no idea when that is and may never hear back.
+positive_swap: Instead of "Hopefully someone will call you", say "I'll call you back by four o'clock tomorrow with an update, even if the issue isn't fully fixed by then."
+alt_1: I'll ring you tomorrow before four with an update, whether it's fixed or not.
+alt_2: You'll hear from me by 4 p.m. tomorrow, with an update on where things stand.
+more_formal: I will call you by 4 p.m. tomorrow with an update, even if the issue has not been fully resolved by that time.
+ask_next: Shall I call you on this number, or is there a better one for tomorrow afternoon?
+replies_you_may_hear: Okay, that's fine. · Can you make it earlier? · I'm in meetings until three.
+if_customer_pushes: Customer: "Why can't you fix it today?" → Agent: "I know you hoped it would be sorted today. The network team has to test the line overnight, so tomorrow I'll be able to tell you what they found."
+cultural_note: "I will revert" is common in Indian English, and dictionaries list it. International customers may not expect it; "I'll call you back" or "I'll get back to you" sounds clearer to them.
+channel_note: Chat: "I'll email you an update by 4 p.m. tomorrow, even if it isn't fixed yet." Email: put the update time in the last line, in bold.
+when_not_to_use: Do not promise a callback if outbound calls are not allowed in your process; promise an email or SMS update instead.
+mini_conversation: Customer: So you can't fix it today? | Agent: Not on this call. I'll call you back by four o'clock tomorrow with an update, even if the issue isn't fully fixed by then. | Customer: Okay, please do. | Agent: I will. Is this the best number for you?
+source_rule: Use "I will" plus a time; offer a callback and keep it even when the fix is not finished.
+fill_blank: I'll call you back by four o'clock tomorrow with an update, even ____ the issue isn't fully fixed by then.
+fill_answer: if
+mcq_question: You need more time to fix a fault. Which promise sets the best expectation?
+mcq_options: A) We'll call you as soon as the technical team has finished their checks. | B) I'll call you back by four tomorrow with an update, even if it isn't fixed. | C) I'll get back to you soon with some news, either way, once I hear something. | D) Hopefully it will be fixed by tomorrow, and I'll call you if there is any news.
+mcq_answer: B
+mcq_why: B has a time and a promise that does not depend on the fix. A and C sound positive but give no time, and D depends on a fix nobody can promise.
+reorder_task: back / you / call / tomorrow / I'll
+reorder_answer: I'll call you back tomorrow
+hindi_to_english: Main aapko kal dopahar do baje tak call karke update doonga.
+hindi_to_english_answer: I'll call you by two o'clock tomorrow afternoon with an update.
+whats_next_customer: Can you make it earlier? I'm busy after lunch.
+whats_next_reply: Of course. I'll call you by eleven tomorrow morning instead, with whatever news I have.
+role_play: Partner A has a broken oven that needs a parts check. Partner B explains it cannot be solved today, promises a callback with a day and time, and confirms the phone number.
+record_task: Record the sentence, then record a version with an email update instead of a call, with a day and a time.
+self_check: Did you give a clear time? · Did you say "fixed" as one syllable? · Did you say "call you back" or "get back to you"?
+
+@CSV-I-013
+id: CSV-I-013
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Close
+sentence: So, to sum up: I've reset your password and unlocked your account, and a confirmation email is on its way. Does that sort everything out for you?
+speaker: Agent
+situation: You have fixed a locked account and are about to end the call, so you recap before checking the issue is resolved.
+recall_cue: The fix is done and you are ready to close. What do you say to recap the call, and what do you ask before "anything else"?
+stress: so-to-SUM-UP · i've-re-SET-your-PASS-word · and-un-LOCKED-your-ac-COUNT · and-a-con-fir-MA-tion-E-mail-is-on-its-WAY · does-that-SORT-EV-ery-thing-OUT
+linking: sum_up → "suh-MUP" · unlocked_your → "un-LOCK-chyer" · on_its_way → "on-its-WAY" · sort_everything_out → "sor-tev-ree-thing-OUT"
+intonation: Pause after "sum up:". List the actions with a slight rise on "password" and a fall on "way". Rise on "for you?" as a real yes/no question.
+indian_pron_tip: "Unlocked" ends in /kt/: "un-LOCKT", one beat at the end, not "un-lock-ed". "Everything" has /θ/: tongue between the teeth, not "every-ting".
+register: Neutral
+tone: Clear, satisfied recap
+importance: 5
+customer_emotion: Pleased the account works again, and keen to get on with their day.
+memory_hook: Picture a waiter reading the bill aloud before you pay: everything you got, and a pause for you to say "yes, that's right".
+hindi_meaning: तो, संक्षेप में: मैंने आपका पासवर्ड रीसेट कर दिया है और अकाउंट अनलॉक कर दिया है, और कन्फ़र्मेशन ईमेल आ रहा है। क्या इससे आपकी समस्या पूरी तरह हल हो गई?
+hindi_roman: To, sankshep mein: maine aapka password reset kar diya hai aur account unlock kar diya hai, aur confirmation email aa raha hai. Kya isse aapki samasya poori tarah hal ho gayi?
+simple_meaning: Here is what I did: new password, account open, email coming. Is your problem fully solved now?
+why_it_works: The recap shows the customer exactly what changed, and the check question confirms the issue is really solved before you move to "anything else".
+key_chunk: So, to sum up: I've ___. Does that sort everything out for you?
+grammar_pattern: So, to sum up: + I've + past participle … · Does that + verb + for you?
+grammar_note: "I've reset" uses the present perfect because the result matters now.
+tone_note: Asking if it is solved respects the customer's view. Jumping straight to "Anything else?" assumes it is fixed, which may not be true.
+watch_out: ✗ I have done reset of your password and account is unlocked. → ✓ I've reset your password and unlocked your account.
+dont_say: "Okay, done. Anything else?" It skips the recap and assumes the customer is happy.
+positive_swap: Instead of "That's all, anything else?", say "So, to sum up: I've reset your password and unlocked your account. Does that sort everything out for you?"
+alt_1: Just to recap, your password is reset, the account is unlocked and a confirmation email is coming. Is everything working now?
+alt_2: So that's your password reset and your account unlocked, with an email on the way. Has that solved it for you?
+more_formal: To summarise, I have reset your password and unlocked your account, and a confirmation email has been sent. Has this fully resolved the issue?
+ask_next: Great. Is there anything else I can help you with today?
+replies_you_may_hear: Yes, all good, thanks. · I haven't got the email yet. · Will I need to reset it again?
+if_customer_pushes: Customer: "I haven't got the email." → Agent: "It can take a few minutes. Could you check your spam folder? If it's not there in ten minutes, I'll send it again."
+cultural_note: Indian agents often close with "anything else, sir?" straight away. International callers may expect a short recap first; it sounds more complete and caring.
+channel_note: Chat: list the actions as short lines, then ask "Is everything working now?" Email: put the summary in numbered points at the top.
+when_not_to_use: Do not ask "Does that sort everything out?" when you know the issue is still open; give the next steps instead.
+mini_conversation: Customer: Okay, I can log in now. | Agent: So, to sum up: I've reset your password and unlocked your account, and a confirmation email is on its way. Does that sort everything out for you? | Customer: Yes, thanks. | Agent: Great. Is there anything else I can help you with today?
+source_rule: Close the call by summarising the next steps, checking the issue is resolved, then "Is there anything else…?"
+fill_blank: So, to sum up: I've reset your password and unlocked your account. Does that ____ everything out for you?
+fill_answer: sort
+mcq_question: You have fixed the customer's issue. What is the best order for the close?
+mcq_options: A) Recap what you did, check it is solved, then ask if there is anything else. | B) Ask if there is anything else, then recap what you did and say goodbye. | C) Say goodbye warmly, then send the customer a summary email after the call. | D) Ask for a rating first, then recap what you did and say goodbye.
+mcq_answer: A
+mcq_why: A recaps, checks the fix and only then asks about more help. B asks "anything else" before the fix is confirmed, C never checks the result, and D puts the rating before the recap.
+reorder_task: sort / out / that / Does / everything
+reorder_answer: Does that sort everything out
+hindi_to_english: Toh, sankshep mein: maine aapka address badal diya hai aur order dobara bhej diya hai.
+hindi_to_english_answer: So, to sum up: I've changed your address and sent the order again.
+whats_next_customer: Not quite, I still can't log in on my phone.
+whats_next_reply: Thank you for telling me. Let's sort that out before we finish. Which app are you using on your phone?
+role_play: Partner A called to change a delivery address and add a phone number. Partner B recaps both changes, asks if that solves everything, then asks "anything else" and closes warmly.
+record_task: Record the recap and the check question, then record a second recap for a call where you changed a delivery date.
+self_check: Did you list what you did? · Did you check it was solved before "anything else"? · Did you say "unlocked" with a clean /kt/?
+
+@CSV-I-014
+id: CSV-I-014
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Say it
+call_stage: Set expectations
+sentence: I have a reference number for your complaint. Do you have something to write it down with? I'll say it slowly.
+speaker: Agent
+situation: You have logged a complaint and need the customer to note the reference number for any future call.
+recall_cue: You have just created a case. Before you read out its number, what do you check, and how do you say it?
+stress: i-HAVE-a-REF-rence-NUM-ber-for-your-com-PLAINT · do-you-HAVE-some-thing-to-WRITE-it-DOWN-with · i'll-SAY-it-SLOW-ly
+linking: reference_number → "REF-rens-NUM-ber" · have_something → "ha-vsum-thing" · write_it_down → "ry-dit-DOWN" · say_it → "SAY-yit"
+intonation: Fall on "complaint". Rise on "write it down with?" because it is a yes/no question, then stop and wait for the answer. Calm, falling "I'll say it slowly." When you read the code, use short groups with a pause: "C-K … 4-7 … 2-9".
+indian_pron_tip: Stress "reference" on the first syllable: REF-rence, two beats, not re-FER-ence. In "something", say /θ/ with the tongue between the teeth, not "sumting".
+register: Neutral
+tone: Patient, careful instruction
+importance: 4
+customer_emotion: Mildly rushed, may be looking for a pen.
+memory_hook: Picture a teacher dictating: "Pens ready?", then reading each part slowly and waiting for the class to catch up.
+hindi_meaning: आपकी शिकायत के लिए मेरे पास एक रेफ़रेंस नंबर है। क्या आपके पास इसे लिखने के लिए कुछ है? मैं इसे धीरे-धीरे बोलूँगा/बोलूँगी।
+hindi_roman: Aapki shikayat ke liye mere paas ek reference number hai. Kya aapke paas ise likhne ke liye kuch hai? Main ise dheere-dheere boloonga/boloongi.
+simple_meaning: I have a case number for you. Please get something to write with, and I will say it slowly.
+why_it_works: Checking that they can write first stops the number being lost. With a reference, the next agent can find the case quickly and the customer does not have to explain again.
+key_chunk: I have a reference number for ___. Do you have something to write it down with?
+grammar_pattern: Do you have + something + to-infinitive + with?
+grammar_note: "Something to write it down with" ends in "with" because you write with a pen.
+tone_note: Checking for a pen shows patience. Rattling off "CK4729, okay?" fast makes the customer ask again or give up.
+watch_out: ✗ Note down your reference number, it is CK4729. → ✓ I have a reference number for your complaint. Do you have something to write it down with?
+dont_say: "Note it down: CK4729." said at full speed. The customer hears a blur of letters and numbers.
+positive_swap: Instead of "Note down quickly", say "Do you have something to write it down with? I'll say it slowly."
+alt_1: I'll give you a reference number for this. Have you got a pen handy?
+alt_2: Here's your case number. Let me know when you're ready, and I'll read it slowly: C-K-4-7-2-9.
+more_formal: I have a reference number for your complaint. Would you like a moment to find something to note it down with? I will read it slowly.
+ask_next: Thank you. The number is C-K … 4-7 … 2-9. Could you read it back to me, just to make sure I said it clearly?
+replies_you_may_hear: Hang on, let me get a pen. · Okay, go ahead. · Can you text it to me instead?
+if_customer_pushes: Customer: "Can't you just text it to me?" → Agent: "Of course. I'll send it by SMS now, and I'll still say it once so you have it straight away."
+cultural_note: "Double seven" and "triple two" are common in India and the UK, but some callers, especially in the US, may not expect them. In a reference code, saying each digit separately is clearest.
+channel_note: Chat: paste the reference on its own line so it can be copied. Email: put it in the subject line and the first sentence.
+when_not_to_use: Do not read the number while the customer is driving or clearly cannot write; offer to text or email it instead.
+mini_conversation: Customer: Do I get a reference for this? | Agent: Yes. I have a reference number for your complaint. Do you have something to write it down with? I'll say it slowly. | Customer: Okay, I'm ready. | Agent: C-K … 4-7 … 2-9. Could you read it back to me?
+source_rule: Give a reference the customer can quote next time, and check they have noted it correctly.
+fill_blank: Do you have something to ____ (starts with w) it down with? I'll say it slowly.
+fill_answer: write
+mcq_question: What is the best way to give a caller a reference number?
+mcq_options: A) Say it once at normal speed, then ask if they have any other questions. | B) Tell them it will arrive in an email later, so there is no need to write it. | C) Say it slowly with "double" and "triple" for repeated digits, then move on. | D) Check they can write, say it slowly in groups, then ask them to read it back.
+mcq_answer: D
+mcq_why: D checks the caller can write, uses slow groups and ends with a read-back. C is slow but skips the pen check and the read-back, and A and B leave the caller to remember or hunt for the number.
+reorder_task: something / you / Do / have / to / write / with / it / down
+reorder_answer: Do you have something to write it down with
+hindi_to_english: Mere paas aapke liye ek ticket number hai. Kya aapke paas pen hai?
+hindi_to_english_answer: I have a ticket number for you. Do you have a pen handy?
+whats_next_customer: Hang on, let me find a pen.
+whats_next_reply: No rush, take your time. Just tell me when you're ready.
+role_play: Partner A has reported a lost card. Partner B checks A can write, then gives a reference number in groups and asks A to read it back; A makes one mistake to correct.
+record_task: Record yourself giving two reference numbers in groups, with the pen check and the read-back request.
+self_check: Did you check they could write it down? · Did you read it in short groups? · Did you stress REF-rence on the first syllable?
+
+@CSV-I-015
+id: CSV-I-015
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Understand it
+call_stage: Listen & clarify
+sentence: I've been charged twice for the same thing.
+speaker: Customer
+situation: A customer calls after checking their bank app and seeing two payments for one order.
+recall_cue: A caller says they paid two times for one purchase. What do they want, and what do you need to find out first?
+stress: i've-been-CHARGED-TWICE · for-the-SAME-THING
+linking: I've_been → "aiv-bin" · charged_twice → "charj-TWICE" · same_thing → "SAYM-thing"
+intonation: The customer usually stresses "twice" hard and falls on "thing". A rising, sharp tone means they are angry; a flat tone means they are tired or worried.
+indian_pron_tip: When you repeat it back, say "charged" as one syllable, "charjd", not "char-ged". Say "thing" with /θ/, tongue between the teeth, not "ting".
+register: Neutral
+tone: Annoyed, worried complaint
+importance: 5
+customer_emotion: Worried about losing money and annoyed at the mistake.
+memory_hook: Picture a shop till ringing up the same item twice while the customer watches: they want the second ring taken off, fast.
+hindi_meaning: मुझसे एक ही चीज़ के लिए दो बार पैसे काट लिए गए हैं।
+hindi_roman: Mujhse ek hi cheez ke liye do baar paise kaat liye gaye hain.
+simple_meaning: The customer paid two times for one product or service and wants one payment back.
+why_it_works: The real need is reassurance that the money is safe and will come back. They may also suspect fraud, so a calm, quick check matters more than a long apology.
+key_chunk: I've been charged ___ for ___.
+grammar_pattern: I've been + past participle (passive present perfect) + for + noun
+grammar_note: "I've been charged" is passive: someone charged the customer, and the result matters now.
+tone_note: The customer is not blaming you personally. Reply calmly and with a specific apology; "This is not possible, our system doesn't do that" sounds defensive.
+watch_out: ✗ (Agent) Sir, you might have paid two times yourself. → ✓ I'm sorry you've been charged twice. Let me check both payments for you now.
+dont_say: "Our system can't charge twice." It contradicts the customer before you have checked and makes them angrier.
+positive_swap: Instead of "That is not possible", say "I'm sorry you've been charged twice. Let me check both payments for you now."
+alt_1: You've taken the money twice for one order.
+alt_2: I can see two payments for the same order on my statement.
+more_formal: I would like to report a duplicate charge for a single purchase.
+ask_next: I'm sorry you've been charged twice. In your bank app, do both payments say "completed", or is one still "pending"?
+replies_you_may_hear: Both were on Monday, 40 dollars each. · I don't know, I just saw it on my app. · Is my card hacked?
+if_customer_pushes: Customer: "I want my money back right now!" → Agent: "I understand, it's your money and you want it back. I'm checking both payments now, and once I find the duplicate I'll start the refund on this call."
+cultural_note: Indian agents may reply "the same will be refunded". International customers may not expect "the same" used this way; naming it ("the second payment will be refunded") is clearer.
+channel_note: Chat: customers often write "charged 2x!!" or "double charged". Email: they may attach a screenshot of the statement, so check it before asking for details.
+when_not_to_use: Do not treat this as fraud straight away; first check whether it is a duplicate charge or a temporary hold that will disappear.
+mini_conversation: Customer: I've been charged twice for the same thing. | Agent: I'm sorry you've been charged twice. In your bank app, do both payments say "completed", or is one still "pending"? | Customer: Both say completed, 40 dollars each, on Monday. | Agent: Thank you. I can see both on my side too, so I'm refunding the second one now.
+source_rule: Paraphrase before solving and apologise specifically; take responsibility, then offer a fix.
+fill_blank: I've ____ charged twice for the same thing.
+fill_answer: been
+mcq_question: A customer says "I've been charged twice for the same thing." What do they most likely want?
+mcq_options: A) They want the duplicate checked and the extra money returned. | B) They want to cancel the whole order and close their account. | C) They want a discount on their next order as an apology. | D) They want you to explain how the payment system works.
+mcq_answer: A
+mcq_why: They paid twice for one thing, so they want the duplicate checked and the extra money returned. B is tempting, but nothing in the sentence suggests they dislike the order; only the double payment is the problem.
+reorder_task: both / Let / check / payments / me / now
+reorder_answer: Let me check both payments now
+hindi_to_english: Customer keh raha hai ki ek order ke liye do baar paisa kata. Aap maafi maangiye aur kahiye ki aap dono payment abhi check karte hain.
+hindi_to_english_answer: I'm sorry you've been charged twice. Let me check both payments for you right now.
+whats_next_customer: Is my card hacked or something?
+whats_next_reply: I can see both payments came from our checkout, so it looks like a duplicate, not fraud. I'll start the refund for the second one now.
+role_play: Partner A was charged twice for a 30-dollar phone case. Partner B apologises, asks for the date and amounts, confirms the duplicate and explains when the refund will arrive.
+record_task: Record your reply to this customer: a short apology, the question you need answered, and what you will do next.
+self_check: Did you apologise before asking for details? · Did you avoid saying "not possible"? · Did you tell the customer what happens next?
+
+@CSV-I-016
+id: CSV-I-016
+channel: Voice
+level: Intermediate
+cefr: B2
+kind: Understand it
+call_stage: Difficult customer
+sentence: This is the third time I'm calling about this.
+speaker: Customer
+situation: A customer rings again about a broken washing machine that two earlier calls failed to fix.
+recall_cue: A caller says they have rung several times about one problem. What are they really feeling, and what must you do first?
+stress: THIS-is-the-THIRD-TIME · i'm-CALL-ing-a-BOUT-THIS
+linking: this_is → "thi-siz" · third_time → "thurd-TIME" · calling_about → "kaw-lin-guh-BOUT"
+intonation: The customer often stresses "third" and slows down on it. A sharp fall at the end shows anger; a tired, low voice shows they have almost given up.
+indian_pron_tip: When you repeat "third", start with /θ/, tongue between the teeth, and keep the "r" light: "thurd", not "tird" or "tard". "This" needs /ð/, not "dis".
+register: Neutral
+tone: Frustrated, losing patience
+importance: 5
+customer_emotion: Fed up, ignored and close to giving up on the company.
+memory_hook: Picture someone knocking on the same door for the third time, louder each time: the knock is not about the door, it is about being ignored.
+hindi_meaning: इसके बारे में मैं तीसरी बार कॉल कर रहा/रही हूँ।
+hindi_roman: Iske baare mein main teesri baar call kar raha/rahi hoon.
+simple_meaning: I have already called two times about this problem, and it is still not fixed.
+why_it_works: The customer is saying "nobody has taken responsibility". They need acknowledgement of the repeat calls, proof you know the history, and one person who will own it.
+key_chunk: This is the ___ time I'm calling about ___.
+grammar_pattern: This is the + ordinal + time + I'm + verb-ing + about + noun
+grammar_note: After "This is the third time", you will hear both "I'm calling" and "I've called"; both are natural on the phone.
+tone_note: It is a complaint, not a question. Replying "Okay, what is the issue?" ignores the history and sounds as if you have not listened at all.
+watch_out: ✗ (Agent) Sorry for the inconvenience. Please give me your complaint details. → ✓ I'm sorry you've had to call three times. I can see the notes from your earlier calls.
+dont_say: "Please explain the problem from the beginning." It proves the customer's fear that nobody remembers them.
+positive_swap: Instead of "Please tell me your problem again", say "I'm sorry you've had to call three times. I can see the earlier notes, so let's fix it now."
+alt_1: I've rung you three times now about this.
+alt_2: I keep calling and nothing gets done.
+more_formal: This is my third call regarding this matter, and it is still unresolved.
+ask_next: I'm sorry you've had to call three times. I can see the notes from your earlier calls, and I'll take care of it personally now.
+replies_you_may_hear: I hope so, because I'm tired of this. · Every time someone says that. · Then why hasn't anyone fixed it?
+if_customer_pushes: Customer: "Everyone says they'll fix it!" → Agent: "After two calls, I don't blame you for doubting it. I'm booking the engineer now, and I'll call you tomorrow to confirm the visit."
+cultural_note: Indian agents may say "sorry, sir, I will check" and start the script again. International customers may not expect a fresh start; they expect you to know the history and say so.
+channel_note: Chat: often "3rd time contacting u about this!!!" Email: subject lines may say "THIRD REQUEST"; reply with the case history in the first line.
+when_not_to_use: Do not claim you can see the history if you cannot; say honestly that the notes are missing and apologise for that too.
+mini_conversation: Customer: This is the third time I'm calling about this. | Agent: I'm sorry you've had to call three times. I can see the notes from your earlier calls, and I'll take care of it personally now. | Customer: Fine, but I want it fixed this week. | Agent: I'm booking the engineer for Thursday and I'll call you on Wednesday to confirm.
+source_rule: HEARD (often credited to Disney): hear, empathise, apologise, resolve; take ownership so the customer does not repeat the story.
+fill_blank: This is the third ____ I'm calling about this.
+fill_answer: time
+mcq_question: A customer says "This is the third time I'm calling about this." What is the best first reply?
+mcq_options: A) Thank you for calling. Could you please start from the beginning and tell me what happened? | B) I'm sorry for the inconvenience. Please bear with me while I open your account. | C) I'm sorry you've had to call three times. I can see your notes, so I'll take care of it. | D) I understand, sir. Please be patient, and I will send this to the right team.
+mcq_answer: C
+mcq_why: C acknowledges the repeat calls, shows you know the history and takes ownership. A and B make the customer start again or wait, and D passes the problem on to someone else.
+reorder_task: earlier / see / notes / I / your / can
+reorder_answer: I can see your earlier notes
+hindi_to_english: Customer teesri baar call kar raha hai. Pehle maafi maangiye, phir boliye ki aapke paas pichli calls ke notes hain, taaki unhe kuch dohrana na pade.
+hindi_to_english_answer: I'm sorry you've had to call again. I have the notes from your earlier calls, so you won't need to repeat anything.
+whats_next_customer: Then why hasn't anyone fixed it?
+whats_next_reply: That's a fair question, and I'm sorry it has taken three calls. The part was never ordered. I've ordered it now, and I'll call you on Wednesday with the delivery date.
+role_play: Partner A is calling for the third time about a router that keeps dropping. Partner B acknowledges the repeat calls, mentions the earlier notes, takes ownership and gives a date.
+record_task: Record your full reply to this customer, including the acknowledgement, the ownership line and a clear next step with a time.
+self_check: Did you acknowledge the repeat calls? · Did you avoid asking them to start again? · Did you give a clear next step?
+
+@CSV-I-017
+id: CSV-I-017
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Understand it
+call_stage: Listen & clarify
+sentence: It keeps freezing whenever I open it.
+speaker: Customer
+situation: A customer calls about the company's banking app on their phone, which stops responding each time it starts.
+recall_cue: A caller says something "keeps freezing". What exactly is happening, and what two questions do you ask next?
+stress: it-KEEPS-FREEZ-ing · when-EV-er-i-O-pen-it
+linking: keeps_freezing → "keep-SFREE-zing" · whenever_I → "wen-ev-ruh-RYE" · open_it → "OH-puh-nit"
+intonation: The customer often stresses "keeps" to show it happens again and again. A falling end shows frustration; a rising end may mean they are unsure what is wrong.
+indian_pron_tip: When you repeat it, say "freezing" with a buzzing /z/ in the middle: "FREE-zing", not "free-sing". "Whenever" starts with /w/, rounded lips, not "venever".
+register: Neutral
+tone: Frustrated, puzzled report
+importance: 4
+customer_emotion: Irritated and unable to do what they need on the app.
+memory_hook: Picture a video call where the other person's face freezes mid-word, every single time you dial: that is "keeps freezing".
+hindi_meaning: जब भी मैं इसे खोलता/खोलती हूँ, यह बार-बार अटक जाता है।
+hindi_roman: Jab bhi main ise kholta/kholti hoon, yeh baar-baar atak jaata hai.
+simple_meaning: Every time I start the app, the screen stops moving and I cannot use it.
+why_it_works: "Keeps" means it happens again and again, and "freezing" means the screen stops responding. The customer needs a fix, but first you need the device and the exact moment it stops.
+key_chunk: It keeps ___ whenever I ___.
+grammar_pattern: keep + verb-ing (repeated action) · whenever + present simple
+grammar_note: "Keeps freezing" means it freezes again and again; "whenever" means every time.
+tone_note: The customer is frustrated with the app, not with you. "Your phone may be old" sounds like you are blaming them before checking anything.
+watch_out: ✗ (Agent) So your app is stopped working every time? → ✓ So the app stops responding every time you open it. Is that right?
+dont_say: "Uninstall and install it again." said as the first reply. It skips the questions and may lose the customer's saved data.
+positive_swap: Instead of "Your phone is the problem", say "Let's find out what's causing it. What phone are you using?"
+alt_1: It hangs every time I start it.
+alt_2: The app gets stuck as soon as I open it.
+more_formal: The application becomes unresponsive each time I launch it.
+ask_next: That sounds annoying. Does it freeze straight away, or after you log in? And what phone are you using?
+replies_you_may_hear: Straight away, on the first screen. · After I put in my PIN. · It's an older Android phone.
+if_customer_pushes: Customer: "Just fix it, I don't know the technical stuff!" → Agent: "That's fine, you don't need to. Just tell me what you see on the screen, and I'll guide you step by step."
+cultural_note: In Indian English, "it is hanging" is common, and "hung" is the standard past form ("it hung"). Many international customers say "freeze", "crash" or "get stuck" instead.
+channel_note: Chat: often "app keeps freezing wen i open it". Email: ask for a screenshot and the phone model in your first reply.
+when_not_to_use: Do not treat "freezing" as "crashing" without checking; freezing means it stays open but stops, crashing means it closes by itself.
+mini_conversation: Customer: It keeps freezing whenever I open it. | Agent: That sounds annoying. Does it freeze straight away, or after you log in? | Customer: Straight away, on the first screen. | Agent: Thanks. So the app freezes on the first screen every time. Let's try updating it first. Could you open your app store?
+source_rule: Paraphrase before solving and ask clarifying questions, so you fix the right problem.
+fill_blank: It keeps ____ (freeze) whenever I open it.
+fill_answer: freezing
+mcq_question: A customer says their app "keeps freezing". What does this mean?
+mcq_options: A) The app closes by itself a few seconds after the customer opens it. | B) The app will not install on the customer's phone at all. | C) The app opens, but it is very slow to load the first screen. | D) The app opens, but the screen stops responding again and again.
+mcq_answer: D
+mcq_why: Freezing means the screen stops responding but the app stays open. A is tempting, but that is crashing, which needs different questions. C is slowness, not a complete stop.
+reorder_task: open / I / freezing / whenever / it / keeps / It
+reorder_answer: It keeps freezing whenever I open it
+hindi_to_english: Customer bol raha hai app baar-baar atak jaata hai. Pehle afsos jataiye, phir poochhiye ki kab atakta hai aur kaun-sa phone hai.
+hindi_to_english_answer: I'm sorry the app keeps freezing. When does it freeze, and what phone are you using?
+whats_next_customer: It's an old Android phone, about four years old.
+whats_next_reply: Thanks. Let's check for an app update first, because updates often fix freezing.
+role_play: Partner A's food-delivery app freezes on the payment screen. Partner B asks when it freezes and which phone A uses, paraphrases the answer, and gives one first step.
+record_task: Record your reply to this customer with a short empathy line and your two clarifying questions.
+self_check: Did you ask when it freezes? · Did you ask which device they use? · Did you avoid blaming the customer's phone?
+
+@CSV-I-018
+id: CSV-I-018
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Understand it
+call_stage: Set expectations
+sentence: Can you just tell me when it'll arrive?
+speaker: Customer
+situation: The agent has been explaining the courier process for a while, and the customer interrupts because they only want the delivery date, which you can see on the tracking screen.
+recall_cue: A caller interrupts with "can you just tell me…". What is the word "just" telling you, and how should your reply begin?
+stress: can-you-JUST-TELL-me · WHEN-it'll-ar-RIVE
+linking: can_you → "kuh-nyoo" · tell_me → "TEL-mee" · when_it'll → "we-NIT-ul" · it'll_arrive → "it-luh-RIVE"
+intonation: Heavy stress on "just" and "when", often with a sharp, falling end. That fall signals impatience, not a real yes/no question.
+indian_pron_tip: When you answer, say "arrive" with stress on the second syllable, a-RIVE, and a clear /v/ at the end with teeth on the lip. Do not let "it'll" become "it will" with full stress; keep it short.
+register: Neutral
+tone: Impatient, wanting a straight answer
+importance: 5
+customer_emotion: Impatient and tired of hearing about the process.
+memory_hook: Picture someone at a bus stop who does not want the route map, only the time the bus comes. Give them the time first.
+hindi_meaning: क्या आप बस इतना बता सकते/सकती हैं कि यह कब पहुँचेगा?
+hindi_roman: Kya aap bas itna bata sakte/sakti hain ki yeh kab pahunchega?
+simple_meaning: Stop explaining the process; I only want to know the delivery day.
+why_it_works: "Just" shows the customer feels the agent is talking too much. They need the answer first, in one short sentence, and details only if they ask.
+key_chunk: Can you just tell me ___?
+grammar_pattern: Can you just + verb + me + wh- clause (when + subject + will + verb)
+grammar_note: "Just" here means "only" or "simply"; it shows impatience, not rudeness.
+tone_note: The customer sounds blunt but is not being rude. Giving more explanation after this sounds like you are not listening.
+watch_out: ✗ (Agent) Sir, first let me explain the process. → ✓ Yes, it's due on Thursday, between 9 a.m. and 1 p.m.
+dont_say: "As I was saying, the courier partner will…" It ignores the request and makes the customer angrier.
+positive_swap: Instead of "Please listen, I am explaining", say "Of course. It's due to arrive on Thursday, between 9 a.m. and 1 p.m."
+alt_1: When is it actually coming?
+alt_2: I just need a date, please.
+more_formal: Could you please confirm the expected delivery date?
+ask_next: Of course. It's due to arrive on Thursday, between 9 a.m. and 1 p.m.
+replies_you_may_hear: Thursday? Not before? · Okay, thank you. · Will someone call before they come?
+if_customer_pushes: Customer: "Thursday? That's too late!" → Agent: "I understand, you were hoping for sooner. Could you hold for about a minute while I check whether a faster delivery is possible for this parcel?"
+cultural_note: Some agents explain the whole process first to be thorough. International customers may not expect that; many prefer the answer first and the reason only if they ask.
+channel_note: Chat: often "just tell me when it's coming" or "ETA??". Reply with the date in the first line. Email: put the date in the first sentence.
+when_not_to_use: Do not give a date you are unsure of just to please the customer; say what the system shows and that you will confirm.
+mini_conversation: Customer: Can you just tell me when it'll arrive? | Agent: Of course. It's due to arrive on Thursday, between 9 a.m. and 1 p.m. | Customer: Okay, good. | Agent: You'll also get a text on Thursday morning with a tracking link.
+source_rule: Reduce customer effort: give a clear timeline first; be specific about what will happen and when.
+fill_blank: Can you ____ (only, simply) tell me when it'll arrive?
+fill_answer: just
+mcq_question: In "Can you just tell me when it'll arrive?", what does the word "just" show?
+mcq_options: A) The customer is relaxed and would like to chat about the delivery. | B) The customer is asking politely and has plenty of time to listen. | C) The customer is impatient and wants only the date, not an explanation. | D) The customer is unsure about the date and wants to cancel the order.
+mcq_answer: C
+mcq_why: "Just" means "only" here and signals impatience with long explanations. D is tempting because the customer sounds annoyed, but they are asking for a date, not cancelling. A and B ignore the tone.
+reorder_task: Thursday / arrive / It's / on / to / due
+reorder_answer: It's due to arrive on Thursday
+hindi_to_english: Customer sirf delivery ki date jaanna chahta hai. Seedha date aur time batayiye.
+hindi_to_english_answer: Of course. It's due on Friday, between 2 and 6 p.m.
+whats_next_customer: Thursday? Not before?
+whats_next_reply: I've checked, and Thursday is the earliest. I'll ask the courier to call you an hour before.
+role_play: Partner B starts explaining the warehouse process; Partner A interrupts with "Can you just tell me when it'll arrive?" Partner B stops, gives the date and time window in one sentence, and offers a tracking text.
+record_task: Record your reply to this customer: the date and time window first, then one helpful extra detail.
+self_check: Did you give the date in your first sentence? · Did you stop explaining the process? · Did you keep your reply short?
+
+@CSV-I-019
+id: CSV-I-019
+channel: Voice
+level: Intermediate
+cefr: B2
+kind: Understand it
+call_stage: Listen & clarify
+sentence: I never signed up for this.
+speaker: Customer
+situation: A customer has noticed a monthly subscription charge on their card and calls to dispute it.
+recall_cue: A caller says they never agreed to a subscription they are paying for. What might really have happened, and how do you start?
+stress: i-NEV-er-SIGNED-UP · for-THIS
+linking: never_signed → "NEV-er-SYND" · signed_up → "syn-DUP" · up_for → "up-fer"
+intonation: Heavy stress on "never" and often on "this", with a sharp fall. It can sound accusing; the customer may feel tricked.
+indian_pron_tip: When you repeat it, say "signed" as "synd", one syllable with a soft final /d/; the "g" is silent. "Never" needs a /v/ with teeth on the lip, not "newer".
+register: Neutral
+tone: Suspicious, accusing denial
+importance: 5
+customer_emotion: Feeling cheated, suspicious and worried about more charges.
+memory_hook: Picture finding a gym card in your wallet that you never asked for: you want to know how it got there, and you want it gone.
+hindi_meaning: मैंने इसके लिए कभी साइन अप नहीं किया।
+hindi_roman: Maine iske liye kabhi sign up nahin kiya.
+simple_meaning: I did not agree to join this service, so I should not be paying for it.
+why_it_works: The customer feels tricked and fears more money will go. They need you to take it seriously, find out how it started without blaming them, and stop or refund it.
+key_chunk: I never ___ for this.
+grammar_pattern: I + never + past simple verb + up + for + noun
+grammar_note: "Sign up for" is a phrasal verb meaning "join" or "register for".
+tone_note: The customer may sound accusing. Saying "You must have clicked on it" blames them and turns the call into an argument.
+watch_out: ✗ (Agent) You must have done it by mistake. → ✓ I understand. Let's find out how this started, and I'll stop it if it shouldn't be there.
+dont_say: "You must have subscribed yourself." It blames the customer before you have checked anything.
+positive_swap: Instead of "It shows you subscribed", say "Let's find out how this started. I can see it began on 3 May. Does that date mean anything to you?"
+alt_1: I didn't agree to this at all.
+alt_2: I don't remember joining anything like this.
+more_formal: I have no record of subscribing to this service.
+ask_next: I understand, and I'll look into it now. I can see it started on 3 May after a free trial. Does that ring a bell?
+replies_you_may_hear: No, never. · Oh, maybe that free trial? · Just cancel it and give me my money back.
+if_customer_pushes: Customer: "I want all my money back!" → Agent: "I understand. I'll cancel it now so nothing more is taken, and I'll check what I can refund for the past months."
+cultural_note: Indian agents may say "as per our records, you have subscribed". International customers may not expect that phrase and may hear it as "you are lying"; describing what you see and asking is calmer.
+channel_note: Chat: often "i never signed up for this??" or "didnt sign up for anything". Email: may include the bank statement; quote the date and amount back to them.
+when_not_to_use: Do not say "I can see you signed up" as your first line, even if it is true; it sounds like an argument before you have listened.
+mini_conversation: Customer: I never signed up for this. | Agent: I understand, and I'll look into it now. I can see it started on 3 May after a free trial. Does that ring a bell? | Customer: Oh, maybe. But I don't want it. | Agent: Of course. I'll cancel it now, so there are no more charges.
+source_rule: Don't hide behind records or policy: listen without blaming, give the facts in plain words, then offer what you can do.
+fill_blank: I never ____ (sign) up for this.
+fill_answer: signed
+mcq_question: A customer says "I never signed up for this." What is the best first reply?
+mcq_options: A) Let's find out how this started, and I'll stop it if it shouldn't be there. | B) I can see that you subscribed on 3 May, so the charge is correct, I'm afraid. | C) I'm sorry about that. Could you check whether someone else in your home signed up? | D) Our system shows your consent, so I can't cancel it without a good reason.
+mcq_answer: A
+mcq_why: A takes the customer seriously and moves to a fix without blame. B is tempting because it is factual, but it sounds like calling the customer a liar. C hands the investigation to the customer, and D hides behind the system.
+reorder_task: started / out / this / find / how / Let's
+reorder_answer: Let's find out how this started
+hindi_to_english: Customer keh raha hai usne kabhi join nahin kiya. Uski baat sun kar boliye ki aap check karenge kaise shuru hua, aur agar yeh nahin hona chahiye tha to ise band kar denge.
+hindi_to_english_answer: I understand. Let me check how this started, and I'll stop it if it shouldn't be there.
+whats_next_customer: Oh, maybe it was that free trial.
+whats_next_reply: That's likely. The trial turned into a paid plan when it ended. I can cancel it now, so nothing more is charged.
+role_play: Partner A sees a 9-dollar monthly music charge they do not recognise. Partner B listens, checks the start date without blaming A, explains the free trial and cancels it.
+record_task: Record your reply to this customer: an acknowledgement, what you can see, and a question that helps them remember, all without blame.
+self_check: Did you avoid blaming the customer? · Did you give a fact, such as the start date? · Did you offer to stop further charges?
+
+@CSV-I-020
+id: CSV-I-020
+channel: Voice
+level: Intermediate
+cefr: B1
+kind: Understand it
+call_stage: Close
+sentence: I'll think about it and get back to you.
+speaker: Customer
+situation: You have offered the customer an upgrade to a faster broadband plan, and they answer at the end of the call.
+recall_cue: At the end of an offer, a caller says they will think about it. What might they really mean, and how do you close well?
+stress: i'll-THINK-a-BOUT-it · and-GET-BACK-to-you
+linking: think_about_it → "thing-kuh-BOU-tit" · get_back → "geh-BACK" · back_to_you → "BAK-tuh-yoo"
+intonation: A light, falling tone often means a polite "no for now". A slower, thoughtful tone means they are really considering it. Listen to the pace, not only the words.
+indian_pron_tip: When you reply, say "think" with /θ/, tongue between the teeth, not "tink". In "about it", link the /t/ into "it": "a-bou-tit", not two separate words.
+register: Neutral
+tone: Polite, non-committal
+importance: 4
+customer_emotion: Unsure, slightly pressured, wanting space to decide.
+memory_hook: Picture a shopper putting a shirt back on the rail and saying "maybe later": push and they walk out; hand them the tag and they may come back.
+hindi_meaning: मैं इसके बारे में सोचूँगा/सोचूँगी और फिर आपको बताऊँगा/बताऊँगी।
+hindi_roman: Main iske baare mein sochoonga/sochoongi aur phir aapko bataoonga/bataoongi.
+simple_meaning: I am not ready to decide now; maybe I will contact you later.
+why_it_works: It is often a polite way to say "not now" without saying no. The customer wants no pressure; making it easy to decide later keeps their trust and the chance of a yes.
+key_chunk: I'll think about it and ___.
+grammar_pattern: I'll + think about + it + and + get back to + person
+grammar_note: "Get back to you" means contact you again later; it is the common international form.
+tone_note: The customer is polite but closing the topic. Pushing with "But this offer ends today!" sounds pushy and can damage trust.
+watch_out: ✗ (Agent) Okay, then you call back to us. → ✓ Of course, take your time. Shall I email you the details so you can compare?
+dont_say: "But sir, this is the best offer, you should take it now." It ignores the customer's answer and feels like pressure.
+positive_swap: Instead of "Why don't you decide now?", say "Of course, take your time. Shall I email you the details so you can compare?"
+alt_1: Let me think it over and I'll let you know.
+alt_2: I'm not sure yet. I'll call you back if I decide to go ahead.
+more_formal: I would like some time to consider it, and I will contact you once I have decided.
+ask_next: Of course, take your time. Would it help if I emailed you the details so you can compare?
+replies_you_may_hear: Yes, please email it. · No, I'll look on the website. · Okay, but I probably won't change.
+if_customer_pushes: Customer: "I said I'll think about it!" → Agent: "Absolutely, no pressure at all. The details will be in your email whenever you're ready."
+cultural_note: Indian customers often say "I will let you know" or "Let me discuss with family and revert". International customers more often say "I'll get back to you" or "Let me think it over". All of them usually mean "not yet", so answer them the same way: no pressure.
+channel_note: Chat: often "ok will think n let u know". Email: "I'll consider it and come back to you." Reply with a short, no-pressure summary.
+when_not_to_use: Do not offer to call them back about it unless they agree; an unwanted sales call feels like pressure.
+mini_conversation: Customer: I'll think about it and get back to you. | Agent: Of course, take your time. Would it help if I emailed you the details so you can compare? | Customer: Yes, please. | Agent: Done. It's in your inbox now. Is there anything else I can help you with today?
+source_rule: Respect the customer's decision: avoid pressure, and leave one clear, easy next step.
+fill_blank: I'll think about it and get ____ to you.
+fill_answer: back
+mcq_question: After an upgrade offer, a customer says "I'll think about it and get back to you." What is the best reply?
+mcq_options: A) Of course, take your time. Shall I email you the details so you can compare? | B) I understand, but this offer ends today, so it would be best to decide now. | C) Okay. Please remember that prices can change, so don't wait too long. | D) Of course. May I ask what is stopping you from deciding today?
+mcq_answer: A
+mcq_why: A respects the decision and makes it easy to come back. B is tempting because it creates urgency, but it ignores what the customer said. C and D add pressure.
+reorder_task: details / so / Shall / you / email / compare / I / can / the / you
+reorder_answer: Shall I email you the details so you can compare
+hindi_to_english: Customer sochna chahta hai. Usse boliye aaram se sochiye, aur details email karne ka offer kariye.
+hindi_to_english_answer: Of course, take your time. Shall I email you the details so you can compare?
+whats_next_customer: Yes, email it, but please don't call me about it.
+whats_next_reply: Of course. I'll just send the email, and I'll note on your account that you don't want a call about it.
+role_play: Partner B offers Partner A an annual plan that saves money. Partner A says "I'll think about it and get back to you." Partner B accepts without pressure, offers an email summary and closes the call.
+record_task: Record your reply to this customer, then the closing line of the call, without any pressure to decide now.
+self_check: Did you accept the answer without pushing? · Did you offer something useful, like an email? · Did you close the call warmly?

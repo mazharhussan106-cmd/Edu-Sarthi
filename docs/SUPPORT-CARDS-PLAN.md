@@ -1,6 +1,6 @@
 # Customer-support English cards — plan and 10 samples (13 Oct 2026)
 
-Status: **design only, nothing built in the app yet.** Mockup of one card: `docs/support-card.png` (source `docs/support-card-mockup.html`). Written after the owner's answers below. Update this file when anything is decided.
+Status (15 Oct 2026): **180-card workbook built and audited** — `content/support-cards/Support_Cards_EduSarthi.xlsx` (+ `support.json` for a future app import). App integration (Support chip) is NOT built yet. Mockup of one card: `docs/support-card.png` (source `docs/support-card-mockup.html`). Written after the owner's answers below. Update this file when anything is decided.
 
 ## Owner's answers (13 Oct 2026)
 
@@ -83,3 +83,13 @@ Grammar in one line: *Could you + base verb* = polite request; *I'll* = decision
 
 - All wording is drafted by Claude and must be checked by a verified teacher before students see it.
 - Sample 10 says "by Friday" only because the example gives a day; real cards must not teach agents to promise times the company cannot keep.
+
+## Build and audit record (15 Oct 2026)
+
+- 56 fields per card (6 card · 13 side 1 · 22 side 2 · 15 side 3), defined in `content/support-cards/source/schema.py`.
+- 180 cards = Voice/Chat/Email × Basic/Intermediate/Advanced × 20 (14 "Say it" + 6 "Understand it" each).
+- Research: `source/research.md` (111 sourced links, 31 writer rules in `source/rules.md`).
+- Audit round 1: 9 independent reviewers, ~1,500 logged fixes (`audit/audit1_*.md`). MCQ answer letters rebalanced to 5/5/5/5 per group; correct option no longer the giveaway longest.
+- Audit round 2 (regression): one reviewer per channel re-checked every round-1 fix and did a fresh pass; chat and email also had an adversarial pass (`audit/audit2_*.md`).
+- Final checks: `audit.py` 0 errors, `rules_check.py` 0 issues, workbook recalculated with 0 formula errors.
+- Still a DRAFT until a verified teacher checks it. Next step (needs approval, >6 files): app Support chip using the chunk-card route.

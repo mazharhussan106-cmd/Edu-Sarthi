@@ -12,6 +12,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/Button";
+import { SocialSignIn } from "@/components/auth/SocialSignIn";
 import { Input, Label } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { registerSchema } from "@/lib/validations";
@@ -185,6 +186,8 @@ export default function RegisterPage() {
           {busy ? "Creating account…" : "Create account"}
         </Button>
       </form>
+
+      <SocialSignIn />
 
       <p className="mt-6 text-xs text-ink-muted">
         Already have an account?{" "}

@@ -15,7 +15,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-10">
       <h1 className="font-display text-2xl font-bold text-ink">Search</h1>
-      <p className="mt-1 text-sm text-ink-muted">Find a word, chunk or grammar card by its text or its ID.</p>
+      <p className="mt-1 text-sm text-ink-muted">Find a word, chunk, grammar or support card by its text or its ID.</p>
       <SearchBox section={def ? { key: def.key, label: def.label } : null} />
     </main>
   );

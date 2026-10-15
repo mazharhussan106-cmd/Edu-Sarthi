@@ -15,7 +15,7 @@ import { ALLOWED_TYPES, createUploadTarget } from "@/lib/storage";
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
 
 export async function POST(req: Request) {
-  const gate = await requireUser({ verified: true });
+  const gate = await requireUser({ verified: true, member: true });
   if (!gate.ok) return gate.res;
   const userId = gate.id;
 

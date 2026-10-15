@@ -21,7 +21,7 @@ const fail = (error: string, status: number) => NextResponse.json({ error }, { s
 const done = (r: { ok: true } | { error: string }) => ("error" in r ? fail(r.error, 400) : NextResponse.json({ ok: true }));
 
 export async function POST(req: Request) {
-  const gate = await requireUser({ verified: true });
+  const gate = await requireUser({ verified: true, member: true });
   if (!gate.ok) return gate.res;
   const userId = gate.id;
 

@@ -1,0 +1,1159 @@
+@CSE-B-001
+id: CSE-B-001
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Opening
+sentence: Update on your refund request – Ticket #55102
+speaker: Agent
+situation: You are sending the first update on a customer's refund, and your helpdesk lets you write the subject line of the email.
+recall_cue: Your email is about a refund and has a ticket number. What short subject tells the customer exactly what is inside?
+stress: UP-date · on-your-REE-fund-re-QUEST · TICK-et-NUM-ber · five-five-one-oh-TWO
+linking: If read aloud: update_on → "up-day-ton" · refund_request → "ree-fun-dri-kwest"
+intonation: If read aloud: a subject line is a label, so read it flat and falling, with a small pause before the ticket number.
+indian_pron_tip: If read aloud, "update" is UP-date with stress on the first part, and the final "t" in "request" and "ticket" should be clear, not dropped.
+register: Neutral
+tone: Clear, specific, businesslike
+importance: 4
+customer_emotion: Waiting for money back and checking the inbox for news.
+memory_hook: A subject line is the label on a box: the customer should know what is inside without opening the lid.
+hindi_meaning: आपकी रिफ़ंड रिक्वेस्ट पर अपडेट – टिकट #55102
+hindi_roman: Aapki refund request par update – ticket #55102
+simple_meaning: This email tells you the latest news about the money you asked to get back.
+why_it_works: The customer sees the topic and the ticket number before opening the email, so they can find it again and know it is not spam or a new problem.
+key_chunk: Update on your ___ – Ticket #___
+grammar_pattern: Noun (Update) + on + your + noun phrase + – + Ticket + number
+grammar_note: Subject lines are short labels, so they skip "This is" and usually have no full stop.
+tone_note: A specific, calm label sounds professional. A subject like "URGENT!!!" or "Important information" sounds like spam and can worry the customer.
+watch_out: ✗ Regarding your query → ✓ Update on your refund request – Ticket #55102
+dont_say: "Important information" — it says nothing about the content and looks like spam or a scam email.
+positive_swap: Instead of "Your complaint", write "Update on your refund request – Ticket #55102".
+alt_1: Your refund for order 62408 – Ticket #55102
+alt_2: Refund update for order 62408 (Ticket #55102)
+more_formal: Update regarding your refund request – Ticket #55102
+ask_next: Hi Daniel, I have an update on your refund for order 62408.
+replies_you_may_hear: Thanks, when will I get the money? · Is this about my old order? · Got it, thank you.
+if_customer_pushes: Customer: "Why do you keep changing the subject line? I can't find your emails." → Agent: "I'm sorry the emails were hard to find. I'll keep the same subject line from now on so all our emails stay together."
+cultural_note: Many Indian office emails use "Regarding your query" or "Reg: complaint". International customers expect a specific topic plus the ticket number.
+channel_note: Voice and chat: no subject line; say the topic in the first sentence instead. Email: if you reply in the customer's thread, keep their subject and the "Re:".
+when_not_to_use: Do not change the subject when replying inside an existing thread; keep the customer's subject so the emails stay together.
+mini_conversation: Customer: I asked for a refund last week. | Agent: Subject: Update on your refund request – Ticket #55102. Hi Daniel, your refund is approved. | Customer: Great, when will I see it? | Agent: It should reach your card within five working days.
+source_rule: Email subject: specific, short and with the ticket number; keep it when replying.
+fill_blank: Update on your refund request – ____ (starts with T) #55102
+fill_answer: Ticket
+mcq_question: You are writing the first update on a customer's refund. Which subject line is best?
+mcq_options: A) Important information on your account – Ticket #55102 | B) Update on your refund request – Ticket #55102 | C) Reg: your refund query – see details below | D) URGENT – PLEASE READ – Refund Ticket #55102
+mcq_answer: B
+mcq_why: B names the topic and the ticket number in a calm label. A has a ticket number but does not say what the email is about, C has no ticket number and uses an office abbreviation, and D is in capital letters, which looks like spam.
+reorder_task: refund / Update / Ticket / your / on / request / 55102
+reorder_answer: Update on your refund request – Ticket #55102
+hindi_to_english: Subject line likhiye: aapke exchange request par update, ticket 60417.
+hindi_to_english_answer: Update on your exchange request – Ticket #60417
+whats_next_customer: Thanks for the update. When will the money reach my card?
+whats_next_reply: Your refund was sent today, and it should reach your card within five working days.
+role_play: Partner A is a customer who asked for a refund on order 62408. Partner B writes three possible subject lines for the update email, and A chooses the clearest one and says why.
+record_task: Write a subject line for an email updating a customer about a replacement order, Ticket #60233, and send it as text or a photo for audit.
+self_check: Does the subject name the topic in a few clear words? · Did you include the ticket number? · Did you avoid ALL CAPS, "Reg:" and "Important"?
+
+@CSE-B-002
+id: CSE-B-002
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Opening
+sentence: Hi Daniel, this is Meera from the [Company] support team.
+speaker: Agent
+situation: You are starting your first reply to a customer called Daniel Brooks, who signed his email with his first name.
+recall_cue: How do you open an email to a customer who signed off with his first name, and introduce yourself in one line?
+stress: HI-DAN-yel · this-is-MEE-ra · from-the-COM-pa-ny · sup-PORT-team
+linking: If read aloud: this_is → "thi-siz" · support_team → "su-por-team"
+intonation: If read aloud: a short pause after "Daniel", then a friendly, falling tone at the end.
+indian_pron_tip: If read aloud, "this" starts with a soft "th" (tongue lightly between the teeth), not "dis"; "support" has the stress on PORT.
+register: Friendly
+tone: Warm, personal, professional
+importance: 4
+customer_emotion: Hoping a real person has read the email.
+memory_hook: Use the name the customer gave you, like a shopkeeper who remembers a regular and says hello by name.
+hindi_meaning: नमस्ते डैनियल, मैं [Company] की सपोर्ट टीम से मीरा हूँ।
+hindi_roman: Namaste Daniel, main [Company] ki support team se Meera hoon.
+simple_meaning: Hello Daniel, my name is Meera and I work in the support team.
+why_it_works: Using the customer's name shows a person read the email, and giving your own name tells the customer who to reply to.
+key_chunk: Hi ___, this is ___ from ___.
+grammar_pattern: Hi + first name + , + this is + your name + from + team
+grammar_note: In emails we write "this is Meera", not "I am Meera speaking".
+tone_note: "Hi" plus a first name is friendly and normal in modern support. "Dear Customer" sounds like a machine, and "Respected Sir" sounds old-fashioned to many readers.
+watch_out: ✗ Dear Customer, I am Meera speaking from support. → ✓ Hi Daniel, this is Meera from the [Company] support team.
+dont_say: "Dear Customer," — it shows nobody looked at the customer's name and feels like a mass mailing.
+positive_swap: Instead of "Dear Customer", write "Hi Daniel, this is Meera from the [Company] support team."
+alt_1: Hello Daniel, I'm Meera from the [Company] support team.
+alt_2: Hi Daniel, Meera here from [Company] support.
+more_formal: Dear Mr Brooks, my name is Meera and I work in the [Company] customer support team.
+ask_next: Thank you for writing to us about your order.
+replies_you_may_hear: Hi Meera, thanks for getting back to me. · Hello, are you a real person? · Hi, I've been waiting for a reply.
+if_customer_pushes: Customer: "Is this an automatic reply?" → Agent: "No, I'm Meera and I've read your email myself. I'm looking into your order now."
+cultural_note: Many Indian emails start with "Respected Sir" or "Dear Sir/Madam". International customers usually expect their name; use "Hi" plus first name if they signed that way, or "Dear Mr/Ms" plus surname if they wrote formally.
+channel_note: Voice: "Thank you for calling [Company], this is Meera." Chat: "Hi Daniel, I'm Meera." Email: greeting and your name in the first line, then a blank line before the message.
+when_not_to_use: Do not use "Hi" plus first name when the customer wrote formally and signed with a title and surname; use "Dear Mr Brooks" instead.
+mini_conversation: Customer: Hello, my blender stopped working. Thanks, Daniel | Agent: Hi Daniel, this is Meera from the [Company] support team. I'm sorry your blender stopped working. | Customer: Hi Meera, can you replace it? | Agent: I'll check your warranty now and email you the next step by 3 pm tomorrow.
+source_rule: Greet by name, not "Dear customer"; use a conversational voice.
+fill_blank: Hi Daniel, ____ is Meera from the [Company] support team.
+fill_answer: this
+mcq_question: The customer signed his email "Daniel". Which opening is best?
+mcq_options: A) Dear Customer, I am Meera speaking from the support desk. | B) Respected Sir, this is Meera from the [Company] support team. | C) Hi Daniel, this is Meera from the [Company] support team. | D) Hello Mr Daniel, this is Meera from the [Company] support team.
+mcq_answer: C
+mcq_why: C uses his name as he signed it and introduces you. D is tempting, but "Mr" goes with a surname (Mr Brooks), not a first name. A ignores his name and sounds like a mass mailing, and B uses "Respected Sir", which is polite in India but international customers may not expect it.
+reorder_task: is / from / Hi / support / Meera / the / this / Company / team / Daniel
+reorder_answer: Hi Daniel, this is Meera from the [Company] support team.
+hindi_to_english: Customer Priya ko greet kijiye aur bataiye ki aap Rahul hain, [Company] support se.
+hindi_to_english_answer: Hi Priya, this is Rahul from the [Company] support team.
+whats_next_customer: Hi Meera, thanks. Did you find my order?
+whats_next_reply: Yes, I found it. Your order 51736 is with the courier and is due to arrive tomorrow.
+role_play: Partner A writes a short email about a broken kettle and signs it "Sarah Jones". Partner B writes two openings, one friendly and one formal, and A says which fits her email better.
+record_task: Write the greeting and first line of a reply to a customer who signed her email "Anita Kapoor", and send it as text or a photo for audit.
+self_check: Did you use the customer's name as they wrote it? · Did you give your own name? · Did you avoid "Dear Customer", and "Respected Sir", which international customers may not expect?
+
+@CSE-B-003
+id: CSE-B-003
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Opening
+sentence: Thank you for writing to us about your missing parcel.
+speaker: Agent
+situation: A customer has emailed to say a parcel marked as delivered never reached them, and you are starting your reply.
+recall_cue: The customer took time to tell you about a problem. What do you say first, and how do you show you read their email?
+stress: THANK-you · for-WRY-ting-to-us · a-BOUT-your · MISS-ing-PAR-cel
+linking: If read aloud: thank_you → "thang-kyoo" · about_your → "a-bou-chor"
+intonation: If read aloud: steady and warm, falling at "parcel" with no rush.
+indian_pron_tip: If read aloud, "thank" starts with a soft "th" (tongue between the teeth), not "tank"; "parcel" is PAR-cel, not par-SEL.
+register: Neutral
+tone: Grateful, attentive
+importance: 4
+customer_emotion: Annoyed and worried the parcel is lost.
+memory_hook: Thank the customer and name their problem, like a doctor who repeats your symptom so you know they listened.
+hindi_meaning: अपने गुम हुए पार्सल के बारे में हमें लिखने के लिए धन्यवाद।
+hindi_roman: Apne gum hue parcel ke baare mein hamein likhne ke liye dhanyavaad.
+simple_meaning: Thanks for telling us that your parcel has not arrived.
+why_it_works: Thanking the customer makes them feel heard, and naming the exact problem shows you read their email instead of sending a template.
+key_chunk: Thank you for writing to us about ___.
+grammar_pattern: Thank you + for + verb-ing + about + noun
+grammar_note: After "Thank you for" use the -ing form: "for writing", not "for write".
+tone_note: Thanking plus naming the problem sounds personal. "Thank you for your query" alone sounds like a template and may annoy an upset customer.
+watch_out: ✗ Thank you for write to us. → ✓ Thank you for writing to us about your missing parcel.
+dont_say: "Your query has been noted." — it sounds cold and robotic, and says nothing about the customer's problem.
+positive_swap: Instead of "Your query has been noted", write "Thank you for writing to us about your missing parcel."
+alt_1: Thanks for letting us know that your parcel has not arrived.
+alt_2: Thank you for contacting us about your missing parcel.
+more_formal: Thank you for your email regarding the parcel that has not reached you.
+ask_next: I'm sorry it hasn't arrived. I have already asked the courier to trace it.
+replies_you_may_hear: Thanks, any news? · I just want my parcel. · It says delivered but I don't have it.
+if_customer_pushes: Customer: "I don't need thanks, I need my parcel." → Agent: "You're right, and I'm sorry you are still waiting. The courier is tracing it now, and I'll email you by 4 pm with an update."
+cultural_note: Indian office emails often begin "This is with reference to your mail". International customers expect a short thank-you and the problem in plain words.
+channel_note: Voice: "Thanks for calling about your parcel." Chat: "Thanks for reaching out about your parcel." Email: one line, then the action.
+when_not_to_use: Do not start with a thank-you to a very angry customer whose second complaint was ignored; apologise first.
+mini_conversation: Customer: My parcel says delivered, but it isn't here. | Agent: Thank you for writing to us about your missing parcel. I'm sorry it hasn't arrived. | Customer: What will you do? | Agent: I've asked the courier to trace it, and I'll update you by 4 pm today.
+source_rule: Thank the customer, name the issue, then give one clear next step.
+fill_blank: Thank you for ____ (write) to us about your missing parcel.
+fill_answer: writing
+mcq_question: A customer emails about a missing parcel. Which first line is best?
+mcq_options: A) Your query has been noted and will be looked into. | B) Thank you for writing to us about your missing parcel. | C) This is with reference to your mail about the parcel. | D) Thank you for your query. We will look into it soon.
+mcq_answer: B
+mcq_why: B thanks the customer and names the exact problem. D thanks but could be sent to anyone, C is a common Indian office opening that international customers may not expect, and it does not thank, and A is a cold office phrase.
+reorder_task: writing / about / Thank / us / missing / you / to / parcel / for / your
+reorder_answer: Thank you for writing to us about your missing parcel.
+hindi_to_english: Customer ko damaged phone ke baare mein likhne ke liye thanks kahiye.
+hindi_to_english_answer: Thank you for writing to us about your damaged phone.
+whats_next_customer: So where is my parcel?
+whats_next_reply: I'm checking the courier's last scan myself right now. I'll email you by 4 pm today with what I find.
+role_play: Partner A writes an email saying a parcel marked delivered is missing. Partner B writes the first two lines of the reply: a thank-you that names the problem, then the action taken.
+record_task: Write the first two lines of a reply to a customer whose shoes arrived in the wrong size, and send it as text or a photo for audit.
+self_check: Did you use "for" plus an -ing word? · Did you name the customer's exact problem? · Did you follow with an action?
+
+@CSE-B-004
+id: CSE-B-004
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Opening
+sentence: We have received your email, and I will send you a full answer by 5 pm tomorrow.
+speaker: Agent
+situation: A customer has asked a question that needs a check with the billing team, so you confirm you got it and say when they will hear back.
+recall_cue: You cannot answer fully today. What do you tell the customer so they stop worrying their email was lost?
+stress: we-have-re-CEIVED-your-EE-mail · and-I-will-SEND-you · a-FULL-AN-swer · by-FIVE-pee-EM-to-MOR-row
+linking: If read aloud: received_your → "ri-SEEV-jer" (d + y join into a "j" sound) · send_you → "sen-joo" · full_answer → "fu-lan-ser"
+intonation: If read aloud: a small pause after "email", then a clear, falling tone on "tomorrow" to sound sure.
+indian_pron_tip: If read aloud, say the "v" in "received" with your top teeth on your lower lip (vest, not west), and keep the final "d" in "received" and "send": ri-SEEVD, two syllables.
+register: Neutral
+tone: Reassuring, clear promise
+importance: 5
+customer_emotion: Unsure whether anyone has read the email.
+memory_hook: Like a courier receipt: you show the parcel has arrived, and you write the delivery time on it.
+hindi_meaning: हमें आपका ईमेल मिल गया है, और मैं कल शाम 5 बजे तक आपको पूरा जवाब भेजूँगा/भेजूँगी।
+hindi_roman: Hamein aapka email mil gaya hai, aur main kal shaam 5 baje tak aapko poora jawaab bhejunga/bhejungi.
+simple_meaning: We got your email, and you will get a complete reply from me before 5 pm tomorrow.
+why_it_works: It tells the customer the email is not lost and gives a real time, so they do not need to write again or call to chase.
+key_chunk: I will send you ___ by ___.
+grammar_pattern: We have + past participle · I will + base verb + by + time
+grammar_note: "Have received" shows it has just happened; "will send" is your promise for the future.
+tone_note: "I will" plus a time sounds confident and responsible. "We will try to revert soon" sounds vague and uses a word international customers may not expect.
+watch_out: ✗ We have received your email and will reply you soon. → ✓ We have received your email, and I will send you a full answer by 5 pm tomorrow.
+dont_say: "We will get back to you shortly." — "shortly" is not a time, so the customer cannot plan and will probably chase you.
+positive_swap: Instead of "We will try to reply soon", write "I will send you a full answer by 5 pm tomorrow."
+alt_1: Thanks for your email. I'm checking this with our billing team and will reply by 5 pm tomorrow.
+alt_2: I've received your message, and you'll have a full reply from me by tomorrow at 5 pm.
+more_formal: This is to confirm that we have received your email. I will send you a complete response by 5 pm tomorrow.
+ask_next: If you have a copy of the invoice, please attach it to your reply so I can check it faster.
+replies_you_may_hear: OK, thanks for letting me know. · Can't you answer today? · Fine, but please don't forget.
+if_customer_pushes: Customer: "Why can't you answer today?" → Agent: "I know you would like an answer today. I need our billing team to check two charges so that my answer is correct. I will email you by 5 pm tomorrow, and sooner if they finish early."
+cultural_note: "We will revert" is common in Indian office email; Oxford lists "revert" meaning "reply" as Indian English. International customers expect "reply" or "get back to you".
+channel_note: Voice: "I'll call you back by 5 pm tomorrow." Chat: "I'll email you the full answer by 5 pm tomorrow." Email: one line near the top.
+when_not_to_use: Do not send a holding reply when you can answer the whole question now; just answer it.
+mini_conversation: Customer: Why was I charged twice? | Agent: We have received your email, and I will send you a full answer by 5 pm tomorrow. | Customer: OK, please don't forget. | Agent: I won't. I'll check both charges with our billing team today.
+source_rule: Use "I will" plus a time instead of "we'll try" or "soon".
+fill_blank: We have received your email, and I will send you a full answer ____ 5 pm tomorrow at the latest.
+fill_answer: by
+mcq_question: You need one day to check a billing question. Which holding reply is best?
+mcq_options: A) Thank you for your email. We will revert back to you with an answer very soon. | B) Your email has been forwarded to the billing team and is under process. | C) We have received your email, and I will send you a full answer by 5 pm tomorrow. | D) We have received your email, and someone from our team will contact you shortly.
+mcq_answer: C
+mcq_why: C confirms the email arrived and gives a real time. A, B and D give no time ("very soon", "under process", "shortly"), and A also uses "revert back" and B "under process", which international readers may not expect.
+reorder_task: send / I / full / will / answer / you / a
+reorder_answer: I will send you a full answer.
+hindi_to_english: Customer ko bataiye ki email mil gaya hai aur aap Monday dopahar 12 baje tak jawaab denge.
+hindi_to_english_answer: We have received your email, and I will reply by 12 noon on Monday.
+whats_next_customer: OK. Do you need anything else from me?
+whats_next_reply: Yes, please could you send a screenshot of the two charges on your bank statement? You can hide your account number.
+role_play: Partner A emails about being charged twice. Partner B writes a holding reply that confirms the email arrived, explains the check in one line and gives a real time.
+record_task: Write a two-line holding reply to a customer whose warranty question needs a check with the product team, and send it as text or a photo for audit.
+self_check: Did you confirm you received the email? · Did you give a real day and time? · Did you use "I will" instead of "we will try"?
+
+@CSE-B-005
+id: CSE-B-005
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Verify
+sentence: To find your order quickly, could you send me the order number? It starts with ORD.
+speaker: Agent
+situation: A customer has emailed about a late delivery but did not include an order number, and they have several orders with you.
+recall_cue: The customer forgot a detail you need to find their purchase. How do you ask for it and help them find it?
+stress: to-FIND-your-OR-der-QUICK-ly · could-you-SEND-me · the-OR-der-NUM-ber · it-STARTS-with-oh-ar-DEE
+linking: If read aloud: could_you → "cud-joo" · send_me → "sen-me" · starts_with → "star-tswith"
+intonation: If read aloud: rise on "order number?" because it is a yes/no question, then fall on "ORD".
+indian_pron_tip: If read aloud, "order" is OR-der. For the "d", touch the ridge just behind your top teeth with the tip of your tongue; do not curl the tongue back, as in the Hindi ड.
+register: Neutral
+tone: Polite, helpful request
+importance: 5
+customer_emotion: A little impatient because they expected you to know already.
+memory_hook: The order number is the key to the customer's locker; ask for the key and tell them which pocket it is in.
+hindi_meaning: आपका ऑर्डर जल्दी ढूँढने के लिए, क्या आप मुझे ऑर्डर नंबर भेज सकते हैं? यह ORD से शुरू होता है।
+hindi_roman: Aapka order jaldi dhoondhne ke liye, kya aap mujhe order number bhej sakte hain? Yeh ORD se shuru hota hai.
+simple_meaning: Please send me your order number so I can find your order fast; it begins with the letters ORD.
+why_it_works: It gives the reason first, so the request does not feel like a test, and tells the customer how to recognise the number.
+key_chunk: To ___, could you send me ___?
+grammar_pattern: To + base verb (reason) + , + could you + base verb + object?
+grammar_note: "To find" at the start gives the reason; "could you" makes the request polite.
+tone_note: Giving a reason and a hint sounds helpful. "Provide order number" or "May I know your order ID" sounds like a form.
+watch_out: ✗ Please provide order no. for further process. → ✓ To find your order quickly, could you send me the order number? It starts with ORD.
+dont_say: "Order number is mandatory to process your request." — it sounds like a rule and blames the customer.
+positive_swap: Instead of "Provide your order ID", write "To find your order quickly, could you send me the order number?"
+alt_1: Could you reply with your order number? You'll find it in your confirmation email.
+alt_2: So I can check your delivery, could you send me the order number that begins with ORD?
+more_formal: So that I can locate your order, could you please send me the order number? It begins with the letters ORD.
+ask_next: Thank you. I can see order ORD-48213 and I'm checking the delivery now.
+replies_you_may_hear: It's ORD-48213. · I can't find the email. · Can't you search by my email address?
+if_customer_pushes: Customer: "Can't you just use my email address?" → Agent: "I can see three orders on your email address. The order number tells me which one is late, so I can fix the right one."
+cultural_note: "May I know your order ID?" is common in Indian scripts and is grammatical. International customers more often hear "Could you send me…?" or "Could I have…?".
+channel_note: Voice: "Could I have your order number, please?" Chat: "Could you type your order number here?" Email: give the reason and where to find it, to avoid another round of emails.
+when_not_to_use: Do not ask for the order number if it is already in the customer's email or subject line; read carefully first.
+mini_conversation: Customer: My delivery is late again. | Agent: I'm sorry your delivery is late again. To find your order quickly, could you send me the order number? It starts with ORD. | Customer: It's ORD-48213. | Agent: Thank you. I'm checking it now.
+source_rule: Verification: say the purpose and ask only for what you need.
+fill_blank: ____ find your order quickly, could you send me the order number? It starts with ORD.
+fill_answer: To
+mcq_question: A customer with three orders writes "My delivery is late." What is the best reply?
+mcq_options: A) The order number is mandatory to process your request, so please send it. | B) To find your order quickly, could you send me the order number? It starts with ORD. | C) We cannot look into your delivery without further details from your side. | D) To confirm it is you, please send your full name, address, date of birth and phone number.
+mcq_answer: B
+mcq_why: B gives a reason, asks for one thing and says how to find it. D gives a reason too, but asks for far more than you need. A and C sound like rules and give the customer no help.
+reorder_task: send / number / you / me / Could / the / order
+reorder_answer: Could you send me the order number?
+hindi_to_english: Customer se poochhiye ki kya woh ticket number bhej sakte hain, taaki aap complaint jaldi dhoondh saken.
+hindi_to_english_answer: To find your complaint quickly, could you send me the ticket number?
+whats_next_customer: I can't find the confirmation email.
+whats_next_reply: That's fine. Could you tell me the date you ordered and the item name? I'll search for it that way.
+role_play: Partner A emails "Where is my delivery?" with no details. Partner B writes a reply that asks for the order number with a reason and a hint; then A says they cannot find it, and B offers another way.
+record_task: Write a reply asking a customer for their ticket number, with a reason and a hint where to find it, and send it as text or a photo for audit.
+self_check: Did you give a reason first? · Did you ask for only one thing? · Did you tell the customer where to find it?
+
+@CSE-B-006
+id: CSE-B-006
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Listen & clarify
+sentence: Could you attach a photo of the damaged item to your reply?
+speaker: Agent
+situation: A customer writes that their new lamp arrived broken, and you need to see the damage before you arrange a replacement.
+recall_cue: You need to see the damage before you can send a new item. What do you ask the customer to add to their next email?
+stress: could-you-at-TACH · a-PHO-to · of-the-DAM-aged-I-tem · to-your-re-PLY
+linking: If read aloud: attach_a → "a-ta-cha" · damaged_item → "dam-ij-dye-tem"
+intonation: If read aloud: rise at the end on "reply?" because it is a yes/no request.
+indian_pron_tip: If read aloud, "photo" is FOH-toh with a long "oh". Start with "f", with your top teeth on your lower lip (fan, not pan), not a breathy "p"; "damaged" ends in a clear "d".
+register: Neutral
+tone: Polite, practical request
+importance: 4
+customer_emotion: Disappointed and wanting a quick replacement.
+memory_hook: A photo is worth a thousand words, so ask for one picture instead of ten emails describing the crack.
+hindi_meaning: क्या आप अपने जवाब में क्षतिग्रस्त सामान की एक फ़ोटो लगा सकते हैं?
+hindi_roman: Kya aap apne jawaab mein kshatigrast saamaan ki ek photo laga sakte hain?
+simple_meaning: Please add a picture of the broken item when you write back.
+why_it_works: It asks for one clear thing in a polite question, so the customer knows exactly what to do and you avoid more emails.
+key_chunk: Could you attach ___ to your reply?
+grammar_pattern: Could + you + attach + object + to + your reply?
+grammar_note: We "attach" a file "to" an email; we do not "attach with" it.
+tone_note: A question sounds like a request. "Send photo" or "You have to send proof" sounds like the customer is not trusted.
+watch_out: ✗ Could you attach photo of damaged item to your reply? → ✓ Could you attach a photo of the damaged item to your reply?
+dont_say: "Send proof of damage." — "proof" sounds like you think the customer may be lying.
+positive_swap: Instead of "You have to send proof", write "Could you attach a photo of the damaged item to your reply?"
+alt_1: Please could you send a photo of the broken lamp with your reply?
+alt_2: Could you reply with a photo that shows the damage?
+more_formal: Would you be able to attach a photograph of the damaged item when you reply?
+ask_next: A photo of the box and the label would also help, if you still have them.
+replies_you_may_hear: Sure, here it is. · I threw the box away. · How do I attach a photo?
+if_customer_pushes: Customer: "Why do you need a photo? Don't you believe me?" → Agent: "I do believe you, and I'm sorry it arrived broken. The photo goes to our courier so they can fix the packing problem, and it lets me send your replacement today."
+cultural_note: Indian English often says "snap" for a photo and "the same" for the item. International customers say "photo" or "picture" and expect you to name the thing.
+channel_note: Voice: "Could you email us a photo of the damage?" Chat: "Could you upload a photo here using the clip icon?" Email: ask for it as an attachment to the reply.
+when_not_to_use: Do not ask for a photo when the damage is already clear from the courier report or the customer already sent one.
+mini_conversation: Customer: My lamp arrived broken. | Agent: I'm sorry your lamp arrived broken. Could you attach a photo of the damaged item to your reply? | Customer: Here it is. | Agent: Thank you. I've booked a replacement lamp for you today.
+source_rule: Ask a clear question and give one clear next step.
+fill_blank: Could you attach a photo of the damaged item ____ (starts with t) your reply?
+fill_answer: to
+mcq_question: You need to see a broken item before replacing it. Which request is best?
+mcq_options: A) Send proof of the damage today so that we can process your claim. | B) Kindly send the snap of the same so that we can look into the matter. | C) Could you attach a photo of the damaged item to your reply? | D) You have to send photos of the lamp, or we cannot arrange a replacement.
+mcq_answer: C
+mcq_why: C is polite and clear. B is a common Indian-English habit that international customers may find unclear ("snap", "the same"), and A and D sound like you distrust the customer.
+reorder_task: photo / Could / attach / you / a
+reorder_answer: Could you attach a photo?
+hindi_to_english: Customer se kahiye ki apne jawaab mein error message ka screenshot attach karein.
+hindi_to_english_answer: Could you attach a screenshot of the error message to your reply?
+whats_next_customer: I'm on my phone. How do I attach it?
+whats_next_reply: In most email apps, tap the paperclip icon, choose the photo and press send.
+role_play: Partner A emails that a dinner plate arrived cracked. Partner B asks for a photo politely; A asks why it is needed, and B explains the reason calmly.
+record_task: Write a two-line reply asking a customer for a screenshot of an error message, and send it as text or a photo for audit.
+self_check: Did you ask with "Could you"? · Did you name the exact thing to photograph? · Did you avoid "proof" (it sounds like distrust) and "the same" (international customers may not expect it)?
+
+@CSE-B-007
+id: CSE-B-007
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Apologise
+sentence: I'm sorry your headphones arrived two days late. I have refunded the delivery charge to your card.
+speaker: Agent
+situation: A customer paid for fast delivery, but their headphones arrived two days after the promised date.
+recall_cue: The delivery was late and the customer paid extra for speed. How do you say sorry for the exact problem and fix something?
+stress: i'm-SOR-ry · your-HEAD-phones · a-RIVED · two-DAYS-LATE · i-have-re-FUND-ed · the-de-LIV-er-y-CHARGE
+linking: If read aloud: arrived_two → "a-rive-too" · refunded_the → "ri-fun-di-the"
+intonation: If read aloud: low and sincere on the first sentence, then a clear, steady tone for the action.
+indian_pron_tip: If read aloud, say the "v" in "delivery" with top teeth on the lower lip (vest, not west); "arrived" ends in a clear "d".
+register: Neutral
+tone: Sincere, responsible
+importance: 5
+customer_emotion: Let down and feeling they paid for nothing.
+memory_hook: A real apology has two hands: one says sorry for the exact thing, the other gives something back.
+hindi_meaning: मुझे खेद है कि आपके हेडफ़ोन दो दिन देर से पहुँचे। मैंने डिलीवरी चार्ज आपके कार्ड में वापस कर दिया है।
+hindi_roman: Mujhe khed hai ki aapke headphone do din der se pahunche. Maine delivery charge aapke card mein wapas kar diya hai.
+simple_meaning: I apologise that your headphones came two days late, and I have given back the money you paid for delivery.
+why_it_works: It names the exact problem, so the customer knows you understood, and shows an action already done instead of only words.
+key_chunk: I'm sorry your ___. I have ___.
+grammar_pattern: I'm sorry + (that) + subject + past verb · I have + past participle
+grammar_note: Use "I'm sorry" plus what happened; "I have refunded" shows the action is already done.
+tone_note: A specific apology plus a fix sounds sincere. "Sorry for the inconvenience caused" sounds copied and does not say what went wrong.
+watch_out: ✗ Sorry for the inconvenience caused. → ✓ I'm sorry your headphones arrived two days late. I have refunded the delivery charge to your card.
+dont_say: "We regret the inconvenience caused." — it is a stock phrase that does not name the problem or take responsibility.
+positive_swap: Instead of "Sorry for the inconvenience", write "I'm sorry your headphones arrived two days late."
+alt_1: I apologise that your headphones were two days late. I've refunded your delivery charge.
+alt_2: I'm sorry we missed the delivery date for your headphones. I've refunded the delivery charge, and it should reach your card within five working days.
+more_formal: Please accept my apologies for the two-day delay in delivering your headphones. I have refunded the delivery charge to your card.
+ask_next: You do not need to do anything. The refund should show on your card within five working days.
+replies_you_may_hear: Thank you, that's fair. · It's not just the money, I needed them for a trip. · Will this happen again?
+if_customer_pushes: Customer: "I needed them for my trip. A refund doesn't fix that." → Agent: "You're right, and I'm sorry it spoiled your plans. I've also added a note to your account so our team checks your next delivery closely."
+cultural_note: "Sorry for the inconvenience caused" is very common in Indian support templates. International customers often read it as a copy-paste line; name the problem instead.
+channel_note: Voice: say it slowly, then pause for the customer. Chat: split into two short messages. Email: put it near the top, after the greeting.
+when_not_to_use: Do not apologise for a delay before you have checked it really was late; first confirm the facts.
+mini_conversation: Customer: I paid for fast delivery and my headphones came two days late. | Agent: I'm sorry your headphones arrived two days late. I have refunded the delivery charge to your card. | Customer: Thanks. When will I see it? | Agent: It should reach your card within five working days.
+source_rule: Apologise specifically, take responsibility, then offer a fix.
+fill_blank: I'm sorry your headphones arrived two days late. I ____ refunded the delivery charge to your card.
+fill_answer: have
+mcq_question: A customer paid for fast delivery, but their headphones arrived two days late. Which apology is best?
+mcq_options: A) We are sorry for the inconvenience caused to you by the delay in delivering your order. | B) I'm sorry, but delays can happen with couriers, and this one was outside our control. | C) I'm sorry your headphones arrived two days late. I have refunded the delivery charge to your card. | D) We regret any inconvenience this may have caused and thank you for your patience and understanding.
+mcq_answer: C
+mcq_why: C names the problem and fixes something. A and D are stock phrases that do not say what went wrong or what you did, and B makes an excuse instead of taking responsibility.
+reorder_task: headphones / sorry / late / I'm / arrived / your
+reorder_answer: I'm sorry your headphones arrived late.
+hindi_to_english: Customer se maafi maangiye ki unka phone charger galat bheja gaya, aur bataiye ki sahi charger aaj bhej diya hai.
+hindi_to_english_answer: I'm sorry we sent you the wrong charger. I have sent the right one today.
+whats_next_customer: Will this happen again next time?
+whats_next_reply: I have reported this delay to our delivery team today. If your next order is late, reply to this email and I will look into it myself.
+role_play: Partner A emails that a birthday cake arrived a day late. Partner B writes a specific apology and one action already taken; A pushes back once, and B answers calmly.
+record_task: Write a two-sentence apology to a customer who received the wrong colour of shirt, including one action you have taken, and send it as text or a photo for audit.
+self_check: Did you name the exact problem? · Did you use "I", not only "we"? · Did you include an action already done?
+
+@CSE-B-008
+id: CSE-B-008
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: Good news: your account is unlocked, and you can log in again now.
+speaker: Agent
+situation: A customer was locked out after too many wrong passwords, and you have just reset the account.
+recall_cue: The problem is solved. How do you tell the customer in one line, and what can they do now?
+stress: GOOD-NEWS · your-ac-COUNT-is-un-LOCKED · and-you-can-LOG-in-a-GAIN-NOW
+linking: If read aloud: account_is → "a-coun-tis" · log_in → "lo-gin" · unlocked_and → "un-lock-tand"
+intonation: If read aloud: bright, rising energy on "Good news", then a clear fall on "now".
+indian_pron_tip: If read aloud, "unlocked" ends in a "t" sound (un-LOKT), not "un-lock-ed" with an extra syllable.
+register: Friendly
+tone: Positive, clear, upbeat
+importance: 4
+customer_emotion: Frustrated at being locked out and relieved to hear news.
+memory_hook: Lead with the good news like opening the door first, then tell them they can walk in.
+hindi_meaning: अच्छी ख़बर: आपका अकाउंट अनलॉक हो गया है, और अब आप फिर से लॉग इन कर सकते हैं।
+hindi_roman: Achchhi khabar: aapka account unlock ho gaya hai, aur ab aap phir se log in kar sakte hain.
+simple_meaning: Your account works again, and you can sign in right now.
+why_it_works: The customer reads the result in the first line and knows exactly what to do next, without searching through the email.
+key_chunk: Good news: your ___ is ___, and you can ___ now.
+grammar_pattern: Good news + : + subject + is + adjective + , and + you can + base verb
+grammar_note: "Unlocked" here is an adjective that describes the account now.
+tone_note: Starting with the result sounds confident and kind. "Your issue has been resolved from our end" sounds stiff and does not tell the customer what to do.
+watch_out: ✗ Good news: your account is unlock, and you can login again now. → ✓ Good news: your account is unlocked, and you can log in again now.
+dont_say: "The issue has been resolved at our end." — it is vague, and "at our end" hints the problem may still exist at the customer's end.
+positive_swap: Instead of "Issue resolved from our end", write "Good news: your account is unlocked, and you can log in again now."
+alt_1: Your account is working again, so you can sign in now.
+alt_2: I've unlocked your account, and you can log in straight away.
+more_formal: I am pleased to confirm that your account has been unlocked, and you can now log in as usual.
+ask_next: If you still see an error when you log in, reply to this email and I'll check it right away.
+replies_you_may_hear: Great, it works, thanks! · I still can't log in. · Do I need a new password?
+if_customer_pushes: Customer: "It still doesn't work." → Agent: "I'm sorry it still isn't working. Could you send me a screenshot of the message you see? I'll check it straight away."
+cultural_note: "Resolved from our end" is a common Indian support phrase. International customers prefer the actual result in plain words and what they can do now.
+channel_note: Voice: "Good news, your account is unlocked. Could you try logging in now while I'm on the line?" Chat: same short line, then wait for them to try. Email: put it in the first line.
+when_not_to_use: Do not say an issue is fixed before you have tested it or before the change has gone through.
+mini_conversation: Customer: I'm locked out of my account. | Agent: Good news: your account is unlocked, and you can log in again now. | Customer: It works, thank you. | Agent: You're welcome. Is there anything else I can help with?
+source_rule: Give one clear next step in plain words.
+fill_blank: Good ____: your account is unlocked, and you can log in again now.
+fill_answer: news
+mcq_question: You have fixed a customer's locked account. Which line is best to start the email?
+mcq_options: A) Your issue has been resolved from our end, so please check and confirm. | B) Good news: your account is unlocked, and you can log in again now. | C) The needful has been done on your account, and the ticket is now closed. | D) Please check and confirm if you are now able to access your account.
+mcq_answer: B
+mcq_why: B gives the result and the next step. A sounds professional but vague, and "from our end" can sound like the problem may still be on the customer's side. C is fine in Indian office English, but international customers may not expect "the needful", and it does not say what was done, and D leaves the customer to find out the result alone.
+reorder_task: you / account / is / unlocked / and / your / can / now / log / in
+reorder_answer: Your account is unlocked, and you can log in now.
+hindi_to_english: Customer ko bataiye ki unka password reset ho gaya hai aur woh ab login kar sakte hain.
+hindi_to_english_answer: Good news: your password has been reset, and you can log in now.
+whats_next_customer: Do I need to change my password?
+whats_next_reply: Your current password works again. If you would like a new one, go to Settings, then Security, after you log in.
+role_play: Partner A emails that their gift card does not work. Partner B writes the "fixed" email: the good news first, then what A can do now, then a line in case it still fails.
+record_task: Write a two-line email telling a customer that their delivery address is now corrected, and send it as text or a photo for audit.
+self_check: Did the result come in the first line? · Did you say what the customer can do now? · Did you say what was fixed, not just "resolved from our end"?
+
+@CSE-B-009
+id: CSE-B-009
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Set expectations
+sentence: Next, our courier will collect the parcel from your address on Friday between 10 am and 2 pm.
+speaker: Agent
+situation: A customer is returning a faulty toaster, and you have booked a pickup for them.
+recall_cue: The return is booked. What does the customer need to know about what happens next, and when?
+stress: NEXT · our-COUR-i-er-will-col-LECT · the-PAR-cel · on-FRI-day · be-TWEEN-TEN-ay-EM · and-TWO-pee-EM
+linking: If read aloud: collect_the → "co-lec-the" · parcel_from → "par-sel-from"
+intonation: If read aloud: pause after "Next", then slow down for the day and time so they are clear.
+indian_pron_tip: If read aloud, "courier" is KOO-ri-er; keep the "t" at the end of "collect" clear, not "collec".
+register: Neutral
+tone: Clear, organised
+importance: 5
+customer_emotion: Wants the return to be easy and not to waste a day at home.
+memory_hook: Next step equals who, what, when: courier, parcel, Friday 10 to 2.
+hindi_meaning: अगला कदम: हमारा कूरियर शुक्रवार सुबह 10 से दोपहर 2 बजे के बीच आपके पते से पार्सल ले जाएगा।
+hindi_roman: Agla kadam: hamara courier shukravaar subah 10 se dopahar 2 baje ke beech aapke pate se parcel le jayega.
+simple_meaning: On Friday, between 10 in the morning and 2 in the afternoon, a delivery person will come to pick up the box.
+why_it_works: It tells the customer who will come, what they will take and when, so the customer can plan and does not need to ask again.
+key_chunk: Next, ___ will ___ on ___ between ___ and ___.
+grammar_pattern: Next + , + subject + will + base verb + on + day + between + time + and + time
+grammar_note: Use "on" for days and "between … and …" for a time window.
+tone_note: Exact facts sound reliable. "Our team will contact you for pickup" leaves the customer waiting and guessing.
+watch_out: ✗ Pickup will be done on Friday in between 10 to 2. → ✓ Next, our courier will collect the parcel from your address on Friday between 10 am and 2 pm.
+dont_say: "Pickup will happen in 3-5 days." — a wide range with no day makes the customer stay home and wait.
+positive_swap: Instead of "Our team will contact you shortly", write "Next, our courier will collect the parcel on Friday between 10 am and 2 pm."
+alt_1: Our courier will pick up the parcel from your home on Friday, between 10 am and 2 pm.
+alt_2: The next step is a pickup from your address this Friday, any time from 10 am to 2 pm.
+more_formal: As the next step, our courier will collect the parcel from your address on Friday between 10:00 am and 2:00 pm.
+ask_next: Please pack the toaster in its box and have it ready by the door before 10 am on Friday.
+replies_you_may_hear: Friday is fine. · I'm not home on Friday. · Do I need to print anything?
+if_customer_pushes: Customer: "I work on Friday. Can't they come on Saturday?" → Agent: "Of course. I can see a free slot on Saturday between 9 am and 1 pm. Shall I book that for you?"
+cultural_note: "In between 10 to 2" is common in Indian English. International customers expect "between 10 am and 2 pm" or "from 10 am to 2 pm".
+channel_note: Voice: say the time slowly and repeat it. Chat: put the day and time on their own line. Email: put the next step in bold or as a numbered step.
+when_not_to_use: Do not give a day and time before the courier has confirmed the booking.
+mini_conversation: Customer: How do I return the toaster? | Agent: Next, our courier will collect the parcel from your address on Friday between 10 am and 2 pm. | Customer: Do I need to print a label? | Agent: No, the courier will bring one.
+source_rule: Give one clear next step; number the steps if there are several.
+fill_blank: Next, our courier will collect the parcel from your address on Friday ____ 10 am and 2 pm.
+fill_answer: between
+mcq_question: Which line best explains the next step for a return?
+mcq_options: A) Your return is booked, and our courier will pick up the parcel within the next few working days. | B) Your return is booked. Our team will contact you shortly to confirm the day and time of the pickup. | C) Next, our courier will collect the parcel from your address on Friday between 10 am and 2 pm. | D) Your return is booked for Friday, and the courier will call you before arriving to collect the parcel.
+mcq_answer: C
+mcq_why: C says who, what and when, with a time window. A and B give no day or time, and D gives the day but not the time, so the customer cannot plan.
+reorder_task: will / Friday / collect / courier / on / Our / parcel / the
+reorder_answer: Our courier will collect the parcel on Friday.
+hindi_to_english: Customer ko bataiye ki technician Tuesday ko subah 9 se 12 ke beech aayega.
+hindi_to_english_answer: Next, our technician will visit you on Tuesday between 9 am and 12 noon.
+whats_next_customer: Do I need to be at home?
+whats_next_reply: Yes, or someone else can hand over the parcel for you.
+role_play: Partner A wants to return a pair of shoes. Partner B writes the next step with who, what, day and time; A asks to change the day, and B offers another slot.
+record_task: Write a one-line next step telling a customer when a technician will visit, with the day and a time window, and send it as text or a photo for audit.
+self_check: Did you say who will come? · Did you give a day and a time window? · Did you use "between … and …" correctly?
+
+@CSE-B-010
+id: CSE-B-010
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: If you have any other questions, just reply to this email and I'll be happy to help.
+speaker: Agent
+situation: You have answered a customer's question about their warranty, and you are writing the last line before your sign-off.
+recall_cue: The email is almost finished. How do you invite the customer to write again without sounding like a template?
+stress: if-you-have-AN-y-OTH-er-QUES-tions · just-re-PLY · to-THIS-EE-mail · and-I'll-be-HAP-py-to-HELP
+linking: If read aloud: have_any → "ha-ven-ee" · reply_to → "ri-ply-tuh" · I'll_be → "ail-bee"
+intonation: If read aloud: a small pause after "questions", then a warm, falling tone on "help".
+indian_pron_tip: If read aloud, "other" has a soft "th" (tongue between the teeth), not "ud-der"; "questions" ends in a clear "nz".
+register: Friendly
+tone: Warm, open invitation
+importance: 3
+customer_emotion: Satisfied and ready to finish.
+memory_hook: Leave the door open: a closing line is like a shopkeeper saying "come back any time".
+hindi_meaning: अगर आपके कोई और सवाल हैं, तो बस इस ईमेल का जवाब दें, मुझे मदद करके ख़ुशी होगी।
+hindi_roman: Agar aapke koi aur sawaal hain, to bas is email ka jawaab dein, mujhe madad karke khushi hogi.
+simple_meaning: Write back to this email if you want to ask anything else; I am glad to help.
+why_it_works: It tells the customer exactly how to get more help (reply to this email) and sounds personal because of "I'll".
+key_chunk: If you have any other ___, just ___.
+grammar_pattern: If + you + have + noun + , + imperative + and + I'll + be + adjective + to + verb
+grammar_note: In an "if" sentence, use the present ("have") in the first part and "I'll" in the second.
+tone_note: "Just reply" makes it easy and friendly. "Please feel free to revert in case of any further queries" sounds stiff to international readers.
+watch_out: ✗ If you will have any other questions, just reply to this email. → ✓ If you have any other questions, just reply to this email and I'll be happy to help.
+dont_say: "Please do not reply to this email." on a support reply — it shuts the door when the customer may still need help.
+positive_swap: Instead of "Feel free to revert for further queries", write "If you have any other questions, just reply to this email."
+alt_1: If anything else comes up, just reply here and I'll help.
+alt_2: Do let me know if you have any other questions; I'm happy to help.
+more_formal: Should you have any further questions, please reply to this email and I will be glad to assist.
+ask_next: Kind regards, Meera Nair, [Company]
+replies_you_may_hear: Thanks, that's all. · Actually, one more thing… · Great, thank you for your help.
+if_customer_pushes: Customer: "I replied last time and nobody answered." → Agent: "I'm sorry nobody answered your last email. This email comes straight to me, and I'll reply within one working day."
+cultural_note: "Feel free to revert" is a common Indian sign-off line; Oxford marks "revert" meaning "reply" as Indian English, so international customers may not expect it.
+channel_note: Voice: "Is there anything else I can help you with today?" Chat: "Anything else I can help with?" Email: invite a reply, since the customer cannot answer you live.
+when_not_to_use: Do not use it on an email where the problem is still open; give the next step and a date instead.
+mini_conversation: Customer: Thanks for explaining the warranty. | Agent: You're welcome. If you have any other questions, just reply to this email and I'll be happy to help. | Customer: Actually, does it cover the battery? | Agent: Yes, the battery is covered for one year.
+source_rule: Close by checking the issue is resolved; don't invite "anything else" on an unresolved issue.
+fill_blank: If you ____ any other questions, just reply to this email and I'll be happy to help.
+fill_answer: have
+mcq_question: You solved the customer's problem. Which closing line is best?
+mcq_options: A) If you have any other questions, just reply to this email and I'll be happy to help. | B) Your ticket is now closed, so please do not reply to this email, as it is not monitored. | C) Thank you for contacting us. Feel free to revert in case of any further queries. | D) Your issue is marked as resolved and the ticket has been closed from our end.
+mcq_answer: A
+mcq_why: A is warm and tells the customer how to get more help. B shuts the door and D only reports a status. C is polite in Indian office English, but "revert" may not be expected by international readers.
+reorder_task: reply / email / to / just / this
+reorder_answer: Just reply to this email.
+hindi_to_english: Customer ko bataiye ki agar koi aur sawaal ho to woh is email ka jawaab de sakte hain.
+hindi_to_english_answer: If you have any other questions, just reply to this email.
+whats_next_customer: Thanks, that's everything.
+whats_next_reply: You're welcome, Daniel. Enjoy your new speaker.
+role_play: Partner A asks by email how long their warranty lasts. Partner B answers in two lines and ends with an inviting closing line; A replies with one more question, and B answers it.
+record_task: Write the last two lines of an email to a customer whose refund is complete: a closing line and a sign-off. Send it as text or a photo for audit.
+self_check: Is the problem really solved? · Did you say how to get more help? · Did you write "reply" rather than "revert", which international customers may not expect?
+
+@CSE-B-011
+id: CSE-B-011
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: Best regards, Meera, Customer Support, [Company]
+speaker: Agent
+situation: You are ending a reply to a customer and need a short, professional sign-off with your name and team.
+recall_cue: What two or three words do you write before your name at the end of a support email, and what comes after your name?
+stress: BEST-re-GARDS · MEE-ra · CUS-tom-er-sup-PORT
+linking: If read aloud: best_regards → "bes-ri-gardz" · customer_support → "cus-tum-er-suh-port"
+intonation: If read aloud: a sign-off is not read in a call; if you read it, keep it flat and falling.
+indian_pron_tip: If read aloud, keep the "t" in "best" before "regards" light but present, and end "regards" with a "dz" sound, not "rigard".
+register: Neutral
+tone: Friendly, professional
+importance: 3
+customer_emotion: Finishing the email and wanting to know who helped them.
+memory_hook: A sign-off is your name badge at the door: a warm word, your name, your team.
+hindi_meaning: शुभकामनाओं सहित, मीरा, ग्राहक सहायता, [Company]
+hindi_roman: Shubhkaamnaon sahit, Meera, grahak sahayata, [Company]
+simple_meaning: A polite goodbye, then the writer's name, team and company.
+why_it_works: A real name makes the customer feel a person helped them and tells them who to ask for next time; the team and company make it easy to trust.
+key_chunk: Best regards, ___, ___, [Company]
+grammar_pattern: Closing phrase + , + first name + , + team + , + company
+grammar_note: Only the first word of the closing gets a capital: "Best regards", not "Best Regards".
+tone_note: "Best regards" is safe for almost every customer. "Thanks and regards" with no name, or "Yours faithfully", sounds old-fashioned or cold.
+watch_out: ✗ Best Regards, Customer Support → ✓ Best regards, Meera, Customer Support, [Company]
+dont_say: "Regards, Team [Company]" with no name — the customer does not know who helped them and cannot ask for you again.
+positive_swap: Instead of "Thanks & Regards, Support Team", write "Best regards, Meera, Customer Support, [Company]".
+alt_1: Kind regards, Meera, Customer Support, [Company]
+alt_2: Thanks, Meera, [Company] Support
+more_formal: Yours sincerely, Meera Nair, Customer Support Team, [Company]
+ask_next: Ticket #55931 · Reply to this email to continue the conversation.
+replies_you_may_hear: Thanks, Meera. · Hi Meera, I have one more question. · Can I ask for you next time?
+if_customer_pushes: Customer: "Can I speak to you directly next time?" → Agent: "Just reply to this email and it will come to me. If I'm away, a colleague will see our full conversation."
+cultural_note: "Thanks & Regards" is very common in Indian office email. International customers are used to "Best regards" or "Kind regards" plus a real first name; a Zendesk analysis (quoted secondhand) found "Best regards" did better than some other closings, but the reasons are unclear, so treat that as weak evidence.
+channel_note: Voice: "Thank you for calling. Have a good day." Chat: "Thanks for chatting with us, Daniel." Email: sign-off, name, team, company, on separate lines.
+when_not_to_use: Do not use a cheerful "Cheers!" when writing to a customer who has just complained or lost money.
+mini_conversation: Customer: Thanks for sorting out my refund. | Agent: You're welcome. Best regards, Meera, Customer Support, [Company] | Customer: Thank you, Meera. | Agent: It was a pleasure, Daniel. Have a good week.
+source_rule: Sign off warmly with your own name; "Best regards" is a safe choice.
+fill_blank: Best ____ (starts with r), Meera, Customer Support, [Company]
+fill_answer: regards
+mcq_question: Which sign-off is best for a support email to an international customer?
+mcq_options: A) Thanks & Regards, Support Team, [Company] | B) Best regards, Meera, Customer Support, [Company] | C) Yours obediently, Executive, Customer Care, [Company] | D) Cheers!!! Meera, Customer Support, [Company]
+mcq_answer: B
+mcq_why: B is warm, professional and gives a real name and team. A is common in Indian offices, but it has no name, so the customer does not know who helped. C is old-fashioned and also has no name, and D is too casual for a support email.
+reorder_task: Support / Customer / regards / Meera / Best
+reorder_answer: Best regards, Meera, Customer Support
+hindi_to_english: Email ka sign-off likhiye: Kind regards, naam Arjun, team Billing Team, aur company [Company].
+hindi_to_english_answer: Kind regards, Arjun, Billing Team, [Company]
+whats_next_customer: Thanks, Meera, you were very helpful.
+whats_next_reply: Thank you, Daniel, that's kind of you. I'm glad I could help.
+role_play: Partner A shows three sign-offs used in their office. Partner B rewrites each one with a closing phrase, a real first name, a team and [Company].
+record_task: Write a full sign-off for yourself (closing phrase, your first name, your team and [Company]) and send it as text or a photo for audit.
+self_check: Did you use a real first name? · Did you write "regards" with a small "r"? · Did you avoid "Thanks & Regards" with no name?
+
+@CSE-B-012
+id: CSE-B-012
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Follow-up
+sentence: I'm just following up on my email from Monday. Do you still need help with your refund?
+speaker: Agent
+situation: You asked a customer on Monday to choose how they want their refund (on the original card or as store credit), and it is now Thursday with no reply.
+recall_cue: The customer has gone quiet for three days. How do you remind them politely without sounding like you are chasing?
+stress: i'm-JUST-FOL-low-ing-UP · on-my-EE-mail-from-MUN-day · do-you-STILL-NEED-HELP · with-your-REE-fund
+linking: If read aloud: following_up → "fol-oh-in-gup" · still_need → "stil-need" · help_with → "hel-pwith"
+intonation: If read aloud: friendly and light on the first sentence, then rise on "refund?" because it is a yes/no question.
+indian_pron_tip: If read aloud, keep the final "d" in "need" and "refund" clear; "Monday" is MUN-day, not MON-day with an "o" as in "on".
+register: Friendly
+tone: Gentle, helpful reminder
+importance: 4
+customer_emotion: Busy or forgetful, not necessarily unhappy.
+memory_hook: A follow-up is a light knock on the door, not a loud bang.
+hindi_meaning: मैं बस सोमवार वाले अपने ईमेल के बारे में याद दिला रहा/रही हूँ। क्या आपको अभी भी रिफ़ंड के लिए मदद चाहिए?
+hindi_roman: Main bas Somvaar waale apne email ke baare mein yaad dila raha/rahi hoon. Kya aapko abhi bhi refund ke liye madad chahiye?
+simple_meaning: I wrote to you on Monday; I want to check if you still need help getting your money back.
+why_it_works: It reminds the customer which email you mean and asks an easy yes/no question, so it is simple to answer and does not sound like blame.
+key_chunk: I'm just following up on ___. Do you still need help with ___?
+grammar_pattern: I'm + just + verb-ing + on + noun · Do + you + still + need + noun?
+grammar_note: "Following up on" means writing again about something you sent before.
+tone_note: "Just" and the question make it gentle. "You have not replied to our email" sounds like you are blaming the customer.
+watch_out: ✗ I am just follow up on my email from Monday. → ✓ I'm just following up on my email from Monday. Do you still need help with your refund?
+dont_say: "As you have not responded, we are closing your ticket." — it sounds like a punishment and may lose a customer who was simply busy.
+positive_swap: Instead of "You have not replied yet", write "I'm just following up on my email from Monday."
+alt_1: I wanted to check in about my email on Monday. Can I still help with your refund?
+alt_2: Following up on Monday's email: are you still waiting for your refund?
+more_formal: I am writing to follow up on my email of Monday. Please let me know whether you still need assistance with your refund.
+ask_next: If so, please reply with "card" or "store credit" and I'll process the refund the same day.
+replies_you_may_hear: Sorry, I was travelling. · Yes, please send it to my card. · No, it's sorted now, thanks.
+if_customer_pushes: Customer: "Stop emailing me, I'm busy." → Agent: "Of course, I'm sorry for the extra emails. I'll keep your request open for 14 days, so you can reply whenever it suits you."
+cultural_note: "Gentle reminder" is common in Indian office email and can sound pushy to some international readers. A light "just following up" plus a question feels friendlier.
+channel_note: Voice: "I'm calling about the email I sent on Monday." Chat: "Are you still there, Daniel?" Email: keep the same subject line with "Follow-up" so the customer sees it is not new.
+when_not_to_use: Do not send a follow-up the next morning; give the customer a fair time to reply first.
+mini_conversation: Customer: (no reply for three days) | Agent: I'm just following up on my email from Monday. Do you still need help with your refund? | Customer: Sorry, I was away. Yes, please. | Agent: Thank you for replying. Would you like the refund on your original card or as store credit?
+source_rule: Follow-ups: say it is a follow-up (in the subject too) so it is not read as a new issue.
+fill_blank: I'm just ____ up on my email from Monday. Do you still need help with your refund?
+fill_answer: following
+mcq_question: A customer has not replied for three days. Which follow-up is best?
+mcq_options: A) I'm just following up on my email from Monday. Do you still need help with your refund? | B) You have not replied to our email from Monday, so please reply with the details we asked for. | C) Gentle reminder: please reply at the earliest, as we are still waiting for your response. | D) As we have not heard from you since Monday, your ticket will be closed today unless you reply.
+mcq_answer: A
+mcq_why: A says which email and asks an easy question. B blames the customer, C is polite in Indian office English but can feel pushy, and D sounds like a threat.
+reorder_task: following / just / I'm / up / my / on / email
+reorder_answer: I'm just following up on my email.
+hindi_to_english: Customer ko yaad dilaiye ki aapne Tuesday ko email bheja tha, aur poochhiye ki kya unhe abhi bhi exchange chahiye.
+hindi_to_english_answer: I'm just following up on my email from Tuesday. Do you still need help with your exchange?
+whats_next_customer: Sorry, I was away. What did you need?
+whats_next_reply: That's fine, thank you for replying. I need to know if you would like the refund on your original card or as store credit.
+role_play: Partner A asked for a refund but did not reply when Partner B asked how to send the money. Partner B writes a polite follow-up; A replies late and apologises, and B answers warmly.
+record_task: Write a follow-up email to a customer who has not replied for four days about a size exchange, and send it as text or a photo for audit.
+self_check: Did you say which earlier email you mean? · Did you ask an easy yes/no question? · Did you avoid blaming the customer?
+
+@CSE-B-013
+id: CSE-B-013
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Explain
+sentence: I've attached your invoice for order 48213 as a PDF.
+speaker: Agent
+situation: A customer asked for a copy of their invoice for an office claim, and you are sending it.
+recall_cue: You are sending a document with your email. How do you tell the customer what is attached, without old-fashioned office phrases?
+stress: i've-at-TACHED · your-IN-voice · for-OR-der · four-eight-two-one-THREE · as-a-pee-dee-EF
+linking: If read aloud: I've_attached → "ai-va-tacht" · invoice_for → "in-voy-sfor"
+intonation: If read aloud: steady, falling at "PDF", with the numbers read in pairs or one by one.
+indian_pron_tip: If read aloud, "attached" ends in "cht" (one syllable at the end: a-TACHT), not "a-tach-ed"; "invoice" has a clear "v", top teeth on the lower lip.
+register: Neutral
+tone: Clear, helpful
+importance: 3
+customer_emotion: Needs the document quickly for a claim.
+memory_hook: Name the attachment like a gift tag: say what is inside the box, not "the same".
+hindi_meaning: आपके ऑर्डर 48213 का इनवॉइस मैंने PDF के रूप में अटैच कर दिया है।
+hindi_roman: Aapke order 48213 ka invoice maine PDF ke roop mein attach kar diya hai.
+simple_meaning: Your bill for order 48213 is added to this email as a PDF file.
+why_it_works: It names the document, the order and the format, so the customer knows what to look for and does not miss the attachment.
+key_chunk: I've attached your ___ as a ___.
+grammar_pattern: I've (I have) + attached + your + noun + for + noun + as + a + format
+grammar_note: "I've attached" (present perfect) tells the customer the file is already in this email.
+tone_note: A short, plain sentence sounds modern and clear. "Please find the same attached herewith" sounds old-fashioned and does not say what "the same" is.
+watch_out: ✗ I have attach your invoice for order 48213 in PDF. → ✓ I've attached your invoice for order 48213 as a PDF.
+dont_say: "PFA." — many customers do not know this abbreviation, and it looks rushed.
+positive_swap: Instead of "Please find the same attached", write "I've attached your invoice for order 48213 as a PDF."
+alt_1: Your invoice for order 48213 is attached as a PDF.
+alt_2: I've added the PDF invoice for order 48213 to this email.
+more_formal: Please find attached your invoice for order 48213 in PDF format.
+ask_next: If you need the invoice in your company's name, just reply with the company name and address.
+replies_you_may_hear: Thanks, got it. · I can't open the file. · Can you add my company name?
+if_customer_pushes: Customer: "There's no attachment!" → Agent: "I'm sorry, it didn't come through. I've attached it again now; it's called Invoice-48213.pdf."
+cultural_note: "PFA" and "Please find the same attached" are common in Indian office email. International customers expect you to name the document in a normal sentence.
+channel_note: Voice: "I'll email you the invoice now as a PDF." Chat: "I've uploaded your invoice here as a PDF." Email: name the file and attach it before you press send.
+when_not_to_use: Do not write this line until the file is really attached; check before you send, or the customer has to write again.
+mini_conversation: Customer: Could you send me my invoice? | Agent: Of course. I've attached your invoice for order 48213 as a PDF. | Customer: Thanks, I can open it. | Agent: Great. Just reply if you need anything else.
+source_rule: Name the thing instead of "the same"; use plain words.
+fill_blank: I've attached your invoice for order 48213 ____ (starts with a) a PDF.
+fill_answer: as
+mcq_question: You are sending an invoice. Which sentence is best for an international customer?
+mcq_options: A) I've attached your invoice for order 48213 as a PDF. | B) PFA the invoice for order 48213, kindly acknowledge receipt. | C) Please find the same attached herewith, as requested. | D) Invoice attachment is there in this mail, please check.
+mcq_answer: A
+mcq_why: A names the document, order and format. B uses an abbreviation many customers do not know, plus "kindly", which international customers may not expect, C is a habit from Indian office email where "the same" does not tell the reader what is attached, and D sounds abrupt.
+reorder_task: PDF / your / as / attached / invoice / I've / a
+reorder_answer: I've attached your invoice as a PDF.
+hindi_to_english: Customer ko bataiye ki aapne unka warranty card PDF mein attach kiya hai.
+hindi_to_english_answer: I've attached your warranty card as a PDF.
+whats_next_customer: Can you put my company name on it?
+whats_next_reply: Yes. Please reply with your company name and address, and I'll send a new invoice today.
+role_play: Partner A asks by email for a delivery receipt and a warranty card. Partner B writes the reply naming both attachments; A says one file will not open, and B resends it.
+record_task: Write a one-line email telling a customer you have attached their return label, and send it as text or a photo for audit.
+self_check: Did you name the document and the order? · Did you avoid "the same" and "PFA", which international customers may not expect? · Did you check the file was really attached?
+
+@CSE-B-014
+id: CSE-B-014
+channel: Email
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Set expectations
+sentence: Thanks for your email. Our team is offline right now, and we will reply by 11 am on the next working day.
+speaker: Agent
+situation: You are writing the automatic reply that customers receive when they email outside support hours.
+recall_cue: Nobody is at work when the customer writes. What should the automatic reply promise, and when?
+stress: THANKS-for-your-EE-mail · our-TEAM-is-OFF-line · RIGHT-NOW · we-will-re-PLY · by-e-LEV-en-ay-EM · on-the-NEXT-WORK-ing-DAY
+linking: If read aloud: thanks_for → "thank-sfor" · team_is → "tee-miz" · next_working → "nex-working"
+intonation: If read aloud: calm and steady, with a clear fall on "working day".
+indian_pron_tip: If read aloud, "working" starts with a "w": round your lips, no teeth on the lip, so it does not sound like "vorking".
+register: Neutral
+tone: Polite, clear, reassuring
+importance: 4
+customer_emotion: Hoping for help and unsure if anyone will see the email.
+memory_hook: An auto-reply is a note on a closed shop door: "Back tomorrow at 9", not just "Closed".
+hindi_meaning: आपके ईमेल के लिए धन्यवाद। हमारी टीम अभी ऑफ़लाइन है, और हम अगले कार्य दिवस सुबह 11 बजे तक जवाब देंगे।
+hindi_roman: Aapke email ke liye dhanyavaad. Hamari team abhi offline hai, aur hum agle kaarya divas subah 11 baje tak jawaab denge.
+simple_meaning: We got your email, but nobody is working now; you will get an answer before 11 in the morning on our next work day.
+why_it_works: It confirms the email arrived, explains the silence and gives a real time, so the customer does not send the same email again.
+key_chunk: Our team is ___ right now, and we will reply by ___.
+grammar_pattern: Our team + is + adjective + right now · we will + base verb + by + time
+grammar_note: "By 11 am" means "at 11 am or before".
+tone_note: A clear time sounds trustworthy. "Your mail will be attended in due course" sounds old-fashioned and gives no time.
+watch_out: ✗ Your mail will be attended at the earliest. → ✓ Thanks for your email. Our team is offline right now, and we will reply by 11 am on the next working day.
+dont_say: "We are closed." alone — it gives no time and makes the customer think the email is lost.
+positive_swap: Instead of "We will revert at the earliest", write "We will reply by 11 am on the next working day."
+alt_1: Thanks for writing to us. We're away right now and will answer by 11 am on our next working day.
+alt_2: We've got your email. Our support team is back at 9 am on the next working day and will reply by 11 am.
+more_formal: Thank you for your email. Our support team is currently unavailable, and we will respond by 11:00 am on the next working day.
+ask_next: If your order has not shipped yet, you can still cancel it in your account under My Orders.
+replies_you_may_hear: OK, thanks. · It's urgent, is there a phone number? · Will someone really reply?
+if_customer_pushes: Customer: "It's urgent and I can't wait until tomorrow." → Agent (next morning): "Good morning, Daniel. I'm sorry you had to wait. I'm checking your order now, and I will email you within the hour."
+cultural_note: "At the earliest" and "will be attended" are common in Indian office English. International customers expect a plain sentence with a clear time.
+channel_note: Voice: a recorded message gives the opening hours. Chat: "We're offline now; leave a message and we'll email you by 11 am." Email: the auto-reply goes out at once.
+when_not_to_use: Do not promise "by 11 am" in an auto-reply if your team cannot really meet that time on busy days.
+mini_conversation: Customer: (emails at 10 pm) My order is wrong. | Agent: (auto-reply) Thanks for your email. Our team is offline right now, and we will reply by 11 am on the next working day. | Customer: (next day) Any update? | Agent: Good morning, Daniel. I'm sorry your order was wrong; I've arranged a replacement.
+source_rule: Use "I will"/"we will" plus a real time instead of "soon".
+fill_blank: Our team is offline right now, and we will reply ____ 11 am on the next working day at the latest.
+fill_answer: by
+mcq_question: Which line is best for an out-of-hours automatic reply?
+mcq_options: A) Thanks for your email. We are closed at the moment, so please contact us again during office hours. | B) Thank you for contacting us. Your mail will be attended at the earliest by the concerned team. | C) This is an automated message. Do not reply to this email, as this mailbox is not monitored by us. | D) Thanks for your email. Our team is offline right now, and we will reply by 11 am on the next working day.
+mcq_answer: D
+mcq_why: D confirms the email arrived and gives a real time. A gives no time and sends the customer away, B sounds polite in Indian office English but "at the earliest" is not a time, and C shuts the door.
+reorder_task: is / right / team / now / Our / offline
+reorder_answer: Our team is offline right now.
+hindi_to_english: Auto-reply likhiye: email ke liye dhanyavaad, hamari team abhi offline hai aur Monday dopahar 12 baje tak jawaab denge.
+hindi_to_english_answer: Thanks for your email. Our team is offline right now, and we will reply by 12 noon on Monday.
+whats_next_customer: It's urgent. Is there a phone number?
+whats_next_reply: Our phone line opens at 9 am, and the number is on our Contact Us page. You can also cancel an order yourself under My Orders.
+role_play: Partner A is a manager. Partner B writes an out-of-hours auto-reply with a clear time and one self-help tip; A checks it for a real time and plain words.
+record_task: Write a two-line out-of-hours auto-reply for a weekend, saying when the team will reply, and send it as text or a photo for audit.
+self_check: Did you confirm the email arrived? · Did you give a real time? · Did you avoid "at the earliest" and "will be attended"?
+
+@CSE-B-015
+id: CSE-B-015
+channel: Email
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Opening
+sentence: I am writing to complain about my late delivery.
+speaker: Customer
+situation: This is the first line of a new email from a customer whose order arrived a week late.
+recall_cue: An email starts with a formal "complain" line. What does the customer want you to understand, and what do you write first?
+stress: i-am-WRY-ting · to-com-PLAIN · a-BOUT-my-LATE-de-LIV-er-y
+linking: If read aloud: writing_to → "wri-ting-tuh" · about_my → "a-bou-my"
+intonation: If read aloud: firm and falling; it is a formal statement, not a question.
+indian_pron_tip: If you read the customer's line aloud, "complain" is com-PLAIN with stress on the second part, and "delivery" has a clear "v" (teeth on lip).
+register: Formal
+tone: Formal, unhappy, serious
+importance: 5
+customer_emotion: Annoyed and wanting the company to take them seriously.
+memory_hook: "Complain" is a red flag at the top of the email: read everything carefully and apologise for the exact problem.
+hindi_meaning: मैं अपनी देर से आई डिलीवरी के बारे में शिकायत करने के लिए लिख रहा/रही हूँ।
+hindi_roman: Main apni der se aayi delivery ke baare mein shikaayat karne ke liye likh raha/rahi hoon.
+simple_meaning: I am unhappy because my order came late, and I want you to know.
+why_it_works: The customer chose a formal, official line to show this is serious. They want an apology, an explanation and often something to make up for it, not a template.
+key_chunk: I am writing to complain about ___.
+grammar_pattern: I am writing + to + verb + about + noun
+grammar_note: "I am writing to…" is a fixed formal opening that gives the reason for the email.
+tone_note: The customer is formal, so reply in a calm, respectful tone. A cheerful "Hi there!" or a smiley would sound like you are not taking it seriously.
+watch_out: ✗ Thank you for your feedback! 😊 → ✓ I'm sorry your delivery was late, and thank you for telling us.
+dont_say: "We have noted your feedback." — a complaint is not feedback, and this line sounds like nothing will happen.
+positive_swap: Instead of "Thank you for your valuable feedback", write "I'm sorry your delivery was a week late."
+alt_1: I want to make a complaint about my delivery.
+alt_2: I'm very unhappy that my order arrived late.
+more_formal: I wish to make a formal complaint regarding the late delivery of my order.
+ask_next: I'm sorry your delivery was a week late. I've checked your order, and here is what happened.
+replies_you_may_hear: I want a refund for the delivery. · This is the second time. · I needed it for an event.
+if_customer_pushes: Customer: "Sorry is not enough." → Agent: "You're right, an apology alone is not enough. I have refunded your delivery charge, and I've reported the delay to our courier partner."
+cultural_note: "I am writing to complain" is standard formal English, not an Indian-English phrase. International customers who use it usually expect a personal reply, so treat it as a formal complaint, not a casual question.
+channel_note: Voice: "I'm calling to make a complaint." Chat: "I want to complain." Email: the formal line often means the customer may escalate if the reply is weak.
+when_not_to_use: Do not send a canned "thank you for your feedback" reply to a message that starts with "I am writing to complain".
+mini_conversation: Customer: I am writing to complain about my late delivery. | Agent: I'm sorry your order arrived a week late, Ms Clarke. | Customer: I needed it for my son's birthday. | Agent: I understand how disappointing that was. I have refunded the delivery charge.
+source_rule: Apologise specifically and take responsibility, then offer a fix.
+fill_blank: I am very unhappy, so I am writing to ____ about my late delivery.
+fill_answer: complain
+mcq_question: A customer's email begins "I am writing to complain about my late delivery." What does this line show?
+mcq_options: A) The customer is seriously unhappy and wants the complaint taken seriously. | B) The customer has a simple question and wants a quick, friendly answer. | C) The customer wants to cancel their account and is asking how to do it. | D) The customer is giving friendly feedback and does not expect a reply.
+mcq_answer: A
+mcq_why: "Complain" in a formal opening shows real dissatisfaction. B and C do not match what the line says, and D is tempting because companies call it "feedback", but the customer wants action, not thanks.
+reorder_task: complain / to / writing / am / I
+reorder_answer: I am writing to complain.
+hindi_to_english: Customer ki shikaayat ka jawaab dijiye: maafi maangiye ki unka order ek hafte late aaya.
+hindi_to_english_answer: I'm sorry your order arrived a week late.
+whats_next_customer: I want my delivery charge back.
+whats_next_reply: That's fair. I've refunded the delivery charge, and it should reach your card within five working days.
+role_play: Partner A writes a short formal complaint about a late delivery. Partner B reads it, says in one line what A feels and wants, then writes the first three lines of a reply.
+record_task: Read the customer's line, then write the first three lines of your reply: greeting, specific apology and one action. Send it as text or a photo for audit.
+self_check: Did you treat it as a complaint, not feedback? · Did you apologise for the exact problem? · Did you avoid smileys and cheerful openers?
+
+@CSE-B-016
+id: CSE-B-016
+channel: Email
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Opening
+sentence: Please find attached the invoice.
+speaker: Customer
+situation: A customer is asking for a refund on a damaged coffee maker and has added their purchase invoice to the email.
+recall_cue: The customer says a document is with their email. What should you do before you write back?
+stress: PLEASE · FIND-at-TACHED · the-IN-voice
+linking: If read aloud: find_attached → "fain-da-tacht" · attached_the → "a-tach-the"
+intonation: If read aloud: flat and falling; it is a formal note, not a request for action.
+indian_pron_tip: If you read it aloud, "attached" is a-TACHT (two syllables), not "a-tach-ed"; "invoice" has a clear "v" (top teeth on the lower lip).
+register: Formal
+tone: Formal, matter-of-fact
+importance: 3
+customer_emotion: Organised and expecting the document to be used.
+memory_hook: "Find attached" means "look at the paperclip": open the file before you reply.
+hindi_meaning: कृपया संलग्न इनवॉइस देखें।
+hindi_roman: Kripya sanlagn invoice dekhein.
+simple_meaning: I have added the bill to this email; please look at it.
+why_it_works: The customer has already sent what you will need. They expect you to open it and use it, not to ask for it again.
+key_chunk: Please find attached ___.
+grammar_pattern: Please + find + attached + noun
+grammar_note: "Attached" works like an adjective here: "find the invoice (that is) attached".
+tone_note: It is formal but normal business English. Reply in a friendly, plain way, and never ask for a document the customer already sent.
+watch_out: ✗ Please share the invoice. (it is already attached) → ✓ Thank you for sending the invoice. I can see you bought the coffee maker on 3 May.
+dont_say: "Please send your invoice to proceed." — asking again for a file the customer attached shows you did not read the email.
+positive_swap: Instead of "Please send the invoice", write "Thank you for the invoice. I can see your purchase on 3 May."
+alt_1: I have attached the invoice.
+alt_2: The invoice is attached.
+more_formal: Please find the invoice attached for your reference.
+ask_next: Thank you for sending the invoice. I can see you bought the coffee maker on 3 May, and I'm checking your refund now.
+replies_you_may_hear: Can you confirm you got it? · Is that enough proof? · I've also added photos.
+if_customer_pushes: Customer: "I already sent the invoice, why are you asking again?" → Agent: "You're right, and I'm sorry I asked for it again. I've found it now, and I'll confirm your refund by 5 pm today."
+cultural_note: "Please find attached" is a normal formal phrase in both Indian and international business English. The problem is only "the same" in place of the document name.
+channel_note: Voice: the customer may say "I've emailed you the invoice." Chat: "I've uploaded the invoice." Email: always open the attachment before replying.
+when_not_to_use: Do not reply "Noted" without checking that the attachment opens and is the right document.
+mini_conversation: Customer: My coffee maker broke. Please find attached the invoice. | Agent: Thank you for the invoice. I can see your purchase on 3 May, and I'm sorry the coffee maker broke. | Customer: Great, can I get a refund? | Agent: I'm checking it now, and I'll email you by 5 pm today.
+source_rule: Use plain words and give one clear next step.
+fill_blank: Please find ____ (starts with a) the invoice.
+fill_answer: attached
+mcq_question: The customer writes "Please find attached the invoice." What should you do first?
+mcq_options: A) Open the attachment and check the purchase details before you reply. | B) Reply asking them to send the invoice again so that you can check it. | C) Close the ticket, because the customer has sent everything you need. | D) Reply asking for a photo of the invoice so that you can see the date.
+mcq_answer: A
+mcq_why: The invoice is already in the email. B and D are tempting if you skim the email, but asking again shows you did not read it, and C closes the case before anyone has looked at the invoice.
+reorder_task: attached / find / invoice / Please / the
+reorder_answer: Please find attached the invoice.
+hindi_to_english: Customer ko thanks kahiye invoice bhejne ke liye aur bataiye ki aapko 3 May ki purchase dikh rahi hai.
+hindi_to_english_answer: Thank you for sending the invoice. I can see your purchase on 3 May.
+whats_next_customer: Did you get the invoice? I'm not sure it was attached.
+whats_next_reply: Yes, I received it, thank you. It shows your purchase on 3 May.
+role_play: Partner A sends an email with "Please find attached the invoice" and a photo of a bill. Partner B replies confirming the document, one detail from it, and the next step.
+record_task: Write a reply to a customer who attached their invoice: confirm you received it, mention one detail from it and give the next step. Send it as text or a photo for audit.
+self_check: Did you confirm you received the attachment? · Did you mention a detail from it? · Did you avoid asking for it again?
+
+@CSE-B-017
+id: CSE-B-017
+channel: Email
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Listen & clarify
+sentence: Kindly do the needful.
+speaker: Customer
+situation: A customer explains that their address is wrong on an order and ends the email with this line.
+recall_cue: An email ends with a common Indian-English request. What is the customer actually asking you to do?
+stress: KIND-ly · DO-the-NEED-ful
+linking: If read aloud: do_the → "doo-the" · the_needful → "the-need-ful"
+intonation: If read aloud: flat and falling; it is a polite closing request.
+indian_pron_tip: If you read the line aloud, say "the" with a soft "th" (tongue between the teeth), not "de".
+register: Formal
+tone: Polite, formal request
+importance: 3
+customer_emotion: Polite and expecting quick action.
+memory_hook: "The needful" is a blank box: the customer has already written what goes in it earlier in the email.
+hindi_meaning: कृपया जो ज़रूरी है वह कर दीजिए।
+hindi_roman: Kripya jo zaroori hai woh kar dijiye.
+simple_meaning: Please take whatever action is needed to fix my problem.
+why_it_works: The customer is being polite and expects you to do the obvious next step, which is usually in the lines before. Reply by naming the exact action you took.
+key_chunk: do the needful
+grammar_pattern: Kindly + do + the + needful
+grammar_note: "The needful" means "what is necessary"; it is a set phrase in Indian English.
+tone_note: It is polite and normal in Indian English. Do not copy it back; just say clearly what you have done.
+watch_out: ✗ I have change your delivery address. → ✓ I have changed your delivery address to 14 Lake Road.
+dont_say: "Noted, the needful will be done." — it does not say what you will do, so the customer still does not know if the address is fixed.
+positive_swap: Instead of "We will do the needful", write "I have changed your delivery address to 14 Lake Road."
+alt_1: Please take the necessary action.
+alt_2: Please look into this and fix it.
+more_formal: I would be grateful if you could take the necessary action.
+ask_next: I have changed your delivery address to 14 Lake Road, and your order is now due to arrive on Thursday.
+replies_you_may_hear: Thank you for the quick help. · Please confirm once done. · When will it be delivered now?
+if_customer_pushes: Customer: "Please confirm the needful is done." → Agent: "Yes, it's done. Your order now shows 14 Lake Road as the address, and it is due to arrive on Thursday."
+cultural_note: Many Indian customers use "do the needful" politely; it is a long-standing Indian English phrase. International readers may find it old-fashioned, so agents should switch to naming the action.
+channel_note: Voice: "Please do the needful" means "please sort it out". Chat: same. Email: reply with the exact action and a confirmation.
+when_not_to_use: Do not guess the action if the email does not say what is wrong; ask one clear question instead.
+mini_conversation: Customer: My address is wrong on order 39054. Kindly do the needful. | Agent: I have changed your delivery address to 14 Lake Road. | Customer: Thank you. When will it come? | Agent: It is due to arrive on Thursday.
+source_rule: Indian English switch: for "do the needful", say the actual action.
+fill_blank: Kindly do the ____ (ends in -ful).
+fill_answer: needful
+mcq_question: A customer writes about a wrong address and ends with "Kindly do the needful." What do they want?
+mcq_options: A) A form to fill in so that the address can be changed later. | B) A refund, because the order was sent to the wrong address. | C) A call from a manager to discuss the problem with the order. | D) For you to correct the address on their order and confirm it.
+mcq_answer: D
+mcq_why: "The needful" points back to the problem in the email, which is the wrong address, so the action is to fix it and confirm. B is tempting because a wrong address can end in a refund, but the customer has not asked for one, and A and C add steps nobody requested.
+reorder_task: address / changed / your / I / delivery / have
+reorder_answer: I have changed your delivery address.
+hindi_to_english: Customer ko bataiye ki aapne unka phone number update kar diya hai.
+hindi_to_english_answer: I have updated your phone number on the account.
+whats_next_customer: Thanks. Will I get a tracking link for the new address?
+whats_next_reply: Yes, I will email you the tracking link today. The courier now shows delivery on Thursday.
+role_play: Partner A writes a short email about a wrong billing name ending in "Kindly do the needful." Partner B replies by naming the exact action taken, without copying the phrase.
+record_task: Write a reply to a customer whose email ends "Kindly do the needful" after asking to change their delivery date; name the exact action you took. Send it as text or a photo for audit.
+self_check: Did you find the real request in the email? · Did you name the exact action? · Did you avoid copying "do the needful" back, as international customers may not expect it?
+
+@CSE-B-018
+id: CSE-B-018
+channel: Email
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Follow-up
+sentence: Further to my previous email, I still have not received my refund.
+speaker: Customer
+situation: A customer wrote last week about a refund and is now writing again because the money has not arrived.
+recall_cue: The customer points back to an earlier email. What should you check before you reply?
+stress: FUR-ther-to-my-PRE-vi-ous-EE-mail · i-STILL-have-NOT · re-CEIVED-my-REE-fund
+linking: If read aloud: further_to → "fur-ther-tuh" · still_have → "sti-lhav"
+intonation: If read aloud: firm and falling, with stress on "still" and "not".
+indian_pron_tip: If you read it aloud, "further" has a soft "th" in the middle (tongue between the teeth), not "fur-der".
+register: Formal
+tone: Formal, impatient, firm
+importance: 5
+customer_emotion: Impatient and losing trust because nothing has happened.
+memory_hook: "Further to" is a finger pointing back: scroll down and read the first email before you type a word.
+hindi_meaning: मेरे पिछले ईमेल के संदर्भ में, मुझे अभी तक मेरा रिफ़ंड नहीं मिला है।
+hindi_roman: Mere pichhle email ke sandarbh mein, mujhe abhi tak mera refund nahin mila hai.
+simple_meaning: I wrote to you before, and I am writing again because my money has still not come back.
+why_it_works: The customer is pointing back to their earlier email. They want you to know the history without explaining again, plus a clear answer with a date.
+key_chunk: Further to my previous email, ___.
+grammar_pattern: Further to + my + previous + noun + , + statement
+grammar_note: "Further to" is a formal way to say "about what I wrote before".
+tone_note: "Still" shows impatience. Reply with an apology for the wait and a real date; a fresh template that asks them to explain again will make them angrier.
+watch_out: ✗ Please share your issue in detail. → ✓ I'm sorry your refund hasn't arrived yet. I've checked your first email and the refund status.
+dont_say: "Please raise a new request." — it ignores the history and makes the customer start again.
+positive_swap: Instead of "Please explain your issue", write "I'm sorry you're still waiting. I've read your first email and checked your refund."
+alt_1: I'm writing again about my refund, which I still haven't received.
+alt_2: Following up on my last email: the refund has not reached me yet.
+more_formal: With reference to my earlier email, I wish to inform you that I have not yet received my refund.
+ask_next: I'm sorry you're still waiting. Your refund was sent on 2 June, and it should reach your card by 9 June.
+replies_you_may_hear: That's what you said last time. · Can you send proof it was sent? · Why does it take so long?
+if_customer_pushes: Customer: "That's what you said last time." → Agent: "I understand why you're frustrated. Here is the refund reference number, RF-57340, which your bank can use to trace the payment. I'll check again on 9 June and email you."
+cultural_note: "Further to" is used in both Indian and international formal email. It always means the customer has written before, so read the whole thread first.
+channel_note: Voice: "I called last week about my refund." Chat: "I already asked about this yesterday." Email: the earlier message is usually below, so scroll down.
+when_not_to_use: Do not reply with the same answer as last time without new information; give a date, a reference number or an action.
+mini_conversation: Customer: Further to my previous email, I still have not received my refund. | Agent: I'm sorry you're still waiting. It was sent on 2 June and should reach your card by 9 June. | Customer: Can you prove it was sent? | Agent: Yes, the refund reference number is RF-57340.
+source_rule: Follow-ups: treat it as the same issue, not a new one; give a real time.
+fill_blank: ____ to my previous email, I still have not received my refund.
+fill_answer: Further
+mcq_question: Your system shows this as a new ticket with no history, but the email begins "Further to my previous email, …". What should you do first?
+mcq_options: A) Treat it as a new request and ask the customer to explain the problem from the start. | B) Reply with the usual refund steps from the help centre and close the ticket. | C) Wait until the customer writes a third time before you look into the refund. | D) Find the customer's earlier email, read it and check the refund before you reply.
+mcq_answer: D
+mcq_why: "Further to" points back to an earlier email, so find it and check the refund before you answer. A is tempting because the ticket looks new in your system, but it makes the customer start again; B ignores the history and C leaves them waiting longer.
+reorder_task: received / have / my / not / I / refund / still
+reorder_answer: I still have not received my refund.
+hindi_to_english: Customer se maafi maangiye ki woh abhi bhi refund ka intezaar kar rahe hain, aur date bataiye.
+hindi_to_english_answer: I'm sorry you're still waiting. Your refund should reach your card by 9 June.
+whats_next_customer: Can you send proof that it was sent?
+whats_next_reply: Yes. The refund reference number is RF-57340; your bank can use it to trace the payment.
+role_play: Partner A sends a second email starting "Further to my previous email" about a missing replacement. Partner B reads the history and replies with an apology, the status and a date.
+record_task: Write a reply to a customer who writes "Further to my previous email, I still have not received my replacement." Include an apology, the status and a date. Send it as text or a photo for audit.
+self_check: Did you read the earlier email first? · Did you apologise for the wait? · Did you give a real date or reference?
+
+@CSE-B-019
+id: CSE-B-019
+channel: Email
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Close
+sentence: I look forward to your reply.
+speaker: Customer
+situation: A customer ends an email asking whether a sofa can be delivered on a Sunday.
+recall_cue: An email ends with a polite formal closing. What does the customer expect from you, and how soon?
+stress: i-LOOK-FOR-ward · to-your-re-PLY
+linking: If read aloud: look_forward → "loo-kfor-ward" · forward_to → "for-wer-duh"
+intonation: If read aloud: polite and falling; it is a closing line, not a question.
+indian_pron_tip: If you read it aloud, "forward" is FOR-wud with a soft "w" (rounded lips, no teeth), not "for-vard".
+register: Formal
+tone: Polite, formal closing
+importance: 2
+customer_emotion: Calm and expecting a clear answer soon.
+memory_hook: "Look forward" means the customer is looking at the door, waiting for your reply to walk in.
+hindi_meaning: मैं आपके जवाब का इंतज़ार कर रहा/रही हूँ।
+hindi_roman: Main aapke jawaab ka intezaar kar raha/rahi hoon.
+simple_meaning: I am waiting for you to answer this email.
+why_it_works: It is a polite formal ending, not a complaint. The customer simply expects a clear answer to their question within a normal time.
+key_chunk: I look forward to ___.
+grammar_pattern: I look forward + to + noun / verb-ing
+grammar_note: After "look forward to", use a noun or an -ing verb: "to your reply" or "to hearing from you".
+tone_note: It is polite and neutral, not pushy. Reply to the actual question; there is no need to copy this line back.
+watch_out: ✗ I look forward to hear from you. → ✓ I look forward to hearing from you.
+dont_say: "Noted." as the whole reply — it does not answer the question the customer is waiting on.
+positive_swap: Instead of "Noted, will check", write "I've checked, and we can deliver your sofa this Sunday between 9 am and 1 pm."
+alt_1: Hope to hear from you soon.
+alt_2: Waiting for your answer.
+more_formal: I look forward to hearing from you at your earliest convenience.
+ask_next: Thanks for your question. I've checked, and we can deliver your sofa this Sunday between 9 am and 1 pm.
+replies_you_may_hear: Thanks for the quick reply. · Great, please book it. · Can you do the morning?
+if_customer_pushes: Customer: "I'm still waiting for a reply." → Agent: "I'm sorry you had to wait for a reply. I've checked, and Sunday delivery is possible; shall I book this Sunday between 9 am and 1 pm?"
+cultural_note: "I look forward to your reply" is standard formal English everywhere, so there is no switch to make when you read it. The slip to avoid in your own writing is "look forward to hear"; the standard form is "look forward to hearing".
+channel_note: Voice: "I'll wait for your call." Chat: rare. Email: a normal formal ending; answer the question in the first line of your reply.
+when_not_to_use: Do not read this line as urgent or angry; it is a standard polite ending.
+mini_conversation: Customer: Can you deliver the sofa on Sunday? I look forward to your reply. | Agent: Yes, I've checked, and we can deliver it this Sunday between 9 am and 1 pm. | Customer: Great, please book it. | Agent: Done. You'll get a confirmation text on Saturday.
+source_rule: Email body: answer clearly and give one clear next step.
+fill_blank: I look forward ____ your reply.
+fill_answer: to
+mcq_question: A customer ends with "I look forward to your reply." What does this show?
+mcq_options: A) The customer is angry and wants a manager to reply to the email. | B) The customer wants a phone call instead of an email reply. | C) The customer is cancelling the order and wants it confirmed. | D) It is a polite formal ending; the customer expects a clear answer.
+mcq_answer: D
+mcq_why: It is a standard polite ending that expects an answer. A is tempting because the line is formal, but there is no anger in it, and B and C say something the line never says.
+reorder_task: forward / I / reply / to / look / your
+reorder_answer: I look forward to your reply.
+hindi_to_english: Customer ke sawaal ka jawaab dijiye: sawaal ke liye dhanyavaad, haan, hum Saturday ko delivery kar sakte hain.
+hindi_to_english_answer: Thanks for your question. Yes, we can deliver on Saturday.
+whats_next_customer: Great, please book it for the morning.
+whats_next_reply: Done. I have booked your sofa for this Sunday between 9 am and 1 pm, and you will get a confirmation email today.
+role_play: Partner A emails asking if a fridge can be installed on the same day as delivery, ending "I look forward to your reply." Partner B answers the question in the first line and gives the next step.
+record_task: Write a reply to a customer who asks about Sunday delivery and ends "I look forward to your reply." Answer in the first line. Send it as text or a photo for audit.
+self_check: Did you answer the question in the first line? · Did you give a day and time? · Did you avoid a one-word "Noted" reply?
+
+@CSE-B-020
+id: CSE-B-020
+channel: Email
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Follow-up
+sentence: This is my second email about this.
+speaker: Customer
+situation: A customer emailed four days ago about a faulty phone charger that you can see is still under warranty, got no reply, and has written again.
+recall_cue: The customer says they have already written once. What do they feel, and what must your reply start with?
+stress: THIS-is-my-SEC-ond-EE-mail · a-BOUT-THIS
+linking: If read aloud: this_is → "thi-siz" · second_email → "sec-un-dee-mail"
+intonation: If read aloud: firm, with strong stress on "second".
+indian_pron_tip: If you read it aloud, "this" uses a soft "th" (tongue between the teeth), not "dis"; "second" ends in a clear "nd".
+register: Neutral
+tone: Frustrated, firm
+importance: 5
+customer_emotion: Frustrated and feeling ignored.
+memory_hook: "Second email" is a yellow card: a third email may be a red card, so apologise and act now.
+hindi_meaning: इस बारे में यह मेरा दूसरा ईमेल है।
+hindi_roman: Is baare mein yeh mera doosra email hai.
+simple_meaning: I already wrote to you about this problem, and nobody answered.
+why_it_works: The customer feels ignored. They need an apology for the missed reply, proof you have read the first email, and an action with a time.
+key_chunk: This is my ___ email about ___.
+grammar_pattern: This is + my + ordinal number + noun + about + this
+grammar_note: "Second" here shows the customer has written before; "about this" points to the problem.
+tone_note: Apologise for the silence first. A reply that ignores the first email or starts "Thank you for contacting us" will feel like nobody is listening.
+watch_out: ✗ Thank you for contacting us. Please describe your issue. → ✓ I'm sorry we didn't reply to your first email. I've read it, and I'm sending a new charger today.
+dont_say: "We receive many emails, so replies take time." — it blames the workload and tells the customer they are not important.
+positive_swap: Instead of "Due to high volume we could not reply", write "I'm sorry we didn't reply to your first email."
+alt_1: I already emailed you about this.
+alt_2: I'm writing again because nobody replied.
+more_formal: I am writing for the second time regarding this matter, as I have not received a response.
+ask_next: I'm sorry we didn't reply to your first email. I've read it, and I'm sending you a new charger today.
+replies_you_may_hear: Finally. · Why did nobody answer? · OK, when will it arrive?
+if_customer_pushes: Customer: "Why did nobody answer me?" → Agent: "You're right to ask. I can see your first email was not answered, and that was our mistake. I'm handling it myself now, and your charger is due to arrive on Wednesday."
+cultural_note: Customers anywhere often write this when they feel ignored, and may escalate next. There is no phrase to translate here; the switch is for agents: skip the template opener and apologise for the silence in plain words.
+channel_note: Voice: "I've called three times about this." Chat: "I already asked this." Email: find the first email in the thread before replying.
+when_not_to_use: Do not answer with a template that asks the customer to explain the problem again.
+mini_conversation: Customer: This is my second email about this. My charger is still not working. | Agent: I'm sorry we didn't reply to your first email. I'm sending you a new charger today. | Customer: When will it arrive? | Agent: It is due on Wednesday, and I'll email you the tracking link tonight.
+source_rule: Apologise specifically, take responsibility, then give an action with a time.
+fill_blank: This is my ____ email about this, because nobody answered the first one.
+fill_answer: second
+mcq_question: A customer writes "This is my second email about this." What should your reply start with?
+mcq_options: A) A thank-you for contacting us, then a request for the customer's details. | B) A request to describe the problem again, so that you can open a new ticket. | C) A link to the help centre, so that the customer can find the answer alone. | D) An apology for missing their first email, then an action with a time.
+mcq_answer: D
+mcq_why: The customer feels ignored, so apologise for the silence and act. A sounds polite, but it treats the email as new, B makes the customer start again, and C sends them away.
+reorder_task: second / is / This / email / my
+reorder_answer: This is my second email.
+hindi_to_english: Customer se maafi maangiye ki unke pehle email ka jawaab nahin diya gaya, aur bataiye ki aap aaj replacement bhej rahe hain.
+hindi_to_english_answer: I'm sorry we didn't reply to your first email. I'm sending your replacement today.
+whats_next_customer: Who can I contact if the charger does not arrive?
+whats_next_reply: Reply to this email and it will come straight to me. I will check the tracking on Wednesday and write to you if there is a delay.
+role_play: Partner A writes a second email about a broken charger after getting no reply. Partner B replies with an apology for the silence, proof they read the first email and an action with a date.
+record_task: Write a reply to "This is my second email about this." about a missing refund: apologise for the silence, show you read the first email and give a date. Send it as text or a photo for audit.
+self_check: Did you apologise for the missed reply? · Did you show you read the first email? · Did you give an action with a time?

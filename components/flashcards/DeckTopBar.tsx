@@ -1,7 +1,8 @@
-// Owns the top of the Flashcard tab: one scrolling row
-// with the card kinds (Words, Chunk, Grammar), the "skipped" chip, the
-// student's remark lists and today's counts; on the Chunk tab, a second row
-// with the chunk types (Frames, Prepositions, …).
+// Owns the top of the Flashcard tab: one scrolling row with the card kinds
+// (Words, Chunk, Grammar, Support), the "skipped" chip, the student's remark
+// lists and today's counts; on the Chunk tab, a second row with the chunk
+// types (Frames, Prepositions, …), and on the Support tab a second row with
+// the channels (Voice, Chat, Email) and levels.
 //
 // Search moved to the header (HeaderSearch). Kept to as few short rows as possible so the card gets most of a phone
 // screen. A server component: it only links, it never fetches.
@@ -9,12 +10,14 @@
 import Link from "next/link";
 
 import { CHUNK_TYPES } from "@/lib/chunkCard";
+import { SUPPORT_CHANNELS, SUPPORT_LEVELS } from "@/lib/supportCard";
 import { cn } from "@/lib/utils";
 
 export const DECK_KINDS = [
   { value: "words", label: "Words", kind: "WORD", ready: true, noun: "word" },
   { value: "chunks", label: "Chunk", kind: "CHUNK", ready: true, noun: "chunk" },
   { value: "grammar", label: "Grammar", kind: "GRAMMAR", ready: true, noun: "card" },
+  { value: "support", label: "Support", kind: "SUPPORT", ready: true, noun: "support sentence" },
 ] as const;
 export type DeckKind = (typeof DECK_KINDS)[number];
 
@@ -29,11 +32,22 @@ export type ListKey = (typeof DECK_LISTS)[number]["value"];
 type Counts = { due: number; newLeft: number; known: number; total: number; lists: Record<ListKey, number> };
 
 const chip = "shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium";
+const subChip = "shrink-0 rounded-full px-2.5 py-0.5 text-xs";
+const subOn = "bg-tag-navy font-medium text-surface";
+const subOff = "bg-paper-dim text-ink-muted hover:text-ink";
+
+/// The Support tab's link for a channel and level. Tapping the chip that is
+/// already on turns that filter off, so "all levels" needs no extra chip.
+function supportHref(channel: string | null, level: string | null): string {
+  return `/flashcards?kind=support${channel ? `&ch=${channel}` : ""}${level ? `&lv=${level}` : ""}`;
+}
 
 export function DeckTopBar({
   k,
   type,
   section,
+  channel = null,
+  level = null,
   list,
   base,
   skipCount,
@@ -44,6 +58,9 @@ export function DeckTopBar({
   type: string | null;
   /** The word section being studied, if any, so it can be shown and left. */
   section?: { label: string; key: string } | null;
+  /** Support tab only: the channel and level filters, as in the URL. */
+  channel?: string | null;
+  level?: string | null;
   list: ListKey | undefined;
   base: string;
   skipCount: number;
@@ -140,14 +157,44 @@ export function DeckTopBar({
               href={t.value ? `/flashcards?kind=chunks&type=${t.value}` : "/flashcards?kind=chunks"}
               aria-current={type === t.value ? "page" : undefined}
               className={cn(
-                "shrink-0 rounded-full px-2.5 py-0.5 text-xs",
-                type === t.value ? "bg-tag-navy font-medium text-surface" : "bg-paper-dim text-ink-muted hover:text-ink",
+                subChip,
+                type === t.value ? subOn : subOff,
               )}
             >
               {t.label}
             </Link>
           ))}
         </nav>
+      ) : null}
+
+      {k.value === "support" ? (
+        <div className="mt-1 flex items-center gap-1 overflow-x-auto pb-1 [scrollbar-width:none]">
+          <nav aria-label="Support channel" className="flex shrink-0 gap-1">
+            {SUPPORT_CHANNELS.map((c) => (
+              <Link
+                key={c.value}
+                href={supportHref(channel === c.value ? null : c.value, level)}
+                aria-current={channel === c.value ? "page" : undefined}
+                className={cn(subChip, channel === c.value ? subOn : subOff)}
+              >
+                {c.label}
+              </Link>
+            ))}
+          </nav>
+          <span aria-hidden="true" className="mx-0.5 h-4 w-px shrink-0 bg-border-strong" />
+          <nav aria-label="Support level" className="flex shrink-0 gap-1">
+            {SUPPORT_LEVELS.map((l) => (
+              <Link
+                key={l.value}
+                href={supportHref(channel, level === l.value ? null : l.value)}
+                aria-current={level === l.value ? "page" : undefined}
+                className={cn(subChip, level === l.value ? subOn : subOff)}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       ) : null}
     </>
   );

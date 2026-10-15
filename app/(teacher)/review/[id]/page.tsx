@@ -21,6 +21,7 @@ import { ClaimButton, ClaimTimer, ReleaseButton } from "@/components/review/Clai
 import { RubricForm } from "@/components/review/RubricForm";
 import { SendBackForm } from "@/components/review/SendBackForm";
 import { cardNoun, chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
+import { supportDetailsOf } from "@/lib/supportCard";
 import { ensureActiveUser } from "@/lib/activeUser";
 
 export const revalidate = 0;
@@ -158,7 +159,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         <p className="mt-1 text-sm text-ink-muted">{submission.exercise.prompt}</p>
         {submission.word ? (
           <p className="mt-2 text-sm text-ink">
-            <span className="font-medium">{submission.word.text}</span> — {submission.word.kind !== "WORD" ? chunkGloss(chunkDetailsOf(submission.word.details)) : detailsOf(submission.word.details).simple_explanation}
+            <span className="font-medium">{submission.word.text}</span> — {submission.word.kind === "SUPPORT" ? supportDetailsOf(submission.word.details).record_task : submission.word.kind !== "WORD" ? chunkGloss(chunkDetailsOf(submission.word.details)) : detailsOf(submission.word.details).simple_explanation}
           </p>
         ) : null}
       </Card>

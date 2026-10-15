@@ -59,7 +59,8 @@ export default async function FlashcardsPage({
   // Only the Words tab has sections; on any other tab the parameter is ignored.
   const def = k.kind === "WORD" ? sectionDef(sp.sec) : null;
   const sectionFilter = def ? await sectionWhere(def.key) : null;
-  const packNo = def && sectionFilter ? Math.max(1, Math.floor(Number(sp.pack)) || 0) : 0;
+  // No `pack` means the whole section; only an explicit pack narrows it.
+  const packNo = def && sectionFilter && sp.pack ? Math.max(1, Math.floor(Number(sp.pack)) || 1) : 0;
   const sectionExtra = sectionFilter ? (packNo ? await packWhere(sectionFilter, packNo) : sectionFilter) : undefined;
   const sectionQuery = def && sectionFilter ? `&sec=${def.key}${packNo ? `&pack=${packNo}` : ""}` : "";
   const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}${sectionQuery}`;
@@ -77,6 +78,8 @@ export default async function FlashcardsPage({
         kind: k.kind,
         deckId: null,
         ...(type ? { category: type } : {}),
+        // Inside a section (or pack), search and lists look only in it.
+        ...(sectionExtra ? { AND: [sectionExtra] } : {}),
         ...(q
           ? { OR: [{ text: { contains: q, mode: "insensitive" } }, { code: { equals: q.toUpperCase() } }] }
           : { states: { some: { userId, [list!]: true } } }),
@@ -168,7 +171,7 @@ export default async function FlashcardsPage({
         type={type}
         list={list}
         base={base}
-        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}` } : null}
+        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}`, key: def.key } : null}
         skipCount={skip.length}
         skipHref={withMore}
         counts={counts}

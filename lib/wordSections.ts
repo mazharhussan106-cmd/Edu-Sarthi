@@ -18,10 +18,11 @@ import { prisma } from "@/lib/prisma";
 
 export const PACK_SIZE = 50;
 
-export type Family = "level" | "topic" | "type" | "must";
+export type Family = "goal" | "level" | "topic" | "type" | "must";
 export type SectionDef = { key: string; family: Family; label: string; hint: string };
 
 export const FAMILIES: { value: Family; title: string; blurb: string }[] = [
+  { value: "goal", title: "By goal", blurb: "Words picked for what you are practising for." },
   { value: "level", title: "By level", blurb: "Start easy and move up." },
   { value: "topic", title: "By topic", blurb: "Learn the words for one part of life together." },
   { value: "type", title: "By word type", blurb: "Verbs, adjectives, phrasal verbs and more." },
@@ -79,6 +80,36 @@ const TOPIC_RULES: { key: string; label: string; hint: string; test: RegExp }[] 
   { key: "topic-daily", label: "Daily life and home", hint: "Routines, food, things, weather", test: /daily|home|food|things|colour|weather|nature|sports|arts|routine/ },
   { key: "topic-quality", label: "Describing and doing", hint: "Quality, size, manner, common verbs", test: /quality|quantity|size|degree|manner|adjective|speed|difficulty|descriptions|states|change|making|creation|core action|start \/|state \/|helping|reasons|results|cause|comparison|certain/ },
 ];
+// Goal tracks. The sheet has no exam or interview tag on any word, so a track
+// is built honestly from what it does have: the topics a goal needs, the levels
+// that suit it, and a minimum importance. It is a study path chosen by
+// EduSarthi, NOT an official IELTS or employer word list, and the page says so.
+// The `key` suffix matches the profile's goal value (lib/preferences GOALS).
+type TrackRule = { topics: string[]; cefr?: string[]; minImportance: number };
+const TRACKS: (SectionDef & { rule: TrackRule })[] = [
+  {
+    key: "goal-daily", family: "goal", label: "Daily English", hint: "Everyday topics, importance 4–5",
+    rule: { topics: ["topic-daily", "topic-people", "topic-feelings", "topic-travel", "topic-time", "topic-money", "topic-health", "topic-speaking"], minImportance: 4 },
+  },
+  {
+    key: "goal-interview", family: "goal", label: "Interviews", hint: "Work, speaking and character words, A2 and up",
+    rule: { topics: ["topic-work", "topic-speaking", "topic-people", "topic-feelings", "topic-quality", "topic-phrasal"], cefr: ["A2", "B1", "B2"], minImportance: 4 },
+  },
+  {
+    key: "goal-ielts", family: "goal", label: "IELTS and exams", hint: "A2–B2 words on common exam topics",
+    rule: { topics: ["topic-work", "topic-tech", "topic-health", "topic-speaking", "topic-feelings", "topic-quality", "topic-people", "topic-travel", "topic-time", "topic-grammar"], cefr: ["A2", "B1", "B2"], minImportance: 4 },
+  },
+  {
+    key: "goal-work", family: "goal", label: "Work English", hint: "Work, technology, money and speaking",
+    rule: { topics: ["topic-work", "topic-tech", "topic-money", "topic-speaking", "topic-grammar"], minImportance: 3 },
+  },
+];
+
+/// The track that matches a profile goal ("ielts" → goal-ielts), if any.
+export function trackForGoal(goal: string | undefined | null): SectionDef | null {
+  return TRACKS.find((t) => t.key === `goal-${goal}`) ?? null;
+}
+
 const TOPIC_MORE: SectionDef = { key: "topic-more", family: "topic", label: "More words", hint: "Everything else", };
 
 const TOPIC_DEFS: SectionDef[] = [
@@ -91,7 +122,7 @@ export function topicKeyOf(category: string | null): string {
   return TOPIC_RULES.find((r) => r.test.test(c))?.key ?? TOPIC_MORE.key;
 }
 
-export const ALL_SECTIONS: SectionDef[] = [...LEVELS, ...TOPIC_DEFS, ...TYPES, ...MUST];
+export const ALL_SECTIONS: SectionDef[] = [...TRACKS, ...LEVELS, ...TOPIC_DEFS, ...TYPES, ...MUST];
 
 export function sectionDef(key: string | undefined | null): SectionDef | null {
   return ALL_SECTIONS.find((s) => s.key === key) ?? null;
@@ -108,6 +139,17 @@ export async function sectionWhere(key: string): Promise<Prisma.WordWhereInput |
   if (type) return { ...BUILT_IN, OR: type.codes.map((c) => ({ code: { startsWith: `${c}-` } })) };
   const must = MUST.find((s) => s.key === key);
   if (must) return { ...BUILT_IN, importance: { in: must.importance } };
+  const track = TRACKS.find((s) => s.key === key);
+  if (track) {
+    const cats = await prisma.word.groupBy({ by: ["category"], where: BUILT_IN });
+    const names = cats.map((c) => c.category).filter((c): c is string => c !== null && track.rule.topics.includes(topicKeyOf(c)));
+    return {
+      ...BUILT_IN,
+      category: { in: names },
+      ...(track.rule.cefr ? { cefr: { in: track.rule.cefr } } : {}),
+      importance: { gte: track.rule.minImportance },
+    };
+  }
   if (TOPIC_DEFS.some((s) => s.key === key)) {
     const cats = await prisma.word.groupBy({ by: ["category"], where: BUILT_IN });
     const names = cats.map((c) => c.category).filter((c): c is string => c !== null && topicKeyOf(c) === key);
@@ -137,7 +179,14 @@ function keysOf(w: Fact): string[] {
   const keys: string[] = [];
   const lv = LEVELS.find((s) => w.cefr && s.cefr.includes(w.cefr));
   if (lv) keys.push(lv.key);
-  keys.push(topicKeyOf(w.category));
+  const topic = topicKeyOf(w.category);
+  keys.push(topic);
+  for (const t of TRACKS) {
+    const r = t.rule;
+    if (r.topics.includes(topic) && (!r.cefr || (w.cefr !== null && r.cefr.includes(w.cefr))) && w.importance !== null && w.importance >= r.minImportance) {
+      keys.push(t.key);
+    }
+  }
   const prefix = w.code.split("-")[0];
   const ty = TYPES.find((s) => s.codes.includes(prefix));
   if (ty) keys.push(ty.key);

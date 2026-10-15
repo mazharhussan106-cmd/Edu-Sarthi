@@ -9,8 +9,10 @@
 import Link from "next/link";
 
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { prefsOf } from "@/lib/preferences";
 import { Card } from "@/components/ui/Card";
-import { FAMILIES, sectionStats, type SectionStat } from "@/lib/wordSections";
+import { FAMILIES, sectionStats, trackForGoal, type SectionStat } from "@/lib/wordSections";
 
 export const revalidate = 0;
 
@@ -36,7 +38,14 @@ function Tile({ s }: { s: SectionStat }) {
 
 export default async function SectionsPage() {
   const session = await auth();
-  const { stats, total, known } = await sectionStats(session!.user.id);
+  const userId = session!.user.id;
+  const [{ stats, total, known }, me] = await Promise.all([
+    sectionStats(userId),
+    prisma.user.findUnique({ where: { id: userId }, select: { preferences: true } }),
+  ]);
+  // The track that matches the goal chosen on the profile, if there is one.
+  const mine = trackForGoal(prefsOf(me?.preferences).goal);
+  const mineStat = mine ? stats.find((s) => s.key === mine.key) : null;
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-8 pt-3 sm:px-6 sm:pt-6">
@@ -56,12 +65,28 @@ export default async function SectionsPage() {
         </Card>
       </Link>
 
+      {mineStat ? (
+        <section aria-labelledby="for-you" className="mt-6">
+          <h2 id="for-you" className="font-display text-lg font-bold text-ink">For your goal</h2>
+          <div className="mt-2"><Tile s={mineStat} /></div>
+        </section>
+      ) : (
+        <p className="mt-4 text-sm text-ink-muted">
+          Tell us what you are practising for in <Link href="/profile" className="font-medium text-accent hover:underline">Profile</Link> and we will suggest a goal track here.
+        </p>
+      )}
+
       {FAMILIES.map((f) => {
         const tiles = stats.filter((s) => s.family === f.value);
         return (
           <section key={f.value} aria-labelledby={`fam-${f.value}`} className="mt-6">
             <h2 id={`fam-${f.value}`} className="font-display text-lg font-bold text-ink">{f.title}</h2>
             <p className="text-sm text-ink-muted">{f.blurb}</p>
+            {f.value === "goal" ? (
+              <p className="mt-1 text-xs text-ink-muted">
+                Chosen by EduSarthi from topic, level and importance. These are study paths, not an official exam or employer word list.
+              </p>
+            ) : null}
             <ul className="mt-2 grid grid-cols-2 gap-2">
               {tiles.map((s) => (
                 <li key={s.key}><Tile s={s} /></li>

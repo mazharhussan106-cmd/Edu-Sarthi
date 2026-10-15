@@ -43,7 +43,7 @@ export function DeckTopBar({
   k: DeckKind;
   type: string | null;
   /** The word section being studied, if any, so it can be shown and left. */
-  section?: { label: string } | null;
+  section?: { label: string; key: string } | null;
   list: ListKey | undefined;
   base: string;
   skipCount: number;
@@ -74,6 +74,11 @@ export function DeckTopBar({
             >
               {section ? `📂 ${section.label}` : "📂 Sections"}
             </Link>
+            {section ? (
+              <Link href={`/search?sec=${section.key}`} aria-label={`Search in ${section.label}`} className={cn(chip, "border-border-strong text-ink hover:bg-hover")}>
+                🔍 Search here
+              </Link>
+            ) : null}
             {section ? (
               <Link href="/flashcards?kind=words" aria-label="Study all words again" className={cn(chip, "border-border-strong text-ink-muted hover:bg-hover")}>
                 ✕ All words

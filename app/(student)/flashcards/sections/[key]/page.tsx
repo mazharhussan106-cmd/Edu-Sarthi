@@ -9,6 +9,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
+import { Search } from "lucide-react";
+
 import { Card } from "@/components/ui/Card";
 import { packStats, sectionDef, sectionWhere, PACK_SIZE } from "@/lib/wordSections";
 
@@ -37,7 +39,22 @@ export default async function SectionPage({ params }: { params: Promise<{ key: s
         <b className="text-ink">{n(known)}</b> / {n(total)} words known · {packs.length} pack{packs.length === 1 ? "" : "s"} of up to {PACK_SIZE}
       </p>
 
-      <Link href={study} className="mt-4 inline-flex h-11 items-center rounded-lg bg-accent px-5 text-sm font-medium text-on-accent hover:bg-accent-dark">
+      <form action="/flashcards" role="search" className="relative mt-4">
+        <input type="hidden" name="kind" value="words" />
+        <input type="hidden" name="sec" value={def.key} />
+        <label htmlFor="sec-q" className="sr-only">Search in {def.label}</label>
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist" aria-hidden="true" />
+        <input
+          id="sec-q"
+          name="q"
+          type="search"
+          maxLength={60}
+          placeholder={`Search in ${def.label}`}
+          className="h-10 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
+        />
+      </form>
+
+      <Link href={study} className="mt-3 inline-flex h-11 items-center rounded-lg bg-accent px-5 text-sm font-medium text-on-accent hover:bg-accent-dark">
         Study this section
       </Link>
 

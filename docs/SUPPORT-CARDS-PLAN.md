@@ -1,6 +1,6 @@
 # Customer-support English cards — plan and 10 samples (13 Oct 2026)
 
-Status (15 Oct 2026): **180-card workbook built and audited** — `content/support-cards/Support_Cards_EduSarthi.xlsx` (+ `support.json` for a future app import). App integration (Support chip) is NOT built yet. Mockup of one card: `docs/support-card.png` (source `docs/support-card-mockup.html`). Written after the owner's answers below. Update this file when anything is decided.
+Status (15 Oct 2026): **180-card workbook built and audited** — `content/support-cards/Support_Cards_EduSarthi.xlsx` (+ `support.json` for a future app import). App integration (Support chip) **built 15 Oct 2026** — see "App build" at the end. Mockup of one card: `docs/support-card.png` (source `docs/support-card-mockup.html`). Written after the owner's answers below. Update this file when anything is decided.
 
 ## Owner's answers (13 Oct 2026)
 
@@ -93,3 +93,22 @@ Grammar in one line: *Could you + base verb* = polite request; *I'll* = decision
 - Audit round 2 (regression): one reviewer per channel re-checked every round-1 fix and did a fresh pass; chat and email also had an adversarial pass (`audit/audit2_*.md`).
 - Final checks: `audit.py` 0 errors, `rules_check.py` 0 issues, workbook recalculated with 0 formula errors.
 - Still a DRAFT until a verified teacher checks it. Next step (needs approval, >6 files): app Support chip using the chunk-card route.
+
+## App build (15 Oct 2026)
+
+Built after the owner's "Bana do", on branch `claude/happy-galileo-167f8x`.
+
+- **Data:** `CardKind` gets `SUPPORT` (additive — no data can be lost). `prisma/import-support.ts` reads `content/support-cards/support.json`: `id` → `code`, `sentence` → `text`, channel → `category` (`voice`/`chat`/`email`), level → `partOfSpeech` (`Basic`/…), `cefr`, `importance`; the other 50 fields go into `details` with the workbook's own keys. Learning order = order in the file. Re-running updates in place. Added as the last step of Actions → Database setup.
+- **Tab:** Support chip after Grammar; second row Voice · Chat · Email | Basic · Intermediate · Advanced. Tapping the chip that is on clears it, so no filter = all 180 in study order. Daily new-card limit counts the whole Support kind, as for chunks.
+- **Card:** same frame and controls. Header band reads "SUPPORT · RECOGNITION / MEANING & USE / REAL LIFE & PRACTICE" (as in the mockup).
+  - Side 1: ID + channel + level + Say it / Understand it badges, situation, sentence ("Customer says:" on Understand cards), Listen + Slow (browser voice, British/American first for this tab), recall cue, call stage, stress, register · tone, customer feels, CEFR · importance, memory hook.
+  - Side 2: Hindi meaning (Devanagari + Roman) and plain English, tone note, watch out ✗/✓ with don't say and positive swap, ask next and replies you may hear, grammar in one line.
+  - Side 3 (scrolls): Sound right (linking, intonation, Indian-speaker tip), why it works, other ways (alt 1, alt 2, more formal), mini conversation, if the customer pushes back, Indian English vs international, other channels, when not to use, best-practice rule; then practice — fill blank, MCQ with "why", put words in order (tap), Hindi → English (reveal), customer says next (reveal), role-play, audit task with the 3-point self-check, review plan, See video / Record.
+  - Why linking, intonation etc. moved to side 3: sides 1–2 must fit a phone screen; with every field on them the text shrank to an unreadable size (checked in screenshots).
+- **Email cards:** the audit task is written. A draft box (not saved) and the button "Send a photo for audit" go to an IMAGE exercise. Voice and Chat cards record audio.
+- **Tested locally:** schema push, import twice (180 created, then 0 changed), all three tabs and filters, search, card link, MCQ and word-order checks, both audit exits and the practice page, typecheck and production build.
+
+### Still open
+- Content is a DRAFT until a verified teacher checks it (side 2 says so).
+- Recorded audio per card (the browser voice cannot sound like an angry or accented customer).
+- A text-only submission type for email cards, if photos turn out to be awkward.

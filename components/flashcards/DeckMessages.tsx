@@ -35,10 +35,11 @@ export function DeckResults({
             <Link href={hrefFor(w.code)} className="block">
               <Card className="flex items-center justify-between gap-3 p-3 hover:bg-hover">
                 <span className="min-w-0">
-                  <span className="block font-display font-bold text-ink">{w.text}</span>
+                  {/* Two lines at most: support sentences run to an email paragraph. */}
+                  <span className="line-clamp-2 font-display font-bold text-ink">{w.text}</span>
                   <span className="block truncate text-xs text-ink-muted">{w.gloss}</span>
                 </span>
-                <span className="shrink-0 font-mono text-[11px] text-ink-muted">{w.meta}</span>
+                <span className="max-w-[38%] shrink-0 text-right font-mono text-[11px] text-ink-muted">{w.meta}</span>
               </Card>
             </Link>
           </li>

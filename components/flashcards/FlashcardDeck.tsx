@@ -9,8 +9,8 @@
 // to go back to. Skips live in the URL (lib/cardSkip), so they survive a
 // refresh and vanish when the student leaves the flashcard tab.
 //
-// Words and chunks share all of this; only the drawing of each side differs
-// (CardSides). It deliberately does NOT draw the card or handle gestures
+// Words, chunks and support cards share all of this; only the drawing of
+// each side differs (CardSides). It deliberately does NOT draw the card or handle gestures
 // (CardSurface) or pick the next card (the page, on the server).
 
 "use client";
@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { CardControls, type Level, type Remarks } from "@/components/flashcards/CardControls";
-import { ChunkSide, WORD_TITLES, WordSide, type ChunkExtras } from "@/components/flashcards/CardSides";
+import { ChunkSide, SUPPORT_TITLES, SupportSide, WORD_TITLES, WordSide, type ChunkExtras } from "@/components/flashcards/CardSides";
 import { CardSurface } from "@/components/flashcards/CardSurface";
 import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi";
 import type { CardColor } from "@/lib/cardColors";
@@ -56,6 +56,7 @@ export function FlashcardDeck({
   skip,
   cardColor,
   chunk,
+  support = false,
   tallTop = false,
 }: {
   word: DeckWord;
@@ -66,6 +67,8 @@ export function FlashcardDeck({
   cardColor: CardColor;
   /** Present for chunk and grammar cards; words leave it out. */
   chunk?: ChunkExtras;
+  /** A customer-support card: its own sides, and a Slow button. */
+  support?: boolean;
   /** The Chunk tab has one more row of chips above the card. */
   tallTop?: boolean;
 }) {
@@ -87,7 +90,9 @@ export function FlashcardDeck({
     if (h[h.length - 1] !== word.code) writeHistory([...h, word.code]);
   }, [word.code]);
 
-  function speak() {
+  // `rate` is checked as a number because the chunk card passes this straight
+  // to onClick, which hands over the click event.
+  function speak(rate?: unknown) {
     if (word.audioUrl) {
       void new Audio(word.audioUrl).play().catch(() => setMessage("The recording would not play. Check the volume and try again."));
       return;
@@ -98,9 +103,12 @@ export function FlashcardDeck({
     if (!synth) return setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
     const u = new SpeechSynthesisUtterance(chunk ? sayable(word.text) : word.text);
     const voices = synth.getVoices();
-    u.voice = voices.find((v) => v.lang === "en-IN") ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
-    u.lang = u.voice?.lang ?? "en-IN";
-    u.rate = 0.85;
+    // Support agents talk to customers abroad, so those cards prefer a British
+    // or American voice; every other card stays Indian English first.
+    const first = support ? ["en-GB", "en-US"] : ["en-IN"];
+    u.voice = first.map((l) => voices.find((v) => v.lang === l)).find(Boolean) ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
+    u.lang = u.voice?.lang ?? first[0];
+    u.rate = typeof rate === "number" ? rate : 0.85;
     synth.cancel();
     synth.speak(u);
   }
@@ -175,13 +183,19 @@ export function FlashcardDeck({
       >
         <CardSurface
           side={side}
-          titles={WORD_TITLES}
+          titles={support ? SUPPORT_TITLES : WORD_TITLES}
           word={word.text}
           color={cardColor}
           onTurn={() => setSide((s) => ((s + 1) % 3) as 0 | 1 | 2)}
           onSwipe={(dir) => (dir === "next" ? next() : prev())}
         >
-          {chunk ? <ChunkSide {...sideProps} extras={chunk} /> : <WordSide {...sideProps} />}
+          {support ? (
+            <SupportSide {...sideProps} />
+          ) : chunk ? (
+            <ChunkSide {...sideProps} extras={chunk} />
+          ) : (
+            <WordSide {...sideProps} />
+          )}
         </CardSurface>
       </div>
 

@@ -114,7 +114,7 @@ export function chunkGloss(d: ChunkDetails): string {
   return d.hindi?.roman ?? d.example ?? "";
 }
 
-/// "Word", "Chunk" or "Grammar", for screens that label a flashcard recording.
-export function cardNoun(kind: string | null | undefined): "Word" | "Chunk" | "Grammar" {
-  return kind === "CHUNK" ? "Chunk" : kind === "GRAMMAR" ? "Grammar" : "Word";
+/// "Word", "Chunk", "Grammar" or "Support", for screens that label a flashcard recording.
+export function cardNoun(kind: string | null | undefined): "Word" | "Chunk" | "Grammar" | "Support" {
+  return kind === "CHUNK" ? "Chunk" : kind === "GRAMMAR" ? "Grammar" : kind === "SUPPORT" ? "Support" : "Word";
 }

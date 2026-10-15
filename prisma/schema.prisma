@@ -362,6 +362,9 @@ enum CardKind {
   WORD
   CHUNK
   GRAMMAR
+  /// Customer-support English (content/support-cards). Channel in `category`,
+  /// level in `partOfSpeech`.
+  SUPPORT
 }
 
 /// One flashcard: a word (and later a chunk or grammar pattern). The columns

@@ -1,0 +1,328 @@
+
+@API-008
+topic: 02 HTTP
+level: Beginner
+term: HTTP methods (GET, POST, PUT, PATCH, DELETE)
+cue: Which five request methods tell an API whether you want to read, create, replace, partly change or remove something?
+category: HTTP concept
+frequency: Very high
+importance: 5
+origin: HTTP needed a small set of standard verbs so that every web service could express common actions in the same way.
+pro_tip: Use GET only for reading, because it must never change data on the server.
+memory_story: The five methods are like the actions in a filing office: look up, add, replace, correct and shred.
+visual: Five labelled arrows pointing at the same URL, each with a different action.
+emotion: The comfort of a small, predictable set of actions.
+definition: HTTP methods are verbs sent with a request that say what to do with the resource: GET reads, POST creates, PUT replaces, PATCH changes part of it, and DELETE removes it.
+explanation: GET retrieves data and is safe, meaning it should not change anything. POST sends data to create a resource or trigger an action. PUT replaces a whole resource, PATCH updates only some fields, and DELETE removes it. HEAD and OPTIONS also exist for headers and capabilities.
+simple_explain: GET reads, POST creates, PUT replaces everything, PATCH changes only a few fields, and DELETE removes. The URL says what, and the method says what to do with it.
+analogy: It is like the actions in a filing office: look up, add, replace, correct and shred.
+formula_rule: GET = read, POST = create, PUT = replace, PATCH = partial update, DELETE = remove
+example_1: GET /users/42 reads user 42.
+example_2: POST /orders creates a new order.
+example_3: PATCH /users/42 changes only the email of user 42.
+related: REST, idempotency, status codes, request body
+word_family: GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS
+where_used: Every REST API | API documentation | Writing client code
+mini_conversation: A: I only want to change the user's email. | B: Use PATCH, since PUT would replace the whole user.
+misconception: ✗ PUT and PATCH do the same thing → ✓ PUT replaces the whole resource, while PATCH changes only the fields you send
+contrast: PUT vs PATCH: PUT replaces everything, PATCH updates part of it.
+avoid: Do not use GET to delete or change data.
+memory_trick: GET gets, POST posts a new one.
+real_project: Using POST to create orders and PATCH to update only their status.
+real_interview: An interviewer may ask: What is the difference between PUT and PATCH?
+real_daily: It is like looking up, adding, replacing, correcting and shredding a file.
+mcq_question: Which method should you use to change only one field of an existing record?
+mcq_options: A) PATCH B) GET C) DELETE D) POST
+mcq_answer: A
+mcq_why: PATCH sends a partial update, while PUT replaces the whole record.
+fill_blank: To read data without changing it you use the ____ method → GET
+apply: Which method creates a new record? → POST
+explain_task: Explain the five HTTP methods in three lines.
+own_task: Write which method you would use for five actions in a to-do app.
+
+@API-009
+topic: 02 HTTP
+level: Beginner
+term: URL parts (path and query parameters)
+cue: In a URL such as /users/42?active=true, which parts name the resource and which parts filter or modify it?
+category: HTTP concept
+frequency: Very high
+importance: 4
+origin: A single address needs to say both which thing you want and some options about it, so URLs split into a path and an optional query string.
+pro_tip: Use path parts for identifying a resource and query parameters for filtering, sorting and paging.
+memory_story: The path is the street and house number, and the query is the note you pin to the door saying how you want it.
+visual: A URL with the path part underlined in one colour and the query string after the question mark in another.
+emotion: The satisfaction of reading any URL at a glance.
+definition: The path identifies the resource, such as /users/42, and the query string after the question mark adds named options such as active=true.
+explanation: A URL has a scheme (https), a host (api.example.com), a path (/users/42), and an optional query string that starts with a question mark and joins pairs with ampersands. Special characters in values must be URL-encoded. Path parameters like 42 are part of the resource address.
+simple_explain: The path says which thing you mean. The query string after the question mark adds options such as filters, sorting and page numbers.
+analogy: The path is the house address and the query is the note pinned to the door saying how you want it.
+formula_rule: scheme://host/path?key=value&key2=value2
+example_1: https://api.example.com/users/42 uses 42 as a path parameter.
+example_2: https://api.example.com/users?active=true filters users with a query parameter.
+example_3: https://api.example.com/orders?page=2&limit=10 asks for the second page of ten.
+related: endpoint, pagination, filtering, URL encoding
+word_family: scheme, host, path, query string, parameter, fragment
+where_used: Every API call | Filtering and paging | Building URLs in code
+mini_conversation: A: How do I get only active users? | B: Add a query parameter, GET /users?active=true.
+misconception: ✗ Query parameters and path parameters are the same thing → ✓ Path parameters identify the resource, while query parameters add optional filters or settings
+contrast: Path vs query: the path names the resource, the query refines the request.
+avoid: Do not put spaces or special characters in URLs without encoding them.
+memory_trick: The path points and the query refines it.
+real_project: Building a list request with page, limit and sort query parameters.
+real_interview: An interviewer may ask: When do you use a path parameter and when a query parameter?
+real_daily: It is like an address plus a note pinned to the door.
+mcq_question: In /orders?page=2&limit=10, what does page=2 belong to?
+mcq_options: A) The query string B) The scheme C) The host D) The header
+mcq_answer: A
+mcq_why: Everything after the question mark is the query string.
+fill_blank: Query parameters begin after a ____ mark in the URL → question
+apply: How would you request only active users? → Add the query parameter active=true to the users endpoint
+explain_task: Explain path and query parameters in three lines.
+own_task: Write a URL that asks for page 3 of a product list with ten items per page.
+
+@API-010
+topic: 02 HTTP
+level: Beginner
+term: Headers
+cue: Which key-value pairs travel with every request and response and carry information about the message rather than its data?
+category: HTTP concept
+frequency: Very high
+importance: 5
+origin: The message body holds the data, but both sides also need to share details such as format and identity, so HTTP added headers for that metadata.
+pro_tip: Check the Content-Type and Authorization headers first when a request mysteriously fails.
+memory_story: Headers are the labels on a parcel, giving the sender, type and handling instructions while the box holds the goods.
+visual: A parcel with several stickers listing the type, size and sender, next to a closed box.
+emotion: The relief of finding the missing label that explains a failed request.
+definition: Headers are name and value pairs sent with a request or response that describe the message, such as its format, authorisation or caching.
+explanation: Common request headers include Authorization, Content-Type, Accept and User-Agent. Common response headers include Content-Type, Cache-Control and Retry-After. Header names are case-insensitive. Custom headers are often prefixed or documented by the provider, such as X-Request-Id.
+simple_explain: Headers are small labels on a message. They say things like I am sending JSON, here is my token, and please give me JSON back.
+analogy: Headers are the labels on a parcel, while the body is the goods inside.
+formula_rule: Header-Name: value
+example_1: Authorization: Bearer abc123 carries the token.
+example_2: Content-Type: application/json says the body is JSON.
+example_3: Accept: application/json asks for a JSON answer.
+related: Content-Type, Authorization, request body, status codes
+word_family: header, Content-Type, Accept, Authorization, User-Agent
+where_used: Authentication | Content negotiation | Caching and debugging
+mini_conversation: A: The server says it cannot read my data. | B: You probably forgot the Content-Type header for JSON.
+misconception: ✗ Headers carry the main data of a request → ✓ Headers carry information about the message, and the main data goes in the body or the URL
+contrast: Header vs body: the header describes the message, the body is the data itself.
+avoid: Do not put secrets in custom headers without HTTPS.
+memory_trick: Headers are labels, body is goods.
+real_project: Setting Authorization and Content-Type headers on every request of an API client.
+real_interview: An interviewer may ask: Which headers are used in an API request and why?
+real_daily: It is like the labels on a parcel.
+mcq_question: Which header usually carries a token?
+mcq_options: A) User-Agent B) Accept C) Authorization D) Cache-Control
+mcq_answer: C
+mcq_why: The Authorization header carries credentials such as a Bearer token.
+fill_blank: The header that tells the server the body is JSON is Content-____ → Type
+apply: A server cannot read your JSON body. Which header do you check? → Content-Type
+explain_task: Explain what headers are in three lines.
+own_task: List three headers you would send when creating a record with JSON.
+
+@API-011
+topic: 02 HTTP
+level: Beginner
+term: Request body
+cue: Which part of a request carries the actual data you are sending, such as the fields of a new user?
+category: HTTP concept
+frequency: Very high
+importance: 4
+origin: Large or structured data does not fit neatly in a URL, so HTTP lets a request carry a body after the headers.
+pro_tip: Send data in the body for POST, PUT and PATCH, and do not put a body on a GET request.
+memory_story: The body is the contents of the parcel, while the URL and headers are the address and labels.
+visual: A request drawn as an envelope with a small address on the front and a sheet of data inside.
+emotion: The ease of sending a whole object in one go.
+definition: The request body is the data sent with a request, most often JSON, used by methods such as POST, PUT and PATCH.
+explanation: The body can be JSON, form data, files or plain text, and its type is announced by the Content-Type header. The server reads the body to create or update a resource. GET and DELETE requests normally do not have a body.
+simple_explain: The body is where the data goes. To create a user, you send the user's fields as JSON in the body of a POST request.
+analogy: It is like the sheet of paper inside an envelope.
+formula_rule: POST + Content-Type: application/json + {"name": "Asha"}
+example_1: A POST body {"name": "Asha", "email": "asha@example.com"} to create a user.
+example_2: A PATCH body {"email": "new@example.com"} to change one field.
+example_3: A multipart body that uploads an image file.
+related: Content-Type, HTTP methods, JSON, form data
+word_family: body, payload, JSON, multipart, form data
+where_used: Creating and updating records | File uploads | Sending forms
+mini_conversation: A: How do I send the new user's details? | B: Put them as JSON in the body of a POST request.
+misconception: ✗ A GET request normally carries its data in a body → ✓ A GET request carries its options in the URL, and the body is meant for POST, PUT and PATCH
+contrast: Body vs query string: the body carries larger structured data, the query string carries short options.
+avoid: Do not send secrets in the URL when a body can carry them.
+memory_trick: Body is the payload inside.
+real_project: Sending an order's items as a JSON body to the create order endpoint.
+real_interview: An interviewer may ask: Where would you send data for a POST request?
+real_daily: It is like the paper inside an envelope.
+mcq_question: Where does the data of a POST request normally go?
+mcq_options: A) The browser history B) The response C) The status code D) The body
+mcq_answer: D
+mcq_why: POST sends its data in the request body.
+fill_blank: The body of a POST request is usually written as ____ → JSON
+apply: Where do you put new user details when creating a user? → In the JSON body of a POST request
+explain_task: Explain the request body in three lines.
+own_task: Write a JSON body that creates a product with a name and a price.
+
+@API-012
+topic: 02 HTTP
+level: Beginner
+term: Status codes (2xx, 3xx, 4xx, 5xx)
+cue: Which three-digit numbers in a response tell you whether a request worked, was redirected, failed because of you, or failed on the server?
+category: HTTP concept
+frequency: Very high
+importance: 5
+origin: A client needs a quick, standard way to know what happened, so HTTP gives every response a numeric status grouped by its first digit.
+pro_tip: Learn the groups first: 2xx success, 3xx redirect, 4xx client error, 5xx server error.
+memory_story: Status codes are traffic lights: green for 2xx, a detour sign for 3xx, a stop for your mistake in 4xx and a broken signal in 5xx.
+visual: Four coloured boxes labelled 2xx, 3xx, 4xx and 5xx with example numbers inside.
+emotion: The calm of reading a number and knowing what to do next.
+definition: A status code is a three-digit number in a response, where the first digit shows the group: 2 success, 3 redirect, 4 client error and 5 server error.
+explanation: Common ones are 200 OK, 201 Created, 204 No Content, 400 Bad Request, 401 Unauthorized (not authenticated), 403 Forbidden, 404 Not Found, 409 Conflict, 429 Too Many Requests, 500 Internal Server Error and 503 Service Unavailable. A 4xx usually means fix your request, and a 5xx may be worth retrying.
+simple_explain: Look at the first digit. 2 means it worked, 4 means your request has a problem, and 5 means the server has a problem.
+analogy: It is like traffic lights, with green for go, a detour sign, a stop for your mistake and a broken signal for the server's.
+formula_rule: 2xx success, 3xx redirect, 4xx you erred, 5xx server erred
+example_1: 201 Created after a successful POST.
+example_2: 404 Not Found for a wrong URL or missing record.
+example_3: 503 Service Unavailable when the server is overloaded.
+related: error handling, retries, rate limiting, authentication
+word_family: 200, 201, 204, 400, 401, 403, 404, 429, 500, 503
+where_used: Every API call | Error handling | Debugging
+mini_conversation: A: My call returned 401. | B: That means you are not authenticated, so check your token or API key.
+misconception: ✗ 401 and 403 mean the same thing → ✓ 401 means you are not authenticated, while 403 means you are known but not allowed to do that
+contrast: 401 vs 403: 401 asks who you are, 403 says you are not permitted.
+avoid: Do not treat every non-200 response as the same error.
+memory_trick: The first digit tells whose fault it is.
+real_project: Showing different messages for 404, 429 and 500 in an app.
+real_interview: An interviewer may ask: What is the difference between 401 and 403?
+real_daily: It is like traffic lights guiding what to do next.
+mcq_question: Which status group means the client made a mistake?
+mcq_options: A) 2xx B) 4xx C) 5xx D) 3xx
+mcq_answer: B
+mcq_why: 4xx codes mean the request has a problem on the client side.
+fill_blank: The status code 404 means Not ____ → Found
+apply: A POST created a record. Which code do you expect? → 201 Created
+explain_task: Explain the status code groups in three lines.
+own_task: Write what you would do for each of 401, 404 and 500.
+
+@API-013
+topic: 02 HTTP
+level: Intermediate
+term: Content types (Content-Type and Accept)
+cue: Which two headers tell the server the format of what you send and the format you want back?
+category: HTTP concept
+frequency: High
+importance: 4
+origin: Servers can speak several formats, so clients and servers use headers to agree on how the data is written.
+pro_tip: For JSON APIs, send Content-Type: application/json when you have a body and Accept: application/json to be explicit.
+memory_story: Content-Type is the language you write your letter in, and Accept is the language you want the reply in.
+visual: A letter marked written in JSON and a note saying please reply in JSON.
+emotion: The clarity of both sides agreeing on a format.
+definition: Content-Type states the format of the message body, and Accept lists the formats the client is willing to receive.
+explanation: Common media types are application/json, application/xml, text/html, application/x-www-form-urlencoded and multipart/form-data. If you send JSON without the right Content-Type, the server may reject or misread it. The response also has a Content-Type that tells you how to parse it.
+simple_explain: Content-Type describes what you are sending. Accept says what you want back. Mismatches cause errors like 415 Unsupported Media Type.
+analogy: It is like writing a letter in one language and asking for the reply in another.
+formula_rule: Content-Type = what I send. Accept = what I want.
+example_1: Content-Type: application/json on a POST with a JSON body.
+example_2: Accept: application/json to ask for a JSON response.
+example_3: Content-Type: multipart/form-data when uploading a file.
+related: headers, JSON, request body, form data
+word_family: media type, MIME type, Content-Type, Accept, 415
+where_used: Sending JSON | File uploads | Content negotiation
+mini_conversation: A: The server returns 415 when I post my data. | B: Check that you set Content-Type to application/json.
+misconception: ✗ Content-Type and Accept are interchangeable → ✓ Content-Type describes the body you send, while Accept describes the format you want in the response
+contrast: Content-Type vs Accept: one describes the message, the other states a preference for the reply.
+avoid: Do not send a JSON body without the JSON content type.
+memory_trick: Content-Type is what I send, Accept is what I want.
+real_project: Fixing a 415 error by adding the JSON content type to a client.
+real_interview: An interviewer may ask: What is the difference between Content-Type and Accept?
+real_daily: It is like writing in one language and asking for the reply in another.
+mcq_question: Which header describes the format of the body you send?
+mcq_options: A) Content-Type B) Accept C) Cache-Control D) Authorization
+mcq_answer: A
+mcq_why: Content-Type describes the body being sent.
+fill_blank: Status 415 means Unsupported ____ Type → Media
+apply: A server rejects your JSON body with 415. What do you check? → That Content-Type is application/json
+explain_task: Explain Content-Type and Accept in three lines.
+own_task: Write the headers for sending a JSON body and asking for a JSON reply.
+
+@API-014
+topic: 02 HTTP
+level: Intermediate
+term: Idempotency
+cue: Which property means that repeating the same request again leaves the server in the same state as doing it once?
+category: HTTP concept
+frequency: High
+importance: 4
+origin: Networks fail and clients retry, so APIs need requests that are safe to repeat without causing duplicate effects.
+pro_tip: For payments or orders, send an Idempotency-Key so a retried POST does not charge twice.
+memory_story: Pressing a lift's call button many times still brings only one lift, because the effect is the same.
+visual: A button pressed five times lighting up the same single lamp.
+emotion: The peace of retrying without fearing double charges.
+definition: An operation is idempotent when making the same request many times has the same effect as making it once.
+explanation: GET, PUT and DELETE are defined as idempotent, because replacing or deleting something twice leaves the same final state. POST is generally not idempotent, since it can create a new record each time. Many APIs let you add an Idempotency-Key header so a repeated POST is recognised and ignored.
+simple_explain: If repeating a call changes nothing more after the first time, it is idempotent. That makes retries safe.
+analogy: It is like pressing a lift's call button many times, which still brings only one lift.
+formula_rule: GET, PUT, DELETE = idempotent. POST = not by default.
+example_1: Deleting user 42 twice leaves the same result as deleting once.
+example_2: Setting an order's status to shipped twice leaves it shipped.
+example_3: Posting a payment twice could charge two times without an idempotency key.
+related: HTTP methods, retries, webhooks, payments
+word_family: idempotent, safe, retry, duplicate, Idempotency-Key
+where_used: Payments | Retries | Reliable integrations
+mini_conversation: A: My payment call timed out, can I retry it? | B: Only with an idempotency key, or you may charge the customer twice.
+misconception: ✗ Idempotent means the request never changes anything → ✓ Idempotent means repeating it has no extra effect, and it may still change data the first time
+contrast: Safe vs idempotent: a safe request does not change data, an idempotent request can change data but gives the same result when repeated.
+avoid: Do not retry a plain POST blindly after a timeout.
+memory_trick: Idempotent means the same result however many times.
+real_project: Adding an Idempotency-Key header to payment requests so retries are safe.
+real_interview: An interviewer may ask: Which HTTP methods are idempotent?
+real_daily: It is like pressing a lift button many times and still getting one lift.
+mcq_question: Which method is generally not idempotent?
+mcq_options: A) GET B) POST C) DELETE D) PUT
+mcq_answer: B
+mcq_why: A POST can create a new record each time it is sent.
+fill_blank: A header that makes a repeated POST safe is called an ____ key → Idempotency
+apply: A POST payment timed out. How can you retry safely? → Send it again with the same idempotency key
+explain_task: Explain idempotency in three lines.
+own_task: Write which of your own API calls must be idempotent and why.
+
+@API-015
+topic: 02 HTTP
+level: Intermediate
+term: Stateless requests, cookies and tokens
+cue: Why must a client send its identity again on every request, and what are the common ways to do so?
+category: HTTP concept
+frequency: High
+importance: 4
+origin: HTTP was built so servers keep no memory between requests, which makes it scalable, so identity has to be carried with every call.
+pro_tip: For APIs used by apps and scripts, prefer sending a token in the Authorization header over relying on cookies.
+memory_story: HTTP is a shopkeeper with no memory, so you must show your membership card every time you visit.
+visual: A person showing a card at a counter each time, even on the same day.
+emotion: The understanding that clears up why a login seems to vanish.
+definition: HTTP is stateless, meaning each request is independent, so clients identify themselves with each request using cookies or tokens.
+explanation: A cookie is a small value the server sets and the browser stores and sends back automatically. A token, such as a Bearer token, is a value your code stores and sends in the Authorization header. Stateless design lets any server handle any request, which helps scaling.
+simple_explain: The server forgets you after each call, so you send proof each time. Browsers do this with cookies automatically, and API clients usually send a token in a header.
+analogy: It is like a shopkeeper with no memory, so you show your membership card on every visit.
+formula_rule: Stateless = identity sent with every request (cookie or token)
+example_1: A browser sends a session cookie automatically with each request.
+example_2: A script sends Authorization: Bearer abc123 with each call.
+example_3: A mobile app stores a token and attaches it to every request.
+related: authentication, Bearer token, JWT, sessions
+word_family: stateless, session, cookie, token, Authorization
+where_used: Login systems | API authentication | Scalable backends
+mini_conversation: A: Why do I have to send my token on every request? | B: Because HTTP is stateless and the server does not remember you between calls.
+misconception: ✗ After I log in once the server remembers me by itself → ✓ The server remembers nothing, so your client must send a cookie or token with every request
+contrast: Cookie vs token: a cookie is stored and sent automatically by the browser, a token is stored and attached by your code.
+avoid: Do not rely on cookies for non-browser API clients.
+memory_trick: Stateless means show your card every time.
+real_project: Attaching a stored access token to every request through one shared function.
+real_interview: An interviewer may ask: What does stateless mean in HTTP?
+real_daily: It is like showing your membership card on every visit.
+mcq_question: What does it mean that HTTP is stateless?
+mcq_options: A) The server stores every user B) It only works with cookies C) It never fails D) The server keeps no memory between requests
+mcq_answer: D
+mcq_why: Each request stands alone, so identity must be sent every time.
+fill_blank: Browsers send a small stored value called a ____ automatically → cookie
+apply: How does a script prove who it is on every call? → By sending a token in the Authorization header
+explain_task: Explain stateless requests in three lines.
+own_task: Write how your favourite app might keep you logged in using a token.

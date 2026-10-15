@@ -1,0 +1,396 @@
+
+@GIT-022
+topic: 02 Branching & Merging
+level: Intermediate
+term: git fetch
+cue: Which command lets you see new remote commits without changing any of your own files?
+kind: Git command
+frequency: High
+importance: 4
+origin: Fetch means to bring; Git downloads only new data from the remote into remote-tracking branches like origin/main and leaves your work alone.
+pro_tip: Fetch before a pull and run git log HEAD..origin/main to see what is coming.
+memory_story: Fetch is a postman who leaves the letters on your table without forcing you to open them.
+visual: A delivery person leaves a parcel at the door and you open it later.
+emotion: The safe relief of learning what is on the remote without touching your own work.
+meaning: git fetch downloads new commits from the remote but does not change your branch or files.
+code: git fetch origin¶git log HEAD..origin/main --oneline
+output: 8b7d1e2 Fix refund rounding¶5c3a2f0 Update README
+explanation: Fetch updates the remote-tracking branches. You can then look with git log or git diff, and decide whether to combine the changes with git merge or git rebase.
+simple_explain: Fetch only brings the news of what is new on the remote. Your files do not change until you merge yourself, so it is safer than pull.
+analogy: It is like visiting a shop to see whether new stock has arrived, without buying anything.
+syntax: git fetch [<remote>]
+anatomy: git fetch = command | <remote> = origin | --all = all remotes
+example_1: git fetch origin
+example_2: git fetch --all
+example_3: git fetch --prune
+variation: git fetch --prune   # clear deleted remote branches¶git fetch origin pull/12/head   # the code of PR 12
+used_with: git merge, git rebase, --prune, origin/main
+related: git pull, git merge, git log
+alternatives: git pull (fetch plus merge)
+word_family: git fetch, git pull, git merge, git remote, git push
+where_used: Looking before a pull | Bringing a colleague's branch for review | CI scripts
+mini_conversation: A: I am afraid pulling will break something. | B: Fetch first and check with log, then decide.
+misconception: ✗ After git fetch my files change to include the new commits → ✓ Fetch does not change files, and new commits sit in origin/main until you merge or rebase
+confused_with: git fetch vs git pull: fetch only downloads, pull downloads and merges.
+avoid: Do not expect fetch to update your working files like pull does.
+wrong_code: git fetch main origin
+right_code: git fetch origin main
+memory_trick: Fetch means just look, do not merge yet.
+real_project: Fetching before a merge to see which new commits are on the remote.
+real_interview: An interviewer may ask: What is the difference between fetch and pull?
+real_daily: It is like checking whether new stock has come in without buying.
+mcq_question: Which command downloads new remote commits but does not change your current branch?
+mcq_options: A) git clone B) git merge C) git fetch D) git pull
+mcq_answer: C
+mcq_why: Fetch only downloads data, while pull also merges.
+fill_blank: git ____ origin → fetch
+hindi_to_task: Get the new data from origin but do not merge it.
+task_answer: git fetch origin
+own_task: After a git fetch, run git log HEAD..origin/main to see what is coming.
+practice_question: What does git fetch --prune do?
+practice_answer: It removes stale references to remote branches that were deleted.
+
+@GIT-023
+type: topic56
+topic: 03 Collaboration
+level: Beginner
+term: Fork
+cue: How do you make your own copy of someone else's repository on GitHub so you can change it without touching the original?
+category: GitHub feature
+frequency: High
+importance: 5
+origin: In open source, many people want to change a project but not all can write to it, so GitHub offers fork, which makes your own separate copy.
+pro_tip: After forking, add the original as an upstream remote so you can keep your copy updated.
+memory_story: A fork is a bend in the road where you make your own path while the original road stays known.
+visual: A big tree with one branch cut off and planted in your own garden.
+emotion: The freedom to tinker with someone else's code without fear.
+definition: A fork is a full copy of a repository in your own GitHub account that you can change without touching the original.
+explanation: A fork is a server-side copy. You clone the fork, make changes, push them, and then send a pull request to the original. A link between fork and original is kept.
+simple_explain: A fork gives you your own copy of someone's project in which you can write. Then you send a pull request asking the owner to take your changes.
+analogy: It is like photocopying someone's book, writing your own notes, and sending suggestions to the author.
+formula_rule: Fork → clone → branch → commit → push → pull request
+example_1: Forking a small library first to fix a typo in it.
+example_2: Working on a fork to add a new feature to an open-source tool.
+example_3: Keeping an abandoned project alive in your own copy.
+related: clone, pull request, upstream, origin
+word_family: fork, clone, upstream, origin, pull request
+where_used: Open-source contribution | Experiments | Continuing an old project
+mini_conversation: A: I want to fix a bug in this library but I have no permission. | B: Fork it first, fix it in your fork, and send a pull request.
+misconception: ✗ Fork and clone are the same thing → ✓ A fork is a copy on GitHub in your account, while a clone brings a copy onto your computer
+contrast: Fork vs clone: a fork makes a copy on GitHub, a clone brings a copy to your computer.
+avoid: Do not let your fork drift away, keep syncing it with upstream.
+memory_trick: Fork means a Fresh copy of my own.
+real_project: Forking an open-source library to fix a bug and sending a pull request.
+real_interview: An interviewer may ask: What is the difference between a fork and a clone?
+real_daily: It is like photocopying a book and writing your own notes in it.
+mcq_question: You are not a collaborator on someone's public repo. What is the right first step to send them a change?
+mcq_options: A) Ask for their password B) Push directly C) Delete the repo D) Fork it
+mcq_answer: D
+mcq_why: Without collaborator permission you cannot push, and a fork gives you your own copy.
+fill_blank: After forking, you ask the original owner to take your change by opening a ____ → pull request
+apply: How do you bring your fork to your computer? → Use git clone with your fork's URL
+explain_task: Explain the difference between a fork and a clone to a friend in three lines.
+own_task: Fork a small open-source repo and write down the link to your fork.
+
+@GIT-024
+type: topic56
+topic: 03 Collaboration
+level: Intermediate
+term: Pull request (PR)
+cue: What is GitHub's way of asking teammates to review your branch before it is merged into main?
+category: GitHub feature
+frequency: Very high
+importance: 5
+origin: Changes used to be mailed around as patches, and GitHub turned that into one page where discussion, review and merging all happen together.
+pro_tip: Keep a PR small and write in its description what, why, and how you tested it.
+memory_story: A PR is a request form where you say: look at my work and take it into main.
+visual: A page showing the list of changes, comments, and a green Merge button at the bottom.
+emotion: The pleasure of seeing your work accepted in front of everyone after review.
+definition: A pull request is a GitHub request asking for the commits on your branch to be merged into another branch after review.
+explanation: A PR contains commits, a diff, comments, checks and reviews. Reviewers approve and then the Merge, Squash or Rebase button brings the work into main. Commits you push to the branch afterwards join the same PR.
+simple_explain: In a PR you say what you changed and why. Teammates look, suggest fixes, and when all is good the work merges into main.
+analogy: It is like submitting an assignment that the teacher checks before giving marks.
+formula_rule: Make a branch → commits → push → open a PR → review → merge
+example_1: A developer opens a PR for a login feature and two teammates approve it.
+example_2: An open-source contributor sends a PR with a typo fix from a fork.
+example_3: A team waits for CI checks to pass on a bug-fix PR.
+related: branch, code review, merge, issue
+word_family: PR, review, approve, merge, squash
+where_used: Team development | Open-source | Code quality checks
+mini_conversation: A: The feature is built, how does it get into main? | B: Push the branch and open a PR, and it merges after review.
+misconception: ✗ A pull request means pulling your code toward you → ✓ A pull request is a request to merge your changes into another branch, so the name is old but it works like a merge request
+contrast: PR vs git pull: a PR is a review request on GitHub, git pull is a command that fetches remote code.
+avoid: Do not open huge PRs, they tire the reviewers.
+memory_trick: PR simply means Please Review it.
+real_project: Getting every feature reviewed through a PR before it enters main.
+real_interview: An interviewer may ask: What is the difference between merge, squash and rebase merge?
+real_daily: It is like handing in an assignment and getting it marked.
+mcq_question: CI checks fail on your PR. What is the right step?
+mcq_options: A) Push a fix commit to the branch B) Create a new repo C) Close the PR D) Remove the reviewer
+mcq_answer: A
+mcq_why: New commits join the same PR and the checks run again.
+fill_blank: The option that joins all PR commits into one is called ____ merge → squash
+apply: How do you add a fix after opening a PR? → Commit on the same branch and push
+explain_task: Explain in three lines why pull requests are used.
+own_task: Open a PR for a small change and write in the description what, why, and how you tested it.
+
+@GIT-025
+type: topic56
+topic: 03 Collaboration
+level: Intermediate
+term: Code review
+cue: What is the process of reading a teammate's code in a PR, line by line, suggesting changes and approving it?
+category: Team practice
+frequency: Very high
+importance: 4
+origin: One person finds it hard to see their own mistakes, so teams have others check bugs and design, and GitHub gives a direct tool for it in PRs.
+pro_tip: Read the PR description first, then the logic, then names and style.
+memory_story: A review is a proofreader who spots the mistake you cannot see yourself.
+visual: A small comment bubble sits on a line of a PR with a suggestion in it.
+emotion: Confidence that your work gets better through another pair of eyes.
+definition: In a code review other developers read the change, suggest improvements and approve it when it looks good.
+explanation: GitHub reviews end in one of three ways: Comment, Approve, or Request changes. A reviewer can leave a suggestion on a line that the author applies with one click. Branch protection rules can require approvals.
+simple_explain: In a review you read your teammate's code carefully and say what is good and what should change. Keep your words clear and kind.
+analogy: It is like having someone else read your essay to find mistakes.
+formula_rule: Understand → check the logic → look at the tests → write clear comments
+example_1: A reviewer spots an off-by-one mistake in a loop and sends a suggestion.
+example_2: A reviewer points out that a function name does not show what it does.
+example_3: A reviewer notes a security gap because input was not validated.
+related: pull request, approve, branch protection, CODEOWNERS
+word_family: review, approve, request changes, suggestion
+where_used: Team development | Open-source | Security checks
+mini_conversation: A: My PR is stuck. | B: The reviewer asked for changes, so read the comments and push a fix.
+misconception: ✗ Review is only for finding mistakes → ✓ Review also gives praise for good work, suggestions and learning, not just criticism
+contrast: Review vs testing: review checks logic and design through human eyes, testing runs the code to check the result.
+avoid: Do not make personal remarks, speak only about the code.
+memory_trick: Review means a Reader Verifies and helps You grow.
+real_project: Requiring at least one approval on every PR.
+real_interview: An interviewer may ask: What does a good code review comment look like?
+real_daily: It is like asking someone to read your essay and find mistakes.
+mcq_question: A reviewer chose Request changes on a PR. What should the author do next?
+mcq_options: A) Remove the reviewer B) Fix as the comments say and push C) Switch the branch D) Delete the PR
+mcq_answer: B
+mcq_why: Apply the suggestions and push to the same PR, then the reviewer looks again.
+fill_blank: The feature that lets the author apply a reviewer's change in one click is called a ____ → suggestion
+apply: What should a code review comment focus on? → The logic, names, tests and security, not the person
+explain_task: Explain to a friend what the purpose of a review is.
+own_task: Read an open-source PR and write one good comment on it.
+
+@GIT-026
+type: topic56
+topic: 03 Collaboration
+level: Beginner
+term: GitHub Issues
+cue: Which part of GitHub is used to record bugs, questions and feature ideas and discuss them?
+category: GitHub feature
+frequency: Very high
+importance: 4
+origin: Big projects needed one place for their to-do list, so GitHub added issues where every bug or idea gets its own thread, label and owner.
+pro_tip: In an issue write what happened, what should have happened, and how to reproduce it.
+memory_story: An issue is a complaint register where every complaint gets a number and an owner.
+visual: A list in which each line has a number, a label, and Open or Closed beside it.
+emotion: The calm of knowing no task will get lost.
+definition: An issue is a tracked record on GitHub of a bug, task or idea, with discussion and labels.
+explanation: An issue has a number such as #42. To link it to a PR, write Fixes #42 in the commit or PR, and the issue closes itself when the PR merges. Labels, assignees and milestones help organise work.
+simple_explain: In an issue you write what the problem is. Then someone works on it, writes Fixes #42 in the PR, and the issue closes when it merges.
+analogy: It is like an entry in a complaint register with a number and a person in charge.
+formula_rule: Open an issue → assign it → write Fixes #N in the PR → it closes on merge
+example_1: A user reports that the login button does not work.
+example_2: A maintainer adds a good first issue label to invite newcomers.
+example_3: A team puts ten issues into a milestone to plan a release.
+related: pull request, labels, milestone, project board
+word_family: issue, label, assignee, milestone, close
+where_used: Bug tracking | Feature requests | Open-source onboarding
+mini_conversation: A: Where should I record this bug? | B: Open an issue on GitHub and write Fixes #12 in the PR.
+misconception: ✗ Issues are only for reporting bugs → ✓ Issues are also used for questions, new ideas, task lists and discussion
+contrast: Issue vs PR: an issue records a problem or task, a PR is how you send a solution for it.
+avoid: Do not put many unrelated problems into one issue.
+memory_trick: Issue means Include the Situation clearly.
+real_project: Opening an issue for every bug and writing Fixes #N in the PR.
+real_interview: An interviewer may ask: How do you link an issue to a PR?
+real_daily: It is like an entry in a complaint register with a number.
+mcq_question: Which phrase in a PR description closes issue 42 automatically when it merges?
+mcq_options: A) Maybe #42 B) About #42 C) Fixes #42 D) See #42
+mcq_answer: C
+mcq_why: Words such as Fixes, Closes or Resolves close the issue.
+fill_blank: To close the issue, write ____ #42 in the PR → Fixes
+apply: How do newcomers find a good issue to start with? → Look for the good first issue label
+explain_task: Explain in three lines the difference between an issue and a pull request.
+own_task: Open an issue in your repo that says what happened, what should happen, and how to reproduce it.
+
+@GIT-027
+type: topic56
+topic: 03 Collaboration
+level: Intermediate
+term: Collaborators and roles
+cue: Which system decides how much permission a person has on a repo, such as reading, writing or changing settings?
+category: Access control
+frequency: Medium
+importance: 4
+origin: Letting everyone do everything is risky, so GitHub has separate permission levels so people can do only what their job needs.
+pro_tip: Give the least permission needed (least privilege) and use teams to assign roles.
+memory_story: Roles are like key cards for a building: some open only the lobby and some open every floor.
+visual: A badge with Read, Write or Admin printed on it.
+emotion: A safe feeling from giving the right people the right access.
+definition: Collaborators are people given access to a repo, and the role (Read, Triage, Write, Maintain, Admin) sets what they can do.
+explanation: Read: view and clone. Triage: manage issues and PRs. Write: push. Maintain: run the repo without risky settings. Admin: everything, including delete. In an organisation you create teams to give roles together.
+simple_explain: Give each person only as much permission as their work needs. A new teammate may get Write, but Admin should go only to trusted people.
+analogy: It is like office key cards that open different rooms for different people.
+formula_rule: Read < Triage < Write < Maintain < Admin
+example_1: An intern gets the Read role so they can only look at the code.
+example_2: A developer gets the Write role so they can push branches.
+example_3: The project lead gets the Admin role to manage settings and collaborators.
+related: organisation, team, branch protection, private repo
+word_family: collaborator, role, permission, team
+where_used: Company repos | Open-source maintainers | Student group projects
+mini_conversation: A: The new teammate cannot push. | B: Add them as a collaborator and give them the Write role.
+misconception: ✗ A collaborator is always the admin of the repo → ✓ Collaborators get different levels of access, and admin is only the highest role
+contrast: Collaborator vs fork: a collaborator gets permission on the repo directly, while a forker works in their own copy and sends a PR.
+avoid: Do not give everyone the Admin role.
+memory_trick: Roles mean Rights only as much as the work.
+real_project: Making teams in an organisation and giving each team only the Write role on its own repo.
+real_interview: An interviewer may ask: What are GitHub's permission levels?
+real_daily: It is like key cards that open different rooms for different people.
+mcq_question: Which role lets a person push to branches but not change repo settings?
+mcq_options: A) Triage B) Read C) Admin D) Write
+mcq_answer: D
+mcq_why: Write allows pushing, but changing settings needs Admin.
+fill_blank: The highest role, which can even delete a repo, is called ____ → Admin
+apply: Which role would you give a new intern who should only view code? → Read
+explain_task: Explain what least privilege means in three lines.
+own_task: Write down the role each teammate in your group project should have.
+
+@GIT-028
+topic: 03 Collaboration
+level: Intermediate
+term: Syncing a fork with upstream
+cue: How do you keep your fork up to date with the new commits of the original project?
+kind: Git workflow
+frequency: Medium
+importance: 4
+origin: Once you fork, the original keeps moving ahead, so you add the original as an upstream remote and sync from it.
+pro_tip: Sync with upstream before you start new work to keep conflicts small.
+memory_story: Upstream is the spring from which your small stream keeps getting water.
+visual: A big river with a small canal branching off it that keeps receiving fresh water.
+emotion: The peace of working on the latest code instead of stale code.
+meaning: Syncing a fork means bringing the original repo's new commits into your fork.
+code: git remote add upstream https://github.com/octocat/Hello-World.git¶git fetch upstream¶git switch main¶git merge upstream/main¶git push origin main
+output: From https://github.com/octocat/Hello-World¶ * [new branch]      main -> upstream/main¶Fast-forward
+explanation: Origin is your fork and upstream is the original repo. You add upstream as a remote once, then fetch, merge into your main, and push to your fork whenever needed. GitHub's Sync fork button does the same.
+simple_explain: A fork is a one-time copy while the original keeps changing. So you add an upstream remote, fetch, merge, and push to your fork.
+analogy: It is like asking again for photocopies of the new pages in someone's notes.
+syntax: git fetch upstream && git merge upstream/main
+anatomy: upstream = remote of the original repo | origin = your fork | upstream/main = main branch of the original
+example_1: git remote add upstream https://github.com/octocat/Hello-World.git
+example_2: git fetch upstream
+example_3: git merge upstream/main
+variation: git rebase upstream/main   # rebase instead of merge¶git remote -v   # see both origin and upstream
+used_with: git remote, git fetch, git merge, origin
+related: fork, git remote, git fetch
+alternatives: The Sync fork button on GitHub
+word_family: upstream, origin, fork, fetch, merge
+where_used: Open-source contributions | Long-lived forks | Refreshing before a PR
+mini_conversation: A: My fork has become outdated. | B: Add the upstream remote, fetch, merge, and push.
+misconception: ✗ A fork updates itself along with the original → ✓ A fork does not update itself, so you must fetch and merge from upstream or use the Sync fork button
+confused_with: origin vs upstream: origin is your fork, upstream is the original project you forked.
+avoid: Do not try to push to the original project's main branch.
+wrong_code: git remote add origin https://github.com/octocat/Hello-World.git
+right_code: git remote add upstream https://github.com/octocat/Hello-World.git
+memory_trick: Upstream is the spring at the top.
+real_project: Syncing your fork with upstream before opening an open-source PR.
+real_interview: An interviewer may ask: What is the difference between origin and upstream?
+real_daily: It is like asking for copies of the new pages of someone's notes.
+mcq_question: In a fork workflow, what is the original project's remote usually named?
+mcq_options: A) upstream B) origin C) backup D) master
+mcq_answer: A
+mcq_why: Origin is your fork and upstream is the original repository.
+fill_blank: git fetch ____ → upstream
+hindi_to_task: Get the new commits of the original repo.
+task_answer: git fetch upstream
+own_task: Add an upstream remote to your fork, fetch, and look at git remote -v.
+practice_question: What command merges upstream/main into your main?
+practice_answer: git merge upstream/main (while on the main branch)
+
+@GIT-029
+type: topic56
+topic: 03 Collaboration
+level: Advanced
+term: Branch protection and CODEOWNERS
+cue: What GitHub feature blocks direct pushes to main and requires reviews or checks first?
+category: Repository governance
+frequency: Medium
+importance: 4
+origin: One wrong push can break production, so GitHub has rules that stop important branches changing without review and checks, and a CODEOWNERS file says who reviews what.
+pro_tip: On main, require a pull request, require status checks, and require at least one approval.
+memory_story: Branch protection is a double lock on a bank vault, with no single person holding the key.
+visual: A door with two or three locks whose keys are held by different people.
+emotion: A firm sense that production stays safe.
+definition: Branch protection rules stop force pushes, direct pushes and merges without review on branches like main, and CODEOWNERS says who reviews which files.
+explanation: Rules include required reviews, required status checks, linear history and blocking force pushes. In .github/CODEOWNERS you write a path followed by the users or teams whose review is requested automatically on a PR.
+simple_explain: These rules say nothing goes straight into main. You need a PR, passing checks and approval from the right people. CODEOWNERS says who owns which file.
+analogy: It is like a vault that needs two different people's keys to open.
+formula_rule: Main protected → PR + checks + approval → merge; CODEOWNERS: path @owner
+example_1: Main now needs at least one approval and CI passing.
+example_2: The docs team reviews /docs/, as written in CODEOWNERS.
+example_3: Force pushes and branch deletion are blocked to protect the history.
+related: pull request, CI, code review, rulesets
+word_family: protection, rule, ruleset, required check, owner
+where_used: Production repos | Open-source maintainers | Security and compliance
+mini_conversation: A: I cannot push to main. | B: Branch protection is on, so open a PR and get approval.
+misconception: ✗ Branch protection does not apply to admins → ✓ Rules can apply to admins too, when the option to allow bypassing is turned off
+contrast: Branch protection vs permissions: permissions say who can do what, protection puts rules on the branch however permitted the person is.
+avoid: Do not leave main unprotected.
+memory_trick: Protect means review first, then merge.
+real_project: Putting required checks and one approval on the main branch.
+real_interview: An interviewer may ask: What does a CODEOWNERS file do?
+real_daily: It is like a vault with two locks and separate keys.
+mcq_question: Which file automatically adds the owner of a path as a reviewer on a PR?
+mcq_options: A) package.json B) CODEOWNERS C) .gitignore D) README.md
+mcq_answer: B
+mcq_why: CODEOWNERS maps paths to their owners.
+fill_blank: To stop direct changes to main, you set up a ____ rule → branch protection
+apply: How do you stop merges to main without review? → Turn on required approvals and required status checks
+explain_task: Explain in three lines why CODEOWNERS is useful.
+own_task: Write two lines of a CODEOWNERS file for your repo.
+
+@GIT-030
+type: topic56
+topic: 03 Collaboration
+level: Advanced
+term: Git workflows (feature branch, GitFlow, trunk-based)
+cue: What are the agreed ways teams create branches and decide when to merge called?
+category: Team process
+frequency: Medium
+importance: 4
+origin: When many people work on one codebase without rules everything gets tangled, so teams created different ways of working such as GitFlow and trunk-based development to suit their release speed.
+pro_tip: Try a feature-branch workflow for a small team and trunk-based for frequent releases.
+memory_story: A workflow is like traffic rules that decide who passes where and when.
+visual: Three maps: one with a straight road, one with many short roads, one with a long release lane.
+emotion: The relief of a clear route instead of team confusion.
+definition: A Git workflow is a set of rules for how branches are made, when they are merged and how releases are cut.
+explanation: Feature branch: a branch and PR for each task. GitFlow: main, develop, feature, release and hotfix branches. Trunk-based: small changes go straight to main (the trunk), with feature flags. The choice depends on team size and release speed.
+simple_explain: There are three main ways. Feature branch is the most common and simple. GitFlow suits big teams with scheduled releases. Trunk-based suits teams that release often.
+analogy: It is like different ways of cooking in one kitchen: in one pot, in many pots, or from a plan.
+formula_rule: Feature branch: main + feature/*; GitFlow: main + develop + feature + release + hotfix; Trunk-based: main + short branches
+example_1: A small team uses a feature branch and a PR for every task.
+example_2: Software with many versions uses GitFlow to manage release branches.
+example_3: A fast web company that deploys many times a day uses trunk-based development.
+related: branch, pull request, release, feature flag
+word_family: GitFlow, trunk-based, feature branch, release branch, hotfix
+where_used: Team development | Release planning | CI/CD
+mini_conversation: A: Which workflow should our team use? | B: Start with feature branches if the team is small, and change when needed.
+misconception: ✗ GitFlow is the best workflow for every team → ✓ No single workflow is best, and GitFlow can be heavy for small or fast-releasing teams
+contrast: GitFlow vs trunk-based: GitFlow has long-lived and release branches, trunk-based merges small work into main quickly.
+avoid: Do not keep long-lived branches, they increase conflicts.
+memory_trick: A small team needs a small road.
+real_project: Writing the agreed workflow in the README so the whole team follows it.
+real_interview: An interviewer may ask: What is the difference between GitFlow and trunk-based development?
+real_daily: It is like the traffic rules that decide who goes where.
+mcq_question: Which workflow stresses merging small changes into main frequently?
+mcq_options: A) GitFlow B) Fork-only C) Release-only D) Trunk-based
+mcq_answer: D
+mcq_why: Trunk-based sends small commits into main (the trunk) quickly.
+fill_blank: The approach with a separate branch and PR for each task is called the ____ workflow → feature branch
+apply: Which workflow would you choose for a team of three? → The feature branch workflow
+explain_task: Explain the difference between GitFlow and the feature branch workflow in three lines.
+own_task: Choose a workflow for your team and write three rules for it.

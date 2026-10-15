@@ -1,0 +1,293 @@
+deck.title: Apache Airflow – Beginner to Advanced Flashcards
+deck.subject: Apache Airflow
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: bash
+type: topic56
+
+@AIR-001
+topic: 01 Basics
+level: Beginner
+term: What Airflow is
+cue: Which tool schedules and monitors workflows that you write as Python code?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Teams ran data jobs with cron and scripts, which could not express dependencies or show history, so Airflow was built to orchestrate workflows as code.
+pro_tip: Think of Airflow as the manager of tasks, not the worker that does heavy processing.
+memory_story: Airflow is an air traffic controller that decides which plane takes off when, but does not fly the planes.
+visual: A graph of tasks with arrows and coloured run squares in a web page.
+emotion: The comfort of seeing every task and its state in one place.
+definition: Apache Airflow is an open-source platform for authoring, scheduling and monitoring workflows, which are defined in Python as directed acyclic graphs of tasks.
+explanation: You write a DAG file in Python, and Airflow reads it, schedules runs and executes the tasks through workers. A web interface shows runs, logs and history. Airflow is built for batch workflows that run on a schedule or trigger, not for low-latency streaming. Heavy work should run in external systems such as warehouses or Spark, with Airflow only calling them.
+simple_explain: Airflow runs your Python-defined workflows on schedule, in order, with retries and a visual history.
+analogy: Airflow is an air traffic controller that decides which plane takes off when, but does not fly the planes.
+formula_rule: Workflow as code = tasks + dependencies + schedule.
+example_1: A nightly workflow that extracts, loads and tests data.
+example_2: A weekly report task that waits for another job.
+example_3: A retry of one failed task from the interface.
+related: DAGs, tasks and operators, the web UI, orchestration
+word_family: DAG, task, scheduler, operator, workflow
+where_used: Data pipelines | Machine learning pipelines | Operations
+mini_conversation: A: Can Airflow process our huge files directly? | B: It should call Spark or the warehouse, since Airflow is the manager.
+misconception: ✗ Airflow is a data processing engine → ✓ It orchestrates tasks, and the heavy work runs elsewhere
+contrast: Airflow vs cron: Airflow tracks dependencies, retries and history, cron only runs commands.
+avoid: Do not run heavy data processing inside Airflow workers.
+memory_trick: Airflow orchestrates, other tools process the data.
+real_project: Replacing cron jobs with Airflow gave a customer clear history and automatic retries.
+real_interview: An interviewer may ask: What is Airflow used for and what is it not?
+real_daily: It is like an air traffic controller for jobs.
+mcq_question: What is Airflow mainly for?
+mcq_options: A) Streaming events B) Storing files C) Training models only D) Orchestrating scheduled workflows
+mcq_answer: D
+mcq_why: It schedules and monitors tasks.
+fill_blank: Airflow workflows are written in the language ____ → Python
+apply: A team needs dependencies, retries and history for nightly jobs. What tool? → Airflow
+explain_task: Explain Airflow in three lines.
+own_task: List three jobs that suit Airflow and one that does not.
+
+@AIR-002
+topic: 01 Basics
+level: Beginner
+term: DAGs
+cue: Which structure describes tasks and the order in which they must run?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Tasks depend on each other without circles, so a directed acyclic graph was chosen to describe the order of work.
+pro_tip: Keep each DAG focused on one business process, with a clear id and owner.
+memory_story: A DAG is a recipe flow chart where arrows say what to do first and no arrow ever leads back.
+visual: Boxes connected by arrows that never form a loop.
+emotion: The clarity of seeing the whole process on one page.
+definition: A DAG, or directed acyclic graph, is a collection of tasks with directed dependencies and no cycles, plus a schedule and settings, that Airflow runs as one workflow.
+explanation: Directed means each link has a direction, and acyclic means no task can depend on itself through a loop. The DAG file defines tasks and their dependencies. Each execution of a DAG is a DAG run, and each task execution inside it is a task instance. DAG files are parsed repeatedly by the scheduler, so they must be quick to load.
+simple_explain: A DAG is the map of tasks and their order, with no loops.
+analogy: A DAG is a recipe flow chart where arrows say what to do first and none leads back.
+formula_rule: DAG = tasks + arrows + schedule, with no cycles.
+example_1: extract then transform then load.
+example_2: Two extracts feeding one join task.
+example_3: One DAG run for each day.
+related: tasks and operators, dependencies, schedules, DAG definition
+word_family: DAG, DAG run, task instance, dependency, cycle
+where_used: Every Airflow workflow | Design reviews | Documentation
+mini_conversation: A: Can task A depend on task B and B on A? | B: No, that is a cycle, and Airflow rejects it.
+misconception: ✗ A DAG is the code that does the work → ✓ A DAG describes the workflow, and the tasks do the work
+contrast: DAG vs DAG run: the DAG is the definition, a run is one execution of it.
+avoid: Do not create circular dependencies.
+memory_trick: Directed arrows, acyclic means no loops.
+real_project: Splitting one huge DAG into focused DAGs made failures easier to understand.
+real_interview: An interviewer may ask: Why must a DAG be acyclic?
+real_daily: It is like a recipe flow chart without loops.
+mcq_question: What does acyclic mean?
+mcq_options: A) No tasks B) No Python C) No loops in dependencies D) No schedule
+mcq_answer: C
+mcq_why: A task cannot depend on itself through a cycle.
+fill_blank: One execution of a DAG is called a DAG ____ → run
+apply: Two tasks depend on each other. Is this valid? → No, it creates a cycle
+explain_task: Explain a DAG in three lines.
+own_task: Draw a DAG with one extract, one clean step and two loads.
+
+@AIR-003
+topic: 01 Basics
+level: Beginner
+term: Tasks and operators
+cue: Which two ideas describe a unit of work and the template that defines what it does?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Workflows consist of many kinds of work, so operators are reusable templates, and tasks are the concrete instances in a DAG.
+pro_tip: Use the provider operator for a system when it exists, instead of writing custom code.
+memory_story: An operator is a cookie cutter, and a task is one cookie cut from it.
+visual: A shape template stamping out labelled tasks in a graph.
+emotion: The ease of reusing ready-made building blocks.
+definition: An operator is a template for a type of work, such as running Bash or calling a database, and a task is an instance of an operator inside a DAG with its own id and arguments.
+explanation: Common operators include BashOperator, PythonOperator, EmptyOperator and many provider operators for cloud services and databases. Sensors are operators that wait for a condition. Each task has an id, retries, a timeout and dependencies. The task instance is that task for a specific DAG run, with a state such as running, success or failed.
+simple_explain: Pick an operator for the kind of work, and create a task with its settings.
+analogy: An operator is a cookie cutter, and a task is one cookie cut from it.
+formula_rule: Operator = template. Task = instance in a DAG. Task instance = task in one run.
+example_1: A BashOperator running a shell command.
+example_2: A PythonOperator calling a function.
+example_3: A provider operator running a warehouse query.
+related: DAGs, PythonOperator and BashOperator, sensors, TaskFlow API
+word_family: operator, task, task instance, sensor, provider
+where_used: Every DAG | Integrations | Custom operators
+mini_conversation: A: Is there an operator for our warehouse? | B: Yes, install the provider package and use its operator.
+misconception: ✗ An operator and a task are the same thing → ✓ The operator is the template, and the task is its use in a DAG
+contrast: Task vs task instance: a task is the definition, a task instance is one run of it.
+avoid: Do not write custom code when a provider operator exists.
+memory_trick: Operator is the mould, task is the cast.
+real_project: Using a provider operator replaced fifty lines of custom connection code.
+real_interview: An interviewer may ask: What is the difference between an operator and a task?
+real_daily: It is like a cookie cutter and a cookie.
+mcq_question: What is a task instance?
+mcq_options: A) A server B) A task in one specific DAG run C) A schedule D) A connection
+mcq_answer: B
+mcq_why: Each run creates its own instance with a state.
+fill_blank: An operator that waits for a condition is a ____ → sensor
+apply: You need to run a query in a warehouse. What do you look for? → A provider operator
+explain_task: Explain operators and tasks in three lines.
+own_task: List four common operators and write the job of each one.
+
+@AIR-004
+topic: 01 Basics
+level: Beginner
+term: Schedules and cron expressions
+cue: How do you tell Airflow when a DAG should run?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Workflows run at regular times, so DAGs carry a schedule written as a cron expression, a preset or a timetable.
+pro_tip: Use presets such as daily for simple cases and cron when you need exact times.
+memory_story: A cron expression is five slots in a ticket that say minute, hour, day, month and weekday.
+visual: A monthly calendar with several highlighted run times.
+emotion: The satisfaction of a job that runs on its own at the right time.
+definition: A schedule says when DAG runs are created, written as a cron expression with five fields, a preset such as daily, a timedelta, or a timetable for complex calendars.
+explanation: The cron fields are minute, hour, day of month, month and day of week, so 0 2 * * * means every day at two. Presets include @hourly, @daily and @weekly. Schedules in Airflow are evaluated in UTC by default, unless a time zone is set on the DAG. Setting the schedule to None means the DAG runs only when triggered. Datasets can trigger DAGs when data is updated.
+simple_explain: Set a schedule with cron or a preset, and remember the default time zone is UTC.
+analogy: A cron expression is five slots in a ticket for minute, hour, day, month and weekday.
+formula_rule: minute hour day month weekday.
+example_1: 0 2 * * * for every day at 02:00.
+example_2: */15 * * * * for every fifteen minutes.
+example_3: 0 9 * * 1-5 for weekdays at nine.
+related: DAGs, data intervals, catchup and backfill, triggers
+word_family: cron, schedule, preset, timetable, UTC
+where_used: Every scheduled DAG | Reports | Nightly loads
+mini_conversation: A: My DAG ran at the wrong hour. | B: The schedule is in UTC, so set the time zone or convert the time.
+misconception: ✗ Schedules use the local time of the server → ✓ Airflow uses UTC unless you set a time zone
+contrast: Schedule vs trigger: a schedule is automatic by time, a trigger is manual or event driven.
+avoid: Do not forget the time zone when planning business-hour runs.
+memory_trick: Minute, hour, day, month, weekday in order.
+real_project: Setting the time zone on a DAG fixed reports that ran five hours too early.
+real_interview: An interviewer may ask: What does 0 2 star star star mean?
+real_daily: It is like a ticket with five time slots.
+mcq_question: What does the first cron field represent?
+mcq_options: A) Minute B) Month C) Hour D) Day
+mcq_answer: A
+mcq_why: The order starts with minute.
+fill_blank: Airflow schedules use ____ by default → UTC
+apply: A report must run at nine on weekdays. Which expression? → 0 9 * * 1-5
+explain_task: Explain cron fields in three lines.
+own_task: Write cron expressions for hourly, daily at midnight and every Monday.
+
+@AIR-005
+topic: 01 Basics
+level: Beginner
+term: Dependencies
+cue: How do you say that one task must finish before another starts?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Real workflows have order, so Airflow lets you connect tasks with simple operators that build the graph.
+pro_tip: Use the right-shift operator for a readable left-to-right flow.
+memory_story: Dependencies are arrows on the flow chart, and the arrowhead points to what runs next.
+visual: Tasks joined by arrows from left to right.
+emotion: The pleasure of a pipeline that reads like a sentence.
+definition: Dependencies declare the order of tasks using the bit shift operators or set_upstream and set_downstream, so a downstream task starts only after its upstream tasks succeed.
+explanation: A task runs when all its upstream tasks have succeeded, by default. This rule can be changed with a trigger rule, such as running even when upstream tasks failed, which suits cleanup. Lists of tasks create fan-out and fan-in shapes. The chain helper connects many tasks in order. Missing dependencies make tasks run in parallel unintentionally.
+simple_explain: Connect tasks with arrows, and downstream tasks wait for upstream success.
+analogy: Dependencies are arrows on a flow chart, and the arrowhead points to what runs next.
+formula_rule: upstream >> downstream, and a task runs when all upstream tasks have succeeded.
+example_1: extract >> transform >> load
+example_2: [extract_a, extract_b] >> join
+example_3: load >> [notify, cleanup]
+related: DAGs, trigger rules, task groups, branching
+word_family: upstream, downstream, fan-out, fan-in, trigger rule
+where_used: Every DAG | Design | Debugging
+mini_conversation: A: Two tasks ran at the same time unexpectedly. | B: You forgot to link them with a dependency.
+misconception: ✗ Tasks run in the order they appear in the file → ✓ Only declared dependencies set the order
+contrast: Upstream vs downstream: upstream runs before, downstream runs after.
+avoid: Do not rely on file order to sequence tasks.
+memory_trick: Arrows decide order, not line numbers.
+real_project: Adding a missing dependency stopped a report running before its data load finished.
+real_interview: An interviewer may ask: What does the right shift operator do in Airflow?
+real_daily: It is like arrows on a flow chart.
+mcq_question: What decides the order of tasks?
+mcq_options: A) Random B) File order C) Declared dependencies D) Alphabet
+mcq_answer: C
+mcq_why: Airflow follows the declared graph.
+fill_blank: A task that runs after another is its ____ → downstream
+apply: A cleanup task must run even if earlier tasks failed. What do you change? → Its trigger rule
+explain_task: Explain dependencies in three lines.
+own_task: Write dependencies for two extracts, a join and a load.
+
+@AIR-006
+topic: 01 Basics
+level: Beginner
+term: The Airflow web UI
+cue: Which web interface shows DAGs, runs, logs and lets you control them?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: Operators need to see and control workflows without editing files, so Airflow ships a web interface.
+pro_tip: Use the grid and graph views to find which task failed and read its log.
+memory_story: The UI is the control tower window where every flight can be seen.
+visual: A grid of coloured squares for runs and tasks.
+emotion: The calm of seeing green squares across the grid.
+definition: The Airflow web interface lists DAGs, shows their runs and task states in grid and graph views, displays logs and lets you trigger, pause, clear and mark tasks.
+explanation: The grid view shows runs as columns and tasks as rows with colours for states. The graph view shows dependencies. Logs for each task instance explain failures. You can trigger a DAG manually, pause it, clear a failed task to rerun it, or mark it as success. Access is controlled by roles, so not every user can change DAGs.
+simple_explain: Use the grid to find the red task, read its log, and clear it to rerun.
+analogy: The UI is the control tower window where every flight can be seen.
+formula_rule: Grid = history, graph = structure, log = reason.
+example_1: Opening a failed task log to read the error.
+example_2: Clearing a failed task so it reruns.
+example_3: Pausing a DAG during maintenance.
+related: DAGs, retries and timeouts, logs, alerts
+word_family: grid, graph, log, clear, trigger
+where_used: Daily operations | Debugging | Support
+mini_conversation: A: How do I rerun the failed load? | B: Clear that task in the grid and it will run again.
+misconception: ✗ Clearing a task deletes its code → ✓ It only resets the task state so it can run again
+contrast: Clear vs mark success: clear reruns the task, mark success skips it.
+avoid: Do not mark failed tasks as success without understanding why.
+memory_trick: Red square, read log, clear to retry.
+real_project: Training operators to use grid and clear actions cut the time to recover failed loads.
+real_interview: An interviewer may ask: How do you rerun a failed task in Airflow?
+real_daily: It is like a control tower window.
+mcq_question: Which view shows runs as columns and tasks as rows?
+mcq_options: A) Grid view B) Calendar only C) Graph view D) Code view
+mcq_answer: A
+mcq_why: The grid shows history by run and task.
+fill_blank: Rerunning a failed task is done by ____ it → clearing
+apply: A task failed because of a temporary error. What do you do in the UI? → Clear the task to rerun it
+explain_task: Explain how to debug a failed run in the UI.
+own_task: List four actions you can perform in the Airflow UI.
+
+@AIR-007
+topic: 01 Basics
+level: Intermediate
+term: Airflow components
+cue: Which parts make up an Airflow deployment and what does each do?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Scheduling, running and storing are different jobs, so Airflow is split into separate components that can scale on their own.
+pro_tip: When nothing runs, check the scheduler first, then the workers and the database.
+memory_story: The scheduler is the dispatcher, workers are the drivers, and the metadata database is the logbook.
+visual: Boxes for scheduler, workers, web server and database connected together.
+emotion: The understanding of why one piece can fail while the rest keep going.
+definition: An Airflow deployment has a scheduler that decides what to run, an executor and workers that run tasks, a web server for the interface, a metadata database that stores state, and a DAG folder holding the code.
+explanation: The scheduler parses DAG files and creates runs and task instances. The executor decides how tasks are run, for example locally, on Celery workers or as Kubernetes pods. The metadata database, usually PostgreSQL, stores all state and history. The web server reads from it. A triggerer handles deferred tasks. Workers must see the same DAG code. In Airflow 3 the web server is replaced by the api-server and the DAG processor runs as a separate component.
+simple_explain: Scheduler plans, workers run, database remembers, web server shows.
+analogy: The scheduler is the dispatcher, workers are drivers, and the database is the logbook.
+formula_rule: Scheduler + executor + workers + metadata database + web server.
+example_1: A scheduler creating a run at midnight.
+example_2: A Celery worker running a task.
+example_3: A PostgreSQL database holding task states.
+related: executors, deployment options, DAGs, the web UI
+word_family: scheduler, executor, worker, metadata database, triggerer
+where_used: Platform setup | Troubleshooting | Capacity planning
+mini_conversation: A: Tasks stay queued and nothing runs. | B: Check the scheduler and whether workers are alive.
+misconception: ✗ The web server runs the tasks → ✓ Workers run tasks, and the web server only shows information
+contrast: Scheduler vs executor: the scheduler decides when, the executor decides how.
+avoid: Do not run the metadata database on a fragile single disk.
+memory_trick: Scheduler plans, workers act, database records.
+real_project: Finding a dead scheduler explained why no DAG had started for an hour.
+real_interview: An interviewer may ask: What does the scheduler do?
+real_daily: It is like a dispatcher, drivers and a logbook.
+mcq_question: What stores task states and history?
+mcq_options: A) The DAG file B) The metadata database C) The web server D) A worker
+mcq_answer: B
+mcq_why: All state lives in the database.
+fill_blank: The component that creates runs and task instances is the ____ → scheduler
+apply: Tasks stay in queued state forever. What do you check first? → The scheduler and workers
+explain_task: Explain the Airflow components in three lines.
+own_task: Draw the components and mark where a failure stops all runs.

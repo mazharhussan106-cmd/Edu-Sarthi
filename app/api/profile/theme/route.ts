@@ -8,6 +8,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
+import { isRevoked } from "@/lib/activeUser";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { attrFromTheme, isTheme, THEME_COOKIE } from "@/lib/theme";
@@ -44,6 +45,11 @@ export async function PATCH(req: Request) {
   // gets the cookie and nothing else. Not an error.
   if (session?.user?.id) {
     try {
+      const account = await prisma.user.findUnique({ where: { id: session.user.id }, select: { sessionsValidFrom: true } });
+      // A revoked session may still set its own cookie, but not write the account.
+      if (isRevoked(session.user.loginAt, account?.sessionsValidFrom ?? null)) {
+        return NextResponse.json({ ok: true });
+      }
       await prisma.user.update({
         where: { id: session.user.id },
         data: { theme },

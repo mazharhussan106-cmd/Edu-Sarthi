@@ -1,0 +1,205 @@
+
+@CLD-034
+topic: 06 Data Services
+level: Beginner
+term: Managed relational databases
+cue: Which service runs a SQL database for you, handling patches and backups?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Running a database well takes constant care, so providers offered it as a managed service with the routine work built in.
+pro_tip: Turn on automated backups and multi-zone failover for production.
+memory_story: A managed database is a hotel room that is cleaned and maintained for you.
+visual: A database icon surrounded by patching, backup and failover badges.
+emotion: The relief of not patching the database engine yourself.
+definition: A managed relational database, such as AWS RDS, runs engines like PostgreSQL or MySQL for you, with automated backups, patching, monitoring and optional failover.
+explanation: You choose an engine, size and storage, and the provider handles installation and routine maintenance. A standby copy in another zone can take over after a failure. Read replicas spread read load. You cannot log in to the host itself, but you control schema, users and settings. Azure has Azure Database services, and GCP has Cloud SQL.
+simple_explain: You get a ready SQL database, and the provider handles backups, patches and failover.
+analogy: It is a hotel room that is cleaned and maintained for you.
+formula_rule: Managed = engine you choose + operations the provider does.
+example_1: A PostgreSQL instance with daily backups.
+example_2: A standby in another zone for failover.
+example_3: A read replica serving reporting queries.
+related: backups, read replicas, security groups, SQL
+word_family: RDS, engine, replica, failover, backup
+where_used: Application databases | Reporting | Customer systems
+mini_conversation: A: Who patches the database server? | B: The provider does, in a maintenance window.
+misconception: ✗ A managed database needs no thought about backups → ✓ You still choose retention, test restores and set access rules
+contrast: Managed vs self-installed database: managed handles routine upkeep, self-installed leaves it to you.
+avoid: Do not place the database in a public subnet.
+memory_trick: Managed means upkeep is theirs, design is yours.
+real_project: Moving a self-run database to a managed service and gaining automatic backups.
+real_interview: An interviewer may ask: Why choose a managed database?
+real_daily: It is like a hotel room that is maintained for you.
+mcq_question: What does a managed database handle for you?
+mcq_options: A) Patching and backups B) Your queries C) Your schema design D) Your tags
+mcq_answer: A
+mcq_why: Routine operations are done by the provider.
+fill_blank: A copy that serves read queries is a read ____ → replica
+apply: You want a SQL database with less upkeep. What do you use? → A managed relational database
+explain_task: Explain managed databases in three lines.
+own_task: List three settings to check before going live.
+
+@CLD-035
+topic: 06 Data Services
+level: Intermediate
+term: NoSQL databases
+cue: Which databases store flexible data such as key-value or documents at huge scale?
+category: Core concept
+frequency: High
+importance: 4
+origin: Some applications needed very high speed and flexible shapes of data, so databases without fixed tables were built.
+pro_tip: Design the tables around the questions you will ask, since joins are limited.
+memory_story: A NoSQL table is a filing cabinet where each folder can hold different papers.
+visual: Documents with different fields stored side by side.
+emotion: The freedom of changing a data shape without a migration.
+definition: NoSQL databases, such as DynamoDB, Cosmos DB or Firestore, store data as key-value pairs, documents or other flexible shapes, and scale horizontally.
+explanation: Access is usually by key, which gives predictable speed even at massive scale. Schemas are flexible, but you must plan access patterns up front. Joins and complex queries are limited. They suit sessions, carts, IoT data and profiles. Relational databases remain better for complex relationships and reporting.
+simple_explain: NoSQL stores flexible data fast by key. Plan how you will read it before you design it.
+analogy: It is a filing cabinet where each folder can hold different papers.
+formula_rule: Key lookups are fast. Complex joins are not the strength.
+example_1: A shopping cart stored under a user key.
+example_2: Sensor readings saved at a high rate.
+example_3: User profiles with different optional fields.
+related: relational databases, caching, backups, queues
+word_family: key-value, document, partition key, scale, schema-less
+where_used: High traffic apps | IoT | Profiles
+mini_conversation: A: We need millions of simple lookups a second. | B: A key-value NoSQL table fits.
+misconception: ✗ NoSQL is always faster than SQL → ✓ It is fast for the access patterns it was designed for, and weaker for complex queries
+contrast: SQL vs NoSQL: SQL fits relations and joins, NoSQL fits key lookups at scale.
+avoid: Do not pick NoSQL only because it sounds modern.
+memory_trick: NoSQL is great by key, weak at joins.
+real_project: Storing session data in a key-value table to handle sudden traffic bursts.
+real_interview: An interviewer may ask: When would you choose NoSQL over SQL?
+real_daily: It is like folders that each hold different papers.
+mcq_question: What is NoSQL usually best at?
+mcq_options: A) Printing B) Fast access by key at scale C) Complex joins D) Spreadsheet maths
+mcq_answer: B
+mcq_why: Key lookups scale predictably.
+fill_blank: A NoSQL table is usually read by its ____ key → partition
+apply: A cart must be fetched by user id millions of times. Which fits? → A key-value NoSQL table
+explain_task: Explain NoSQL in three lines.
+own_task: Give two cases for SQL and two for NoSQL.
+
+@CLD-036
+topic: 06 Data Services
+level: Intermediate
+term: Caching
+cue: Which service keeps frequently used data in fast memory to reduce load and delay?
+category: Core concept
+frequency: High
+importance: 4
+origin: Reading from a database for the same answer again and again is slow, so a quick memory store was placed in front.
+pro_tip: Always set an expiry on cached values and decide how stale data may be.
+memory_story: A cache is a sticky note of answers you use daily, kept right on your desk.
+visual: An app asking a cache first and the database only on a miss.
+emotion: The speed of an answer returned in a millisecond.
+definition: A cache, such as Redis or Memcached in a managed service, keeps data in memory so repeated reads are served much faster than from a database.
+explanation: The app checks the cache first. On a hit it returns at once, and on a miss it reads the database and stores the result. Entries expire after a time to live. The hard part is invalidation, which means keeping cache and source in agreement. Managed options include ElastiCache and Memorystore.
+simple_explain: Check the cache before the database, store the answer, and let it expire.
+analogy: It is a sticky note of daily answers kept on your desk.
+formula_rule: Hit = fast. Miss = read source and store.
+example_1: Caching the result of an expensive query for five minutes.
+example_2: Storing user sessions in memory.
+example_3: Counting requests per user for rate limiting.
+related: databases, CDN, TTL, performance
+word_family: cache, hit, miss, TTL, Redis
+where_used: Sessions | Hot data | Rate limits
+mini_conversation: A: The same query runs ten thousand times a minute. | B: Cache the result for a short time.
+misconception: ✗ A cache always holds the latest data → ✓ It can be stale until the entry expires or is refreshed
+contrast: Cache vs database: a cache is fast and temporary, a database is the durable source.
+avoid: Do not store the only copy of important data in a cache.
+memory_trick: Check the cache first, always set expiry.
+real_project: Adding a cache for a slow report and cutting its load time sharply.
+real_interview: An interviewer may ask: What is a cache miss?
+real_daily: It is like a sticky note of answers on your desk.
+mcq_question: What happens on a cache miss?
+mcq_options: A) The cache deletes the database B) Nothing C) The server stops D) The app reads the source and stores the result
+mcq_answer: D
+mcq_why: A miss falls back to the source of truth.
+fill_blank: How long a cached entry lives is its time to ____ → live
+apply: A report query is slow and repeated. What do you add? → A cache
+explain_task: Explain caching in three lines.
+own_task: List two things that should not be cached.
+
+@CLD-037
+topic: 06 Data Services
+level: Intermediate
+term: Backups and snapshots
+cue: Which practice protects data from loss by keeping restorable copies?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Disks fail and mistakes happen, so copies of data must exist elsewhere and be proven restorable.
+pro_tip: A backup you have never restored is only a hope, so test restores regularly.
+memory_story: Backups are spare keys kept in another house, tried once a year to see that they work.
+visual: A database with arrows to copies in another region.
+emotion: The calm of a tested restore.
+definition: A backup or snapshot is a point-in-time copy of data that can be restored after failure, deletion or corruption.
+explanation: Automated backups run on a schedule, and point-in-time recovery restores to a chosen moment. Snapshots can be copied to another region to survive a regional failure. Retention sets how long copies are kept. Two measures matter, recovery point objective for how much data you can lose and recovery time objective for how long you can be down. Backups need encryption and access control.
+simple_explain: Schedule copies, keep them elsewhere, protect them, and test restoring.
+analogy: Backups are spare keys kept in another house and tried once a year.
+formula_rule: RPO = data you can lose. RTO = time you can be down.
+example_1: Nightly automated database backups.
+example_2: A snapshot copied to a second region.
+example_3: Restoring to ten minutes before a bad delete.
+related: block storage, managed databases, disaster recovery, lifecycle rules
+word_family: snapshot, retention, restore, RPO, RTO
+where_used: Databases | Servers | Compliance
+mini_conversation: A: Someone deleted the table. | B: Restore to a point before it from the backup.
+misconception: ✗ Replication is the same as a backup → ✓ Replication copies mistakes too, while a backup keeps earlier states
+contrast: Replica vs backup: a replica mirrors current data, a backup preserves a past state.
+avoid: Do not leave backups unencrypted or never tested.
+memory_trick: An untested backup is only a hope.
+real_project: Running a restore test every quarter and finding a missing permission before an incident.
+real_interview: An interviewer may ask: What are RPO and RTO?
+real_daily: It is like a spare key stored in another house.
+mcq_question: Which measure says how much data you can afford to lose?
+mcq_options: A) RTO B) CIDR C) TTL D) RPO
+mcq_answer: D
+mcq_why: The recovery point objective is the tolerated data loss.
+fill_blank: Restoring to an exact moment is called point-in-time ____ → recovery
+apply: A table was deleted by mistake. What do you use? → A backup restore
+explain_task: Explain RPO and RTO in three lines.
+own_task: Write a backup plan for a small production database.
+
+@CLD-038
+topic: 06 Data Services
+level: Intermediate
+term: Queues and topics (SQS and SNS)
+cue: Which services pass messages between parts of a system without them waiting on each other?
+category: Core concept
+frequency: High
+importance: 4
+origin: Tightly linked services fail together, so messages were placed in the middle to decouple senders from receivers.
+pro_tip: Make message handling idempotent, because messages can be delivered more than once.
+memory_story: A queue is a ticket line at a counter, and a topic is a loudspeaker announcing to all listeners.
+visual: Producers sending messages into a queue read later by workers.
+emotion: The ease of a system that absorbs sudden bursts.
+definition: A queue stores messages until a consumer processes them, and a topic publishes each message to all of its subscribers, as with AWS SQS and SNS.
+explanation: With a queue, one worker takes each message, which suits background jobs and smoothing traffic spikes. With a topic, many subscribers such as queues, functions or emails receive a copy. If you configure a dead-letter queue, messages that keep failing are moved there after a set number of tries. Standard queues may deliver a message more than once. Azure Service Bus and GCP Pub/Sub play similar roles.
+simple_explain: Queues hand each job to one worker, topics broadcast to many listeners.
+analogy: A queue is a ticket line at a counter, and a topic is a loudspeaker for all listeners.
+formula_rule: Queue = one consumer per message. Topic = many subscribers per message.
+example_1: Uploads queued for image processing.
+example_2: An order event published to billing and shipping.
+example_3: A dead-letter queue collecting failures.
+related: serverless functions, idempotency, ETL pipelines, Kafka
+word_family: queue, topic, publish, subscribe, dead-letter
+where_used: Background jobs | Events | Decoupled systems
+mini_conversation: A: The API times out during traffic spikes. | B: Put jobs in a queue and let workers catch up.
+misconception: ✗ Every message is delivered exactly once → ✓ Standard queues may deliver duplicates, so handlers must tolerate repeats
+contrast: Queue vs topic: a queue gives each message to one consumer, a topic gives it to all.
+avoid: Do not assume message order or single delivery unless the service promises it.
+memory_trick: Queue is one worker, topic is many ears.
+real_project: Moving slow image processing behind a queue so the API stayed fast.
+real_interview: An interviewer may ask: When would you use a queue?
+real_daily: It is like a ticket line at a counter.
+mcq_question: Where do repeatedly failing messages go?
+mcq_options: A) A route table B) A dead-letter queue C) The load balancer D) A bucket
+mcq_answer: B
+mcq_why: A dead-letter queue holds messages that could not be processed.
+fill_blank: A handler that is safe to repeat is called ____ → idempotent
+apply: A burst of jobs overwhelms the workers. What helps absorb it? → A queue
+explain_task: Explain queues and topics in three lines.
+own_task: Design a flow where an upload triggers two actions.

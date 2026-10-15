@@ -264,6 +264,15 @@
 }
 
 @layer base {
+  /* Tailwind sizes in rem, so scaling the root scales the whole site. The
+     flashcard text is fitted in px by useFitFont and follows separately. */
+  html[data-text="small"] { font-size: 93.75%; }
+  html[data-text="large"] { font-size: 112.5%; }
+
+  /* "Hide Hindi meanings" in Settings. Hindi boxes carry data-hindi; hiding
+     them with CSS keeps the toggle instant and needs no extra data fetch. */
+  html[data-hindi="off"] [data-hindi] { display: none; }
+
   body {
     background-color: var(--color-paper);
     color: var(--color-ink);

@@ -1,0 +1,396 @@
+
+@CICD-032
+type: code56
+topic: 05 Security and Scale
+level: Advanced
+term: OIDC to the cloud
+cue: How can a workflow sign in to a cloud account without any stored key?
+kind: Security practice
+frequency: High
+importance: 5
+origin: Stored cloud keys in secrets leak and never expire, so workflows now prove their identity with a short-lived signed token.
+pro_tip: Restrict the cloud role to your repository and branch in its trust policy.
+memory_story: OIDC is showing a signed visitor badge at the door instead of carrying a permanent key.
+visual: A workflow exchanging a signed token for temporary cloud credentials.
+emotion: The relief of deleting the last stored cloud key.
+meaning: With OpenID Connect, the workflow requests a signed identity token from GitHub, and the cloud exchanges it for temporary credentials for a role it trusts.
+code: permissions:¶  id-token: write¶  contents: read¶steps:¶  - uses: aws-actions/configure-aws-credentials@v4¶    with:¶      role-to-assume: arn:aws:iam::123456789012:role/deploy¶      aws-region: ap-south-1
+output: The job receives temporary credentials for the deploy role, and no long-lived key is stored anywhere.
+explanation: The cloud role has a trust policy that names GitHub as the identity provider and limits which repository, branch or environment may assume it. The token contains claims about the repository and ref. The workflow needs the id-token write permission. Credentials are short-lived, by default about an hour with the AWS action, so a leak is much less harmful. Azure and GCP offer similar federation.
+simple_explain: Trust GitHub in the cloud, limit the role by repository, and let the workflow request temporary access.
+analogy: It is like showing a signed visitor badge instead of carrying a permanent key.
+syntax: permissions: id-token: write | role-to-assume: <role>
+anatomy: id-token = lets the job request a token | trust policy = who may assume | role = what they may do
+example_1: sub: repo:acme/api:ref:refs/heads/main
+example_2: role-to-assume: arn:aws:iam::123456789012:role/deploy
+example_3: audience: sts.amazonaws.com
+variation: azure/login with client-id and tenant-id   // the same idea on Azure
+used_with: IAM roles, permissions, environments
+related: workflow permissions, secrets in workflows, temporary credentials, least privilege tokens
+alternatives: Stored access keys
+where_used: Cloud deployments | Container pushes | Infrastructure pipelines
+mini_conversation: A: Where is the AWS key stored for the pipeline? | B: Nowhere, it uses OIDC and a role.
+misconception: ✗ OIDC removes the need to limit the role → ✓ The trust policy must still restrict which repository and branch can use it
+confused_with: OIDC vs stored secret: OIDC gives temporary access, a secret is a long-lived value.
+avoid: Do not trust every repository in the organisation with a powerful role.
+wrong_code: permissions:¶  contents: read   # no id-token, so OIDC fails
+right_code: permissions:¶  id-token: write¶  contents: read
+memory_trick: Badge at the door, no key in pocket.
+real_project: Replacing a stored deployment key with OIDC and a role limited to the main branch.
+real_interview: An interviewer may ask: How do you avoid storing cloud credentials in CI?
+real_daily: It is like a signed visitor badge instead of a permanent key.
+mcq_question: Which permission does a job need to request an OIDC token?
+mcq_options: A) contents: write B) actions: none C) packages: read D) id-token: write
+mcq_answer: D
+mcq_why: The id-token write scope allows token requests.
+fill_blank: The cloud checks a ____ policy to see who may assume the role → trust
+hindi_to_task: Allow a job to request an OIDC token.
+task_answer: permissions:¶  id-token: write
+own_task: Describe what the trust policy should restrict.
+practice_question: Why are OIDC credentials safer than stored keys?
+practice_answer: They are temporary and no long-lived secret exists.
+
+@CICD-033
+type: code56
+topic: 05 Security and Scale
+level: Advanced
+term: Pinning actions
+cue: How do you stop a third-party action from changing under you?
+kind: Security practice
+frequency: High
+importance: 5
+origin: A moving tag can be replaced by an attacker or a bad release, so workflows should point at an exact immutable version.
+pro_tip: Pin third-party actions to a full commit hash, and let a bot propose updates.
+memory_story: Pinning is writing the exact serial number instead of the product name.
+visual: An action reference ending in a long commit hash.
+emotion: The assurance that code does not change silently.
+meaning: Pinning means referencing an action by a full commit SHA rather than a tag or branch, so its code cannot change without your knowledge.
+code: - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # v4.1.1¶- uses: some-org/deploy-action@5e1c2a8b9d0f3a4b6c7d8e9f0a1b2c3d4e5f6a7b
+output: The workflow always runs the exact reviewed code, and a version comment shows the human-readable tag.
+explanation: Tags such as v1 can be moved by the action author, so a compromised maintainer account can change what your pipeline runs. A full commit hash is immutable. Bots such as Dependabot can open pull requests to update pinned hashes. Actions from the official organisation carry lower risk but pinning is still wise for critical pipelines. Review what an action does before use.
+simple_explain: Use full commit hashes for third-party actions, and update them through reviewed pull requests.
+analogy: Pinning is writing the exact serial number instead of the product name.
+syntax: uses: owner/action@<full-commit-sha>
+anatomy: owner/action = which action | @sha = exact version | comment = human label
+example_1: uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8   # v4.0.2
+example_2: Dependabot updating github-actions weekly
+example_3: uses: ./.github/actions/local-step
+variation: uses: owner/action@v1   // convenient but movable
+used_with: Dependabot, code review, permissions
+related: workflow permissions, secret scanning, reusable workflows, supply chain
+alternatives: Vendoring or forking the action
+where_used: Security hardening | Regulated pipelines | Shared workflows
+mini_conversation: A: An action we use was compromised. | B: Pinned hashes would have protected us from the new code.
+misconception: ✗ A version tag such as v4 can never change → ✓ Tags can be moved, and only a commit hash is immutable
+confused_with: Tag vs commit hash: a tag is a movable label, a hash identifies fixed code.
+avoid: Do not use branch names such as main for third-party actions.
+wrong_code: uses: some-org/deploy-action@main
+right_code: uses: some-org/deploy-action@5e1c2a8b9d0f3a4b6c7d8e9f0a1b2c3d4e5f6a7b
+memory_trick: Pin the hash, not the nickname.
+real_project: Pinning all third-party actions after a supply chain scare, with weekly update pull requests.
+real_interview: An interviewer may ask: How do you defend against a compromised GitHub Action?
+real_daily: It is like writing the exact serial number.
+mcq_question: Which reference is immutable?
+mcq_options: A) The word latest B) A full commit SHA C) A branch name D) A tag name
+mcq_answer: B
+mcq_why: A hash identifies exact content.
+fill_blank: A bot that proposes pinned updates is called ____ → Dependabot
+hindi_to_task: Pin an action to a commit hash instead of a tag.
+task_answer: uses: some-org/deploy-action@5e1c2a8b9d0f3a4b6c7d8e9f0a1b2c3d4e5f6a7b
+own_task: Explain how you would keep pinned versions up to date.
+practice_question: Why can a tag be unsafe?
+practice_answer: The author can move it to different code.
+
+@CICD-034
+type: topic56
+topic: 05 Security and Scale
+level: Intermediate
+term: Least privilege tokens
+cue: How do you give automation tokens only the access they need?
+category: Core concept
+frequency: High
+importance: 5
+origin: Broad personal tokens in pipelines turned small leaks into large breaches, so scoped tokens became the standard.
+pro_tip: Prefer the built-in token or a fine-grained token limited to one repository.
+memory_story: A scoped token is a key that opens one door, not the whole building.
+visual: A token card listing a single repository and a single permission.
+emotion: The confidence of a token that cannot do much harm.
+definition: Least privilege tokens are credentials limited to the specific repositories, permissions and lifetime needed for one automation task.
+explanation: Fine-grained tokens and GitHub App tokens can be restricted to chosen repositories and actions. The built-in GITHUB_TOKEN is created per run and expires. Personal access tokens tied to a person break when that person leaves and often grant too much. Bots should use their own identity. Set expiry dates and review tokens regularly.
+simple_explain: Give each automation its own narrow, short-lived token instead of a broad personal one.
+analogy: It is a key that opens one door, not the whole building.
+formula_rule: One task, one token, narrow scope, short life.
+example_1: A fine-grained token that can read one repository.
+example_2: A GitHub App installed on two repositories only.
+example_3: A token set to expire in thirty days.
+related: workflow permissions, OIDC to the cloud, secrets in workflows, access reviews
+word_family: scope, token, expiry, app, fine-grained
+where_used: Automation | Integrations | Security reviews
+mini_conversation: A: The bot uses my personal token. | B: Replace it with an app token limited to one repository.
+misconception: ✗ A personal access token is a fine shared key for automation → ✓ It carries your full access and breaks when you leave
+contrast: Personal token vs app token: a personal token acts as you, an app token acts as the app with set scopes.
+avoid: Do not share one broad token across many pipelines.
+memory_trick: One task, one token, small scope.
+real_project: Replacing a shared admin token with a scoped app token for a release bot.
+real_interview: An interviewer may ask: How do you manage tokens used by automation?
+real_daily: It is like a key for one door only.
+mcq_question: What limits the damage if a token leaks?
+mcq_options: A) A big repository B) Many users C) Narrow scope and short life D) A long name
+mcq_answer: C
+mcq_why: A limited token can do little and soon expires.
+fill_blank: A token that stops working after a date has an ____ → expiry
+apply: A bot needs to read one repository. What token do you give it? → A narrow fine-grained token
+explain_task: Explain least privilege tokens in three lines.
+own_task: List what to review in your existing tokens.
+
+@CICD-035
+type: topic56
+topic: 05 Security and Scale
+level: Intermediate
+term: Secret scanning
+cue: Which feature detects credentials accidentally committed to a repository?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Developers sometimes commit keys by mistake, and bots find them in minutes, so scanners detect them at once.
+pro_tip: Turn on push protection so secrets are blocked before they reach the repository.
+memory_story: Secret scanning is a metal detector at the exit that beeps before a key leaves with you.
+visual: A push being rejected with a warning about a detected key.
+emotion: The relief of a block before the mistake becomes public.
+definition: Secret scanning searches code and history for known credential patterns, and push protection blocks a push that contains one.
+explanation: Providers register patterns for their own tokens and are notified when one is found, and some revoke it. Scanning also covers history, so old commits can reveal secrets. If a secret is found, revoke and rotate it first, then clean the history. Local tools can scan before commit. Custom patterns can cover internal key formats.
+simple_explain: Turn on scanning and push protection, and rotate any key that appears.
+analogy: It is a metal detector at the exit that beeps before a key leaves.
+formula_rule: Detect → block → revoke → rotate → clean.
+example_1: A push blocked because it contained a cloud key.
+example_2: A scan alert on a token in an old commit.
+example_3: A custom pattern for an internal API key.
+related: secrets in workflows, pre-commit hooks, access keys, history cleanup
+word_family: scanning, push protection, pattern, revoke, rotate
+where_used: Repositories | Organisations | Audits
+mini_conversation: A: I pushed a key by mistake. | B: Revoke it first, then remove it from the history.
+misconception: ✗ Deleting the file in a new commit removes the leaked secret → ✓ The secret remains in history and must be revoked
+contrast: Scanning vs push protection: scanning finds existing secrets, push protection blocks new ones.
+avoid: Do not only delete the commit and assume the key is safe.
+memory_trick: Revoke the key first, clean history second.
+real_project: Enabling push protection that stopped three accidental key commits in a month.
+real_interview: An interviewer may ask: What do you do after a secret is committed?
+real_daily: It is like a metal detector at the exit.
+mcq_question: What is the first action after a secret is leaked?
+mcq_options: A) Revoke it B) Delete the file only C) Rename the repository D) Wait
+mcq_answer: A
+mcq_why: Copies may exist, so the secret must be invalidated.
+fill_blank: A feature that blocks pushes containing secrets is push ____ → protection
+apply: A key appears in an old commit. What first? → Revoke and rotate it
+explain_task: Explain secret scanning in three lines.
+own_task: Write an incident checklist for a leaked key.
+
+@CICD-036
+type: topic56
+topic: 05 Security and Scale
+level: Advanced
+term: Self-hosted runners
+cue: When and how should you run pipeline jobs on your own machines?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Some jobs need private networks, special hardware or custom software, so teams run the runner agent on their own servers.
+pro_tip: Use ephemeral runners that exist for one job and are then destroyed.
+memory_story: A self-hosted runner is your own employee who must be kept safe and up to date.
+visual: A runner inside a private network connected to GitHub.
+emotion: The power and responsibility of running your own workers.
+definition: A self-hosted runner is a machine you manage that runs the GitHub runner agent and picks up jobs from your repositories.
+explanation: They reach private systems, use special hardware such as GPUs, and can avoid hosted minute charges. You must patch them, isolate them and limit their credentials. Persistent runners keep state between jobs, which can leak data or cause odd failures. Ephemeral runners, often created on demand in containers or virtual machines, are safer. Never allow untrusted pull requests to run on them.
+simple_explain: Use self-hosted runners for private access or special hardware, keep them clean and isolated.
+analogy: It is your own employee, who must be kept safe and up to date.
+formula_rule: Private access + control, in exchange for patching and security work.
+example_1: A runner inside a company network reaching a private database.
+example_2: A GPU runner for model tests.
+example_3: Autoscaled ephemeral runners created per job.
+related: runners, security, least privilege, autoscaling
+word_family: self-hosted, ephemeral, label, agent, isolation
+where_used: Private networks | Special hardware | Cost control
+mini_conversation: A: Public pull requests are running on our own runner. | B: That is risky, so restrict it to trusted workflows.
+misconception: ✗ Self-hosted runners are always cheaper and easier → ✓ You pay in maintenance and security effort
+contrast: Ephemeral vs persistent runner: ephemeral lasts one job, persistent keeps state.
+avoid: Do not run untrusted fork code on your own runners.
+memory_trick: Own runners need own care.
+real_project: Using a self-hosted runner to test against a customer's private test database.
+real_interview: An interviewer may ask: What are the risks of self-hosted runners?
+real_daily: It is like an employee who needs care and safety.
+mcq_question: Which runner type is safer against leftover data?
+mcq_options: A) Shared forever B) Unpatched C) Persistent D) Ephemeral
+mcq_answer: D
+mcq_why: A fresh machine per job leaves nothing behind.
+fill_blank: A runner that is destroyed after one job is called ____ → ephemeral
+apply: A job must reach a private database. What runner fits? → A self-hosted runner
+explain_task: Explain self-hosted runners in three lines.
+own_task: List the security steps for a self-hosted runner.
+
+@CICD-037
+type: topic56
+topic: 06 Mapping
+level: Beginner
+term: Jenkins vs GitHub Actions
+cue: How does the older Jenkins server compare with GitHub Actions?
+category: Reference
+frequency: Medium
+importance: 3
+origin: Jenkins was an early popular automation server that you host yourself, while Actions arrived later built into GitHub.
+pro_tip: Learn the concepts first, since stages, jobs and agents appear in every tool.
+memory_story: Jenkins is a workshop you own and maintain, and Actions is a workshop rented inside the GitHub building.
+visual: A self-managed server on one side and a hosted service on the other.
+emotion: The calm of knowing the ideas carry over between tools.
+definition: Jenkins is a self-hosted automation server configured through Jenkinsfiles and plugins, while GitHub Actions is a hosted service defined with YAML workflows next to the code.
+explanation: Jenkins offers deep customisation and a huge plugin ecosystem, but you maintain the server, plugins and agents. Actions removes server upkeep and integrates with pull requests, but is tied to GitHub. A Jenkinsfile defines stages and steps, similar to jobs and steps. Many customers still run Jenkins, so you will meet both.
+simple_explain: Same ideas, different packaging. Jenkins is self-managed and flexible, Actions is hosted and simple.
+analogy: Jenkins is a workshop you own, and Actions is one rented inside the GitHub building.
+formula_rule: Jenkins = host and maintain. Actions = hosted and integrated.
+example_1: A Jenkinsfile with stages for build and test.
+example_2: A workflow YAML doing the same on pull requests.
+example_3: A customer using Jenkins for older projects and Actions for new ones.
+related: GitLab CI, Azure Pipelines, workflow file, runners
+word_family: Jenkinsfile, plugin, agent, stage, workflow
+where_used: Legacy systems | Migrations | Customer discovery
+mini_conversation: A: The customer runs Jenkins. | B: The concepts match, so we map stages to jobs.
+misconception: ✗ Jenkins is obsolete and nobody uses it → ✓ It is still widely used, especially in older enterprise setups
+contrast: Jenkinsfile vs workflow: a Jenkinsfile uses stages and agents, a workflow uses jobs and runners.
+avoid: Do not recommend a rewrite without a reason.
+memory_trick: You host Jenkins, but you rent Actions.
+real_project: Mapping a customer's Jenkins stages onto Actions jobs before a migration.
+real_interview: An interviewer may ask: How is Jenkins different from GitHub Actions?
+real_daily: It is like owning a workshop versus renting one.
+mcq_question: Which tool needs you to maintain the server?
+mcq_options: A) GitHub-hosted Actions B) Both are hosted C) Jenkins D) Neither
+mcq_answer: C
+mcq_why: Jenkins is self-hosted by default.
+fill_blank: The file that defines a Jenkins pipeline is a ____ → Jenkinsfile
+apply: A customer wants less server upkeep for CI. What might you suggest? → A hosted service such as GitHub Actions
+explain_task: Explain Jenkins versus Actions in three lines.
+own_task: Map three Jenkins terms to their Actions equivalents.
+
+@CICD-038
+type: topic56
+topic: 06 Mapping
+level: Beginner
+term: GitLab CI vs GitHub Actions
+cue: How do GitLab CI and GitHub Actions compare in structure and wording?
+category: Reference
+frequency: Medium
+importance: 3
+origin: GitLab built CI into its platform early, and GitHub later added Actions, so both now offer similar built-in pipelines.
+pro_tip: Translate by concept, such as stage to job order and runner to runner.
+memory_story: They are two languages describing the same factory line.
+visual: Two YAML files side by side with matching parts.
+emotion: The comfort of recognising familiar ideas.
+definition: GitLab CI defines pipelines in a .gitlab-ci.yml file with stages and jobs, while GitHub Actions uses workflow files with jobs and steps.
+explanation: In GitLab, jobs belong to stages that run in order, and runners execute them. In Actions, jobs depend on each other with needs. GitLab uses cache and artifacts keywords, similar to Actions caching and artifacts. GitLab has built-in container registry and environments. Actions has a large marketplace of reusable actions.
+simple_explain: Both are YAML pipelines with jobs and runners, and the main differences are naming and ecosystem.
+analogy: They are two languages describing the same factory line.
+formula_rule: GitLab stage and job ≈ Actions job order and job.
+example_1: A .gitlab-ci.yml with build and test stages.
+example_2: An Actions workflow with needs between jobs.
+example_3: Translating a GitLab cache block into an Actions cache step.
+related: Jenkins, Azure Pipelines, workflow file, runners
+word_family: .gitlab-ci.yml, stage, job, runner, variable
+where_used: Customer migrations | Multi-tool teams | Interviews
+mini_conversation: A: Our pipeline is in GitLab. | B: The ideas map directly to Actions jobs and runners.
+misconception: ✗ The two tools cannot be compared because they work differently → ✓ They share the same concepts and differ mostly in syntax
+contrast: GitLab stages vs Actions needs: stages group order, needs links specific jobs.
+avoid: Do not translate line by line without checking behaviour.
+memory_trick: The same concepts wear different keywords here.
+real_project: Porting a GitLab pipeline to Actions by mapping stages to chained jobs.
+real_interview: An interviewer may ask: What is the equivalent of a GitLab stage in Actions?
+real_daily: It is like two languages for the same line.
+mcq_question: Which GitLab file defines the pipeline?
+mcq_options: A) Makefile B) workflow.json C) Jenkinsfile D) .gitlab-ci.yml
+mcq_answer: D
+mcq_why: GitLab reads pipeline definitions from .gitlab-ci.yml.
+fill_blank: GitLab groups jobs that run in order into ____ → stages
+apply: You must move a GitLab pipeline to Actions. What do you map first? → Stages and jobs to chained jobs
+explain_task: Explain how GitLab CI maps to Actions in three lines.
+own_task: List four matching terms between the two tools.
+
+@CICD-039
+type: topic56
+topic: 06 Mapping
+level: Beginner
+term: Azure Pipelines vs GitHub Actions
+cue: How do Azure Pipelines and GitHub Actions compare?
+category: Reference
+frequency: Medium
+importance: 3
+origin: Microsoft owns both, so Azure Pipelines grew in Azure DevOps and Actions grew in GitHub with similar goals.
+pro_tip: Check which service hosts the customer's code, since that often decides the tool.
+memory_story: They are siblings from the same family with different house rules.
+visual: An azure-pipelines.yml next to a workflow file.
+emotion: The ease of reading either file after learning one.
+definition: Azure Pipelines defines builds and releases in azure-pipelines.yml with stages, jobs and tasks, while Actions uses workflows with jobs and steps.
+explanation: Pipelines supports stages, jobs, steps and tasks, with pools of agents that run them. Variable groups and service connections hold settings and cloud access. Both tools support YAML, templates and approvals through environments. Pipelines is common in organisations that already use Azure DevOps boards and repositories.
+simple_explain: Almost the same ideas with different names, such as agent pool for runner.
+analogy: They are siblings from the same family with different house rules.
+formula_rule: Agent pool ≈ runner. Task ≈ action. Service connection ≈ OIDC role.
+example_1: An azure-pipelines.yml with a build stage.
+example_2: A variable group holding settings.
+example_3: A service connection to deploy to Azure.
+related: Jenkins, GitLab CI, environments, OIDC
+word_family: agent pool, task, service connection, variable group, stage
+where_used: Azure customers | Enterprises | Migrations
+mini_conversation: A: Our code is in Azure DevOps. | B: Then Azure Pipelines is the natural choice.
+misconception: ✗ Azure Pipelines can only deploy to Azure → ✓ It can build and deploy to many targets
+contrast: Task vs action: Azure Pipelines uses tasks, GitHub uses actions.
+avoid: Do not assume the customer wants GitHub just because you do.
+memory_trick: Agent pools are runners in Azure words.
+real_project: Reading a customer's Azure pipeline and planning an equivalent workflow.
+real_interview: An interviewer may ask: What is the Azure Pipelines equivalent of a runner?
+real_daily: It is like siblings with different house rules.
+mcq_question: What does Azure Pipelines call machines that run jobs?
+mcq_options: A) Runners only B) Agents in pools C) Nodes only D) Workers only
+mcq_answer: B
+mcq_why: Jobs run on agents grouped into pools.
+fill_blank: In Azure Pipelines a saved link for deploying to a cloud is a service ____ → connection
+apply: A customer keeps code in Azure DevOps. Which tool fits naturally? → Azure Pipelines
+explain_task: Explain Azure Pipelines versus Actions in three lines.
+own_task: Map three Azure Pipelines terms to Actions terms.
+
+@CICD-040
+type: topic56
+topic: 06 Mapping
+level: Intermediate
+term: Choosing a CI/CD tool
+cue: Which questions decide the CI/CD tool for a customer?
+category: Reference
+frequency: Medium
+importance: 4
+origin: Every customer already has code, clouds and habits, so the best tool depends on context rather than fame.
+pro_tip: Use the tool next to the code unless a requirement says otherwise.
+memory_story: Choosing a tool is choosing a vehicle for the road, not for the brochure.
+visual: A checklist with hosting, security, cost and skills.
+emotion: The clarity of a decision based on facts.
+definition: Choosing a CI/CD tool means weighing where the code lives, security and compliance needs, private network access, cost and team skills.
+explanation: Ask where the repository is hosted, whether jobs must reach private systems, and who maintains the servers. Check compliance needs, such as audit logs and approvals. Consider cost in minutes and in staff time. Migrating pipelines has its own cost, so avoid it without a clear gain. Prefer standard, portable steps such as scripts and containers.
+simple_explain: Start from where the code lives and what the customer must keep private, then compare cost and skills.
+analogy: It is choosing a vehicle for the road, not for the brochure.
+formula_rule: Code location + security + network + cost + skills.
+example_1: A GitHub repository with Actions as the natural choice.
+example_2: A bank needing self-hosted runners in a private network.
+example_3: A team keeping Jenkins because migration is costly.
+related: Jenkins, GitLab CI, Azure Pipelines, self-hosted runners
+word_family: requirements, hosting, compliance, portability, cost
+where_used: Proposals | Migrations | Platform decisions
+mini_conversation: A: Which CI tool should we use? | B: The one next to the code, unless security rules say otherwise.
+misconception: ✗ The newest CI tool is always the best choice → ✓ The best tool fits the customer's code, rules and skills
+contrast: Hosted vs self-hosted: hosted is simpler, self-hosted gives control and private access.
+avoid: Do not migrate pipelines without a clear benefit.
+memory_trick: Fit the customer, not the fashion.
+real_project: Recommending Actions for a GitHub customer while keeping private test runners.
+real_interview: An interviewer may ask: How would you choose a CI tool?
+real_daily: It is like choosing a vehicle for the road.
+mcq_question: What should usually decide the tool?
+mcq_options: A) Where the code lives and the customer's needs B) Personal taste C) Random choice D) The logo
+mcq_answer: A
+mcq_why: Context decides, since tools share the same ideas.
+fill_blank: Steps written as scripts are more ____ between tools → portable
+apply: A customer's code is on GitHub and jobs need no private access. What tool? → GitHub Actions
+explain_task: Explain how to choose a CI/CD tool in three lines.
+own_task: Write five questions to ask a customer about CI/CD.

@@ -1,0 +1,1020 @@
+
+@TS-033
+type: code56
+topic: 04 TypeScript
+level: Beginner
+term: Why TypeScript
+cue: Which language adds types to JavaScript so mistakes are caught before the code runs?
+kind: Language concept
+frequency: Very high
+importance: 5
+origin: Large JavaScript projects hid type mistakes until run time, so TypeScript added optional types that are checked while you write.
+pro_tip: Let the editor show the errors as you type, and treat them as free code review.
+memory_story: TypeScript is a spell checker for code, underlining mistakes before you send.
+visual: A red underline under a wrong argument in an editor.
+emotion: The comfort of catching bugs before anyone runs the code.
+meaning: TypeScript is a superset of JavaScript that adds static types, which the compiler checks and then removes to produce plain JavaScript.
+code: function total(price: number, qty: number): number {¶  return price * qty;¶}¶console.log(total(10, 3));¶// total("10", 3) is a compile error
+output: 30
+explanation: Types exist only at compile time and are erased, so the running code is ordinary JavaScript. The compiler tsc reports errors and can emit JavaScript. Types also power editor features such as autocomplete and safe renaming. TypeScript does not check data that arrives at run time, such as API responses, so those still need validation.
+simple_explain: Write types, let the compiler check them, and ship plain JavaScript.
+analogy: TypeScript is a spell checker for code, underlining mistakes before you send.
+syntax: function f(x: number): string { }
+anatomy: : type = annotation | tsc = compiler | .ts = TypeScript file
+example_1: let count: number = 0;
+example_2: const names: string[] = [];
+example_3: function greet(name: string): string { return name; }
+variation: npx tsc --noEmit   // check types only
+used_with: editors, Node, React, linters
+related: basic types, tsconfig, strict mode, any vs unknown
+alternatives: JSDoc type comments | Flow
+where_used: Large codebases | Libraries | Teams
+mini_conversation: A: Why did the editor underline my call? | B: The argument has the wrong type, and TypeScript caught it before running.
+misconception: ✗ TypeScript checks types while the program runs → ✓ Types are removed at compile time, so run-time data needs its own validation
+confused_with: Compile-time vs run-time: types are checked before running, not during it.
+avoid: Do not assume API data matches your types.
+wrong_code: total("10", 3);
+right_code: total(10, 3);
+memory_trick: Types check before running, not during.
+real_project: Adding TypeScript caught several wrong argument orders in a shared utility library.
+real_interview: An interviewer may ask: Do TypeScript types exist at run time?
+real_daily: It is like a spell checker for code.
+mcq_question: What does TypeScript produce for running?
+mcq_options: A) Machine code B) Python C) Typed bytecode D) Plain JavaScript
+mcq_answer: D
+mcq_why: Types are erased during compilation.
+fill_blank: The TypeScript compiler command is ____ → tsc
+hindi_to_task: Check the project for type errors without writing output files.
+task_answer: npx tsc --noEmit
+own_task: Add types to a small JavaScript function and find one bug.
+practice_question: Are types checked on data from an API at run time?
+practice_answer: No, that data needs validation.
+
+@TS-034
+type: code56
+topic: 04 TypeScript
+level: Beginner
+term: Basic types
+cue: Which built-in types describe numbers, text, lists and other common values?
+kind: Type
+frequency: Very high
+importance: 5
+origin: Each kind of value needs a name the compiler can check, so TypeScript provides simple types for the common cases.
+pro_tip: Let inference work for obvious values, and annotate function parameters and returns.
+memory_story: Basic types are the labelled shelves where each kind of value belongs.
+visual: A row of shelves labelled string, number, boolean and array.
+emotion: The ease of reading code that names its types.
+meaning: Common types include string, number, boolean, arrays written as T[], tuples, object types, null, undefined, void and never.
+code: const name: string = "Asha";¶const age: number = 28;¶const active: boolean = true;¶const tags: string[] = ["a", "b"];¶const pair: [string, number] = ["x", 1];¶function log(msg: string): void { console.log(msg); }¶const inferred = 5;
+output: No output. inferred has the literal type 5 (a let variable would be number).
+explanation: Type inference means you usually do not annotate local variables. A tuple fixes length and the type at each position. void marks functions that return nothing, and never marks values that cannot happen. There is one number type for integers and decimals. Capitalised wrappers such as String should not be used.
+simple_explain: Use lowercase primitive types, let inference work, and annotate function boundaries.
+analogy: Basic types are labelled shelves where each kind of value belongs.
+syntax: let x: type = value; | type[] | [type1, type2]
+anatomy: string, number, boolean = primitives | T[] = array | [A, B] = tuple | void = no return
+example_1: let id: number | undefined;
+example_2: const scores: Array<number> = [1, 2];
+example_3: let point: [number, number] = [0, 0];
+variation: let big: bigint = 10n;   // very large integers
+used_with: functions, interfaces, generics
+related: why TypeScript, interfaces vs types, unions, type inference
+alternatives: Inference
+where_used: Every TypeScript file | Function signatures | Data models
+mini_conversation: A: Should I annotate every variable? | B: No, annotate function parameters and returns and let inference do the rest.
+misconception: ✗ Use String and Number with capital letters for types → ✓ Use lowercase string and number, as the capitalised ones are wrappers
+confused_with: Tuple vs array: a tuple has fixed positions and types, an array has any length of one type.
+avoid: Do not annotate obvious local variables.
+wrong_code: let name: String = "Asha";
+right_code: let name: string = "Asha";
+memory_trick: Lowercase types are the real types.
+real_project: Defining tuple types for coordinates prevented swapped latitude and longitude.
+real_interview: An interviewer may ask: What is a tuple?
+real_daily: It is like labelled shelves for values.
+mcq_question: Which type should you use for text?
+mcq_options: A) The word text B) The lowercase primitive name C) The word char D) The capitalised wrapper class
+mcq_answer: B
+mcq_why: The lowercase primitive type is the standard.
+fill_blank: A function that returns nothing has the return type ____ → void
+hindi_to_task: Declare a variable of type number named count.
+task_answer: let count: number = 0;
+own_task: Write a function with typed parameters and a typed return.
+practice_question: What is the difference between a tuple and an array?
+practice_answer: A tuple has fixed length and a type per position.
+
+@TS-035
+type: code56
+topic: 04 TypeScript
+level: Beginner
+term: Interfaces vs type aliases
+cue: Which two ways describe the shape of an object, and when does each fit?
+kind: Type
+frequency: Very high
+importance: 5
+origin: Objects need named shapes, so TypeScript offers interfaces and type aliases, which overlap but differ at the edges.
+pro_tip: Use interface for object shapes you may extend, and type for unions and other forms.
+memory_story: An interface is a blueprint for a building, and a type alias is a name sticker for any shape.
+visual: Two ways to draw the same object shape.
+emotion: The satisfaction of a clear name for a data shape.
+meaning: An interface describes an object shape and can be extended or merged, while a type alias names any type including unions, tuples and primitives.
+code: interface User { id: number; name: string; email?: string }¶interface Admin extends User { level: number }¶type Id = number | string;¶type Point = { x: number; y: number };¶const a: Admin = { id: 1, name: "Asha", level: 2 };
+output: No output, and the object is checked against the Admin shape
+explanation: Both describe objects and work in most cases. Interfaces extend with extends and can be declared twice to merge, which libraries use. Type aliases use intersections with ampersand and are needed for unions and mapped types. Pick one convention for a project and stay consistent.
+simple_explain: Use interfaces for object shapes and type aliases for unions and combinations.
+analogy: An interface is a building blueprint, and a type alias is a name sticker for any shape.
+syntax: interface Name { key: type } | type Name = type
+anatomy: interface = object shape | extends = inherit | type = alias | & = combine
+example_1: type Status = "open" | "closed";
+example_2: type Admin = User & { level: number };
+example_3: interface Props { title: string }
+variation: interface Window { myApp: string }   // declaration merging
+used_with: functions, React props, APIs
+related: basic types, unions and literals, utility types, generics
+alternatives: Classes | Zod schemas
+where_used: Data models | Props | API shapes
+mini_conversation: A: Should this be an interface or a type? | B: For a plain object shape either works, but a union needs a type.
+misconception: ✗ Interfaces and types are completely interchangeable → ✓ Only types can name unions, and only interfaces can merge by redeclaration
+confused_with: Interface vs type: interfaces extend and merge, types combine and name unions.
+avoid: Do not mix both styles randomly in one project.
+wrong_code: interface Id = number | string;
+right_code: type Id = number | string;
+memory_trick: Unions need a type alias.
+real_project: Defining a User interface shared by the API and the UI removed several mismatches.
+real_interview: An interviewer may ask: What is the difference between an interface and a type?
+real_daily: It is like a blueprint and a name sticker.
+mcq_question: Which can name a union type?
+mcq_options: A) A type alias B) An interface C) A class only D) A module
+mcq_answer: A
+mcq_why: Interfaces describe object shapes only.
+fill_blank: An optional property is marked with a question ____ → mark
+hindi_to_task: Define a type for a user with an id and a name.
+task_answer: interface User { id: number; name: string }
+own_task: Extend one interface with another and create an object of it.
+practice_question: Which one supports declaration merging?
+practice_answer: An interface.
+
+@TS-036
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Unions and literal types
+cue: Which types say a value can be one of several options or exactly one fixed value?
+kind: Type
+frequency: Very high
+importance: 5
+origin: Real data often has a few allowed forms, so unions and literal types let the compiler know exactly which are valid.
+pro_tip: Use literal unions instead of loose strings for statuses and modes.
+memory_story: A union is a menu where you may pick one item, and a literal type is a menu with a single dish.
+visual: A short list of allowed values beside a variable.
+emotion: The pleasure of typos caught by the editor.
+meaning: A union type uses a vertical bar to allow several types, and a literal type restricts a value to one exact string, number or boolean.
+code: type Status = "idle" | "loading" | "done";¶type Id = number | string;¶let s: Status = "idle";¶s = "loading";¶// s = "stopped" is an error¶function show(id: Id) { return typeof id === "number" ? id.toFixed(0) : id.toUpperCase(); }
+output: No output, and an invalid status is rejected at compile time
+explanation: A union value can use only members common to all options until you narrow it. Literal unions behave like enums but compile to plain strings. A discriminated union adds a shared literal field, such as kind, so the compiler can tell the members apart in a switch. Combine with exhaustive checks using never.
+simple_explain: List the allowed options, and narrow before using type-specific features.
+analogy: A union is a menu where you pick one item, and a literal type is a menu with a single dish.
+syntax: type T = A | B | "literal"
+anatomy: | = or | "x" = exact value | discriminant = shared literal field
+example_1: type Mode = "light" | "dark";
+example_2: type Result = { ok: true; data: string } | { ok: false; error: string };
+example_3: let level: 1 | 2 | 3 = 2;
+variation: const modes = ["light", "dark"] as const;   // literal tuple
+used_with: narrowing, switch, React state
+related: basic types, narrowing, enums, as const
+alternatives: Enums
+where_used: State machines | Props | API results
+mini_conversation: A: How do I stop invalid status strings? | B: Use a union of literal types.
+misconception: ✗ A union lets you use any property of any member → ✓ You can use only what all members share until you narrow
+confused_with: Union vs intersection: union means one of, intersection means all of.
+avoid: Do not use plain string for a small fixed set of values.
+wrong_code: let status: string = "stoped";
+right_code: let status: Status = "done";
+memory_trick: Bar means one of these options.
+real_project: Replacing string statuses with a literal union caught a misspelled state in review.
+real_interview: An interviewer may ask: What is a discriminated union?
+real_daily: It is like a menu with a few allowed dishes.
+mcq_question: What does the vertical bar mean in a type?
+mcq_options: A) And B) Not C) Or D) Equals
+mcq_answer: C
+mcq_why: A union allows any one of the listed types.
+fill_blank: A union with a shared literal field is called a ____ union → discriminated
+hindi_to_task: Define a type that allows only the words red and green.
+task_answer: type Light = "red" | "green";
+own_task: Model a result that is either a success with data or a failure with an error.
+practice_question: Why narrow a union before using a property?
+practice_answer: Only properties shared by all members are safe to use.
+
+@TS-037
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Generics
+cue: Which feature lets a function or type work with many types while keeping them linked?
+kind: Type
+frequency: High
+importance: 5
+origin: Writing the same function for numbers, strings and users was wasteful, so generics let one definition keep the type connection.
+pro_tip: Name type parameters meaningfully when there are several, such as TItem.
+memory_story: A generic is a box with a label slot, where the label says what sort of item is inside.
+visual: A box labelled T holding different things.
+emotion: The aha moment when one function fits every case.
+meaning: A generic type parameter is a placeholder, written in angle brackets, that is filled in when the function or type is used.
+code: function first<T>(items: T[]): T | undefined {¶  return items[0];¶}¶const n = first([1, 2, 3]);¶const s = first(["a", "b"]);¶interface Box<T> { value: T }¶const box: Box<string> = { value: "hi" };
+output: n is number or undefined, s is string or undefined, and box holds a string
+explanation: The compiler infers T from the arguments, so you rarely write it. Constraints with extends limit what T may be, such as T extends { id: number }. Defaults can be provided. Generics power arrays, promises and utility types. Avoid generics that are used only once, since a simple type is clearer.
+simple_explain: A placeholder type that is filled in at use, so input and output types stay connected.
+analogy: A generic is a box with a label slot saying what sort of item is inside.
+syntax: function f<T>(x: T): T | interface Box<T> { }
+anatomy: <T> = type parameter | extends = constraint | default = T = string
+example_1: function getId<T extends { id: number }>(x: T) { return x.id; }
+example_2: const p: Promise<number> = Promise.resolve(1);
+example_3: function pair<A, B>(a: A, b: B): [A, B] { return [a, b]; }
+variation: type Response<T = unknown> = { data: T };   // a default type
+used_with: arrays, promises, utility types
+related: utility types, Promise<T>, interfaces vs types, constraints
+alternatives: Function overloads | any
+where_used: Libraries | Utilities | API clients
+mini_conversation: A: My helper loses the item type. | B: Make it generic so the type flows through.
+misconception: ✗ Generics are only for library authors → ✓ They help in everyday helpers and API wrappers too
+confused_with: Generic vs any: generic keeps the type link, any discards it.
+avoid: Do not use any when a generic fits.
+wrong_code: function first(items: any[]): any { return items[0]; }
+right_code: function first<T>(items: T[]): T | undefined { return items[0]; }
+memory_trick: T remembers the type that went in.
+real_project: Making an API helper generic gave typed results for every endpoint.
+real_interview: An interviewer may ask: What problem do generics solve?
+real_daily: It is like a box with a label slot.
+mcq_question: What does T represent in a generic function?
+mcq_options: A) A variable name only B) A string C) A type filled in at use D) A number
+mcq_answer: C
+mcq_why: It is a placeholder for a type.
+fill_blank: A rule limiting a generic type uses the keyword ____ → extends
+hindi_to_task: Write a generic function that returns its argument.
+task_answer: function identity<T>(x: T): T { return x; }
+own_task: Write a generic function that returns the last item of an array.
+practice_question: Why prefer generics over any?
+practice_answer: They keep the link between input and output types.
+
+@TS-038
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Narrowing
+cue: How does TypeScript work out a more specific type inside a condition?
+kind: Type
+frequency: Very high
+importance: 5
+origin: Variables often hold several possible types, so the compiler follows your checks to know which one applies in each branch.
+pro_tip: Use typeof, in, instanceof and equality checks, and let the compiler follow.
+memory_story: Narrowing is a detective eliminating suspects until one remains.
+visual: A type shrinking inside each branch of an if statement.
+emotion: The pleasure of the editor understanding your checks.
+meaning: Narrowing is the compiler refining a broad type to a narrower one inside a branch, based on checks such as typeof, instanceof, in, truthiness and equality.
+code: function format(v: string | number | null) {¶  if (v === null) return "empty";¶  if (typeof v === "string") return v.trim();¶  return v.toFixed(1);¶}¶console.log(format(" hi "), format(2.456), format(null));
+output: hi 2.5 empty
+explanation: After the null check, the type no longer includes null, and after the string check only number remains. Narrowing also works with in for object keys, instanceof for classes, and switch on a discriminant. Assignments can narrow, but callbacks can reset narrowing. Custom type guards extend the idea.
+simple_explain: Check the type, and inside that branch the compiler knows the narrower type.
+analogy: Narrowing is a detective eliminating suspects until one remains.
+syntax: if (typeof x === "string") { } | if ("key" in obj) { } | x instanceof Class
+anatomy: typeof = primitives | in = property check | instanceof = classes | === = equality
+example_1: if (Array.isArray(v)) { v.length; }
+example_2: if ("error" in result) { result.error; }
+example_3: if (err instanceof Error) { err.message; }
+variation: switch (shape.kind) { case "circle": ... }   // narrowing by discriminant
+used_with: unions, type guards, errors
+related: unions and literals, type guards, any vs unknown, errors in TypeScript
+alternatives: Type assertions
+where_used: Unions | Error handling | Parsing
+mini_conversation: A: I cannot call toFixed on this value. | B: It may be a string, so narrow with typeof first.
+misconception: ✗ A type assertion is the same as narrowing → ✓ Narrowing is proven by checks, while an assertion only tells the compiler to trust you
+confused_with: Narrowing vs assertion: one is verified, the other is trusted.
+avoid: Do not assert when a check would prove the type.
+wrong_code: (v as number).toFixed(1);
+right_code: if (typeof v === "number") v.toFixed(1);
+memory_trick: Check first, then use the narrow type.
+real_project: Narrowing an API result union removed several unsafe type assertions.
+real_interview: An interviewer may ask: How does TypeScript narrow a union?
+real_daily: It is like a detective eliminating suspects.
+mcq_question: Which check narrows a value to a string?
+mcq_options: A) v exists B) v is truthy C) v is long D) typeof v equals string
+mcq_answer: D
+mcq_why: typeof narrows primitives.
+fill_blank: To test whether a key exists on an object, narrow with the operator ____ → in
+hindi_to_task: Narrow value to a string before calling toUpperCase.
+task_answer: if (typeof value === "string") value.toUpperCase();
+own_task: Write a function that handles a number, a string and null differently.
+practice_question: Does an assertion prove the type?
+practice_answer: No, it only tells the compiler to trust you.
+
+@TS-039
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: any vs unknown
+cue: Which two types hold anything, and why is one far safer?
+kind: Type
+frequency: Very high
+importance: 5
+origin: Sometimes a value really can be anything, so two top types exist, one that switches checking off and one that demands checks.
+pro_tip: Prefer unknown for data from outside, and narrow it before use.
+memory_story: any is a door with no lock, and unknown is a locked box that must be opened with proof.
+visual: A free-for-all box versus a box that needs a key.
+emotion: The security of checks that you cannot skip.
+meaning: any turns off type checking for a value, while unknown accepts any value but requires narrowing before you can use it.
+code: let a: any = "text";¶// a.doesNotExist();   // no compile error, but would crash at run time¶let u: unknown = JSON.parse('{"id": 1}');¶if (typeof u === "object" && u !== null && "id" in u) {¶  console.log((u as { id: number }).id);¶}
+output: 1
+explanation: any spreads, because values derived from it are also any, which hides errors widely. unknown forces you to prove the type before use, so it is safe for parsed data, caught errors and third-party input. Validation libraries such as Zod turn unknown into a typed value. Enabling noImplicitAny flags accidental any.
+simple_explain: Use unknown instead of any, and narrow or validate before using the value.
+analogy: any is a door with no lock, and unknown is a locked box that needs proof.
+syntax: let x: unknown; if (typeof x === "string") { }
+anatomy: any = unchecked | unknown = must narrow | noImplicitAny = flag
+example_1: catch (err: unknown) { }
+example_2: function parse(text: string): unknown { return JSON.parse(text); }
+example_3: const data = schema.parse(raw);
+variation: // @ts-expect-error   // a documented, intentional exception
+used_with: validation, JSON, errors
+related: narrowing, type guards, JSON, strict mode
+alternatives: Zod validation | generics
+where_used: API data | Error handling | Parsing
+mini_conversation: A: The API data type is any. | B: Make it unknown and validate it before use.
+misconception: ✗ any is harmless because it is flexible → ✓ It silently removes checking for everything it touches
+confused_with: any vs unknown: any allows everything, unknown requires proof.
+avoid: Do not let any spread through the code.
+wrong_code: const data: any = await res.json();¶data.user.name.first;
+right_code: const data: unknown = await res.json();¶const user = userSchema.parse(data);
+memory_trick: Unknown asks for proof, any asks for nothing.
+real_project: Replacing any with unknown plus validation caught a missing field in an API response.
+real_interview: An interviewer may ask: Why is unknown safer than any?
+real_daily: It is like a box that needs a key.
+mcq_question: What must you do before using an unknown value?
+mcq_options: A) Cast it to any B) Narrow or validate it C) Nothing D) Delete it
+mcq_answer: B
+mcq_why: The compiler requires proof of the type.
+fill_blank: The compiler flag that reports implicit any is ____ → noImplicitAny
+hindi_to_task: Type the result of JSON.parse safely.
+task_answer: const data: unknown = JSON.parse(text);
+own_task: Replace an any in a function parameter with unknown and add a check.
+practice_question: Why does any spread?
+practice_answer: Values derived from any are also any, hiding errors.
+
+@TS-040
+type: code56
+topic: 04 TypeScript
+level: Beginner
+term: Optional and readonly properties
+cue: Which modifiers mark a property as possibly missing or as unchangeable?
+kind: Type
+frequency: High
+importance: 4
+origin: Real data has optional fields and values that must not change, so modifiers state those rules in the type.
+pro_tip: Use readonly for data that should not be modified after creation.
+memory_story: A question mark is a maybe box, and readonly is a sealed box.
+visual: A property with a question mark and a property with a lock.
+emotion: The assurance that important data cannot be changed by accident.
+meaning: A question mark makes a property optional, so it may be undefined, and readonly prevents reassignment after creation.
+code: interface Config {¶  readonly name: string;¶  port?: number;¶}¶const c: Config = { name: "api" };¶// c.name = "x" is an error¶const port = c.port ?? 3000;¶const nums: readonly number[] = [1, 2];
+output: No output, and writing to name is rejected at compile time
+explanation: Optional properties have the type of their value or undefined, so check them before use. readonly is checked only at compile time and does not stop run-time changes. readonly arrays remove methods that mutate. The utility types Partial and Readonly apply these modifiers to every property.
+simple_explain: A question mark means maybe missing, and readonly means do not reassign.
+analogy: A question mark is a maybe box, and readonly is a sealed box.
+syntax: key?: type | readonly key: type
+anatomy: ? = optional | readonly = no reassignment | ?? = default for missing values
+example_1: interface Options { retries?: number }
+example_2: const ids: ReadonlyArray<number> = [1];
+example_3: type Frozen = Readonly<User>;
+variation: Object.freeze(obj)   // also enforces at run time
+used_with: interfaces, utility types, configuration
+related: interfaces vs types, utility types, strict mode, Object.freeze
+alternatives: Object.freeze | immutable libraries
+where_used: Configuration | Props | Immutable data
+mini_conversation: A: How do I stop code changing this config? | B: Mark the properties readonly.
+misconception: ✗ readonly makes the object immutable at run time → ✓ It is checked only by the compiler
+confused_with: Optional vs undefined: optional means the key may be absent, undefined is a value.
+avoid: Do not rely on readonly for run-time protection.
+wrong_code: interface User { email: string }   // not always present
+right_code: interface User { email?: string }
+memory_trick: Question means maybe, readonly means locked.
+real_project: Marking config fields readonly stopped accidental changes in a shared module.
+real_interview: An interviewer may ask: Does readonly exist at run time?
+real_daily: It is like a sealed box.
+mcq_question: What does a question mark after a property name mean?
+mcq_options: A) It is optional B) It is readonly C) It is private D) It is a number
+mcq_answer: A
+mcq_why: The property may be missing.
+fill_blank: A modifier that blocks reassignment is ____ → readonly
+hindi_to_task: Make the property port optional.
+task_answer: port?: number;
+own_task: Write an interface with one optional and one readonly property.
+practice_question: Is readonly enforced while the program runs?
+practice_answer: No, only by the compiler.
+
+@TS-041
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Enums
+cue: Which feature gives names to a fixed set of related constants, and what are the alternatives?
+kind: Type
+frequency: Medium
+importance: 3
+origin: Code needed named constants for sets such as roles, so enums were added, and later unions offered a lighter way.
+pro_tip: Prefer literal unions over enums unless you need run-time values.
+memory_story: An enum is a labelled switch panel with a name for every position.
+visual: A panel with named positions and numbers behind them.
+emotion: The clarity of options that carry readable names.
+meaning: An enum defines a set of named constants, numeric or string, that exists at run time as an object.
+code: enum Role { Admin = "ADMIN", User = "USER" }¶const r: Role = Role.Admin;¶type Level = "low" | "high";¶const lvl: Level = "low";¶console.log(r, lvl);
+output: ADMIN low
+explanation: String enums produce readable values and are safer than numeric enums, which accept any number in older versions. Enums create extra code at run time, while literal unions vanish after compilation. const enums inline values but have tooling limits. The as const object pattern gives enum-like behaviour with plain JavaScript.
+simple_explain: Use a literal union for most cases, and a string enum when you need a run-time object.
+analogy: An enum is a labelled switch panel with a name for every position.
+syntax: enum Name { A = "a", B = "b" }
+anatomy: enum = named set | = "value" = string member | Name.A = access
+example_1: enum Dir { Up, Down }
+example_2: const Colors = { red: "red", blue: "blue" } as const;
+example_3: type Color = typeof Colors[keyof typeof Colors];
+variation: const enum Mode { Fast = "fast" }   // inlined at compile time
+used_with: unions, as const, switch
+related: unions and literals, as const, interfaces vs types, narrowing
+alternatives: Literal unions | as const objects
+where_used: Roles | Statuses | Configuration keys
+mini_conversation: A: Do I need an enum here? | B: A literal union is lighter, unless you need the values at run time.
+misconception: ✗ Enums are erased like other types → ✓ They create real objects in the compiled JavaScript
+confused_with: Enum vs union: an enum exists at run time, a union exists only at compile time.
+avoid: Do not use numeric enums for values that cross system boundaries.
+wrong_code: enum Status { Open, Closed }   // numbers hide meaning in logs
+right_code: type Status = "open" | "closed";
+memory_trick: Unions vanish, enums stay behind.
+real_project: Switching enums to literal unions shrank a frontend bundle slightly.
+real_interview: An interviewer may ask: What is the difference between an enum and a union of literals?
+real_daily: It is like a labelled switch panel.
+mcq_question: Which exists at run time?
+mcq_options: A) A literal union B) A type alias C) An interface D) An enum
+mcq_answer: D
+mcq_why: Enums compile into objects.
+fill_blank: An object that behaves like an enum can be made with ____ const → as
+hindi_to_task: Define a string enum with Admin and User.
+task_answer: enum Role { Admin = "ADMIN", User = "USER" }
+own_task: Replace an enum with a literal union and compare.
+practice_question: Why prefer string enums over numeric ones?
+practice_answer: They are readable in logs and safer.
+
+@TS-042
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: tsconfig.json
+cue: Which file tells the TypeScript compiler how to check and emit your code?
+kind: Configuration
+frequency: High
+importance: 5
+origin: The compiler has many options, so a project file records them once instead of repeating command line flags.
+pro_tip: Turn on strict and pick a target and module setting that match where the code runs.
+memory_story: tsconfig is the settings panel of the compiler.
+visual: A JSON file with compilerOptions and an include list.
+emotion: The relief of one file that holds all settings.
+meaning: tsconfig.json sets compiler options such as target, module, strict and outDir, and lists the files to include.
+code: {¶  "compilerOptions": {¶    "target": "ES2022",¶    "module": "NodeNext",¶    "strict": true,¶    "outDir": "dist",¶    "rootDir": "src",¶    "skipLibCheck": true¶  },¶  "include": ["src"]¶}
+output: tsc reads this file and compiles files in src into dist with strict checking.
+explanation: target sets the JavaScript version emitted, module sets the module system, and strict turns on a group of safety checks. outDir and rootDir control where output goes. include and exclude choose files. Frontend tools often use noEmit because a bundler produces the output. extends lets projects share a base configuration.
+simple_explain: Put compiler settings in tsconfig.json and run tsc with no extra flags.
+analogy: tsconfig is the settings panel of the compiler.
+syntax: { "compilerOptions": { ... }, "include": [ ... ] }
+anatomy: target = output version | module = module style | strict = safety group | outDir = output folder
+example_1: "extends": "./tsconfig.base.json"
+example_2: "noEmit": true
+example_3: "paths": { "@/*": ["src/*"] }
+variation: npx tsc --init   // create a starter file
+used_with: strict mode, bundlers, Node
+related: strict mode, ES modules vs CommonJS, why TypeScript, declaration files
+alternatives: Bundler configuration
+where_used: Every TypeScript project | Monorepos | CI checks
+mini_conversation: A: Imports fail with the wrong module settings. | B: Check module and moduleResolution in tsconfig.
+misconception: ✗ tsconfig changes how TypeScript runs in the editor only → ✓ It also controls the compiler output and checks in builds
+confused_with: target vs module: target is the JavaScript version, module is the module system.
+avoid: Do not leave strict off in new projects.
+wrong_code: "strict": "true"
+right_code: "strict": true
+memory_trick: Strict true, no quotes needed.
+real_project: Enabling strict in tsconfig found dozens of hidden null bugs in a service.
+real_interview: An interviewer may ask: What does strict do in tsconfig?
+real_daily: It is like a settings panel.
+mcq_question: Which option picks the output folder?
+mcq_options: A) target B) rootDir C) outDir D) include
+mcq_answer: C
+mcq_why: outDir sets where compiled files go.
+fill_blank: The option that turns on a group of safety checks is ____ → strict
+hindi_to_task: Create a starter tsconfig file.
+task_answer: npx tsc --init
+own_task: Write a tsconfig that compiles src to dist with strict mode.
+practice_question: What does include do?
+practice_answer: It lists which files the compiler should check.
+
+@TS-043
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Utility types
+cue: Which built-in generic types transform existing types, such as Partial, Pick, Omit and Record?
+kind: Type
+frequency: High
+importance: 5
+origin: Many types are small variations of others, so the library provides helpers that derive new types from existing ones.
+pro_tip: Derive types from one source of truth instead of copying fields.
+memory_story: Utility types are cookie cutters that reshape one dough into many shapes.
+visual: One type fanning into several derived types.
+emotion: The satisfaction of deriving a type in one line.
+meaning: Utility types build new types from existing ones, for example Partial makes all fields optional, Pick keeps chosen fields, Omit removes fields and Record maps keys to a value type.
+code: interface User { id: number; name: string; email: string }¶type Update = Partial<User>;¶type Preview = Pick<User, "id" | "name">;¶type NoEmail = Omit<User, "email">;¶type Roles = Record<string, "admin" | "user">;¶const patch: Update = { name: "Asha" };
+output: No output, and patch is valid because every field is optional
+explanation: Partial suits update payloads, Pick suits views of a type, Omit suits removing sensitive fields, and Record suits dictionaries. Required reverses Partial, and Readonly freezes properties. ReturnType and Awaited extract types from functions and promises. They are built from mapped types.
+simple_explain: Derive new types from existing ones with Partial, Pick, Omit and Record.
+analogy: Utility types are cookie cutters that reshape one dough into many shapes.
+syntax: Partial<T> | Pick<T, K> | Omit<T, K> | Record<K, V>
+anatomy: Partial = optional all | Pick = keep chosen | Omit = remove chosen | Record = key to value map
+example_1: type Fn = ReturnType<typeof getUser>;
+example_2: type Data = Awaited<ReturnType<typeof load>>;
+example_3: type Needed = Required<Config>;
+variation: Readonly<User>   // freeze every property
+used_with: generics, mapped types, APIs
+related: generics, interfaces vs types, mapped types, optional and readonly
+alternatives: Writing types by hand
+where_used: Update payloads | Public views | Dictionaries
+mini_conversation: A: I copied the User type for the update call. | B: Use Partial of User so they cannot drift apart.
+misconception: ✗ Omit removes properties at run time → ✓ It only changes the type, and the data must still be removed in code
+confused_with: Pick vs Omit: Pick lists what to keep, Omit lists what to remove.
+avoid: Do not duplicate fields across several types.
+wrong_code: type Update = { id?: number; name?: string; email?: string };
+right_code: type Update = Partial<User>;
+memory_trick: Pick keeps, Omit drops, Partial loosens.
+real_project: Deriving the update type with Partial kept the API and form in step.
+real_interview: An interviewer may ask: What is the difference between Pick and Omit?
+real_daily: It is like cookie cutters for types.
+mcq_question: Which utility type makes every property optional?
+mcq_options: A) Partial B) Record C) Omit D) Pick
+mcq_answer: A
+mcq_why: Partial adds an optional marker to each key.
+fill_blank: The utility type that builds a key to value dictionary is ____ → Record
+hindi_to_task: Create a type with all fields of User except email.
+task_answer: type Safe = Omit<User, "email">;
+own_task: Create a type with only the id and name of User.
+practice_question: Does Omit remove data at run time?
+practice_answer: No, it only changes the type.
+
+@TS-044
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Promise<T> and async typing
+cue: How do you type values that arrive later from async functions?
+kind: Type
+frequency: High
+importance: 4
+origin: Async functions return promises, so the type must say what the promise will eventually contain.
+pro_tip: Let the compiler infer the promise type from the returned value.
+memory_story: Promise of T is a receipt that says what item will be delivered.
+visual: A box labelled Promise with a type inside.
+emotion: The ease of typed async results.
+meaning: Promise<T> is the type of a promise that resolves to a value of type T, and an async function that returns T has the type Promise<T>.
+code: interface User { id: number; name: string }¶async function getUser(id: number): Promise<User> {¶  const res = await fetch(`/api/users/${id}`);¶  return (await res.json()) as User;¶}¶const user = await getUser(1);¶type Loaded = Awaited<ReturnType<typeof getUser>>;
+output: user has type User, and Loaded is also User
+explanation: Inside an async function you return a plain value, and the compiler wraps it. await removes the Promise layer. Promise.all keeps the tuple of results typed. Awaited extracts the inner type. The json method returns any, so assert or validate it.
+simple_explain: Async functions return Promise of their value, and await gives the inner value.
+analogy: Promise of T is a receipt that says what item will be delivered.
+syntax: async function f(): Promise<T> | Awaited<T>
+anatomy: Promise<T> = future T | await = unwrap | Awaited = utility to unwrap
+example_1: const p: Promise<string> = Promise.resolve("x");
+example_2: const [users, total] = await Promise.all([listUsers(), countUsers()]);
+example_3: function load(): Promise<void> { return Promise.resolve(); }
+variation: async function f() { return 1; }   // inferred as Promise<number>
+used_with: fetch, validation, generics
+related: promises, async and await, generics, type assertions
+alternatives: Callbacks with types
+where_used: API calls | Services | Hooks
+mini_conversation: A: What type does my async function return? | B: A Promise of whatever you return.
+misconception: ✗ An async function returning a number has the type number → ✓ It has the type Promise of number
+confused_with: Promise<T> vs T: one is the future value, the other is the value after await.
+avoid: Do not trust the json result without a check.
+wrong_code: async function getId(): number { return 1; }
+right_code: async function getId(): Promise<number> { return 1; }
+memory_trick: Async always wraps the return in Promise.
+real_project: Typing async helpers as Promise of known shapes caught a misused result.
+real_interview: An interviewer may ask: What type does an async function return?
+real_daily: It is like a receipt for a future item.
+mcq_question: What type does an async function returning a string have?
+mcq_options: A) any B) Promise of string C) void D) string
+mcq_answer: B
+mcq_why: The return is wrapped in a promise.
+fill_blank: The utility that extracts the value type of a promise is ____ → Awaited
+hindi_to_task: Declare the return type of an async function that gives a number.
+task_answer: async function f(): Promise<number> { return 1; }
+own_task: Type an async function that fetches a list of users.
+practice_question: What does await do to the type?
+practice_answer: It unwraps the promise to its inner type.
+
+@TS-045
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Type assertions
+cue: Which syntax tells the compiler to treat a value as a chosen type, and what is the danger?
+kind: Type
+frequency: High
+importance: 4
+origin: Sometimes you know more than the compiler, so assertions let you override its view, at your own risk.
+pro_tip: Prefer narrowing or validation, and use assertions sparingly.
+memory_story: An assertion is signing a statement that says trust me.
+visual: A value stamped with a different label.
+emotion: The caution of overriding the safety net.
+meaning: A type assertion with as tells the compiler to treat an expression as a given type without any run-time check.
+code: const el = document.getElementById("name") as HTMLInputElement;¶console.log(el.value);¶const data = JSON.parse("{}") as { id: number };¶const safe = document.getElementById("x");¶if (safe instanceof HTMLInputElement) console.log(safe.value);
+output: Reads the input value, and the last lines read it safely after a check
+explanation: Assertions change only the compiler's view, so a wrong claim fails at run time. The non-null operator, an exclamation mark, asserts a value is not null. Assertions to unrelated types need a double cast, which is a warning sign. Narrowing and schema validation are safer ways to learn the real type.
+simple_explain: as overrides the compiler, so use it only when you truly know and cannot check.
+analogy: An assertion is signing a statement that says trust me.
+syntax: value as Type | value!
+anatomy: as = assertion | ! = non-null assertion | instanceof = a safe check
+example_1: const n = input as unknown as number;
+example_2: const len = name!.length;
+example_3: <HTMLElement>node
+variation: satisfies HTMLElement   // check a value without changing its type
+used_with: DOM, JSON, narrowing
+related: narrowing, any vs unknown, type guards, DOM
+alternatives: Narrowing | Zod validation | satisfies
+where_used: DOM access | Parsed data | Migration code
+mini_conversation: A: It compiles but crashes with undefined. | B: A type assertion hid the missing value, so validate it.
+misconception: ✗ An assertion converts the value to the new type → ✓ It only changes what the compiler believes
+confused_with: as vs satisfies: as overrides the type, satisfies only checks it.
+avoid: Do not assert API data without validation.
+wrong_code: const user = data as User;   // data is unchecked
+right_code: const user = userSchema.parse(data);
+memory_trick: An assertion claims, but a check proves.
+real_project: Replacing assertions on API data with validation exposed a missing field.
+real_interview: An interviewer may ask: What is the risk of the as keyword?
+real_daily: It is like signing a trust-me statement.
+mcq_question: Does as perform a run-time check?
+mcq_options: A) Only for numbers B) Only in strict C) No D) Yes always
+mcq_answer: C
+mcq_why: It only affects compile-time types.
+fill_blank: The operator that asserts a value is not null is the ____ mark → exclamation
+hindi_to_task: Treat an element as an input element.
+task_answer: const el = node as HTMLInputElement;
+own_task: Replace an assertion with a safe instanceof check.
+practice_question: Why can a wrong assertion crash at run time?
+practice_answer: The compiler trusts you, but the real value differs.
+
+@TS-046
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Declaration files
+cue: Which files describe the types of JavaScript libraries that have none?
+kind: Tooling
+frequency: Medium
+importance: 3
+origin: Many libraries are plain JavaScript, so separate files describe their shapes for the compiler.
+pro_tip: Install the matching types package from DefinitelyTyped when a library lacks types.
+memory_story: A declaration file is a manual that describes a machine written in another language.
+visual: A .d.ts file beside a JavaScript library.
+emotion: The relief of finally getting autocomplete for a library.
+meaning: A declaration file ending in .d.ts contains only type information for existing JavaScript code, and many libraries ship one or have a types package.
+code: // npm install --save-dev @types/express¶import express from "express";¶const app = express();¶app.get("/", (req, res) => res.send("ok"));¶// custom.d.ts¶declare module "legacy-lib" {¶  export function run(input: string): number;¶}
+output: The editor now knows the types for express, and the legacy library has a hand-written description.
+explanation: Packages published with their own types need nothing extra. Others have @types packages. When none exists, write a small declare module block. skipLibCheck avoids checking declaration files. Global additions go in a .d.ts that is included by tsconfig. Generated declarations are produced with the declaration option.
+simple_explain: Install @types packages or write a .d.ts to describe untyped code.
+analogy: A declaration file is a manual describing a machine written in another language.
+syntax: declare module "name" { export function f(): void; }
+anatomy: .d.ts = types only | @types = community typings | declare module = describe a package
+example_1: npm install -D @types/node
+example_2: declare const VERSION: string;
+example_3: "declaration": true
+variation: // @ts-ignore   // silence a single error, use sparingly
+used_with: tsconfig, npm, libraries
+related: tsconfig.json, npm and package.json, why TypeScript, ES modules
+alternatives: JSDoc types | rewriting in TypeScript
+where_used: Legacy libraries | Global variables | Published packages
+mini_conversation: A: TypeScript says it cannot find types for this package. | B: Install the types package or add a declare module.
+misconception: ✗ .d.ts files contain runnable code → ✓ They contain only type declarations
+confused_with: .d.ts vs .ts: one only describes types, the other contains code.
+avoid: Do not use any module declarations that hide real types.
+wrong_code: declare module "legacy-lib";   // everything is any
+right_code: declare module "legacy-lib" { export function run(input: string): number; }
+memory_trick: Missing types? Look for an at types package.
+real_project: Writing a small declaration gave typing to an internal legacy library.
+real_interview: An interviewer may ask: What is DefinitelyTyped?
+real_daily: It is like a manual for a foreign machine.
+mcq_question: What do .d.ts files contain?
+mcq_options: A) Images B) Only type declarations C) Runnable code D) Tests
+mcq_answer: B
+mcq_why: They describe shapes for the compiler.
+fill_blank: Community type packages are published under the scope ____ → @types
+hindi_to_task: Install types for Node.
+task_answer: npm install --save-dev @types/node
+own_task: Write a declaration for a function exported by an untyped package.
+practice_question: Do packages with built-in types need @types?
+practice_answer: No.
+
+@TS-047
+type: code56
+topic: 04 TypeScript
+level: Advanced
+term: Type guards
+cue: Which functions tell the compiler that a value has a specific type after a check?
+kind: Type
+frequency: High
+importance: 4
+origin: Complex checks cannot be followed by the compiler, so you can wrap a check in a function that states the resulting type.
+pro_tip: Write a guard for each union member that you test often.
+memory_story: A type guard is a bouncer who checks an ID and announces who is entering.
+visual: A function with a special return type announcing a narrowed type.
+emotion: The pride of reusable, safe checks.
+meaning: A type guard is a function whose return type is written as value is Type, so a true result narrows the value to that type.
+code: interface Cat { meow(): void }¶interface Dog { bark(): void }¶function isCat(p: Cat | Dog): p is Cat {¶  return "meow" in p;¶}¶function speak(p: Cat | Dog) {¶  if (isCat(p)) p.meow(); else p.bark();¶}
+output: No output, and each branch uses the right method
+explanation: The compiler trusts the guard, so a wrong guard breaks safety. Guards suit validation of unknown data. Assertion functions use asserts value is Type to narrow after the call without an if. Discriminated unions often avoid the need for custom guards.
+simple_explain: Write a function that checks and declares the type, then use it in conditions.
+analogy: A type guard is a bouncer who checks an ID and announces who is entering.
+syntax: function isX(v: unknown): v is X { ... }
+anatomy: v is X = type predicate | return true = narrowed | asserts v is X = assertion function
+example_1: function isString(v: unknown): v is string { return typeof v === "string"; }
+example_2: function assertDefined<T>(v: T | undefined): asserts v is T { }
+example_3: const cats = pets.filter(isCat);
+variation: items.filter((x): x is string => typeof x === "string")   // inline guard in filter
+used_with: unions, unknown, validation
+related: narrowing, unions and literals, any vs unknown, type assertions
+alternatives: Discriminated unions | Zod
+where_used: Validation | Filters | Event handling
+mini_conversation: A: Filter still gives me a union array. | B: Pass a type guard to filter so the result is narrowed.
+misconception: ✗ The compiler verifies that a guard is correct → ✓ It trusts the predicate, so mistakes break safety
+confused_with: Guard vs assertion: a guard returns a boolean, an assertion function throws.
+avoid: Do not write guards that return true without checking.
+wrong_code: function isCat(p: any): p is Cat { return true; }
+right_code: function isCat(p: Cat | Dog): p is Cat { return "meow" in p; }
+memory_trick: The guard announces, so make it honest.
+real_project: A custom guard filtered an API array down to valid records with full typing.
+real_interview: An interviewer may ask: What does the is keyword do in a return type?
+real_daily: It is like a bouncer announcing who enters.
+mcq_question: What does a type predicate look like?
+mcq_options: A) value to Type B) value in Type C) value as Type D) value is Type
+mcq_answer: D
+mcq_why: The predicate form names the narrowed type.
+fill_blank: A function that narrows by throwing uses ____ in its return type → asserts
+hindi_to_task: Write a guard that checks whether a value is a string.
+task_answer: function isString(v: unknown): v is string { return typeof v === "string"; }
+own_task: Use a type guard inside filter to keep only numbers.
+practice_question: Does the compiler verify the guard logic?
+practice_answer: No, it trusts the predicate.
+
+@TS-048
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: Strict mode
+cue: Which group of compiler options turns on the safest set of checks?
+kind: Configuration
+frequency: Very high
+importance: 5
+origin: Loose checking let many bugs slip through, so a single strict switch turns on a group of stronger rules.
+pro_tip: Turn on strict from the start in new projects, since it is hard to add later.
+memory_story: Strict mode is the inspector who never lets a missing value slide.
+visual: A switch labelled strict turning on several checks.
+emotion: The confidence of a compiler that checks everything.
+meaning: The strict option enables checks such as strictNullChecks, noImplicitAny, strictFunctionTypes and strictPropertyInitialization.
+code: // tsconfig.json: { "compilerOptions": { "strict": true } }¶function len(s: string | null) {¶  return s.length;   // error with strictNullChecks¶}¶function ok(s: string | null) {¶  return s?.length ?? 0;¶}
+output: The first function is rejected at compile time, and the second is accepted.
+explanation: strictNullChecks makes null and undefined separate types, so you must handle them. noImplicitAny rejects parameters with no type. Extra flags such as noUncheckedIndexedAccess go beyond strict. Migrating an old project can be done file by file or flag by flag.
+simple_explain: Turn on strict, and handle null and any explicitly.
+analogy: Strict mode is the inspector who never lets a missing value slide.
+syntax: "strict": true
+anatomy: strictNullChecks = null is separate | noImplicitAny = types required | strict = group switch
+example_1: "noUncheckedIndexedAccess": true
+example_2: "strictNullChecks": true
+example_3: "exactOptionalPropertyTypes": true
+variation: "strict": true, "strictNullChecks": false   // turn one rule off while migrating
+used_with: tsconfig, narrowing, optional chaining
+related: tsconfig.json, narrowing, any vs unknown, optional and readonly
+alternatives: Gradual migration by flag
+where_used: New projects | Migrations | Teams
+mini_conversation: A: The compiler complains that the value may be null. | B: That is strict null checking, so handle the null case.
+misconception: ✗ Strict mode makes code slower → ✓ It affects only compile-time checks, not run time
+confused_with: strict vs noImplicitAny: strict is the group, noImplicitAny is one member.
+avoid: Do not disable strict to silence errors.
+wrong_code: "strict": false
+right_code: "strict": true
+memory_trick: Strict shows nulls before users do.
+real_project: Enabling strict null checks found a crash path in a customer integration.
+real_interview: An interviewer may ask: What does strictNullChecks do?
+real_daily: It is like an inspector who lets nothing slide.
+mcq_question: What does strictNullChecks require?
+mcq_options: A) Handling null and undefined explicitly B) Faster code C) Typed comments D) No null values ever
+mcq_answer: A
+mcq_why: Null becomes a separate type to be handled.
+fill_blank: The option that rejects untyped parameters is ____ → noImplicitAny
+hindi_to_task: Turn on strict mode in tsconfig.
+task_answer: "strict": true
+own_task: Fix a function that fails strict null checks.
+practice_question: Does strict mode change run-time speed?
+practice_answer: No, it affects only compile-time checks.
+
+@TS-049
+type: code56
+topic: 04 TypeScript
+level: Advanced
+term: Mapped types
+cue: Which syntax builds a new type by transforming every key of another type?
+kind: Type
+frequency: Medium
+importance: 3
+origin: Many helper types repeat the same change on each property, so mapped types express it once for all keys.
+pro_tip: Learn mapped types by rebuilding Partial and Readonly yourself.
+memory_story: A mapped type is an assembly line that visits every key and applies the same edit.
+visual: A line of keys passing through a machine that changes each.
+emotion: The satisfaction of building your own utility type.
+meaning: A mapped type iterates over the keys of a type, with a key in keyof T clause, and produces a new property for each one.
+code: type Flags<T> = { [K in keyof T]: boolean };¶type MyPartial<T> = { [K in keyof T]?: T[K] };¶type Getters<T> = { [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K] };¶interface User { id: number; name: string }¶type UserFlags = Flags<User>;¶type UserGetters = Getters<User>;
+output: UserFlags has id and name as booleans, and UserGetters has getId and getName functions.
+explanation: The in keyof clause loops over keys, and T[K] reads each property type. Modifiers can be added or removed with plus and minus signs. The as clause renames keys with template literal types. Built-in utilities such as Partial and Readonly are mapped types. Use them for derived shapes, not everyday code.
+simple_explain: Loop over every key of a type and produce a new shape from it.
+analogy: A mapped type is an assembly line that visits every key and applies the same edit.
+syntax: { [K in keyof T]: NewType }
+anatomy: K in keyof T = loop over keys | T[K] = property type | as = rename key | ? and readonly = modifiers
+example_1: type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+example_2: type Nullable<T> = { [K in keyof T]: T[K] | null };
+example_3: type Keys = keyof User;
+variation: { [K in "a" | "b"]: number }   // loop over a literal union
+used_with: generics, utility types, template literal types
+related: utility types, generics, interfaces vs types, as const
+alternatives: Built-in utility types
+where_used: Libraries | Form helpers | API clients
+mini_conversation: A: I need a type with the same keys but all booleans. | B: Use a mapped type over the keys of the original.
+misconception: ✗ Mapped types create objects at run time → ✓ They exist only at compile time
+confused_with: keyof vs in keyof: keyof gives the key union, in keyof loops over it.
+avoid: Do not build complex mapped types where a utility type works.
+wrong_code: type Flags<T> = { K: boolean };
+right_code: type Flags<T> = { [K in keyof T]: boolean };
+memory_trick: K in keyof T loops every key.
+real_project: Building a mapped type gave typed field flags for a large form.
+real_interview: An interviewer may ask: How is Partial implemented?
+real_daily: It is like an assembly line that edits every key.
+mcq_question: Which clause loops over the keys of T?
+mcq_options: A) K of T B) K in keyof T C) K for T D) K as T
+mcq_answer: B
+mcq_why: The in keyof form iterates over keys.
+fill_blank: The operator that gives the union of a type's keys is ____ → keyof
+hindi_to_task: Write a type that makes every property of T nullable.
+task_answer: type Nullable<T> = { [K in keyof T]: T[K] | null };
+own_task: Rebuild the built-in Readonly utility as your own mapped type.
+practice_question: What does T[K] mean?
+practice_answer: The type of property K in T.
+
+@TS-050
+type: code56
+topic: 04 TypeScript
+level: Intermediate
+term: as const
+cue: Which assertion freezes a literal value and gives it the narrowest possible type?
+kind: Type
+frequency: High
+importance: 4
+origin: Plain object and array literals widen to general types, so as const keeps their exact values and makes them readonly.
+pro_tip: Use as const on config objects and lists to derive union types from them.
+memory_story: As const is shrink wrap that fixes the exact contents.
+visual: An object wrapped in plastic with every value labelled exactly.
+emotion: The delight of deriving types straight from data.
+meaning: as const makes a literal deeply readonly and infers its narrowest literal types instead of widened ones.
+code: const modes = ["light", "dark"] as const;¶type Mode = typeof modes[number];¶const config = { retries: 3, env: "prod" } as const;¶type Env = typeof config.env;¶const wide = ["a", "b"];¶console.log(modes, config.retries);
+output: [ 'light', 'dark' ] 3
+explanation: Without as const the array would be string[], and the object would hold number and string. With it, the array is a readonly tuple of exact strings, so Mode becomes light or dark. It affects only the type, and nothing is frozen at run time. It removes the need for a separate union definition and keeps data and types in one place.
+simple_explain: Add as const to keep exact values, then derive types from the data.
+analogy: As const is shrink wrap that fixes the exact contents.
+syntax: const x = value as const
+anatomy: as const = narrow and readonly | typeof x[number] = union of items | keyof typeof x = union of keys
+example_1: const roles = ["admin", "user"] as const;
+example_2: type Role = typeof roles[number];
+example_3: type Key = keyof typeof config;
+variation: Object.freeze(config)   // add run-time protection
+used_with: unions, enums, configuration
+related: enums, unions and literals, mapped types, optional and readonly
+alternatives: Enums | explicit union types
+where_used: Config | Option lists | Route tables
+mini_conversation: A: I keep a list and a union with the same values. | B: Define the list as const and derive the union from it.
+misconception: ✗ as const freezes the object at run time → ✓ It changes only the compile-time type
+confused_with: as const vs Object.freeze: one is compile-time, the other is run-time.
+avoid: Do not duplicate values in a list and in a union.
+wrong_code: const modes = ["light", "dark"];   // type is string[]
+right_code: const modes = ["light", "dark"] as const;
+memory_trick: As const keeps the exact words.
+real_project: Deriving a union from a constant list removed a duplicated type in two files.
+real_interview: An interviewer may ask: What does as const do?
+real_daily: It is like shrink wrap around exact contents.
+mcq_question: What is the type of an array literal with as const?
+mcq_options: A) object B) string[] C) A readonly tuple of exact values D) any
+mcq_answer: C
+mcq_why: Each element keeps its literal type.
+fill_blank: A union of array items is derived with typeof x[____] → number
+hindi_to_task: Make a constant list of two roles and derive a union from it.
+task_answer: const roles = ["admin", "user"] as const; type Role = typeof roles[number];
+own_task: Derive a union type of the keys from a config object.
+practice_question: Does as const freeze the object at run time?
+practice_answer: No, it only affects types.
+
+@TS-051
+type: code56
+topic: 04 TypeScript
+level: Advanced
+term: Errors in TypeScript
+cue: How do you type and handle errors safely when anything can be thrown?
+kind: Type
+frequency: High
+importance: 5
+origin: JavaScript lets you throw any value, so catch variables have no reliable type and need careful handling.
+pro_tip: Treat the caught value as unknown and narrow it before use.
+memory_story: A caught error is a parcel with no label, so you check what is inside before opening.
+visual: A catch block with an unknown value being inspected.
+emotion: The calm of predictable error messages.
+meaning: A caught value is unknown in strict setups, so you narrow it with instanceof Error, and you can define custom error classes for specific failures.
+code: class ApiError extends Error {¶  constructor(message: string, public status: number) { super(message); this.name = "ApiError"; }¶}¶function messageOf(err: unknown): string {¶  if (err instanceof ApiError) return `API ${err.status}: ${err.message}`;¶  if (err instanceof Error) return err.message;¶  return String(err);¶}¶try { throw new ApiError("nope", 404); } catch (e) { console.log(messageOf(e)); }
+output: API 404: nope
+explanation: With useUnknownInCatchVariables, part of strict, catch variables are unknown. Custom errors carry extra data such as a status. Errors crossing module boundaries lose the class if serialised, so rebuild them. Result types, with ok and error fields, avoid exceptions for expected failures.
+simple_explain: Treat caught values as unknown, narrow them, and use custom errors for detail.
+analogy: A caught error is an unlabeled parcel, so check inside before opening.
+syntax: catch (e: unknown) { if (e instanceof Error) { } }
+anatomy: unknown = caught value | instanceof = narrow | extends Error = custom class
+example_1: if (e instanceof TypeError) { }
+example_2: throw new Error("failed", { cause: original });
+example_3: type Result<T> = { ok: true; value: T } | { ok: false; error: string };
+variation: err instanceof Error ? err.message : String(err)   // a one-line safe message
+used_with: try and catch, narrowing, classes
+related: error handling basics, narrowing, any vs unknown, type guards
+alternatives: Result types
+where_used: APIs | Services | Libraries
+mini_conversation: A: TypeScript says the error is unknown. | B: Narrow it with instanceof Error before reading message.
+misconception: ✗ Every caught value is an Error → ✓ Anything can be thrown, so check before using Error properties
+confused_with: Error vs custom error: a custom error carries extra fields such as status.
+avoid: Do not read message from an unchecked value.
+wrong_code: catch (e) { console.log(e.message); }   // e may not be an Error
+right_code: catch (e) { console.log(e instanceof Error ? e.message : String(e)); }
+memory_trick: Check the parcel before you open it.
+real_project: A custom error class with a status code simplified retry logic in an API client.
+real_interview: An interviewer may ask: Why is the catch variable unknown?
+real_daily: It is like an unlabelled parcel.
+mcq_question: What type does a caught value have in strict mode?
+mcq_options: A) unknown B) number C) string D) Error
+mcq_answer: A
+mcq_why: Anything may be thrown.
+fill_blank: A custom class for failures extends the built-in ____ class → Error
+hindi_to_task: Safely get a message from a caught value.
+task_answer: e instanceof Error ? e.message : String(e)
+own_task: Write a custom error with a status field and catch it by class.
+practice_question: Why check instanceof Error before using message?
+practice_answer: Any value can be thrown, not only errors.
+
+@TS-052
+type: code56
+topic: 04 TypeScript
+level: Advanced
+term: Validating data with Zod
+cue: Which approach checks run-time data against a schema and gives you a typed result?
+kind: Tooling
+frequency: High
+importance: 5
+origin: Types vanish at run time, so a schema library checks real data and also produces the matching TypeScript type.
+pro_tip: Validate at every boundary, such as request bodies and API responses.
+memory_story: A schema is a customs officer who checks each parcel against the declaration.
+visual: Raw data entering a schema and leaving as a typed value or an error.
+emotion: The trust that data matches its type.
+meaning: A schema library such as Zod describes the expected shape, parses unknown data, returns a typed value on success and throws or reports details on failure.
+code: import { z } from "zod";¶const User = z.object({ id: z.number(), email: z.string().email(), age: z.number().int().optional() });¶type User = z.infer<typeof User>;¶const result = User.safeParse(JSON.parse('{"id": 1, "email": "a@example.com"}'));¶if (result.success) console.log(result.data.email); else console.log(result.error.issues.length);
+output: a@example.com
+explanation: parse throws on failure, while safeParse returns an object with success. z.infer derives the TypeScript type from the schema, so there is one source of truth. Schemas can coerce, transform and refine values. Use them for request bodies, environment variables and API responses. Error messages should tell the user what to fix.
+simple_explain: Define the schema once, parse unknown data, and get both checks and types.
+analogy: A schema is a customs officer who checks each parcel against the declaration.
+syntax: schema.safeParse(data) | z.infer<typeof schema>
+anatomy: z.object = shape | safeParse = result object | infer = derived type
+example_1: z.string().min(1)
+example_2: z.enum(["admin", "user"])
+example_3: const env = z.object({ PORT: z.coerce.number() }).parse(process.env);
+variation: schema.parse(data)   // throws instead of returning a result
+used_with: fetch, request bodies, environment variables
+related: any vs unknown, type assertions, fetch, environment variables
+alternatives: Valibot | Yup | io-ts
+where_used: API boundaries | Forms | Configuration
+mini_conversation: A: The API sometimes returns a missing field. | B: Validate the response with a schema at the boundary.
+misconception: ✗ TypeScript types protect against bad API data at run time → ✓ Only run-time validation can do that
+confused_with: parse vs safeParse: parse throws, safeParse returns a result.
+avoid: Do not trust external data without validation.
+wrong_code: const user = (await res.json()) as User;
+right_code: const user = User.parse(await res.json());
+memory_trick: Validate at the border, trust inside.
+real_project: Validating webhook bodies with a schema rejected malformed events safely.
+real_interview: An interviewer may ask: How do you validate API responses in TypeScript?
+real_daily: It is like a customs officer checking a parcel.
+mcq_question: What does z.infer give you?
+mcq_options: A) The raw data B) A promise C) The error list D) The TypeScript type of the schema
+mcq_answer: D
+mcq_why: It derives a static type from the schema.
+fill_blank: The method that returns a result object instead of throwing is ____ → safeParse
+hindi_to_task: Validate an unknown value against a user schema without throwing.
+task_answer: const r = User.safeParse(data);
+own_task: Write a schema for a signup request with email and age.
+practice_question: Why validate even with TypeScript types?
+practice_answer: Types do not exist at run time.

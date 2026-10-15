@@ -1,0 +1,252 @@
+
+@RAG-035
+type: topic56
+topic: 05 Operations
+level: Intermediate
+term: Latency and cost
+cue: Where do time and money go in a RAG request and how do you reduce them?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Each stage adds delay and cost, so teams measure them to find what to optimise.
+pro_tip: Measure p95 latency per stage, and stream the answer to improve perceived speed.
+memory_story: Latency is a relay race, and the slowest runner decides your time.
+visual: A bar split into rewrite, embed, search, rerank and generate.
+emotion: The satisfaction of a faster, cheaper system.
+definition: Latency and cost in RAG are the time and spend of each stage, including query rewriting, embedding, retrieval, reranking and generation, which together determine user experience and the bill.
+explanation: Generation is usually the slowest and costliest step, driven by prompt size and output length. Reduce by sending fewer, better chunks, using smaller models for easy questions, caching, streaming, parallelising retrieval and limiting output. Reranking and rewriting add delay, so use them where they pay off. Track p50 and p95 per stage.
+simple_explain: Measure each stage, trim the prompt, cache, stream and choose models wisely.
+analogy: Latency is a relay race, and the slowest runner decides your time.
+formula_rule: Total latency = sum of stage latencies.
+example_1: Reducing chunks from ten to five.
+example_2: Streaming the first words quickly.
+example_3: A small model for simple questions.
+related: top-k, reranking, caching, cost control
+word_family: latency, p95, stage, stream, budget
+where_used: Production RAG | Cost reviews | UX tuning
+mini_conversation: A: Answers take eight seconds. | B: Measure each stage and look at prompt size first.
+misconception: ✗ Retrieval is the main source of delay → ✓ Generation usually dominates
+contrast: Perceived vs real latency: streaming improves feel, not total time.
+avoid: Do not optimise without per-stage timing.
+memory_trick: Time each stage, trim the biggest.
+real_project: Streaming the answer shortened the perceived wait for support agents.
+real_interview: An interviewer may ask: How would you speed up a RAG system?
+real_daily: It is like a relay race.
+mcq_question: Which stage is often the slowest?
+mcq_options: A) Logging B) Parsing the query C) Generation D) Cleaning
+mcq_answer: C
+mcq_why: Long prompts and outputs take time.
+fill_blank: Sending text as it is generated is ____ → streaming
+apply: Answers feel slow. What do you measure first? → Latency per stage
+explain_task: Explain RAG latency and cost in three lines.
+own_task: Make a latency budget for a five second target.
+
+@RAG-036
+type: topic56
+topic: 05 Operations
+level: Intermediate
+term: Monitoring RAG
+cue: Which signals show how a RAG system behaves in production?
+category: Core concept
+frequency: High
+importance: 5
+origin: Quality can drift as documents and questions change, so production systems are watched continuously.
+pro_tip: Log queries, retrieved ids, scores and feedback with privacy controls.
+memory_story: Monitoring is the dashboard of a car that tells you before the engine stops.
+visual: A dashboard with latency, no-answer rate and feedback.
+emotion: The calm of watching quality, not guessing.
+definition: RAG monitoring tracks latency, errors, cost, retrieval scores, no-answer rates, user feedback, citation checks and sampled quality reviews, to detect drift and failures.
+explanation: Useful signals are the share of questions with weak retrieval, the rate of no-answer, thumbs down, answer length, and costs. Sample conversations for human review. Compare against the evaluation set regularly. Alert on spikes. Keep logs safe, with masking and retention rules. Feed failures back into improvements.
+simple_explain: Watch speed, cost, retrieval quality and feedback, and review samples.
+analogy: Monitoring is the dashboard of a car.
+formula_rule: Metrics + feedback + sampled review.
+example_1: A rising no-answer rate showing content gaps.
+example_2: A drop in retrieval scores after a model change.
+example_3: A weekly review of thumbs-down answers.
+related: logging calls safely, evaluating retrieval, failure analysis, alerts
+word_family: monitoring, drift, feedback, sampling, dashboard
+where_used: Production | Quality teams | Operations
+mini_conversation: A: Quality seems lower this month. | B: Check the no-answer rate and thumbs-down trend.
+misconception: ✗ If there are no errors, the system works well → ✓ Quality problems rarely raise errors
+contrast: Errors vs quality signals: crashes versus bad answers.
+avoid: Do not log raw private data without controls.
+memory_trick: Watch quality, not only uptime.
+real_project: A no-answer dashboard revealed missing documents that were then added.
+real_interview: An interviewer may ask: What do you monitor in RAG?
+real_daily: It is like a car dashboard.
+mcq_question: Which signal suggests content gaps?
+mcq_options: A) Faster servers B) A rising no-answer rate C) More colours D) Shorter logs
+mcq_answer: B
+mcq_why: Users ask things the documents lack.
+fill_blank: Gradual decline in quality over time is ____ → drift
+apply: Thumbs-down feedback rises. What do you do? → Review samples and find the cause
+explain_task: Explain RAG monitoring in three lines.
+own_task: List five dashboard metrics for a RAG assistant.
+
+@RAG-037
+type: topic56
+topic: 05 Operations
+level: Advanced
+term: Evaluating retrieval
+cue: Which metrics show whether retrieval finds the right chunks?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Retrieval limits answer quality, so it is tested on its own with labelled questions before judging the whole system.
+pro_tip: Build a small set of real questions with the chunks that answer them.
+memory_story: Evaluating retrieval is a quiz that checks whether the librarian fetches the right books.
+visual: A table of questions, expected chunks and found ranks.
+emotion: The confidence of improvements that are measured.
+definition: Retrieval evaluation compares retrieved results with labelled relevant chunks, using metrics such as recall at k, precision at k, mean reciprocal rank and nDCG.
+explanation: Recall at k is the share of relevant chunks found in the top k. A simpler hit rate counts the questions where at least one relevant chunk appears in the top k. Precision is the share of retrieved chunks that are relevant. Mean reciprocal rank rewards placing the first relevant result high. Labels can be made by experts or generated carefully and reviewed. Run the evaluation after each change of chunking, embeddings, filters or rerankers.
+simple_explain: Label questions with correct chunks, then measure recall and ranking after each change.
+analogy: Evaluating retrieval is a quiz that checks whether the librarian fetches the right books.
+formula_rule: Hit rate at k = questions with a hit in the top k ÷ all questions.
+example_1: Recall at 5 rising from 70 to 85 percent.
+example_2: MRR showing the right chunk is usually first.
+example_3: A failing question list.
+related: when RAG fails, top-k, reranking, AI evaluation
+word_family: recall, precision, MRR, nDCG, labelled set
+where_used: Tuning | Release gates | Experiments
+mini_conversation: A: Did the new chunking help? | B: Compare recall at five on the question set.
+misconception: ✗ Answer quality alone shows retrieval quality → ✓ Retrieval should be measured separately
+contrast: Recall vs precision: found relevant items versus how clean the results are.
+avoid: Do not tune without a labelled set.
+memory_trick: Measure recall first, then ranking.
+real_project: A labelled set of eighty questions made chunking experiments objective.
+real_interview: An interviewer may ask: How do you evaluate retrieval?
+real_daily: It is like a quiz for the librarian.
+mcq_question: What does recall at k measure?
+mcq_options: A) Style B) Cost C) Speed D) Whether a relevant chunk is in the top k
+mcq_answer: D
+mcq_why: It checks coverage of relevant evidence.
+fill_blank: A metric rewarding a high rank for the first relevant result is ____ → MRR
+apply: You change the chunking. How do you know it helped? → Compare recall on a labelled set
+explain_task: Explain retrieval evaluation in three lines.
+own_task: Build a ten question evaluation set outline.
+
+@RAG-038
+type: topic56
+topic: 05 Operations
+level: Advanced
+term: Failure analysis
+cue: How do you study bad answers to find which stage failed and what to fix first?
+category: Core concept
+frequency: High
+importance: 5
+origin: Random fixes waste time, so failures are classified by cause and fixed in order of impact.
+pro_tip: Review fifty failing examples and count causes before choosing a fix.
+memory_story: Failure analysis is a doctor's chart review that looks for the commonest illness.
+visual: A simple bar chart showing the counts of failure causes.
+emotion: The clarity of fixing what matters most.
+definition: Failure analysis samples poor answers, traces each through the pipeline to classify the cause, such as parsing, chunking, retrieval, ranking, prompt or model, and prioritises fixes by frequency and impact.
+explanation: For each failure, check whether the evidence exists, whether it was retrieved, whether it was in the prompt and whether the model used it. Tally causes in a table. Fix the top cause, re-run the evaluation and repeat. Save failures as regression tests. Involve domain experts when answers are subtle.
+simple_explain: Classify failures by stage, fix the biggest group and test again.
+analogy: Failure analysis is a doctor's chart review that looks for the commonest illness.
+formula_rule: Sample, classify, rank causes, fix, re-test.
+example_1: Forty percent of failures due to parsing.
+example_2: A failing question saved as a regression test.
+example_3: A review with a domain expert.
+related: when RAG fails, evaluating retrieval, monitoring RAG, human review
+word_family: failure, cause, regression, sample, prioritise
+where_used: Quality improvement | Reviews | Operations
+mini_conversation: A: Where should we spend effort first? | B: Count failure causes on fifty bad answers.
+misconception: ✗ Changing the prompt fixes most RAG problems → ✓ Failures often come from parsing or retrieval
+contrast: Cause vs symptom: wrong answer versus the stage that failed.
+avoid: Do not fix without counting causes.
+memory_trick: Count the causes, fix the biggest.
+real_project: Failure analysis showed parsing, not prompts, caused most errors.
+real_interview: An interviewer may ask: How do you decide what to improve in a RAG system?
+real_daily: It is like a chart review by a doctor.
+mcq_question: What do you do first in failure analysis?
+mcq_options: A) Change the model B) Rewrite everything C) Sample failing answers and classify causes D) Buy more storage
+mcq_answer: C
+mcq_why: Evidence tells where the problem is.
+fill_blank: A saved failing case used to prevent repeats is a ____ test → regression
+apply: Many answers are wrong. What is your first step? → Classify the causes of a sample
+explain_task: Explain failure analysis in three lines.
+own_task: Make a table to tally failure causes.
+
+@RAG-039
+type: topic56
+topic: 05 Operations
+level: Advanced
+term: Agentic RAG
+cue: How can a model decide when and how to search, instead of always retrieving once?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Complex questions need several searches and checks, so the model is given retrieval as a tool and can plan its own steps.
+pro_tip: Use agentic RAG only when simple retrieval cannot handle the questions.
+memory_story: Agentic RAG is a researcher who searches, reads, refines the question and searches again.
+visual: A loop of plan, search, read and decide.
+emotion: The excitement of deeper answers and the caution of extra cost.
+definition: Agentic RAG lets a model control retrieval through tools, deciding what to search, evaluating results, issuing follow-up searches, and stopping when it has enough evidence.
+explanation: It helps with multi-part questions, comparisons and exploratory research. It costs more, takes longer and is harder to test. Set step limits, log every search, validate tool arguments and keep permission filters in the tool, not the model. Compare against a simple pipeline, since many questions do not need it.
+simple_explain: Give the model a search tool and limits, and use it when one retrieval is not enough.
+analogy: Agentic RAG is a researcher who searches, reads, refines and searches again.
+formula_rule: Plan, search, assess, repeat within limits.
+example_1: A comparison question needing two searches.
+example_2: A follow-up search when evidence is thin.
+example_3: A step limit of five.
+related: agents and loops, tool calling, multi-query retrieval, guardrails
+word_family: agentic, loop, search tool, planning, step limit
+where_used: Research assistants | Complex support | Analysis tools
+mini_conversation: A: Single search misses multi-part questions. | B: Try agentic retrieval with a step limit.
+misconception: ✗ Agentic RAG is always better than simple RAG → ✓ It is slower and costlier, and often unnecessary
+contrast: Simple vs agentic RAG: one retrieval versus a planned loop.
+avoid: Do not put permission checks in the model's hands.
+memory_trick: Limit the loop, keep permissions in the tool.
+real_project: A limited agentic loop answered comparison questions that single retrieval missed.
+real_interview: An interviewer may ask: When would you use agentic RAG?
+real_daily: It is like a researcher refining searches.
+mcq_question: Where should permission filters live in agentic RAG?
+mcq_options: A) Nowhere B) In the search tool C) In the prompt only D) In the model's decision
+mcq_answer: B
+mcq_why: Code enforces what the model cannot be trusted with.
+fill_blank: A cap on loop iterations is a step ____ → limit
+apply: Questions need several linked searches. What approach? → Agentic RAG with limits
+explain_task: Explain agentic RAG in three lines.
+own_task: List risks of agentic RAG and a control for each.
+
+@RAG-040
+type: topic56
+topic: 05 Operations
+level: Advanced
+term: Graph-based retrieval
+cue: How can a graph of entities and relations help answer connected questions?
+category: Core concept
+frequency: Medium
+importance: 3
+origin: Some questions depend on relations across many documents, which similarity search alone handles poorly, so knowledge graphs link entities.
+pro_tip: Try hybrid and reranking before building a graph, since graphs add heavy upkeep.
+memory_story: A knowledge graph is a map of people, places and links between them.
+visual: Nodes for entities connected by labelled relations.
+emotion: The curiosity of questions that follow links.
+definition: Graph-based retrieval builds a graph of entities and relationships extracted from documents, then retrieves by traversing connections and summaries, so questions about relations and themes can be answered with linked evidence.
+explanation: Extraction of entities and relations is done with models and is imperfect and costly. Queries can follow paths, such as which suppliers affect this product. Community summaries support broad questions across a whole corpus. Graphs need updates when documents change. They suit connected domains such as compliance, supply chains and research, but many problems do not need them.
+simple_explain: Extract entities and relations, then retrieve by following links.
+analogy: A knowledge graph is a map of people, places and links between them.
+formula_rule: Entities + relations + traversal + summaries.
+example_1: Finding all contracts linked to one supplier.
+example_2: A theme summary across a large corpus.
+example_3: A path from a product to its components.
+related: vector search, hybrid search, agentic RAG, updating the index
+word_family: graph, entity, relation, traversal, community summary
+where_used: Compliance | Supply chains | Research
+mini_conversation: A: Questions about links across documents fail. | B: A graph of entities may help beyond similarity search.
+misconception: ✗ Graphs replace vector search → ✓ They complement it for relational questions
+contrast: Graph vs vector retrieval: links versus similarity.
+avoid: Do not build a graph before simpler methods are tried.
+memory_trick: Vectors find similar, graphs follow links.
+real_project: A small entity graph answered supplier impact questions that vector search could not.
+real_interview: An interviewer may ask: When would you add a knowledge graph to RAG?
+real_daily: It is like a map of connections.
+mcq_question: What does graph retrieval follow?
+mcq_options: A) Relations between entities B) File dates only C) Random words D) Font sizes
+mcq_answer: A
+mcq_why: It traverses links.
+fill_blank: A linked item in a graph is a ____ → node
+apply: A question asks how suppliers connect to a product. What helps? → A graph of entities and relations
+explain_task: Explain graph-based retrieval in three lines.
+own_task: Sketch a small graph for suppliers, products and contracts.

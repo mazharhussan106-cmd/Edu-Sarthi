@@ -1,0 +1,510 @@
+
+@CICD-007
+type: code56
+topic: 02 GitHub Actions
+level: Beginner
+term: Workflow file
+cue: Which YAML file in your repository defines an automated GitHub Actions process?
+kind: GitHub Actions concept
+frequency: Very high
+importance: 5
+origin: Automation needs to live with the code and be reviewed like code, so GitHub reads workflow definitions from a folder in the repository.
+pro_tip: Keep workflows small and named clearly, one purpose per file.
+memory_story: The workflow file is a recipe card stored in the cookbook beside the code.
+visual: A YAML file under .github/workflows triggering a run.
+emotion: The thrill of your first green check.
+meaning: A workflow is a YAML file in .github/workflows that names its triggers and the jobs to run.
+code: name: CI¶on:¶  pull_request:¶  push:¶    branches: [main]¶jobs:¶  test:¶    runs-on: ubuntu-latest¶    steps:¶      - uses: actions/checkout@v4¶      - run: npm test
+output: On each pull request and each push to main, a runner starts, checks out the code and runs the tests.
+explanation: The file must be inside .github/workflows and end in .yml or .yaml. The on key lists triggers, and jobs defines the work. Each job runs on a runner named by runs-on. Steps either run shell commands with run or use a packaged action with uses. Results appear in the Actions tab and on the pull request.
+simple_explain: Write a YAML file with a trigger and jobs, commit it, and GitHub runs it for you.
+analogy: It is a recipe card kept in the cookbook beside the code.
+syntax: name: / on: / jobs: <id>: runs-on: / steps:
+anatomy: name = label | on = triggers | jobs = work units | runs-on = machine | steps = commands
+example_1: on: workflow_dispatch
+example_2: on: { schedule: [{ cron: "0 2 * * *" }] }
+example_3: on: { push: { tags: ["v*"] } }
+variation: on: [push, pull_request]   // shorthand for two triggers
+used_with: runners, secrets, actions, branch protection
+related: jobs and steps, runners, triggers, reusable workflows
+alternatives: GitLab CI files | Jenkinsfiles
+where_used: Testing | Building | Deploying
+mini_conversation: A: Nothing runs after my push. | B: The file must be in .github/workflows.
+misconception: ✗ A workflow file can live anywhere in the repo → ✓ It must be inside .github/workflows to be detected
+confused_with: Workflow vs job: a workflow is the whole file, a job is one unit of work inside it.
+avoid: Do not use tabs in YAML.
+wrong_code: .github/workflow/ci.yml
+right_code: .github/workflows/ci.yml
+memory_trick: Folder name ends with an s.
+real_project: Adding a first workflow that ran the unit tests on every pull request.
+real_interview: An interviewer may ask: Where do GitHub Actions workflows live?
+real_daily: It is like a recipe card kept beside the code.
+mcq_question: Which folder holds workflow files?
+mcq_options: A) .actions B) .github/workflows C) .github/workflow D) workflows
+mcq_answer: B
+mcq_why: GitHub only reads workflows from .github/workflows.
+fill_blank: The key that lists the events that start a workflow is ____ → on
+hindi_to_task: Write a trigger that runs on pull requests.
+task_answer: on:¶  pull_request:
+own_task: Create a workflow that runs echo hello on every push.
+practice_question: What file extensions can a workflow use?
+practice_answer: .yml or .yaml
+
+@CICD-008
+type: code56
+topic: 02 GitHub Actions
+level: Beginner
+term: Jobs and steps
+cue: How are the work units inside a workflow organised and ordered?
+kind: GitHub Actions concept
+frequency: Very high
+importance: 5
+origin: One long script is hard to read and reuse, so work is split into jobs, which hold ordered steps.
+pro_tip: Use needs to chain jobs, otherwise they run at the same time.
+memory_story: Jobs are workstations, and steps are the tasks done at each one.
+visual: Two job boxes with an arrow between them and steps inside.
+emotion: The tidy feeling of a clear pipeline layout.
+meaning: A job is a group of steps that run on one runner, and jobs run in parallel unless one declares needs on another.
+code: jobs:¶  build:¶    runs-on: ubuntu-latest¶    steps:¶      - uses: actions/checkout@v4¶      - run: make build¶  deploy:¶    needs: build¶    runs-on: ubuntu-latest¶    steps:¶      - run: echo deploying
+output: The build job runs first, and the deploy job starts only after it succeeds.
+explanation: Every job gets a fresh runner, so files do not carry over between jobs unless you upload and download artifacts. Steps inside a job run in order and share the file system. A failing step stops the job. Use if conditions to run a step only in some cases. Job outputs can pass small values to later jobs.
+simple_explain: Jobs run on separate machines, steps run in order inside a job, and needs links jobs.
+analogy: Jobs are workstations, and steps are the tasks done at each one.
+syntax: jobs: <id>: needs: [other] steps: - run: command
+anatomy: jobs = units of work | needs = dependency | steps = ordered tasks | if = condition
+example_1: needs: [lint, test]
+example_2: if: github.ref == 'refs/heads/main'
+example_3: outputs: version: ${{ steps.v.outputs.version }}
+variation: continue-on-error: true   // let one step fail without stopping the job
+used_with: artifacts, outputs, conditions
+related: workflow file, runners, artifacts, matrix
+alternatives: Stages in other CI tools
+where_used: Multi-stage pipelines | Parallel testing | Releases
+mini_conversation: A: The deploy job cannot find my build output. | B: Jobs do not share files, so upload and download an artifact.
+misconception: ✗ Jobs in one workflow share the same file system → ✓ Each job runs on its own fresh runner
+confused_with: needs vs steps order: needs orders jobs, steps order tasks inside a job.
+avoid: Do not assume files from one job exist in the next.
+wrong_code: deploy:¶  runs-on: ubuntu-latest   # runs at the same time as build
+right_code: deploy:¶  needs: build¶  runs-on: ubuntu-latest
+memory_trick: Needs chains jobs, steps stay in a job.
+real_project: Splitting lint, test and deploy into chained jobs so failures showed up clearly.
+real_interview: An interviewer may ask: How do you make one job wait for another?
+real_daily: It is like workstations with ordered tasks at each.
+mcq_question: How do you make a job wait for another job?
+mcq_options: A) after B) wait C) depends D) needs
+mcq_answer: D
+mcq_why: The needs key declares job dependencies.
+fill_blank: Jobs run in ____ by default unless chained → parallel
+hindi_to_task: Make the deploy job wait for the test job.
+task_answer: deploy:¶  needs: test
+own_task: Write two jobs where the second runs only if the first passes.
+practice_question: Do two jobs share a file system?
+practice_answer: No, each job has its own runner.
+
+@CICD-009
+type: code56
+topic: 02 GitHub Actions
+level: Beginner
+term: Runners
+cue: Which machines actually execute the jobs of a workflow?
+kind: GitHub Actions concept
+frequency: High
+importance: 4
+origin: Jobs need computers to run on, so GitHub offers hosted machines and lets you register your own.
+pro_tip: Pin a specific runner image version if a new image could break your build.
+memory_story: A runner is the worker who walks up to your job card and does it.
+visual: A job card going to a machine labelled ubuntu-latest.
+emotion: The ease of a clean machine for every run.
+meaning: A runner is a machine that runs a job, either GitHub-hosted with a fresh virtual machine each time, or self-hosted on your own infrastructure.
+code: jobs:¶  test:¶    runs-on: ubuntu-latest¶  mac-build:¶    runs-on: macos-14¶  internal:¶    runs-on: [self-hosted, linux]
+output: Three jobs go to a hosted Linux machine, a hosted macOS machine and one of your own Linux runners.
+explanation: Hosted runners start clean for each job and include common tools. Minutes are free or paid depending on the plan, and macOS costs more than Linux. Self-hosted runners suit private networks or special hardware, but you must secure and update them. Labels in runs-on choose which runner is used.
+simple_explain: Choose hosted runners for convenience and self-hosted ones for private access or special hardware.
+analogy: A runner is the worker who picks up your job card and does it.
+syntax: runs-on: ubuntu-latest | runs-on: [self-hosted, label]
+anatomy: ubuntu-latest = hosted Linux | macos-14 = hosted Mac | self-hosted = your machine | labels = selectors
+example_1: runs-on: ubuntu-22.04
+example_2: runs-on: windows-latest
+example_3: runs-on: [self-hosted, gpu]
+variation: runs-on: ubuntu-latest-4-cores   // a larger hosted runner
+used_with: matrix, caching, cost
+related: workflow file, matrix builds, self-hosted runners, caching
+alternatives: Other CI agents
+where_used: All workflows | Cross-platform builds | Private networks
+mini_conversation: A: The job needs our internal database. | B: Use a self-hosted runner inside the network.
+misconception: ✗ Hosted runners keep files between runs → ✓ Each job starts on a fresh machine
+confused_with: Hosted vs self-hosted: hosted are managed by GitHub, self-hosted are managed by you.
+avoid: Do not use self-hosted runners for public repositories without protection.
+wrong_code: runs-on: ubuntu
+right_code: runs-on: ubuntu-latest
+memory_trick: Latest label picks the current image.
+real_project: Using a self-hosted runner so tests could reach a customer's private test database.
+real_interview: An interviewer may ask: When would you use a self-hosted runner?
+real_daily: It is like a worker who picks up each job card.
+mcq_question: What starts fresh for every hosted job?
+mcq_options: A) The branch B) The repository C) The secrets D) The runner machine
+mcq_answer: D
+mcq_why: Hosted runners are new virtual machines per job.
+fill_blank: The key that picks the machine for a job is ____ → runs-on
+hindi_to_task: Run a job on a hosted Windows machine.
+task_answer: runs-on: windows-latest
+own_task: Write a runs-on value for a self-hosted Linux runner with a GPU.
+practice_question: Why do self-hosted runners need extra care?
+practice_answer: You must secure and update them, and untrusted code could run on them.
+
+@CICD-010
+type: code56
+topic: 02 GitHub Actions
+level: Intermediate
+term: Matrix builds
+cue: Which feature runs the same job across several versions or systems automatically?
+kind: GitHub Actions concept
+frequency: High
+importance: 4
+origin: Libraries must work on many versions, so repeating a job by hand for each combination was replaced by a matrix.
+pro_tip: Use exclude to skip combinations that are not supported, and fail-fast to stop early.
+memory_story: A matrix is a grid of test tubes, each holding one combination.
+visual: A grid of versions against operating systems with green ticks.
+emotion: The confidence of testing many versions at once.
+meaning: A matrix strategy creates one job for each combination of the listed values, and runs them in parallel.
+code: jobs:¶  test:¶    runs-on: ${{ matrix.os }}¶    strategy:¶      matrix:¶        os: [ubuntu-latest, windows-latest]¶        python: ["3.11", "3.12"]¶    steps:¶      - uses: actions/setup-python@v5¶        with:¶          python-version: ${{ matrix.python }}
+output: Four jobs run, one for each operating system and Python version combination.
+explanation: Values are read with the matrix context, such as matrix.os. Two lists of two values produce four jobs. The exclude key removes combinations, and include adds special ones. By default fail-fast cancels the other jobs when one fails, which can be turned off. Each matrix job counts towards the concurrency and minutes used.
+simple_explain: List the versions and systems once, and Actions makes a job for each combination.
+analogy: It is a grid of test tubes, each holding one combination.
+syntax: strategy: matrix: key: [values]
+anatomy: strategy = how to run | matrix = lists | exclude = remove combos | fail-fast = stop on first failure
+example_1: matrix: node: [20, 22, 24]
+example_2: exclude: [{ os: windows-latest, python: "3.11" }]
+example_3: fail-fast: false
+variation: max-parallel: 2   // limit simultaneous jobs
+used_with: runners, caching, setup actions
+related: runners, jobs and steps, caching, quality gates
+alternatives: Separate hand-written jobs
+where_used: Libraries | Cross-platform apps | Compatibility tests
+mini_conversation: A: Do we support Python 3.11 and 3.12? | B: The matrix tests both on every pull request.
+misconception: ✗ Matrix jobs run one after the other → ✓ They run in parallel, within your concurrency limits
+confused_with: Matrix vs needs: a matrix repeats a job, needs orders different jobs.
+avoid: Do not make a huge matrix that burns minutes without need.
+wrong_code: python-version: 3.10
+right_code: python-version: "3.10"
+memory_trick: Quote versions so 3.10 stays 3.10.
+real_project: Testing a customer library against three Python versions with one matrix.
+real_interview: An interviewer may ask: How would you test on several versions?
+real_daily: It is like a grid of test tubes.
+mcq_question: Two operating systems and three versions give how many jobs?
+mcq_options: A) 3 B) 6 C) 5 D) 2
+mcq_answer: B
+mcq_why: Two times three combinations are created.
+fill_blank: The key that removes a combination from the grid is ____ → exclude
+hindi_to_task: Test on Node 20 and 22.
+task_answer: strategy:¶  matrix:¶    node: [20, 22]
+own_task: Add a matrix of two operating systems to a test job.
+practice_question: What does fail-fast do?
+practice_answer: It cancels other matrix jobs when one fails.
+
+@CICD-011
+type: code56
+topic: 02 GitHub Actions
+level: Intermediate
+term: Caching dependencies
+cue: How do you avoid downloading the same packages on every run?
+kind: GitHub Actions concept
+frequency: High
+importance: 4
+origin: Installing dependencies is often the slowest step, so Actions can save and restore folders between runs.
+pro_tip: Key the cache on a hash of the lockfile so it refreshes only when dependencies change.
+memory_story: A cache is a lunch box packed once and reused all week.
+visual: A package folder saved after one run and restored in the next.
+emotion: The joy of a build that drops from five minutes to one.
+meaning: The cache action stores files under a key and restores them in later runs when the key matches.
+code: - uses: actions/cache@v4¶  with:¶    path: ~/.npm¶    key: npm-${{ hashFiles('package-lock.json') }}¶    restore-keys: npm-
+output: The first run saves the npm cache, and later runs with the same lockfile restore it in seconds.
+explanation: The key must change when the contents should change, which is why a hash of the lockfile is used. restore-keys gives a fallback prefix when there is no exact match. Caches belong to a branch scope, so feature branches can read the main branch cache. Caches that are not accessed for a while are removed, and there is a total size limit per repository. Many setup actions have a built-in cache option.
+simple_explain: Cache the package folder with a key built from the lockfile.
+analogy: A cache is a lunch box packed once and reused all week.
+syntax: uses: actions/cache@v4 with: path, key, restore-keys
+anatomy: path = what to save | key = exact match | restore-keys = fallback prefixes
+example_1: uses: actions/setup-node@v4 with: { node-version: 22, cache: npm }
+example_2: key: pip-${{ hashFiles('requirements.txt') }}
+example_3: path: ~/.cache/pip
+variation: enableCrossOsArchive: true   // share a cache between systems
+used_with: setup actions, matrix, lockfiles
+related: runners, jobs and steps, build artifacts, matrix builds
+alternatives: Docker layer cache
+where_used: Slow installs | Large projects | Cost saving
+mini_conversation: A: Every run reinstalls everything. | B: Add a cache keyed on the lockfile.
+misconception: ✗ A cache and an artifact are the same thing → ✓ A cache speeds up repeated work, an artifact passes results to people or later jobs
+confused_with: Cache vs artifact: caches are for speed, artifacts are for results.
+avoid: Do not cache secrets or build outputs that must be fresh.
+wrong_code: key: npm-cache
+right_code: key: npm-${{ hashFiles('package-lock.json') }}
+memory_trick: Hash the lockfile to refresh the cache.
+real_project: Cutting build time by caching pip downloads keyed on the requirements file.
+real_interview: An interviewer may ask: How do you speed up a slow dependency install?
+real_daily: It is like a lunch box packed once.
+mcq_question: Why include a lockfile hash in the key?
+mcq_options: A) It deletes old runs B) It encrypts the cache C) The cache refreshes when dependencies change D) It speeds the network
+mcq_answer: C
+mcq_why: A new hash makes a new key and a fresh cache.
+fill_blank: A fallback prefix for a partial cache match is set with ____-keys → restore
+hindi_to_task: Cache the pip folder using the requirements file as key.
+task_answer: - uses: actions/cache@v4¶  with:¶    path: ~/.cache/pip¶    key: pip-${{ hashFiles('requirements.txt') }}
+own_task: Write a cache step for a Node project using npm.
+practice_question: Why can feature branches use the main branch cache?
+practice_answer: Caches from the default branch are readable by other branches.
+
+@CICD-012
+type: code56
+topic: 02 GitHub Actions
+level: Intermediate
+term: Artifacts in workflows
+cue: How do you keep files from one job and pass them to another or download them later?
+kind: GitHub Actions concept
+frequency: High
+importance: 4
+origin: Jobs run on separate machines, so results must be uploaded and downloaded explicitly.
+pro_tip: Set a short retention for large artifacts to save storage.
+memory_story: An artifact is a parcel posted from one workstation to another.
+visual: A box uploaded after build and downloaded before deploy.
+emotion: The relief when the deploy job finally finds the build output.
+meaning: upload-artifact stores files from a job, and download-artifact retrieves them in a later job or lets you download them from the run page.
+code: - uses: actions/upload-artifact@v4¶  with:¶    name: dist¶    path: dist/¶    retention-days: 7¶# later job¶- uses: actions/download-artifact@v4¶  with:¶    name: dist
+output: The dist folder is stored for seven days and appears again in the later job.
+explanation: Artifacts are attached to the workflow run. They are useful for build outputs, test reports and logs. Unlike a cache, an artifact is meant for results, and it can be downloaded by people with access. Names must be unique within a run when using version 4. Large artifacts cost storage, so set retention.
+simple_explain: Upload at the end of a job, download at the start of the next.
+analogy: It is a parcel posted from one workstation to another.
+syntax: actions/upload-artifact@v4 with: name, path, retention-days
+anatomy: name = label | path = files | retention-days = how long kept
+example_1: name: coverage-report
+example_2: path: |¶  dist/¶  reports/
+example_3: if: always()   // upload even when the tests fail
+variation: if-no-files-found: error   // fail if nothing matched
+used_with: needs, build jobs, test reports
+related: jobs and steps, caching, build artifacts, reports
+alternatives: Container registries for images
+where_used: Passing builds | Test reports | Debugging
+mini_conversation: A: Tests failed and I cannot see the report. | B: Upload it with if: always() so it exists on failure.
+misconception: ✗ Artifacts are shared automatically between jobs → ✓ You must upload and download them explicitly
+confused_with: Artifact vs cache: artifacts carry results, caches speed up repeated work.
+avoid: Do not upload secrets inside artifacts.
+wrong_code: - uses: actions/upload-artifact@v4¶  with:¶    name: dist   # path is missing, so the step fails
+right_code: - uses: actions/upload-artifact@v4¶  with:¶    name: dist¶    path: dist/
+memory_trick: Always name the parcel you upload.
+real_project: Uploading test reports even on failure so reviewers could inspect them.
+real_interview: An interviewer may ask: How do you pass files between jobs?
+real_daily: It is like posting a parcel between workstations.
+mcq_question: Which condition uploads a report even when tests fail?
+mcq_options: A) always() B) never() C) success() D) once()
+mcq_answer: A
+mcq_why: always() runs the step regardless of earlier failures.
+fill_blank: How long a file is stored is set by ____-days → retention
+hindi_to_task: Upload the reports folder under the name reports.
+task_answer: - uses: actions/upload-artifact@v4¶  with:¶    name: reports¶    path: reports/
+own_task: Add a step that uploads a coverage report even on failure.
+practice_question: Why set retention-days?
+practice_answer: To save storage by deleting old artifacts.
+
+@CICD-013
+type: code56
+topic: 02 GitHub Actions
+level: Intermediate
+term: Secrets in workflows
+cue: How do you give a workflow a password or token without putting it in the code?
+kind: GitHub Actions concept
+frequency: Very high
+importance: 5
+origin: Credentials in a repository leak, so GitHub stores encrypted secrets and injects them only into runs.
+pro_tip: Prefer short-lived tokens through OIDC over stored long-lived secrets.
+memory_story: A secret is a sealed envelope handed to the job only when it runs.
+visual: A key icon feeding a masked value into a step.
+emotion: The peace of keeping tokens out of the code.
+meaning: Repository, environment and organisation secrets are encrypted values that workflows read with the secrets context, and logs mask them.
+code: steps:¶  - run: ./deploy.sh¶    env:¶      API_TOKEN: ${{ secrets.API_TOKEN }}
+output: The script receives the token as an environment variable, and the log shows *** instead of the value.
+explanation: Secrets are set in repository settings and cannot be read back. They are not passed to workflows triggered from forks by default. Masking only hides exact values, so printing a transformed secret may reveal it. Environment secrets are available only to jobs that use that environment. Scope each secret as narrowly as you can.
+simple_explain: Store the value in settings, read it with the secrets context, and never print it.
+analogy: A secret is a sealed envelope handed to the job only when it runs.
+syntax: ${{ secrets.NAME }}
+anatomy: secrets = context | NAME = secret name | env = pass to a step
+example_1: password: ${{ secrets.DB_PASSWORD }}
+example_2: gh secret set API_TOKEN
+example_3: environment: production   // unlocks environment secrets
+variation: with:¶  token: ${{ secrets.GITHUB_TOKEN }}   // the built-in short-lived token
+used_with: environments, OIDC, least privilege
+related: environments and approvals, OIDC, permissions, secret scanning
+alternatives: OIDC | External secret managers
+where_used: Deployments | API calls | Registries
+mini_conversation: A: Can I echo the token to debug? | B: No, never print secrets, even masked ones.
+misconception: ✗ Masking makes it safe to print secrets in logs → ✓ Masking is a safety net, and printing secrets is still dangerous
+confused_with: Secret vs variable: secrets are encrypted and masked, variables are plain configuration.
+avoid: Do not pass secrets to workflows that run untrusted code.
+wrong_code: env:¶  API_TOKEN: abc123
+right_code: env:¶  API_TOKEN: ${{ secrets.API_TOKEN }}
+memory_trick: Never print, never commit, always scope.
+real_project: Moving a registry password from a script into an environment secret.
+real_interview: An interviewer may ask: How do you handle credentials in GitHub Actions?
+real_daily: It is like a sealed envelope handed over at run time.
+mcq_question: How do you read a secret named TOKEN in a workflow?
+mcq_options: A) The secrets context written with double braces B) A plain text file C) The repository README D) A bare dollar variable only
+mcq_answer: A
+mcq_why: The secrets context exposes stored secrets to steps.
+fill_blank: Secret values in logs are replaced with ____ → ***
+hindi_to_task: Pass the secret API_TOKEN to a step as an environment variable.
+task_answer: env:¶  API_TOKEN: ${{ secrets.API_TOKEN }}
+own_task: Write a step that uses a database password from secrets.
+practice_question: Are secrets passed to workflows from forks by default?
+practice_answer: No, they are withheld for safety.
+
+@CICD-014
+type: code56
+topic: 02 GitHub Actions
+level: Advanced
+term: Environments and approvals
+cue: How do you protect a deployment target with rules and a required reviewer?
+kind: GitHub Actions concept
+frequency: High
+importance: 5
+origin: Production deployments need a human check and their own secrets, so GitHub lets you define protected environments.
+pro_tip: Give each environment its own secrets, and require approval only for production.
+memory_story: An environment is a locked gate with a guard who asks for a signature.
+visual: A job stopping at a gate until a reviewer clicks approve.
+emotion: The assurance that nothing reaches production by accident.
+meaning: An environment is a named deployment target in repository settings that can require reviewers, wait timers, branch limits and its own secrets.
+code: jobs:¶  deploy:¶    runs-on: ubuntu-latest¶    environment:¶      name: production¶      url: https://app.example.com¶    steps:¶      - run: ./deploy.sh
+output: The job pauses until a required reviewer approves, then runs with the production secrets.
+explanation: Protection rules are configured in settings, not in the YAML. The job waits for approval before any step runs. Deployment history is recorded for each environment. Branch rules can allow only main to deploy to production. This gives delivery with a manual gate, as opposed to full deployment.
+simple_explain: Name the environment in the job, and set reviewers and secrets in settings.
+analogy: It is a locked gate with a guard who asks for a signature.
+syntax: environment: name: production url: ...
+anatomy: environment = target name | url = link shown in UI | rules = set in settings
+example_1: environment: staging
+example_2: environment: { name: production }
+example_3: concurrency: production   // one deployment at a time
+variation: environment: ${{ inputs.target }}   // choose at run time
+used_with: secrets, reviewers, branches
+related: environments, secrets in workflows, deployment strategies, permissions
+alternatives: Manual release scripts
+where_used: Production deploys | Compliance | Staging
+mini_conversation: A: Can anyone deploy to production? | B: No, it needs a reviewer to approve.
+misconception: ✗ Approval rules are written in the workflow YAML → ✓ They are configured in the environment's settings
+confused_with: Environment secret vs repository secret: environment secrets are only for jobs using that environment.
+avoid: Do not let feature branches deploy to production.
+wrong_code: deploy:¶  environment: prod   # a typo here silently creates a new, unprotected environment
+right_code: deploy:¶  environment: production
+memory_trick: Rules live in settings, name lives in YAML.
+real_project: Adding a production environment with a required approver after a bad release.
+real_interview: An interviewer may ask: How do you add a manual approval to a deployment?
+real_daily: It is like a gate with a guard.
+mcq_question: Where are required reviewers configured?
+mcq_options: A) In the Dockerfile B) In the README C) In the environment settings D) In package.json
+mcq_answer: C
+mcq_why: Environment protection rules are managed in repository settings.
+fill_blank: A named deployment target in GitHub is called an ____ → environment
+hindi_to_task: Make a job deploy to the production environment.
+task_answer: environment: production
+own_task: Write a deploy job that targets staging with a URL.
+practice_question: What does a required reviewer do?
+practice_answer: They must approve before the job runs.
+
+@CICD-015
+type: code56
+topic: 02 GitHub Actions
+level: Advanced
+term: Reusable workflows
+cue: How do you share one workflow across many repositories or jobs?
+kind: GitHub Actions concept
+frequency: Medium
+importance: 4
+origin: Copying the same steps into every repository leads to drift, so a workflow can be called like a function.
+pro_tip: Pin the called workflow to a tag or commit, not a moving branch.
+memory_story: A reusable workflow is a shared recipe that other kitchens can cook from.
+visual: Many callers pointing to one central workflow file.
+emotion: The satisfaction of fixing something once for every repository.
+meaning: A reusable workflow uses the workflow_call trigger, so other workflows can call it with inputs and secrets.
+code: # .github/workflows/test.yml¶on:¶  workflow_call:¶    inputs:¶      node: { type: string, default: "20" }¶# caller¶jobs:¶  ci:¶    uses: acme/shared/.github/workflows/test.yml@v1¶    with: { node: "22" }
+output: The caller runs the shared test workflow with Node 22 without copying any steps.
+explanation: The called workflow defines inputs and secrets under workflow_call. The caller uses the uses key at the job level with a path and a version. Secrets can be passed explicitly or inherited. Outputs can return values. A composite action is another reuse option, for sharing steps instead of whole jobs.
+simple_explain: Write the workflow once with workflow_call, and call it from other workflows with inputs.
+analogy: It is a shared recipe that other kitchens can cook from.
+syntax: on: workflow_call: | uses: owner/repo/.github/workflows/file.yml@ref
+anatomy: workflow_call = makes it callable | inputs = parameters | uses = call it | @ref = version
+example_1: secrets: inherit
+example_2: uses: ./.github/workflows/test.yml
+example_3: outputs: image: ${{ jobs.build.outputs.image }}
+variation: uses: acme/actions/setup@v2   // reuse steps with a composite action
+used_with: versions, inputs, organisations
+related: workflow file, jobs and steps, pinning actions, permissions
+alternatives: Composite actions | Copy and paste
+where_used: Organisations | Many repositories | Standard pipelines
+mini_conversation: A: Twenty repositories have slightly different test workflows. | B: Move it into one reusable workflow.
+misconception: ✗ A reusable workflow is the same as a composite action → ✓ A workflow reuses whole jobs, and a composite action reuses steps
+confused_with: Reusable workflow vs composite action: jobs versus steps.
+avoid: Do not call a shared workflow from a moving branch name.
+wrong_code: uses: acme/shared/.github/workflows/test.yml@main
+right_code: uses: acme/shared/.github/workflows/test.yml@v1
+memory_trick: Version your shared workflows like software.
+real_project: Replacing twelve copied test workflows with one reusable workflow.
+real_interview: An interviewer may ask: How would you standardise CI across many repositories?
+real_daily: It is like a shared recipe for many kitchens.
+mcq_question: Which trigger makes a workflow callable?
+mcq_options: A) schedule B) release C) push D) workflow_call
+mcq_answer: D
+mcq_why: workflow_call lets other workflows invoke it.
+fill_blank: A callable workflow declares its parameters as ____ → inputs
+hindi_to_task: Call the shared workflow test.yml at version v1 from the acme/shared repo.
+task_answer: jobs:¶  ci:¶    uses: acme/shared/.github/workflows/test.yml@v1
+own_task: Add an input called node to a reusable workflow.
+practice_question: What is the difference between a reusable workflow and a composite action?
+practice_answer: A reusable workflow shares whole jobs, a composite action shares steps.
+
+@CICD-016
+type: code56
+topic: 02 GitHub Actions
+level: Advanced
+term: Workflow permissions
+cue: How do you limit what the built-in GITHUB_TOKEN can do in a workflow?
+kind: GitHub Actions concept
+frequency: High
+importance: 5
+origin: A token with write access everywhere makes a compromised step dangerous, so permissions can be limited per workflow and job.
+pro_tip: Start with read-only and add only the scopes a job needs.
+memory_story: Permissions are the keys on a keyring, and you hand over only the ones needed.
+visual: A token with a short list of scopes ticked.
+emotion: The security of a token that can do very little.
+meaning: The permissions key sets the scopes of GITHUB_TOKEN, such as contents, pull-requests or packages, as read, write or none.
+code: permissions:¶  contents: read¶jobs:¶  release:¶    runs-on: ubuntu-latest¶    permissions:¶      contents: write¶      packages: write¶    steps:¶      - uses: actions/checkout@v4
+output: Every job gets read-only access to contents, except the release job, which can also write contents and packages.
+explanation: When permissions is set, any scope you do not list becomes none. A workflow-level setting applies to every job unless a job overrides it. The repository default can also be set to read-only in settings. For OIDC to a cloud, a job needs id-token write. Least privilege here limits the damage from a malicious or buggy action.
+simple_explain: Set permissions at the top to read, then raise them only on the jobs that need more.
+analogy: Permissions are keys on a keyring, and you hand over only the ones needed.
+syntax: permissions: scope: read|write|none
+anatomy: contents = repository files | packages = registry | id-token = OIDC | pull-requests = PR comments
+example_1: permissions: read-all
+example_2: permissions: { id-token: write, contents: read }
+example_3: permissions: {}
+variation: permissions: write-all   // avoid, grants everything
+used_with: GITHUB_TOKEN, OIDC, least privilege
+related: secrets in workflows, OIDC to the cloud, pinning actions, least privilege tokens
+alternatives: Fine-grained personal tokens
+where_used: Security hardening | Releases | Cloud deployment
+mini_conversation: A: A third-party action has write access to our repo. | B: Set permissions to read at the top.
+misconception: ✗ The default token permissions are always minimal → ✓ Older repositories may default to broad write access, so set them explicitly
+confused_with: Permissions vs secrets: permissions limit the built-in token, secrets are stored values you add.
+avoid: Do not grant write-all to any job.
+wrong_code: permissions: write-all
+right_code: permissions:¶  contents: read
+memory_trick: Read at the top, write only where needed.
+real_project: Setting read-only permissions workflow-wide after a third-party action review.
+real_interview: An interviewer may ask: How do you secure the GITHUB_TOKEN?
+real_daily: It is like handing over only the keys needed.
+mcq_question: What happens to scopes you do not list once permissions is set?
+mcq_options: A) They become read B) They become none C) They stay write D) They are ignored
+mcq_answer: B
+mcq_why: Unlisted scopes are set to no access.
+fill_blank: Cloud sign-in through OIDC needs the scope ____ write → id-token
+hindi_to_task: Make a workflow read-only for repository contents.
+task_answer: permissions:¶  contents: read
+own_task: Give a release job write access to packages only.
+practice_question: Why set permissions explicitly?
+practice_answer: Defaults may be broad, and least privilege limits damage from a bad step.

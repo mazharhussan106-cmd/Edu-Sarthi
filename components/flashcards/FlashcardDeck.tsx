@@ -57,6 +57,7 @@ export function FlashcardDeck({
   cardColor,
   chunk,
   support = false,
+  autoSpeak = false,
   tallTop = false,
 }: {
   word: DeckWord;
@@ -71,6 +72,8 @@ export function FlashcardDeck({
   support?: boolean;
   /** The Chunk tab has one more row of chips above the card. */
   tallTop?: boolean;
+  /** Say the word when each card opens (a setting, off by default). */
+  autoSpeak?: boolean;
 }) {
   const router = useRouter();
   const [side, setSide] = useState<0 | 1 | 2>(0);
@@ -90,17 +93,17 @@ export function FlashcardDeck({
     if (h[h.length - 1] !== word.code) writeHistory([...h, word.code]);
   }, [word.code]);
 
-  // `rate` is checked as a number because the chunk card passes this straight
-  // to onClick, which hands over the click event.
-  function speak(rate?: unknown) {
+  // `rate` is only for the Support card's Listen / Slow buttons; quiet is
+  // the automatic speak on opening, which must not show errors.
+  function speak(quiet = false, rate = 0.85) {
     if (word.audioUrl) {
-      void new Audio(word.audioUrl).play().catch(() => setMessage("The recording would not play. Check the volume and try again."));
+      void new Audio(word.audioUrl).play().catch(() => quiet || setMessage("The recording would not play. Check the volume and try again."));
       return;
     }
     // The phone's own voice until recorded audio exists. Indian English
     // first, so the model matches what students hear around them.
     const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
-    if (!synth) return setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
+    if (!synth) return quiet || setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
     const u = new SpeechSynthesisUtterance(chunk ? sayable(word.text) : word.text);
     const voices = synth.getVoices();
     // Support agents talk to customers abroad, so those cards prefer a British
@@ -108,10 +111,20 @@ export function FlashcardDeck({
     const first = support ? ["en-GB", "en-US"] : ["en-IN"];
     u.voice = first.map((l) => voices.find((v) => v.lang === l)).find(Boolean) ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
     u.lang = u.voice?.lang ?? first[0];
-    u.rate = typeof rate === "number" ? rate : 0.85;
+    u.rate = rate;
     synth.cancel();
     synth.speak(u);
   }
+
+  // Browsers only let a page speak after the student has touched it, so the
+  // very first card after a fresh load may stay silent; every later card, which
+  // follows a tap on Known / Unknown, speaks.
+  useEffect(() => {
+    // Quiet: an automatic attempt that fails should not put an error on every card.
+    if (autoSpeak) speak(true);
+    // speak() is rebuilt each render; the card changing is the only trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word.code, autoSpeak]);
 
   async function mark(known: boolean) {
     setBusy(true);
@@ -162,7 +175,9 @@ export function FlashcardDeck({
     stage: state.stage,
     dueLabel: state.dueAt ? describeDue(new Date(state.dueAt)) : null,
     recordHref,
-    onSpeak: speak,
+    // Checked as a number: the word and chunk fronts pass this straight to
+    // onClick, which hands over the click event.
+    onSpeak: (rate?: unknown) => speak(false, typeof rate === "number" ? rate : undefined),
     backToFront: (
       <button type="button" onClick={() => setSide(0)} className="self-center rounded-full px-3 py-1 text-xs text-ink-muted hover:bg-hover">
         ↻ Back to the front
@@ -171,16 +186,23 @@ export function FlashcardDeck({
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* Tall enough to fill a phone between the chips and the control line;
-          the numbers are the header, page chrome and bottom bar around it. */}
+    <div className="flex min-h-0 flex-1 flex-col gap-2 md:flex-none">
+      {/* On a phone the card takes whatever height is left between the chips
+          and the Known / Unknown bar, so the bar sits right above the bottom
+          navigation with no gap on any screen size. From md up the card keeps
+          a height tied to the window instead, because there is no bottom bar
+          to pin against. */}
       <div
         className={
           tallTop
-            ? "h-[calc(100dvh-19.75rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-16rem)] md:max-h-[52rem]"
-            : "h-[calc(100dvh-17.5rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-14rem)] md:max-h-[52rem]"
+            ? "relative min-h-[18rem] flex-1 md:h-[calc(100dvh-16rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
+            : "relative min-h-[18rem] flex-1 md:h-[calc(100dvh-14rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
         }
       >
+        {/* Absolutely filled, so the card always gets exactly this box's
+            height however the flex columns above resolve. The card fits its
+            text to this height and scrolls inside it when it cannot. */}
+        <div className="absolute inset-0">
         <CardSurface
           side={side}
           titles={support ? SUPPORT_TITLES : WORD_TITLES}
@@ -197,6 +219,7 @@ export function FlashcardDeck({
             <WordSide {...sideProps} />
           )}
         </CardSurface>
+        </div>
       </div>
 
       <CardControls

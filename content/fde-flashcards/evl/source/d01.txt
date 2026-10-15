@@ -1,0 +1,642 @@
+deck.title: AI Evaluation – Beginner to Advanced Flashcards
+deck.subject: Evaluating LLM applications, RAG and agents
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: json
+type: topic56
+
+@EVL-001
+topic: 01 Ideas
+level: Beginner
+term: Why evaluate
+cue: Why must AI applications be tested with measurements and not by feel?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: AI outputs vary and failures are subtle, so teams that only try a few examples ship problems that appear later with real users.
+pro_tip: Define what good means before building, then measure it from the first prototype.
+memory_story: Evaluation is the scoreboard that tells you whether a change really helped.
+visual: A scoreboard comparing two versions on the same questions.
+emotion: The confidence of decisions backed by numbers.
+definition: Evaluation is the systematic measurement of how well an AI system performs on defined tasks, using test cases, metrics and reviews, so changes can be compared and risks found early.
+explanation: Without evaluation, changes to prompts, models or retrieval are guesses. A good evaluation covers typical cases, hard cases and failures. It supports choosing models, catching regressions, setting release gates and reporting quality to customers. It does not need to be big at first, since fifty good examples are better than none.
+simple_explain: Measure quality on a fixed set of cases so you can compare changes and find problems early.
+analogy: Evaluation is the scoreboard that tells you whether a change helped.
+formula_rule: Cases + metrics + comparison = evidence.
+example_1: Comparing two prompts on the same fifty questions.
+example_2: Blocking a release that lowers accuracy.
+example_3: Choosing a cheaper model after testing.
+related: test sets, regression tests, what good means, eval harness
+word_family: evaluation, metric, benchmark, regression, evidence
+where_used: Every AI project | Releases | Customer reports
+mini_conversation: A: Is the new prompt better? | B: Run both on the test set and compare the scores.
+misconception: ✗ A few good demo answers show the system works → ✓ Demos hide failures that tests on many cases expose
+contrast: Demo vs evaluation: a demo shows the best case, evaluation shows the spread.
+avoid: Do not judge changes by a handful of examples.
+memory_trick: Measure before you claim better.
+real_project: A fifty question test set showed a prompt change had hurt accuracy that a demo had hidden.
+real_interview: An interviewer may ask: How do you know your LLM feature is good?
+real_daily: It is like a scoreboard for versions.
+mcq_question: Why evaluate AI systems?
+mcq_options: A) To avoid testing B) To compare changes with evidence C) To raise costs D) To make demos longer
+mcq_answer: B
+mcq_why: Numbers show whether a change helped.
+fill_blank: A drop in quality after a change is a ____ → regression
+apply: You changed the prompt. How do you know if it helped? → Run the same test set and compare scores
+explain_task: Explain why evaluation matters in three lines.
+own_task: List three decisions that an evaluation can support.
+
+@EVL-002
+topic: 01 Ideas
+level: Intermediate
+term: Offline vs online evaluation
+cue: Which two settings test quality before release and after users arrive?
+category: Core concept
+frequency: High
+importance: 5
+origin: Some problems are caught with fixed tests, and others appear only with real users, so both kinds of evaluation are needed.
+pro_tip: Use offline tests as a gate and online signals to learn what tests missed.
+memory_story: Offline evaluation is the rehearsal, and online evaluation is the live performance review.
+visual: A test lab on one side and a live dashboard on the other.
+emotion: The assurance of testing in both places.
+definition: Offline evaluation runs a system on a fixed dataset before release, while online evaluation measures behaviour with real traffic through feedback, experiments and monitoring.
+explanation: Offline tests are repeatable, cheap and safe, but may not reflect real questions. Online signals such as thumbs, edits, retries and task completion show real value, but are noisy and risky if the system is bad. Failures found online become new offline test cases. A/B tests compare versions on live traffic.
+simple_explain: Test offline before release, watch online after, and feed what you learn back into the tests.
+analogy: Offline evaluation is the rehearsal, and online evaluation is the live performance review.
+formula_rule: Offline gate + online learning loop.
+example_1: A nightly run on a golden dataset.
+example_2: Tracking thumbs-down rates after launch.
+example_3: A failed live question added to the test set.
+related: test sets, A/B tests, feedback loops, drift monitoring
+word_family: offline, online, traffic, feedback, experiment
+where_used: Release processes | Product teams | Monitoring
+mini_conversation: A: Tests pass but users complain. | B: The test set misses real questions, so add the failures to it.
+misconception: ✗ Offline scores guarantee online success → ✓ Real users bring cases the dataset lacks
+contrast: Offline vs online: repeatable and safe versus realistic and noisy.
+avoid: Do not release on offline scores alone for high-risk systems.
+memory_trick: Rehearse offline first, then review online.
+real_project: Adding live failures to the test set raised offline tests' usefulness.
+real_interview: An interviewer may ask: What is the difference between offline and online evaluation?
+real_daily: It is like a rehearsal and a live review.
+mcq_question: Which is an online signal?
+mcq_options: A) A golden dataset score B) A unit test C) User thumbs-down D) A rubric
+mcq_answer: C
+mcq_why: It comes from real use.
+fill_blank: A test comparing two versions on live traffic is an ____ test → A/B
+apply: Users report problems that tests missed. What do you do? → Add those cases to the offline set
+explain_task: Explain offline and online evaluation in three lines.
+own_task: List two offline and two online metrics for a support bot.
+
+@EVL-003
+topic: 01 Ideas
+level: Beginner
+term: Test sets
+cue: Which collections of examples are used to measure quality?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Fair comparisons need the same cases each time, so teams keep a fixed collection of inputs and expected qualities.
+pro_tip: Build from real user questions, include hard cases, and keep a held-out part you never tune on.
+memory_story: A test set is the exam paper that every version must sit.
+visual: A table of inputs, expectations and categories.
+emotion: The satisfaction of a stable benchmark.
+definition: A test set is a collection of representative inputs, each with expected answers, reference material or criteria, used repeatedly to measure and compare system versions.
+explanation: Sources are real logs, expert-written cases and carefully generated variations that are reviewed. Cover common tasks, edge cases, out-of-scope questions and known failures. Label categories to analyse weak areas. Keep a separate held-out set to detect overfitting to the test. Update it as the product changes, with versioning.
+simple_explain: Collect real and hard cases with expectations, keep it versioned, and hold some back.
+analogy: A test set is the exam paper that every version must sit.
+formula_rule: Representative + hard + versioned + held-out.
+example_1: A hundred real support questions with ideal answers.
+example_2: Out-of-scope questions expecting a refusal.
+example_3: A held-out set of twenty cases.
+related: golden datasets, regression tests, what good means, sampling
+word_family: test set, held-out, coverage, label, version
+where_used: Evaluation | Prompt work | Model selection
+mini_conversation: A: The score is high but I only tuned on those questions. | B: Use a held-out set to check for overfitting.
+misconception: ✗ A test set made only of easy cases is enough → ✓ Hard and rare cases show real weaknesses
+contrast: Test set vs training data: tests measure, training teaches.
+avoid: Do not tune repeatedly on the same cases without a held-out set.
+memory_trick: Real cases, hard cases, held-out cases.
+real_project: A held-out set revealed that tuning had overfitted the main test questions.
+real_interview: An interviewer may ask: How do you build a good test set?
+real_daily: It is like an exam paper every version sits.
+mcq_question: What does a held-out set prevent?
+mcq_options: A) Overfitting to the test cases B) Slow servers C) Long prompts D) High cost
+mcq_answer: A
+mcq_why: It stays unseen during tuning.
+fill_blank: Reserved data never used for tuning is ____ → held-out
+apply: You tuned many times on one set. How do you check honesty? → Test on a held-out set
+explain_task: Explain test sets in three lines.
+own_task: Outline a test set for a policy assistant.
+
+@EVL-004
+topic: 01 Ideas
+level: Intermediate
+term: Regression tests
+cue: Which tests make sure a change does not break what already worked?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Fixing one problem often breaks another, so earlier successes and past failures are kept as tests that run on every change.
+pro_tip: Turn every real failure into a test case once you fix it.
+memory_story: Regression tests are the alarm that rings when an old bug returns.
+visual: A list of past cases with pass and fail marks per version.
+emotion: The comfort of changes that are safe to make.
+definition: Regression tests re-run a stable set of cases after each change to prompts, models, retrieval or code, to detect drops in quality compared with a baseline.
+explanation: Keep a baseline score per case and category, and flag cases that got worse, not only the average. Include previously fixed failures. Run automatically in CI where affordable, sampling if costly. Allow small noise margins since outputs vary. Review differences, since some changes are improvements to expectations.
+simple_explain: Re-run old cases after every change and look at what got worse.
+analogy: Regression tests are the alarm that rings when an old bug returns.
+formula_rule: Baseline vs new, per case, flagged when worse.
+example_1: A fixed refund question that must keep passing.
+example_2: An average that rose while one category fell.
+example_3: A CI job running twenty key cases.
+related: test sets, eval harness, prompt versioning, golden datasets
+word_family: regression, baseline, CI, noise, flag
+where_used: CI pipelines | Prompt changes | Model upgrades
+mini_conversation: A: The average improved, is it safe? | B: Check per-case results, since one category may have dropped.
+misconception: ✗ If the average score rose, nothing broke → ✓ Specific cases can get worse while the average improves
+contrast: Average vs per-case view: summary versus detail.
+avoid: Do not look only at the average.
+memory_trick: Track cases, not only averages.
+real_project: Per-case comparison revealed a prompt change broke refusals despite a better average.
+real_interview: An interviewer may ask: How do you prevent regressions in LLM apps?
+real_daily: It is like an alarm for returning bugs.
+mcq_question: What should become a regression test?
+mcq_options: A) Nothing B) Random text C) Only demos D) Every fixed real failure
+mcq_answer: D
+mcq_why: It prevents repeat of the same mistake.
+fill_blank: The scores of the current version used for comparison are the ____ → baseline
+apply: A new prompt raises the average. What else do you check? → Per-case regressions
+explain_task: Explain regression tests in three lines.
+own_task: Choose five cases that must never regress.
+
+@EVL-005
+topic: 01 Ideas
+level: Beginner
+term: What good means
+cue: How do you define quality for an AI feature before measuring it?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Teams argue about quality because nobody wrote down what good means for their users and risks.
+pro_tip: Write criteria as concrete, checkable statements with examples of pass and fail.
+memory_story: Defining good is writing the marking scheme before the exam.
+visual: A checklist of several criteria, each with an example.
+emotion: The clarity of a shared standard.
+definition: Defining good means writing the dimensions of quality for the task, such as correctness, completeness, faithfulness, tone, safety, latency and cost, with thresholds and examples that reviewers and tests can apply.
+explanation: Start from the user's goal and the cost of errors. A medical question stresses accuracy and safety, while a brainstorm stresses variety. Rank criteria by importance and set minimum levels. Provide pass and fail examples so reviewers agree. Revisit as the product evolves. Different customers may have different standards.
+simple_explain: Write the quality dimensions, the minimum levels and examples before you measure.
+analogy: Defining good is writing the marking scheme before the exam.
+formula_rule: Goals + criteria + thresholds + examples.
+example_1: Answers must be correct and cite a source.
+example_2: Replies under five seconds for ninety-five percent of requests.
+example_3: A pass and fail example for tone.
+related: rubrics, human review, test sets, cost and latency
+word_family: criteria, threshold, dimension, standard, rubric
+where_used: Project start | Customer agreements | Reviews
+mini_conversation: A: We cannot agree if the bot is good. | B: Write the criteria and thresholds first.
+misconception: ✗ Quality is obvious when you see it → ✓ Without written criteria, people disagree
+contrast: Vague quality vs written criteria: opinion versus a standard.
+avoid: Do not start measuring without defining good.
+memory_trick: Write the marking scheme first.
+real_project: Written criteria ended debates and allowed objective release decisions.
+real_interview: An interviewer may ask: How do you define quality for an LLM feature?
+real_daily: It is like writing the marking scheme.
+mcq_question: What should be agreed first?
+mcq_options: A) Criteria and thresholds B) The font C) The server D) The logo
+mcq_answer: A
+mcq_why: Measurement needs a standard.
+fill_blank: Minimum acceptable levels are ____ → thresholds
+apply: Reviewers disagree on answers. What do you write? → Criteria with pass and fail examples
+explain_task: Explain what good means in three lines.
+own_task: Write five criteria for a support assistant.
+
+@EVL-006
+topic: 02 Methods
+level: Intermediate
+term: Golden datasets
+cue: Which carefully labelled datasets act as the trusted reference for evaluation?
+category: Core concept
+frequency: High
+importance: 5
+origin: Reliable scoring needs trusted answers, so experts create and review a small high-quality dataset.
+pro_tip: Prefer a small, reviewed dataset over a large unchecked one.
+memory_story: A golden dataset is the master answer key checked by experts.
+visual: A list of inputs with expert-approved reference answers beside them.
+emotion: The trust of a reliable reference.
+definition: A golden dataset is a curated set of inputs paired with verified reference answers, evidence or labels, created or reviewed by domain experts and used as the benchmark for scoring.
+explanation: Quality matters more than size. Cover major tasks and failure types. Record who labelled each item and when. Resolve disagreements between reviewers. Keep it versioned and protected from leaking into prompts or training. Update it when policies change. Use it for regression tests and model comparisons.
+simple_explain: Build a small expert-checked answer key and keep it clean and versioned.
+analogy: A golden dataset is the master answer key checked by experts.
+formula_rule: Curated inputs + verified answers + versioning.
+example_1: Eighty questions with expert-approved answers.
+example_2: Reference passages for each question.
+example_3: A change log of dataset versions.
+related: test sets, rubrics, human review and agreement, regression tests
+word_family: golden, reference, label, curated, version
+where_used: Benchmarks | Release gates | Vendor comparisons
+mini_conversation: A: Can we trust these labels? | B: Experts reviewed them and resolved disagreements.
+misconception: ✗ A large generated dataset is as good as a curated one → ✓ Unreviewed labels can be wrong and mislead decisions
+contrast: Golden vs synthetic data: reviewed reference versus generated, unchecked.
+avoid: Do not let the dataset leak into prompts.
+memory_trick: Small, checked and clean beats big and noisy.
+real_project: A reviewed golden set of sixty cases guided a model choice better than thousands unlabelled.
+real_interview: An interviewer may ask: What is a golden dataset?
+real_daily: It is like a master answer key.
+mcq_question: What matters most in a golden dataset?
+mcq_options: A) Speed B) Size only C) Colour D) Label quality
+mcq_answer: D
+mcq_why: Wrong labels give wrong conclusions.
+fill_blank: The verified answer for a test item is its ____ answer → reference
+apply: You need a trusted benchmark quickly. What do you build? → A small expert-reviewed set
+explain_task: Explain golden datasets in three lines.
+own_task: Plan how experts will label thirty cases.
+
+@EVL-007
+topic: 02 Methods
+level: Intermediate
+term: Rubrics
+cue: Which scoring guides turn subjective quality into consistent judgments?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Open-ended outputs have no single correct answer, so rubrics describe levels of quality in each dimension.
+pro_tip: Use few criteria with clear level descriptions and examples.
+memory_story: A rubric is a marking sheet with boxes for each quality and examples for each score.
+visual: A table with criteria across and levels down.
+emotion: The fairness of scoring that stays consistent.
+definition: A rubric lists the criteria for judging an output, such as accuracy, completeness and tone, with defined score levels and examples, used by humans or LLM judges.
+explanation: Each criterion has clear, observable descriptions, such as a score of three means every claim is supported by a source. Scores can be combined or kept separate. Train reviewers with examples and check agreement. Rubrics also guide LLM-as-judge prompts. Too many criteria make scoring slow and noisy.
+simple_explain: Define criteria and score levels with examples, and train reviewers.
+analogy: A rubric is a marking sheet with boxes for each quality.
+formula_rule: Criteria × levels × examples.
+example_1: Accuracy scored from one to four with examples.
+example_2: A yes or no for citing a source.
+example_3: A tone score with sample replies.
+related: what good means, LLM-as-judge, human review, golden datasets
+word_family: rubric, criterion, level, anchor, agreement
+where_used: Human review | Judge prompts | Quality programmes
+mini_conversation: A: Reviewers score the same answer differently. | B: Add clearer level descriptions and anchor examples.
+misconception: ✗ More criteria always give better evaluation → ✓ Too many criteria slow reviewers and add noise
+contrast: Rubric vs gut feeling: structured criteria versus impressions.
+avoid: Do not use vague terms such as good without definitions.
+memory_trick: Few criteria, clear levels, real examples.
+real_project: A four-criteria rubric made reviewer scores far more consistent.
+real_interview: An interviewer may ask: How do you design a rubric?
+real_daily: It is like a marking sheet.
+mcq_question: What should each rubric level have?
+mcq_options: A) A nickname B) A colour C) A clear description and example D) Nothing
+mcq_answer: C
+mcq_why: Clarity creates agreement.
+fill_blank: An example that illustrates a score level is an ____ → anchor
+apply: Reviewers disagree often. What do you improve? → The rubric descriptions and anchors
+explain_task: Explain rubrics in three lines.
+own_task: Write a three-level rubric for answer accuracy.
+
+@EVL-008
+type: code56
+topic: 02 Methods
+level: Intermediate
+term: Exact match and similarity
+cue: Which automatic checks compare an output with a reference?
+kind: Metric
+frequency: High
+importance: 4
+origin: For some tasks answers can be compared mechanically, which is fast and repeatable, though it works only where expected answers are narrow.
+pro_tip: Use exact match for labels and short answers, and semantic similarity or a judge for free text.
+memory_story: Exact match is a strict spelling test, and similarity is a test of meaning.
+visual: Two short texts compared side by side with a score.
+emotion: The speed of checks that run automatically.
+meaning: Exact match checks that the output equals the reference after normalisation, while similarity metrics such as embedding cosine, token overlap or ROUGE estimate how close the texts are.
+code: import re¶def normalise(s):¶    return re.sub(r"\s+", " ", s.strip().lower())¶def exact_match(pred, ref):¶    return normalise(pred) == normalise(ref)¶def token_overlap(pred, ref):¶    a, b = set(normalise(pred).split()), set(normalise(ref).split())¶    return len(a & b) / max(1, len(a | b))¶print(exact_match("Billing ", "billing"), round(token_overlap("refund in 7 days", "refunds take 7 days"), 2))
+output: True 0.33
+explanation: Exact match suits classification labels, extracted fields and numbers. For free text, overlap metrics reward the same words, not the same meaning, and can mislead. Embedding similarity captures meaning better, but needs thresholds and can miss factual differences such as numbers. Combine metrics with judge scores and human spot checks.
+simple_explain: Normalise, compare exactly for short answers, and use meaning-based scoring for free text.
+analogy: Exact match is a strict spelling test, and similarity is a test of meaning.
+syntax: normalise(pred) == normalise(ref)
+anatomy: normalise = clean text | exact = equal | overlap = shared words | embedding = meaning distance
+example_1: Label equals billing after lowercasing.
+example_2: A total extracted as 4200 equals the reference.
+example_3: A high similarity score for two answers with different numbers.
+variation: ROUGE or BLEU style overlap   // older text metrics
+used_with: extraction, classification, regression tests
+related: precision and recall, LLM-as-judge, golden datasets, rubrics
+alternatives: LLM-as-judge | human review
+where_used: Classification | Extraction | Quick checks
+mini_conversation: A: Two answers look similar but differ on the price. | B: Similarity missed the number, so add a rule for numbers.
+misconception: ✗ High similarity means a correct answer → ✓ Two texts can be similar and differ in a key fact
+confused_with: Exact match vs similarity: strict equality versus closeness.
+avoid: Do not use word overlap alone for free text quality.
+wrong_code: pred == ref   # without normalising
+right_code: normalise(pred) == normalise(ref)
+memory_trick: Always normalise the text first, then compare.
+real_project: Exact match on labels gave a fast daily check for a classifier.
+real_interview: An interviewer may ask: When is exact match a good metric?
+real_daily: It is like a spelling test versus a meaning test.
+mcq_question: Where does exact match work best?
+mcq_options: A) Jokes B) Short labels and fields C) Poems D) Long essays
+mcq_answer: B
+mcq_why: Answers are narrow and well defined.
+fill_blank: Cleaning text before comparing is ____ → normalisation
+hindi_to_task: Compare two labels ignoring case and spaces.
+task_answer: normalise(pred) == normalise(ref)
+own_task: Choose a metric for extraction and one for summaries.
+practice_question: Why can similarity mislead?
+practice_answer: Similar wording can hide different key facts.
+
+@EVL-009
+type: code56
+topic: 02 Methods
+level: Intermediate
+term: Precision and recall
+cue: Which two metrics show how clean and how complete the results are?
+kind: Metric
+frequency: Very high
+importance: 5
+origin: Counting only correct answers hides different kinds of mistakes, so precision and recall separate false alarms from misses.
+pro_tip: Choose which matters more for the task, and report F1 when both matter.
+memory_story: Precision asks how many of your picks were right, and recall asks how many right ones you found.
+visual: A circle of retrieved items overlapping a circle of relevant items.
+emotion: The clarity of separating misses from false alarms.
+meaning: Precision is the share of predicted positives that are correct, recall is the share of actual positives that were found, and F1 is their harmonic mean.
+code: tp, fp, fn = 40, 10, 20   # true positives, false positives, false negatives¶precision = tp / (tp + fp)¶recall = tp / (tp + fn)¶f1 = 2 * precision * recall / (precision + recall)¶print(round(precision, 2), round(recall, 2), round(f1, 2))
+output: 0.8 0.67 0.73
+explanation: A spam filter that flags everything has full recall and poor precision. A cautious one has high precision and poor recall. Which matters depends on the cost of each error, such as missing a fraud case versus bothering a customer. For multi-class tasks, report per class and macro averages. For retrieval, recall at k and precision at k apply.
+simple_explain: Precision is how right the positives are, recall is how many positives you caught.
+analogy: Precision asks how many of your picks were right, and recall asks how many of the right ones you found.
+syntax: precision = tp / (tp + fp) | recall = tp / (tp + fn)
+anatomy: tp = correct hits | fp = false alarms | fn = misses | F1 = balance
+example_1: A classifier catching 40 of 60 urgent tickets.
+example_2: A retriever returning five chunks, three relevant.
+example_3: A fraud model tuned for high recall.
+variation: macro average over classes   // equal weight for each class
+used_with: classification, retrieval, extraction
+related: exact match and similarity, retrieval metrics, bias checks, test sets
+alternatives: Accuracy | ROC curves
+where_used: Classifiers | Retrieval | Safety filters
+mini_conversation: A: The filter blocks a lot of good messages. | B: Precision is low, so raise its threshold.
+misconception: ✗ Accuracy alone is enough → ✓ With rare positives, accuracy can look high while the model misses them
+confused_with: Precision vs recall: correctness of picks versus coverage of targets.
+avoid: Do not report accuracy alone on imbalanced data.
+wrong_code: accuracy = correct / total   # misleading when positives are rare
+right_code: precision = tp / (tp + fp); recall = tp / (tp + fn)
+memory_trick: Precision is purity, recall is coverage.
+real_project: Reporting recall for urgent tickets showed misses that accuracy had hidden.
+real_interview: An interviewer may ask: What is the difference between precision and recall?
+real_daily: It is like how right your picks were and how many you found.
+mcq_question: What does recall measure?
+mcq_options: A) Speed B) The share of correct predictions overall C) The share of actual positives found D) Cost
+mcq_answer: C
+mcq_why: It counts misses.
+fill_blank: The harmonic mean of precision and recall is ____ → F1
+hindi_to_task: Compute recall from true positives and false negatives.
+task_answer: recall = tp / (tp + fn)
+own_task: Choose whether precision or recall matters more for three tasks.
+practice_question: Why is accuracy misleading when positives are rare?
+practice_answer: A model that predicts none can still look accurate.
+
+@EVL-010
+type: topic56
+topic: 02 Methods
+level: Advanced
+term: LLM-as-judge and its biases
+cue: How can a model score outputs, and what can go wrong?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Human review is slow and costly, so models are used to score outputs at scale, but they have systematic biases.
+pro_tip: Calibrate the judge against human labels, and use clear rubrics and structured scores.
+memory_story: An LLM judge is a fast marker who still needs checking against a senior examiner.
+visual: An output, a rubric and a judge model producing a score.
+emotion: The efficiency of scoring many cases, with a note of caution.
+definition: LLM-as-judge uses a model with a rubric to rate or compare outputs, and it is affected by biases such as preferring longer answers, preferring the first option, favouring its own style and being swayed by confident tone.
+explanation: Mitigate by writing explicit rubrics, asking for reasoning then a score, using pairwise comparisons with order swapped, and testing the judge on cases with known labels. Use a stronger or different model as judge where possible. Track agreement with humans, and refresh the calibration when prompts or models change. Judges can miss factual errors without references.
+simple_explain: Use rubrics, swap order, calibrate against humans, and do not trust it blindly.
+analogy: An LLM judge is a fast marker who still needs checking against a senior examiner.
+formula_rule: Rubric + order swap + human calibration.
+example_1: A judge preferring the longer of two answers.
+example_2: Swapping answer order to test position bias.
+example_3: Agreement of 85 percent with expert labels.
+related: rubrics, pairwise comparison, human review and agreement, faithfulness
+word_family: judge, bias, calibration, position bias, verbosity
+where_used: Large evaluations | Prompt comparisons | Monitoring
+mini_conversation: A: The judge likes whichever answer comes first. | B: That is position bias, so swap the order and average.
+misconception: ✗ An LLM judge is as reliable as an expert → ✓ It is useful but biased and must be calibrated
+contrast: Judge vs human: scalable and biased versus slow and more reliable.
+avoid: Do not use an uncalibrated judge for decisions.
+memory_trick: Calibrate the judge before you trust it.
+real_project: Calibration against expert labels exposed a verbosity bias that was then corrected.
+real_interview: An interviewer may ask: What biases affect LLM judges?
+real_daily: It is like a fast marker checked by a senior examiner.
+mcq_question: Which is a known judge bias?
+mcq_options: A) Ignoring tone B) Preferring longer answers C) Preferring shorter answers always D) Perfect fairness
+mcq_answer: B
+mcq_why: Verbosity bias is common.
+fill_blank: Preference for the first option shown is ____ bias → position
+apply: A judge prefers long answers. What do you do? → Calibrate with human labels and adjust the rubric
+explain_task: Explain LLM-as-judge in three lines.
+own_task: Design a test of judge position bias.
+
+@EVL-011
+topic: 02 Methods
+level: Intermediate
+term: Human review and agreement
+cue: How do people judge outputs, and how do you know they agree?
+category: Core concept
+frequency: High
+importance: 5
+origin: Humans remain the reference for quality, but they disagree, so processes measure and improve agreement.
+pro_tip: Have two reviewers on a sample and resolve differences with a third.
+memory_story: Reviewer agreement is checking that two examiners give a similar mark.
+visual: Two reviewers' scores for the same items.
+emotion: The assurance of judgments that stay consistent.
+definition: Human review has trained reviewers score outputs against a rubric, and inter-annotator agreement, measured by percent agreement or Cohen's kappa, shows how consistent they are.
+explanation: Low agreement means unclear criteria or hard cases, not necessarily bad reviewers. Improve rubrics, add examples and calibrate in meetings. Use multiple reviewers for important sets and adjudicate disagreements. Kappa corrects for chance agreement. Review cost is high, so reserve it for golden sets, judge calibration and risky areas.
+simple_explain: Use trained reviewers, measure agreement, and fix unclear rubrics.
+analogy: Reviewer agreement is checking that two examiners give a similar mark.
+formula_rule: Agreement above chance shows consistency.
+example_1: Two reviewers agreeing on 90 percent of items.
+example_2: A third reviewer resolving a split.
+example_3: A kappa of 0.7 considered good.
+related: rubrics, LLM-as-judge, golden datasets, sampling
+word_family: agreement, kappa, adjudication, annotator, calibration
+where_used: Golden datasets | Judge calibration | Quality programmes
+mini_conversation: A: Reviewers keep disagreeing. | B: The rubric is unclear, so add anchors and recalibrate.
+misconception: ✗ Disagreement means the reviewers are bad → ✓ It usually means the criteria or task are unclear
+contrast: Percent agreement vs kappa: raw match versus chance-corrected.
+avoid: Do not use one reviewer for critical labels.
+memory_trick: Use two reviewers and one tiebreaker.
+real_project: Measuring kappa showed the rubric needed rewriting before scores were trusted.
+real_interview: An interviewer may ask: How do you measure agreement between reviewers?
+real_daily: It is like two examiners marking the same paper.
+mcq_question: What does kappa correct for?
+mcq_options: A) Agreement by chance B) Length C) Cost D) Speed
+mcq_answer: A
+mcq_why: Some agreement happens randomly.
+fill_blank: Resolving a split between reviewers is ____ → adjudication
+apply: Agreement is low. What do you fix first? → The rubric and its examples
+explain_task: Explain reviewer agreement in three lines.
+own_task: Plan a review of fifty items with two reviewers.
+
+@EVL-012
+topic: 02 Methods
+level: Intermediate
+term: Pairwise comparison
+cue: Why compare two outputs side by side instead of scoring each alone?
+category: Core concept
+frequency: High
+importance: 4
+origin: People and judges find it easier to choose the better of two answers than to give an absolute score.
+pro_tip: Randomise order, and record ties and reasons.
+memory_story: Pairwise comparison is a taste test between two dishes.
+visual: Two answers side by side with a winner marked.
+emotion: The simplicity of picking the better one.
+definition: Pairwise comparison shows two outputs for the same input and asks a reviewer or judge to pick the better one or declare a tie, and results are summarised as win rates.
+explanation: It reduces scale confusion and is sensitive to small improvements. Randomising order avoids position bias. Win rates with confidence intervals show whether a difference is real. Ratings systems such as Elo can rank many systems. It tells which is better, not by how much in absolute quality, so pair it with criteria-based scoring.
+simple_explain: Show two answers, pick the better, randomise order, and compute the win rate.
+analogy: Pairwise comparison is a taste test between two dishes.
+formula_rule: Win rate = (wins + half the ties) ÷ all comparisons.
+example_1: Version B winning 62 of 100 comparisons.
+example_2: Order randomised to remove bias.
+example_3: A tie recorded when both are equal.
+related: LLM-as-judge, A/B tests, rubrics, statistical care
+word_family: pairwise, win rate, tie, Elo, preference
+where_used: Prompt comparison | Model selection | Human studies
+mini_conversation: A: Which prompt is better overall? | B: Run pairwise comparisons and look at the win rate.
+misconception: ✗ A 60 percent win rate on ten items proves one is better → ✓ Small samples are noisy, so check confidence
+contrast: Pairwise vs absolute scoring: relative choice versus a score on a scale.
+avoid: Do not show the same order every time.
+memory_trick: Randomise the order, count the wins.
+real_project: Pairwise tests picked the better of two prompts when scores were too close to separate.
+real_interview: An interviewer may ask: Why use pairwise comparison?
+real_daily: It is like a taste test.
+mcq_question: What reduces position bias in pairwise tests?
+mcq_options: A) Using one order B) Longer answers C) Hiding ties D) Randomising order
+mcq_answer: D
+mcq_why: Neither answer always comes first.
+fill_blank: The share of comparisons won is the ____ rate → win
+apply: Two prompts score almost equally. What method helps? → Pairwise comparison
+explain_task: Explain pairwise comparison in three lines.
+own_task: Design a pairwise test for two summary prompts.
+
+@EVL-013
+topic: 02 Methods
+level: Advanced
+term: A/B tests
+cue: How do you compare two versions with real users?
+category: Core concept
+frequency: High
+importance: 5
+origin: Offline scores do not always predict real value, so versions are compared on live traffic with randomly assigned users.
+pro_tip: Define the success metric and the sample size before you start.
+memory_story: An A/B test is giving two groups different medicines and comparing outcomes.
+visual: Traffic split into two groups with different results.
+emotion: The patience of waiting for evidence.
+definition: An A/B test randomly assigns users or requests to version A or B, measures a predefined outcome metric, and uses statistics to decide whether the difference is real.
+explanation: Randomisation balances other factors. Metrics include task completion, edits, retries, satisfaction and cost. Run long enough to cover weekly patterns, and avoid peeking and stopping early. Guardrail metrics such as safety and latency protect users. Start with small traffic for risky changes. Network effects and novelty can bias results.
+simple_explain: Split traffic randomly, measure a chosen metric and check significance before deciding.
+analogy: An A/B test is giving two groups different medicines and comparing outcomes.
+formula_rule: Random split + planned metric + enough data.
+example_1: Ten percent of users seeing a new prompt.
+example_2: Comparing the rate of accepted drafts.
+example_3: A guardrail on complaint rate.
+related: online evaluation, statistical care, pairwise comparison, feedback loops
+word_family: A/B test, randomise, metric, guardrail, significance
+where_used: Product teams | Launches | Optimisation
+mini_conversation: A: B looks better after one day. | B: Wait for the planned sample size before deciding.
+misconception: ✗ Stopping a test as soon as it looks good is fine → ✓ Early stopping inflates false wins
+contrast: A/B test vs offline test: live users versus fixed cases.
+avoid: Do not peek and stop early.
+memory_trick: Plan the metric, then wait for the data.
+real_project: An A/B test showed a better-scoring prompt reduced user acceptance, and it was not shipped.
+real_interview: An interviewer may ask: How do you run an A/B test for an LLM feature?
+real_daily: It is like testing two medicines.
+mcq_question: What should be set before an A/B test?
+mcq_options: A) The date of release only B) The success metric and sample size C) The winner D) The logo
+mcq_answer: B
+mcq_why: It prevents bias in interpreting results.
+fill_blank: A metric protecting against harm during a test is a ____ metric → guardrail
+apply: A new version looks better after a day. What do you do? → Continue until the planned sample is reached
+explain_task: Explain A/B tests in three lines.
+own_task: Plan an A/B test for a new support prompt.
+
+@EVL-014
+topic: 02 Methods
+level: Intermediate
+term: Sampling for evaluation
+cue: How do you choose which cases or outputs to review when you cannot check everything?
+category: Core concept
+frequency: High
+importance: 4
+origin: Reviewing every output is too costly, so samples must be chosen to represent the whole and to find problems.
+pro_tip: Mix random samples for an honest estimate and targeted samples for known risks.
+memory_story: Sampling is tasting a spoonful from each pot, plus the pots that smell odd.
+visual: A population with random and targeted picks marked.
+emotion: The efficiency of reviewing less with confidence.
+definition: Sampling selects a subset of requests or outputs for review, using random sampling for unbiased estimates, stratified sampling to cover categories, and targeted sampling for risky or low-confidence cases.
+explanation: Random samples estimate overall quality with a margin of error that shrinks with more items. Stratified samples ensure rare categories are included. Targeted samples focus on thumbs-down, long conversations or high-risk topics, but do not represent the whole. Record how the sample was chosen so results are read correctly.
+simple_explain: Use random samples for honesty and targeted samples for risk.
+analogy: Sampling is tasting a spoonful from each pot, plus the pots that smell odd.
+formula_rule: Random for estimates, stratified for coverage, targeted for risk.
+example_1: Fifty random answers a week.
+example_2: Ten from each ticket category.
+example_3: All answers with negative feedback.
+related: human review, test sets, monitoring, statistical care
+word_family: sample, stratified, random, margin of error, targeted
+where_used: Production monitoring | Quality reviews | Audits
+mini_conversation: A: We only review thumbs-down answers. | B: That misses silent failures, so add a random sample.
+misconception: ✗ Reviewing only complaints shows overall quality → ✓ Complaints are a biased sample
+contrast: Random vs targeted sampling: representative versus problem-focused.
+avoid: Do not read results from a targeted sample as overall quality.
+memory_trick: Random for truth, targeted for risk.
+real_project: A weekly random sample revealed a quality drop that complaints had not shown.
+real_interview: An interviewer may ask: How do you sample outputs for review?
+real_daily: It is like tasting a spoonful from each pot.
+mcq_question: Which sampling gives an unbiased estimate?
+mcq_options: A) Only long answers B) Only recent ones C) Only complaints D) Random sampling
+mcq_answer: D
+mcq_why: Every item has an equal chance.
+fill_blank: Sampling that covers each category is ____ → stratified
+apply: You need honest overall quality estimates. What sample? → A random sample
+explain_task: Explain sampling for evaluation in three lines.
+own_task: Design a weekly review sample for a support bot.
+
+@EVL-015
+topic: 02 Methods
+level: Advanced
+term: Statistical care
+cue: How do you avoid fooling yourself with small differences in scores?
+category: Core concept
+frequency: High
+importance: 5
+origin: Outputs vary and test sets are small, so apparent improvements are often noise.
+pro_tip: Report confidence intervals and repeat runs, and be sceptical of small gains.
+memory_story: Statistical care is checking whether a coin that landed heads twice is really biased.
+visual: Two score bars with overlapping error whiskers.
+emotion: The humility of knowing noise exists.
+definition: Statistical care means treating evaluation scores as estimates with uncertainty, using sample sizes, confidence intervals, paired comparisons, multiple runs and significance tests before claiming that one system is better.
+explanation: A difference of two points on fifty cases is usually noise. Paired tests on the same cases are more powerful than comparing averages alone. Randomness in generation means repeated runs can vary, so average several. Avoid testing many variants and picking the best, which overstates results. Report effect size, not only whether it is significant.
+simple_explain: Use enough cases, repeat runs, show uncertainty and be careful with small gains.
+analogy: Statistical care is checking whether a coin that landed heads twice is really biased.
+formula_rule: Estimate ± uncertainty, not a single number.
+example_1: A 58 versus 56 percent score with overlapping intervals.
+example_2: Running each prompt three times.
+example_3: Testing twenty variants and picking the best.
+related: A/B tests, test sets, pairwise comparison, sampling
+word_family: confidence interval, noise, significance, effect size, variance
+where_used: Experiments | Reports | Decision making
+mini_conversation: A: Version B scored two points higher. | B: With fifty cases that may be noise, so check the interval.
+misconception: ✗ The higher score is always the better system → ✓ Small differences may be random variation
+contrast: Noise vs real effect: random variation versus a true difference.
+avoid: Do not pick the best of many variants and report it as typical.
+memory_trick: Every score has an error bar.
+real_project: Confidence intervals stopped the team from shipping a change that was only noise.
+real_interview: An interviewer may ask: How do you know a score difference is real?
+real_daily: It is like checking a coin for bias.
+mcq_question: What helps judge if a difference is real?
+mcq_options: A) A new colour B) Luck C) Confidence intervals D) A bigger font
+mcq_answer: C
+mcq_why: They show uncertainty.
+fill_blank: Random variation in scores is ____ → noise
+apply: Two versions differ by one point on thirty cases. What do you conclude? → The difference may be noise
+explain_task: Explain statistical care in three lines.
+own_task: Describe how to compare two prompts fairly.

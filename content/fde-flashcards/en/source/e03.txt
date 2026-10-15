@@ -1,0 +1,246 @@
+
+@GIT-017
+topic: 02 Branching & Merging
+level: Beginner
+term: Branch
+cue: How do you create a separate line of history so you can build a new feature without breaking the main code?
+kind: Git concept
+frequency: Very high
+importance: 5
+origin: A branch is a limb of a tree; in Git it is only a light label pointing at a commit, so creating and switching branches is very fast.
+pro_tip: Make a new branch for every piece of work and name it after the work, such as feature/login.
+memory_story: You try an experiment on a new limb of the tree and, if it works, you join it back to the trunk.
+visual: A road that splits into two paths and later joins again.
+emotion: The freedom to experiment without fear.
+meaning: A branch is a separate line of history where you can work without touching the main code.
+code: git branch feature/login¶git branch
+output:   feature/login¶* main
+explanation: A branch is a pointer to a commit, so it takes almost no time or space to create. HEAD says which branch you are on. A new commit moves only the current branch forward.
+simple_explain: A branch lets you work on a separate path. If something breaks there, main stays safe. When the work is good, you merge it back.
+analogy: It is like a rough draft of a book where you experiment while the final copy stays separate.
+syntax: git branch [<name>]
+anatomy: git branch = command | <name> = name of the new branch | * = the branch you are on
+example_1: git branch feature/login
+example_2: git branch -a
+example_3: git branch -d old-feature
+variation: git branch -m new-name   # rename¶git branch -r   # remote branches¶git branch -D feature   # force delete
+used_with: git switch, git merge, HEAD, main
+related: git switch, git merge, git checkout
+alternatives: git switch -c name (create and move at once)
+word_family: git branch, git switch, git merge, git checkout, git rebase
+where_used: A new feature | A bug fix | Experiments
+mini_conversation: A: Where should I build the new feature? | B: Not on main, make a separate branch with git branch and work there.
+misconception: ✗ Running git branch name moves you onto that branch at once → ✓ git branch only creates the branch, and you need git switch to move onto it
+confused_with: git branch vs git switch -c: branch only creates, switch -c creates and moves.
+avoid: Do not do experimental work directly on the main branch.
+wrong_code: git branch -new feature/login
+right_code: git branch feature/login
+memory_trick: Branch means a new road and a new shade.
+real_project: Working on every ticket in its own branch and joining it to main through a pull request.
+real_interview: An interviewer may ask: What is a branch internally in Git?
+real_daily: It is like experimenting on a rough draft of a book.
+mcq_question: Which command only creates a branch but does not move you onto it?
+mcq_options: A) git switch -c x B) git merge x C) git branch x D) git checkout -b x
+mcq_answer: C
+mcq_why: git branch x only creates the branch, while the others also move you or merge.
+fill_blank: git ____ feature/login → branch
+hindi_to_task: Create a new branch called fix-navbar.
+task_answer: git branch fix-navbar
+own_task: Make a test branch in your repo and look at the list with git branch.
+practice_question: What does git branch -a show?
+practice_answer: The list of local and remote branches together.
+
+@GIT-018
+topic: 02 Branching & Merging
+level: Beginner
+term: git switch / git checkout
+cue: How do you move from one branch to another to work there?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: Everything used to be done with git checkout, which did too many jobs, so newer Git added the clearer git switch just for changing branches.
+pro_tip: Use git switch -c name to create a new branch and move onto it in one step.
+memory_story: Switch is a light switch that takes you from one room to another.
+visual: A railway points that turns a train from one track onto another.
+emotion: The convenience of jumping to another task straight away.
+meaning: git switch moves your working folder onto another branch.
+code: git switch -c feature/login¶git switch main
+output: Switched to a new branch 'feature/login'¶Switched to branch 'main'
+explanation: When you switch, the files in your working folder change to match that branch. If your uncommitted changes would conflict, Git stops you, and then you commit or stash first.
+simple_explain: git switch name puts you on that branch and the files change to match it. Adding -c creates the branch and moves onto it at once.
+analogy: It is like changing the decorated set in the same room.
+syntax: git switch [-c] <branch>
+anatomy: git switch = command | -c = create it | <branch> = branch name
+example_1: git switch main
+example_2: git switch -c bugfix/cart
+example_3: git switch -
+variation: git checkout main   # the old way¶git checkout -b new   # the old switch -c¶git switch --detach abc123
+used_with: -c, git branch, git stash
+related: git branch, git restore, git stash
+alternatives: git checkout <branch>
+word_family: git switch, git checkout, git branch, git restore, git stash
+where_used: Changing feature | Going to a bug fix | Opening someone's branch for review
+mini_conversation: A: I need another branch but I have pending changes. | B: Commit or stash first, then run git switch.
+misconception: ✗ Changing branches always loses uncommitted changes → ✓ Git usually carries them along or stops you if there is a conflict, and git stash is the safe way
+confused_with: git switch vs git checkout: switch only changes branches, checkout also does file restoring and more.
+avoid: Do not switch branches with pending changes without checking.
+wrong_code: git switch feature/login -c
+right_code: git switch -c feature/login
+memory_trick: Switch goes straight to another branch.
+real_project: Opening a teammate's branch with git switch to run it for review.
+real_interview: An interviewer may ask: What is the difference between git checkout and git switch?
+real_daily: It is like pressing the switch to go from one room to another.
+mcq_question: Which command creates a new branch and moves onto it at once?
+mcq_options: A) git switch -c x B) git branch x C) git merge x D) git switch x
+mcq_answer: A
+mcq_why: The -c flag creates the branch and also moves you onto it.
+fill_blank: git switch ____ feature/login → -c
+hindi_to_task: Go back to the main branch.
+task_answer: git switch main
+own_task: Create a new branch, change a file there, switch back to main, and see what the file looks like.
+practice_question: What does git switch - do?
+practice_answer: It takes you back to the previous branch.
+
+@GIT-019
+topic: 02 Branching & Merging
+level: Beginner
+term: git diff
+cue: Which command do you run before committing to see line by line what has changed?
+kind: Git command
+frequency: Very high
+importance: 4
+origin: Diff is short for difference; this command comes from the old Unix diff tool and shows the difference between two versions line by line.
+pro_tip: Run git diff --staged before committing and review your own code once.
+memory_story: It is like a spot-the-difference game where Git circles the changes for you.
+visual: Two versions sit side by side, green for what is new and red for what went.
+emotion: The satisfaction of catching a mistake before it is committed.
+meaning: git diff shows the line-by-line changes between two versions.
+code: git diff¶git diff --staged
+output: -  <h1>Hello</h1>¶+  <h1>Hello, World</h1>
+explanation: Plain git diff compares the working folder with the staging area. --staged compares the staging area with the last commit. A red minus line was removed and a green plus line was added.
+simple_explain: git diff shows which lines you removed and which you added. Doing this before you commit saves you from silly mistakes.
+analogy: It is like marking the difference between two fabrics with a highlighter.
+syntax: git diff [--staged] [<commit>] [-- <path>]
+anatomy: git diff = command | --staged = staged changes | <commit> = compare with a commit | <path> = one file
+example_1: git diff
+example_2: git diff --staged
+example_3: git diff main..feature/login
+variation: git diff HEAD~1   # against the previous commit¶git diff --stat   # summary only¶git diff -- src/app.js
+used_with: --staged, --stat, HEAD, git add
+related: git status, git log -p, git show
+alternatives: The diff view in your IDE
+word_family: git diff, git status, git log, git show, git blame
+where_used: Before committing | Code review | Comparing branches
+mini_conversation: A: I forgot what I changed. | B: Run git diff and it will show line by line.
+misconception: ✗ git diff shows all changes, staged or not → ✓ Plain git diff shows only unstaged changes, and you need --staged to see staged ones
+confused_with: git diff vs git status: diff shows line-by-line changes, status only lists which files changed.
+avoid: Do not commit everything without looking at the diff.
+wrong_code: git diff --stage
+right_code: git diff --staged
+memory_trick: Diff dives into the difference.
+real_project: Reading your own full change with git diff main before opening a pull request.
+real_interview: An interviewer may ask: What is the difference between git diff and git diff --staged?
+real_daily: It is like finding the differences between two near-identical pictures.
+mcq_question: A file has already been git added. Which command shows its change?
+mcq_options: A) git diff B) git diff --staged C) git status -d D) git log -p -1
+mcq_answer: B
+mcq_why: Plain git diff does not show staged changes, but --staged does.
+fill_blank: git diff ____ → --staged
+hindi_to_task: Show the difference of the staged changes.
+task_answer: git diff --staged
+own_task: Change a file and compare the output of git diff and git diff --staged.
+practice_question: How will a removed line look in a diff?
+practice_answer: In red, with a minus sign in front.
+
+@GIT-020
+topic: 02 Branching & Merging
+level: Intermediate
+term: git merge
+cue: Which command joins the work of one branch into another branch?
+kind: Git command
+frequency: Very high
+importance: 5
+origin: Merge means to combine; Git joins the histories of two branches and makes a merge commit when both sides have new commits.
+pro_tip: Pull main into your branch before merging so conflicts show up early.
+memory_story: Two rivers flow together into one, and that is a merge.
+visual: Two roads meet at a junction and become one wide road.
+emotion: The satisfaction of separate pieces of work finally coming together.
+meaning: git merge brings the commits of another branch into the current branch.
+code: git switch main¶git merge feature/login
+output: Updating 3f2a9c1..8b7d1e2¶Fast-forward¶ login.js | 12 ++++++++++++
+explanation: If main has not moved ahead, Git simply moves the pointer forward (fast-forward). If both sides have new commits, Git creates a merge commit. If both changed the same line, a merge conflict appears.
+simple_explain: To merge, first move to the branch that should receive the work (usually main), then name the branch you want to bring in. Both sets of work become one.
+analogy: It is like two friends writing separate chapters and then putting them in one book.
+syntax: git merge <branch>
+anatomy: git merge = command | <branch> = the branch to bring into the current one
+example_1: git merge feature/login
+example_2: git merge --no-ff feature/payment
+example_3: git merge --squash bugfix/cart
+variation: git merge --abort   # stop the merge¶git merge --no-ff x   # always make a merge commit¶git merge --squash x   # stage all changes as one set, then commit yourself
+used_with: git switch, --no-ff, --squash, --abort
+related: git rebase, merge conflict, pull request
+alternatives: git rebase, the Merge button on GitHub
+word_family: git merge, git rebase, git branch, git switch, git pull
+where_used: When a feature is complete | Releases | Merging a pull request
+mini_conversation: A: The feature is done, what next? | B: Go to main, run git merge feature, and then push.
+misconception: ✗ Running git merge feature brings main's work into feature → ✓ Merge brings the other branch's work into the current branch, so you must be on the branch that receives the work
+confused_with: merge vs rebase: merge joins the histories with a merge commit, rebase rewrites commits on a new base.
+avoid: Do not merge into an outdated main without pulling first.
+wrong_code: git merge feature --to main   # merge has no --to option; switch to main first
+right_code: git merge feature
+memory_trick: Merge means mix it into main.
+real_project: Merging a feature branch into main once its pull request is approved.
+real_interview: An interviewer may ask: What is a fast-forward merge?
+real_daily: It is like two rivers flowing into one.
+mcq_question: You want a feature branch's work in main. On which branch should you run the merge command?
+mcq_options: A) Only origin B) The feature branch C) Any branch D) The branch that should receive the work
+mcq_answer: D
+mcq_why: Merge brings other work into the current branch, so you run it on the receiving branch.
+fill_blank: git ____ feature/login → merge
+hindi_to_task: Merge feature/login into the current branch.
+task_answer: git merge feature/login
+own_task: Make a commit on a test branch, merge it into main, and view it with git log.
+practice_question: Why does a fast-forward merge not create a new merge commit?
+practice_answer: Because main made no new work, so Git just moves the pointer forward.
+
+@GIT-021
+type: topic56
+topic: 02 Branching & Merging
+level: Intermediate
+term: Merge conflict
+cue: When two branches changed the same line differently, what does Git report while merging, and what must you do?
+category: Git situation
+frequency: High
+importance: 5
+origin: Git cannot choose between two different edits to the same place, so it stops and asks a human to decide.
+pro_tip: Do not panic: open the file, keep the right part between <<<<<<< and >>>>>>>, and delete the markers.
+memory_story: Two cooks add different amounts of salt to one dish and Git asks which version to keep.
+visual: A file where two different versions sit between <<<<<<<, ======= and >>>>>>> markers.
+emotion: A scary first look and a calm feeling once it is resolved.
+definition: A merge conflict happens when two branches changed the same part of a file and Git cannot decide which change to keep.
+explanation: Git writes markers into the file with the current branch's code on one side and the incoming code on the other. You keep the right code, remove the markers, run git add, and then git commit to finish the merge.
+simple_explain: A conflict means Git threw up its hands. Open the file, decide which code stays, remove the markers, add it, and commit.
+analogy: It is like two people writing different dates on one wedding card, so one must be chosen.
+formula_rule: Conflict → open the file → pick code and remove markers → git add → git commit
+example_1: Both people renamed the same function differently.
+example_2: One person deleted a line and the other edited that same line.
+example_3: Both set a different version number in package.json.
+related: git merge, git status, git merge --abort
+word_family: conflict, marker, resolve, abort
+where_used: Pull | Merge | Rebase
+mini_conversation: A: I got CONFLICT as soon as I pulled. | B: Check the file with git status, keep the right code, then add and commit.
+misconception: ✗ A merge conflict means the repo is broken and everything is lost → ✓ A conflict is a normal situation where nothing is lost, and git merge --abort can return you to how it was
+contrast: Conflict vs error: a conflict is a normal state you resolve by hand, an error is a command failing.
+avoid: Never commit with the <<<<<<< markers still in the code.
+memory_trick: Conflict means Choose and Complete.
+real_project: Resolving a pull request conflict locally and pushing again.
+real_interview: An interviewer may ask: When does a merge conflict occur and how do you resolve it?
+real_daily: It is like two meetings being booked at the same time.
+mcq_question: Which two commands finish a merge after you resolve the conflict?
+mcq_options: A) git init and git push B) git add and git commit C) git clone and git pull D) git reset and git stash
+mcq_answer: B
+mcq_why: You add the resolved file and commit to complete the merge.
+fill_blank: To stop a merge, run git merge ____ → --abort
+apply: What does the ======= line show in a conflict? → The boundary between the two versions
+explain_task: Explain the steps to resolve a conflict in three lines.
+own_task: Create a conflict on purpose in a test repo and resolve it.

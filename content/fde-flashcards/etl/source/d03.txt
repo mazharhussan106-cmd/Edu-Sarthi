@@ -1,0 +1,684 @@
+
+@ETL-026
+type: code56
+topic: 05 Reliability
+level: Intermediate
+term: Idempotency
+cue: Which property means running a job twice gives the same result as running it once?
+kind: Reliability principle
+frequency: Very high
+importance: 5
+origin: Jobs fail halfway and get retried, so safe pipelines are designed so that repeating a run never duplicates or corrupts data.
+pro_tip: Replace by key or partition instead of appending blindly.
+memory_story: An idempotent job is a light switch, where pressing on twice still leaves the light on.
+visual: Two identical runs leading to the same final table.
+emotion: The confidence to rerun anything at three in the morning.
+meaning: An idempotent job produces the same final state however many times it runs with the same input, usually by upserting or replacing a partition.
+code: BEGIN;¶DELETE FROM fct_sales WHERE sale_date = DATE '2026-10-01';¶INSERT INTO fct_sales SELECT * FROM stg_sales WHERE sale_date = DATE '2026-10-01';¶COMMIT;
+output: Rerunning the block always leaves exactly one copy of that day's sales.
+explanation: Appending rows on every run creates duplicates after a retry. Delete and insert for one day inside a transaction, or write to a temporary table and swap, makes the run repeatable. Upserts by key give the same effect. Runs should depend on the logical date, not the current time. Side effects such as emails need their own guard.
+simple_explain: Make each run replace its own slice of data, so a retry changes nothing.
+analogy: An idempotent job is a light switch, where pressing on twice still leaves the light on.
+syntax: DELETE slice; INSERT slice; inside one transaction
+anatomy: slice = day or partition | transaction = all or nothing | logical date = the run's input date
+example_1: INSERT ... ON CONFLICT (id) DO UPDATE ...
+example_2: TRUNCATE staging; INSERT INTO staging SELECT ...;
+example_3: ALTER TABLE x EXCHANGE PARTITION p WITH TABLE y;
+variation: CREATE OR REPLACE TABLE report AS SELECT ...;   // rebuild the whole table
+used_with: upserts, partitions, retries, backfills
+related: upserts, retries, backfills, partitions
+alternatives: Upserts | exactly-once streaming
+where_used: Every pipeline | Reruns | Backfills
+mini_conversation: A: The retry doubled yesterday's data. | B: The load appended, so make it replace that day instead.
+misconception: ✗ Retrying a failed job is always safe → ✓ It is safe only if the job is idempotent
+confused_with: Idempotent vs atomic: idempotent means repeat-safe, atomic means all or nothing.
+avoid: Do not append blindly in a job that may be retried.
+wrong_code: INSERT INTO fct_sales SELECT * FROM stg_sales;
+right_code: DELETE FROM fct_sales WHERE sale_date = :d; INSERT INTO fct_sales SELECT * FROM stg_sales WHERE sale_date = :d;
+memory_trick: Replace the slice, never just append.
+real_project: Making loads idempotent let the team rerun failed nights without cleanup scripts.
+real_interview: An interviewer may ask: What does idempotent mean for a pipeline?
+real_daily: It is like pressing a light switch twice.
+mcq_question: What makes a retry safe?
+mcq_options: A) A bigger server B) A new schedule C) A longer name D) An idempotent job
+mcq_answer: D
+mcq_why: Repeating gives the same final state.
+fill_blank: Running a job again gives the same result when it is ____ → idempotent
+hindi_to_task: Reload one day of sales without creating duplicates.
+task_answer: DELETE FROM fct_sales WHERE sale_date = '2026-10-01'; INSERT INTO fct_sales SELECT * FROM stg_sales WHERE sale_date = '2026-10-01';
+own_task: Rewrite an append-only daily load so reruns stay idempotent.
+practice_question: Why should a run depend on its logical date, not now?
+practice_answer: So a rerun processes the same input as the original.
+
+@ETL-027
+type: code56
+topic: 05 Reliability
+level: Intermediate
+term: Retries
+cue: How should a pipeline respond to temporary failures such as network blips?
+kind: Reliability principle
+frequency: Very high
+importance: 5
+origin: Many failures are short lived, so automatic retries with delays recover from them without waking anyone.
+pro_tip: Retry only temporary errors, and cap the number of tries.
+memory_story: A retry is knocking again after a pause, but not forever.
+visual: Attempts spaced with growing gaps ending in success or failure.
+emotion: The relief of jobs fixing themselves.
+meaning: A retry repeats a failed operation after a delay, usually with exponential backoff and a maximum count, and only for errors that may succeed later.
+code: import time, random¶def retry(fn, tries=4, base=1):¶    for i in range(tries):¶        try:¶            return fn()¶        except (ConnectionError, TimeoutError) as e:¶            if i == tries - 1:¶                raise¶            time.sleep(base * 2 ** i + random.random())
+output: The call is repeated up to four times with growing delays, and the final error is raised if all fail.
+explanation: Transient errors include timeouts, connection resets and 503 responses. Permanent errors such as bad credentials or invalid data will fail again, so retrying them wastes time. Jitter prevents many jobs retrying at the same moment. Retries need idempotent operations. Orchestrators offer retries and delays as settings per task.
+simple_explain: Retry temporary errors with growing delays and a cap, and fail fast on permanent ones.
+analogy: A retry is knocking again after a pause, but not forever.
+syntax: for attempt in range(n): try ... except Transient: sleep(backoff)
+anatomy: tries = cap | backoff = growing wait | jitter = random spread | raise = final failure
+example_1: retries=3, retry_delay=timedelta(minutes=5)
+example_2: except requests.HTTPError as e: if e.response.status_code < 500: raise
+example_3: time.sleep(min(60, 2 ** attempt))
+variation: @retry(stop=stop_after_attempt(5), wait=wait_exponential())   // a library decorator
+used_with: idempotency, orchestration, alerts
+related: idempotency, pagination and rate limits, error handling, alerts
+alternatives: Orchestrator retry settings | circuit breakers
+where_used: API calls | Database connections | Orchestrators
+mini_conversation: A: Should we retry the bad password error? | B: No, it is permanent, so fail and alert.
+misconception: ✗ Retrying forever eventually fixes everything → ✓ Permanent errors never succeed, so retries must be limited and selective
+confused_with: Transient vs permanent error: one may pass later, the other never will.
+avoid: Do not retry without a maximum count.
+wrong_code: while True:¶    try:¶        run()¶    except Exception:¶        pass
+right_code: # inside a function¶for i in range(4):¶    try:¶        return run()¶    except TimeoutError:¶        time.sleep(2 ** i)
+memory_trick: Retry the temporary, never the permanent.
+real_project: Limiting retries to timeouts stopped a bad-credential job from hammering a source.
+real_interview: An interviewer may ask: Which errors should you retry?
+real_daily: It is like knocking again after a pause.
+mcq_question: Which error is worth retrying?
+mcq_options: A) A connection timeout B) A wrong password C) A missing table D) A malformed query
+mcq_answer: A
+mcq_why: Timeouts are often temporary.
+fill_blank: Random extra delay that spreads retries is ____ → jitter
+hindi_to_task: Retry a function up to three times with a growing pause.
+task_answer: # inside a function¶for i in range(3):¶    try:¶        return fn()¶    except TimeoutError:¶        time.sleep(2 ** i)
+own_task: List three temporary and three permanent errors for a data pipeline.
+practice_question: Why does a retry need an idempotent job?
+practice_answer: A repeated run must not duplicate data.
+
+@ETL-028
+type: code56
+topic: 05 Reliability
+level: Beginner
+term: Logging in pipelines
+cue: What should a pipeline record so you can understand a failure later?
+kind: Reliability principle
+frequency: Very high
+importance: 5
+origin: Jobs run unattended, so logs are the only witness when something goes wrong at night.
+pro_tip: Log counts and ids, never secrets or full personal data.
+memory_story: Logs are the flight recorder of a pipeline.
+visual: Timestamped lines showing start, row counts and finish.
+emotion: The comfort of a clear trail when something breaks.
+meaning: Pipeline logging records structured events such as start, end, row counts, parameters and errors, with a run id, and avoids sensitive data.
+code: import logging, json¶log = logging.getLogger("orders_load")¶def load(run_id, rows):¶    log.info(json.dumps({"event": "load_start", "run_id": run_id, "rows_in": len(rows)}))¶    ...¶    log.info(json.dumps({"event": "load_done", "run_id": run_id, "rows_out": 981, "rejected": 19}))
+output: Two structured log lines with the run id and row counts that can be searched.
+explanation: Row counts at each stage show where data disappears. A run id lets you follow one execution across jobs. Log levels separate normal events from warnings and errors. Structured logs, as JSON, are easy to search and alert on. Keep errors detailed with the failing key and the next step. Never write passwords, tokens or full personal records.
+simple_explain: Log start, end, counts, parameters and errors with a run id, and keep secrets out.
+analogy: Logs are the flight recorder of a pipeline.
+syntax: log.info("event", extra={...})
+anatomy: run_id = one execution | rows_in and rows_out = counts | level = severity
+example_1: log.warning("rejected rows: %s", n)
+example_2: log.error("load failed for %s", partition, exc_info=True)
+example_3: logging.basicConfig(level="INFO")
+variation: structlog   // a library for structured logging
+used_with: alerts, data quality checks, orchestration
+related: alerts, data quality checks, error handling, lineage
+alternatives: Orchestrator task logs | observability tools
+where_used: Every pipeline | Incident response | Audits
+mini_conversation: A: How many rows did last night's load reject? | B: Check the load_done line, which shows rows_out and rejected.
+misconception: ✗ More logging is always better → ✓ Noisy or sensitive logs hide the useful lines and create risk
+confused_with: Log vs metric: a log is a detailed event, a metric is a number over time.
+avoid: Do not log secrets or personal data.
+wrong_code: print(f"password={pwd}")
+right_code: log.info("connected to %s", host)
+memory_trick: Count rows at every stage.
+real_project: Adding row counts to logs exposed where a join was dropping a fifth of the data.
+real_interview: An interviewer may ask: What do you log in a data pipeline?
+real_daily: It is like a flight recorder.
+mcq_question: What helps follow one execution across jobs?
+mcq_options: A) A bigger disk B) A run id C) A password D) A colour
+mcq_answer: B
+mcq_why: The same id ties related lines together.
+fill_blank: Logs written as JSON are called ____ logs → structured
+hindi_to_task: Write a log line that records how many rows were loaded.
+task_answer: log.info("rows loaded: %s", n)
+own_task: List five fields every pipeline log line should have.
+practice_question: Why log row counts at every stage?
+practice_answer: To see where data disappears.
+
+@ETL-029
+type: topic56
+topic: 05 Reliability
+level: Intermediate
+term: Backfills
+cue: How do you reprocess historical data after a fix or a late source change?
+category: Core concept
+frequency: High
+importance: 4
+origin: Bugs, new columns and late data mean old periods must be recomputed, so pipelines are built to run for past dates on demand.
+pro_tip: Run backfills in small ranges and check the results before widening.
+memory_story: A backfill is rewinding the tape and replaying it with the fixed machine.
+visual: A timeline with a range of past days being rerun.
+emotion: The relief of fixing history without panic.
+definition: A backfill runs a pipeline for past time ranges to create or correct historical data, using the same logic with the original logical dates.
+explanation: Idempotent, partitioned jobs make backfills safe, since each past day is replaced cleanly. Orchestrators can schedule runs for each missed date. Throttle concurrency so sources and targets are not overwhelmed. Sources may no longer have old data, which is why raw copies matter. Validate counts against the original before and after, and tell downstream users.
+simple_explain: Rerun past dates with the same code, one range at a time, and compare results.
+analogy: A backfill is rewinding the tape and replaying it with the fixed machine.
+formula_rule: Same logic + past dates + idempotent runs.
+example_1: Rerunning 30 days after a bug fix.
+example_2: Loading a new column for last year's data.
+example_3: Replaying raw files into a corrected model.
+related: idempotency, partitions, orchestration, late-arriving data
+word_family: backfill, replay, catch-up, logical date, range
+where_used: Bug fixes | Migrations | New metrics
+mini_conversation: A: We fixed the bug, but last month is still wrong. | B: Backfill that month, one week at a time.
+misconception: ✗ A backfill can safely run all history at once → ✓ It can overload sources and targets, so run in controlled ranges
+contrast: Backfill vs normal run: a backfill reruns past dates, a normal run handles the current one.
+avoid: Do not backfill a non-idempotent job.
+memory_trick: Small ranges, same logic, check, then widen.
+real_project: Backfilling thirty days in daily chunks corrected a revenue metric without load spikes.
+real_interview: An interviewer may ask: How do you make a backfill safe?
+real_daily: It is like replaying a tape with a fixed machine.
+mcq_question: What makes backfills safe?
+mcq_options: A) Bigger schedules B) Manual edits C) Deleting logs D) Idempotent, partitioned jobs
+mcq_answer: D
+mcq_why: Each past slice can be replaced cleanly.
+fill_blank: Running a pipeline for past dates is a ____ → backfill
+apply: A bug corrupted last month's data. What do you do after fixing it? → Backfill that month in small ranges
+explain_task: Explain backfills in three lines.
+own_task: Plan a backfill for 90 days and list the checks.
+
+@ETL-030
+type: code56
+topic: 05 Reliability
+level: Intermediate
+term: Data quality checks
+cue: Which automatic tests find missing, duplicate or impossible data before users do?
+kind: Reliability principle
+frequency: Very high
+importance: 5
+origin: Pipelines can run successfully and still produce wrong data, so explicit checks test the data itself.
+pro_tip: Check freshness, volume, uniqueness, nulls and valid values on every run.
+memory_story: Quality checks are inspectors at the end of the conveyor belt.
+visual: A list of checks with green and red results.
+emotion: The trust that the numbers are right.
+meaning: Data quality checks are queries or tests that verify expectations such as no duplicate keys, no nulls in required columns, valid ranges and expected row counts, and they fail or alert when broken.
+code: SELECT 'dup_keys' AS check, COUNT(*) AS bad FROM (SELECT order_id FROM fct_orders GROUP BY 1 HAVING COUNT(*) > 1) d¶UNION ALL SELECT 'null_customer', COUNT(*) FROM fct_orders WHERE customer_id IS NULL¶UNION ALL SELECT 'negative_total', COUNT(*) FROM fct_orders WHERE total < 0¶UNION ALL SELECT 'stale', CASE WHEN MAX(loaded_at) < NOW() - INTERVAL '26 hours' THEN 1 ELSE 0 END FROM fct_orders;
+output: Each check returns a count of bad rows, and any value above zero should stop or alert the pipeline.
+explanation: Typical checks are uniqueness, not null, accepted values, relationships between tables, freshness and volume changes compared with the past. Decide which failures block the load and which only warn. Store check results to see trends. Tools such as dbt tests and Great Expectations run these checks. Alerts must say what failed and what to do next.
+simple_explain: Write queries for expectations, run them every time, and block or alert on failures.
+analogy: Quality checks are inspectors at the end of the conveyor belt.
+syntax: SELECT COUNT(*) FROM table WHERE rule_is_broken
+anatomy: uniqueness = no duplicates | not null = required | freshness = recent | volume = expected count
+example_1: SELECT COUNT(*) FROM fct_orders o LEFT JOIN dim_customers c USING (customer_id) WHERE c.customer_id IS NULL;
+example_2: SELECT COUNT(*) FROM fct_orders WHERE status NOT IN ('paid','refunded','open');
+example_3: SELECT COUNT(*) FROM fct_orders WHERE loaded_at::date = CURRENT_DATE;
+variation: expect_column_values_to_not_be_null("customer_id")   // Great Expectations style
+used_with: dbt tests, alerts, orchestrators
+related: dbt basics, alerts, lineage, data contracts
+alternatives: dbt tests | Great Expectations | Soda
+where_used: Every pipeline | Finance data | Dashboards
+mini_conversation: A: The dashboard shows half the usual orders. | B: A volume check should have caught the load before it published.
+misconception: ✗ A job that finishes without errors has correct data → ✓ Only explicit checks prove that the data is right
+confused_with: Failing vs warning check: a failing check blocks the load, a warning only notifies.
+avoid: Do not publish data that failed a critical check.
+wrong_code: -- no checks, trust the run status
+right_code: SELECT COUNT(*) FROM fct_orders WHERE customer_id IS NULL;   -- expect zero
+memory_trick: A green job is not proof of good data.
+real_project: Adding freshness and volume checks caught a silent source outage before the morning report.
+real_interview: An interviewer may ask: What data quality checks do you run?
+real_daily: It is like inspectors at the end of the belt.
+mcq_question: Which check finds a source that stopped sending data?
+mcq_options: A) A uniqueness check B) A freshness check C) A style check D) A type check
+mcq_answer: B
+mcq_why: Freshness compares the latest load time with the expected one.
+fill_blank: A test that data is recent enough is a ____ check → freshness
+hindi_to_task: Count orders with no customer id.
+task_answer: SELECT COUNT(*) FROM fct_orders WHERE customer_id IS NULL;
+own_task: Write four checks for an orders table.
+practice_question: Does a successful job prove the data is correct?
+practice_answer: No, only checks on the data can show that.
+
+@ETL-031
+type: topic56
+topic: 05 Reliability
+level: Advanced
+term: Lineage
+cue: Which map shows where each dataset comes from and which reports depend on it?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: When a number looks wrong or a source changes, teams need to trace upstream causes and downstream effects quickly.
+pro_tip: Use lineage to answer what breaks if this table changes.
+memory_story: Lineage is a family tree of data, showing parents and children.
+visual: A graph of sources, models and dashboards connected by arrows.
+emotion: The calm of knowing exactly what a change will touch.
+definition: Data lineage records how data flows from sources through transformations to outputs, at the level of tables and sometimes columns.
+explanation: Upstream lineage helps debug wrong values, and downstream lineage shows who is affected by a change. Tools such as dbt, orchestrators and catalogs build lineage from model references and query logs. Column-level lineage is more precise and also more costly. Lineage supports audits, privacy requests and impact analysis.
+simple_explain: Lineage shows where data came from and what depends on it.
+analogy: Lineage is a family tree of data, showing parents and children.
+formula_rule: Upstream = causes. Downstream = impact.
+example_1: A dashboard traced back to three source tables.
+example_2: A change to one column showing eleven affected models.
+example_3: A privacy request locating every table holding a customer id.
+related: dbt basics, data contracts, data quality checks, PII and masking
+word_family: lineage, upstream, downstream, catalog, impact
+where_used: Debugging | Audits | Change planning
+mini_conversation: A: If we change this column, what breaks? | B: Lineage shows four models and two dashboards depend on it.
+misconception: ✗ Lineage is only for compliance teams → ✓ Engineers use it daily to debug and plan changes
+contrast: Upstream vs downstream: upstream feeds a table, downstream consumes it.
+avoid: Do not change shared tables without checking downstream users.
+memory_trick: Look up for causes, down for impact.
+real_project: Using lineage to find all consumers made a column removal safe and planned.
+real_interview: An interviewer may ask: How do you find what a schema change will affect?
+real_daily: It is like a family tree of data.
+mcq_question: What does downstream lineage tell you?
+mcq_options: A) The data size B) Where the data came from C) Who depends on this data D) The cost
+mcq_answer: C
+mcq_why: Downstream shows consumers of the dataset.
+fill_blank: Tables that feed a model are ____ of it → upstream
+apply: You plan to rename a column. What do you check first? → Downstream lineage
+explain_task: Explain data lineage in three lines.
+own_task: Draw lineage for a dashboard fed by two models.
+
+@ETL-032
+type: topic56
+topic: 05 Reliability
+level: Intermediate
+term: Alerts
+cue: How do you make sure the right person learns about a pipeline problem quickly?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Pipelines fail at night, so alerts push the right information to the right people before users notice.
+pro_tip: Alert on symptoms that need action, and include what failed and what to do next.
+memory_story: An alert is a smoke alarm that tells you which room and what to do.
+visual: A notification showing job name, error and a link to logs.
+emotion: The comfort of being told before the boss notices.
+definition: Alerts are automatic notifications triggered by failures or broken expectations, routed to owners with enough context to act.
+explanation: Good alerts name the pipeline, the run, the error and the next step. Too many alerts cause fatigue, so tune thresholds and group repeated ones. Distinguish urgent pages from daily summaries. Route by ownership. Alerts should also cover silent failures, such as no data arriving, not only crashes. Test alerting paths regularly.
+simple_explain: Alert on what needs action, with context, to the owner, and keep the noise low.
+analogy: An alert is a smoke alarm that tells you which room and what to do.
+formula_rule: Problem + context + owner + next step.
+example_1: A message saying orders_load failed at step load with a link to the log.
+example_2: A freshness alert when no data arrived by 6 am.
+example_3: A daily summary of warnings instead of many pages.
+related: logging, data quality checks, retries, orchestration
+word_family: alert, page, threshold, owner, runbook
+where_used: Operations | On-call | Data platforms
+mini_conversation: A: The job failed but nobody knew until noon. | B: Add an alert with the job name and a link to the log.
+misconception: ✗ More alerts mean better monitoring → ✓ Too many alerts are ignored, so each must be actionable
+contrast: Page vs summary: a page needs action now, a summary can wait.
+avoid: Do not alert without saying what to do next.
+memory_trick: Every alert needs an owner and an action.
+real_project: Adding a no-data-arrived alert caught a silent source outage within an hour.
+real_interview: An interviewer may ask: How do you avoid alert fatigue?
+real_daily: It is like a smoke alarm that names the room.
+mcq_question: What makes an alert useful?
+mcq_options: A) Context and a next step B) Many repeats C) A loud sound D) A long name
+mcq_answer: A
+mcq_why: The receiver must know what to do.
+fill_blank: Too many unhelpful alerts cause alert ____ → fatigue
+apply: A source silently stopped sending data. What alert catches it? → A freshness alert
+explain_task: Explain good alerting in three lines.
+own_task: Write the text of an alert for a failed load.
+
+@ETL-033
+type: code56
+topic: 05 Reliability
+level: Intermediate
+term: Testing pipelines
+cue: How do you test transformations and pipelines before they run on real data?
+kind: Reliability principle
+frequency: High
+importance: 4
+origin: Pipeline bugs are costly because they spread wrong data, so transformations are tested with small known inputs before deployment.
+pro_tip: Test business rules with tiny fixtures that contain tricky cases.
+memory_story: Testing a pipeline is rehearsing the recipe with a small pot before cooking for the whole village.
+visual: A small input table and an expected output table compared by a test.
+emotion: The confidence of shipping a tested change.
+meaning: Pipeline testing covers unit tests of transformation functions, data tests on outputs, and an end-to-end run on a small sample in a safe environment.
+code: import pandas as pd¶def dedupe_latest(df):¶    return df.sort_values("updated_at").drop_duplicates("id", keep="last")¶def test_dedupe_latest():¶    df = pd.DataFrame({"id": [1, 1, 2], "updated_at": [1, 2, 1], "v": ["a", "b", "c"]})¶    out = dedupe_latest(df).sort_values("id")¶    assert out["v"].tolist() == ["b", "c"]
+output: The test passes when the newest row for each id is kept.
+explanation: Keep transformation logic in small functions that take and return data, so they are easy to test. Include edge cases such as nulls, duplicates and boundary dates. Run data tests such as uniqueness after each load. Use a staging copy or a sample for end-to-end checks. Run tests in CI on every change.
+simple_explain: Test small functions with tricky samples, test the outputs, and run it all in CI.
+analogy: Testing a pipeline is rehearsing the recipe with a small pot before cooking for the whole village.
+syntax: def test_name(): assert actual == expected
+anatomy: fixture = small input | assert = expected result | CI = run on every change
+example_1: assert out.shape[0] == 2
+example_2: pytest tests/
+example_3: dbt test --select state:modified
+variation: pytest.mark.parametrize("input,expected", cases)   // many cases in one test
+used_with: pytest, dbt tests, CI
+related: data quality checks, dbt basics, error handling, CI
+alternatives: dbt unit tests | sampling in staging
+where_used: Pull requests | Releases | Refactors
+mini_conversation: A: Can we change the dedup rule safely? | B: Add a test with tricky rows first, then change it.
+misconception: ✗ Testing on production data only is enough → ✓ Small controlled tests find rule bugs that large data hides
+confused_with: Unit test vs data test: a unit test checks logic with fixtures, a data test checks real output.
+avoid: Do not skip tests for transformations that handle money.
+wrong_code: def dedupe_latest(df): ...   # no test
+right_code: def test_dedupe_latest(): assert ...
+memory_trick: Tiny tricky inputs find big bugs.
+real_project: Adding fixture tests caught a boundary date bug before it reached finance.
+real_interview: An interviewer may ask: How do you test a data transformation?
+real_daily: It is like rehearsing with a small pot.
+mcq_question: What makes a transformation easy to test?
+mcq_options: A) No inputs B) Hidden state C) Small functions taking and returning data D) One huge script
+mcq_answer: C
+mcq_why: Inputs and outputs can be controlled in tests.
+fill_blank: A small hand-made input used in a test is a ____ → fixture
+hindi_to_task: Write an assertion that a result has two rows.
+task_answer: assert len(out) == 2
+own_task: Write a test for a function that fills missing countries with unknown.
+practice_question: Why test with tricky edge cases?
+practice_answer: They expose rule bugs that normal data hides.
+
+@ETL-034
+type: topic56
+topic: 05 Reliability
+level: Intermediate
+term: Error handling and dead letters
+cue: What should a pipeline do with bad records and unexpected failures?
+category: Core concept
+frequency: High
+importance: 5
+origin: One bad row must not kill a whole run or vanish silently, so pipelines separate failure of the job from failure of a record.
+pro_tip: Quarantine bad records with the reason, and fail the run only when thresholds are crossed.
+memory_story: A dead letter box holds the mail that could not be delivered so someone can fix the address.
+visual: Good rows flowing to the target and bad rows to a side table.
+emotion: The calm of a run that survives one bad row.
+definition: Error handling decides which problems stop the run and which are recorded and skipped, with rejected records stored in a dead letter table or queue along with the reason.
+explanation: Distinguish record errors, such as invalid values, from system errors, such as a lost connection. Record errors go to a rejected table with the error text, source key and time, and the run continues unless the rate exceeds a limit. System errors fail the job and trigger retries and alerts. Reprocess rejected rows after fixing the cause.
+simple_explain: Quarantine bad rows with reasons, fail only when it matters, and reprocess later.
+analogy: A dead letter box holds undeliverable mail so someone can fix the address.
+formula_rule: Bad record → quarantine. Bad system → fail and alert.
+example_1: A rejected_orders table with error reasons.
+example_2: A run failing because more than five percent of rows were rejected.
+example_3: A queue with a dead letter queue for repeated failures.
+related: retries, data quality checks, alerts, cleaning data
+word_family: dead letter, quarantine, reject, threshold, reprocess
+where_used: Streaming | Batch loads | Integrations
+mini_conversation: A: One bad date stopped the whole load. | B: Quarantine that row and let the rest through.
+misconception: ✗ The safest choice is to stop the whole run on any bad row → ✓ Stopping for each record blocks all good data, so quarantine and set thresholds
+contrast: Record error vs system error: one bad value versus a broken connection.
+avoid: Do not silently drop records.
+memory_trick: Quarantine the row, keep the run.
+real_project: A rejected table with reasons let analysts fix source typos within a day.
+real_interview: An interviewer may ask: What is a dead letter queue?
+real_daily: It is like a box for undeliverable mail.
+mcq_question: Where do bad records go?
+mcq_options: A) A rejected table with the reason B) The log only C) The target table D) The trash with no record
+mcq_answer: A
+mcq_why: Stored rejects can be reviewed and reprocessed.
+fill_blank: A queue holding messages that keep failing is a dead ____ queue → letter
+apply: Two percent of rows have invalid dates. What should the run do? → Quarantine them and continue
+explain_task: Explain error handling in three lines.
+own_task: Define a rule for when a load should fail because of rejects.
+
+@ETL-035
+type: topic56
+topic: 06 Advanced
+level: Advanced
+term: Kafka basics
+cue: Which platform stores streams of events so many consumers can read them independently?
+category: Core concept
+frequency: High
+importance: 4
+origin: Systems needed a durable, high-volume way to pass events between many producers and consumers, so a distributed commit log was built.
+pro_tip: Choose the partition key carefully, since order is guaranteed only inside a partition.
+memory_story: Kafka is a newspaper archive where each reader keeps their own bookmark.
+visual: Producers writing to topic partitions and consumer groups reading at their own pace.
+emotion: The power of replaying events at will.
+definition: Kafka is a distributed log where producers append events to topics split into partitions, and consumers read them with their own offsets, usually within consumer groups.
+explanation: Messages are kept for a retention period and are not removed when read, so new consumers can replay history. Order is preserved within a partition, and the key decides the partition. A consumer group shares partitions among its members to scale reading. Offsets record progress. Delivery is at least once by default, so consumers should handle duplicates.
+simple_explain: Producers append events to topics, and consumers read them at their own pace with offsets.
+analogy: Kafka is a newspaper archive where each reader keeps their own bookmark.
+formula_rule: Topic → partitions → ordered log, with offsets per consumer.
+example_1: A topic of order events keyed by customer id.
+example_2: Two consumer groups, one for billing and one for analytics.
+example_3: A new consumer replaying a week of history.
+related: batch vs streaming, change data capture, idempotency, orchestration
+word_family: topic, partition, offset, consumer group, retention
+where_used: Event platforms | CDC | Real-time pipelines
+mini_conversation: A: Why do events for one customer arrive out of order? | B: They went to different partitions, so key by customer id.
+misconception: ✗ A message is deleted from Kafka once it is read → ✓ It stays until retention expires, and others can still read it
+contrast: Queue vs log: a queue removes messages when consumed, a log keeps them for replay.
+avoid: Do not assume global ordering across partitions.
+memory_trick: Order lives only inside one partition.
+real_project: Using customer id as the key kept each customer's events in order for billing.
+real_interview: An interviewer may ask: How does Kafka guarantee ordering?
+real_daily: It is like an archive with personal bookmarks.
+mcq_question: Where is message order guaranteed?
+mcq_options: A) Nowhere B) Within one partition C) Across topics D) Across all partitions
+mcq_answer: B
+mcq_why: Each partition is an ordered log.
+fill_blank: A consumer's position in a partition is its ____ → offset
+apply: Events for one customer must stay in order. What do you use as the key? → The customer id
+explain_task: Explain Kafka basics in three lines.
+own_task: Design topics and keys for order events and payment events.
+
+@ETL-036
+type: topic56
+topic: 06 Advanced
+level: Intermediate
+term: Orchestration
+cue: Which tools schedule and supervise pipelines, including order, retries and alerts?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Cron scripts could not express dependencies or recover from failures, so orchestrators manage whole workflows.
+pro_tip: Let the orchestrator manage scheduling, dependencies and retries, and keep the jobs themselves simple.
+memory_story: An orchestrator is the conductor who tells each musician when to play and notices when one stops.
+visual: A graph of tasks with arrows, run states and a calendar.
+emotion: The confidence of a system that supervises itself.
+definition: Orchestration coordinates tasks into workflows with schedules, dependencies, retries, alerting and history, using tools such as Airflow, Dagster or Prefect.
+explanation: Workflows are described as graphs of tasks. The orchestrator triggers runs on schedules or events, passes dates, retries failures, and shows what ran and what failed. It does not do the heavy data work itself, but calls jobs and services. Good orchestration makes reruns, backfills and observability easy.
+simple_explain: The orchestrator decides what runs when, retries failures and shows the history.
+analogy: An orchestrator is the conductor who tells each musician when to play.
+formula_rule: Graph of tasks + schedule + retries + history.
+example_1: An Airflow DAG with extract, load and test tasks.
+example_2: A sensor waiting for a file before starting.
+example_3: A rerun of one failed task from the interface.
+related: pipelines vs jobs, Airflow, retries, backfills
+word_family: DAG, scheduler, task, run, dependency
+where_used: Data platforms | Daily loads | Operations
+mini_conversation: A: Cron cannot tell the load to wait for the extract. | B: Use an orchestrator with task dependencies.
+misconception: ✗ The orchestrator should do the heavy processing itself → ✓ It should call other systems and stay light
+contrast: Cron vs orchestrator: cron runs commands on time, an orchestrator manages dependencies, retries and history.
+avoid: Do not put heavy processing inside the scheduler.
+memory_trick: Orchestrators conduct, they do not play.
+real_project: Moving cron jobs into an orchestrator gave clear history and safe retries.
+real_interview: An interviewer may ask: Why use an orchestrator instead of cron?
+real_daily: It is like a conductor leading musicians.
+mcq_question: What do orchestrators add to cron?
+mcq_options: A) Faster disks B) Colours C) More memory D) Dependencies, retries and history
+mcq_answer: D
+mcq_why: They supervise whole workflows.
+fill_blank: A directed graph of tasks in Airflow is a ____ → DAG
+apply: A load must wait for an extract and retry on failure. What tool? → An orchestrator
+explain_task: Explain orchestration in three lines.
+own_task: Sketch a DAG for a daily sales pipeline.
+
+@ETL-037
+type: topic56
+topic: 06 Advanced
+level: Advanced
+term: PII and masking
+cue: How do you protect personal data inside pipelines and warehouses?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Pipelines copy data widely, and personal data in many places multiplies risk, so it must be classified and protected by design.
+pro_tip: Collect and move only the personal data you truly need.
+memory_story: Masking is putting a name tag over a face so guests can still be counted but not recognised.
+visual: A column of emails turning into hashed or partly hidden values.
+emotion: The responsibility of handling people's data carefully.
+definition: PII is information that identifies a person, and protection includes minimising it, masking or hashing values, restricting access, encrypting data and deleting it on request.
+explanation: Identify PII fields such as names, emails, phones and ids. Options include dropping them, keyed hashing (HMAC with a secret key) so equal values still match for joins, tokenising, and partial masking such as showing the last four digits. Use column-level access control and audit logs. Keep production PII out of test environments. Follow local law, such as the DPDP Act in India and GDPR in Europe.
+simple_explain: Know where PII is, collect less, mask it, restrict access and be able to delete it.
+analogy: Masking is putting a name tag over a face so guests can be counted but not recognised.
+formula_rule: Minimise + mask + restrict + delete on request.
+example_1: Hashing an email with a secret key (HMAC) to allow joins.
+example_2: Showing only the last four digits of a phone number.
+example_3: A column-level policy hiding salary from most users.
+related: credentials in pipelines, lineage, schemas, ETL vs ELT
+word_family: PII, hashing, tokenisation, masking, consent
+where_used: Customer data | Compliance | Analytics
+mini_conversation: A: Can analysts see customer emails? | B: Only the hashed version, and the raw column is restricted.
+misconception: ✗ Hashing an email makes it anonymous → ✓ It is only pseudonymous, and can often be reversed by guessing without a secret key
+contrast: Masking vs deleting: masking hides values, deleting removes them completely.
+avoid: Do not copy production PII into test environments.
+memory_trick: Minimise first, mask second, restrict always.
+real_project: Hashing emails with a keyed hash allowed joins without exposing addresses.
+real_interview: An interviewer may ask: How do you handle PII in a data warehouse?
+real_daily: It is like a name tag over a face.
+mcq_question: What is the safest first step with PII?
+mcq_options: A) Store it in a spreadsheet B) Email it C) Copy everything D) Collect only what is needed
+mcq_answer: D
+mcq_why: Data you never collect cannot leak.
+fill_blank: Replacing a value with a stand-in token is called ____ → tokenisation
+apply: Analysts need to join on email without seeing it. What do you do? → Hash it with a keyed hash (HMAC)
+explain_task: Explain how to protect PII in three lines.
+own_task: List five fields in an orders table that count as PII.
+
+@ETL-038
+type: code56
+topic: 06 Advanced
+level: Advanced
+term: Slowly changing data
+cue: How do you keep history when attributes such as a customer's city change over time?
+kind: Modelling pattern
+frequency: Medium
+importance: 4
+origin: Reports need to know what was true at the time, so dimension tables store old versions instead of overwriting them.
+pro_tip: Use type 2 history only for attributes whose past values matter.
+memory_story: Type 2 history is keeping every old address card in the drawer with the dates it was valid.
+visual: Several rows for one customer with valid-from and valid-to dates.
+emotion: The satisfaction of reports that match the past.
+meaning: Slowly changing dimensions manage changing attributes, where type 1 overwrites the value and type 2 adds a new row with valid-from and valid-to dates.
+code: -- type 2 table¶-- customer_key | customer_id | city | valid_from | valid_to | is_current¶UPDATE dim_customers SET valid_to = NOW(), is_current = false¶WHERE customer_id = 7 AND is_current AND city <> 'Pune';¶INSERT INTO dim_customers (customer_id, city, valid_from, valid_to, is_current)¶SELECT 7, 'Pune', NOW(), '9999-12-31', true¶WHERE NOT EXISTS (SELECT 1 FROM dim_customers WHERE customer_id = 7 AND is_current AND city = 'Pune');
+output: The old city row is closed, and a new current row with Pune is added.
+explanation: Type 1 loses history but is simple. Type 2 keeps every version, and facts join to the version valid on the event date. A surrogate key identifies each version. Tools such as dbt snapshots automate type 2. History grows, so apply it only where it matters. Type 3 keeps only the previous value in a column.
+simple_explain: Overwrite when history does not matter, and add dated versions when it does.
+analogy: Type 2 history is keeping every old address card with the dates it was valid.
+syntax: valid_from, valid_to, is_current columns
+anatomy: type 1 = overwrite | type 2 = new row | surrogate key = version id | is_current = latest flag
+example_1: SELECT * FROM dim_customers WHERE customer_id = 7 AND is_current;
+example_2: JOIN dim_customers d ON f.customer_id = d.customer_id AND f.order_date >= d.valid_from AND f.order_date < d.valid_to
+example_3: dbt snapshot with strategy timestamp
+variation: UPDATE dim_customers SET city = 'Pune' WHERE customer_id = 7;   // type 1 overwrite
+used_with: dimensional models, dbt snapshots, upserts
+related: upserts, dbt basics, change data capture, joins
+alternatives: dbt snapshots | event history tables
+where_used: Dimensions | Reporting | Audits
+mini_conversation: A: Last year's sales show the customer's new city. | B: Use type 2 history and join by the date the order happened.
+misconception: ✗ Overwriting is always fine for dimensions → ✓ Overwriting loses history that reports may need
+confused_with: Type 1 vs type 2: type 1 overwrites, type 2 adds a dated version.
+avoid: Do not keep history for attributes nobody needs.
+wrong_code: UPDATE dim_customers SET city = 'Pune' WHERE customer_id = 7;   -- history lost
+right_code: UPDATE ... SET valid_to = NOW(), is_current = false ...; INSERT ... new current row;
+memory_trick: Type 1 overwrites, type 2 stacks versions.
+real_project: Type 2 customer history made old reports match what was true at the time.
+real_interview: An interviewer may ask: What is a slowly changing dimension?
+real_daily: It is like keeping every old address card.
+mcq_question: Which type adds a new row for each change?
+mcq_options: A) Type 0 B) Type 1 C) Type 2 D) Type 4 only
+mcq_answer: C
+mcq_why: Type 2 keeps dated versions.
+fill_blank: A key that identifies one version of a dimension row is a ____ key → surrogate
+hindi_to_task: Fetch the current row for a customer.
+task_answer: SELECT * FROM dim_customers WHERE customer_id = 7 AND is_current;
+own_task: Write the join that links an order to the customer version valid on its date.
+practice_question: What is lost with type 1?
+practice_answer: The history of earlier values.
+
+@ETL-039
+type: topic56
+topic: 06 Advanced
+level: Advanced
+term: Cost and performance
+cue: Which habits keep pipelines fast and the cloud bill low?
+category: Core concept
+frequency: High
+importance: 4
+origin: Warehouses charge by compute and data scanned, so careless queries and loads can multiply costs quickly.
+pro_tip: Read fewer columns and fewer rows, and measure before and after tuning.
+memory_story: Cost control is turning off lights in empty rooms and carrying only the groceries you need.
+visual: A query scanning a thin slice instead of the whole table.
+emotion: The pleasure of a faster pipeline and a smaller bill.
+definition: Cost and performance tuning reduces scanned data, avoids repeated work and sizes compute to the job, using partitions, columnar formats, incremental models and caching.
+explanation: Select only needed columns, filter on partition keys, and avoid select star on wide tables. Process incrementally instead of rebuilding history. Compress and compact small files. Right-size compute and shut it down when idle. Materialise expensive steps once. Monitor cost per pipeline and set budgets with alerts.
+simple_explain: Scan less, process only what changed, size compute sensibly and watch the bill.
+analogy: Cost control is turning off lights in empty rooms and carrying only the groceries you need.
+formula_rule: Less data scanned + less repeated work = lower cost.
+example_1: Filtering on the partition date column.
+example_2: An incremental model processing only new rows.
+example_3: Compacting thousands of tiny files into a few large ones.
+related: partitions, file formats, full vs incremental, warehouse vs lake
+word_family: scan, compute, compaction, materialise, budget
+where_used: Cloud warehouses | Lakes | Platform teams
+mini_conversation: A: The monthly warehouse bill doubled. | B: Check the most expensive queries and add partition filters.
+misconception: ✗ A bigger warehouse always fixes slow queries → ✓ Reducing scanned data usually helps more and costs less
+contrast: Scaling up vs tuning: bigger compute costs more, tuning reduces the work itself.
+avoid: Do not leave large compute running idle.
+memory_trick: Scan less before paying for more.
+real_project: Partition filters and incremental models cut a warehouse bill noticeably.
+real_interview: An interviewer may ask: How would you reduce warehouse cost?
+real_daily: It is like turning off lights in empty rooms.
+mcq_question: Which habit reduces scanned data?
+mcq_options: A) Filtering on partition keys B) Leaving compute on C) Rebuilding all history D) Using select star
+mcq_answer: A
+mcq_why: Partition filters let the engine skip data.
+fill_blank: Merging many small files into fewer large ones is called ____ → compaction
+apply: A model rebuilds all history nightly. How do you cut cost? → Make it incremental
+explain_task: Explain how to control pipeline cost in three lines.
+own_task: List four changes that would lower the cost of a slow daily model.
+
+@ETL-040
+type: topic56
+topic: 06 Advanced
+level: Advanced
+term: Late-arriving data
+cue: How do you handle records that arrive after the period they belong to has been processed?
+category: Core concept
+frequency: High
+importance: 5
+origin: Mobile apps, partner feeds and retries deliver events late, so pipelines must update past periods and not only the current one.
+pro_tip: Separate event time from processing time, and reprocess a lookback window.
+memory_story: Late data is a letter that arrives after the post has been sorted, so you must reopen the box.
+visual: An event from Monday arriving on Wednesday and updating Monday's total.
+emotion: The calm of totals that eventually become correct.
+definition: Late-arriving data is data whose event time is earlier than the time it reaches the pipeline, which requires reprocessing earlier periods or using windows that wait for stragglers.
+explanation: Use the event time for reporting and the load time for tracking. A lookback window reprocesses the last few days on every run, so late rows are absorbed. Streaming systems use watermarks that wait a set time for late events. Decide a cut-off after which data is ignored or handled separately, and document it. Dashboards may show that recent days are provisional.
+simple_explain: Report by event time, reprocess a recent window, and set a clear cut-off.
+analogy: Late data is a letter arriving after the post is sorted, so you reopen the box.
+formula_rule: Event time for meaning, load time for tracking, lookback for safety.
+example_1: Rerunning the last three days on every nightly run.
+example_2: A streaming window waiting ten minutes for late events.
+example_3: A report marking the last two days as provisional.
+related: date handling, incremental loads, backfills, Kafka basics
+word_family: event time, processing time, watermark, lookback, provisional
+where_used: Mobile analytics | Partner feeds | Streaming
+mini_conversation: A: Yesterday's totals keep changing. | B: Late events arrive, so mark recent days as provisional.
+misconception: ✗ Once a day has been processed it never changes → ✓ Late data can change past days, so pipelines must allow for it
+contrast: Event time vs processing time: one is when it happened, the other is when we handled it.
+avoid: Do not use load time to place events in reports.
+memory_trick: Lookback window absorbs late arrivals.
+real_project: A three-day lookback fixed totals that changed after late mobile events arrived.
+real_interview: An interviewer may ask: How do you handle late-arriving events?
+real_daily: It is like a letter arriving after sorting.
+mcq_question: Which time should reports use?
+mcq_options: A) Load time B) Event time C) Server time D) Random time
+mcq_answer: B
+mcq_why: Event time says when the action actually happened.
+fill_blank: A rule that waits for late events in a stream is a ____ → watermark
+apply: Events arrive up to two days late. What should each run do? → Reprocess a lookback window of recent days
+explain_task: Explain late-arriving data in three lines.
+own_task: Choose a lookback window for a mobile app and justify it.

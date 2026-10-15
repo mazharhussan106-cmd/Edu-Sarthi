@@ -1,0 +1,764 @@
+
+@TS-018
+type: code56
+topic: 02 Async JavaScript
+level: Beginner
+term: Callbacks
+cue: Which functions are passed to other code to be called later?
+kind: Async pattern
+frequency: High
+importance: 4
+origin: Some work, such as timers and file reads, takes time, so JavaScript lets you hand over a function to run when the work finishes.
+pro_tip: Handle the error argument first in Node style callbacks.
+memory_story: A callback is leaving your phone number so the shop calls you when the order is ready.
+visual: A request going out and a function coming back later.
+emotion: The understanding of how waiting works without freezing.
+meaning: A callback is a function passed as an argument that the receiving code calls when its work is done or an event occurs.
+code: function loadUser(id, done) {¶  setTimeout(() => done(null, { id, name: "Asha" }), 100);¶}¶loadUser(1, (err, user) => {¶  if (err) return console.error(err);¶  console.log("loaded", user.name);¶});¶console.log("waiting");
+output: waiting¶loaded Asha
+explanation: The last line prints first, because the timer runs later and the main code continues. Node style callbacks pass an error first and the result second. Nesting many callbacks leads to code that drifts to the right, called callback hell. Promises and async functions solve that problem.
+simple_explain: Give a function to be called when work finishes, and expect it to run later.
+analogy: A callback is leaving your phone number so the shop calls when your order is ready.
+syntax: doWork(arg, (err, result) => { ... })
+anatomy: callback = function passed in | err = first argument | result = second argument
+example_1: array.forEach(item => console.log(item));
+example_2: button.addEventListener("click", () => save());
+example_3: fs.readFile(path, "utf8", (err, text) => { });
+variation: setInterval(() => tick(), 1000);   // repeat a callback
+used_with: timers, events, Node APIs
+related: promises, async and await, event loop, timers
+alternatives: Promises | async and await
+where_used: Events | Timers | Older Node APIs
+mini_conversation: A: Why does my code after the call run before the result? | B: The callback runs later, so use the result inside it.
+misconception: ✗ Callbacks always run asynchronously → ✓ Some, such as the ones in forEach, run immediately
+confused_with: Callback vs promise: a callback is passed in, a promise is returned.
+avoid: Do not nest many levels of callbacks.
+wrong_code: let user; loadUser(1, u => { user = u; }); console.log(user.name);
+right_code: loadUser(1, u => { console.log(u.name); });
+memory_trick: Use the result inside the callback.
+real_project: Replacing nested callbacks with promises made an import script readable.
+real_interview: An interviewer may ask: What is callback hell?
+real_daily: It is like leaving a phone number at a shop.
+mcq_question: When does a timer callback run?
+mcq_options: A) Before the code B) Later, after the current code finishes C) Immediately D) Never
+mcq_answer: B
+mcq_why: Callbacks wait for the event loop.
+fill_blank: In Node style callbacks the first argument is the ____ → error
+hindi_to_task: Run a function after one second.
+task_answer: setTimeout(() => run(), 1000);
+own_task: Write a function that takes a callback and calls it with a result.
+practice_question: Why does the line after the call print first?
+practice_answer: The callback is scheduled to run later.
+
+@TS-019
+type: code56
+topic: 02 Async JavaScript
+level: Intermediate
+term: Promises
+cue: Which objects represent a value that will arrive later, or an error?
+kind: Async pattern
+frequency: Very high
+importance: 5
+origin: Callbacks became tangled, so promises gave a single object to chain and handle results and errors in order.
+pro_tip: Always return the promise from a then handler to keep chains flat.
+memory_story: A promise is a restaurant buzzer that will light up with food or with an apology.
+visual: A box that is pending, then filled with a value or an error.
+emotion: The relief of flat, readable async chains.
+meaning: A promise is an object that is pending until it becomes fulfilled with a value or rejected with an error, and then and catch react to the outcome.
+code: const wait = ms => new Promise(resolve => setTimeout(resolve, ms));¶wait(100)¶  .then(() => 42)¶  .then(n => { console.log(n); return n * 2; })¶  .then(n => console.log(n))¶  .catch(err => console.error(err))¶  .finally(() => console.log("done"));
+output: 42¶84¶done
+explanation: A promise has three states: pending, fulfilled and rejected. Each then returns a new promise, so chains pass values forward. A thrown error or rejection skips to the next catch. finally runs in both cases. Callbacks passed to then always run asynchronously, after current code finishes.
+simple_explain: A promise is a placeholder for a future value, and then and catch handle the result.
+analogy: A promise is a restaurant buzzer that lights up with food or an apology.
+syntax: new Promise((resolve, reject) => { ... }) | p.then(fn).catch(fn)
+anatomy: resolve = success | reject = failure | then = on success | catch = on failure
+example_1: Promise.resolve(5).then(x => x + 1);
+example_2: Promise.reject(new Error("bad")).catch(e => e.message);
+example_3: fetch(url).then(r => r.json());
+variation: Promise.allSettled([p1, p2])   // wait for all, success or failure
+used_with: fetch, async and await, timers
+related: callbacks, async and await, Promise.all, error handling
+alternatives: Callbacks | async and await
+where_used: Network calls | File work | Libraries
+mini_conversation: A: My then handler gets undefined. | B: The previous step did not return a value.
+misconception: ✗ A then handler runs immediately when attached → ✓ It always runs later, after the current code finishes
+confused_with: then vs catch: then handles success, catch handles errors.
+avoid: Do not forget to return inside then.
+wrong_code: p.then(x => { x * 2; }).then(y => console.log(y));
+right_code: p.then(x => x * 2).then(y => console.log(y));
+memory_trick: Return inside then to pass it on.
+real_project: Converting callback code to promise chains cut an import script's nesting.
+real_interview: An interviewer may ask: What are the three states of a promise?
+real_daily: It is like a buzzer at a restaurant.
+mcq_question: What are the promise states?
+mcq_options: A) Start, middle and end B) Open and closed C) Hot and cold D) Pending, fulfilled and rejected
+mcq_answer: D
+mcq_why: Those are the three defined states.
+fill_blank: A promise that failed is said to be ____ → rejected
+hindi_to_task: Create a promise that resolves with 5.
+task_answer: Promise.resolve(5)
+own_task: Write a chain that doubles a number twice and logs it.
+practice_question: What does finally do?
+practice_answer: It runs whether the promise succeeded or failed.
+
+@TS-020
+type: code56
+topic: 02 Async JavaScript
+level: Intermediate
+term: async and await
+cue: Which syntax lets you write promise code that reads like normal steps?
+kind: Async pattern
+frequency: Very high
+importance: 5
+origin: Promise chains were still harder to read than plain steps, so async and await let you wait for a result in a straight line.
+pro_tip: Use try and catch around await calls to handle failures.
+memory_story: Await is pausing at a crossing until the light turns green, while the rest of the town keeps moving.
+visual: A function pausing at an await line while other code runs.
+emotion: The comfort of async code that looks like a simple list.
+meaning: An async function always returns a promise, and await pauses it until a promise settles and gives its value or throws its error.
+code: async function getName(id) {¶  try {¶    const res = await fetch(`https://api.example.com/users/${id}`);¶    const user = await res.json();¶    return user.name;¶  } catch (err) {¶    console.error("failed", err.message);¶    return null;¶  }¶}¶getName(1).then(console.log);
+output: Prints the user name, or failed with a message and null
+explanation: await can be used only inside async functions and at the top level of modules. It pauses only that function, not the whole program. Awaiting steps one after another makes them run in sequence, which is slower than starting them together. Errors from await become exceptions for try and catch.
+simple_explain: Mark the function async, await each promise, and handle errors with try and catch.
+analogy: Await is pausing at a crossing until the light turns green while the town keeps moving.
+syntax: async function f() { const x = await promise; }
+anatomy: async = returns a promise | await = wait for a promise | try catch = error handling
+example_1: const data = await readFile("a.json", "utf8");
+example_2: const [a, b] = await Promise.all([getA(), getB()]);
+example_3: const run = async () => { await wait(100); };
+variation: for await (const chunk of stream) { }   // async iteration
+used_with: fetch, Promise.all, try and catch
+related: promises, fetch, Promise.all, error handling
+alternatives: Promise chains
+where_used: API calls | Scripts | Servers
+mini_conversation: A: Why is await a syntax error here? | B: It is inside a normal function, so make the function async.
+misconception: ✗ await blocks the whole program → ✓ It pauses only the current async function
+confused_with: async vs await: async marks the function, await pauses inside it.
+avoid: Do not await inside a loop when the calls are independent.
+wrong_code: function load() { const r = await fetch(url); }
+right_code: async function load() { const r = await fetch(url); }
+memory_trick: Await needs async around it.
+real_project: Rewriting promise chains with async and await made a sync job easy to follow.
+real_interview: An interviewer may ask: What does an async function return?
+real_daily: It is like waiting at a crossing for the light.
+mcq_question: What does an async function always return?
+mcq_options: A) A number B) A string C) A promise D) undefined
+mcq_answer: C
+mcq_why: Return values are wrapped in a promise.
+fill_blank: await can be used inside an ____ function → async
+hindi_to_task: Wait for fetch to finish and store the response.
+task_answer: const res = await fetch(url);
+own_task: Write an async function that reads two files one after another.
+practice_question: Does await freeze the whole program?
+practice_answer: No, only that function pauses.
+
+@TS-021
+type: code56
+topic: 02 Async JavaScript
+level: Intermediate
+term: fetch
+cue: Which built-in function makes HTTP requests and returns a promise?
+kind: Web API
+frequency: Very high
+importance: 5
+origin: Older request tools were clumsy, so fetch offered a promise-based way to call servers in browsers and in modern Node.
+pro_tip: Check response.ok, because fetch does not reject on HTTP error statuses.
+memory_story: Fetch is sending a runner to a shop with a note and waiting for the parcel.
+visual: A request arrow and a response box with status and body.
+emotion: The ease of calling any API in a few lines.
+meaning: fetch sends an HTTP request and resolves with a response object whose body is read with methods such as json or text.
+code: const res = await fetch("https://api.example.com/items", {¶  method: "POST",¶  headers: { "Content-Type": "application/json" },¶  body: JSON.stringify({ name: "pen" })¶});¶if (!res.ok) throw new Error(`HTTP ${res.status}`);¶const item = await res.json();¶console.log(item.id);
+output: Prints the id of the created item, or throws HTTP with the status code
+explanation: fetch rejects only on network failure, so a 404 or 500 still resolves, and you must test res.ok. The body can be read once. Headers and method go in the options. AbortController can cancel a request, and timeouts are not built in. In browsers, cross-origin rules apply.
+simple_explain: Call fetch, check ok, then read the body with json.
+analogy: Fetch is sending a runner to a shop with a note and waiting for the parcel.
+syntax: await fetch(url, { method, headers, body })
+anatomy: res.ok = status in the 200s | res.status = code | res.json() = parse body
+example_1: const res = await fetch(url);
+example_2: await fetch(url, { signal: controller.signal });
+example_3: const text = await res.text();
+variation: AbortSignal.timeout(5000)   // abort after five seconds
+used_with: async and await, JSON, error handling
+related: async and await, JSON, HTTP, error handling
+alternatives: axios | node http
+where_used: API calls | Frontend apps | Scripts
+mini_conversation: A: The code says success but the API returned 404. | B: fetch does not reject on 404, so check res.ok.
+misconception: ✗ fetch rejects when the server returns an error status → ✓ It rejects only on network failures
+confused_with: res.json vs res.text: json parses the body, text returns it raw.
+avoid: Do not read the body twice.
+wrong_code: const data = await fetch(url).json();
+right_code: const res = await fetch(url); const data = await res.json();
+memory_trick: Fetch fails only on the network, check ok.
+real_project: Adding a status check to fetch calls exposed hidden server errors in a script.
+real_interview: An interviewer may ask: Does fetch reject on a 500 response?
+real_daily: It is like sending a runner to a shop.
+mcq_question: When does fetch reject its promise?
+mcq_options: A) On a 404 B) On a 500 C) On network failure D) Never
+mcq_answer: C
+mcq_why: HTTP error statuses still resolve normally.
+fill_blank: The property that is true for statuses in the 200s is ____ → ok
+hindi_to_task: Send a GET request and read the JSON body.
+task_answer: const res = await fetch(url); const data = await res.json();
+own_task: Write a helper that throws on any non-ok response.
+practice_question: Can a response body be read twice?
+practice_answer: No, it can be read only once.
+
+@TS-022
+type: code56
+topic: 02 Async JavaScript
+level: Intermediate
+term: try and catch with async code
+cue: How do you handle errors that happen inside awaited calls and promise chains?
+kind: Async pattern
+frequency: High
+importance: 5
+origin: Errors in asynchronous code do not travel through normal call stacks, so each style has its own way to catch them.
+pro_tip: Handle errors at the level that can do something useful about them.
+memory_story: Errors in async code are letters sent by post, so you must watch the right mailbox.
+visual: A rejected promise travelling to the nearest catch.
+emotion: The calm of failures that land in one place.
+meaning: Inside async functions, try and catch handle awaited rejections, and with promise chains the catch method handles them.
+code: async function run() {¶  try {¶    await Promise.reject(new Error("boom"));¶  } catch (err) {¶    console.log("caught", err.message);¶  }¶}¶run();¶Promise.reject(new Error("later")).catch(e => console.log("chain", e.message));
+output: caught boom¶chain later
+explanation: A rejected promise with no handler triggers an unhandled rejection warning, and in modern Node it can crash the process. try and catch around a call without await will not catch its rejection. A returned promise needs return await inside try for the catch to apply. Wrap the top of event handlers and jobs with a safety catch that logs.
+simple_explain: Await inside try, or add a catch to the chain, and never leave a rejection unhandled.
+analogy: Errors in async code are letters sent by post, so you must watch the right mailbox.
+syntax: try { await p; } catch (e) { } | p.catch(e => { })
+anatomy: await in try = catches rejection | .catch = chain handler | unhandled = no handler found
+example_1: await task().catch(err => log(err));
+example_2: process.on("unhandledRejection", err => log(err));
+example_3: return await fetchData();
+variation: Promise.allSettled(tasks)   // never rejects, reports each result
+used_with: async and await, promises, logging
+related: promises, async and await, error handling, Node
+alternatives: Result objects
+where_used: Servers | Jobs | Frontend calls
+mini_conversation: A: The error is not caught even though I used try. | B: You did not await the call, so the rejection escapes.
+misconception: ✗ try and catch catch every kind of async error → ✓ They catch only awaited rejections inside the same function
+confused_with: Unhandled rejection vs thrown error: one has no handler anywhere, the other is a normal exception.
+avoid: Do not call async functions without handling their rejections.
+wrong_code: try { fetchData(); } catch (e) { console.log(e); }
+right_code: try { await fetchData(); } catch (e) { console.log(e); }
+memory_trick: If you skip await, you skip catch.
+real_project: Adding a global rejection logger revealed silent failures in a nightly job.
+real_interview: An interviewer may ask: What is an unhandled promise rejection?
+real_daily: It is like watching the right mailbox for a letter.
+mcq_question: Why does try not catch a call without await?
+mcq_options: A) The rejection happens later, outside the try B) The function is sync C) try is broken D) fetch is faulty
+mcq_answer: A
+mcq_why: The promise rejects after the try block finishes.
+fill_blank: A rejection with no handler is called ____ → unhandled
+hindi_to_task: Catch an error from await loadData().
+task_answer: try { await loadData(); } catch (e) { console.error(e); }
+own_task: Write code that logs any unhandled rejection in Node.
+practice_question: Does try and catch catch a rejection of a call without await?
+practice_answer: No, only awaited rejections are caught.
+
+@TS-023
+type: code56
+topic: 02 Async JavaScript
+level: Advanced
+term: The event loop
+cue: Which mechanism lets single-threaded JavaScript handle waiting work without blocking?
+kind: Runtime concept
+frequency: High
+importance: 5
+origin: JavaScript runs one piece of code at a time, so the event loop schedules finished async work to run when the main code is free.
+pro_tip: Never run long synchronous loops, since they freeze everything else.
+memory_story: The event loop is a single waiter who takes new orders only when the current table is served.
+visual: A call stack, a queue of waiting callbacks and a loop moving items between them.
+emotion: The insight of finally seeing why code runs in this order.
+meaning: The event loop moves callbacks from queues onto the call stack when it is empty, running microtasks such as promise callbacks before timer callbacks.
+code: console.log("1 start");¶setTimeout(() => console.log("4 timeout"), 0);¶Promise.resolve().then(() => console.log("3 promise"));¶console.log("2 end");
+output: 1 start¶2 end¶3 promise¶4 timeout
+explanation: Synchronous code runs first until the stack is empty. Then all microtasks run, such as promise reactions and queueMicrotask. Only after that does the loop take the next macrotask, such as a timer or an input event. A zero delay timer therefore runs after promise callbacks. Heavy computation blocks the loop, so move it to workers.
+simple_explain: Sync code first, then promise callbacks, then timers and events.
+analogy: The event loop is a single waiter who takes new orders only when the current table is served.
+syntax: stack empties → microtasks → next macrotask
+example_1: setTimeout(fn, 0) running after the current code.
+example_2: queueMicrotask(() => log("micro"));
+example_3: A long for loop that freezes a page.
+variation: setImmediate(() => log("immediate"));   // Node specific timing
+used_with: promises, timers, Node
+related: callbacks, promises, timers, async and await
+alternatives: Worker threads for heavy work
+where_used: Interviews | Performance work | Debugging
+mini_conversation: A: Why does a zero timeout run last? | B: Promise callbacks go first, then timers.
+misconception: ✗ setTimeout with zero runs immediately → ✓ It waits for the current code and all microtasks to finish
+confused_with: Microtask vs macrotask: microtasks run before the next timer or event.
+avoid: Do not block the loop with long synchronous work.
+wrong_code: setTimeout(() => log("timer"), 0); Promise.resolve().then(() => log("promise"));   // expecting timer first
+right_code: Promise.resolve().then(() => log("promise"));   // always runs before a zero-delay timer
+memory_trick: Promises always jump ahead of timers.
+real_project: Moving heavy parsing to a worker stopped a server from freezing.
+real_interview: An interviewer may ask: In what order do promise callbacks and timers run?
+real_daily: It is like a single waiter serving one table at a time.
+mcq_question: Which runs first after sync code?
+mcq_options: A) User clicks B) Promise callbacks C) Network replies D) Timers
+mcq_answer: B
+mcq_why: Microtasks run before the next macrotask.
+fill_blank: A promise callback is a ____ → microtask
+hindi_to_task: Predict the order of a timeout and a promise callback.
+task_answer: The promise callback runs first, then the timeout.
+own_task: Write code that logs four steps and predict the order before running it.
+practice_question: Why can a long loop freeze a page?
+practice_answer: The loop blocks the call stack, so nothing else can run.
+
+@TS-024
+type: code56
+topic: 02 Async JavaScript
+level: Intermediate
+term: Promise.all
+cue: Which method runs several promises together and waits for all of them?
+kind: Async pattern
+frequency: High
+importance: 5
+origin: Awaiting independent tasks one by one wastes time, so Promise.all lets them run in parallel and collects the results.
+pro_tip: Use allSettled when you want every result even if some fail.
+memory_story: Promise.all is sending several runners to different shops and waiting until every one is back.
+visual: Three parallel arrows joining into one result array.
+emotion: The satisfaction of cutting wait time to the slowest call.
+meaning: Promise.all takes an array of promises and returns one promise that resolves with an array of results, or rejects as soon as any one rejects.
+code: const wait = (ms, v) => new Promise(r => setTimeout(() => r(v), ms));¶async function run() {¶  const t0 = Date.now();¶  const [a, b] = await Promise.all([wait(200, "A"), wait(200, "B")]);¶  console.log(a, b, Date.now() - t0 < 350);¶}¶run();
+output: A B true
+explanation: The tasks start immediately and run together, so the total time is about the slowest one, not the sum. The result array keeps the same order as the input. If one rejects, all rejects, but the others still continue in the background. Promise.allSettled returns the status of each, and Promise.race returns the first to settle.
+simple_explain: Start independent tasks together and await them as a group.
+analogy: Promise.all is sending several runners to different shops and waiting until every one returns.
+syntax: await Promise.all([p1, p2, p3])
+anatomy: input = array of promises | output = array of results in order | rejects on first failure
+example_1: const [users, posts] = await Promise.all([getUsers(), getPosts()]);
+example_2: await Promise.allSettled(tasks);
+example_3: await Promise.race([task, timeout]);
+variation: Promise.any([a, b])   // first success wins
+used_with: async and await, fetch, batching
+related: async and await, promises, fetch, rate limits
+alternatives: Sequential awaits | p-limit for concurrency control
+where_used: Parallel API calls | Startup tasks | Batch work
+mini_conversation: A: Three API calls take nine seconds in total. | B: They are awaited one by one, so run them with Promise.all.
+misconception: ✗ Promise.all stops the other tasks when one fails → ✓ It rejects at once, but the others keep running
+confused_with: all vs allSettled: all fails fast, allSettled always waits for everything.
+avoid: Do not start thousands of calls at once.
+wrong_code: for (const id of ids) { results.push(await getUser(id)); }
+right_code: const results = await Promise.all(ids.map(id => getUser(id)));
+memory_trick: All together, results in order.
+real_project: Lazy loading made the first page load noticeably faster.
+real_interview: An interviewer may ask: What is the difference between all and allSettled?
+real_daily: It is like sending runners to several shops.
+mcq_question: What does Promise.all return when one input rejects?
+mcq_options: A) undefined B) A resolved empty array C) All results anyway D) A rejected promise
+mcq_answer: D
+mcq_why: It fails fast on the first rejection.
+fill_blank: The method that never rejects and reports each outcome is Promise.____ → allSettled
+hindi_to_task: Fetch two users at once and wait for both.
+task_answer: const [a, b] = await Promise.all([getUser(1), getUser(2)]);
+own_task: Rewrite a loop of awaited calls so the calls run together.
+practice_question: What order are the results in?
+practice_answer: The same order as the input array.
+
+@TS-025
+type: code56
+topic: 02 Async JavaScript
+level: Beginner
+term: Timers
+cue: Which functions run code after a delay or repeatedly?
+kind: Web API
+frequency: High
+importance: 3
+origin: Some actions must wait or repeat, so the runtime offers timer functions that schedule callbacks.
+pro_tip: Always keep the timer id so you can cancel it.
+memory_story: A timer is an alarm clock that rings your function.
+visual: A clock with a function waiting for its time.
+emotion: The ease of scheduling a task with one line.
+meaning: setTimeout runs a function once after a delay in milliseconds, setInterval runs it repeatedly, and clearTimeout and clearInterval cancel them.
+code: const id = setTimeout(() => console.log("once"), 100);¶let n = 0;¶const tick = setInterval(() => {¶  n += 1;¶  console.log("tick", n);¶  if (n === 3) clearInterval(tick);¶}, 40);¶// clearTimeout(id) would cancel the first one
+output: tick 1¶tick 2¶once¶tick 3
+explanation: Delays are minimum values, not exact, because the loop may be busy. A forgotten interval keeps running and can keep a Node process alive. For waiting inside async code, wrap setTimeout in a promise. In browsers, timers in background tabs may be slowed down.
+simple_explain: setTimeout runs once, setInterval repeats, and clear functions stop them.
+analogy: A timer is an alarm clock that rings your function.
+syntax: setTimeout(fn, ms) | setInterval(fn, ms) | clearTimeout(id)
+anatomy: fn = callback | ms = delay | id = handle for cancelling
+example_1: const sleep = ms => new Promise(r => setTimeout(r, ms));
+example_2: const t = setInterval(poll, 5000);
+example_3: clearTimeout(timerId);
+variation: setTimeout(fn, 0)   // run after the current code
+used_with: promises, polling, debouncing
+related: callbacks, event loop, promises, polling
+alternatives: requestAnimationFrame | cron jobs
+where_used: Delays | Polling | Debouncing
+mini_conversation: A: My process never exits. | B: An interval is still running, so clear it.
+misconception: ✗ A timer fires at exactly the delay given → ✓ The delay is a minimum, and the callback waits for free time
+confused_with: setTimeout vs setInterval: one runs once, the other repeats.
+avoid: Do not leave intervals running without a way to stop them.
+wrong_code: setTimeout(run(), 1000);
+right_code: setTimeout(run, 1000);
+memory_trick: Pass the function, do not call it.
+real_project: Clearing a forgotten interval fixed a script that never finished.
+real_interview: An interviewer may ask: Why is a timer delay not exact?
+real_daily: It is like an alarm clock for a function.
+mcq_question: Which function repeats a callback?
+mcq_options: A) setOnce B) clearTimeout C) setTimeout D) setInterval
+mcq_answer: D
+mcq_why: setInterval repeats until cleared.
+fill_blank: To cancel an interval you call ____ → clearInterval
+hindi_to_task: Wait two seconds and then print done.
+task_answer: setTimeout(() => console.log("done"), 2000);
+own_task: Write a sleep helper that returns a promise.
+practice_question: What does setTimeout(run(), 1000) do wrong?
+practice_answer: It calls run immediately instead of passing it.
+
+@TS-026
+type: code56
+topic: 03 Node and Tooling
+level: Beginner
+term: Node.js
+cue: Which runtime lets you run JavaScript outside the browser?
+kind: Runtime
+frequency: Very high
+importance: 5
+origin: JavaScript was limited to browsers, so Node.js took the same engine to servers and tools.
+pro_tip: Check the Node version with node --version, since features differ.
+memory_story: Node is a portable engine that lets JavaScript work in any workshop.
+visual: A terminal window running a script file with the node command.
+emotion: The thrill of running your first script outside the browser.
+meaning: Node.js is a runtime built on the V8 engine that runs JavaScript on servers and computers, with built-in modules for files, networks and more.
+code: // hello.js¶const os = require("os");¶console.log("Hello from Node", process.version.startsWith("v"));¶console.log(typeof os.cpus().length);
+output: Hello from Node true¶number
+explanation: Node runs a file with the node command. It provides modules such as fs, path, http and os, and a global process object for arguments and the environment. It uses a single thread with an event loop and non-blocking input and output. Package managers add third-party libraries. There is no window or document, since there is no browser.
+simple_explain: Run node file.js to execute JavaScript on your machine.
+analogy: Node is a portable engine that lets JavaScript work in any workshop.
+syntax: node file.js | node --version
+anatomy: node = the runtime | process = global info | modules = fs, path, http
+example_1: node -e "console.log(1 + 1)"
+example_2: console.log(process.argv);
+example_3: node --watch server.js
+variation: node --env-file=.env app.js   // load a .env file in recent versions
+used_with: npm, package.json, ES modules
+related: npm and package.json, ES modules vs CommonJS, file system, HTTP server
+alternatives: Deno | Bun
+where_used: Servers | Scripts | Tooling
+mini_conversation: A: Does my script run in the browser or Node? | B: In Node, so there is no window object.
+misconception: ✗ Node.js is a programming language → ✓ It is a runtime that runs JavaScript outside the browser
+confused_with: Node vs browser: Node has fs and process, the browser has window and document.
+avoid: Do not use browser-only globals in Node scripts.
+wrong_code: console.log(window.location);
+right_code: console.log(process.argv);
+memory_trick: Node has process, browsers have window.
+real_project: Writing a data cleaning script in Node let the team reuse JavaScript skills.
+real_interview: An interviewer may ask: Is Node single threaded?
+real_daily: It is like a portable engine for any workshop.
+mcq_question: Which global holds command line arguments in Node?
+mcq_options: A) global.cmd B) process.argv C) document.args D) window.args
+mcq_answer: B
+mcq_why: process.argv lists the arguments.
+fill_blank: The engine behind Node is called ____ → V8
+hindi_to_task: Run the file app.js with Node.
+task_answer: node app.js
+own_task: Write a script that prints its command line arguments.
+practice_question: Does Node have window or document?
+practice_answer: No, those belong to browsers.
+
+@TS-027
+type: code56
+topic: 03 Node and Tooling
+level: Beginner
+term: npm and package.json
+cue: Which tool and file manage the libraries a JavaScript project uses?
+kind: Package manager
+frequency: Very high
+importance: 5
+origin: Projects share code through libraries, so a package manager and a manifest file keep track of what is needed.
+pro_tip: Commit the lockfile so everyone installs identical versions.
+memory_story: package.json is a shopping list, and node_modules is the bag of groceries.
+visual: A file listing dependencies and a folder of installed packages.
+emotion: The ease of installing a library in one command.
+meaning: npm installs and manages packages, and package.json records the project name, scripts and dependencies with version ranges.
+code: npm init -y¶npm install express¶npm install --save-dev typescript¶npm ls --depth=0¶cat package.json
+output: A package.json is created, express is added under dependencies, typescript under devDependencies, and the dependency list is shown.
+explanation: dependencies are needed at run time, and devDependencies only for development. A lockfile pins exact versions and should be committed. Version ranges such as ^4.18.0 allow compatible updates. node_modules should not be committed. npm ci installs exactly from the lockfile, which suits CI. npm audit reports known vulnerabilities.
+simple_explain: package.json lists what you need, npm installs it, and the lockfile fixes versions.
+analogy: package.json is a shopping list, and node_modules is the bag of groceries.
+syntax: npm install <package> | npm install -D <package>
+anatomy: dependencies = runtime | devDependencies = tools | lockfile = exact versions | node_modules = installed code
+example_1: npm install lodash
+example_2: npm ci
+example_3: npm audit
+variation: npm install express@4   // choose a major version
+used_with: Node, scripts, CI
+related: Node.js, scripts, ES modules, CI
+alternatives: yarn | pnpm
+where_used: Every project | CI | Deployments
+mini_conversation: A: It works on my laptop but not in CI. | B: Commit the lockfile and use npm ci.
+misconception: ✗ node_modules should be committed to Git → ✓ It is generated from package.json and the lockfile, so keep it out of Git
+confused_with: npm install vs npm ci: install may update the lockfile, ci installs exactly from it.
+avoid: Never commit the node_modules folder to Git.
+wrong_code: npm install typescript   // for a build tool
+right_code: npm install --save-dev typescript
+memory_trick: Lockfile in Git, node_modules out.
+real_project: Switching CI to npm ci made builds identical to developer machines.
+real_interview: An interviewer may ask: What is the difference between dependencies and devDependencies?
+real_daily: It is like a shopping list and a bag of groceries.
+mcq_question: Which command installs exactly what the lockfile says?
+mcq_options: A) npm ci B) npm audit C) npm init D) npm ls
+mcq_answer: A
+mcq_why: ci is a clean install from the lockfile.
+fill_blank: Tools needed only during development are ____ → devDependencies
+hindi_to_task: Install express as a dependency.
+task_answer: npm install express
+own_task: Create a project, add one dependency and one dev dependency, and list them.
+practice_question: Should node_modules be committed to Git?
+practice_answer: No, it can be rebuilt from the lockfile.
+
+@TS-028
+type: code56
+topic: 03 Node and Tooling
+level: Beginner
+term: npm scripts
+cue: How do you name and run common project tasks such as test and build?
+kind: Tooling
+frequency: Very high
+importance: 4
+origin: Teams repeated long commands, so package.json gained a scripts section that gives each task a short name.
+pro_tip: Use the same script names across projects, such as dev, build and test.
+memory_story: Scripts are speed-dial buttons for your longest commands.
+visual: A scripts block with short names mapped to commands.
+emotion: The convenience of one short command for everything.
+meaning: The scripts field in package.json maps names to shell commands, which you run with npm run name.
+code: {¶  "scripts": {¶    "dev": "node --watch server.js",¶    "build": "tsc",¶    "test": "node --test",¶    "lint": "eslint ."¶  }¶}¶npm run dev¶npm test
+output: npm run dev starts the server in watch mode, and npm test runs the tests.
+explanation: test and start can be run without the word run. Scripts can call locally installed tools directly, since node_modules/.bin is on the path. Scripts named with pre and post prefixes run before and after another. Extra arguments go after two dashes. Keep scripts short and put complex logic in files.
+simple_explain: Add commands under scripts and run them with npm run name.
+analogy: Scripts are speed-dial buttons for your longest commands.
+syntax: "scripts": { "name": "command" } | npm run name
+anatomy: name = what you type | command = what runs | -- = pass extra arguments
+example_1: npm run build -- --watch
+example_2: "prebuild": "rm -rf dist"
+example_3: npm start
+variation: npm run --workspaces test   // run in every workspace
+used_with: CI, TypeScript, linting
+related: npm and package.json, CI, TypeScript, environment variables
+alternatives: Makefile | task runners
+where_used: Every project | CI | Onboarding
+mini_conversation: A: How do I run the tests? | B: Run npm test, which is in the scripts section.
+misconception: ✗ Scripts can only run Node files → ✓ They can run any shell command, including installed tools
+confused_with: npm start vs npm run dev: start is a special name, dev needs run.
+avoid: Do not hide complex logic inside one long script line.
+wrong_code: npm dev
+right_code: npm run dev
+memory_trick: Only test and start skip the word run.
+real_project: Adding standard scripts let new developers run the project with three commands.
+real_interview: An interviewer may ask: How do you add arguments to an npm script?
+real_daily: It is like speed-dial buttons for long commands.
+mcq_question: Which script name can run without the word run?
+mcq_options: A) dev B) build C) test D) deploy
+mcq_answer: C
+mcq_why: test and start have shortcuts.
+fill_blank: Extra arguments for a script go after ____ → two dashes
+hindi_to_task: Run the build script.
+task_answer: npm run build
+own_task: Add a lint script and a test script to a package.json.
+practice_question: What does a prebuild script do?
+practice_answer: It runs automatically before the build script.
+
+@TS-029
+type: code56
+topic: 03 Node and Tooling
+level: Intermediate
+term: Environment variables in Node
+cue: How does a Node program read settings and secrets from its environment?
+kind: Configuration
+frequency: Very high
+importance: 5
+origin: Settings differ between machines and secrets must stay out of code, so programs read them from the environment.
+pro_tip: Validate required variables at startup and fail with a clear message.
+memory_story: Environment variables are notes pinned to the room the program runs in.
+visual: A process reading values from the surrounding environment.
+emotion: The calm of keeping secrets out of the code.
+meaning: process.env holds environment variables as strings, which can be set in the shell, in a .env file or by the platform.
+code: // PORT=4000 node app.js¶const port = Number(process.env.PORT ?? 3000);¶if (!process.env.API_KEY) {¶  throw new Error("API_KEY is required. Set it in your environment.");¶}¶console.log(`listening on ${port}`);
+output: Throws the missing key error, or prints listening on 4000 when both are set
+explanation: All values are strings, so convert numbers explicitly. Recent Node versions can load a .env file with a flag, and libraries such as dotenv did this before. The .env file must stay out of Git. Browsers do not have process.env, and build tools expose only variables with a special prefix. Never log secrets.
+simple_explain: Read process.env, convert types, and fail early when something is missing.
+analogy: Environment variables are notes pinned to the room the program runs in.
+syntax: process.env.NAME
+anatomy: process.env = all variables | values are strings | .env = local file
+example_1: const isProd = process.env.NODE_ENV === "production";
+example_2: node --env-file=.env app.js
+example_3: const url = process.env.DATABASE_URL;
+variation: PORT=5000 npm start   // set for one command
+used_with: dotenv, Docker, CI secrets
+related: Node.js, npm scripts, secrets in CI, Docker
+alternatives: Config files | secret managers
+where_used: Servers | Scripts | Deployments
+mini_conversation: A: Why does my port comparison fail? | B: The value is a string, so convert it with Number.
+misconception: ✗ process.env values keep their types → ✓ Every value is a string
+confused_with: process.env vs config file: env is set outside the code, a file lives with it.
+avoid: Do not commit .env files.
+wrong_code: const port = process.env.PORT + 1;
+right_code: const port = Number(process.env.PORT) + 1;
+memory_trick: Env values are always strings first.
+real_project: Failing fast on a missing key saved hours when a deploy lacked its secret.
+real_interview: An interviewer may ask: How do you manage secrets in a Node app?
+real_daily: It is like a note pinned to the room.
+mcq_question: What type are process.env values?
+mcq_options: A) Numbers B) Booleans C) Objects D) Strings
+mcq_answer: D
+mcq_why: The environment stores text only.
+fill_blank: Values from process.env must be converted from ____ → strings
+hindi_to_task: Read PORT as a number with a default of 3000.
+task_answer: const port = Number(process.env.PORT ?? 3000);
+own_task: Write startup code that checks three required variables.
+practice_question: Should .env files be committed?
+practice_answer: No, they often hold secrets.
+
+@TS-030
+type: code56
+topic: 03 Node and Tooling
+level: Intermediate
+term: File system module
+cue: Which module reads and writes files in Node?
+kind: Node module
+frequency: High
+importance: 4
+origin: Scripts and servers need to work with files, so Node ships a built-in module for it.
+pro_tip: Prefer the promise-based version with await in new code.
+memory_story: The fs module is the librarian who fetches and files documents on request.
+visual: A script reading a file and writing a new one.
+emotion: The ease of processing files with a few lines.
+meaning: The fs module provides functions to read, write, list and delete files and folders, and the promise-based version works with async and await.
+code: import { readFile, writeFile, readdir } from "node:fs/promises";¶const text = await readFile("data.json", "utf8");¶const data = JSON.parse(text);¶await writeFile("out.json", JSON.stringify(data, null, 2));¶console.log(await readdir("."));
+output: The file is read, parsed and written back, and the folder contents are listed.
+explanation: Reading as text needs an encoding such as utf8, otherwise you get a buffer. Synchronous versions block the event loop, so avoid them in servers. Large files should be streamed instead of loaded whole. Relative paths depend on where the process starts, so build absolute paths with the path module. Handle the missing file error.
+simple_explain: Use fs/promises with await, give an encoding, and build paths with the path module.
+analogy: The fs module is the librarian who fetches and files documents on request.
+syntax: await readFile(path, "utf8") | await writeFile(path, data)
+anatomy: readFile = read | writeFile = write | readdir = list | encoding = utf8 for text
+example_1: await mkdir("out", { recursive: true });
+example_2: import path from "node:path"; path.join(import.meta.dirname, "x.txt");   // Node 20.11+; older: dirname(fileURLToPath(import.meta.url))
+example_3: createReadStream("big.csv").pipe(process.stdout);
+variation: readFileSync("a.txt", "utf8")   // blocking, fine in small scripts
+used_with: JSON, path, streams
+related: Node.js, JSON, async and await, ES modules
+alternatives: Streams for large files
+where_used: Scripts | Data processing | Config loading
+mini_conversation: A: Reading prints a buffer, not text. | B: Pass utf8 as the encoding.
+misconception: ✗ Synchronous file functions are fine anywhere → ✓ They block the event loop and hurt servers
+confused_with: fs vs fs/promises: one uses callbacks, the other returns promises.
+avoid: Do not read huge files fully into memory.
+wrong_code: const text = await readFile("a.txt");
+right_code: const text = await readFile("a.txt", "utf8");
+memory_trick: Text needs an encoding, or you get bytes.
+real_project: Streaming a large export file avoided running out of memory in a nightly job.
+real_interview: An interviewer may ask: Why avoid readFileSync in a server?
+real_daily: It is like a librarian fetching documents.
+mcq_question: What do you get from readFile without an encoding?
+mcq_options: A) A number B) A string C) A buffer D) JSON
+mcq_answer: C
+mcq_why: Without an encoding the raw bytes are returned.
+fill_blank: Large files should be handled with ____ → streams
+hindi_to_task: Read the file notes.txt as text.
+task_answer: const text = await readFile("notes.txt", "utf8");
+own_task: Write a script that reads a JSON file and writes a formatted copy.
+practice_question: Why avoid synchronous reads in a server?
+practice_answer: They block the event loop.
+
+@TS-031
+type: code56
+topic: 03 Node and Tooling
+level: Intermediate
+term: ES modules vs CommonJS
+cue: Which two module systems exist in Node, and how do you tell them apart?
+kind: Module system
+frequency: High
+importance: 4
+origin: Node had its own require system before the language standard existed, so both styles now live side by side.
+pro_tip: Choose ES modules for new projects by setting type module in package.json.
+memory_story: CommonJS is the old plug type, and ES modules are the new standard socket, with adapters in between.
+visual: Two plug shapes, require and import, joined by an adapter.
+emotion: The relief of finally understanding the import error.
+meaning: CommonJS uses require and module.exports, while ES modules use import and export, and Node decides which applies from the file extension and package.json.
+code: // CommonJS¶const fs = require("fs");¶module.exports = { run };¶// ES module¶import fs from "node:fs";¶export function run() {}¶// package.json: { "type": "module" }
+output: Both styles work, but each file must use the one it is configured for.
+explanation: A package.json with type module makes .js files ES modules, while .cjs is always CommonJS and .mjs is always ES module. ES modules need file extensions in relative imports and do not have __dirname by default. Older Node versions let CommonJS load ES modules only with dynamic import(); recent versions (22.12+, 20.19+) also allow require() of an ES module that has no top-level await. Mixing them causes errors such as cannot use import statement outside a module.
+simple_explain: Pick one style per project, set type in package.json, and use extensions to override.
+analogy: CommonJS is the old plug type, and ES modules are the new standard socket.
+syntax: require("x") | import x from "x"
+anatomy: require = CommonJS | import = ES module | type = package.json setting | .cjs/.mjs = forced types
+example_1: "type": "module"
+example_2: const mod = await import("./file.js");
+example_3: import { fileURLToPath } from "node:url";
+variation: import.meta.url   // the ES module replacement for __filename
+used_with: package.json, TypeScript, bundlers
+related: ES modules, npm and package.json, TypeScript, Node.js
+alternatives: Bundlers that convert styles
+where_used: Node projects | Libraries | Migration work
+mini_conversation: A: It says cannot use import statement outside a module. | B: Set type module in package.json or rename to .mjs.
+misconception: ✗ The two module systems can be mixed freely in one file → ✓ A file is one or the other, and mixing needs dynamic import
+confused_with: require vs import: require is sync and old, import is static and standard.
+avoid: Do not use require in an ES module file.
+wrong_code: const x = require("./x.js");   // inside an ES module
+right_code: import x from "./x.js";
+memory_trick: Type module means import and export.
+real_project: Migrating a service to ES modules removed a long list of build workarounds.
+real_interview: An interviewer may ask: What does type module do in package.json?
+real_daily: It is like an old plug and a new socket.
+mcq_question: Which file extension is always CommonJS?
+mcq_options: A) .cjs B) .json C) .ts D) .mjs
+mcq_answer: A
+mcq_why: The cjs extension forces CommonJS.
+fill_blank: The package.json field that sets the module style is ____ → type
+hindi_to_task: Make all .js files in a project ES modules.
+task_answer: "type": "module"
+own_task: Convert a small CommonJS file to an ES module.
+practice_question: Do ES modules have __dirname by default?
+practice_answer: No, use import.meta.url instead.
+
+@TS-032
+type: code56
+topic: 03 Node and Tooling
+level: Intermediate
+term: A simple HTTP server
+cue: How do you create a small web server with Node?
+kind: Node module
+frequency: High
+importance: 4
+origin: Understanding servers is easier with a tiny example, so Node includes an http module to build one from scratch.
+pro_tip: Use a framework such as Express or Fastify for real projects, and learn the basic server first.
+memory_story: A server is a shop counter that answers each customer who walks in.
+visual: A request arriving and a response going out of a small server.
+emotion: The thrill of seeing your own server answer in a browser.
+meaning: The http module creates a server that runs a function for every request, and the function writes a status, headers and a body to the response.
+code: import { createServer } from "node:http";¶const server = createServer((req, res) => {¶  if (req.url === "/health") {¶    res.writeHead(200, { "Content-Type": "application/json" });¶    return res.end(JSON.stringify({ ok: true }));¶  }¶  res.writeHead(404);¶  res.end("not found");¶});¶server.listen(3000, () => console.log("http://localhost:3000"));
+output: Visiting /health returns {"ok":true}, and any other path returns not found.
+explanation: The handler receives a request with the method, url and headers, and a response to which you write. You must always end the response, or the client hangs. Bodies arrive as streams and need to be collected. Frameworks add routing, parsing and middleware on top of this base. Listen on the port from the environment.
+simple_explain: Create a server with a handler, answer each request, and end the response.
+analogy: A server is a shop counter that answers each customer who walks in.
+syntax: createServer((req, res) => { ... }).listen(port)
+anatomy: req = request | res = response | writeHead = status and headers | end = finish
+example_1: res.writeHead(200, { "Content-Type": "text/plain" });
+example_2: if (req.method === "POST") { }
+example_3: server.listen(Number(process.env.PORT ?? 3000));
+variation: import express from "express"; app.get("/health", (req, res) => res.json({ ok: true }));   // the framework version
+used_with: JSON, environment variables, Express
+related: Node.js, environment variables, JSON, HTTP
+alternatives: Express | Fastify | Hono
+where_used: APIs | Webhooks | Health checks
+mini_conversation: A: The browser keeps loading forever. | B: The handler never calls res.end, so the response never finishes.
+misconception: ✗ A response finishes automatically when the handler returns → ✓ You must call end, or the client keeps waiting
+confused_with: req vs res: req is what the client sent, res is what you send back.
+avoid: Do not forget to end every response.
+wrong_code: createServer((req, res) => { res.write("hi"); });
+right_code: createServer((req, res) => { res.end("hi"); });
+memory_trick: Always end the response you start.
+real_project: Writing a tiny health check server helped test a container before the real app.
+real_interview: An interviewer may ask: What happens if you never call res.end?
+real_daily: It is like a shop counter answering customers.
+mcq_question: What must a handler do to finish a response?
+mcq_options: A) Call req.end B) Call res.end C) Return a string D) Close the browser
+mcq_answer: B
+mcq_why: The response stays open until end is called.
+fill_blank: The server starts accepting requests after you call ____ → listen
+hindi_to_task: Return the text hello for every request.
+task_answer: createServer((req, res) => res.end("hello")).listen(3000);
+own_task: Add a route that returns the current time as JSON.
+practice_question: Why use a framework after learning this?
+practice_answer: It adds routing, parsing and middleware.

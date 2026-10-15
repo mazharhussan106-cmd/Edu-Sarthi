@@ -1,0 +1,255 @@
+
+@GIT-031
+topic: 04 Undo & Fix Mistakes
+level: Intermediate
+term: git restore
+cue: How do you put an accidentally changed file back to how it was in the last commit, or unstage a staged file?
+kind: Git command
+frequency: High
+importance: 4
+origin: git checkout and git reset used to do many different jobs in one command, so newer Git added a clear, separate command, git restore, for bringing files back.
+pro_tip: Restore removes your change for good, so look at git diff first.
+memory_story: Restore is an undo button that puts the file back in its last clean condition.
+visual: A smudge disappears from a damaged photo and it becomes clean again.
+emotion: The relief of undoing a mistake with a single command.
+meaning: git restore puts a file back to the last commit or staged state.
+code: git restore index.html¶git restore --staged index.html
+output: (no output; the file is restored or unstaged)
+explanation: Without options, restore returns the working file to the staged or last committed version and throws away uncommitted changes. --staged takes the file out of the staging area but leaves its changes in the file.
+simple_explain: If a file got spoiled, git restore file makes it like the last commit again. Be careful, uncommitted changes do not come back.
+analogy: It is like erasing a pencil smudge and bringing the page back to clean.
+syntax: git restore [--staged] <path>
+anatomy: git restore = command | --staged = remove from staging | <path> = the file
+example_1: git restore style.css
+example_2: git restore --staged style.css
+example_3: git restore --source=HEAD~2 app.js
+variation: git restore .   # all changed files¶git restore --source=<commit> <file>   # from an older version
+used_with: --staged, --source, git status, git diff
+related: git reset, git checkout, git stash
+alternatives: git checkout -- <file> (the old way)
+word_family: git restore, git reset, git checkout, git revert, git stash
+where_used: A file spoiled by mistake | Unstaging a file | Looking at an older version
+mini_conversation: A: I messed up this file by accident. | B: Run git restore on it and it will match the last commit.
+misconception: ✗ git restore --staged also wipes the change out of the file → ✓ --staged only removes it from staging, and the change stays in the working file
+confused_with: git restore vs git revert: restore brings a file back, revert makes a new commit that undoes an old one.
+avoid: Do not run git restore . without looking at the diff.
+wrong_code: git restore --unstage index.html
+right_code: git restore --staged index.html
+memory_trick: Restore means Return to the previous clean version.
+real_project: Putting a config file that was changed by mistake back to the last commit.
+real_interview: An interviewer may ask: What is the difference between git restore and git reset?
+real_daily: It is like rubbing out a pencil smudge with an eraser.
+mcq_question: Which command removes a file from staging but keeps its changes in the file?
+mcq_options: A) git restore --staged file B) git revert file C) git restore file D) git clean file
+mcq_answer: A
+mcq_why: The --staged flag only unstages it, and without it the change is erased.
+fill_blank: git restore ____ style.css → --staged
+hindi_to_task: Throw away the changes in app.js and make it like the last commit.
+task_answer: git restore app.js
+own_task: Change a file, undo it with git restore, and see what git status says.
+practice_question: What will git restore . do?
+practice_answer: It discards the uncommitted changes of all tracked files.
+
+@GIT-032
+topic: 04 Undo & Fix Mistakes
+level: Intermediate
+term: git revert
+cue: An earlier commit turned out to be wrong. What do you run to undo its effect without rewriting history?
+kind: Git command
+frequency: High
+importance: 5
+origin: Rewriting history on a shared branch hurts other people, so Git added a safer way: a fresh commit doing the opposite of the old one while history stays intact.
+pro_tip: Use revert instead of reset for a commit that has already been pushed.
+memory_story: Revert is a new entry that says undo what was done, and the old entry is never erased.
+visual: In a ledger, a mistaken entry is cancelled by a reverse entry written below it.
+emotion: The comfort of fixing a mistake while history stays safe.
+meaning: git revert creates a new commit that undoes the effect of an earlier commit.
+code: git revert 8b7d1e2¶git log --oneline -2
+output: c4a8f19 Revert "Fix refund rounding"¶8b7d1e2 Fix refund rounding
+explanation: Revert does not touch the old history. It adds a new commit doing the opposite of the old one, so it is safe for commits that were pushed. Reverting a merge commit needs the -m flag.
+simple_explain: Revert does not change history, it adds one more commit that cancels the bad change. Nobody else is disturbed.
+analogy: It is like writing a reverse entry under a wrong ledger entry.
+syntax: git revert <commit>
+anatomy: git revert = command | <commit> = the commit to undo | -m 1 = parent for a merge commit
+example_1: git revert 8b7d1e2
+example_2: git revert HEAD
+example_3: git revert -m 1 d9e0a31
+variation: git revert --no-commit HEAD~2..HEAD   # many commits into one¶git revert --abort
+used_with: git log, -m, --no-commit
+related: git reset, git restore, git log
+alternatives: git reset (for local work only)
+word_family: git revert, git reset, git restore, git commit, git log
+where_used: A bad deploy in production | Fixing a shared branch | Release rollback
+mini_conversation: A: A wrong commit went into main. | B: Undo it with git revert and the history stays safe.
+misconception: ✗ git revert deletes the commit from history → ✓ Revert does not delete history, it adds a new commit that has the opposite effect
+confused_with: git revert vs git reset: revert adds a reversing commit, reset pulls history backwards.
+avoid: Do not use reset to rewrite a shared branch, use revert.
+wrong_code: git revert 8b7d1e2 --delete
+right_code: git revert 8b7d1e2
+memory_trick: Revert means Reverse commit Recorded.
+real_project: Reverting the commit and pushing straight away after a bad production deploy.
+real_interview: An interviewer may ask: What is the difference between git revert and git reset?
+real_daily: It is like writing a reverse entry under a wrong ledger entry.
+mcq_question: What is the safest way to undo a commit that has already been pushed?
+mcq_options: A) git reset --hard B) git rm .git C) git revert D) git clean
+mcq_answer: C
+mcq_why: Revert adds a new commit and does not change history.
+fill_blank: git ____ HEAD → revert
+hindi_to_task: Undo the effect of the last commit.
+task_answer: git revert HEAD
+own_task: Make a test commit, undo it with git revert, and look at git log.
+practice_question: Which flag is needed to revert a merge commit?
+practice_answer: -m 1, which chooses the parent.
+
+@GIT-033
+topic: 04 Undo & Fix Mistakes
+level: Intermediate
+term: git reset
+cue: Which command pulls HEAD back to undo commits or staging, and what are its three modes?
+kind: Git command
+frequency: Medium
+importance: 4
+origin: Git keeps HEAD, the staging area and the working folder in three places, and reset moves them back, which is why it has --soft, --mixed and --hard modes.
+pro_tip: Before --hard, check git status and consider git stash, since uncommitted work does not come back.
+memory_story: Reset is a rewind button: soft rewinds only the commit, mixed also staging, hard everything.
+visual: A video is dragged backwards at three different speeds, each leaving something behind.
+emotion: The energy of leaving a mistake behind and starting afresh.
+meaning: git reset moves HEAD and the branch to an older commit and, depending on the mode, also changes staging and files.
+code: git reset --soft HEAD~1   # keep changes staged¶git reset --mixed HEAD~1   # keep changes unstaged¶git reset --hard HEAD~1   # discard changes
+output: HEAD is now at 3f2a9c1 Add homepage heading
+explanation: --soft: the commit goes but the changes stay staged. --mixed (the default): the changes leave staging but stay in the files. --hard: the changes vanish from the files too. On pushed commits, reset rewrites history, so use it for local work only. These are three alternatives, so run only one of them.
+simple_explain: Reset takes your branch backwards. With soft your work stays staged, with mixed it stays in files, with hard it is wiped. Be careful with hard.
+analogy: It is like rewinding a video, where soft remembers the scene and hard forgets it all.
+syntax: git reset [--soft|--mixed|--hard] <commit>
+anatomy: git reset = command | --soft/--mixed/--hard = mode | <commit> = where to go back to
+example_1: git reset --soft HEAD~1
+example_2: git reset HEAD~2
+example_3: git reset --hard origin/main
+variation: git reset HEAD file.txt   # unstage a file¶git reset --hard ORIG_HEAD   # undo a reset
+used_with: HEAD~1, --soft, --hard, git reflog
+related: git revert, git restore, git reflog
+alternatives: git revert (for shared branches)
+word_family: git reset, git revert, git restore, git reflog, git stash
+where_used: Changing the last local commit | Clearing the staging area | Making a branch match the remote
+mini_conversation: A: I made a wrong commit but have not pushed yet. | B: Run git reset --soft HEAD~1 and your work stays staged.
+misconception: ✗ A commit erased with git reset --hard is lost forever → ✓ The commit can still be found in git reflog for a while and brought back, but uncommitted changes cannot
+confused_with: git reset vs git revert: reset pulls history backwards, revert adds a reversing commit.
+avoid: Do not run git reset --hard on a pushed, shared branch.
+wrong_code: git reset --hard HEAD~1 --keep-staged
+right_code: git reset --soft HEAD~1
+memory_trick: Soft keeps the work, Hard hurts the work.
+real_project: Soft-resetting a wrong last commit on a local feature branch and committing it again properly.
+real_interview: An interviewer may ask: What is the difference between soft, mixed and hard reset?
+real_daily: It is like rewinding a video to watch a scene again.
+mcq_question: Which reset mode removes the commit but leaves the changes staged?
+mcq_options: A) --soft B) --hard C) --mixed D) --keep
+mcq_answer: A
+mcq_why: --soft moves only HEAD back, and staging and files remain.
+fill_blank: git reset ____ HEAD~1 → --soft
+hindi_to_task: Remove the last commit but keep the changes staged.
+task_answer: git reset --soft HEAD~1
+own_task: Try all three reset modes on a test branch and run git status each time.
+practice_question: What happens to uncommitted changes after git reset --hard HEAD~1?
+practice_answer: They are lost for good.
+
+@GIT-034
+topic: 04 Undo & Fix Mistakes
+level: Intermediate
+term: git stash
+cue: How do you set half-finished work aside without committing so you can switch branches?
+kind: Git command
+frequency: High
+importance: 4
+origin: Stash means to hide away; developers often had to jump to another branch mid-task, so Git gave a way to tuck half-done work into a separate stack.
+pro_tip: Use git stash push -m "name" so you can recognise it later.
+memory_story: A stash is a drawer where you put an unfinished letter and take it out later.
+visual: A heap of small slips on a pile, each slip a hidden piece of work.
+emotion: The reassurance of not losing anything when switching tasks midway.
+meaning: git stash saves uncommitted changes onto a stack and cleans your working folder.
+code: git stash push -m "wip login form"¶git switch main¶git stash pop
+output: Saved working directory and index state On feature/login: wip login form¶On branch main¶Dropped refs/stash@{0}
+explanation: Stash stores tracked changes (and with -u, untracked files too) on a stack. You list them with git stash list, bring one back and remove it with git stash pop, or bring it back and keep it with git stash apply.
+simple_explain: If another task suddenly arrives, stash your work, switch branches, do the other job, then come back and run git stash pop.
+analogy: It is like putting an unfinished letter in a drawer and taking it out later.
+syntax: git stash [push|pop|apply|list]
+anatomy: git stash push = hide away | pop = bring back and remove | apply = bring back and keep | list = show the list
+example_1: git stash
+example_2: git stash push -m "wip search"
+example_3: git stash apply stash@{1}
+variation: git stash -u   # include untracked files¶git stash list   # the list¶git stash drop stash@{0}   # remove one
+used_with: pop, apply, list, -u
+related: git switch, git restore, git commit
+alternatives: Making a WIP commit and amending it later
+word_family: git stash, git stash pop, git stash apply, git switch, git restore
+where_used: Before changing branches | Before a pull | For a sudden bug fix
+mini_conversation: A: I am halfway through and need to fix a bug right now. | B: Stash your work, switch branches, and bring it back later with git stash pop.
+misconception: ✗ git stash also hides new untracked files automatically → ✓ Without the -u flag, stash saves only changes to tracked files
+confused_with: stash pop vs stash apply: pop restores the changes and removes the stash, apply restores them but keeps the stash.
+avoid: Do not pile up many unnamed stashes.
+wrong_code: git stash save pop
+right_code: git stash pop
+memory_trick: Stash tucks it away, Pop brings it back.
+real_project: Stashing half-done work to fix something on another branch after a review comment.
+real_interview: An interviewer may ask: What is the difference between git stash pop and git stash apply?
+real_daily: It is like putting an unfinished letter in a drawer.
+mcq_question: Which command brings a stash back and removes it from the stack?
+mcq_options: A) git stash list B) git stash pop C) git stash push D) git stash apply
+mcq_answer: B
+mcq_why: Pop restores the changes and deletes that stash entry.
+fill_blank: git stash ____ -m "wip" → push
+hindi_to_task: Stash your changes under the name wip navbar.
+task_answer: git stash push -m "wip navbar"
+own_task: Stash a change, look at git stash list, and bring it back with pop.
+practice_question: What is the flag to stash untracked files too?
+practice_answer: -u (or --include-untracked).
+
+@GIT-035
+topic: 04 Undo & Fix Mistakes
+level: Intermediate
+term: git commit --amend
+cue: What lets you change the message of the commit you just made, or add a file you forgot to it?
+kind: Git command
+frequency: Medium
+importance: 4
+origin: Right after committing you often spot a typo or a forgotten file, and instead of making a new commit, amend replaces the last commit.
+pro_tip: Amend only a commit that has not been pushed yet.
+memory_story: Amend is a correction pen that fixes the last line you just wrote.
+visual: A written line is crossed out and a corrected word is written over it.
+emotion: The relief of quietly fixing a small mistake.
+meaning: git commit --amend replaces the last commit with a new message or new changes.
+code: git add forgotten.js¶git commit --amend --no-edit
+output: [main 9d2c3b1] Add login form¶ Date: Mon Oct 5 10:12:00 2026¶ 2 files changed, 20 insertions(+)
+explanation: Amend replaces the last commit with a new one, so the hash changes. If you amend a pushed commit, history changes and you would need a force push, which is wrong for a shared branch.
+simple_explain: If you spot a mistake right after committing, amend the same commit. Do it only when the commit has not been pushed.
+analogy: It is like rubbing out the last line and writing it again.
+syntax: git commit --amend [-m "<message>"] [--no-edit]
+anatomy: --amend = change the last commit | -m = new message | --no-edit = keep the message
+example_1: git commit --amend -m "Add login form validation"
+example_2: git commit --amend --no-edit
+example_3: git commit --amend --author="Asha <asha@example.com>"
+variation: git commit --amend --no-edit   # only add the newly staged file¶git commit --amend --reset-author
+used_with: git add, --no-edit, -m
+related: git reset, git rebase -i, git push --force-with-lease
+alternatives: Making a new commit
+word_family: git commit, git commit --amend, git reset, git rebase, git push
+where_used: Right after a commit | A typo in the message | Adding a forgotten file
+mini_conversation: A: I forgot a file in my commit. | B: Add the file and run git commit --amend --no-edit.
+misconception: ✗ It is safe to amend a pushed commit → ✓ Amending after a push rewrites history and needs a force push, which can trouble other people
+confused_with: amend vs a new commit: amend replaces the old one, a new commit adds another entry to history.
+avoid: Do not amend and then force push on a shared branch.
+wrong_code: git commit --amend -a --push
+right_code: git commit --amend --no-edit
+memory_trick: Amend means fix the last one and Move on.
+real_project: Fixing a typo in the message right after committing with amend.
+real_interview: An interviewer may ask: Why does the commit hash change after an amend?
+real_daily: It is like rubbing out the last line and writing it again.
+mcq_question: Which command adds a forgotten file to the last commit and keeps the message?
+mcq_options: A) git push --amend B) git reset --hard C) git revert HEAD D) git commit --amend --no-edit
+mcq_answer: D
+mcq_why: Add the file and then amend --no-edit puts it in the last commit.
+fill_blank: git commit ____ --no-edit → --amend
+hindi_to_task: Change the last commit's message to Fix typo.
+task_answer: git commit --amend -m "Fix typo"
+own_task: Make a commit with a typo in the message and fix it with amend.
+practice_question: Does the commit hash change after an amend, or stay the same?
+practice_answer: It changes, because a new commit is created.

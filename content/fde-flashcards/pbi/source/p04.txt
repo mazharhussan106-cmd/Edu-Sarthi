@@ -1,0 +1,756 @@
+
+@PBI-028
+type: code56
+topic: 04 DAX
+level: Beginner
+term: SUM and SUMX
+cue: Which DAX functions add up a column, and which one calculates a value for every row before adding?
+kind: DAX function
+frequency: Very high
+importance: 5
+origin: Reports constantly need totals, and DAX offers a simple column total plus an iterator version for totals that depend on a row calculation.
+pro_tip: Use SUM when you only add one column, and SUMX when the amount has to be worked out per row first.
+memory_story: SUM adds a column like a calculator tape, while SUMX walks down the rows and does a small sum on each.
+visual: A column of numbers with a total beneath it, next to a table where each row is multiplied before adding.
+emotion: The comfort of seeing a correct total card appear on your page.
+meaning: SUM adds all values in one column, and SUMX evaluates an expression for each row of a table and adds the results.
+code: Total Sales = SUM(Sales[Amount])¶Sales Value = SUMX(Sales, Sales[Quantity] * Sales[Price])
+output: Total Sales returns the sum of the Amount column, and Sales Value returns the sum of Quantity times Price for every row.
+explanation: SUM takes a single column and adds it in the current filter context. SUMX is an iterator: it goes row by row through the table you give it, calculates the expression for each row, and then adds the results. The X at the end marks iterator functions such as AVERAGEX and MAXX.
+simple_explain: Use SUM to total one column. Use SUMX when you must first multiply or combine columns on each row, like Quantity times Price, and then add up the results.
+analogy: SUM is a calculator tape of one column, and SUMX is checking each bill line before adding.
+syntax: SUM(Table[Column])  |  SUMX(Table, expression)
+anatomy: SUM = add one column | SUMX = add an expression evaluated row by row | Table = rows to walk through
+example_1: Total Sales = SUM(Sales[Amount])
+example_2: Revenue = SUMX(Sales, Sales[Quantity] * Sales[Price])
+example_3: Discounted = SUMX(Sales, Sales[Amount] * (1 - Sales[Discount]))
+variation: AVERAGEX(Sales, Sales[Quantity] * Sales[Price])   // average of a row expression¶MAXX(Sales, Sales[Amount])   // maximum of a row expression
+used_with: CALCULATE, FILTER, row context, measures
+related: AVERAGEX, CALCULATE, row context
+alternatives: Add a calculated column and use SUM on it
+where_used: Totals on cards | Revenue calculations | Weighted values
+mini_conversation: A: I need total revenue but I only have quantity and price columns. | B: Use SUMX over the table with Quantity times Price for each row.
+misconception: ✗ SUM(Sales[Quantity] * Sales[Price]) works as a revenue total → ✓ SUM takes only a single column, so use SUMX to multiply per row and then add
+confused_with: SUM vs SUMX: SUM adds a column directly, SUMX calculates an expression per row and then adds.
+avoid: Do not put an expression inside SUM, it accepts only a column.
+wrong_code: Revenue = SUM(Sales[Quantity] * Sales[Price])
+right_code: Revenue = SUMX(Sales, Sales[Quantity] * Sales[Price])
+memory_trick: The X means go row by row.
+real_project: Calculating revenue as quantity times price per row using SUMX instead of storing a new column.
+real_interview: An interviewer may ask: What is the difference between SUM and SUMX?
+real_daily: It is like adding a bill's total versus checking each line item first.
+mcq_question: Which function calculates Quantity times Price for each row and then adds the results?
+mcq_options: A) COUNT B) MAX C) SUM D) SUMX
+mcq_answer: D
+mcq_why: SUMX is an iterator that evaluates the expression on every row before adding.
+fill_blank: Revenue = ____(Sales, Sales[Quantity] * Sales[Price]) → SUMX
+hindi_to_task: Write a measure that adds the Amount column of the Sales table.
+task_answer: Total Sales = SUM(Sales[Amount])
+own_task: Write a measure of total cost from Quantity and UnitCost columns.
+practice_question: What does the X at the end of SUMX stand for?
+practice_answer: That it is an iterator that evaluates an expression for each row.
+
+@PBI-029
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: CALCULATE
+cue: Which DAX function changes the filters used to evaluate an expression, and is often called the most important function?
+kind: DAX function
+frequency: Very high
+importance: 5
+origin: A total that only reflects the report's current filters is not enough, so DAX needed a function that can add, replace or remove filters for one calculation.
+pro_tip: Start by learning CALCULATE with one simple filter, then add more as you get comfortable.
+memory_story: CALCULATE is a remote control that changes the channel (filters) before the value is shown.
+visual: A total card whose value changes after a filter condition is attached to it.
+emotion: The feeling of unlocking real power over your numbers.
+meaning: CALCULATE evaluates an expression after modifying the filter context with the filters you give it.
+code: Sales 2025 = CALCULATE([Total Sales], Dates[Year] = 2025)¶Red Sales = CALCULATE([Total Sales], Product[Color] = "Red")
+output: Sales 2025 returns total sales for 2025 only, and Red Sales returns total sales of red products only. Other report filters, such as region, still apply.
+explanation: CALCULATE takes an expression first and then one or more filters. A simple condition on a column replaces any existing filter on that column. It can also take functions such as ALL to remove filters, or FILTER to apply complex conditions. It also turns a row context into a filter context.
+simple_explain: CALCULATE says: work out this value, but first change the filters like this. It is how you make a measure for a particular year, product or region.
+analogy: It is like a remote control that changes the channel before the picture is shown.
+syntax: CALCULATE(expression, filter1, filter2, ...)
+anatomy: CALCULATE = function | expression = what to calculate | filters = changes to the filter context
+example_1: Sales 2025 = CALCULATE([Total Sales], Dates[Year] = 2025)
+example_2: Online Sales = CALCULATE([Total Sales], Sales[Channel] = "Online")
+example_3: Large Orders = CALCULATE([Total Sales], Sales[Amount] > 1000)
+variation: CALCULATE([Total Sales], ALL(Product))   // remove product filters¶CALCULATE([Total Sales], Product[Color] = "Red", Dates[Year] = 2025)   // two filters
+used_with: FILTER, ALL, KEEPFILTERS, USERELATIONSHIP
+related: filter context, ALL, FILTER, time intelligence
+alternatives: Use a visual-level filter, but only for a single visual
+where_used: Year or region specific measures | Percent of total | Time comparisons
+mini_conversation: A: I want a measure that always shows 2025 sales. | B: Wrap Total Sales in CALCULATE with a filter on Year equal to 2025.
+misconception: ✗ CALCULATE only adds more filters on top of the report's filters → ✓ A filter on a column in CALCULATE replaces the existing filter on that column, and ALL can remove filters completely
+confused_with: CALCULATE vs FILTER: CALCULATE changes filter context and returns a value, FILTER returns a table of rows.
+avoid: Do not place the filter before the expression, the expression always comes first.
+wrong_code: Sales 2025 = CALCULATE(Dates[Year] = 2025, [Total Sales])
+right_code: Sales 2025 = CALCULATE([Total Sales], Dates[Year] = 2025)
+memory_trick: CALCULATE changes the context first.
+real_project: Building measures for current year, last year and a specific region using CALCULATE.
+real_interview: An interviewer may ask: What does CALCULATE do and why is it important?
+real_daily: It is like changing the TV channel before watching.
+mcq_question: In CALCULATE, which argument comes first?
+mcq_options: A) The expression to evaluate B) The filter C) The relationship D) The table
+mcq_answer: A
+mcq_why: The expression comes first and the filters follow.
+fill_blank: Red Sales = ____([Total Sales], Product[Color] = "Red") → CALCULATE
+hindi_to_task: Write a measure of total sales for the Online channel.
+task_answer: Online Sales = CALCULATE([Total Sales], Sales[Channel] = "Online")
+own_task: Create two CALCULATE measures for two different regions of a small sales table.
+practice_question: What happens when CALCULATE filters a column that the report already filters?
+practice_answer: The new filter replaces the existing filter on that column.
+
+@PBI-030
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: FILTER
+cue: Which DAX function returns only the rows of a table that meet a condition, and is often used inside CALCULATE?
+kind: DAX function
+frequency: High
+importance: 4
+origin: Simple column conditions are not enough for complex rules, so DAX has a function that tests every row against any condition and returns the matching rows as a table.
+pro_tip: Filter a single column inside CALCULATE when you can, because it is faster than iterating a whole table.
+memory_story: FILTER is a security guard checking each row at the door and letting only the matching ones through.
+visual: A table where rows that fail a test are greyed out and the rest stay.
+emotion: The power of expressing any rule, however odd, as a condition.
+meaning: FILTER returns a table that holds only the rows for which a condition is true.
+code: Big Orders = CALCULATE([Total Sales], FILTER(Sales, Sales[Amount] > 1000))
+output: Total sales counting only the sales rows whose Amount is greater than 1000.
+explanation: FILTER is an iterator: it goes through each row of the table you give it and keeps rows where the condition is true. It returns a table, not a value, so it normally sits inside CALCULATE or another function that takes a table. It is more flexible than a simple condition but can be slower on big tables.
+simple_explain: FILTER keeps the rows that pass your test. Put it inside CALCULATE to calculate a value only over those rows.
+analogy: It is like a guard at the door who lets in only the people who meet a rule.
+syntax: FILTER(table, condition)
+anatomy: FILTER = function | table = rows to test | condition = test for each row
+example_1: CALCULATE([Total Sales], FILTER(Sales, Sales[Amount] > 1000))
+example_2: CALCULATE(COUNTROWS(Customer), FILTER(Customer, Customer[Age] >= 18))
+example_3: FILTER(Product, Product[Category] = "Bikes")
+variation: FILTER(ALL(Product), [Total Sales] > 5000)   // filter by a measure over all products
+used_with: CALCULATE, ALL, COUNTROWS, SUMX
+related: CALCULATE, ALL, iterator
+alternatives: A simple column condition inside CALCULATE
+where_used: Complex conditions | Comparing two columns | Filtering by a measure
+mini_conversation: A: I need sales only for orders above 1000. | B: Use CALCULATE with FILTER on the Sales table and the Amount greater than 1000.
+misconception: ✗ FILTER returns a number → ✓ FILTER returns a table of rows, so it is used inside another function such as CALCULATE
+confused_with: FILTER vs CALCULATE: FILTER returns a table, CALCULATE returns a value.
+avoid: Do not use FILTER on a large table when a simple column filter would do.
+wrong_code: Big Orders = FILTER(Sales, Sales[Amount] > 1000)
+right_code: Big Orders = CALCULATE([Total Sales], FILTER(Sales, Sales[Amount] > 1000))
+memory_trick: FILTER keeps the rows that pass.
+real_project: Counting customers older than 18 with FILTER inside CALCULATE.
+real_interview: An interviewer may ask: What does FILTER return?
+real_daily: It is like a guard letting in only people who meet a rule.
+mcq_question: What does FILTER return?
+mcq_options: A) A single number B) A column name C) A table D) A relationship
+mcq_answer: C
+mcq_why: FILTER returns the rows that satisfy the condition, as a table.
+fill_blank: CALCULATE([Total Sales], ____(Sales, Sales[Amount] > 1000)) → FILTER
+hindi_to_task: Count the rows of Sales where Amount is above 500.
+task_answer: Big Count = CALCULATE(COUNTROWS(Sales), FILTER(Sales, Sales[Amount] > 500))
+own_task: Write a measure that totals sales only for products that cost more than 100.
+practice_question: Why is FILTER often slower than a simple condition?
+practice_answer: Because it iterates over every row of the table it is given.
+
+@PBI-031
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: ALL and ALLEXCEPT
+cue: Which DAX functions remove filters, such as when you need a grand total to find a percent of total?
+kind: DAX function
+frequency: High
+importance: 5
+origin: To show a share of the total you need a total that ignores the current slicing, so DAX can strip filters from a table or column.
+pro_tip: Wrap ALL in CALCULATE to get the grand total, and divide the filtered value by it.
+memory_story: ALL tears down every wall that filters have built, and ALLEXCEPT keeps only the walls you name.
+visual: A chart where each bar shows its own value and a faint grand total behind them all.
+emotion: The satisfaction of a percent-of-total that finally adds up to 100.
+meaning: ALL removes filters from a table or columns, and ALLEXCEPT removes all filters except those on the columns you name.
+code: All Sales = CALCULATE([Total Sales], ALL(Product))¶% of Total = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Product)))
+output: All Sales returns total sales ignoring any product filter, and % of Total shows each product's share of that grand total.
+explanation: ALL used inside CALCULATE clears the filters on the table or column you name, so the value no longer changes with product slicers. ALLEXCEPT clears every filter on a table except those on the columns you list, which is useful for keeping one grouping such as Year.
+simple_explain: ALL means ignore the filters on this. Use it to get the grand total, then divide to get a percentage. ALLEXCEPT ignores all filters except the ones you keep.
+analogy: It is like removing every fence in a field so you see the whole field.
+syntax: ALL(Table)  |  ALLEXCEPT(Table, Column1, Column2)
+anatomy: ALL = remove all filters | ALLEXCEPT = remove all except named columns | Table = what to clear
+example_1: CALCULATE([Total Sales], ALL(Product))
+example_2: CALCULATE([Total Sales], ALL(Product[Category]))
+example_3: CALCULATE([Total Sales], ALLEXCEPT(Sales, Sales[Year]))
+variation: ALLSELECTED(Product)   // keeps filters from slicers but ignores visual-level grouping¶REMOVEFILTERS(Product)   // clearer name for removing filters
+used_with: CALCULATE, DIVIDE, ALLSELECTED, REMOVEFILTERS
+related: CALCULATE, filter context, percent of total
+alternatives: REMOVEFILTERS, which only removes filters and cannot return a table
+where_used: Percent of total | Grand totals | Ranking over all items
+mini_conversation: A: How do I show each product as a share of all sales? | B: Divide the product's sales by CALCULATE of sales with ALL on the Product table.
+misconception: ✗ ALL deletes data from the table → ✓ ALL only removes filters for that calculation, and the data stays untouched
+confused_with: ALL vs ALLEXCEPT: ALL clears every filter on the table, ALLEXCEPT keeps the filters on the columns you list.
+avoid: Do not use ALL on the whole fact table when only one dimension should be cleared.
+wrong_code: % of Total = DIVIDE([Total Sales], ALL(Product))
+right_code: % of Total = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Product)))
+memory_trick: ALL clears every filter in sight.
+real_project: Showing each region's share of total sales with ALL inside CALCULATE.
+real_interview: An interviewer may ask: How do you calculate percent of total in DAX?
+real_daily: It is like removing every fence in a field to see the whole field.
+mcq_question: What does ALL(Product) inside CALCULATE do?
+mcq_options: A) Adds a filter B) Removes filters on the product table C) Renames the table D) Deletes the product table
+mcq_answer: B
+mcq_why: ALL clears the filters so the measure ignores product slicing.
+fill_blank: CALCULATE([Total Sales], ____(Product)) → ALL
+hindi_to_task: Write a measure that ignores all filters on the Region table.
+task_answer: Sales All Regions = CALCULATE([Total Sales], ALL(Region))
+own_task: Create a percent-of-total measure for product categories.
+practice_question: What does ALLEXCEPT(Sales, Sales[Year]) keep?
+practice_answer: Only the filter on Year, while all other filters on Sales are removed.
+
+@PBI-032
+type: code56
+topic: 04 DAX
+level: Beginner
+term: DIVIDE
+cue: Which DAX function divides two values safely and avoids the error when the denominator is zero?
+kind: DAX function
+frequency: Very high
+importance: 5
+origin: Plain division by zero gives an error that spoils a visual, so DAX added a function that handles it and lets you pick the result.
+pro_tip: Always use DIVIDE for ratios in measures instead of the slash operator.
+memory_story: DIVIDE is division with a safety net under it.
+visual: A card showing a clean percentage where an error symbol would have been.
+emotion: The relief of a report with no ugly error values.
+meaning: DIVIDE divides a numerator by a denominator and returns an alternate result, or blank, when the denominator is zero or blank.
+code: Margin % = DIVIDE([Total Profit], [Total Sales], 0)
+output: The profit margin, or 0 for any context where Total Sales is zero or blank.
+explanation: DIVIDE takes the numerator, the denominator and an optional third argument for the result when the division would fail. Without the third argument it returns BLANK. It is also more efficient than writing an IF to test for zero.
+simple_explain: Use DIVIDE instead of the slash. If the bottom number is zero, you do not get an error, you get the value you chose, or blank.
+analogy: It is like a calculator that shows 0 instead of crashing when you divide by zero.
+syntax: DIVIDE(numerator, denominator, [alternate_result])
+anatomy: numerator = top | denominator = bottom | alternate_result = what to return when it cannot divide
+example_1: Margin % = DIVIDE([Total Profit], [Total Sales], 0)
+example_2: Average Price = DIVIDE([Total Sales], [Units Sold])
+example_3: Growth % = DIVIDE([Sales] - [Sales LY], [Sales LY])
+variation: DIVIDE(a, b)   // returns BLANK on zero¶DIVIDE(a, b, 0)   // returns 0 on zero
+used_with: measures, IF, percentages
+related: IF, BLANK, ratio
+alternatives: IF(denominator = 0, 0, numerator / denominator)
+where_used: Percentages | Margins | Growth rates
+mini_conversation: A: My percentage shows an error for some regions. | B: Use DIVIDE so a zero denominator returns blank or zero instead.
+misconception: ✗ The slash operator is as safe as DIVIDE → ✓ The slash returns Infinity or NaN when dividing by zero, while DIVIDE returns BLANK or your alternate result, while DIVIDE handles it gracefully
+confused_with: DIVIDE vs the slash operator: DIVIDE handles zero and blank, the slash does not.
+avoid: Do not use / for ratios in measures where the denominator can be zero.
+wrong_code: Margin % = [Total Profit] / [Total Sales]
+right_code: Margin % = DIVIDE([Total Profit], [Total Sales])
+memory_trick: DIVIDE is divide with a safety net.
+real_project: Replacing slash divisions with DIVIDE so a report showed blanks instead of errors.
+real_interview: An interviewer may ask: Why use DIVIDE instead of the slash?
+real_daily: It is like a calculator that shows 0 instead of crashing.
+mcq_question: What does DIVIDE return by default when the denominator is zero?
+mcq_options: A) 1 B) An error C) The numerator D) Blank
+mcq_answer: D
+mcq_why: Without an alternate result, DIVIDE returns BLANK.
+fill_blank: Margin % = ____([Total Profit], [Total Sales], 0) → DIVIDE
+hindi_to_task: Write a safe average price measure from Total Sales and Units Sold.
+task_answer: Average Price = DIVIDE([Total Sales], [Units Sold])
+own_task: Write a growth percentage measure using DIVIDE.
+practice_question: What is the third argument of DIVIDE for?
+practice_answer: The value to return when the denominator is zero or blank.
+
+@PBI-033
+type: code56
+topic: 04 DAX
+level: Beginner
+term: IF and SWITCH
+cue: Which DAX functions let you return different results depending on conditions, and which one suits many conditions better?
+kind: DAX function
+frequency: Very high
+importance: 4
+origin: Calculations often depend on rules such as high or low, so DAX provides IF for one test and SWITCH for neat handling of many tests.
+pro_tip: Use SWITCH(TRUE(), ...) when you have several conditions instead of nesting many IFs.
+memory_story: IF is a fork in the road, and SWITCH is a signpost with many arrows.
+visual: A single road splitting in two, and another signpost pointing to many roads.
+emotion: The tidiness of replacing a tangle of nested IFs with one clear list.
+meaning: IF returns one result when a condition is true and another when false, and SWITCH checks a list of conditions in order.
+code: Size = IF([Total Sales] > 10000, "High", "Low")¶Band = SWITCH(TRUE(), [Total Sales] >= 10000, "High", [Total Sales] >= 5000, "Medium", "Low")
+output: Size returns High or Low, and Band returns High, Medium or Low depending on the sales value.
+explanation: IF takes a test, a result if true and an optional result if false. SWITCH(TRUE(), ...) evaluates conditions top to bottom and returns the result for the first one that is true, with a final default value. This is easier to read than several nested IFs.
+simple_explain: Use IF for a yes or no choice. For three or more choices use SWITCH with TRUE(), list the conditions in order, and end with a default.
+analogy: IF is one fork in a road, and SWITCH is a signpost with many arrows.
+syntax: IF(test, result_if_true, [result_if_false])  |  SWITCH(TRUE(), cond1, result1, cond2, result2, default)
+anatomy: IF = one test | SWITCH(TRUE(), ...) = many tests in order | last value = default result
+example_1: IF([Total Sales] > 10000, "High", "Low")
+example_2: SWITCH(TRUE(), [Margin %] >= 0.3, "Great", [Margin %] >= 0.1, "OK", "Poor")
+example_3: SWITCH(Sales[Region], "N", "North", "S", "South", "Other")
+variation: IF([Sales] > 0, [Sales])   // blank when false¶SWITCH(Region[Code], "N", "North", "S", "South")   // match exact values
+used_with: DIVIDE, measures, calculated columns
+related: CALCULATE, DIVIDE, conditional formatting
+alternatives: Conditional columns in Power Query
+where_used: Banding values | Labels | Conditional logic in measures
+mini_conversation: A: I need High, Medium and Low labels. | B: Use SWITCH with TRUE and list the conditions from highest to lowest.
+misconception: ✗ SWITCH can only test one column for exact equality → ✓ SWITCH(TRUE(), ...) can test any conditions, in order, including ranges
+confused_with: IF vs SWITCH: IF handles one test, SWITCH is neater for many tests.
+avoid: Do not write conditions in the wrong order, the first true one wins.
+wrong_code: Band = SWITCH(TRUE(), [Total Sales] >= 5000, "Medium", [Total Sales] >= 10000, "High", "Low")
+right_code: Band = SWITCH(TRUE(), [Total Sales] >= 10000, "High", [Total Sales] >= 5000, "Medium", "Low")
+memory_trick: SWITCH checks top to bottom.
+real_project: Labelling customers High, Medium or Low value using SWITCH.
+real_interview: An interviewer may ask: When would you use SWITCH instead of nested IF?
+real_daily: It is like a signpost with many arrows instead of one fork.
+mcq_question: In SWITCH(TRUE(), ...), which result is returned?
+mcq_options: A) The last one B) A random one C) All of them D) The first one whose condition is true
+mcq_answer: D
+mcq_why: SWITCH checks the conditions in order and stops at the first that is true.
+fill_blank: For many ordered conditions you can use ____(TRUE(), ...) → SWITCH
+hindi_to_task: Write a measure that returns High if sales exceed 10000, otherwise Low.
+task_answer: Size = IF([Total Sales] > 10000, "High", "Low")
+own_task: Write a SWITCH measure that labels margin as Great, OK or Poor.
+practice_question: Why does the order of conditions matter in SWITCH(TRUE(), ...)?
+practice_answer: Because the first condition that is true decides the result.
+
+@PBI-034
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: RELATED
+cue: Which DAX function lets a row in the many-side table fetch a value from its matching row in the one-side table?
+kind: DAX function
+frequency: High
+importance: 4
+origin: Descriptions such as category sit in dimension tables, so DAX needs a way for a fact row to look up its matching dimension value through a relationship.
+pro_tip: RELATED needs an existing relationship and works in row context, such as in calculated columns.
+memory_story: RELATED follows the relationship bridge to fetch the matching word from the other table.
+visual: An arrow runs from a Sales row to the matching row in Product and brings back a Category.
+emotion: The convenience of pulling a name into a table without any merging.
+meaning: RELATED returns a value from a related table on the one side of a relationship, for the current row.
+code: Category = RELATED(Product[Category])
+output: Each Sales row gets the Category of its matching product.
+explanation: RELATED follows a many-to-one relationship from the current row to the matching row in the other table and returns the column you name. It works only in row context, such as in a calculated column or inside an iterator. RELATEDTABLE does the reverse and returns the many-side rows.
+simple_explain: In a Sales table, RELATED(Product[Category]) fetches each sale's product category through the relationship. It is the DAX version of a lookup.
+analogy: It is like looking up a word in a dictionary using the page number on your card.
+syntax: RELATED(Table[Column])
+anatomy: RELATED = lookup function | Table[Column] = column on the related one side
+example_1: Category = RELATED(Product[Category])
+example_2: Region = RELATED(Customer[Region])
+example_3: Revenue = SUMX(Sales, Sales[Quantity] * RELATED(Product[Price]))
+variation: RELATEDTABLE(Sales)   // the many-side rows for the current row¶COUNTROWS(RELATEDTABLE(Sales))   // count sales for each customer
+used_with: relationships, SUMX, calculated columns, row context
+related: relationships, row context, RELATEDTABLE
+alternatives: A merge in Power Query
+where_used: Calculated columns | Iterators over the fact table | Pulling dimension attributes
+mini_conversation: A: I want the product category on each sales row. | B: Use RELATED with the Product category column in a calculated column.
+misconception: ✗ RELATED works without any relationship between the tables → ✓ RELATED needs an existing relationship, and it follows it from the many side to the one side
+confused_with: RELATED vs RELATEDTABLE: RELATED fetches a single value from the one side, RELATEDTABLE returns the matching rows from the many side.
+avoid: Do not use RELATED in a measure without a row context.
+wrong_code: Category = RELATED(Sales[Category])
+right_code: Category = RELATED(Product[Category])
+memory_trick: RELATED fetches through the relationship.
+real_project: Pulling the product price into a sales iterator with RELATED to calculate revenue.
+real_interview: An interviewer may ask: What does RELATED do and what does it need?
+real_daily: It is like looking up a word using a page reference.
+mcq_question: What does RELATED need in order to work?
+mcq_options: A) A relationship between the tables B) A bookmark C) A parameter D) A slicer
+mcq_answer: A
+mcq_why: RELATED follows an existing relationship to the other table.
+fill_blank: Category = ____(Product[Category]) → RELATED
+hindi_to_task: Add a column to Sales that brings the Region from the Customer table.
+task_answer: Region = RELATED(Customer[Region])
+own_task: Create a calculated column that fetches the product colour onto each sales row.
+practice_question: Which function returns the matching many-side rows instead of one value?
+practice_answer: RELATEDTABLE
+
+@PBI-035
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: VAR and RETURN
+cue: How do you store an intermediate result in a DAX formula under a name so you can reuse it?
+kind: DAX syntax
+frequency: High
+importance: 4
+origin: Long formulas repeat the same sub-calculation, so DAX allows variables that hold a value once and can be reused, which makes formulas shorter and faster.
+pro_tip: Name variables clearly, like Revenue and Cost, so the formula reads like a sentence.
+memory_story: A variable is a labelled jar in which you keep a result so you do not cook it again.
+visual: Labelled boxes holding values that flow into the final line.
+emotion: The clarity of a formula you can finally read.
+meaning: VAR defines a named value inside a measure, and RETURN gives the final result that may use those names.
+code: Profit Margin =¶VAR Revenue = [Total Sales]¶VAR Cost = [Total Cost]¶RETURN DIVIDE(Revenue - Cost, Revenue)
+output: The profit margin, calculated from Revenue and Cost, each of which is evaluated only once.
+explanation: Each VAR is calculated once and can be reused later in the formula, which helps performance and readability. A variable is evaluated in the filter context where it is defined, even if it is used inside CALCULATE later. A formula can contain many VAR lines but only one RETURN.
+simple_explain: Use VAR to name a piece of the calculation and RETURN to give the answer. It makes the formula easier to read, and DAX evaluates each variable only once.
+analogy: It is like a labelled jar in which you keep a result so you do not cook it twice.
+syntax: VAR name = expression  RETURN expression
+anatomy: VAR = declare a named value | name = what you call it | RETURN = the final result
+example_1: VAR Revenue = [Total Sales]
+example_2: VAR Cost = [Total Cost] RETURN Revenue - Cost
+example_3: VAR LastYear = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Dates[Date])) RETURN DIVIDE([Total Sales] - LastYear, LastYear)
+variation: VAR a = 1 VAR b = a + 1 RETURN b   // a variable can use earlier ones
+used_with: CALCULATE, DIVIDE, measures
+related: CALCULATE, measures, performance
+alternatives: Create separate helper measures
+where_used: Long formulas | Repeated sub-calculations | Debugging
+mini_conversation: A: My measure repeats the same calculation three times. | B: Store it in a VAR and reuse the name.
+misconception: ✗ A variable is recalculated every time it is used → ✓ A variable is evaluated once, where it is defined, and the same value is reused
+confused_with: VAR vs measure: a variable lives only inside one formula, a measure is reusable across the model.
+avoid: Do not forget the RETURN line, a formula with VAR must end with RETURN.
+wrong_code: Profit Margin = VAR Revenue = [Total Sales] DIVIDE(Revenue - [Total Cost], Revenue)
+right_code: Profit Margin = VAR Revenue = [Total Sales] RETURN DIVIDE(Revenue - [Total Cost], Revenue)
+memory_trick: VAR names it, RETURN gives it back.
+real_project: Rewriting a long growth formula with variables to make it readable and faster.
+real_interview: An interviewer may ask: What are the benefits of using variables in DAX?
+real_daily: It is like keeping a result in a labelled jar so you do not cook it twice.
+mcq_question: What keyword must end a DAX formula that uses VAR?
+mcq_options: A) RESULT B) RETURN C) END D) STOP
+mcq_answer: B
+mcq_why: A formula with VAR must provide a RETURN expression.
+fill_blank: VAR Revenue = [Total Sales] ____ Revenue * 2 → RETURN
+hindi_to_task: Write a measure that stores Total Sales in a variable and returns it times two.
+task_answer: Double Sales = VAR S = [Total Sales] RETURN S * 2
+own_task: Rewrite a formula that repeats the same calculation to use a variable.
+practice_question: How many times is a variable evaluated within a formula?
+practice_answer: Once, where it is defined.
+
+@PBI-036
+type: code56
+topic: 04 DAX
+level: Beginner
+term: COUNTROWS and DISTINCTCOUNT
+cue: Which DAX functions count the rows of a table and the number of unique values in a column?
+kind: DAX function
+frequency: Very high
+importance: 5
+origin: Counting orders and counting unique customers are different questions, so DAX has one function to count rows and another to count distinct values.
+pro_tip: Use COUNTROWS(Table) to count records, and DISTINCTCOUNT(Column) to count unique items.
+memory_story: COUNTROWS counts every line in the register, and DISTINCTCOUNT counts each customer only once.
+visual: A list with repeated names where the total number of lines and the number of different names are both shown.
+emotion: The pleasure of answering how many orders and how many customers with two measures.
+meaning: COUNTROWS counts the rows of a table, and DISTINCTCOUNT counts the different values in a column.
+code: Order Count = COUNTROWS(Sales)¶Customers = DISTINCTCOUNT(Sales[CustomerID])
+output: Order Count returns the number of sales rows, and Customers returns the number of different customers who bought.
+explanation: COUNTROWS counts all rows of the table in the current filter context. DISTINCTCOUNT counts unique values in a column and counts a blank as one value if present. COUNT counts only non-blank values in a column and is less used than COUNTROWS.
+simple_explain: COUNTROWS answers how many rows. DISTINCTCOUNT answers how many different values, so a customer who bought five times counts once.
+analogy: It is like counting every line in a register versus counting each customer name only once.
+syntax: COUNTROWS(Table)  |  DISTINCTCOUNT(Table[Column])
+anatomy: COUNTROWS = rows in a table | DISTINCTCOUNT = unique values in a column
+example_1: Order Count = COUNTROWS(Sales)
+example_2: Customers = DISTINCTCOUNT(Sales[CustomerID])
+example_3: Products Sold = DISTINCTCOUNT(Sales[ProductID])
+variation: COUNT(Sales[Amount])   // non-blank numeric or date values; use COUNTA for text columns¶COUNTROWS(FILTER(Sales, Sales[Amount] > 100))   // rows that meet a condition
+used_with: FILTER, CALCULATE, measures
+related: SUM, FILTER, CALCULATE
+alternatives: COUNT or COUNTA on a column
+where_used: Order counts | Customer counts | Activity metrics
+mini_conversation: A: How many customers bought something? | B: Use DISTINCTCOUNT on the CustomerID column in the Sales table.
+misconception: ✗ COUNTROWS and DISTINCTCOUNT give the same number → ✓ COUNTROWS counts every row, while DISTINCTCOUNT counts each unique value once
+confused_with: COUNTROWS vs DISTINCTCOUNT: rows versus unique values.
+avoid: Do not use DISTINCTCOUNT when you really want the number of orders.
+wrong_code: Customers = COUNTROWS(Sales[CustomerID])
+right_code: Customers = DISTINCTCOUNT(Sales[CustomerID])
+memory_trick: Rows counts lines, Distinct counts different ones.
+real_project: Showing orders and unique customers side by side to calculate orders per customer.
+real_interview: An interviewer may ask: What is the difference between COUNT, COUNTROWS and DISTINCTCOUNT?
+real_daily: It is like counting each line in a register versus each different customer name.
+mcq_question: A customer bought five times. How many times does DISTINCTCOUNT of CustomerID count that customer?
+mcq_options: A) Zero B) Twice C) Once D) Five times
+mcq_answer: C
+mcq_why: DISTINCTCOUNT counts each unique value once.
+fill_blank: Order Count = ____(Sales) → COUNTROWS
+hindi_to_task: Write a measure for the number of unique products sold.
+task_answer: Products Sold = DISTINCTCOUNT(Sales[ProductID])
+own_task: Write measures for the number of orders and the number of customers in a sales table.
+practice_question: What does COUNTROWS take as its argument?
+practice_answer: A table, not a column.
+
+@PBI-037
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: TOTALYTD (year to date)
+cue: Which time-intelligence function builds a running total from the start of the year up to the current date?
+kind: DAX function
+frequency: High
+importance: 4
+origin: Business users often ask for the year so far, so DAX provides a function that accumulates a value from the first day of the year to the date in context.
+pro_tip: Use it with a proper marked date table, and use the date column from that table.
+memory_story: TOTALYTD is a bucket that keeps filling from January 1st and shows how much is in it today.
+visual: A line that climbs steadily from January and resets each new year.
+emotion: The satisfaction of a smooth rising line that matches the finance team's numbers.
+meaning: TOTALYTD returns the cumulative value of an expression from the start of the year to the last date in the current context.
+code: Sales YTD = TOTALYTD([Total Sales], Dates[Date])
+output: For each date or month, the total of sales from 1 January of that year up to that date.
+explanation: TOTALYTD takes an expression and a date column, and an optional year-end date for fiscal years. It resets at the start of each year. It needs a date table with continuous dates, related to the fact table. Similar functions are TOTALQTD and TOTALMTD.
+simple_explain: TOTALYTD gives the running total for the year so far. Put months on the axis and it grows each month, then restarts the next January.
+analogy: It is like a bucket that fills from January 1st and shows how much is inside today.
+syntax: TOTALYTD(expression, dates, [filter], [year_end_date])
+anatomy: expression = what to add up | dates = the date column | year_end_date = optional fiscal year end
+example_1: Sales YTD = TOTALYTD([Total Sales], Dates[Date])
+example_2: Sales FY YTD = TOTALYTD([Total Sales], Dates[Date], "3/31")
+example_3: Sales QTD = TOTALQTD([Total Sales], Dates[Date])
+variation: TOTALMTD([Total Sales], Dates[Date])   // month to date¶CALCULATE([Total Sales], DATESYTD(Dates[Date]))   // same result with CALCULATE
+used_with: date table, CALCULATE, DATESYTD, relationships
+related: SAMEPERIODLASTYEAR, DATEADD, date table
+alternatives: CALCULATE with DATESYTD
+where_used: Financial reports | Year-to-date dashboards | Running totals
+mini_conversation: A: Finance wants the year-to-date sales. | B: Use TOTALYTD on Total Sales with the date column from the Date table.
+misconception: ✗ TOTALYTD works with any date column, even one with gaps → ✓ It needs a continuous date table, so build and mark one first
+confused_with: TOTALYTD vs a simple SUM: a plain SUM shows the value for each period, TOTALYTD accumulates from the year start.
+avoid: Do not use the date column of the fact table, use the date table.
+wrong_code: Sales YTD = TOTALYTD([Total Sales], Sales[OrderDate])
+right_code: Sales YTD = TOTALYTD([Total Sales], Dates[Date])
+memory_trick: YTD means year to date, and it accumulates.
+real_project: Showing a year-to-date sales line that resets every January.
+real_interview: An interviewer may ask: What is required for time intelligence to work correctly?
+real_daily: It is like a bucket that fills from January 1st.
+mcq_question: What does TOTALYTD reset to at the start of each year?
+mcq_options: A) It deletes data B) It becomes text C) It keeps adding D) It starts again from zero
+mcq_answer: D
+mcq_why: Year to date starts over at the beginning of each year.
+fill_blank: Sales YTD = ____([Total Sales], Dates[Date]) → TOTALYTD
+hindi_to_task: Write a measure for quarter-to-date sales.
+task_answer: Sales QTD = TOTALQTD([Total Sales], Dates[Date])
+own_task: Create a year-to-date measure and show it on a line chart by month.
+practice_question: How do you set a fiscal year ending 31 March in TOTALYTD?
+practice_answer: Pass "3/31" (month and day) as the year-end argument.
+
+@PBI-038
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: SAMEPERIODLASTYEAR
+cue: Which time-intelligence function shifts the current dates back exactly one year so you can compare with last year?
+kind: DAX function
+frequency: High
+importance: 4
+origin: Comparing with the same period last year is the most common business comparison, so DAX gives a function that moves the visible dates back by a year.
+pro_tip: Wrap it inside CALCULATE and use the date column from the date table.
+memory_story: It is a time machine that takes the same days exactly one year back.
+visual: Two lines on a chart, one for this year and one for last year, placed over the same months.
+emotion: The pride of showing growth versus last year.
+meaning: SAMEPERIODLASTYEAR returns the dates of the current period shifted back by one year.
+code: Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Dates[Date]))
+output: For each month or date, the total sales for the same period in the previous year.
+explanation: The function takes the set of dates visible in the current filter context and moves them back one year. CALCULATE then uses those dates to evaluate the measure. Combined with the current value, you can compute year-over-year growth.
+simple_explain: Put it inside CALCULATE and the measure returns last year's value for the same dates. Then subtract or divide to compare with this year.
+analogy: It is like a time machine that takes the same days one year back.
+syntax: SAMEPERIODLASTYEAR(dates)
+anatomy: SAMEPERIODLASTYEAR = function | dates = the date column of the date table
+example_1: Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Dates[Date]))
+example_2: Growth % = DIVIDE([Total Sales] - [Sales LY], [Sales LY])
+example_3: Orders LY = CALCULATE(COUNTROWS(Sales), SAMEPERIODLASTYEAR(Dates[Date]))
+variation: DATEADD(Dates[Date], -1, YEAR)   // more flexible shift¶PARALLELPERIOD(Dates[Date], -12, MONTH)   // shift by whole periods
+used_with: CALCULATE, date table, DIVIDE, TOTALYTD
+related: DATEADD, TOTALYTD, date table
+alternatives: DATEADD with -1 YEAR
+where_used: Year-over-year comparisons | Growth rates | Seasonal analysis
+mini_conversation: A: How do I compare this month with the same month last year? | B: Wrap total sales in CALCULATE with SAMEPERIODLASTYEAR.
+misconception: ✗ SAMEPERIODLASTYEAR returns a number → ✓ It returns a table of dates, so it must be used as a filter inside CALCULATE
+confused_with: SAMEPERIODLASTYEAR vs DATEADD: the first always shifts one year, DATEADD can shift by any number of days, months, quarters or years.
+avoid: Do not use it without a proper date table.
+wrong_code: Sales LY = SAMEPERIODLASTYEAR([Total Sales])
+right_code: Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Dates[Date]))
+memory_trick: Same period, one year back.
+real_project: Building a this year versus last year chart with growth percentage.
+real_interview: An interviewer may ask: How do you calculate year-over-year growth in DAX?
+real_daily: It is like a time machine that moves the same days back a year.
+mcq_question: What does SAMEPERIODLASTYEAR return?
+mcq_options: A) A number B) A relationship C) A table of dates D) A text label
+mcq_answer: C
+mcq_why: It returns the shifted dates, which CALCULATE then uses as a filter.
+fill_blank: Sales LY = CALCULATE([Total Sales], ____(Dates[Date])) → SAMEPERIODLASTYEAR
+hindi_to_task: Write a year-over-year growth measure using Sales LY.
+task_answer: Growth % = DIVIDE([Total Sales] - [Sales LY], [Sales LY])
+own_task: Create a this year versus last year line chart from two measures.
+practice_question: What must be used together with SAMEPERIODLASTYEAR to return a value?
+practice_answer: CALCULATE
+
+@PBI-039
+type: code56
+topic: 04 DAX
+level: Intermediate
+term: DATEADD
+cue: Which function shifts a set of dates by a chosen number of days, months, quarters or years?
+kind: DAX function
+frequency: Medium
+importance: 3
+origin: Besides last year, analysts compare with last month or last quarter, so DAX has a flexible function that moves dates by any interval.
+pro_tip: Use a negative number to look back and a positive one to look ahead.
+memory_story: DATEADD is a slider you can move back or forward through the calendar.
+visual: A calendar strip shifted one month to the left.
+emotion: The flexibility of comparing against any past period.
+meaning: DATEADD moves the dates in the current context forward or backward by a given number of intervals.
+code: Sales Last Month = CALCULATE([Total Sales], DATEADD(Dates[Date], -1, MONTH))
+output: For each month, the total sales for the previous month.
+explanation: DATEADD takes a date column, a number of intervals and an interval type: DAY, MONTH, QUARTER or YEAR. It needs a continuous date table. It returns a table of shifted dates that CALCULATE uses as a filter.
+simple_explain: DATEADD shifts the visible dates. Use minus one month to get last month's value, or minus one year to get last year's value.
+analogy: It is like sliding a calendar strip back by a month.
+syntax: DATEADD(dates, number_of_intervals, interval)
+anatomy: dates = the date column | number_of_intervals = how many | interval = DAY, MONTH, QUARTER or YEAR
+example_1: CALCULATE([Total Sales], DATEADD(Dates[Date], -1, MONTH))
+example_2: CALCULATE([Total Sales], DATEADD(Dates[Date], -1, QUARTER))
+example_3: CALCULATE([Total Sales], DATEADD(Dates[Date], -7, DAY))
+variation: DATEADD(Dates[Date], 1, YEAR)   // look ahead one year¶DATEADD(Dates[Date], -12, MONTH)   // same as one year back
+used_with: CALCULATE, date table, SAMEPERIODLASTYEAR
+related: SAMEPERIODLASTYEAR, TOTALYTD, date table
+alternatives: SAMEPERIODLASTYEAR for one year back
+where_used: Month-over-month | Quarter-over-quarter | Week comparisons
+mini_conversation: A: I need a month-over-month comparison. | B: Use DATEADD with minus one month inside CALCULATE.
+misconception: ✗ DATEADD works fine with a date column that has missing days → ✓ DATEADD needs a continuous date column, so use a full date table
+confused_with: DATEADD vs SAMEPERIODLASTYEAR: DATEADD can shift by any interval, SAMEPERIODLASTYEAR only by one year.
+avoid: Do not apply it to a date column that has gaps.
+wrong_code: Sales Last Month = CALCULATE([Total Sales], DATEADD(Dates[Date], -1, "month"))
+right_code: Sales Last Month = CALCULATE([Total Sales], DATEADD(Dates[Date], -1, MONTH))
+memory_trick: DATEADD slides the calendar back or forward.
+real_project: Showing month-over-month change on a monthly sales chart.
+real_interview: An interviewer may ask: How do you compare a value to the previous month in DAX?
+real_daily: It is like sliding a calendar strip back by one month.
+mcq_question: Which number do you use in DATEADD to go back one month?
+mcq_options: A) Plus one B) Minus one C) Twelve D) Zero
+mcq_answer: B
+mcq_why: A negative number moves the dates backward.
+fill_blank: DATEADD(Dates[Date], ____, MONTH) goes back one month → -1
+hindi_to_task: Write a measure for sales of the previous quarter.
+task_answer: Sales Last Quarter = CALCULATE([Total Sales], DATEADD(Dates[Date], -1, QUARTER))
+own_task: Create a month-over-month change measure using DATEADD.
+practice_question: Which intervals can DATEADD use?
+practice_answer: DAY, MONTH, QUARTER and YEAR.
+
+@PBI-040
+type: code56
+topic: 04 DAX
+level: Advanced
+term: RANKX and TOPN
+cue: Which DAX functions rank items by a value and pick only the top N items?
+kind: DAX function
+frequency: Medium
+importance: 4
+origin: Leaderboards and top-ten lists are common requests, so DAX provides a function to rank each item and another to return the top few rows by a value.
+pro_tip: Use ALL on the item column inside RANKX so the rank is calculated across all items, not just the filtered one.
+memory_story: RANKX gives each runner a position number, and TOPN picks the runners on the podium.
+visual: A list of products with rank numbers beside them and a highlighted top three.
+emotion: The fun of building a leaderboard that updates itself.
+meaning: RANKX returns the rank of the current item compared with all items by a value, and TOPN returns the top N rows by a value.
+code: Sales Rank = RANKX(ALL(Product[Name]), [Total Sales])¶Top 3 Sales = CALCULATE([Total Sales], TOPN(3, ALL(Product[Name]), [Total Sales]))
+output: Sales Rank gives each product a rank by sales, and Top 3 Sales gives the combined sales of the three best-selling products.
+explanation: RANKX evaluates the expression for every item in the table you give it, and ranks the current item among them; the default order is descending, so the largest value is rank 1. TOPN returns the top N rows of a table by an expression, and is often used as a filter inside CALCULATE.
+simple_explain: RANKX tells you which place an item is in. TOPN keeps only the best few. Use ALL so the ranking covers all items.
+analogy: RANKX is the position number on a runner's bib, and TOPN picks the runners on the podium.
+syntax: RANKX(table, expression, [value], [order], [ties])  |  TOPN(n, table, expression, [order])
+anatomy: RANKX = rank each item | TOPN = keep the top n rows | order = ASC or DESC
+example_1: RANKX(ALL(Product[Name]), [Total Sales])
+example_2: TOPN(5, ALL(Customer[Name]), [Total Sales])
+example_3: CALCULATE([Total Sales], TOPN(3, ALL(Product[Name]), [Total Sales]))
+variation: RANKX(ALL(Product[Name]), [Total Sales], , ASC)   // lowest value is rank 1¶RANKX(ALL(Product[Name]), [Total Sales], , DESC, DENSE)   // dense ranking
+used_with: ALL, CALCULATE, measures
+related: ALL, CALCULATE, FILTER
+alternatives: The Top N visual filter
+where_used: Leaderboards | Top 10 lists | Ranking products or customers
+mini_conversation: A: How do I show each product's rank by sales? | B: Use RANKX over all products with Total Sales as the expression.
+misconception: ✗ RANKX ranks only the items currently shown in the visual → ✓ It ranks across the table you give it, so use ALL on the item column to rank across every item
+confused_with: RANKX vs TOPN: RANKX returns a rank number, TOPN returns the rows of the best items.
+avoid: Do not forget ALL in RANKX, or every item may rank 1.
+wrong_code: Sales Rank = RANKX(VALUES(Product[Name]), [Total Sales])
+right_code: Sales Rank = RANKX(ALL(Product[Name]), [Total Sales])
+memory_trick: RANKX ranks every item, TOPN picks the best.
+real_project: Showing the top five customers and each customer's rank on a leaderboard.
+real_interview: An interviewer may ask: How would you rank products by sales in DAX?
+real_daily: It is like the number on a runner's bib and the podium for the best three.
+mcq_question: What is the default sort order in RANKX?
+mcq_options: A) Descending, largest is rank 1 B) Ascending, smallest is rank 1 C) Alphabetical D) Random
+mcq_answer: A
+mcq_why: By default the largest value gets rank 1.
+fill_blank: Top 3 Sales = CALCULATE([Total Sales], ____(3, ALL(Product[Name]), [Total Sales])) → TOPN
+hindi_to_task: Write a measure that ranks customers by total sales across all customers.
+task_answer: Customer Rank = RANKX(ALL(Customer[Name]), [Total Sales])
+own_task: Create a rank measure and a top-five filter for products.
+practice_question: Why is ALL used inside RANKX?
+practice_answer: So that the rank is calculated across all items, not only the filtered ones.
+
+@PBI-041
+type: code56
+topic: 04 DAX
+level: Advanced
+term: USERELATIONSHIP
+cue: Which function activates an inactive relationship for the duration of one calculation?
+kind: DAX function
+frequency: Medium
+importance: 4
+origin: A fact table may have several date columns, such as order date and ship date, but only one relationship between two tables can be active, so DAX can switch to another for a single measure.
+pro_tip: Create the extra relationships as inactive, and call them with USERELATIONSHIP only where needed.
+memory_story: USERELATIONSHIP flips a switch to turn on a spare bridge for one calculation.
+visual: Two lines between Sales and Dates, one solid and one dashed, and the dashed one is used for one measure.
+emotion: The satisfaction of analysing sales by both order date and ship date.
+meaning: USERELATIONSHIP makes an existing inactive relationship active inside CALCULATE for that calculation only.
+code: Sales by Ship Date = CALCULATE([Total Sales], USERELATIONSHIP(Sales[ShipDate], Dates[Date]))
+output: Total sales grouped by the date on which each order was shipped, instead of when it was ordered.
+explanation: Only one relationship between two tables can be active. The others are shown as dashed lines. USERELATIONSHIP is used as a filter argument inside CALCULATE, naming the two columns of the inactive relationship, and it turns that relationship on for that calculation.
+simple_explain: When Sales has Order Date and Ship Date, one link to Dates is active and the other is dashed. USERELATIONSHIP switches to the dashed one for a single measure.
+analogy: It is like switching on a spare bridge for one trip.
+syntax: CALCULATE(expression, USERELATIONSHIP(column1, column2))
+anatomy: USERELATIONSHIP = turn on an inactive link | column1 and column2 = the two related columns
+example_1: CALCULATE([Total Sales], USERELATIONSHIP(Sales[ShipDate], Dates[Date]))
+example_2: CALCULATE([Total Sales], USERELATIONSHIP(Sales[DueDate], Dates[Date]))
+example_3: CALCULATE(COUNTROWS(Sales), USERELATIONSHIP(Sales[ShipDate], Dates[Date]))
+variation: Role-playing dates: a Date table used for order date, ship date and due date
+used_with: CALCULATE, date table, relationships
+related: relationships, date table, CALCULATE
+alternatives: Duplicate the date table for each date role
+where_used: Multiple date columns | Role-playing dimensions | Alternative relationships
+mini_conversation: A: I want sales by ship date but the report uses order date. | B: Use USERELATIONSHIP inside CALCULATE to switch to the ship date relationship.
+misconception: ✗ USERELATIONSHIP creates a new relationship → ✓ It only activates an existing inactive relationship for one calculation
+confused_with: USERELATIONSHIP vs a new relationship: the function switches an existing link on temporarily, a relationship has to be created in the model.
+avoid: Do not use it unless the inactive relationship already exists.
+wrong_code: Sales by Ship Date = USERELATIONSHIP([Total Sales], Sales[ShipDate])
+right_code: Sales by Ship Date = CALCULATE([Total Sales], USERELATIONSHIP(Sales[ShipDate], Dates[Date]))
+memory_trick: Use the Relationship I mean.
+real_project: Building order date and ship date measures from one shared date table.
+real_interview: An interviewer may ask: How do you handle multiple date columns in a fact table?
+real_daily: It is like switching on a spare bridge for one trip.
+mcq_question: Where is USERELATIONSHIP normally used?
+mcq_options: A) In a bookmark B) In a slicer C) In Power Query D) Inside CALCULATE
+mcq_answer: D
+mcq_why: It is a filter argument of CALCULATE.
+fill_blank: CALCULATE([Total Sales], ____(Sales[ShipDate], Dates[Date])) → USERELATIONSHIP
+hindi_to_task: Write a measure of sales by due date using an inactive relationship.
+task_answer: Sales by Due Date = CALCULATE([Total Sales], USERELATIONSHIP(Sales[DueDate], Dates[Date]))
+own_task: Create two inactive date relationships and one measure for each.
+practice_question: How many relationships between two tables can be active at once?
+practice_answer: Only one.
+
+@PBI-042
+type: topic56
+topic: 04 DAX
+level: Intermediate
+term: Row context vs filter context
+cue: Which two kinds of context decide what a DAX formula can see, one for a single row and one for a set of filters?
+category: Core DAX concept
+frequency: Very high
+importance: 5
+origin: A DAX formula gives different answers in different places, so the language is built around two contexts that define what data a calculation is looking at.
+pro_tip: Ask which context you are in: am I on a row, or looking at filtered data?
+memory_story: Row context is looking at one line of a bill, and filter context is looking at the whole filtered pile.
+visual: One highlighted row in a table beside a table filtered down to a set of rows.
+emotion: The aha moment when DAX results finally make sense.
+definition: Row context refers to the current row being calculated, and filter context is the set of filters applied to the model at calculation time.
+explanation: Row context exists in calculated columns and inside iterators such as SUMX, where each row is processed in turn. Filter context comes from slicers, visuals, report filters and CALCULATE, and defines which rows a measure sees. CALCULATE can turn a row context into a filter context.
+simple_explain: Row context means the formula is on one row. Filter context means the formula sees only the rows that the report's filters allow. Measures run in filter context.
+analogy: Row context is reading one line of a bill, and filter context is reading the whole filtered pile.
+formula_rule: Calculated column and iterator = row context. Measure = filter context.
+example_1: A calculated column Line Total = Sales[Quantity] * Sales[Price] works in row context.
+example_2: A card showing Total Sales for the year chosen in a slicer works in filter context.
+example_3: CALCULATE inside an iterator turns the current row into a filter.
+related: CALCULATE, SUMX, calculated column, measure
+word_family: context, row context, filter context, context transition
+where_used: Understanding results | Writing measures | Debugging wrong totals
+mini_conversation: A: Why does my measure give a different value in each chart? | B: Because each chart gives it a different filter context.
+misconception: ✗ A measure always returns the same number wherever it is placed → ✓ A measure is recalculated in the filter context of each cell, so it changes with slicers and rows
+contrast: Row context vs filter context: row context is one row, filter context is a set of filters on tables.
+avoid: Do not use a column reference alone in a measure, it has no row context.
+memory_trick: Row is one line, filter is the filtered pile.
+real_project: Understanding why a ratio measure changed by region after adding slicers.
+real_interview: An interviewer may ask: What is the difference between row context and filter context?
+real_daily: It is like reading one line of a bill versus the whole filtered pile of bills.
+mcq_question: In which context does a measure run by default?
+mcq_options: A) Filter context B) Page context C) No context D) Row context
+mcq_answer: A
+mcq_why: Measures evaluate against the filters supplied by the report.
+fill_blank: A calculated column is evaluated in ____ context → row
+apply: Which function can turn a row context into a filter context? → CALCULATE
+explain_task: Explain the two contexts in three lines.
+own_task: Write one example of a row context and one example of a filter context.

@@ -1,0 +1,334 @@
+deck.title: Requirements, Documentation and Customer Work – Beginner to Advanced Flashcards
+deck.subject: Customer-facing engineering skills for a forward deployed engineer
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: json
+type: topic56
+
+@REQ-001
+topic: 01 The role
+level: Beginner
+term: What a forward deployed engineer does
+cue: Which engineer works directly with customers to make a product succeed in their setting?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Complex products often fail not because of the code but because of the customer's data, systems and people, so some engineers work inside the customer's context.
+pro_tip: Think of the role as part engineer, part consultant, and always accountable for the customer's outcome.
+memory_story: A forward deployed engineer is the builder who moves onto the customer's street to finish the house.
+visual: An engineer sitting between a customer team and the product team.
+emotion: The pride of seeing a customer's problem actually solved.
+definition: A forward deployed engineer is a software engineer embedded with customers who configures, integrates and extends a product to solve the customer's real problem, and brings what they learn back to the product team.
+explanation: The work mixes technical tasks, such as integrations, data pipelines and prototypes, with customer tasks, such as discovery, demos and status updates. Success is measured by customer outcomes, not by lines of code. Titles and exact duties differ between companies, so always ask what the role owns in your team.
+simple_explain: You build and fix things inside the customer's world so the product works for them.
+analogy: A forward deployed engineer is the builder who moves onto the customer's street to finish the house.
+formula_rule: Understand the customer, build the fix, prove the outcome, feed it back.
+example_1: Connecting a customer's database to the product.
+example_2: Building a quick prototype for a new use case.
+example_3: Running a workshop to teach a customer team.
+related: success measures, discovery calls, stakeholder map, demos
+word_family: embedded, customer, integration, outcome, deployment
+where_used: Enterprise software | AI products | Data platforms
+mini_conversation: A: The product works in our demo but not at the customer. | B: That is where the forward deployed engineer steps in.
+misconception: ✗ The role is only technical support → ✓ It includes building, scoping and owning outcomes
+contrast: Forward deployed engineer vs support: building and owning the outcome versus answering and fixing tickets.
+avoid: Do not promise features that only the product team can build.
+memory_trick: Build where the customer lives.
+real_project: An embedded engineer connected a client's old database and got a stalled rollout moving.
+real_interview: An interviewer may ask: How is this role different from a normal software engineer?
+real_daily: It is like a builder who works on the customer's site instead of in a distant factory.
+mcq_question: What mainly measures success in this role?
+mcq_options: A) Lines of code B) Number of emails C) Hours in meetings D) Customer outcomes
+mcq_answer: D
+mcq_why: The role exists to make the product succeed for the customer.
+fill_blank: An engineer placed inside the customer's setting is called a forward ____ engineer → deployed
+apply: A product works in the demo but fails on a customer's messy data. Who investigates on site? → The forward deployed engineer
+explain_task: Explain this role to a friend in three lines.
+own_task: Write what you would want a customer to say about your work after three months.
+
+@REQ-002
+topic: 01 The role
+level: Beginner
+term: FDE vs solutions engineer vs support
+cue: How do three customer-facing technical roles differ?
+category: Comparison
+frequency: High
+importance: 4
+origin: Teams use similar titles for different jobs, so knowing the usual split avoids confusion about ownership.
+pro_tip: Ask which role owns the build, the sale and the ticket before the project starts.
+memory_story: Support fixes the leak, the solutions engineer shows the house, and the forward deployed engineer builds the extension.
+visual: Three people on a line from pre-sale to long-term build.
+emotion: The clarity of knowing who owns what.
+definition: Support answers and resolves issues, a solutions engineer helps customers choose and evaluate the product before and during the sale, and a forward deployed engineer builds and deploys custom work for the customer after and around the sale.
+explanation: Boundaries overlap and vary by company. Support is reactive and ticket driven. Solutions engineering is mostly pre-sale demos, proofs of concept and technical answers. Forward deployed work is longer, more hands-on and closer to production. Agree who does what in writing so customers are not passed around.
+simple_explain: Support fixes, solutions engineers show, and forward deployed engineers build and deploy.
+analogy: Support fixes the leak, the solutions engineer shows the house, and the forward deployed engineer builds the extension.
+formula_rule: Reactive fix, pre-sale proof, hands-on delivery.
+example_1: A support engineer resolving a login ticket.
+example_2: A solutions engineer running a proof of concept before purchase.
+example_3: A forward deployed engineer building an integration for go-live.
+related: what an FDE does, stakeholder map, success measures, scoping
+word_family: support, pre-sale, delivery, ownership, handoff
+where_used: Team design | Hiring | Customer projects
+mini_conversation: A: Who builds the custom connector? | B: That is delivery work for the forward deployed engineer.
+misconception: ✗ All customer-facing engineers do the same job → ✓ The scope, timing and ownership differ
+contrast: Solutions engineer vs FDE: pre-sale proof versus post-sale build and deployment.
+avoid: Do not take on another role's work without agreeing ownership.
+memory_trick: Support fixes, sales engineers show, FDEs build.
+real_project: A written split of roles stopped a customer being bounced between three teams.
+real_interview: An interviewer may ask: How does your role differ from support?
+real_daily: It is like a plumber, a showroom guide and a builder working on one home.
+mcq_question: Which role mainly runs pre-sale proofs of concept?
+mcq_options: A) Solutions engineer B) Support agent C) Auditor D) Accountant
+mcq_answer: A
+mcq_why: Pre-sale technical evaluation is their core job.
+fill_blank: A role that mostly answers tickets after launch is ____ → support
+apply: A customer needs a custom connector built before go-live. Which role owns it? → Forward deployed engineer
+explain_task: Explain the three roles and where they overlap.
+own_task: Draw a simple line from pre-sale to long-term and place each role on it.
+
+@REQ-003
+topic: 01 The role
+level: Beginner
+term: Success measures
+cue: How do you know a customer project is actually going well?
+category: Core concept
+frequency: High
+importance: 5
+origin: Without agreed measures, a project can look busy yet fail to change anything for the customer.
+pro_tip: Agree two or three measures with the customer at the start, and check them on a regular rhythm.
+memory_story: Success measures are the scoreboard that both teams agree to read.
+visual: A small dashboard of three numbers with targets.
+emotion: The satisfaction of progress you can point to.
+definition: Success measures are agreed, observable indicators, such as time saved, errors removed, adoption or revenue protected, that show whether the customer's problem is solved.
+explanation: Good measures link to the customer's goal, have a baseline and a target, and can be checked without argument. Activity counts like meetings held are not outcomes. Leading indicators, such as weekly active users, warn early, while lagging ones, such as renewals, confirm results later. Review them with the customer, and change them in writing if goals change.
+simple_explain: Agree up front which numbers show that the project worked.
+analogy: Success measures are the scoreboard that both teams agree to read.
+formula_rule: Baseline, target, owner, date.
+example_1: Reducing invoice processing time from four days to one.
+example_2: Seventy percent of the support team using the tool weekly.
+example_3: Cutting data errors in a weekly report by half.
+related: success criteria, scoping, status updates, MVP
+word_family: measure, baseline, target, outcome, metric
+where_used: Kick-off | Reviews | Renewals
+mini_conversation: A: We delivered everything on the list. | B: Did the invoice time actually drop?
+misconception: ✗ Finishing all tasks means the project succeeded → ✓ Only the agreed outcome shows success
+contrast: Outputs vs outcomes: things delivered versus changes the customer sees.
+avoid: Do not measure success by the number of meetings or messages.
+memory_trick: Baseline first, target second, review always.
+real_project: A client's four-day invoice process, measured at the start, became a clear one-day win.
+real_interview: An interviewer may ask: How do you measure a customer project?
+real_daily: It is like checking a fitness goal against the scale and the tape measure.
+mcq_question: Which item is an outcome measure?
+mcq_options: A) Slides made B) Time saved per invoice C) Emails sent D) Meetings held
+mcq_answer: B
+mcq_why: It shows a real change for the customer.
+fill_blank: A starting value measured before any change is the ____ → baseline
+apply: A customer says the tool should make reports faster. What do you agree first? → A baseline and a target time
+explain_task: Explain the difference between outputs and outcomes.
+own_task: Write three success measures for a data cleaning project with baselines.
+
+@REQ-004
+topic: 01 The role
+level: Intermediate
+term: Working with product and engineering teams
+cue: How does an FDE connect the customer to the people who build the product?
+category: Teamwork
+frequency: High
+importance: 4
+origin: The FDE sees real customer needs first, and that knowledge only helps if it reaches the people who can change the product.
+pro_tip: Bring product teams evidence, such as a clear problem, an example and the impact, not just a feature request.
+memory_story: The forward deployed engineer is the bridge that carries customer evidence back across the river.
+visual: Arrows from the customer through the FDE to the product team and back.
+emotion: The satisfaction of a customer problem turned into a product fix.
+definition: Working with product and engineering means sharing structured customer evidence, asking for changes with context and impact, and agreeing what is a custom workaround versus a product change.
+explanation: A good request states the customer problem, the current workaround, how many customers share it and the cost of waiting. Keep custom work separated from product code where possible so it does not become a hidden fork. Close the loop by telling the customer what was decided. Respect that product teams must prioritise across many customers.
+simple_explain: Give the product team clear evidence and keep the customer informed about the decision.
+analogy: The forward deployed engineer is the bridge that carries customer evidence back across the river.
+formula_rule: Problem, evidence, impact, workaround, ask.
+example_1: A short write-up showing three customers need the same export.
+example_2: A custom script kept outside the main product code.
+example_3: Telling a customer that a request was scheduled for later.
+related: what an FDE does, decision log, saying no, change requests
+word_family: feedback, roadmap, workaround, priority, escalation
+where_used: Product reviews | Escalations | Planning
+mini_conversation: A: Can we add this button for one customer? | B: Show the evidence from other customers so we can prioritise it.
+misconception: ✗ A customer request is the same as a product requirement → ✓ It needs evidence, impact and priority first
+contrast: Custom work vs product change: one customer's workaround versus a feature for many.
+avoid: Do not hide long-term custom forks that nobody else knows about.
+memory_trick: Bring evidence, not just wishes.
+real_project: Evidence from three customers got a missing export prioritised in one planning cycle.
+real_interview: An interviewer may ask: How do you pass customer feedback to the product team?
+real_daily: It is like a messenger who brings facts, not rumours, to the decision makers.
+mcq_question: What makes a feature request strong?
+mcq_options: A) Loud wording B) A late-night message C) Evidence and impact D) A long email
+mcq_answer: C
+mcq_why: Teams prioritise on problems and measurable impact.
+fill_blank: A temporary fix used until the product changes is a ____ → workaround
+apply: Three customers ask for the same export. What do you bring the product team? → A short evidence write-up with impact
+explain_task: Explain how you would escalate a customer need.
+own_task: Write a five-line template for a product feedback request.
+
+@REQ-005
+topic: 02 Discovery
+level: Beginner
+term: Discovery calls
+cue: What is the first structured conversation with a customer for?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Building before understanding the problem wastes time, so the first meetings are for learning, not pitching.
+pro_tip: Spend most of the call listening, and write down the customer's own words.
+memory_story: A discovery call is a doctor's first visit, where questions come before treatment.
+visual: A notepad with questions on the left and customer answers on the right.
+emotion: The curiosity of really understanding someone's problem.
+definition: A discovery call is a structured conversation where you learn the customer's goals, current process, pain points, constraints and who decides, before proposing any solution.
+explanation: Prepare by reading what you know about the customer, then agree an agenda at the start. Ask about the current way of working, what hurts, what has been tried and what success looks like. Summarise what you heard at the end and send it afterwards for correction. Avoid jumping to solutions before the problem is clear.
+simple_explain: Ask and listen first, so you know the real problem before suggesting anything.
+analogy: A discovery call is a doctor's first visit, where questions come before treatment.
+formula_rule: Prepare, ask, listen, summarise, confirm.
+example_1: Asking how reports are made today.
+example_2: Asking who must approve a new tool.
+example_3: Sending a recap email with open questions.
+related: good questions, five whys, stakeholder map, scoping
+word_family: discovery, agenda, pain point, recap, listening
+where_used: Kick-off | Sales support | Project start
+mini_conversation: A: Should I demo the tool in the first call? | B: First learn the problem, then show what fits.
+misconception: ✗ Discovery is a sales pitch → ✓ It is a listening exercise to understand the problem
+contrast: Discovery vs demo: learning the problem versus showing the product.
+avoid: Do not start proposing solutions in the first ten minutes.
+memory_trick: Ask first, listen well, show later.
+real_project: A listening-first call revealed that the real pain was a manual export, not the dashboard.
+real_interview: An interviewer may ask: How do you run a first customer call?
+real_daily: It is like a doctor asking questions before writing the prescription.
+mcq_question: What is the main goal of a discovery call?
+mcq_options: A) Understand the problem B) Show every feature C) Collect payment D) Close the sale
+mcq_answer: A
+mcq_why: A proper solution depends on a clear problem.
+fill_blank: A short email sent after the call to confirm what was heard is a ____ → recap
+apply: A customer starts describing a vague issue. What do you do first? → Ask questions and listen
+explain_task: Explain how you would structure a first call.
+own_task: Write a six-point agenda for a thirty-minute discovery call.
+
+@REQ-006
+topic: 02 Discovery
+level: Beginner
+term: Good questions
+cue: Which kinds of questions uncover what a customer really needs?
+category: Skill
+frequency: Very high
+importance: 5
+origin: Customers often state a solution, not the problem, so skilled questions are needed to find the need behind it.
+pro_tip: Prefer open questions that begin with what, how and why, and follow up on every vague answer.
+memory_story: Good questions are keys that open rooms the customer did not know to mention.
+visual: A question mark opening a door to a hidden room.
+emotion: The thrill of finding the hidden need.
+definition: Good discovery questions are open, specific and neutral, so they draw out facts, examples and feelings without leading the customer toward an answer.
+explanation: Open questions such as what happens today invite explanation. Specific follow-ups such as can you show me the last time it happened give real examples. Neutral wording avoids hinting at the answer you want. Ask about numbers, frequency and cost, and confirm by repeating back. Closed questions are useful at the end to check a detail.
+simple_explain: Ask open questions, ask for examples, and do not hint at the answer.
+analogy: Good questions are keys that open rooms the customer did not know to mention.
+formula_rule: Open, specific, neutral, then confirm.
+example_1: What happens when a report is late?
+example_2: Can you show me the last time that happened?
+example_3: How often does this cost you time each week?
+related: discovery calls, five whys, stakeholder map, success criteria
+word_family: open question, closed question, follow-up, probing, neutral
+where_used: Calls | Workshops | Interviews
+mini_conversation: A: They said they need a dashboard. | B: Ask what decision the dashboard would help them make.
+misconception: ✗ The first answer is the real requirement → ✓ It is often a solution idea that hides the real need
+contrast: Open vs closed questions: invite explanation versus allow only yes or no.
+avoid: Do not ask leading questions such as You want it faster, right.
+memory_trick: What, how, why, then show me.
+real_project: Asking what decision the dashboard supported revealed a simple alert was enough.
+real_interview: An interviewer may ask: How do you find out what a customer truly needs?
+real_daily: It is like asking why someone is thirsty before handing them a drink.
+mcq_question: Which is an open question?
+mcq_options: A) Is the report late? B) Is it fine? C) What happens today when a report is late? D) Do you like it?
+mcq_answer: C
+mcq_why: It invites explanation instead of a yes or no.
+fill_blank: A question that hints at the answer you want is a ____ question → leading
+apply: A customer asks for a dashboard. What do you ask next? → What decision will it help you make
+explain_task: Explain why open questions work better in discovery.
+own_task: Rewrite three closed questions as open questions about a reporting problem.
+
+@REQ-007
+topic: 02 Discovery
+level: Intermediate
+term: The five whys
+cue: Which technique digs from a symptom down to its root cause?
+category: Technique
+frequency: High
+importance: 4
+origin: The first explanation of a problem is usually only a symptom, so repeated why questions help reach the cause.
+pro_tip: Stop when you reach a cause the team can actually act on, which may take fewer or more than five questions.
+memory_story: The five whys peel the onion until you reach the core.
+visual: A chain of why boxes ending in a root cause.
+emotion: The satisfaction of finding the real reason.
+definition: The five whys is a method of asking why repeatedly, each time about the previous answer, until the underlying cause of a problem is found rather than its visible symptom.
+explanation: Start with the problem in plain words and ask why it happens, then ask why about that answer, and continue. The number five is a guide, not a rule. Keep to facts rather than blame, and check each answer with evidence. Real problems may have several causes, so branch where needed. Use it for process problems, incidents and unclear requests.
+simple_explain: Keep asking why about each answer until you reach the real cause.
+analogy: The five whys peel the onion until you reach the core.
+formula_rule: Problem, why, why, why, until you can act.
+example_1: Why are reports late, because data arrives late, because the export is manual.
+example_2: Why did the job fail, because the disk was full.
+example_3: Why do users avoid the tool, because it takes too many clicks.
+related: good questions, discovery calls, runbook, postmortems
+word_family: root cause, symptom, chain, evidence, blame
+where_used: Discovery | Incidents | Process review
+mini_conversation: A: Reports are always late. | B: Why, and why is that step slow.
+misconception: ✗ There is exactly one cause for each problem → ✓ Problems often have several causes
+contrast: Symptom vs root cause: what you see versus why it happens.
+avoid: Do not use whys to blame people instead of finding causes.
+memory_trick: Keep peeling until you can act.
+real_project: Five whys traced a late weekly report to one manual export step that was easy to automate.
+real_interview: An interviewer may ask: How do you find the root cause of a customer problem?
+real_daily: It is like asking a child why until the real reason appears.
+mcq_question: What is the aim of the five whys?
+mcq_options: A) Shorten a meeting B) Fill a form C) Assign blame D) Find the root cause
+mcq_answer: D
+mcq_why: Repeated whys move from symptom to underlying cause.
+fill_blank: The visible problem, as opposed to its cause, is the ____ → symptom
+apply: Reports are late every week. What do you ask next? → Why they are late, then why again
+explain_task: Explain the five whys with an example.
+own_task: Run a five whys on one problem from your own work and write the chain.
+
+@REQ-008
+topic: 02 Discovery
+level: Intermediate
+term: Stakeholder map
+cue: How do you keep track of who matters in a customer project?
+category: Technique
+frequency: High
+importance: 4
+origin: Projects stall when a decision maker, a blocker or a daily user is missed, so people need to be mapped early.
+pro_tip: Include users, approvers, technical owners and people who can say no, and update the map as you learn.
+memory_story: A stakeholder map is a seating chart for everyone who touches the project.
+visual: A grid of people sorted by influence and interest.
+emotion: The confidence of knowing who to talk to.
+definition: A stakeholder map lists the people and groups affected by or able to influence a project, with their role, interests, level of influence and how to keep them informed.
+explanation: Typical roles are sponsor, decision maker, daily users, technical owners, security or legal reviewers and sceptics. A simple grid of high or low influence against high or low interest suggests who to keep close and who to inform. Update it after every meeting. Store only business information, and respect privacy when noting personal details.
+simple_explain: Write down who is involved, what they care about and how much say they have.
+analogy: A stakeholder map is a seating chart for everyone who touches the project.
+formula_rule: Who, role, interest, influence, plan.
+example_1: A sponsor who funds and approves the project.
+example_2: A security reviewer who can block go-live.
+example_3: Daily users who decide whether the tool is adopted.
+related: discovery calls, scoping, security and data questions, status updates
+word_family: stakeholder, sponsor, influence, owner, sceptic
+where_used: Kick-off | Planning | Escalations
+mini_conversation: A: Who signs off the data access? | B: Add the security lead to the map and meet them early.
+misconception: ✗ Only the person who pays matters → ✓ Users, owners and reviewers can all make or break the project
+contrast: Sponsor vs user: the person who approves versus the person who uses it daily.
+avoid: Do not ignore the daily users until launch.
+memory_trick: Everyone with a say gets a seat.
+real_project: A late-added security reviewer on the map saved weeks of rework on data access.
+real_interview: An interviewer may ask: How do you make sure you do not miss an important person on a project?
+real_daily: It is like a seating chart for a wedding where everyone must feel included.
+mcq_question: Who should be on a stakeholder map?
+mcq_options: A) Only managers B) Anyone who can influence or is affected C) Only engineers D) Only the payer
+mcq_answer: B
+mcq_why: Missing people often cause delays or failed adoption.
+fill_blank: The person who funds and champions the project is the ____ → sponsor
+apply: A project stalls on data access. Whom do you look for on the map? → The security reviewer
+explain_task: Explain what a stakeholder map is and how you would use it.
+own_task: Make a stakeholder map of six roles for one imagined customer project.

@@ -1,0 +1,605 @@
+
+@K8S-010
+type: code56
+topic: 02 Workloads
+level: Intermediate
+term: StatefulSets
+cue: Which resource runs pods that need stable names and their own storage?
+kind: Resource
+frequency: Medium
+importance: 4
+origin: Databases and clusters need fixed identities and persistent disks, which plain Deployments do not guarantee.
+pro_tip: Prefer managed databases, and use StatefulSets only when you must run stateful software yourself.
+memory_story: A StatefulSet gives each pod its own name tag and its own locker that stay the same after restarts.
+visual: Pods named db-0, db-1 and db-2 each with their own disk.
+emotion: The calm of stable identities for stateful software.
+meaning: A StatefulSet creates pods with stable ordinal names and stable storage, and starts, stops and updates them in order.
+code: apiVersion: apps/v1¶kind: StatefulSet¶metadata:¶  name: db¶spec:¶  serviceName: db¶  replicas: 3¶  selector:¶    matchLabels: { app: db }¶  template:¶    metadata:¶      labels: { app: db }¶    spec:¶      containers:¶        - name: pg¶          image: postgres:16¶          env:¶            - name: POSTGRES_PASSWORD¶              valueFrom: { secretKeyRef: { name: db-secret, key: password } }¶            - name: PGDATA¶              value: /var/lib/postgresql/data/pgdata¶          volumeMounts:¶            - { name: data, mountPath: /var/lib/postgresql/data }¶  volumeClaimTemplates:¶    - metadata: { name: data }¶      spec:¶        accessModes: ["ReadWriteOnce"]¶        resources: { requests: { storage: 20Gi } }
+output: Pods db-0, db-1 and db-2 start in order, each with its own 20Gi volume that survives restarts.
+explanation: Each pod gets a stable DNS name through a headless service, such as db-0.db. The headless Service named in serviceName must be created separately, and the Secret must exist. Volumes created from the claim template stay when pods are deleted and are reattached to the same pod name. Scaling down does not delete volumes. Ordered updates reduce risk for clustered software. Running databases in Kubernetes also needs backups and careful upgrades.
+simple_explain: Use a StatefulSet for apps that need fixed names and their own disks.
+analogy: A StatefulSet gives each pod its own name tag and its own locker that stay the same after restarts.
+syntax: kind: StatefulSet / serviceName / volumeClaimTemplates
+anatomy: ordinal = db-0, db-1 | headless service = stable DNS | volumeClaimTemplates = per-pod storage
+example_1: kubectl get pods -l app=db
+example_2: db-0.db.shop.svc.cluster.local
+example_3: podManagementPolicy: Parallel
+variation: updateStrategy: { type: RollingUpdate, rollingUpdate: { partition: 2 } }   // staged updates
+used_with: headless Services, PersistentVolumes, databases
+related: Deployments, PersistentVolumes and claims, Services, storage classes
+alternatives: Managed databases | operators
+where_used: Databases | Message brokers | Clustered software
+mini_conversation: A: Why does the pod keep its name and disk after a restart? | B: It is managed by a StatefulSet with a claim template.
+misconception: ✗ StatefulSets make databases safe and easy → ✓ They give identity and storage, but backups and operations are still your job
+avoid: Do not run production databases without tested backups.
+memory_trick: Stable names, own disks, ordered life.
+real_project: Using a managed database instead of a StatefulSet removed a lot of operational work.
+real_interview: An interviewer may ask: When would you use a StatefulSet?
+real_daily: It is like name tags and lockers that stay the same.
+mcq_question: What do StatefulSet pods have that Deployment pods do not?
+mcq_options: A) More CPU B) Stable names and per-pod storage C) Free licences D) Public IPs
+mcq_answer: B
+mcq_why: Each ordinal pod keeps its identity and volume.
+fill_blank: A service without a cluster IP used for stable pod names is ____ → headless
+hindi_to_task: Give each StatefulSet pod its own volume claim.
+task_answer: volumeClaimTemplates:¶  - metadata: { name: data }¶    spec: { accessModes: ["ReadWriteOnce"], resources: { requests: { storage: 20Gi } } }
+own_task: List two reasons to prefer a managed database over a StatefulSet.
+practice_question: Are volumes deleted when a StatefulSet scales down?
+practice_answer: No, they are kept for safety.
+confused_with: StatefulSet vs Deployment: stable identity and storage versus interchangeable pods.
+wrong_code: kind: Deployment   # for a database needing stable disks
+right_code: kind: StatefulSet   # stable names and per-pod volumes
+@K8S-011
+type: code56
+topic: 02 Workloads
+level: Intermediate
+term: DaemonSets
+cue: Which resource runs exactly one pod on every node, or on chosen nodes?
+kind: Resource
+frequency: Medium
+importance: 3
+origin: Some agents, such as log shippers and monitors, must run on every machine, so a controller keeps one copy per node.
+pro_tip: Use node selectors or tolerations to limit a DaemonSet to the right nodes.
+memory_story: A DaemonSet is a guard posted at every gate of the city.
+visual: One pod icon on each node in a cluster.
+emotion: The convenience of an agent that appears on new nodes by itself.
+meaning: A DaemonSet ensures a copy of a pod runs on all or selected nodes, and adds or removes pods as nodes join or leave.
+code: apiVersion: apps/v1¶kind: DaemonSet¶metadata:¶  name: log-agent¶spec:¶  selector:¶    matchLabels: { app: log-agent }¶  template:¶    metadata:¶      labels: { app: log-agent }¶    spec:¶      containers:¶        - name: agent¶          image: fluent/fluent-bit:3.1¶          volumeMounts:¶            - { name: varlog, mountPath: /var/log }¶      volumes:¶        - name: varlog¶          hostPath: { path: /var/log }
+output: One log agent pod runs on each node and reads that node's logs.
+explanation: When a node is added, the DaemonSet creates a pod on it automatically. Typical uses are log collectors, monitoring agents, network plugins and storage drivers. Pods often need access to host paths, so security review matters. Tolerations let them run on tainted nodes. Updates roll node by node.
+simple_explain: A DaemonSet puts one agent pod on every node.
+analogy: A DaemonSet is a guard posted at every gate of the city.
+syntax: kind: DaemonSet / spec.template
+anatomy: one pod per node | nodeSelector = limit nodes | tolerations = run on tainted nodes
+example_1: kubectl get ds -n monitoring
+example_2: nodeSelector: { disktype: ssd }
+example_3: tolerations: [{ operator: Exists }]
+variation: updateStrategy: { type: OnDelete }   // update only when pods are deleted
+used_with: log shippers, monitoring, security agents
+related: pods, nodes, taints and tolerations, logging and monitoring
+alternatives: Sidecar containers | agents on the host
+where_used: Logging | Monitoring | Networking plug-ins
+mini_conversation: A: How do we get a log agent on every node? | B: Run it as a DaemonSet.
+misconception: ✗ DaemonSet pods run only on worker nodes → ✓ They run wherever tolerations and selectors allow
+avoid: Do not grant host access to agents without review.
+memory_trick: One pod per node, automatically.
+real_project: A log DaemonSet gave a customer logs from every new node without extra setup.
+real_interview: An interviewer may ask: What is a DaemonSet used for?
+real_daily: It is like a guard at each gate.
+mcq_question: How many pods does a DaemonSet run per node?
+mcq_options: A) As many as possible B) Zero C) Three D) One
+mcq_answer: D
+mcq_why: It keeps a single copy on each matching node.
+fill_blank: Allowing pods onto tainted nodes uses a ____ → toleration
+own_task: Name three agents that should run as DaemonSets.
+wrong_code: kind: Deployment   # an agent that must be on every node
+right_code: kind: DaemonSet
+hindi_to_task: Run a log agent on every node.
+task_answer: kind: DaemonSet
+practice_question: How many pods does a DaemonSet keep per node?
+practice_answer: One on each matching node.
+@K8S-012
+type: code56
+topic: 02 Workloads
+level: Intermediate
+term: Jobs and CronJobs
+cue: Which resources run tasks to completion once or on a schedule?
+kind: Resource
+frequency: High
+importance: 4
+origin: Not all work runs forever, so Jobs run pods until they finish and CronJobs create Jobs on a schedule.
+pro_tip: Make jobs idempotent, and set limits for retries and cleanup.
+memory_story: A Job is a one-off errand, and a CronJob is a recurring appointment that creates errands.
+visual: A pod running and ending with a completed status.
+emotion: The tidiness of batch work that cleans up after itself.
+meaning: A Job runs one or more pods until a set number complete successfully, and a CronJob creates Jobs on a cron schedule.
+code: apiVersion: batch/v1¶kind: CronJob¶metadata:¶  name: nightly-report¶spec:¶  schedule: "0 2 * * *"¶  concurrencyPolicy: Forbid¶  successfulJobsHistoryLimit: 3¶  jobTemplate:¶    spec:¶      backoffLimit: 2¶      ttlSecondsAfterFinished: 86400¶      template:¶        spec:¶          restartPolicy: OnFailure¶          containers:¶            - name: report¶              image: acme/report:2.0¶              args: ["--date", "yesterday"]
+output: Every night at 02:00 a Job runs the report, retries twice on failure, and cleans up after a day.
+explanation: The restart policy for Job pods must be OnFailure or Never. backoffLimit sets retries. concurrencyPolicy decides what happens if a run is still going when the next starts. The schedule uses the time zone of kube-controller-manager (often UTC) unless timeZone is set unless a time zone is set. Jobs can run in parallel with completions and parallelism settings.
+simple_explain: Use a Job for one-off work and a CronJob for scheduled work.
+analogy: A Job is a one-off errand, and a CronJob is a recurring appointment that creates errands.
+syntax: kind: Job | kind: CronJob / schedule: "cron"
+anatomy: schedule = cron time | backoffLimit = retries | concurrencyPolicy = overlap rule | ttl = cleanup
+example_1: kubectl create job test --from=cronjob/nightly-report
+example_2: completions: 5, parallelism: 2
+example_3: timeZone: "Asia/Kolkata"
+variation: suspend: true   // pause a CronJob without deleting it
+used_with: idempotency, schedules, monitoring
+related: pods, schedules in Airflow, retries, alerts
+alternatives: Airflow | external schedulers
+where_used: Reports | Cleanup | Migrations
+mini_conversation: A: The nightly job overlaps with the next run. | B: Set concurrencyPolicy to Forbid.
+misconception: ✗ A Job pod restarts forever like a Deployment pod → ✓ It runs to completion, then stops
+avoid: Do not leave finished Jobs piling up.
+memory_trick: Jobs finish, Deployments never end.
+real_project: Setting ttlSecondsAfterFinished stopped old completed pods piling up in a cluster.
+real_interview: An interviewer may ask: What is the difference between a Job and a Deployment?
+real_daily: It is like an errand versus an appointment.
+mcq_question: Which restart policy is allowed for Job pods?
+mcq_options: A) OnFailure B) Always C) Reboot D) Forever
+mcq_answer: A
+mcq_why: Always would never let the Job complete.
+fill_blank: The field that sets the number of retries for a Job is ____ → backoffLimit
+hindi_to_task: Create a one-off job from an existing CronJob.
+task_answer: kubectl create job test --from=cronjob/nightly-report
+own_task: Write a CronJob that runs every Monday at nine.
+practice_question: What does concurrencyPolicy Forbid do?
+practice_answer: It skips a new run while the previous one is still running.
+confused_with: Job vs CronJob: a Job runs once, a CronJob creates Jobs on a schedule.
+wrong_code: restartPolicy: Always   # a Job pod would never complete
+right_code: restartPolicy: OnFailure
+@K8S-013
+type: code56
+topic: 02 Workloads
+level: Beginner
+term: Labels and selectors
+cue: Which key-value tags group objects, and how do other objects find them?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Kubernetes objects must find each other without fixed names, so labels tag them and selectors query those tags.
+pro_tip: Agree a standard set of labels such as app, tier and env across all teams.
+memory_story: Labels are colour stickers, and selectors are people asking for everything with the red sticker.
+visual: Pods with coloured tags and a selector picking the red ones.
+emotion: The ease of grouping objects by meaning.
+meaning: Labels are key-value pairs attached to objects, and label selectors choose objects by matching those pairs, which is how Services, Deployments and other controllers find pods.
+code: metadata:¶  labels:¶    app: web¶    tier: frontend¶    env: prod¶# a Deployment selects them with matchLabels (a Service uses a plain map: selector: { app: web }):¶selector:¶  matchLabels:¶    app: web¶# command line:¶# kubectl get pods -l app=web,env=prod
+output: Only pods that have both app web and env prod are returned or selected.
+explanation: Labels are for identifying and grouping, and annotations are for non-identifying notes. A selector with several labels means all must match. Changing labels on running pods changes what selects them, which can disconnect them from a Service. Equality and set-based selectors exist, such as env in (prod, staging).
+simple_explain: Label objects consistently, and use selectors in Services and controllers to find them.
+analogy: Labels are colour stickers, and selectors are people asking for everything with the red sticker.
+syntax: labels: { key: value } | Deployment: selector: { matchLabels: { key: value } } | Service: selector: { key: value }
+anatomy: labels = tags | selector = query | annotations = notes
+example_1: kubectl get pods -l tier=frontend
+example_2: kubectl label pod web-1 env=debug
+example_3: matchExpressions: [{ key: env, operator: In, values: [prod, staging] }]
+variation: kubectl get pods --show-labels   // see every label
+used_with: Services, Deployments, network policies
+related: Services, Deployments, namespaces, network policies
+alternatives: Namespaces for coarse separation
+where_used: Every cluster | Services | Cost reports
+mini_conversation: A: The Service has no endpoints. | B: Its selector does not match the pod labels.
+misconception: ✗ Labels and annotations are the same → ✓ Labels are used for selection, annotations only hold extra information
+confused_with: Label vs annotation: labels select, annotations describe.
+avoid: Do not change pod labels without checking the Services that select them.
+wrong_code: selector: { matchLabels: { app: web-app } }   # pods are labelled web
+right_code: selector: { matchLabels: { app: web } }
+memory_trick: Selectors only see matching labels.
+real_project: A label typo explained why a Service had no pods behind it.
+real_interview: An interviewer may ask: How does a Service find its pods?
+real_daily: It is like colour stickers and people asking for the red ones.
+mcq_question: What does a Service use to find pods?
+mcq_options: A) Pod names B) Image tags C) A label selector D) Node names
+mcq_answer: C
+mcq_why: Selectors match pod labels.
+fill_blank: Non-identifying notes on objects are called ____ → annotations
+hindi_to_task: List pods labelled app web.
+task_answer: kubectl get pods -l app=web
+own_task: Choose a standard label set for all workloads.
+practice_question: What happens if a Service selector does not match any pod?
+practice_answer: It has no endpoints, so traffic goes nowhere.
+
+@K8S-014
+type: code56
+topic: 02 Workloads
+level: Beginner
+term: Namespaces
+cue: Which feature divides a cluster into separate virtual areas?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Many teams and environments share a cluster, so namespaces give each its own scope for names and policies.
+pro_tip: Use a namespace per team or environment, and attach quotas and policies to it.
+memory_story: Namespaces are rooms in a shared office, each with its own rules and supplies.
+visual: A cluster split into rooms named dev, staging and shop.
+emotion: The tidiness of environments that stay neatly separated.
+meaning: A namespace is a named scope within a cluster, so object names need to be unique only inside it, and quotas, policies and permissions can be applied per namespace.
+code: kubectl create namespace shop¶kubectl get pods -n shop¶kubectl config set-context --current --namespace=shop¶kubectl get all -n shop¶kubectl delete namespace shop
+output: The namespace shop is created, used for commands, and deleting it removes everything inside it.
+explanation: Default namespaces include default, kube-system and kube-public. Some resources, such as nodes and PersistentVolumes, are cluster-wide and not namespaced. Services can be reached across namespaces by their full DNS names. Namespaces are not a strong security boundary on their own, so combine them with RBAC and network policies.
+simple_explain: Use namespaces to separate teams and environments, and add quotas and permissions to each.
+analogy: Namespaces are rooms in a shared office, each with its own rules and supplies.
+syntax: kubectl create namespace NAME | metadata: namespace: NAME
+anatomy: default = no namespace given | kube-system = system parts | -n = choose one
+example_1: kubectl get ns
+example_2: metadata: { namespace: staging }
+example_3: api.shop.svc.cluster.local
+variation: kubectl get pods --all-namespaces   // across the whole cluster
+used_with: RBAC, quotas, network policies
+related: labels and selectors, RBAC, quotas, DNS in the cluster
+alternatives: Separate clusters for strong isolation
+where_used: Teams | Environments | Quotas
+mini_conversation: A: Can staging and shop both have a Service called api? | B: Yes, namespaces keep the names separate.
+misconception: ✗ Namespaces fully isolate teams from each other → ✓ They separate names and policies, but need RBAC and network rules for real isolation
+avoid: Do not put everything in the default namespace.
+wrong_code: kubectl delete namespace shop   # without checking contents
+right_code: kubectl get all,cm,secret,pvc -n shop && kubectl delete namespace shop
+memory_trick: Namespaces separate names, not security alone.
+real_project: Giving each team a namespace with quotas stopped one team starving the others.
+real_interview: An interviewer may ask: Are namespaces a security boundary?
+real_daily: It is like rooms in a shared office.
+mcq_question: What happens when a namespace is deleted?
+mcq_options: A) Everything inside it is deleted B) Nothing C) Nodes are removed D) Only pods stop
+mcq_answer: A
+mcq_why: Namespaced objects are removed with it.
+fill_blank: The namespace that holds the system parts is ____ → kube-system
+hindi_to_task: Create a namespace called shop.
+task_answer: kubectl create namespace shop
+own_task: Plan namespaces for dev, staging and production.
+practice_question: Are nodes namespaced?
+practice_answer: No, they are cluster-wide.
+
+@K8S-015
+type: code56
+topic: 02 Workloads
+level: Intermediate
+term: Rolling updates and rollbacks
+cue: How does Kubernetes replace old pods with new ones without downtime, and how do you undo it?
+kind: Operation
+frequency: Very high
+importance: 5
+origin: Releases must not take the app offline, so Deployments replace pods in steps and keep history for going back.
+pro_tip: Set readiness probes, because the rollout waits for them before continuing.
+memory_story: A rolling update changes the crew a few at a time while the ship stays sailing.
+visual: Old pods fading out as new pods appear a few at a time.
+emotion: The calm of releases that never need downtime.
+meaning: A rolling update gradually creates pods with the new template and removes old ones within limits set by maxSurge and maxUnavailable, and rollout commands report progress, pause or revert it.
+code: spec:¶  strategy:¶    type: RollingUpdate¶    rollingUpdate:¶      maxSurge: 1¶      maxUnavailable: 0¶# commands¶# kubectl set image deployment/web app=acme/web:1.4.3¶# kubectl rollout status deployment/web¶# kubectl rollout history deployment/web¶# kubectl rollout undo deployment/web
+output: One extra pod is created at a time, no pod is removed until its replacement is ready, and undo returns to the previous version.
+explanation: maxSurge says how many extra pods may exist during the update, and maxUnavailable how many may be missing. Readiness probes make new pods wait until they are healthy before receiving traffic. Failed rollouts can stall, so progressDeadlineSeconds sets a limit. Revision history is kept for rollbacks. Database changes must stay compatible with both versions.
+simple_explain: Update the image, watch the rollout, and undo if the new version misbehaves.
+analogy: A rolling update changes the crew a few at a time while the ship stays sailing.
+syntax: kubectl rollout status|history|undo|pause|resume deployment/NAME
+anatomy: maxSurge = extra pods | maxUnavailable = missing pods | undo = go back
+example_1: kubectl rollout undo deployment/web --to-revision=2
+example_2: kubectl rollout pause deployment/web
+example_3: progressDeadlineSeconds: 600
+variation: strategy: { type: Recreate }   // stop all old pods first, with downtime
+used_with: readiness probes, Deployments, CI/CD
+related: Deployments, probes, rollbacks in CI/CD, canary releases
+alternatives: Blue-green | canary with a mesh
+where_used: Every release | Incident response | CI pipelines
+mini_conversation: A: The new version is failing. | B: Run kubectl rollout undo to return to the previous one.
+misconception: ✗ A rolling update never causes downtime → ✓ Without readiness probes, traffic can reach pods that are not ready
+confused_with: RollingUpdate vs Recreate: rolling replaces gradually, recreate stops everything first.
+avoid: Do not roll out without readiness probes.
+wrong_code: maxUnavailable: 100%   # takes the app down
+right_code: maxUnavailable: 0
+memory_trick: Surge up, wait ready, then remove old.
+real_project: A quick rollout undo restored service within a minute after a faulty release.
+real_interview: An interviewer may ask: How do you roll back a Deployment?
+real_daily: It is like changing a ship's crew while sailing.
+mcq_question: Which command returns to the previous version?
+mcq_options: A) kubectl drain B) kubectl rollout undo C) kubectl delete D) kubectl scale
+mcq_answer: B
+mcq_why: It restores the previous ReplicaSet.
+fill_blank: The setting for extra pods during an update is max____ → Surge
+hindi_to_task: Roll back the deployment web to the previous revision.
+task_answer: kubectl rollout undo deployment/web
+own_task: Write a strategy that never removes a pod before its replacement is ready.
+practice_question: Why are readiness probes important during rollouts?
+practice_answer: Traffic should reach only pods that are ready.
+
+@K8S-016
+type: code56
+topic: 03 Config and Storage
+level: Beginner
+term: ConfigMaps
+cue: Which object holds non-secret configuration separate from container images?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Configuration changes between environments, so settings are kept in objects outside the image.
+pro_tip: Mount a ConfigMap as files for config files, and inject as environment variables for simple settings.
+memory_story: A ConfigMap is a settings sheet handed to a container at start.
+visual: A key-value sheet feeding into a pod.
+emotion: The ease of changing settings without rebuilding images.
+meaning: A ConfigMap stores non-confidential configuration as key-value pairs or files, which pods consume as environment variables, command arguments or mounted files.
+code: apiVersion: v1¶kind: ConfigMap¶metadata:¶  name: web-config¶data:¶  LOG_LEVEL: info¶  app.properties: |¶    feature.search=true¶---¶# in the pod spec¶# envFrom: [{ configMapRef: { name: web-config } }]¶# volumes: [{ name: cfg, configMap: { name: web-config } }]
+output: The pod receives LOG_LEVEL as an environment variable, or the app.properties file in a mounted folder.
+explanation: Values must be strings. Environment variables are fixed when a pod starts, so changes need a restart. Mounted files are updated by Kubernetes after a short delay, although the app must reread them. ConfigMaps are limited in size. Never put passwords there, because they are not encrypted or protected like Secrets.
+simple_explain: Store non-secret settings in a ConfigMap, and inject them as variables or files.
+analogy: A ConfigMap is a settings sheet handed to a container at start.
+syntax: kind: ConfigMap / data: { key: value }
+anatomy: data = key-value pairs | envFrom = environment variables | volume = files
+example_1: kubectl create configmap web-config --from-literal=LOG_LEVEL=info
+example_2: kubectl create configmap app --from-file=app.properties
+example_3: valueFrom: { configMapKeyRef: { name: web-config, key: LOG_LEVEL } }
+variation: immutable: true   // protect a ConfigMap from changes
+used_with: environment variables, volumes, Deployments
+related: Secrets, environment variables, volumes, Deployments
+alternatives: Config files baked into images | external config services
+where_used: Per-environment settings | Feature switches | Config files
+mini_conversation: A: I changed the ConfigMap but the app still has the old value. | B: Environment variables load at start, so restart the pods.
+misconception: ✗ A ConfigMap is a safe place for passwords → ✓ Use Secrets, and ideally an external secret manager
+confused_with: ConfigMap vs Secret: ConfigMap is for plain settings, Secret is for sensitive values.
+avoid: Do not store credentials in ConfigMaps.
+wrong_code: data: { DB_PASSWORD: hunter2 }
+right_code: kind: Secret   # for DB_PASSWORD
+memory_trick: Plain settings go in ConfigMaps, secrets go elsewhere.
+real_project: Moving settings into ConfigMaps let one image run unchanged in three environments.
+real_interview: An interviewer may ask: What is the difference between a ConfigMap and a Secret?
+real_daily: It is like a settings sheet handed over at start.
+mcq_question: When are environment variables from a ConfigMap read?
+mcq_options: A) Continuously B) Every minute C) Never D) When the pod starts
+mcq_answer: D
+mcq_why: Environment variables are fixed at container start.
+fill_blank: All values in a ConfigMap are stored as ____ → strings
+hindi_to_task: Create a ConfigMap with LOG_LEVEL set to info.
+task_answer: kubectl create configmap web-config --from-literal=LOG_LEVEL=info
+own_task: Mount a ConfigMap as a file inside a pod.
+practice_question: Why restart pods after changing an environment ConfigMap?
+practice_answer: Environment variables are read only at start.
+
+@K8S-017
+type: code56
+topic: 03 Config and Storage
+level: Intermediate
+term: Secrets
+cue: Which object holds sensitive values such as passwords and tokens?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Credentials must reach pods without being baked into images, so Secrets store them separately with tighter access.
+pro_tip: Remember that Secrets are base64 encoded, not encrypted by default, so enable encryption at rest and restrict access.
+memory_story: A Secret is a sealed envelope, but the seal is only strong if the cluster is configured to protect it.
+visual: A pod mounting a secret as a file.
+emotion: The responsibility of handling sensitive values carefully.
+meaning: A Secret stores small sensitive values, base64 encoded, which can be injected as environment variables or mounted as files, with access controlled by RBAC.
+code: kubectl create secret generic db --from-literal=password='s3cr3t'¶# in the pod spec¶env:¶  - name: DB_PASSWORD¶    valueFrom:¶      secretKeyRef: { name: db, key: password }¶volumes:¶  - name: creds¶    secret: { secretName: db }
+output: The pod receives the password as an environment variable or as a file in a mounted folder.
+explanation: Base64 is only encoding, so anyone who can read the Secret can decode it. Use encryption at rest, tight RBAC and avoid committing manifests with secret values. Files are safer than environment variables, since variables can leak through logs and child processes. External secret managers can sync values into Secrets. Rotate regularly.
+simple_explain: Store sensitive values in Secrets, restrict who can read them, and prefer an external secret manager.
+analogy: A Secret is a sealed envelope, but the seal is only strong if the cluster protects it.
+syntax: kind: Secret / type: Opaque / data: base64
+anatomy: data = base64 values | secretKeyRef = one key as variable | secret volume = files
+example_1: kubectl get secret db -o jsonpath='{.data.password}' | base64 -d
+example_2: type: kubernetes.io/tls
+example_3: ExternalSecret syncing from a cloud vault
+variation: stringData: { password: s3cr3t }   // plain text input, stored encoded
+used_with: RBAC, external secret managers, volumes
+related: ConfigMaps, RBAC, image pull secrets, credentials in pipelines
+alternatives: External secret managers | sealed secrets
+where_used: Database passwords | TLS certificates | API keys
+mini_conversation: A: Are Secrets encrypted? | B: Only if encryption at rest is enabled, as base64 is just encoding.
+misconception: ✗ Base64 means the Secret is encrypted → ✓ Base64 is reversible encoding, not protection
+confused_with: Secret vs ConfigMap: both are key-value stores, but a Secret gets extra handling and access control.
+avoid: Do not commit Secret manifests with real values to Git.
+wrong_code: data: { password: s3cr3t }   # must be base64 in data
+right_code: stringData: { password: s3cr3t }   # or encode the value
+memory_trick: Base64 hides nothing, so lock it with RBAC.
+real_project: Syncing secrets from a cloud vault removed passwords from Git manifests.
+real_interview: An interviewer may ask: Are Kubernetes Secrets secure by default?
+real_daily: It is like an envelope whose seal depends on the cluster.
+mcq_question: What is base64 in a Secret?
+mcq_options: A) Hashing B) Strong encryption C) Compression D) Reversible encoding
+mcq_answer: D
+mcq_why: Anyone can decode it.
+fill_blank: Protecting Secrets stored in etcd needs encryption at ____ → rest
+hindi_to_task: Create a secret called db with a password value.
+task_answer: kubectl create secret generic db --from-literal=password='s3cr3t'
+own_task: List three steps to protect Secrets in a cluster.
+practice_question: Why prefer mounted secret files over environment variables?
+practice_answer: Variables can leak through logs and child processes.
+
+@K8S-018
+type: code56
+topic: 03 Config and Storage
+level: Intermediate
+term: Volumes
+cue: Which feature gives containers storage beyond their own temporary file system?
+kind: Resource
+frequency: High
+importance: 4
+origin: A container's file system disappears with it, so pods can mount volumes that last longer or are shared between containers.
+pro_tip: Use emptyDir for scratch space, and persistent volumes for data that must survive.
+memory_story: A volume is a shelf attached to the pod that keeps things beyond one container's life.
+visual: Two containers in a pod sharing one folder.
+emotion: The comfort of data that survives a container restart.
+meaning: A volume is a directory made available to containers in a pod, with types such as emptyDir for temporary shared space, configMap and secret for config, and persistentVolumeClaim for durable storage.
+code: spec:¶  containers:¶    - name: app¶      image: acme/app:1.0¶      volumeMounts:¶        - { name: scratch, mountPath: /tmp/work }¶        - { name: data, mountPath: /var/lib/app }¶  volumes:¶    - name: scratch¶      emptyDir: {}¶    - name: data¶      persistentVolumeClaim: { claimName: app-data }
+output: The app uses a temporary shared folder that vanishes with the pod and a persistent folder backed by a claim.
+explanation: emptyDir lives as long as the pod and is shared between its containers. hostPath mounts a node folder and is risky. Persistent volume claims connect to real storage that outlives pods. Volume mounts can be read-only. Projected volumes combine several sources. Access modes limit how many nodes may mount a volume.
+simple_explain: Declare volumes in the pod and mount them into containers, using claims for durable data.
+analogy: A volume is a shelf attached to the pod that keeps things beyond one container's life.
+syntax: volumes: [{ name, type }] and volumeMounts: [{ name, mountPath }]
+anatomy: volumes = what exists | volumeMounts = where it appears | emptyDir = temporary
+example_1: emptyDir: { medium: Memory }
+example_2: configMap: { name: web-config }
+example_3: readOnly: true
+variation: hostPath: { path: /data }   // risky, ties the pod to a node
+used_with: PersistentVolumeClaims, ConfigMaps, sidecars
+related: PersistentVolumes and claims, ConfigMaps, StatefulSets, storage classes
+alternatives: Object storage from the application
+where_used: Shared scratch | Config files | Databases
+mini_conversation: A: Our data vanished when the pod restarted. | B: It was in the container file system, so use a persistent volume.
+misconception: ✗ Data written inside a container survives pod replacement → ✓ Only data on a persistent volume survives
+confused_with: emptyDir vs PVC: emptyDir lasts as long as the pod, a claim outlives it.
+avoid: Do not use hostPath for application data.
+wrong_code: # data written to /app/data with no volume
+right_code: volumeMounts: [{ name: data, mountPath: /app/data }]
+memory_trick: Without a volume, data does not survive.
+real_project: Mounting a persistent volume kept uploaded files across pod restarts.
+real_interview: An interviewer may ask: What is an emptyDir volume?
+real_daily: It is like a shelf attached to the pod.
+mcq_question: How long does an emptyDir volume last?
+mcq_options: A) Until the node reboots only B) One minute C) As long as the pod D) Forever
+mcq_answer: C
+mcq_why: It is created and deleted with the pod.
+fill_blank: Where a volume appears in the container is its mount ____ → path
+hindi_to_task: Mount a temporary folder at /tmp/work.
+task_answer: volumes: [{ name: scratch, emptyDir: {} }] and volumeMounts: [{ name: scratch, mountPath: /tmp/work }]
+own_task: Write a pod with two containers sharing an emptyDir.
+practice_question: Why is hostPath risky?
+practice_answer: It ties pods to a node and exposes host files.
+
+@K8S-019
+type: code56
+topic: 03 Config and Storage
+level: Intermediate
+term: PersistentVolumes and claims
+cue: Which two objects separate real storage from the request for it?
+kind: Resource
+frequency: High
+importance: 5
+origin: Developers want storage without knowing the infrastructure, so claims request storage and volumes supply it.
+pro_tip: Request storage with a claim and let a storage class provision it automatically.
+memory_story: A claim is an order slip for storage, and a persistent volume is the real disk delivered against it.
+visual: A claim linking a pod to a volume backed by a cloud disk.
+emotion: The ease of asking for storage by size.
+meaning: A PersistentVolume is a piece of cluster storage, and a PersistentVolumeClaim is a request for storage by size and access mode, which Kubernetes binds to a suitable volume.
+code: apiVersion: v1¶kind: PersistentVolumeClaim¶metadata:¶  name: app-data¶spec:¶  accessModes: ["ReadWriteOnce"]¶  storageClassName: standard¶  resources:¶    requests:¶      storage: 10Gi
+output: A 10Gi volume is provisioned and bound to the claim, which pods can then mount.
+explanation: With dynamic provisioning, creating a claim makes the storage class create the underlying disk. Access modes include ReadWriteOnce for one node, ReadOnlyMany and ReadWriteMany for shared access, where the storage supports it. The reclaim policy decides if the data is kept or deleted after the claim is removed. Volume expansion may be allowed by the class.
+simple_explain: Create a claim with a size and class, and mount it in the pod.
+analogy: A claim is an order slip for storage, and a persistent volume is the real disk delivered against it.
+syntax: kind: PersistentVolumeClaim / spec: accessModes, resources, storageClassName
+anatomy: PVC = request | PV = supplied storage | accessModes = who can mount | reclaimPolicy = after deletion
+example_1: kubectl get pvc,pv
+example_2: persistentVolumeReclaimPolicy: Retain
+example_3: allowVolumeExpansion: true
+variation: volumeMode: Block   // raw block device instead of a file system
+used_with: StatefulSets, storage classes, backups
+related: volumes, storage classes, StatefulSets, backups
+alternatives: Object storage | managed databases
+where_used: Databases | Uploads | Stateful apps
+mini_conversation: A: The claim is stuck in pending. | B: No storage class could provision it, so check the class and capacity.
+misconception: ✗ Deleting a pod deletes its persistent volume → ✓ The claim and volume remain until you delete the claim, and the reclaim policy then decides
+confused_with: PV vs PVC: the volume is the storage, the claim is the request.
+avoid: Do not delete claims holding data without a backup.
+wrong_code: accessModes: ["ReadWriteMany"]   # on disk storage that supports one node only
+right_code: accessModes: ["ReadWriteOnce"]
+memory_trick: The claim asks and the volume supplies.
+real_project: Reading the claim events showed a missing storage class behind a pending database.
+real_interview: An interviewer may ask: What does the reclaim policy do?
+real_daily: It is like an order slip and a delivered disk.
+mcq_question: What does a PersistentVolumeClaim do?
+mcq_options: A) Stores secrets B) Requests storage C) Runs a pod D) Defines a node
+mcq_answer: B
+mcq_why: It asks for size and access mode.
+fill_blank: The access mode for a single node writer is ReadWrite____ → Once
+own_task: Write a claim for 20Gi of single-node storage.
+hindi_to_task: Request 10Gi of single-node storage.
+task_answer: kind: PersistentVolumeClaim with accessModes ReadWriteOnce and requests storage 10Gi
+practice_question: What does a claim ask for?
+practice_answer: Storage of a given size and access mode.
+@K8S-020
+type: code56
+topic: 03 Config and Storage
+level: Intermediate
+term: Storage classes
+cue: Which objects describe the kinds of storage a cluster can provide on demand?
+kind: Resource
+frequency: Medium
+importance: 4
+origin: Different workloads need fast or cheap disks, so storage classes name the types and how to create them.
+pro_tip: Mark one class as default, and choose classes by speed and cost for each workload.
+memory_story: A storage class is a menu of disk types with a dish to order for each need.
+visual: Classes named standard and fast, each pointing to a different disk type.
+emotion: The ease of choosing storage by name.
+meaning: A StorageClass names a provisioner and its parameters, such as disk type and reclaim policy, so claims can request storage that is created automatically.
+code: apiVersion: storage.k8s.io/v1¶kind: StorageClass¶metadata:¶  name: fast¶provisioner: ebs.csi.aws.com¶parameters:¶  type: gp3¶reclaimPolicy: Delete¶allowVolumeExpansion: true¶volumeBindingMode: WaitForFirstConsumer
+output: Claims that name the class fast get gp3 disks created on demand in the right zone.
+explanation: The provisioner is a CSI driver for the cloud or storage system. WaitForFirstConsumer delays creation until a pod is placed, so the disk is made in the same zone. One class can be the default for claims that name none. The reclaim policy sets what happens to the disk after deletion of the claim. Parameters differ by provider.
+simple_explain: Define classes for the storage types you offer, and let claims pick one by name.
+analogy: A storage class is a menu of disk types with a dish to order for each need.
+syntax: kind: StorageClass / provisioner / parameters
+anatomy: provisioner = who creates | parameters = disk settings | volumeBindingMode = when to create
+example_1: kubectl get storageclass
+example_2: storageclass.kubernetes.io/is-default-class: "true"
+example_3: storageClassName: fast
+variation: reclaimPolicy: Retain   // keep the disk after the claim is deleted
+used_with: PersistentVolumeClaims, StatefulSets, CSI drivers
+related: PersistentVolumes and claims, StatefulSets, volumes, cloud basics
+alternatives: Manually created volumes
+where_used: Cloud clusters | Databases | Cost control
+mini_conversation: A: Which disk type does the claim get? | B: Whatever the storage class says, such as gp3.
+misconception: ✗ All storage in a cluster is the same → ✓ Classes differ in speed, cost, zone and features
+avoid: Do not use a Delete policy for data you must keep.
+wrong_code: reclaimPolicy: Delete   # for irreplaceable data
+right_code: reclaimPolicy: Retain
+memory_trick: Class chooses the disk, policy decides its fate.
+real_project: A fast storage class for databases and a cheap one for logs cut the monthly bill.
+real_interview: An interviewer may ask: Why use WaitForFirstConsumer?
+real_daily: It is like a menu of disk types.
+mcq_question: What does a StorageClass name?
+mcq_options: A) A provisioner and parameters B) A namespace C) A node D) A pod
+mcq_answer: A
+mcq_why: It tells Kubernetes how to create storage.
+fill_blank: The plug-in standard used by provisioners is called ____ → CSI
+hindi_to_task: List the storage classes in the cluster.
+task_answer: kubectl get storageclass
+own_task: Describe when you would use a fast class and a cheap class.
+practice_question: Why delay volume creation until a pod is placed?
+practice_answer: So the disk is created in the same zone as the pod.
+
+@K8S-021
+type: code56
+topic: 03 Config and Storage
+level: Beginner
+term: Environment variables in pods
+cue: How do you give containers settings through environment variables?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Twelve-factor apps read settings from the environment, so pods can inject variables from literals, ConfigMaps, Secrets and pod fields.
+pro_tip: Source values from ConfigMaps and Secrets instead of hard-coding them in the pod spec.
+memory_story: Environment variables are notes pinned inside the container before it starts.
+visual: A pod spec listing variables with different sources.
+emotion: The clarity of seeing where each setting comes from.
+meaning: The env field sets variables from literal values, ConfigMap keys, Secret keys or pod information through the downward API, and envFrom loads whole ConfigMaps or Secrets.
+code: env:¶  - name: LOG_LEVEL¶    value: "info"¶  - name: DB_HOST¶    valueFrom:¶      configMapKeyRef: { name: web-config, key: db_host }¶  - name: DB_PASSWORD¶    valueFrom:¶      secretKeyRef: { name: db, key: password }¶  - name: POD_NAME¶    valueFrom:¶      fieldRef: { fieldPath: metadata.name }
+output: The container starts with LOG_LEVEL, DB_HOST, DB_PASSWORD and POD_NAME set from their sources.
+explanation: Values are fixed when the container starts, so changes need a restart. The downward API exposes information such as the pod name and namespace. Variables can refer to others using dollar and parentheses. Be careful with secrets in variables, since they may appear in logs or process listings. Check for a variable with kubectl exec and env.
+simple_explain: Use env with value or valueFrom, and restart pods after changes.
+analogy: Environment variables are notes pinned inside the container before it starts.
+syntax: env: [{ name, value | valueFrom }]
+anatomy: value = literal | configMapKeyRef = from ConfigMap | secretKeyRef = from Secret | fieldRef = pod info
+example_1: kubectl exec web-1 -- env
+example_2: envFrom: [{ configMapRef: { name: web-config } }]
+example_3: fieldRef: { fieldPath: status.podIP }
+variation: resourceFieldRef: { resource: limits.memory }   // expose limits
+used_with: ConfigMaps, Secrets, twelve-factor apps
+related: ConfigMaps, Secrets, Deployments, environment variables in Node
+alternatives: Mounted config files
+where_used: Application settings | Credentials | Pod metadata
+mini_conversation: A: How does the app know its pod name? | B: Inject it with fieldRef from the downward API.
+misconception: ✗ Changing a ConfigMap updates env variables in running pods → ✓ Variables are read at start, so pods must restart
+confused_with: env vs envFrom: env sets named variables, envFrom imports all keys.
+avoid: Do not print environment variables with secrets in logs.
+wrong_code: env: [{ name: DB_PASSWORD, value: "hunter2" }]
+right_code: env: [{ name: DB_PASSWORD, valueFrom: { secretKeyRef: { name: db, key: password } } }]
+memory_trick: Read from sources, never type secrets.
+real_project: Sourcing variables from Secrets removed passwords from the Deployment file.
+real_interview: An interviewer may ask: How do you pass the pod name to the application?
+real_daily: It is like notes pinned inside the container.
+mcq_question: Which field loads every key of a ConfigMap as variables?
+mcq_options: A) labels B) envFrom C) env D) args
+mcq_answer: B
+mcq_why: envFrom imports all keys.
+fill_blank: The feature that exposes pod information to the container is the ____ API → downward
+hindi_to_task: Set LOG_LEVEL to info for a container.
+task_answer: env: [{ name: LOG_LEVEL, value: "info" }]
+own_task: Write env entries from a ConfigMap and a Secret.
+practice_question: When are env variables read?
+practice_answer: When the container starts.

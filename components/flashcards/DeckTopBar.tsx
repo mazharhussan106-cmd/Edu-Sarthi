@@ -1,14 +1,13 @@
-// Owns the top of the Flashcard tab: the search box, then one scrolling row
-// with the card kinds (Words, Chunk, Grammar, Support), the "skipped" chip,
-// the student's remark lists and today's counts; on the Chunk tab, a second
-// row with the chunk types (Frames, Prepositions, …), and on the Support tab
-// a second row with the channels (Voice, Chat, Email) and levels.
+// Owns the top of the Flashcard tab: one scrolling row with the card kinds
+// (Words, Chunk, Grammar, Support), the "skipped" chip, the student's remark
+// lists and today's counts; on the Chunk tab, a second row with the chunk
+// types (Frames, Prepositions, …), and on the Support tab a second row with
+// the channels (Voice, Chat, Email) and levels.
 //
-// Kept to as few short rows as possible so the card gets most of a phone
+// Search moved to the header (HeaderSearch). Kept to as few short rows as possible so the card gets most of a phone
 // screen. A server component: it only links, it never fetches.
 
 import Link from "next/link";
-import { Search } from "lucide-react";
 
 import { CHUNK_TYPES } from "@/lib/chunkCard";
 import { SUPPORT_CHANNELS, SUPPORT_LEVELS } from "@/lib/supportCard";
@@ -48,7 +47,6 @@ export function DeckTopBar({
   type,
   channel = null,
   level = null,
-  q,
   list,
   base,
   skipCount,
@@ -60,7 +58,6 @@ export function DeckTopBar({
   /** Support tab only: the channel and level filters, as in the URL. */
   channel?: string | null;
   level?: string | null;
-  q: string;
   list: ListKey | undefined;
   base: string;
   skipCount: number;
@@ -69,24 +66,7 @@ export function DeckTopBar({
 }) {
   return (
     <>
-      <form action="/flashcards" className="relative">
-        <input type="hidden" name="kind" value={k.value} />
-        {type ? <input type="hidden" name="type" value={type} /> : null}
-        {channel ? <input type="hidden" name="ch" value={channel} /> : null}
-        {level ? <input type="hidden" name="lv" value={level} /> : null}
-        <label htmlFor="card-search" className="sr-only">Search {k.noun}s</label>
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist" aria-hidden="true" />
-        <input
-          id="card-search"
-          name="q"
-          type="search"
-          defaultValue={q}
-          placeholder={`Search a ${k.noun} or ID`}
-          className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
-        />
-      </form>
-
-      <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
         <nav aria-label="Card kind" className="flex shrink-0 gap-1.5">
           {DECK_KINDS.map((x) => (
             <Link
@@ -106,6 +86,7 @@ export function DeckTopBar({
             institute. Placed after the card kinds, before the lists. */}
         {[
           { href: "/decks", label: "📚 My decks" },
+          { href: "/explore", label: "🧭 Explore" },
           { href: "/library", label: "🌐 Library" },
           { href: "/institute", label: "🏫 Institute" },
         ].map((l) => (

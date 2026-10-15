@@ -1,0 +1,429 @@
+
+@SSO-021
+type: topic56
+topic: 03 Provisioning and Access
+level: Intermediate
+term: Just-in-time provisioning
+cue: How can an app create an account automatically the first time someone logs in?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Pre-creating every account is work, so the app creates the account from the identity provider's claims on first login.
+pro_tip: Combine it with SCIM or periodic cleanup, because it cannot remove accounts.
+memory_story: JIT provisioning is a hotel that registers a guest the moment they arrive.
+visual: A first login creating a new profile from token claims.
+emotion: The convenience of no setup before first use.
+definition: Just-in-time provisioning creates or updates a user account in the application at login time, using the identity and attributes from the assertion or ID token.
+explanation: It needs no separate sync and works with SAML and OIDC. The app maps claims to fields and roles. The weakness is that it cannot deactivate users who never log in again, so offboarding must be handled by SCIM or by disabling at the provider. Role changes happen only at the next login. Validate claims before trusting them for roles.
+simple_explain: Create or update the account at login, and handle removal separately.
+analogy: JIT provisioning is a hotel that registers a guest the moment they arrive.
+formula_rule: First login creates, later logins update, removal needs another path.
+example_1: A new user appearing after first SSO login.
+example_2: A role updated from a groups claim at login.
+example_3: A leaver with a lingering account.
+related: SCIM, offboarding, groups and roles, OpenID Connect
+word_family: JIT, provisioning, claims mapping, first login, sync
+where_used: SaaS apps | Small integrations | Federation
+mini_conversation: A: Do we need SCIM for every customer? | B: JIT is enough for creation, but not for removal.
+misconception: ✗ JIT also removes leavers → ✓ It cannot remove accounts of users who stop logging in
+contrast: JIT vs SCIM: JIT acts at login, SCIM acts on directory changes.
+avoid: Do not grant admin roles from unchecked claims.
+memory_trick: JIT creates at login, never removes.
+real_project: JIT let a customer start quickly, and SCIM was added later for offboarding.
+real_interview: An interviewer may ask: What are the limits of just-in-time provisioning?
+real_daily: It is like registering a guest on arrival.
+mcq_question: When does JIT create the account?
+mcq_options: A) At first login B) At logout C) At midnight D) At hiring
+mcq_answer: A
+mcq_why: The account appears when the user first signs in.
+fill_blank: JIT cannot ____ accounts of users who never return → remove
+apply: You need leavers removed automatically. What do you add? → SCIM or provider-driven deactivation
+explain_task: Explain JIT provisioning in three lines.
+own_task: List two benefits and two limits of JIT.
+
+@SSO-022
+type: topic56
+topic: 03 Provisioning and Access
+level: Intermediate
+term: Offboarding
+cue: How do you remove all access quickly when someone leaves?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Leavers who keep access are a serious risk, so identity systems make removal fast and complete.
+pro_tip: Disable the identity first, then revoke sessions and tokens, then clean up apps.
+memory_story: Offboarding is collecting the key cards, then changing the locks.
+visual: A checklist with disable, revoke sessions, remove from groups and review shared secrets.
+emotion: The peace of knowing leavers lose access at once.
+definition: Offboarding is the process of disabling a leaver's identity, ending their sessions and tokens, removing group memberships and handling data, devices and shared credentials.
+explanation: With SSO, disabling one account blocks new logins. Existing app sessions and refresh tokens may continue, so revoke them and keep lifetimes short. SCIM deactivates accounts in connected apps. Service accounts and shared secrets they knew must be rotated. Transfer ownership of documents. Keep an audit trail.
+simple_explain: Disable, revoke sessions, remove from groups, rotate shared secrets and keep a record.
+analogy: Offboarding is collecting the key cards, then changing the locks.
+formula_rule: Disable, revoke, remove, rotate, record.
+example_1: Disabling the account in the identity provider.
+example_2: Revoking refresh tokens.
+example_3: Rotating a shared API key the person knew.
+related: SCIM, sessions, token lifetimes, service accounts
+word_family: offboarding, revoke, disable, rotate, audit
+where_used: HR processes | Security | Audits
+mini_conversation: A: The leaver can still open the app. | B: Their app session is alive, so revoke it.
+misconception: ✗ Disabling the account ends every active session immediately → ✓ Existing sessions and tokens may remain until revoked or expired
+contrast: Disable vs revoke: disabling blocks new logins, revoking ends existing access.
+avoid: Do not forget shared secrets the leaver knew.
+memory_trick: Disable, then revoke, then rotate.
+real_project: Adding session revocation to the checklist closed a gap where leavers stayed signed in.
+real_interview: An interviewer may ask: What steps do you take when an employee leaves?
+real_daily: It is like collecting key cards and changing locks.
+mcq_question: What should happen after disabling the identity?
+mcq_options: A) Delete logs B) Rename the account C) Nothing D) Revoke sessions and tokens
+mcq_answer: D
+mcq_why: Existing access may continue otherwise.
+fill_blank: Ending a live session or token early is to ____ it → revoke
+apply: A leaver knew a shared API key. What do you do? → Rotate the key
+explain_task: Explain offboarding in three lines.
+own_task: Write an offboarding checklist with six steps.
+
+@SSO-023
+type: topic56
+topic: 04 Operations and Security
+level: Advanced
+term: Single logout
+cue: How can logging out in one place end sessions everywhere?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Users expect logging out to sign them out of everything, but each app keeps its own session, so protocols define logout messages.
+pro_tip: Test logout early, since support varies between apps and providers.
+memory_story: Single logout is pulling the fire alarm so every room is told to empty.
+visual: An IdP sending logout messages to several apps.
+emotion: The expectation of a clean sign-out.
+definition: Single logout is a mechanism where signing out at the identity provider or one app notifies the other connected apps to end their sessions, using SAML logout messages or OIDC front-channel and back-channel logout.
+explanation: Front-channel logout uses the browser to load logout URLs in each app, and can fail if cookies are blocked. Back-channel logout sends server-to-server messages and is more reliable. Not all apps support it, so sessions may linger. Short session lifetimes reduce the risk. Users on shared computers need clear logout.
+simple_explain: Notify apps when the provider session ends, and keep session lifetimes short as a backup.
+analogy: Single logout is pulling the fire alarm so every room is told to empty.
+formula_rule: Logout at one place, messages to all apps.
+example_1: Back-channel logout calling an app's endpoint.
+example_2: Front-channel logout loading hidden pages.
+example_3: An app that ignores logout and keeps its session.
+related: sessions, what SSO is, token lifetimes, offboarding
+word_family: logout, front-channel, back-channel, session, notification
+where_used: Enterprise SSO | Shared devices | Compliance
+mini_conversation: A: I logged out but the other app is still open. | B: That app does not support single logout.
+misconception: ✗ Single logout works the same in all apps → ✓ Support varies and sessions can linger
+contrast: Front vs back channel: browser-based versus server-to-server.
+avoid: Do not rely on single logout alone.
+memory_trick: Prefer back-channel, back it with short sessions.
+real_project: Back-channel logout closed lingering sessions on shared workstations.
+real_interview: An interviewer may ask: What is the difference between front-channel and back-channel logout?
+real_daily: It is like a fire alarm telling every room to empty.
+mcq_question: Which logout is server-to-server?
+mcq_options: A) Front-channel B) Back-channel C) Browser tab D) Cookie
+mcq_answer: B
+mcq_why: It does not depend on the browser.
+fill_blank: Logout messages sent through the browser use the ____ channel → front
+apply: Sessions linger on shared PCs. What reduces risk? → Back-channel logout and short sessions
+explain_task: Explain single logout in three lines.
+own_task: List two reasons single logout can fail.
+
+@SSO-024
+type: topic56
+topic: 04 Operations and Security
+level: Advanced
+term: Certificate rotation
+cue: How do you replace signing certificates without breaking logins?
+category: Core concept
+frequency: High
+importance: 5
+origin: Certificates expire, and SAML and token validation depend on them, so rotation must be planned.
+pro_tip: Publish the new certificate before switching, and keep both during the overlap.
+memory_story: Rotation is changing a lock while the old and new keys both work for a short time.
+visual: Two certificates in metadata during an overlap period.
+emotion: The relief of a rotation without downtime.
+definition: Certificate rotation is replacing the certificate or key used to sign assertions and tokens before it expires, with an overlap period in which relying parties trust both.
+explanation: For SAML, the IdP metadata lists signing certificates, and apps must import the new one before the IdP starts using it. For OIDC, the JWKS endpoint publishes several keys identified by kid, so apps pick the right one. Expired certificates cause sudden login outages. Monitor expiry dates and automate where possible. Document who owns each certificate.
+simple_explain: Add the new certificate first, switch later, and remove the old one after.
+analogy: Rotation is changing a lock while old and new keys both work for a short time.
+formula_rule: Publish new, switch, retire old.
+example_1: An IdP certificate expiring and breaking all logins.
+example_2: A JWKS with two keys during rotation.
+example_3: A calendar alert sixty days before expiry.
+related: SAML flow, JWT validation, clock skew, monitoring
+word_family: rotation, JWKS, kid, expiry, overlap
+where_used: Federation | Operations | Outages
+mini_conversation: A: All logins failed this morning. | B: The signing certificate expired.
+misconception: ✗ Certificates can be replaced on the day they expire → ✓ Both sides need the new one in advance
+contrast: SAML vs OIDC rotation: SAML needs metadata updates, OIDC uses a key set with kid.
+avoid: Do not let signing certificates expire unnoticed.
+memory_trick: Publish early, switch calmly, retire late.
+real_project: Monitoring certificate expiry avoided a repeat of a company-wide login outage.
+real_interview: An interviewer may ask: How do you rotate SAML certificates safely?
+real_daily: It is like changing a lock with both keys working briefly.
+mcq_question: What identifies the right key in a JWKS?
+mcq_options: A) The file size B) The colour C) The kid D) The date only
+mcq_answer: C
+mcq_why: Tokens name the key id they used.
+fill_blank: Time when old and new keys are both trusted is the ____ → overlap
+apply: The IdP certificate expires next month. What do you do first? → Publish the new certificate to all relying parties
+explain_task: Explain certificate rotation in three lines.
+own_task: Write a certificate rotation plan with clear dates.
+
+@SSO-025
+type: topic56
+topic: 04 Operations and Security
+level: Intermediate
+term: Clock skew
+cue: Why can logins fail because two servers disagree about the time?
+category: Core concept
+frequency: High
+importance: 4
+origin: Assertions and tokens have validity windows, so clocks that differ cause valid proofs to look expired or not yet valid.
+pro_tip: Keep servers synced with NTP and allow a small leeway.
+memory_story: Clock skew is two watches that disagree, so a ticket looks expired to one and early to the other.
+visual: Two clocks a few minutes apart and a token between them.
+emotion: The surprise of a bug caused by a clock.
+definition: Clock skew is the difference between the clocks of two systems, which can make time-limited assertions and tokens fail validation with errors such as expired or not yet valid.
+explanation: SAML assertions have NotBefore and NotOnOrAfter times, and JWTs have nbf and exp. If the app clock is behind or ahead, tokens fail. Use NTP to synchronise, and allow leeway of a minute or so. Do not set huge tolerances. Check times in the error message first when logins fail oddly.
+simple_explain: Sync clocks with NTP, allow a small leeway, and read the time claims when debugging.
+analogy: Clock skew is two watches that disagree, so a ticket looks expired to one and early to the other.
+formula_rule: Valid only if now is inside the time window with small leeway.
+example_1: Error: assertion not yet valid.
+example_2: A VM whose clock drifted five minutes.
+example_3: A leeway of thirty seconds in the validator.
+related: SAML flow, JWT validation, debugging a failed login, token lifetimes
+word_family: skew, NTP, leeway, nbf, exp
+where_used: Troubleshooting | Servers | Federation
+mini_conversation: A: The token is not yet valid. | B: Our server clock is behind, so sync it.
+misconception: ✗ Increasing leeway to an hour is a good fix → ✓ It weakens security, so fix the clock instead
+contrast: Skew vs expiry: skew is a clock mismatch, expiry is real age.
+avoid: Do not set a large leeway to hide bad clocks.
+memory_trick: Sync the clocks before blaming the tokens.
+real_project: Fixing NTP on one server cleared random login failures across a customer site.
+real_interview: An interviewer may ask: Why would a valid token be rejected as not yet valid?
+real_daily: It is like two watches that disagree.
+mcq_question: Which service keeps clocks in sync?
+mcq_options: A) SMTP B) NTP C) DHCP D) DNS
+mcq_answer: B
+mcq_why: Network Time Protocol aligns clocks.
+fill_blank: A small allowed time difference in validation is called ____ → leeway
+apply: Tokens fail as not yet valid on one server. What do you check? → That server's clock
+explain_task: Explain clock skew in three lines.
+own_task: List the claims that carry time limits.
+
+@SSO-026
+type: topic56
+topic: 04 Operations and Security
+level: Advanced
+term: Common attacks: CSRF and token theft
+cue: Which attacks target login flows, and how are they stopped?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Login flows move secrets through browsers, so attackers try forged requests and stealing tokens.
+pro_tip: Use state, PKCE, SameSite cookies, short lifetimes and strict redirect URIs together.
+memory_story: CSRF tricks your browser into sending a signed request you never meant to make, and token theft steals the ticket itself.
+visual: An attacker page triggering a request and a stolen token being reused.
+emotion: The alertness of knowing the common traps.
+definition: CSRF forces a user's browser to send an unwanted authenticated request, and token theft steals tokens or session cookies through scripts, logs, redirects or insecure storage to impersonate the user.
+explanation: The OAuth state parameter and SameSite cookies defend against CSRF in login flows. Token theft is reduced by HttpOnly cookies, avoiding tokens in URLs and logs, short lifetimes, refresh rotation, PKCE and strict redirect URIs. Content security policy limits script injection. Detect abnormal use and revoke quickly.
+simple_explain: Use state and SameSite against CSRF, and short lifetimes and protected storage against theft.
+analogy: CSRF tricks your browser into sending a request you never meant to make, and token theft steals the ticket itself.
+formula_rule: state + SameSite for CSRF, short life + safe storage for theft.
+example_1: A forged form submit using the user's cookie.
+example_2: A token leaked in a URL log.
+example_3: A script reading a token from local storage.
+related: PKCE, sessions, redirect URI rules, refresh tokens
+word_family: CSRF, XSS, token theft, state, SameSite
+where_used: Security reviews | Penetration tests | App design
+mini_conversation: A: Where should the SPA store tokens? | B: Prefer a backend session with HttpOnly cookies over local storage.
+misconception: ✗ HTTPS alone stops these attacks → ✓ It protects transport, and other defences are still needed
+contrast: CSRF vs XSS: CSRF abuses the browser's cookies, XSS runs attacker code in the page.
+avoid: Do not put tokens in URLs.
+memory_trick: State blocks forgery, short life limits theft.
+real_project: Moving tokens out of local storage removed a theft route found in a review.
+real_interview: An interviewer may ask: How do you defend an OAuth flow against CSRF?
+real_daily: It is like a forged signature and a stolen ticket.
+mcq_question: Which parameter protects the OAuth redirect against CSRF?
+mcq_options: A) scope B) aud C) state D) kid
+mcq_answer: C
+mcq_why: It ties the response to the request.
+fill_blank: A cookie setting that limits cross-site sending is ____ → SameSite
+apply: A single page app stores tokens in local storage. What risk? → Script injection can steal them
+explain_task: Explain CSRF and token theft in three lines.
+own_task: List five defences for a login flow.
+
+@SSO-027
+type: topic56
+topic: 04 Operations and Security
+level: Intermediate
+term: Passkeys
+cue: Which passwordless credentials use cryptographic keys bound to a device and site?
+category: Core concept
+frequency: High
+importance: 5
+origin: Passwords are phished and reused, so passkeys replace them with key pairs that cannot be tricked into working on fake sites.
+pro_tip: Offer passkeys alongside recovery options, and enrol more than one device.
+memory_story: A passkey is a key that only fits the real door and never works on a copy.
+visual: A device unlocking with a fingerprint and signing a challenge.
+emotion: The relief of nothing to type or remember.
+definition: A passkey is a FIDO2 and WebAuthn credential made of a public and private key pair, where the private key stays on the device or in a secure sync service and signs a challenge for one specific site.
+explanation: The site stores the public key. At login, the device unlocks the private key with a fingerprint, face or PIN and signs a challenge that includes the site's origin, so fake sites cannot reuse it. Passkeys resist phishing and cannot be leaked from the server. Synced passkeys ease recovery, while hardware keys give high assurance. Provide fallback and recovery carefully.
+simple_explain: Sign in with a device-bound key, and phishing sites cannot use it.
+analogy: A passkey is a key that only fits the real door and never works on a copy.
+formula_rule: Private key on device + public key on site + origin-bound signature.
+example_1: Logging in with a fingerprint on a phone.
+example_2: A hardware security key tap.
+example_3: A synced passkey on a new laptop.
+related: MFA, sessions, phishing, mTLS
+word_family: passkey, FIDO2, WebAuthn, origin, challenge
+where_used: Modern logins | Admin access | Consumer apps
+mini_conversation: A: Can phishing steal a passkey login? | B: No, the signature is tied to the real site.
+misconception: ✗ A passkey is just a stored password → ✓ It is a key pair, and no secret is sent to the site
+contrast: Password vs passkey: a shared secret versus a signed challenge.
+avoid: Do not make recovery weaker than the passkey.
+memory_trick: Private key stays, signature goes.
+real_project: Offering passkeys cut phishing-related account takeovers for a customer.
+real_interview: An interviewer may ask: Why are passkeys phishing resistant?
+real_daily: It is like a key that fits only the real door.
+mcq_question: What does the site store for a passkey?
+mcq_options: A) The password B) The private key C) The fingerprint D) The public key
+mcq_answer: D
+mcq_why: The private key never leaves the device.
+fill_blank: The browser standard behind passkeys is ____ → WebAuthn
+apply: A team fears phishing of staff logins. What do you roll out? → Passkeys or hardware keys
+explain_task: Explain passkeys in three lines.
+own_task: Plan how users recover access if they lose a device.
+
+@SSO-028
+type: topic56
+topic: 04 Operations and Security
+level: Advanced
+term: mTLS
+cue: Which TLS mode makes both client and server prove identity with certificates?
+category: Core concept
+frequency: Medium
+importance: 4
+origin: Services need to trust each other, so both sides present certificates instead of only the server doing so.
+pro_tip: Automate certificate issue and rotation, since manual handling does not scale.
+memory_story: Mutual TLS is a handshake where both parties show ID before talking.
+visual: Two services exchanging certificates before sending data.
+emotion: The assurance of known peers only.
+definition: Mutual TLS is TLS in which the server and the client both present certificates and verify each other, giving strong service identity and encrypted traffic.
+explanation: The client certificate identifies the caller, often with a service name in it. It is common in service meshes, financial APIs and zero trust networks. Short-lived certificates issued by an internal authority reduce risk. Certificate-bound tokens tie OAuth tokens to the client certificate. Operations need monitoring of expiry and revocation.
+simple_explain: Both sides show certificates, so each knows exactly who the other is.
+analogy: Mutual TLS is a handshake where both parties show ID before talking.
+formula_rule: Server cert + client cert, both verified.
+example_1: Two microservices authenticating in a mesh.
+example_2: A bank API requiring client certificates.
+example_3: Short-lived certificates issued every day.
+related: HTTPS and TLS, certificates, service mesh, client credentials
+word_family: mTLS, client certificate, authority, mesh, identity
+where_used: Service meshes | Finance | Zero trust
+mini_conversation: A: How does the API know which service is calling? | B: Through its client certificate in mutual TLS.
+misconception: ✗ Normal HTTPS authenticates both sides → ✓ Normally only the server proves its identity
+contrast: TLS vs mTLS: one-way versus mutual authentication.
+avoid: Do not manage client certificates by hand at scale.
+memory_trick: Mutual means both show certificates.
+real_project: Mutual TLS gave a customer strong service identity between internal APIs.
+real_interview: An interviewer may ask: What is mutual TLS?
+real_daily: It is like both parties showing ID.
+mcq_question: Who presents a certificate in mTLS?
+mcq_options: A) Both client and server B) Nobody C) Only the server D) Only the client
+mcq_answer: A
+mcq_why: Both authenticate.
+fill_blank: A certificate that identifies the caller is a ____ certificate → client
+apply: Services must prove identity to each other. What do you use? → Mutual TLS
+explain_task: Explain mTLS in three lines.
+own_task: List what you need to run mTLS between two services.
+
+@SSO-029
+type: code56
+topic: 04 Operations and Security
+level: Advanced
+term: Debugging a failed login
+cue: What steps help find why an SSO login fails?
+kind: Debugging skill
+frequency: Very high
+importance: 5
+origin: Login failures come from small mismatches, so a structured routine finds the cause faster than guessing.
+pro_tip: Capture the exact error, the time and the request id, and compare both sides' configuration.
+memory_story: Debugging a login is following a parcel through each hand-off to see where it got stuck.
+visual: A flow of redirect, login, response and validation with a failing step marked.
+emotion: The calm of a routine for a stressful problem.
+meaning: Debugging a failed login means checking each step of the flow, using browser developer tools, provider logs and app logs, and comparing configuration values such as issuer, audience, redirect URI, certificates and clocks.
+code: # 1. Browser: open developer tools, Network tab, preserve log, repeat the login¶# 2. Find the redirect to the IdP and the return to the app, note the status codes¶# 3. Decode the token or assertion (never paste real secrets into public sites)¶python3 -c 'import sys,base64,json; p=sys.argv[1].split(".")[1]; print(json.dumps(json.loads(base64.urlsafe_b64decode(p+"="*(-len(p)%4))),indent=2))' "$ID_TOKEN"¶# 4. Compare iss, aud, exp, nbf, nonce with the app configuration¶# 5. Check the IdP sign-in log for the error code and the app log for the validation error
+output: You see which step fails and the claims that do not match, such as a wrong audience or an expired time.
+explanation: Common causes are redirect URI mismatch, wrong audience or entity id, expired or rotated certificates, clock skew, missing claims, blocked cookies and wrong tenant or environment. Read the provider's sign-in log first, since it has precise error codes. Change one thing at a time. Never share real tokens publicly.
+simple_explain: Trace the flow step by step, decode the token locally, and compare each value with the configuration.
+analogy: Debugging a login is following a parcel through each hand-off.
+syntax: split the token on dots | base64url-decode part 2 (add = padding) | pretty-print JSON
+anatomy: network tab = flow | token claims = facts | provider log = error code | app log = validation error
+example_1: Error: redirect_uri mismatch.
+example_2: Error: audience does not match.
+example_3: Error: token expired by clock skew.
+variation: A SAML tracer browser extension   // shows assertions and redirects
+used_with: browser tools, provider logs, app logs
+related: clock skew, redirect URI rules, certificate rotation, JWT validation
+alternatives: Provider test tools
+where_used: Support | Customer onboarding | Incidents
+mini_conversation: A: The customer cannot log in. | B: Capture the error and compare the audience and redirect URI.
+misconception: ✗ Pasting real tokens into online decoders is fine → ✓ Tokens are credentials, so decode them locally
+confused_with: Decode vs validate: decoding shows claims, validation proves they are genuine.
+avoid: Do not paste live tokens into public tools.
+wrong_code: # paste the production token into a website decoder
+right_code: python3 -c 'import sys,base64,json; p=sys.argv[1].split(".")[1]; print(json.dumps(json.loads(base64.urlsafe_b64decode(p+"="*(-len(p)%4))),indent=2))' "$ID_TOKEN"
+memory_trick: Step by step, one change at a time.
+real_project: A routine of decode and compare found a wrong audience in minutes.
+real_interview: An interviewer may ask: How do you debug a failed SSO login?
+real_daily: It is like following a parcel through each hand-off.
+mcq_question: Where is the most precise error code usually found?
+mcq_options: A) The favicon B) The page title C) The identity provider sign-in log D) A screenshot
+mcq_answer: C
+mcq_why: The provider logs the exact failure reason.
+fill_blank: A mismatch between request and registered addresses is a redirect ____ mismatch → URI
+hindi_to_task: Decode the payload part of a token locally.
+task_answer: python3 -c 'import sys,base64,json; p=sys.argv[1].split(".")[1]; print(json.dumps(json.loads(base64.urlsafe_b64decode(p+"="*(-len(p)%4))),indent=2))' "$ID_TOKEN"
+own_task: Write a five-step checklist for a failed SAML login.
+practice_question: Why decode tokens locally?
+practice_answer: Tokens are credentials and should not be shared.
+
+@SSO-030
+type: topic56
+topic: 04 Operations and Security
+level: Intermediate
+term: Vendor SSO setup checklist
+cue: What do you collect and check when connecting a customer's identity provider?
+category: Practice
+frequency: High
+importance: 5
+origin: Most SSO projects fail on small configuration details, so a checklist keeps both sides aligned.
+pro_tip: Exchange metadata, test with one user first, and agree attribute names before go-live.
+memory_story: A setup checklist is a pilot's pre-flight list that prevents silly mistakes.
+visual: A two-column list of items for the app and for the customer's IdP.
+emotion: The confidence of a repeatable setup.
+definition: A vendor SSO checklist lists the protocol, endpoints, entity ids, redirect URIs, certificates, attribute and group mappings, session settings, test users, provisioning method and support contacts needed to connect an identity provider.
+explanation: Decide SAML or OIDC. Exchange metadata or the discovery URL. Agree attribute names such as email and groups, and the unique user identifier. Confirm clock sync, certificate expiry dates and rotation plan. Test with a pilot user, a user without access and a leaver. Plan SCIM or offboarding, logout behaviour and an emergency local admin login. Document everything.
+simple_explain: Agree protocol, endpoints, attributes and certificates, then test with real users before go-live.
+analogy: A setup checklist is a pilot's pre-flight list.
+formula_rule: Protocol, endpoints, attributes, certificates, tests, offboarding.
+example_1: Metadata exchanged and certificates noted with expiry dates.
+example_2: A pilot user logging in successfully.
+example_3: A break-glass admin account tested.
+related: SAML flow, OpenID Connect, SCIM, certificate rotation
+word_family: checklist, metadata, mapping, pilot, break-glass
+where_used: Customer onboarding | Integration projects | Support
+mini_conversation: A: Can we go live tomorrow? | B: Not until the pilot user and the leaver tests pass.
+misconception: ✗ SSO is finished when the first login works → ✓ Offboarding, rotation and recovery must also be planned
+contrast: Pilot vs go-live: the pilot proves the setup, go-live scales it.
+avoid: Do not enable mandatory SSO without a break-glass admin path.
+memory_trick: Test the leaver, not only the joiner.
+real_project: A checklist caught an expiring certificate before a customer launch.
+real_interview: An interviewer may ask: What do you check when setting up SSO for a customer?
+real_daily: It is like a pilot's pre-flight list.
+mcq_question: What should you keep when SSO is mandatory?
+mcq_options: A) Open signup B) A break-glass admin path C) Shared passwords D) No fallback
+mcq_answer: B
+mcq_why: A broken provider could lock everyone out.
+fill_blank: An emergency admin login outside SSO is a ____ account → break-glass
+apply: A customer's IdP certificate expires in a month. What do you note? → The expiry date and the rotation plan
+explain_task: Explain a vendor SSO checklist in three lines.
+own_task: Write the checklist for connecting one customer's identity provider.

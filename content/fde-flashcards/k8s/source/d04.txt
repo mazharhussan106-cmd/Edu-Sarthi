@@ -1,0 +1,561 @@
+
+@K8S-035
+type: code56
+topic: 06 Security
+level: Intermediate
+term: RBAC
+cue: Which system decides who may do what to which resources in the cluster?
+kind: Resource
+frequency: Very high
+importance: 5
+origin: Clusters hold powerful controls, so role-based access control grants only the verbs people and tools need.
+pro_tip: Grant namespaced Roles before cluster-wide ClusterRoles, and bind to groups.
+memory_story: RBAC is a keycard system where each card opens only certain doors.
+visual: A role listing verbs on resources, bound to a user.
+emotion: The assurance of access that stays limited.
+meaning: A Role lists allowed verbs on resources in a namespace, a ClusterRole does so cluster-wide, and a RoleBinding or ClusterRoleBinding gives that role to users, groups or service accounts.
+code: apiVersion: rbac.authorization.k8s.io/v1¶kind: Role¶metadata: { name: pod-reader, namespace: shop }¶rules:¶  - apiGroups: [""]¶    resources: ["pods", "pods/log"]¶    verbs: ["get", "list", "watch"]¶---¶kind: RoleBinding¶apiVersion: rbac.authorization.k8s.io/v1¶metadata: { name: read-pods, namespace: shop }¶subjects:¶  - { kind: User, name: asha }¶roleRef: { kind: Role, name: pod-reader, apiGroup: rbac.authorization.k8s.io }
+output: The user asha can read pods and their logs in the shop namespace only.
+explanation: Permissions are only additive, with no deny rules. Verbs include get, list, watch, create, update, patch and delete. Check access with kubectl auth can-i. Avoid cluster-admin except for few trusted people. Managed clusters link cloud identities to Kubernetes groups.
+simple_explain: Write Roles for needed verbs, bind them to subjects, and test with can-i.
+analogy: RBAC is a keycard system where each card opens only certain doors.
+syntax: Role / ClusterRole + RoleBinding / ClusterRoleBinding
+anatomy: rules = verbs on resources | subjects = who | roleRef = which role
+example_1: kubectl auth can-i delete pods -n shop --as asha
+example_2: kind: ClusterRoleBinding to a group
+example_3: verbs: ["*"]   // avoid
+variation: kubectl create rolebinding read-pods --role=pod-reader --user=asha -n shop   // quick binding
+used_with: service accounts, namespaces, cloud identities
+related: service accounts, namespaces, least privilege, IAM
+alternatives: Cloud identity integrations
+where_used: Every shared cluster | Audits | CI access
+mini_conversation: A: Can the pipeline delete namespaces? | B: Check with can-i, and give it only the verbs it needs.
+misconception: ✗ RBAC can deny actions explicitly → ✓ It only adds permissions, so absence means denied
+confused_with: Role vs ClusterRole: a Role is namespaced, a ClusterRole is cluster-wide.
+avoid: Do not grant cluster-admin to applications.
+wrong_code: verbs: ["*"]   # grants everything
+right_code: verbs: ["get", "list", "watch"]
+memory_trick: Roles hold verbs, bindings hand them out.
+real_project: Replacing cluster-admin for a pipeline with a narrow Role removed a major risk.
+real_interview: An interviewer may ask: What is the difference between a Role and a ClusterRole?
+real_daily: It is like keycards opening certain doors.
+mcq_question: Which object gives a Role to a user?
+mcq_options: A) ConfigMap B) Ingress C) RoleBinding D) Service
+mcq_answer: C
+mcq_why: Bindings connect roles to subjects.
+fill_blank: The command to test permissions is kubectl auth can-____ → i
+hindi_to_task: Check whether asha can delete pods in shop.
+task_answer: kubectl auth can-i delete pods -n shop --as asha
+own_task: Write a Role that allows reading deployments in one namespace.
+practice_question: Does RBAC support deny rules?
+practice_answer: No, permissions are only additive.
+
+@K8S-036
+type: code56
+topic: 06 Security
+level: Intermediate
+term: Service accounts
+cue: Which identities do pods use to call the Kubernetes API?
+kind: Resource
+frequency: High
+importance: 4
+origin: Programs in pods sometimes need to talk to the API, so each pod runs as a service account with its own permissions.
+pro_tip: Create a service account per app, and turn off token mounting when the app does not use the API.
+memory_story: A service account is a staff badge issued to a program instead of a person.
+visual: A pod carrying a badge linked to a role.
+emotion: The tidiness of identities per workload.
+meaning: A ServiceAccount is an identity for processes in pods, to which RBAC roles are bound, and short-lived tokens are issued to the pod when it needs API access.
+code: apiVersion: v1¶kind: ServiceAccount¶metadata: { name: report-job, namespace: shop }¶automountServiceAccountToken: false¶---¶# pod spec¶# serviceAccountName: report-job
+output: The pod runs as report-job with no API token mounted unless a role requires it.
+explanation: Every namespace has a default service account that should not hold special permissions. Tokens are projected, expire and are bound to the pod. Cloud integrations such as IRSA and workload identity map service accounts to cloud roles, so pods get cloud access without keys. Bind only the verbs needed.
+simple_explain: Give each app its own service account, bind narrow roles, and avoid token mounts when unused.
+analogy: A service account is a staff badge issued to a program.
+syntax: kind: ServiceAccount / serviceAccountName in the pod spec
+anatomy: serviceAccountName = identity | automountServiceAccountToken = token mount | binding = permissions
+example_1: kubectl create serviceaccount report-job -n shop
+example_2: eks.amazonaws.com/role-arn annotation
+example_3: kubectl get sa -n shop
+variation: kubectl create token report-job   // a short-lived token
+used_with: RBAC, cloud identity, pods
+related: RBAC, temporary credentials, secrets, pods
+alternatives: External identity systems
+where_used: Controllers | Pipelines | Cloud access from pods
+mini_conversation: A: How does the pod get cloud access without keys? | B: Map its service account to a cloud role.
+misconception: ✗ All pods should share the default service account → ✓ Each app needs its own, with only needed permissions
+confused_with: ServiceAccount vs user: service accounts are for pods, users are for people.
+avoid: Do not bind powerful roles to the default service account.
+wrong_code: # pods all use the default service account
+right_code: serviceAccountName: report-job
+memory_trick: Give each workload its own badge.
+real_project: Mapping service accounts to cloud roles removed stored cloud keys from pods.
+real_interview: An interviewer may ask: How do pods authenticate to the API?
+real_daily: It is like a staff badge for a program.
+mcq_question: Which identity do pods use for the API?
+mcq_options: A) A label B) A node name C) A Secret key D) A service account
+mcq_answer: D
+mcq_why: Pods run as service accounts.
+fill_blank: The field that picks a pod's identity is service____ → AccountName
+hindi_to_task: Create a service account called report-job.
+task_answer: kubectl create serviceaccount report-job -n shop
+own_task: Write a pod spec that uses a custom service account.
+practice_question: Why disable token mounting for some pods?
+practice_answer: An unused token is an unneeded risk.
+
+@K8S-037
+type: code56
+topic: 06 Security
+level: Advanced
+term: Pod security
+cue: Which settings keep containers from running with dangerous privileges?
+kind: Resource setting
+frequency: High
+importance: 5
+origin: A container with excess privileges can break out to the node, so pods are restricted through security contexts and admission standards.
+pro_tip: Run as non-root with a read-only file system and drop all capabilities.
+memory_story: Pod security is taking sharp tools away from visitors before they enter.
+visual: A single pod drawn with every locked-down setting visible.
+emotion: The assurance of containers with no spare power.
+meaning: A securityContext sets user, privilege and capability options, and Pod Security Standards enforced by admission at namespace level, such as baseline and restricted, block risky pods.
+code: securityContext:¶  runAsNonRoot: true¶  runAsUser: 10001¶  allowPrivilegeEscalation: false¶  readOnlyRootFilesystem: true¶  capabilities:¶    drop: ["ALL"]¶  seccompProfile: { type: RuntimeDefault }¶# label a namespace:¶# pod-security.kubernetes.io/enforce: restricted
+output: The container runs as an unprivileged user with a read-only file system and no extra capabilities, and the namespace rejects riskier pods.
+explanation: Privileged containers, host networking and host paths give wide access and should be avoided. Levels are privileged, baseline and restricted. Policy engines such as Kyverno or OPA Gatekeeper add custom rules. Combine with image scanning and network policies. Read-only roots need writable volumes for temporary files.
+simple_explain: Run as non-root, block escalation, drop capabilities, and enforce the restricted standard.
+analogy: Pod security is taking sharp tools away from visitors before they enter.
+syntax: securityContext: { runAsNonRoot, allowPrivilegeEscalation, capabilities }
+anatomy: runAsNonRoot = no root | capabilities drop = fewer powers | enforce label = namespace rule
+example_1: privileged: false
+example_2: kubectl label ns shop pod-security.kubernetes.io/enforce=restricted
+example_3: hostNetwork: false
+variation: Kyverno policy requiring resource limits   // custom admission rule
+used_with: image scanning, RBAC, admission policy
+related: RBAC, image pull secrets, Docker non-root, network policies
+alternatives: Kyverno | OPA Gatekeeper
+where_used: Production clusters | Compliance | Multi-tenant platforms
+mini_conversation: A: A pod runs as root with host access. | B: Enforce the restricted standard in the namespace.
+misconception: ✗ Containers are isolated enough that privileges do not matter → ✓ Privileged settings can give access to the whole node
+confused_with: securityContext vs admission policy: one configures a pod, the other enforces rules on all pods.
+avoid: Do not run privileged containers.
+wrong_code: securityContext: { privileged: true }
+right_code: securityContext: { runAsNonRoot: true, allowPrivilegeEscalation: false }
+memory_trick: Non-root, read-only, no extra powers.
+real_project: Enforcing restricted standards blocked a risky image from starting.
+real_interview: An interviewer may ask: What are the Pod Security Standards?
+real_daily: It is like removing sharp tools before visitors enter.
+mcq_question: Which setting prevents running as root?
+mcq_options: A) runAsNonRoot B) hostNetwork C) hostPath D) privileged
+mcq_answer: A
+mcq_why: It requires a non-root user.
+fill_blank: The strictest Pod Security level is ____ → restricted
+hindi_to_task: Drop all capabilities in a container.
+task_answer: securityContext: { capabilities: { drop: ["ALL"] } }
+own_task: Write a securityContext for an unprivileged container.
+practice_question: Why use a read-only root file system?
+practice_answer: It stops processes writing to the container's root file system, so attackers cannot easily plant files or tools.
+
+@K8S-038
+type: code56
+topic: 06 Security
+level: Intermediate
+term: Image pull secrets
+cue: How does a cluster pull images from a private registry?
+kind: Resource
+frequency: High
+importance: 4
+origin: Private images need credentials, so clusters store registry logins in Secrets that pods can use when pulling.
+pro_tip: Prefer cloud identity for registries over long-lived passwords.
+memory_story: Think of a library card that lets the cluster fetch private books.
+visual: A pod spec referencing a secret that holds registry login.
+emotion: The relief when a private image finally pulls.
+meaning: An image pull secret is a docker-registry Secret holding registry credentials, referenced by a pod or service account in imagePullSecrets.
+code: kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-username=bot --docker-password="$TOKEN" -n shop¶# pod spec¶imagePullSecrets:¶  - name: regcred¶containers:¶  - name: app¶    image: ghcr.io/acme/web:1.4.2
+output: The kubelet logs in to ghcr.io with the stored credentials and pulls the private image.
+explanation: Without the secret, pods show ErrImagePull or ImagePullBackOff. The secret must be in the same namespace as the pod. Attaching it to the service account applies it to all its pods. Cloud registries often integrate with node roles so no secret is needed. Tokens should be read-only and short lived.
+simple_explain: Create a registry secret in the pod's namespace and reference it in imagePullSecrets.
+analogy: An image pull secret is a library card for fetching private books.
+syntax: kubectl create secret docker-registry NAME --docker-server=... / imagePullSecrets
+anatomy: docker-registry secret = login | imagePullSecrets = pod reference | same namespace = required
+example_1: kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"regcred"}]}'
+example_2: kubectl describe pod web-1   // shows pull errors
+example_3: image: ghcr.io/acme/web@sha256:abc123
+variation: node IAM role for ECR   // no secret needed on EKS
+used_with: registries, service accounts, CI
+related: registries and Docker Hub, service accounts, ImagePullBackOff, secrets
+alternatives: Cloud node roles | workload identity
+where_used: Private registries | Enterprise clusters | CI
+mini_conversation: A: The pod says ImagePullBackOff. | B: The cluster lacks registry credentials, so add an image pull secret.
+misconception: ✗ A secret in any namespace works for a pod → ✓ It must be in the pod's own namespace
+confused_with: Image pull secret vs app secret: one logs in to a registry, the other holds app data.
+avoid: Do not use personal passwords for registry access.
+wrong_code: # secret created in default, pod runs in shop
+right_code: kubectl create secret docker-registry regcred ... -n shop
+memory_trick: Same namespace, referenced by name.
+real_project: Attaching a pull secret to the service account fixed pulls for every pod in a namespace.
+real_interview: An interviewer may ask: Why does a pod show ImagePullBackOff?
+real_daily: It is like a library card.
+mcq_question: Where must an image pull secret live?
+mcq_options: A) In the registry B) In kube-system only C) On the node D) In the pod's namespace
+mcq_answer: D
+mcq_why: Secrets are namespaced.
+fill_blank: A Secret holding image store logins is created with the type docker-____ → registry
+hindi_to_task: Reference a pull secret named regcred in a pod.
+task_answer: imagePullSecrets: [{ name: regcred }]
+own_task: Write the command that creates a registry secret in shop.
+practice_question: What error appears without the secret?
+practice_answer: ErrImagePull or ImagePullBackOff.
+
+@K8S-039
+type: code56
+topic: 07 Tooling
+level: Intermediate
+term: Helm
+cue: Which package manager installs and upgrades Kubernetes applications from charts?
+kind: Tool
+frequency: Very high
+importance: 5
+origin: Apps need many YAML files that differ slightly per environment, so Helm packages them as charts with templates and values.
+pro_tip: Keep a values file per environment, and preview with helm template or diff.
+memory_story: Helm is an app store for the cluster, and values are the settings you choose when installing.
+visual: A chart plus values producing final YAML.
+emotion: The ease of installing a whole app in one command.
+meaning: A Helm chart bundles templated manifests with default values, and helm installs it as a release that can be upgraded, rolled back and removed.
+code: helm repo add grafana https://grafana.github.io/helm-charts¶helm install dash grafana/grafana -n shop -f values-prod.yaml¶helm upgrade dash grafana/grafana -n shop -f values-prod.yaml¶helm rollback dash 1 -n shop¶helm template dash grafana/grafana -f values-prod.yaml
+output: The chart is installed as release dash, upgraded with new values, rolled back to revision one, and rendered locally for review.
+explanation: Templates use Go template syntax with values from values.yaml and overrides. Each install is a release with a revision history. Charts can depend on other charts. helm template renders YAML without installing, which helps review. Secrets in values files need care. Check where a chart's images come from, because some free public image repositories have moved or stopped updating.
+simple_explain: Install charts with values, upgrade releases, and roll back if needed.
+analogy: Helm is an app store for the cluster, and values are the settings you choose.
+syntax: helm install RELEASE CHART -f values.yaml | helm upgrade | helm rollback
+anatomy: chart = package | values = settings | release = installed instance | revision = version
+example_1: helm list -n shop
+example_2: helm show values grafana/grafana
+example_3: helm uninstall db -n shop
+variation: helm upgrade --install db ./chart   // install or upgrade in one command
+used_with: values files, repositories, CI
+related: Kustomize, Deployments, GitOps, secrets
+alternatives: Kustomize | plain manifests
+where_used: Installing third-party apps | Packaging | Environments
+mini_conversation: A: How do I install Postgres with custom settings? | B: Use the chart with a values file.
+misconception: ✗ Helm replaces the need to understand Kubernetes → ✓ It generates the same objects, and problems still need Kubernetes knowledge
+confused_with: Chart vs release: a chart is the package, a release is an installed instance.
+avoid: Do not store secrets in plain values files in Git.
+wrong_code: helm install postgresql   # missing release name and chart
+right_code: helm install dash grafana/grafana
+memory_trick: Chart is the box, release is the install.
+real_project: Helm charts let one app deploy to three environments with different values.
+real_interview: An interviewer may ask: What is the difference between a chart and a release?
+real_daily: It is like an app store.
+mcq_question: What is a Helm release?
+mcq_options: A) A node B) A package file C) An installed instance of a chart D) A pod
+mcq_answer: C
+mcq_why: Each install creates a named release.
+fill_blank: The file with default settings in a chart is ____.yaml → values
+hindi_to_task: Roll back release db to revision 1.
+task_answer: helm rollback db 1 -n shop
+own_task: Write the commands to install a chart with a values file.
+practice_question: What does helm template do?
+practice_answer: It renders the manifests without installing them.
+
+@K8S-040
+type: code56
+topic: 07 Tooling
+level: Intermediate
+term: Kustomize
+cue: Which tool customises plain YAML by layering overlays without templates?
+kind: Tool
+frequency: High
+importance: 4
+origin: Copying manifests per environment leads to drift, so Kustomize patches a base with small overlays.
+pro_tip: Keep one base and an overlay folder per environment.
+memory_story: Kustomize is a transparent sheet laid over a base drawing to change details.
+visual: A base folder with overlays for dev and prod.
+emotion: The neatness of one base, many variants.
+meaning: Kustomize reads a kustomization file that lists resources and patches, and outputs customised manifests built into kubectl.
+code: # base/kustomization.yaml¶resources: [deployment.yaml, service.yaml]¶# overlays/prod/kustomization.yaml¶resources: [../../base]¶namespace: shop¶replicas:¶  - { name: web, count: 5 }¶images:¶  - { name: acme/web, newTag: 1.4.2 }¶# apply: kubectl apply -k overlays/prod
+output: The prod overlay applies the base with five replicas and the pinned image tag in the shop namespace.
+explanation: Features include name prefixes, labels, image overrides, patches and config generators. Output can be previewed with kubectl kustomize. It works on plain YAML, so the base stays valid. Compared with Helm, it has no templates, but less power for packaging third-party apps.
+simple_explain: Keep a base, add overlays per environment, and apply with -k.
+analogy: Kustomize is a transparent sheet laid over a base drawing to change details.
+syntax: kustomization.yaml with resources, patches, images, replicas
+anatomy: base = shared files | overlay = environment changes | patches = edits
+example_1: kubectl kustomize overlays/prod
+example_2: namePrefix: prod-
+example_3: patches: [{ path: patch.yaml }]
+variation: configMapGenerator   // create ConfigMaps from files
+used_with: kubectl, GitOps, overlays
+related: Helm, Deployments, GitOps, Compose override files
+alternatives: Helm | plain copies
+where_used: Environment variants | GitOps | Small teams
+mini_conversation: A: Staging and prod differ only in replicas and tags. | B: Use a base and two Kustomize overlays.
+misconception: ✗ Kustomize needs templating knowledge → ✓ It patches plain YAML with no templates
+confused_with: Kustomize vs Helm: patches versus templates and packages.
+avoid: Do not copy whole manifests per environment.
+wrong_code: # copy deployment.yaml into dev and prod folders
+right_code: resources: [../../base]
+memory_trick: Base once, overlay per place.
+real_project: Overlays replaced duplicated manifests and cut configuration drift.
+real_interview: An interviewer may ask: When would you choose Kustomize over Helm?
+real_daily: It is like a transparent sheet over a drawing.
+mcq_question: Which flag applies a kustomization?
+mcq_options: A) -f only B) -k C) -n D) -o
+mcq_answer: B
+mcq_why: kubectl apply -k builds the folder.
+fill_blank: The shared starting folder is the ____ → base
+hindi_to_task: Preview the prod overlay without applying.
+task_answer: kubectl kustomize overlays/prod
+own_task: Write an overlay that sets three replicas.
+practice_question: Does Kustomize use templates?
+practice_answer: No, it patches plain YAML.
+
+@K8S-041
+type: code56
+topic: 07 Tooling
+level: Beginner
+term: Debugging with describe and logs
+cue: Which two commands show why a pod is unhealthy?
+kind: Command
+frequency: Very high
+importance: 5
+origin: Pod failures leave clues in events and container output, so two commands cover most investigations.
+pro_tip: Read the Events section at the bottom of describe first.
+memory_story: Describe is the case file, and logs are the witness statement.
+visual: A pod description with events at the bottom.
+emotion: The satisfaction of spotting the cause quickly.
+meaning: kubectl describe shows a pod's state, settings and events, and kubectl logs prints the container's output, including the previous crashed container.
+code: kubectl get pods -n shop¶kubectl describe pod web-7d9f -n shop¶kubectl logs web-7d9f -n shop¶kubectl logs web-7d9f -n shop --previous¶kubectl logs deploy/web -n shop -f --tail=50
+output: The commands show pod status, events, current logs, logs of the last crashed container, and a live tail of the deployment.
+explanation: Events reveal scheduling failures, image problems, probe failures and OOM kills. Logs show application errors. --previous is essential for CrashLoopBackOff. For multi-container pods use -c to pick one. Logs disappear when pods are deleted, so central logging is important.
+simple_explain: Describe for events and state, logs for application output, previous for crashes.
+analogy: Describe is the case file, and logs are the witness statement.
+syntax: kubectl describe pod NAME | kubectl logs NAME [-c container] [--previous]
+anatomy: describe = state and events | logs = output | --previous = last crash | -f = follow
+example_1: kubectl logs web-1 -c sidecar
+example_2: kubectl logs -l app=web --tail=20
+example_3: kubectl get events --sort-by=.lastTimestamp
+variation: kubectl logs -f web-1   // stream live
+used_with: events, probes, exec
+related: events, exec, CrashLoopBackOff, logging
+alternatives: Central logging | k9s
+where_used: Daily debugging | Incidents | Rollouts
+mini_conversation: A: The pod restarts and the logs look empty. | B: Use --previous to read the crashed container's output.
+misconception: ✗ kubectl logs shows logs of a crashed container by default → ✓ It shows the current one, so add --previous
+confused_with: describe vs logs: describe shows cluster events, logs show app output.
+avoid: Do not rely on pod logs after the pod is deleted.
+wrong_code: kubectl logs web-1   # empty after a crash
+right_code: kubectl logs web-1 --previous
+memory_trick: If it crashed, read the earlier logs.
+real_project: Reading previous logs revealed a missing environment variable in a crash loop.
+real_interview: An interviewer may ask: How do you debug a crashing pod?
+real_daily: It is like a case file and a witness statement.
+mcq_question: Which flag reads the output of the last crashed instance?
+mcq_options: A) --crash B) --old C) --last D) --previous
+mcq_answer: D
+mcq_why: It reads the prior instance's output.
+fill_blank: The flag to pick one container in a pod is ____ → -c
+hindi_to_task: Show the last 50 lines of deployment web logs.
+task_answer: kubectl logs deploy/web --tail=50
+own_task: Write the steps to debug a pod that restarts.
+practice_question: Where do you find scheduling failures?
+practice_answer: In the Events section of describe.
+
+@K8S-042
+type: code56
+topic: 07 Tooling
+level: Intermediate
+term: kubectl exec
+cue: Which command runs a command inside a running container?
+kind: Command
+frequency: Very high
+importance: 4
+origin: To inspect a live pod you need to look inside, so exec opens a shell or runs a command in its container.
+pro_tip: Use exec to inspect, and fix problems in the image or manifest.
+memory_story: Exec is a side door into the container's room.
+visual: A terminal prompt shown inside a running pod box.
+emotion: The comfort of finally seeing the pod's files.
+meaning: kubectl exec runs a command in a container of a pod, with -it for an interactive shell.
+code: kubectl exec -it web-7d9f -n shop -- sh¶kubectl exec web-7d9f -n shop -- env¶kubectl exec web-7d9f -c app -- cat /etc/resolv.conf¶kubectl debug -it web-7d9f --image=busybox --target=app
+output: A shell opens in the pod, environment variables print, DNS settings print, and a debug container attaches to a minimal image.
+explanation: The double dash separates kubectl options from the command. Slim images may lack a shell, so use kubectl debug to attach an ephemeral container with tools. Changes made inside are lost on restart. Access is controlled by RBAC permission on pods/exec, which should be limited in production.
+simple_explain: Use exec to look inside, and debug when the image has no shell.
+analogy: Exec is a side door into the container's room.
+syntax: kubectl exec -it POD [-c CONTAINER] -- command
+anatomy: -it = interactive | -c = container | -- = separator | debug = ephemeral container
+example_1: kubectl exec web-1 -- ls /app
+example_2: kubectl exec -it db-0 -- psql -U postgres
+example_3: kubectl debug node/node-1 -it --image=busybox
+variation: kubectl cp web-1:/tmp/out.txt ./out.txt   // copy files out
+used_with: debugging, RBAC, ephemeral containers
+related: debugging with describe and logs, port-forward, RBAC, Docker exec
+alternatives: kubectl debug | port-forward
+where_used: Debugging | Database access | Inspection
+mini_conversation: A: There is no shell in this image. | B: Use kubectl debug to attach a toolbox container.
+misconception: ✗ Changes made through exec are permanent → ✓ They vanish when the pod is replaced
+confused_with: exec vs debug: exec uses an existing container, debug adds a new tool container.
+avoid: Do not patch production pods by hand.
+wrong_code: kubectl exec -it web-1 sh
+right_code: kubectl exec -it web-1 -- sh
+memory_trick: Two dashes before the command.
+real_project: Using kubectl debug explained a DNS failure in a distroless pod.
+real_interview: An interviewer may ask: How do you debug a pod without a shell?
+real_daily: It is like a side door into a room.
+mcq_question: What does the double dash do in exec?
+mcq_options: A) Deletes the pod B) Selects the node C) Separates kubectl options from the command D) Starts a job
+mcq_answer: C
+mcq_why: Everything after it is the command to run.
+fill_blank: Attaching a temporary tool container uses kubectl ____ → debug
+hindi_to_task: Open a shell in pod web-1.
+task_answer: kubectl exec -it web-1 -- sh
+own_task: Print the DNS config of a running pod.
+practice_question: Why use debug on distroless images?
+practice_answer: They have no shell, so a tool container is needed.
+
+@K8S-043
+type: code56
+topic: 07 Tooling
+level: Beginner
+term: port-forward
+cue: Which command tunnels a local port to a pod or Service?
+kind: Command
+frequency: Very high
+importance: 4
+origin: Internal services are not exposed outside, so developers forward a local port to reach them for testing.
+pro_tip: Forwarding to a Service lets kubectl pick one pod, but the tunnel still ends if that pod dies; it is not load balanced.
+memory_story: Port-forward is a private tunnel from your laptop into the cluster.
+visual: Localhost port 8080 connected to a pod port 80.
+emotion: The ease of reaching a hidden service in seconds.
+meaning: kubectl port-forward opens a local port that forwards traffic through the API server to a pod, deployment or Service port.
+code: kubectl port-forward svc/web 8080:80 -n shop¶kubectl port-forward pod/db-0 5433:5432 -n shop¶curl http://localhost:8080/health
+output: Local port 8080 reaches the web Service, local port 5433 reaches the database pod, and the curl call shows the health response.
+explanation: The command runs until you stop it. It binds to localhost by default. It tests an app without exposing it publicly. Forwarding to a pod fixes one instance, which dies on restart. It needs permission on pods/portforward. It is for debugging, not for production access.
+simple_explain: Forward a local port to a Service or pod to reach it from your laptop.
+analogy: Port-forward is a private tunnel from your laptop into the cluster.
+syntax: kubectl port-forward TYPE/NAME LOCAL:REMOTE
+anatomy: svc/web = target | 8080 = local port | 80 = remote port
+example_1: kubectl port-forward deploy/api 3000:3000
+example_2: kubectl port-forward --address 0.0.0.0 svc/web 8080:80
+example_3: kubectl port-forward pod/web-1 9090
+variation: kubectl port-forward svc/web :80   // choose a free local port
+used_with: debugging, databases, dashboards
+related: Services, SSH tunnels, exec, ports
+alternatives: Ingress | VPN access
+where_used: Development | Debugging | Dashboards
+mini_conversation: A: How can I test the internal API from my laptop? | B: Port-forward the Service.
+misconception: ✗ port-forward exposes the service to the internet → ✓ It is local and temporary
+confused_with: port-forward vs NodePort: one is a temporary tunnel, the other is a permanent exposure.
+avoid: Do not use port-forward as a production access method.
+wrong_code: kubectl port-forward svc/web 80:8080   # local and remote swapped
+right_code: kubectl port-forward svc/web 8080:80
+memory_trick: Local number first, remote number second.
+real_project: Forwarding the database pod let a developer check data without exposing it.
+real_interview: An interviewer may ask: What does kubectl port-forward do?
+real_daily: It is like a private tunnel.
+mcq_question: In kubectl port-forward svc/web 8080:80, which side of the colon is the laptop port?
+mcq_options: A) The left side B) Both sides C) Neither side D) The right side
+mcq_answer: A
+mcq_why: The format is local then remote.
+fill_blank: The command runs until you ____ it → stop
+hindi_to_task: Reach the web Service on local port 8080.
+task_answer: kubectl port-forward svc/web 8080:80
+own_task: Forward a local port to a database pod.
+practice_question: Is port-forward permanent?
+practice_answer: No, it ends when the command stops.
+
+@K8S-044
+type: code56
+topic: 07 Tooling
+level: Beginner
+term: Events
+cue: Which records show what the cluster did or failed to do with an object?
+kind: Command
+frequency: High
+importance: 4
+origin: Failures need explanations, so the cluster records events such as scheduling decisions, pulls and probe failures.
+pro_tip: Sort events by time and filter by object when searching.
+memory_story: Events are the cluster's diary entries about each object.
+visual: A time-ordered list of warnings and normal events.
+emotion: The relief of finding a clear message.
+meaning: Events are short records created by components about objects, such as Scheduled, Pulled, Failed or BackOff, and they expire after about an hour.
+code: kubectl get events -n shop --sort-by=.lastTimestamp¶kubectl get events -n shop --field-selector type=Warning¶kubectl describe pod web-7d9f -n shop¶kubectl get events -n shop --field-selector involvedObject.name=web-7d9f
+output: Events list newest last, warnings alone, pod details with events, and events for one pod.
+explanation: Events explain why a pod is pending, why an image failed to pull or why a probe fails. They are short lived, so collect them in monitoring for history. Warnings deserve attention. Controllers generate events for rollouts and scaling.
+simple_explain: Read events sorted by time and filter warnings to find causes.
+analogy: Events are the cluster's diary entries about each object.
+syntax: kubectl get events --sort-by=.lastTimestamp
+anatomy: type = Normal or Warning | reason = short code | object = who it is about
+example_1: kubectl get events -A --field-selector type=Warning
+example_2: kubectl events --for pod/web-1
+example_3: Reason FailedScheduling
+variation: kubectl get events -w   // watch live
+used_with: describe, logs, monitoring
+related: debugging with describe and logs, common failures, monitoring, alerts
+alternatives: Event exporters
+where_used: Debugging | Incidents | Rollouts
+mini_conversation: A: Why is the pod pending? | B: Events say FailedScheduling because no node has enough memory.
+misconception: ✗ Events are kept forever → ✓ They expire quickly, so export them if needed
+confused_with: Events vs logs: events come from the cluster, logs come from the app.
+avoid: Do not depend on events for long-term history.
+wrong_code: kubectl get events   # unsorted and in the default namespace only
+right_code: kubectl get events -n shop --sort-by=.lastTimestamp
+memory_trick: Sort events by time, then filter warnings.
+real_project: Events showed a node memory shortage behind pending pods.
+real_interview: An interviewer may ask: Where do you see why a pod is Pending?
+real_daily: It is like diary entries about each object.
+mcq_question: How long do events usually last?
+mcq_options: A) One second B) About an hour C) Forever D) One year
+mcq_answer: B
+mcq_why: They expire quickly.
+fill_blank: The event type that signals trouble is ____ → Warning
+hindi_to_task: List warning events in namespace shop.
+task_answer: kubectl get events -n shop --field-selector type=Warning
+own_task: Find the reason a pod is pending using events.
+practice_question: Why export events?
+practice_answer: They expire quickly, so history is lost.
+
+@K8S-045
+type: code56
+topic: 07 Tooling
+level: Intermediate
+term: Common failures: CrashLoopBackOff and ImagePullBackOff
+cue: Which two statuses show a crashing container and a failed image pull, and how do you fix them?
+kind: Debugging skill
+frequency: Very high
+importance: 5
+origin: Two statuses appear in most cluster problems, so knowing their causes saves hours.
+pro_tip: Pending means scheduling, ImagePullBackOff means the image, CrashLoopBackOff means the app.
+memory_story: CrashLoop is a worker who keeps fainting at the door, and ImagePull is a delivery that never arrives.
+visual: A status column with three common error states.
+emotion: The calm of a clear checklist for the commonest failures.
+meaning: CrashLoopBackOff means the container starts and exits repeatedly with growing delays, and ImagePullBackOff means the image cannot be fetched, usually from a wrong name, tag or credentials.
+code: kubectl get pods -n shop¶kubectl describe pod web-7d9f -n shop   # events and exit code¶kubectl logs web-7d9f -n shop --previous   # why it crashed¶kubectl get pod web-7d9f -n shop -o jsonpath='{.status.containerStatuses[0].lastState}'¶kubectl describe pod web-7d9f -n shop | grep -i -A3 "pull"
+output: The commands show the status, the events and exit code, the previous log, the last state and any pull errors.
+explanation: Causes of CrashLoopBackOff include application errors, missing variables or config, failed liveness probes, wrong commands and out-of-memory kills, with exit code 137. ImagePullBackOff comes from typos, missing tags, private registries without credentials or network limits. Pending means no node fits, due to resources, taints or volumes. Fix the cause, then the backoff resets.
+simple_explain: Read events, previous logs and exit codes, then fix the app, config or image reference.
+analogy: CrashLoop is a worker who keeps fainting at the door, and ImagePull is a delivery that never arrives.
+syntax: kubectl describe pod | kubectl logs --previous
+anatomy: CrashLoopBackOff = app exits | ImagePullBackOff = image fetch fails | Pending = not scheduled | 137 = killed
+example_1: Exit code 1 from an application error.
+example_2: Exit code 137 from OOMKilled.
+example_3: Failed to pull image with not found.
+variation: kubectl rollout restart deployment/web   // restart after fixing config
+used_with: events, logs, probes
+related: debugging with describe and logs, events, requests and limits, image pull secrets
+alternatives: Monitoring dashboards
+where_used: Incidents | Daily operations | Interviews
+mini_conversation: A: The pod shows CrashLoopBackOff. | B: Read the previous logs and exit code to find why it keeps dying.
+misconception: ✗ CrashLoopBackOff is an error of Kubernetes itself → ✓ It reports that the application keeps exiting
+confused_with: CrashLoopBackOff vs ImagePullBackOff: the app crashes versus the image cannot be pulled.
+avoid: Do not just delete the pod without reading the cause.
+wrong_code: kubectl delete pod web-1   # without reading logs or events
+right_code: kubectl logs web-1 --previous && kubectl describe pod web-1
+memory_trick: Pending scheduling, Pull image, Crash app.
+real_project: Reading exit code 137 pointed to a memory limit behind a crash loop.
+real_interview: An interviewer may ask: How do you debug CrashLoopBackOff?
+real_daily: It is like a worker who keeps fainting at the door.
+mcq_question: What does exit code 137 usually mean?
+mcq_options: A) Network error B) Killed, often out of memory C) Wrong command D) Success
+mcq_answer: B
+mcq_why: 137 is a kill signal, commonly from memory limits.
+fill_blank: A pod no node can host stays ____ → Pending
+hindi_to_task: Read the logs of the previous crashed container.
+task_answer: kubectl logs web-7d9f --previous
+own_task: Write a checklist for a pod stuck in CrashLoopBackOff.
+practice_question: What causes ImagePullBackOff?
+practice_answer: A wrong image name or tag, or missing registry credentials.

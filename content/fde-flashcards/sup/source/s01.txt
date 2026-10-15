@@ -1,0 +1,262 @@
+deck.title: Supabase – Beginner to Advanced Flashcards
+deck.subject: Supabase
+deck.learner: Self learner, English
+deck.source: Claude knowledge
+deck.language: javascript
+type: topic56
+
+@SUP-001
+topic: 01 Basics
+level: Beginner
+term: Supabase
+cue: Which open-source platform gives you a PostgreSQL database, login, file storage and a ready-made API in one project?
+category: Backend platform
+frequency: Very high
+importance: 5
+origin: Building a backend means setting up a database, authentication and storage separately, so Supabase packaged these around PostgreSQL as an open-source alternative to Firebase.
+pro_tip: Think of it as a Postgres database with extra services wrapped around it, since that makes every part easier to understand.
+memory_story: Supabase is a ready-furnished flat where the kitchen, lock and storeroom are already fitted, and you just move in.
+visual: One project box containing a database, a login lock, a file cabinet and a live-updates signal.
+emotion: The excitement of launching a full backend in an afternoon.
+definition: Supabase is an open-source backend platform built on PostgreSQL that provides a database, authentication, storage, realtime updates, functions and automatic APIs.
+explanation: When you create a project you get a real Postgres database. Supabase adds an auto-generated REST API over your tables, an authentication service, file storage, realtime subscriptions, edge functions and a dashboard. Your app talks to all of it through client libraries such as supabase-js.
+simple_explain: Supabase gives your app a database, user login, file storage and an API without you building a server first. You can still use plain SQL because it is real PostgreSQL underneath.
+analogy: It is like a ready-furnished flat where the kitchen, lock and storeroom are already fitted.
+formula_rule: Supabase = Postgres + Auth + Storage + Realtime + Functions + auto API
+example_1: A to-do app that stores tasks in a Supabase table and lets users log in.
+example_2: A photo app that keeps pictures in Supabase Storage.
+example_3: A chat app that shows new messages live through Realtime.
+related: PostgreSQL, Firebase, Row Level Security, supabase-js
+word_family: backend-as-a-service, Postgres, Auth, Storage, Realtime
+where_used: Web and mobile apps | Prototypes and startups | Education projects
+mini_conversation: A: Do I need to build my own server for login and data? | B: Not necessarily, Supabase provides the database, login and API for you.
+misconception: ✗ Supabase is a new kind of database that is not SQL → ✓ Supabase is built on PostgreSQL, so standard SQL works as it does anywhere
+contrast: Supabase vs a plain database: a database stores data, Supabase adds login, storage, APIs and realtime around it.
+avoid: Do not treat Supabase as magic, learn the Postgres underneath.
+memory_trick: Supabase is Postgres plus the extras you need.
+real_project: Using Supabase for the database, login and file storage of a learning app.
+real_interview: An interviewer may ask: What is Supabase and how does it differ from Firebase?
+real_daily: It is like moving into a flat that is already furnished.
+mcq_question: Which database does Supabase use underneath?
+mcq_options: A) Redis B) MongoDB C) MySQL D) PostgreSQL
+mcq_answer: D
+mcq_why: Supabase is built on PostgreSQL.
+fill_blank: Supabase is an open-source alternative to ____ → Firebase
+apply: What do you get when you create a Supabase project? → A Postgres database with auth, storage, an API and more
+explain_task: Explain what Supabase is in three lines.
+own_task: List the backend features your own app idea needs and tick which Supabase provides.
+
+@SUP-002
+topic: 01 Basics
+level: Beginner
+term: Project and dashboard
+cue: What is the container for one app's database, auth and storage called, and where do you manage it?
+category: Core concept
+frequency: Very high
+importance: 4
+origin: Each app needs its own isolated database and settings, so Supabase groups everything into a project with a web dashboard for managing it.
+pro_tip: Create separate projects for development and production so test data never mixes with real data.
+memory_story: A project is one apartment in the building, and the dashboard is its control panel.
+visual: A web page with a left menu listing Table Editor, SQL Editor, Authentication and Storage.
+emotion: The comfort of seeing everything about your backend in one place.
+definition: A project is one isolated Supabase backend with its own database, auth, storage and keys, managed through the web dashboard.
+explanation: The dashboard has a Table Editor for browsing data, an SQL Editor for running queries, sections for Authentication, Storage, Edge Functions and Realtime, and project settings with API keys and connection details. A project lives in one region and has its own URL.
+simple_explain: Make one project per app. Inside the dashboard you create tables, manage users, see files and copy the keys your app needs.
+analogy: A project is one apartment in a building and the dashboard is its control panel.
+formula_rule: One app (or environment) = one project = one dashboard
+example_1: A project called learning-app-dev for testing.
+example_2: A separate project called learning-app-prod for real users.
+example_3: Using the Table Editor to look at rows without writing SQL.
+related: API keys, environments, SQL Editor, Table Editor
+word_family: project, dashboard, region, organisation
+where_used: Starting every app | Switching environments | Team access
+mini_conversation: A: Should test and real data share one project? | B: No, make separate projects for development and production.
+misconception: ✗ One Supabase project can safely serve all my apps and environments → ✓ Use a separate project for each app and environment so data and keys stay isolated
+contrast: Project vs organisation: a project is one backend, an organisation groups projects and members.
+avoid: Do not test destructive changes on the production project.
+memory_trick: One project per app and per environment.
+real_project: Keeping a dev project and a prod project and moving changes between them with migrations.
+real_interview: An interviewer may ask: How do you separate development and production in Supabase?
+real_daily: It is like one apartment with its own control panel.
+mcq_question: What is the best practice for development and production data?
+mcq_options: A) Use separate projects B) Use one project for both C) Share one table D) Use one key everywhere
+mcq_answer: A
+mcq_why: Separate projects keep test and real data and keys isolated.
+fill_blank: You browse rows in the dashboard's ____ Editor → Table
+apply: Where do you copy a project's URL and keys from? → From the project settings in the dashboard
+explain_task: Explain a Supabase project and its dashboard in three lines.
+own_task: Name two projects you would create for one app and say why.
+
+@SUP-003
+topic: 01 Basics
+level: Beginner
+term: Supabase vs Firebase
+cue: Which two backend platforms differ mainly in using SQL relational tables versus a NoSQL document database?
+category: Comparison
+frequency: High
+importance: 3
+origin: Firebase made backends easy but locked developers into a NoSQL model, so Supabase offered a similar developer experience built on open-source PostgreSQL.
+pro_tip: Pick Supabase when your data is relational and you like SQL, and Firebase when a document model and its tools fit better.
+memory_story: Firebase stores data in folders of documents, while Supabase stores it in tables with relationships, like a spreadsheet with rules.
+visual: A tree of nested documents on one side and linked tables on the other.
+emotion: The confidence of choosing a tool that matches your data.
+definition: Supabase uses PostgreSQL relational tables, SQL and open-source components, while Firebase uses NoSQL document databases and Google's proprietary services.
+explanation: Supabase offers joins, constraints, SQL and Row Level Security, and it can be self-hosted. Firebase offers Firestore and a Realtime Database with a very polished mobile toolkit and tight Google integration. Data portability is easier with Postgres because you can export it with standard tools.
+simple_explain: If your data fits neatly in related tables, Supabase feels natural. Firebase is document-based, which suits different shapes of data.
+analogy: Firebase is folders of documents, and Supabase is tables with relationships, like linked spreadsheets.
+formula_rule: Supabase = SQL and tables. Firebase = documents and collections.
+example_1: A shop with products, orders and customers fits Supabase tables well.
+example_2: A chat app with nested message documents may fit Firestore well.
+example_3: A team that already knows SQL moving quickly with Supabase.
+related: PostgreSQL, SQL, NoSQL, vendor lock-in
+word_family: SQL, NoSQL, document, relational, open source
+where_used: Choosing a backend | Migration planning | Architecture discussions
+mini_conversation: A: Why choose Supabase over Firebase? | B: Our data is relational and the team knows SQL, and we like that it is open source.
+misconception: ✗ Supabase and Firebase are the same product with different names → ✓ They differ in database type, openness and how you query and secure data
+contrast: Supabase vs Firebase: relational SQL on Postgres versus NoSQL documents on Google's platform.
+avoid: Do not choose a tool only because it is popular, check your data shape first.
+memory_trick: Supabase is SQL tables, Firebase is documents.
+real_project: Choosing Supabase for an app with orders, products and customers that need joins.
+real_interview: An interviewer may ask: When would you pick Supabase over Firebase?
+real_daily: It is like linked spreadsheets versus folders of documents.
+mcq_question: Which kind of database does Supabase use?
+mcq_options: A) Graph only B) Key-value only C) Relational SQL D) Document NoSQL
+mcq_answer: C
+mcq_why: Supabase uses PostgreSQL, a relational SQL database.
+fill_blank: Firebase's Firestore is a ____ database → document
+apply: Your data has orders linked to customers and products. Which fits naturally? → Supabase with relational tables
+explain_task: Explain the difference between Supabase and Firebase in three lines.
+own_task: Write which of your data needs joins and which would fit documents.
+
+@SUP-004
+topic: 01 Basics
+level: Beginner
+term: Project URL and API keys
+cue: Which two values from your project settings does your app need in order to connect to Supabase?
+category: Connection basics
+frequency: Very high
+importance: 5
+origin: The client library must know which project to talk to and prove it is allowed to, so every project has a unique URL and keys.
+pro_tip: Copy the URL and keys from the project settings and keep them in environment variables.
+memory_story: The URL is the address of your project's front door, and the key is the pass you show at that door.
+visual: A settings page showing a long URL and a long key string with copy buttons.
+emotion: The satisfaction of the first successful connection.
+definition: The project URL is the web address of your Supabase project, and API keys are credentials that your app sends to access it.
+explanation: The URL looks like https://yourref.supabase.co. The client key, formerly called the anon key and now also offered as a publishable key, is meant for browsers and apps and relies on Row Level Security to limit access. The service role or secret key has full power and must stay on the server. Key naming has been changing, so check your dashboard for the current names.
+simple_explain: Your app needs the project URL and a public client key to connect. Keep the powerful server key away from front-end code.
+analogy: The URL is the address of your front door and the key is the pass you show there.
+formula_rule: createClient(URL, client key)
+example_1: A URL such as https://abcd1234.supabase.co.
+example_2: A client key used in browser code with RLS protecting data.
+example_3: A server-only secret key used in a backend script.
+related: anon key vs service role key, environment variables, createClient
+word_family: URL, anon key, publishable key, service role, secret key
+where_used: Every Supabase app | Configuration | Deployment
+mini_conversation: A: Where do I find the keys? | B: In the project settings, under the API section of the dashboard.
+misconception: ✗ Every Supabase key is safe to put in front-end code → ✓ Only the client key is meant for front-end use, and the service role or secret key must stay on the server
+contrast: Client key vs service role key: the client key is limited by RLS, the service role key bypasses it.
+avoid: Do not commit keys to a public repository.
+memory_trick: URL says where, key says who.
+real_project: Putting the URL and client key in environment variables of a web app.
+real_interview: An interviewer may ask: What do you need to connect an app to Supabase?
+real_daily: It is like an address plus a pass for the door.
+mcq_question: Which two values does createClient need?
+mcq_options: A) Table name and column B) Project URL and a client key C) Region and bucket D) Username and password
+mcq_answer: B
+mcq_why: The client needs the project URL and a key.
+fill_blank: The web address of your Supabase project is called the project ____ → URL
+apply: Where do you find a project's keys? → In the API section of the project settings
+explain_task: Explain the project URL and keys in three lines.
+own_task: Write the two values you would put into your app's environment file.
+
+@SUP-005
+topic: 01 Basics
+level: Intermediate
+term: anon key vs service role key
+cue: Which key is safe to expose in a browser because Row Level Security limits it, and which one bypasses all rules?
+category: Security concept
+frequency: Very high
+importance: 5
+origin: A browser app must talk to the database directly, so Supabase gives it a limited key that the database rules control, and keeps a separate all-powerful key for trusted servers.
+pro_tip: If a key can bypass RLS, treat it like a master password and never ship it to the browser.
+memory_story: The anon key is a visitor badge that opens only the doors your rules allow, and the service role key is the master key of the building.
+visual: A badge with limited doors beside a master key labelled server only.
+emotion: The alarm of realising which key you pasted into front-end code.
+definition: The anon (client) key identifies unauthenticated or logged-in app users and is subject to Row Level Security, while the service role (secret) key has full access and bypasses RLS.
+explanation: With the anon key, requests run as the anon or authenticated database role, so policies decide what rows are visible. The service role key runs with a role that bypasses RLS, so it can read and write everything. It belongs only in trusted server code, such as edge functions or backend jobs. Naming is moving towards publishable and secret keys, but the roles are the same idea.
+simple_explain: Use the anon key in the app, because RLS guards your data. Use the service role key only on your own server, because it ignores the rules.
+analogy: The anon key is a visitor badge and the service role key is the master key of the building.
+formula_rule: anon or publishable key = browser, controlled by RLS. service role or secret key = server only, bypasses RLS.
+example_1: A browser app using the anon key to fetch a user's own tasks.
+example_2: A scheduled job using the service role key to clean old rows.
+example_3: A leaked service role key forcing an immediate rotation.
+related: Row Level Security, environment variables, Auth, secrets
+word_family: anon, authenticated, service_role, publishable, secret
+where_used: Every Supabase app | Security reviews | Backend jobs
+mini_conversation: A: Can I use the service role key in my React app? | B: No, anyone could read it and bypass all your security rules.
+misconception: ✗ The service role key is fine in the browser because the site is private → ✓ Anything in front-end code can be read, so the service role key must never be there
+contrast: anon vs service role: anon is limited by RLS, service role bypasses it.
+avoid: Never put the service role key in front-end code or a public repository.
+memory_trick: Anon for the app, service role for the server.
+real_project: Keeping the service role key only in a server-side job and the anon key in the web app.
+real_interview: An interviewer may ask: What is the difference between the anon key and the service role key?
+real_daily: It is like a visitor badge versus the master key of a building.
+mcq_question: Which key bypasses Row Level Security?
+mcq_options: A) The anon key B) The service role key C) The project URL D) The region
+mcq_answer: B
+mcq_why: The service role key has full access and ignores RLS.
+fill_blank: The key that is safe for browsers is the ____ key → anon
+apply: A scheduled cleanup job needs full access. Which key should it use? → The service role key, only in server-side code
+explain_task: Explain the two keys in three lines.
+own_task: Write where each key would live in a web app and a backend job.
+
+@SUP-006
+type: code56
+topic: 01 Basics
+level: Beginner
+term: Environment variables for Supabase
+cue: Where should the project URL and keys live so they are not written directly in your source code?
+kind: Configuration practice
+frequency: Very high
+importance: 5
+origin: Keys written in code spread through repositories and logs, so apps read them from environment variables that differ for each environment.
+pro_tip: Prefix variables that must reach the browser as your framework requires, and keep server-only ones unprefixed.
+memory_story: Environment variables are labelled drawers outside the code, and the code only asks for the drawer's name.
+visual: A .env file beside the code, with arrows from names in the code to values in the file.
+emotion: The calm of knowing a key is not hidden inside the code by accident.
+meaning: Environment variables store the URL and keys outside the code, and the app reads them at run time.
+code: # .env.local (not committed)¶NEXT_PUBLIC_SUPABASE_URL=https://abcd1234.supabase.co¶NEXT_PUBLIC_SUPABASE_ANON_KEY=your-client-key¶SUPABASE_SERVICE_ROLE_KEY=your-server-only-key¶// code¶const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+output: The app reads the URL from the environment, and the keys never appear in the committed code.
+explanation: In Next.js, variables starting with NEXT_PUBLIC_ are sent to the browser, so only the URL and client key should have that prefix. The service role key has no prefix, so it stays on the server. Add the env file to .gitignore, and set the same variables in your hosting provider.
+simple_explain: Put the URL and keys in an env file, ignore that file in git, and read them with process.env. Never prefix the service role key so it stays server-only.
+analogy: It is like labelled drawers outside the code, and the code only asks for a drawer's name.
+syntax: process.env.NAME
+anatomy: NEXT_PUBLIC_ = sent to the browser | no prefix = server only | .env.local = local file ignored by git
+example_1: const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+example_2: const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+example_3: const admin = process.env.SUPABASE_SERVICE_ROLE_KEY;
+variation: Vite uses the VITE_ prefix for variables sent to the browser¶Hosting dashboards let you add the same variables for production
+used_with: .gitignore, createClient, deployment settings
+related: Project URL and API keys, anon key vs service role key, secrets
+alternatives: A secrets manager for larger teams
+where_used: Every deployment | Local development | CI settings
+mini_conversation: A: Should I paste the key into my code for now? | B: No, put it in an env file and read it with process.env.
+misconception: ✗ Anything in an env file is hidden from users → ✓ Variables with a public prefix are sent to the browser, so only non-secret values should have it
+confused_with: Public prefix vs server-only variable: the prefixed one reaches the browser, the other stays on the server.
+avoid: Do not give the service role key a public prefix.
+wrong_code: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=your-server-only-key
+right_code: SUPABASE_SERVICE_ROLE_KEY=your-server-only-key
+memory_trick: Public prefix means public to everyone.
+real_project: Setting the same variable names in the local file and the hosting dashboard.
+real_interview: An interviewer may ask: How do you keep Supabase keys out of source code?
+real_daily: It is like labelled drawers outside the code.
+mcq_question: Which variable must not have a public prefix?
+mcq_options: A) The service role key B) The client key C) The project URL D) The region name
+mcq_answer: A
+mcq_why: A public prefix sends the value to the browser, which would leak the service role key.
+fill_blank: Add the env file to ____ so it is not committed → .gitignore
+hindi_to_task: Read the Supabase URL from the environment variable NEXT_PUBLIC_SUPABASE_URL.
+task_answer: const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+own_task: Create an env file for a project and list which variables are public and which are not.
+practice_question: What does the NEXT_PUBLIC_ prefix do in Next.js?
+practice_answer: It makes the variable available in browser code.

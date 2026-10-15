@@ -1,0 +1,447 @@
+
+@SSO-011
+type: code56
+topic: 02 Protocols
+level: Advanced
+term: PKCE
+cue: Which extension protects the authorisation code flow for apps that cannot keep a secret?
+kind: Security mechanism
+frequency: Very high
+importance: 5
+origin: Public clients such as mobile and single page apps cannot hide a secret, so a one-time proof ties the code to the app that asked for it.
+pro_tip: Use PKCE for every authorisation code flow, even with confidential clients.
+memory_story: PKCE is a claim ticket that only the person who made the order can match.
+visual: A hashed challenge sent first and a verifier revealed later.
+emotion: The assurance that a stolen code is useless.
+meaning: PKCE has the client create a random code verifier, send its hash as the code challenge in the authorisation request, and send the verifier when exchanging the code, so the server can check they match.
+code: import base64, hashlib, os¶verifier = base64.urlsafe_b64encode(os.urandom(32)).rstrip(b"=").decode()¶challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()¶auth_url = ("https://idp.example.com/authorize?response_type=code&client_id=APP"¶    "&redirect_uri=https://app.example.com/cb&scope=openid%20profile"¶    f"&code_challenge={challenge}&code_challenge_method=S256&state=xyz")¶# later: POST /token with code and code_verifier=verifier
+output: The authorisation request carries the challenge, and the token request carries the verifier, which the server hashes and compares.
+explanation: An attacker who steals the code from a redirect cannot use it without the verifier, which never travelled in the first request. Use the S256 method, not plain. The state parameter protects against cross-site request forgery. The nonce ties the ID token to the request. Libraries do this automatically.
+simple_explain: Send a hash first and the secret later, so a stolen code is useless.
+analogy: PKCE is a claim ticket that only the person who made the order can match.
+syntax: code_challenge = BASE64URL(SHA256(code_verifier))
+anatomy: verifier = random secret | challenge = its hash | S256 = method | state = CSRF guard
+example_1: code_challenge_method=S256
+example_2: state=random-string
+example_3: nonce=random-string
+variation: client secret on a backend   // confidential clients still add PKCE
+used_with: OAuth code flow, OpenID Connect, mobile apps
+related: OAuth grants, redirect URI rules, CSRF, token theft
+alternatives: Client secrets for server-side apps
+where_used: Single page apps | Mobile apps | All modern logins
+mini_conversation: A: Can a stolen authorisation code be used? | B: Not without the verifier that PKCE requires.
+misconception: ✗ PKCE is only for mobile apps → ✓ It is recommended for all authorisation code flows
+confused_with: state vs PKCE: state guards the redirect, PKCE guards the code exchange.
+avoid: Do not use the plain challenge method.
+wrong_code: code_challenge_method=plain
+right_code: code_challenge_method=S256
+memory_trick: Hash goes first, verifier comes later.
+real_project: Adding PKCE to a single page app removed the need for any client secret in the browser.
+real_interview: An interviewer may ask: What problem does PKCE solve?
+real_daily: It is like a claim ticket that only the orderer can match.
+mcq_question: What does the client send in the token request with PKCE?
+mcq_options: A) The code challenge only B) The state only C) The password D) The code verifier
+mcq_answer: D
+mcq_why: The server hashes it to match the challenge.
+fill_blank: The recommended challenge method is ____ → S256
+hindi_to_task: Build the authorisation URL with a code challenge.
+task_answer: https://idp.example.com/authorize?response_type=code&code_challenge=CHALLENGE&code_challenge_method=S256
+own_task: Explain why a stolen code fails without the verifier.
+practice_question: Which method should you use for the challenge?
+practice_answer: S256.
+
+@SSO-012
+type: code56
+topic: 02 Protocols
+level: Intermediate
+term: JWT validation
+cue: Which checks must an API make before trusting a JSON Web Token?
+kind: Security mechanism
+frequency: Very high
+importance: 5
+origin: Tokens arrive from outside, so an API must prove that they are genuine, current and meant for it.
+pro_tip: Use a well-tested library and fix the allowed algorithms.
+memory_story: Validating a token is checking a banknote for watermark, date and issuer.
+visual: A token split into header, payload and signature with checks beside each.
+emotion: The confidence of rejecting forged tokens.
+meaning: A JWT has a header, payload and signature, and validation checks the signature with the issuer's key, the algorithm, issuer, audience, expiry and not-before times.
+code: import jwt   # PyJWT¶claims = jwt.decode(¶    token,¶    key=public_key_from_jwks,¶    algorithms=["RS256"],¶    audience="https://api.example.com",¶    issuer="https://idp.example.com/",¶    leeway=30,¶)¶print(claims["sub"], claims.get("scope"))
+output: The claims are returned only if the signature, issuer, audience and times are valid, with thirty seconds of allowed clock difference.
+explanation: Keys come from the provider's JWKS endpoint and are chosen using the kid header. Allow only expected algorithms, because attackers try none or switching to a shared secret. Check exp and nbf with a small leeway. A JWT is signed, not encrypted, so anyone can read it. Revocation needs short lifetimes or introspection.
+simple_explain: Verify signature, algorithm, issuer, audience and time, and never trust an unverified token.
+analogy: Validating a token is checking a banknote for watermark, date and issuer.
+syntax: jwt.decode(token, key, algorithms=[...], audience=..., issuer=...)
+anatomy: header = algorithm and kid | payload = claims | signature = proof | JWKS = public keys
+example_1: kid selects the key from the JWKS.
+example_2: exp is a Unix time in seconds.
+example_3: aud must match this API.
+variation: opaque tokens with introspection   // ask the server instead of decoding
+used_with: OIDC, OAuth, APIs
+related: scopes and claims, token lifetimes, clock skew, OpenID Connect
+alternatives: Token introspection | opaque tokens
+where_used: APIs | Gateways | Microservices
+mini_conversation: A: Can we just decode the token and read the user? | B: No, you must verify the signature and claims first.
+misconception: ✗ A JWT is encrypted so its contents are private → ✓ It is only signed, and anyone can decode the payload
+confused_with: Decode vs verify: decoding reads the payload, verifying proves it is genuine.
+avoid: Do not accept the none algorithm.
+wrong_code: claims = jwt.decode(token, options={"verify_signature": False})
+right_code: claims = jwt.decode(token, key, algorithms=["RS256"], audience=AUD, issuer=ISS)
+memory_trick: Decoding reads it, verifying trusts it.
+real_project: Adding audience checks stopped tokens meant for another API being accepted.
+real_interview: An interviewer may ask: What do you validate in a JWT?
+real_daily: It is like checking a banknote.
+mcq_question: Which part proves a JWT is genuine?
+mcq_options: A) The token length B) The signature C) The header colour D) The payload size
+mcq_answer: B
+mcq_why: It is created with the issuer's key.
+fill_blank: Public keys for validation come from the ____ endpoint → JWKS
+hindi_to_task: Decode a token with verification of audience and issuer.
+task_answer: jwt.decode(token, key, algorithms=["RS256"], audience=AUD, issuer=ISS)
+own_task: List the checks an API must make on every token.
+practice_question: Is a JWT encrypted?
+practice_answer: No, it is signed, and anyone can read the payload.
+
+@SSO-013
+type: topic56
+topic: 02 Protocols
+level: Intermediate
+term: Token lifetimes
+cue: How long should access, ID and refresh tokens live?
+category: Core concept
+frequency: High
+importance: 5
+origin: Stolen tokens stay useful until they expire, so lifetimes trade safety against convenience.
+pro_tip: Keep access tokens short, usually minutes, and use refresh tokens to renew them.
+memory_story: Token lifetimes are the validity of a ticket, where shorter means less damage if lost.
+visual: Three bars of different lengths for access, ID and refresh tokens.
+emotion: The balance between safety and ease.
+definition: Token lifetime is the time a token stays valid, with access tokens typically short, ID tokens short and refresh tokens longer, set by the authorisation server.
+explanation: Short access tokens limit the damage of theft because they expire quickly. Refresh tokens allow getting new ones without another login, but are powerful and need protection and rotation. Session lifetimes at the provider decide how often users must log in. Revoking a JWT before expiry needs extra mechanisms, which short lifetimes avoid.
+simple_explain: Short access tokens, protected longer refresh tokens, and clear session limits.
+analogy: Token lifetimes are the validity of a ticket, where shorter means less damage if lost.
+formula_rule: Shorter life = smaller risk, more renewals.
+example_1: An access token valid for ten minutes.
+example_2: A refresh token valid for a day with rotation.
+example_3: A session ending after eight hours.
+related: refresh tokens, JWT validation, sessions, token theft
+word_family: expiry, lifetime, renewal, rotation, revocation
+where_used: Authorisation servers | APIs | Security reviews
+mini_conversation: A: Users are logged out too often. | B: Use refresh tokens rather than longer access tokens.
+misconception: ✗ Long-lived access tokens are more convenient and fine → ✓ A stolen long-lived token stays dangerous for a long time
+contrast: Access vs refresh token: access is short and used on APIs, refresh is longer and used to get new access tokens.
+avoid: Do not issue access tokens that last for days.
+memory_trick: Keep access short and guard the refresh.
+real_project: Shortening access token lifetimes cut the window for abuse of leaked tokens.
+real_interview: An interviewer may ask: How long should access tokens live?
+real_daily: It is like the validity of a ticket.
+mcq_question: Which token should be shortest lived?
+mcq_options: A) Refresh token B) Access token C) Session cookie always D) Password
+mcq_answer: B
+mcq_why: It is sent often and can leak.
+fill_blank: Replacing a refresh token with a new one on use is ____ → rotation
+apply: Users complain about frequent logins. What do you use? → Refresh tokens
+explain_task: Explain token lifetimes in three lines.
+own_task: Choose lifetimes for access, refresh and session.
+
+@SSO-014
+type: topic56
+topic: 02 Protocols
+level: Intermediate
+term: Refresh tokens
+cue: Which long-lived credentials obtain new access tokens without another login?
+category: Core concept
+frequency: High
+importance: 5
+origin: Short access tokens would force constant logins, so refresh tokens let apps renew them quietly.
+pro_tip: Rotate refresh tokens and detect reuse, and store them securely.
+memory_story: A refresh token is a season pass used to get a day ticket each morning.
+visual: An app exchanging a refresh token for a new access token.
+emotion: The comfort of staying signed in safely.
+definition: A refresh token is a credential issued with an access token that a client presents to the authorisation server to receive a new access token, usually with rotation and limits.
+explanation: Refresh tokens are sent only to the token endpoint, never to APIs. Rotation issues a new refresh token each time and invalidates the old one, so reuse signals theft. They can be bound to the client and have absolute expiry. Browser apps need extra care, such as secure cookies via a backend. Revoking a refresh token stops further renewals, and the current access token ends at its expiry.
+simple_explain: Use a refresh token only at the token endpoint, rotate it, and revoke it on logout.
+analogy: A refresh token is a season pass used to get a day ticket each morning.
+formula_rule: Refresh token buys new access tokens, rotated on each use.
+example_1: A mobile app renewing its access token silently.
+example_2: Reuse of an old refresh token revoking the session.
+example_3: Revocation at logout.
+related: token lifetimes, OAuth grants, token theft, sessions
+word_family: refresh, rotation, reuse detection, revoke, token endpoint
+where_used: Mobile apps | Web apps | Authorisation servers
+mini_conversation: A: Should the refresh token go to the API? | B: No, only to the token endpoint.
+misconception: ✗ Refresh tokens can be stored anywhere in the browser → ✓ They are powerful and need secure storage, ideally server-side
+contrast: Access vs refresh token: one calls APIs, the other renews access.
+avoid: Do not send refresh tokens to resource APIs.
+memory_trick: Refresh tokens rotate and stay hidden.
+real_project: Rotation with reuse detection flagged a stolen token at a customer.
+real_interview: An interviewer may ask: What is refresh token rotation?
+real_daily: It is like a season pass for day tickets.
+mcq_question: Where is a refresh token sent?
+mcq_options: A) The token endpoint B) Every API C) A log D) The browser address bar
+mcq_answer: A
+mcq_why: Only the authorisation server accepts it.
+fill_blank: Using an old rotated token again is called ____ → reuse
+apply: A rotated refresh token is used twice. What does it suggest? → Possible theft
+explain_task: Explain refresh tokens in three lines.
+own_task: Describe how to store refresh tokens in a web app safely.
+
+@SSO-015
+type: topic56
+topic: 02 Protocols
+level: Intermediate
+term: Client credentials
+cue: Which grant lets a service get a token for itself with no user?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Backend jobs have no user to log in, so they authenticate as themselves with their own credentials.
+pro_tip: Prefer certificates or workload identity over long-lived client secrets.
+memory_story: Client credentials are a staff badge for a robot with its own job.
+visual: A service sending its id and secret and receiving a token.
+emotion: The ease of safe machine access.
+definition: The client credentials grant lets a confidential client authenticate with its client id and a secret or certificate and receive an access token with scopes granted to the application itself.
+explanation: There is no user and no ID token. Scopes represent application permissions. Secrets must be stored in a vault and rotated. Certificates or federated identities avoid stored secrets. Tokens are cached until near expiry. Give each service its own client and minimal scopes.
+simple_explain: A service proves itself and receives a token for its own permissions.
+analogy: Client credentials are a staff badge for a robot with its own job.
+formula_rule: No user, app identity, app permissions.
+example_1: A nightly job calling an internal API.
+example_2: A service using a certificate instead of a secret.
+example_3: A token cached for fifty minutes.
+related: OAuth grants, service accounts, scopes and claims, secrets
+word_family: client id, secret, machine to machine, certificate, app permission
+where_used: Backend jobs | Microservices | Integrations
+mini_conversation: A: How does the batch job call the API? | B: With client credentials and a narrow scope.
+misconception: ✗ One shared client is fine for all services → ✓ Each service needs its own client with minimal scopes
+contrast: Client credentials vs code flow: no user versus a user present.
+avoid: Do not share one client secret across many services.
+memory_trick: Machine in, no user, own scopes.
+real_project: Giving each service its own client made access reviews and revocation simple.
+real_interview: An interviewer may ask: When do you use client credentials?
+real_daily: It is like a staff badge for a robot.
+mcq_question: Is a user involved in client credentials?
+mcq_options: A) Sometimes by email B) Yes always C) No D) Only admins
+mcq_answer: C
+mcq_why: The app authenticates as itself.
+fill_blank: The secret of a client is stored in a ____ → vault
+apply: Two services must call each other with no user. What do you use? → Client credentials
+explain_task: Explain client credentials in three lines.
+own_task: Design clients and scopes for three backend services.
+
+@SSO-016
+type: topic56
+topic: 02 Protocols
+level: Intermediate
+term: Redirect URI rules
+cue: Why must the redirect address be registered and matched exactly?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Codes and tokens return through redirects, so loose matching would let attackers send them to their own sites.
+pro_tip: Register full exact URIs and avoid wildcards.
+memory_story: The redirect URI is the delivery address that must match the registered one exactly.
+visual: A request with a registered address and an attacker's address rejected.
+emotion: The importance of one strict comparison.
+definition: A redirect URI is the address where the authorisation server sends the user and the code or token after login, and servers should compare it exactly with the values registered for the client.
+explanation: If matching is loose, an attacker can craft a login link that sends the code to their site and take over accounts. Use HTTPS, exact string matches and no wildcards or open redirects on the app. Mobile apps use claimed links or custom schemes with care. Separate redirect URIs per environment.
+simple_explain: Register exact HTTPS addresses and let the server reject any other.
+analogy: The redirect URI is the delivery address that must match the registered one exactly.
+formula_rule: Exact match, HTTPS, no wildcards.
+example_1: https://app.example.com/callback registered exactly.
+example_2: A rejected request with an unregistered address.
+example_3: Different URIs for staging and production.
+related: OAuth grants, PKCE, token theft, CSRF
+word_family: redirect, callback, exact match, open redirect, wildcard
+where_used: OAuth setup | Security reviews | Integrations
+mini_conversation: A: The login says redirect URI mismatch. | B: The address in the request differs from the registered one.
+misconception: ✗ A wildcard redirect URI is convenient and safe → ✓ It can let attackers capture codes
+contrast: Exact vs prefix match: exact blocks variants, prefix can be abused.
+avoid: Do not register wildcard redirect URIs.
+memory_trick: Exact, secure, and one per environment.
+real_project: Replacing a wildcard with exact URIs closed an account takeover path.
+real_interview: An interviewer may ask: Why must redirect URIs be exact?
+real_daily: It is like a delivery address that must match.
+mcq_question: What should redirect URI matching be?
+mcq_options: A) Approximate B) Ignored C) Wildcard D) Exact
+mcq_answer: D
+mcq_why: Looseness lets attackers redirect codes.
+fill_blank: An app flaw that forwards users to any address an attacker picks is an open ____ → redirect
+apply: A login fails with a mismatch error. What do you compare? → The request URI and the registered URI
+explain_task: Explain redirect URI rules in three lines.
+own_task: List the URIs for dev, staging and production.
+
+@SSO-017
+type: code56
+topic: 03 Provisioning and Access
+level: Intermediate
+term: SCIM
+cue: Which standard automatically creates, updates and removes users in applications?
+kind: Standard
+frequency: High
+importance: 5
+origin: Creating accounts by hand in every app is slow and risky, so SCIM lets the identity provider push changes.
+pro_tip: Use SCIM so offboarding in the directory removes access everywhere.
+memory_story: SCIM is a mail carrier that delivers every staff change to each app.
+visual: A provider sending user create and delete requests to an app.
+emotion: The relief of accounts that manage themselves.
+meaning: SCIM is a REST API standard with JSON for users and groups, which an identity provider calls to create, update, deactivate and delete accounts in an application.
+code: curl -X POST https://app.example.com/scim/v2/Users -H "Authorization: Bearer TOKEN" -H "Content-Type: application/scim+json" -d '{"schemas":["urn:ietf:params:scim:schemas:core:2.0:User"],"userName":"asha@example.com","name":{"givenName":"Asha","familyName":"Rao"},"active":true}'¶curl -X PATCH https://app.example.com/scim/v2/Users/123 -H "Authorization: Bearer TOKEN" -H "Content-Type: application/scim+json" -d '{"schemas":["urn:ietf:params:scim:api:messages:2.0:PatchOp"],"Operations":[{"op":"replace","path":"active","value":false}]}'
+output: The first call creates a user, and the second deactivates that user.
+explanation: The app exposes endpoints such as /Users and /Groups. The provider maps its attributes to SCIM fields and syncs on changes. Deactivating is preferred to deleting so history is kept. The bearer token must be protected. Errors are returned as SCIM error messages. SCIM complements SSO, since SSO handles login and SCIM handles accounts.
+simple_explain: The provider calls SCIM endpoints to create, change and deactivate accounts automatically.
+analogy: SCIM is a mail carrier that delivers every staff change to each app.
+syntax: POST /scim/v2/Users | PATCH /scim/v2/Users/ID
+anatomy: schemas = format version | userName = login | active = enabled flag | Operations = changes
+example_1: GET /scim/v2/Users?filter=userName eq "asha@example.com"
+example_2: DELETE /scim/v2/Users/123
+example_3: POST /scim/v2/Groups
+variation: just-in-time provisioning at first login   // an alternative to SCIM
+used_with: identity providers, groups and roles, offboarding
+related: just-in-time provisioning, offboarding, groups and roles, directory services
+alternatives: Just-in-time provisioning | manual accounts
+where_used: Enterprise SaaS | Onboarding | Offboarding
+mini_conversation: A: A leaver still has an account in the app. | B: Enable SCIM so deactivation in the directory flows through.
+misconception: ✗ SSO also creates and removes accounts → ✓ SSO handles login, and SCIM handles provisioning
+confused_with: SSO vs SCIM: login versus account lifecycle.
+avoid: Do not expose SCIM endpoints without strong authentication.
+wrong_code: DELETE /scim/v2/Users/123   # loses history
+right_code: PATCH ... {"op":"replace","path":"active","value":false}
+memory_trick: SSO logs in, SCIM manages accounts.
+real_project: Turning on SCIM removed access for leavers in a customer's apps within minutes.
+real_interview: An interviewer may ask: What is the difference between SSO and SCIM?
+real_daily: It is like a mail carrier for staff changes.
+mcq_question: What does SCIM manage?
+mcq_options: A) Logs B) User account lifecycle C) Passwords only D) Network routes
+mcq_answer: B
+mcq_why: It creates, updates and deactivates accounts.
+fill_blank: SCIM user endpoint path ends with ____ → /Users
+hindi_to_task: Deactivate a user through SCIM.
+task_answer: PATCH /scim/v2/Users/ID with active set to false
+own_task: List the SCIM calls for onboarding and offboarding.
+practice_question: Why deactivate instead of delete?
+practice_answer: It keeps history for audits.
+
+@SSO-018
+type: topic56
+topic: 03 Provisioning and Access
+level: Beginner
+term: Groups and roles
+cue: How do people get permissions through membership instead of individual grants?
+category: Core concept
+frequency: Very high
+importance: 5
+origin: Granting rights person by person does not scale, so groups and roles bundle permissions.
+pro_tip: Map directory groups to application roles, and review them regularly.
+memory_story: Groups are teams, and roles are the job descriptions the team receives.
+visual: Users inside a group linked to a role with permissions.
+emotion: The tidiness of access by membership.
+definition: A group is a set of users, and a role is a named set of permissions, so membership in a group grants the role and its permissions.
+explanation: Identity providers send group or role claims in tokens or assertions, or provision them through SCIM. Apps map those to internal permissions. Changes in the directory then flow to all apps. Least privilege means small, purposeful roles. Access reviews check membership. Avoid very large catch-all groups.
+simple_explain: Put users in groups, give groups roles, and review membership.
+analogy: Groups are teams, and roles are the job descriptions the team receives.
+formula_rule: User → group → role → permissions.
+example_1: A finance group mapped to a reporting role.
+example_2: A groups claim in the token.
+example_3: A quarterly access review.
+related: RBAC vs ABAC, SCIM, scopes and claims, offboarding
+word_family: group, role, membership, mapping, review
+where_used: Access management | Enterprise apps | Audits
+mini_conversation: A: How do we give the new hire access? | B: Add them to the sales group.
+misconception: ✗ Granting permissions to individuals is easier long term → ✓ Groups scale and make audits simpler
+contrast: Group vs role: a group is people, a role is permissions.
+avoid: Do not create one giant admin group.
+memory_trick: People in groups, permissions in roles.
+real_project: Mapping directory groups to roles removed manual access requests.
+real_interview: An interviewer may ask: What is the difference between a group and a role?
+real_daily: It is like a team and its job description.
+mcq_question: What does a role contain?
+mcq_options: A) A set of permissions B) A log C) A list of passwords D) A server
+mcq_answer: A
+mcq_why: Roles bundle permissions.
+fill_blank: A set of users is a ____ → group
+apply: A new hire joins sales. How do you grant access? → Add them to the sales group
+explain_task: Explain groups and roles in three lines.
+own_task: Design three groups and their roles for a small company.
+
+@SSO-019
+type: topic56
+topic: 03 Provisioning and Access
+level: Advanced
+term: RBAC vs ABAC
+cue: Which two access models decide by role or by attributes?
+category: Core concept
+frequency: High
+importance: 4
+origin: Role lists grow too large for complex rules, so attribute-based models decide using user, resource and context facts.
+pro_tip: Start with RBAC and add attributes where roles become too many.
+memory_story: RBAC checks your job title at the door, and ABAC also checks the time, place and what you are opening.
+visual: A role box and an attribute rule box feeding a decision.
+emotion: The satisfaction of rules that match real policy.
+definition: Role-based access control grants permissions through roles, and attribute-based access control evaluates policies over attributes of the user, the resource, the action and the environment.
+explanation: RBAC is simple and easy to audit, but can lead to role explosion. ABAC can express rules such as managers may approve expenses under a limit in their own department during working hours. Policies need good attribute data and testing. Many systems combine both. Policy engines such as OPA evaluate such rules.
+simple_explain: Roles are simple, and attributes allow finer rules.
+analogy: RBAC checks your job title at the door, and ABAC also checks the time, place and what you open.
+formula_rule: RBAC = who you are. ABAC = who, what, where and when.
+example_1: Role editor can edit articles.
+example_2: Managers approve expenses in their own department under a limit.
+example_3: Access only from a managed device.
+related: groups and roles, scopes and claims, least privilege, policy engines
+word_family: RBAC, ABAC, attribute, policy, role explosion
+where_used: Enterprise apps | Data platforms | Compliance
+mini_conversation: A: We have hundreds of roles now. | B: Use attributes such as department for finer rules.
+misconception: ✗ ABAC replaces RBAC completely → ✓ Most systems combine both
+contrast: RBAC vs ABAC: roles are coarse and simple, attributes are fine and flexible.
+avoid: Do not build attribute rules without reliable attribute data.
+memory_trick: Roles are simple, attributes are precise.
+real_project: Adding a department attribute removed dozens of near-duplicate roles.
+real_interview: An interviewer may ask: When would you choose ABAC over RBAC?
+real_daily: It is like checking a job title versus time and place too.
+mcq_question: What does ABAC evaluate?
+mcq_options: A) Only passwords B) Only roles C) Attributes of user, resource and context D) Only IP
+mcq_answer: C
+mcq_why: Policies use many facts.
+fill_blank: Too many near-duplicate roles is role ____ → explosion
+apply: Rules depend on department and amount. Which model helps? → ABAC
+explain_task: Explain RBAC and ABAC in three lines.
+own_task: Write one access policy that truly needs attributes.
+
+@SSO-020
+type: topic56
+topic: 03 Provisioning and Access
+level: Intermediate
+term: Service accounts
+cue: Which non-human identities let applications access systems?
+category: Core concept
+frequency: High
+importance: 4
+origin: Programs need access too, and sharing a person's login is unsafe, so dedicated machine identities are used.
+pro_tip: Give each service its own identity with minimal rights and an owner.
+memory_story: A service account is a badge for a robot, issued with a named owner.
+visual: A service using its own identity to call an API.
+emotion: The tidiness of clear machine identities.
+definition: A service account is a non-human identity used by an application or automation to authenticate and access resources, with its own credentials and permissions.
+explanation: Risks include forgotten accounts, shared keys and over-broad rights. Prefer short-lived tokens, workload identity and certificates to static keys. Record an owner and purpose, rotate secrets, monitor use and remove unused accounts. Do not use them for human logins.
+simple_explain: Use a separate machine identity per service, with an owner and least rights.
+analogy: A service account is a badge for a robot, issued with a named owner.
+formula_rule: One service, one identity, one owner.
+example_1: A pipeline identity with deploy rights only.
+example_2: A workload identity replacing a stored key.
+example_3: A quarterly review of unused service accounts.
+related: client credentials, offboarding, least privilege, secrets
+word_family: service account, workload identity, owner, rotation, machine identity
+where_used: Automation | Cloud | Integrations
+mini_conversation: A: Nobody knows who owns this account. | B: Every service account needs a recorded owner.
+misconception: ✗ Service accounts are safe because no person uses them → ✓ They are prized targets and often over-privileged
+contrast: User vs service account: users are people, service accounts are programs.
+avoid: Do not share one service account across many systems.
+memory_trick: One robot badge per job.
+real_project: Reviewing service accounts found several unused ones with admin rights.
+real_interview: An interviewer may ask: How do you manage service accounts?
+real_daily: It is like a badge for a robot.
+mcq_question: What should every service account have?
+mcq_options: A) A shared password B) No monitoring C) Admin rights D) A recorded owner
+mcq_answer: D
+mcq_why: Owners make reviews and offboarding possible.
+fill_blank: Cloud identity for programs without static keys is ____ identity → workload
+apply: A script uses an engineer's login. What should replace it? → A dedicated service account
+explain_task: Explain service accounts in three lines.
+own_task: List five fields to record for each service account.

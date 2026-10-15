@@ -20,7 +20,7 @@ import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
 import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/chunkCard";
 import { channelLabel, isSupportChannel, isSupportLevel, levelLabel, supportDetailsOf, supportGloss } from "@/lib/supportCard";
-import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { prefsOf } from "@/lib/preferences";
 import { chunkExtras, deckCounts, nextCardId, practiceTitle, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
 import { ComingSoon, DeckDone, DeckResults } from "@/components/flashcards/DeckMessages";
@@ -61,10 +61,10 @@ export default async function FlashcardsPage({
   const level = k.kind === "SUPPORT" && isSupportLevel(sp.lv) ? sp.lv : null;
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { preferences: true } });
-  // Read loosely: a stored value this version no longer offers falls back to
-  // its default instead of throwing away the student's other settings.
-  const prefs = PREFERENCE_SCHEMA.partial().safeParse(user?.preferences ?? {});
-  const cardColor = (prefs.success && prefs.data.cardColor) || DEFAULT_PREFERENCES.cardColor;
+  // Each key is read on its own: a stored value this version no longer offers
+  // falls back to its default without throwing away the other settings.
+  const prefs = prefsOf(user?.preferences);
+  const { cardColor, newPerDay } = prefs;
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
@@ -74,7 +74,7 @@ export default async function FlashcardsPage({
   // Support keeps its channel in `category`, like a chunk's type, and its
   // level in `partOfSpeech` as the sheet writes it ("Basic").
   const deck = { kind: k.kind, category: type ?? channel ?? undefined, level: level ? levelLabel(level) : undefined };
-  const counts = k.ready ? await deckCounts(userId, deck) : null;
+  const counts = k.ready ? await deckCounts(userId, deck, newPerDay) : null;
 
   let body: React.ReactNode;
   if (!k.ready) {
@@ -107,7 +107,7 @@ export default async function FlashcardsPage({
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
   } else {
-    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip));
+    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip, newPerDay));
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
 
     if (!word) {
@@ -116,6 +116,7 @@ export default async function FlashcardsPage({
           skipCount={skip.length}
           allSeen={!!counts && counts.known >= counts.total}
           noun={k.noun}
+          newPerDay={newPerDay}
           skipHref={withMore}
           moreHref={`${base}&more=1`}
         />
@@ -130,7 +131,7 @@ export default async function FlashcardsPage({
         word.kind === "CHUNK" || word.kind === "GRAMMAR" ? chunkExtras(word) : null,
       ]);
       body = (
-        <div className="mt-2">
+        <div className="mt-2 flex min-h-0 flex-1 flex-col md:block">
           <FlashcardDeck
             key={word.id}
             word={word}
@@ -150,6 +151,7 @@ export default async function FlashcardsPage({
             cardColor={cardColor}
             tallTop={k.kind === "CHUNK" || k.kind === "SUPPORT"}
             support={word.kind === "SUPPORT"}
+            autoSpeak={prefs.autoSpeak}
             chunk={
               extras
                 ? {
@@ -167,13 +169,20 @@ export default async function FlashcardsPage({
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-3 pb-4 pt-3 sm:px-6 sm:pt-6">
+    <main
+      // A column exactly one phone screen tall (minus the header and the
+      // bottom bar). The HEIGHT is fixed, not a minimum: the card measures its
+      // box to fit its text, and a box that grows with its content never
+      // overflows, so nothing would fit or scroll. The controls end up at the
+      // foot, directly above the navigation. 7.25rem is the header (3.5rem)
+      // plus the bottom bar (3.5rem) plus their borders.
+      className="mx-auto flex h-[calc(100dvh-7.25rem-env(safe-area-inset-bottom,0px))] max-w-2xl flex-col px-3 pb-1 pt-3 sm:px-6 sm:pt-6 md:block md:h-auto md:pb-4"
+    >
       <DeckTopBar
         k={k}
         type={type}
         channel={channel}
         level={level}
-        q={q}
         list={list}
         base={base}
         skipCount={skip.length}

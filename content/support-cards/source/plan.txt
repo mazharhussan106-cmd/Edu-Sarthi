@@ -1,0 +1,190 @@
+# ID | kind | stage | what the card teaches   (CSV voice, CSC chat, CSE email; B/I/A = Basic/Intermediate/Advanced)
+## Voice · Basic (CEFR A2-B1)
+CSV-B-001 | Say | Opening | Greeting with company and own name, offer help
+CSV-B-002 | Say | Verify | Ask for the caller's name
+CSV-B-003 | Say | Verify | Ask for registered mobile number or email to verify
+CSV-B-004 | Say | Listen & clarify | Ask the caller to repeat politely
+CSV-B-005 | Say | Listen & clarify | Ask the caller to spell a name or email
+CSV-B-006 | Say | Hold & check | Ask permission to put on hold, say why
+CSV-B-007 | Say | Hold & check | Thank the caller for holding on return
+CSV-B-008 | Say | Apologise | Simple sincere apology
+CSV-B-009 | Say | Listen & clarify | Confirm understanding ("Let me make sure I have this right")
+CSV-B-010 | Say | Verify | Ask for order or account number
+CSV-B-011 | Say | Opening | Reassure: "I can help you with that"
+CSV-B-012 | Say | Listen & clarify | Bad phone line, ask to call back or speak up
+CSV-B-013 | Say | Close | Ask if there is anything else
+CSV-B-014 | Say | Close | Close the call warmly
+CSV-B-015 | Understand | Opening | Customer: "Hello? Can you hear me?"
+CSV-B-016 | Understand | Opening | Customer: "I'm calling about my order."
+CSV-B-017 | Understand | Escalate | Customer: "I want to speak to your manager."
+CSV-B-018 | Understand | Listen & clarify | Customer: "My payment didn't go through."
+CSV-B-019 | Understand | Hold & check | Customer: "Hang on a sec, let me find it."
+CSV-B-020 | Understand | Difficult customer | Customer: "You already asked me that."
+## Voice · Intermediate (B1-B2)
+CSV-I-001 | Say | Listen & clarify | Paraphrase the problem back
+CSV-I-002 | Say | Apologise | Empathy statement for a frustrating situation
+CSV-I-003 | Say | Explain | Ownership: "I'll take care of this for you"
+CSV-I-004 | Say | Explain | Signpost what you will do now
+CSV-I-005 | Say | Hold & check | Return from hold, need more time, new estimate
+CSV-I-006 | Say | Transfer | Warm transfer: explain who and why before transferring
+CSV-I-007 | Say | Set expectations | Give a clear timeline for resolution
+CSV-I-008 | Say | Say no politely | Can't do X, can do Y (positive language)
+CSV-I-009 | Say | Explain | Explain a charge on the bill
+CSV-I-010 | Say | Explain | Give a troubleshooting step and ask what they see
+CSV-I-011 | Say | Verify | Read back an email address to confirm
+CSV-I-012 | Say | Set expectations | Offer a callback with an update
+CSV-I-013 | Say | Close | Summarise what was done before closing
+CSV-I-014 | Say | Set expectations | Give a reference number (check they can note it)
+CSV-I-015 | Understand | Listen & clarify | Customer: "I've been charged twice for the same thing."
+CSV-I-016 | Understand | Difficult customer | Customer: "This is the third time I'm calling about this."
+CSV-I-017 | Understand | Listen & clarify | Customer: "It keeps freezing whenever I open it."
+CSV-I-018 | Understand | Set expectations | Customer: "Can you just tell me when it'll arrive?"
+CSV-I-019 | Understand | Listen & clarify | Customer: "I never signed up for this."
+CSV-I-020 | Understand | Close | Customer: "I'll think about it and get back to you."
+## Voice · Advanced (B2-C1)
+CSV-A-001 | Say | Difficult customer | De-escalate: acknowledge the anger without arguing
+CSV-A-002 | Say | Difficult customer | Let the customer finish ("Please go on, I'm listening")
+CSV-A-003 | Say | Say no politely | Refuse a refund with reason and an alternative
+CSV-A-004 | Say | Difficult customer | Set a boundary when the caller is abusive
+CSV-A-005 | Say | Apologise | Take responsibility for a company mistake
+CSV-A-006 | Say | Escalate | Escalate to a supervisor and brief them first
+CSV-A-007 | Say | Explain | Don't know the answer: check rather than guess
+CSV-A-008 | Say | Set expectations | Deliver bad news (a delay)
+CSV-A-009 | Say | Difficult customer | Customer threatens to cancel: retain without pressure
+CSV-A-010 | Say | Explain | Correct the customer politely
+CSV-A-011 | Say | Hold & check | Fill silence while checking ("I'm still here")
+CSV-A-012 | Say | Say no politely | Explain a rule without "policy says"
+CSV-A-013 | Say | Close | Close a difficult call positively
+CSV-A-014 | Say | Verify | Refuse to share account details with a non-holder (security)
+CSV-A-015 | Understand | Difficult customer | Customer: "This is absolutely ridiculous!"
+CSV-A-016 | Understand | Difficult customer | Customer: "I'm going to post about this online."
+CSV-A-017 | Understand | Difficult customer | Customer: "I want this sorted today. No excuses."
+CSV-A-018 | Understand | Difficult customer | Customer: "Don't read me a script."
+CSV-A-019 | Understand | Difficult customer | Customer (sarcastic): "Oh great, another hold."
+CSV-A-020 | Understand | Difficult customer | Customer: "I'll take my business elsewhere."
+## Chat · Basic (A2-B1)
+CSC-B-001 | Say | Opening | Chat greeting with name
+CSC-B-002 | Say | Verify | Ask for the order number in chat
+CSC-B-003 | Say | Hold & check | "Let me check that for you. One moment, please."
+CSC-B-004 | Say | Hold & check | Thank for waiting in chat
+CSC-B-005 | Say | Apologise | Short apology in chat
+CSC-B-006 | Say | Listen & clarify | Ask for a screenshot
+CSC-B-007 | Say | Explain | Share a link with one instruction
+CSC-B-008 | Say | Verify | Confirm a detail ("Just to confirm, …?")
+CSC-B-009 | Say | Hold & check | Check the customer is still there
+CSC-B-010 | Say | Close | Close the chat politely
+CSC-B-011 | Say | Close | Ask if there is anything else (chat)
+CSC-B-012 | Say | Transfer | Tell the customer you are transferring to a team
+CSC-B-013 | Say | Listen & clarify | Ask for more details
+CSC-B-014 | Say | Close | Thank the customer for their patience
+CSC-B-015 | Understand | Opening | Customer: "hi"
+CSC-B-016 | Understand | Opening | Customer: "need help with my order"
+CSC-B-017 | Understand | Listen & clarify | Customer: "recieved wrong item" (misspelt)
+CSC-B-018 | Understand | Difficult customer | Customer: "pls help asap"
+CSC-B-019 | Understand | Close | Customer: "ok thx"
+CSC-B-020 | Understand | Difficult customer | Customer: "is anyone there??"
+## Chat · Intermediate (B1-B2)
+CSC-I-001 | Say | Opening | Personalised greeting using the customer's name
+CSC-I-002 | Say | Explain | Numbered step-by-step instructions
+CSC-I-003 | Say | Set expectations | Refund raised + timeline
+CSC-I-004 | Say | Explain | Explain why something happened
+CSC-I-005 | Say | Set expectations | Tell the customer when to expect a reply
+CSC-I-006 | Say | Apologise | Empathy in writing
+CSC-I-007 | Say | Follow-up | Proactive update during a long check
+CSC-I-008 | Say | Say no politely | Offer alternatives
+CSC-I-009 | Say | Close | Check whether the solution worked
+CSC-I-010 | Say | Listen & clarify | Several questions: take them one at a time
+CSC-I-011 | Say | Close | Close after inactivity (warn first)
+CSC-I-012 | Say | Close | Ask for a rating politely
+CSC-I-013 | Say | Set expectations | Share the case number
+CSC-I-014 | Say | Explain | Correct a misunderstanding gently
+CSC-I-015 | Understand | Difficult customer | Customer: "still not working"
+CSC-I-016 | Understand | Difficult customer | Customer: "y is this taking so long"
+CSC-I-017 | Understand | Listen & clarify | Customer: "ur website is broken"
+CSC-I-018 | Understand | Follow-up | Customer: "i was promised a callback yesterday"
+CSC-I-019 | Understand | Difficult customer | Customer: "can u do it or not?"
+CSC-I-020 | Understand | Close | Customer: "never mind"
+## Chat · Advanced (B2-C1)
+CSC-A-001 | Say | Difficult customer | De-escalate in writing
+CSC-A-002 | Say | Say no politely | Say no in writing with a reason and option
+CSC-A-003 | Say | Apologise | Apologise for a long wait
+CSC-A-004 | Say | Difficult customer | Boundary for abusive messages
+CSC-A-005 | Say | Explain | Explain a technical issue in plain words
+CSC-A-006 | Say | Transfer | Hand over to a specialist with a summary
+CSC-A-007 | Say | Verify | Verify identity securely (never ask for full card number or OTP)
+CSC-A-008 | Say | Difficult customer | Complaint about another agent
+CSC-A-009 | Say | Difficult customer | Retention: customer wants to cancel
+CSC-A-010 | Say | Apologise | Admit our mistake clearly
+CSC-A-011 | Say | Close | Close an angry chat
+CSC-A-012 | Say | Follow-up | Follow up after an outage
+CSC-A-013 | Say | Set expectations | Ownership when there is no fix yet
+CSC-A-014 | Say | Say no politely | Out of scope: redirect to the right place
+CSC-A-015 | Understand | Difficult customer | Customer: "I want a refund NOW"
+CSC-A-016 | Understand | Difficult customer | Customer: "this is a joke"
+CSC-A-017 | Understand | Difficult customer | Customer: "your bot was useless"
+CSC-A-018 | Understand | Difficult customer | Customer: "I'm reporting this"
+CSC-A-019 | Understand | Close | Customer: "fine whatever"
+CSC-A-020 | Understand | Difficult customer | Customer: "why should I trust you?"
+## Email · Basic (A2-B1)
+CSE-B-001 | Say | Opening | Clear subject line for a reply
+CSE-B-002 | Say | Opening | Opening greeting (Dear / Hi + name)
+CSE-B-003 | Say | Opening | Thank the customer for writing
+CSE-B-004 | Say | Opening | Acknowledge receipt with a time for the full reply
+CSE-B-005 | Say | Verify | Ask for the order number
+CSE-B-006 | Say | Listen & clarify | Ask for an attachment (photo/screenshot)
+CSE-B-007 | Say | Apologise | Simple written apology
+CSE-B-008 | Say | Close | Tell the customer the issue is fixed
+CSE-B-009 | Say | Set expectations | Share the next step
+CSE-B-010 | Say | Close | Closing line inviting questions
+CSE-B-011 | Say | Close | Sign-off
+CSE-B-012 | Say | Follow-up | Follow-up when the customer has not replied
+CSE-B-013 | Say | Explain | Mention an attachment you sent
+CSE-B-014 | Say | Set expectations | Out-of-hours auto-reply line
+CSE-B-015 | Understand | Opening | Customer: "I am writing to complain about…"
+CSE-B-016 | Understand | Opening | Customer: "Please find attached the invoice."
+CSE-B-017 | Understand | Listen & clarify | Customer: "Kindly do the needful."
+CSE-B-018 | Understand | Follow-up | Customer: "Further to my previous email, …"
+CSE-B-019 | Understand | Close | Customer: "I look forward to your reply."
+CSE-B-020 | Understand | Follow-up | Customer: "This is my second email about this."
+## Email · Intermediate (B1-B2)
+CSE-I-001 | Say | Listen & clarify | Restate the issue at the start
+CSE-I-002 | Say | Explain | Explain the cause clearly
+CSE-I-003 | Say | Set expectations | Confirm a refund with timeline
+CSE-I-004 | Say | Listen & clarify | Ask for several missing details (list)
+CSE-I-005 | Say | Apologise | Apology plus the action taken
+CSE-I-006 | Say | Set expectations | Notify a delay
+CSE-I-007 | Say | Explain | Explain a rule plainly
+CSE-I-008 | Say | Say no politely | Offer alternatives in writing
+CSE-I-009 | Say | Escalate | Update: case escalated
+CSE-I-010 | Say | Follow-up | Polite reminder
+CSE-I-011 | Say | Close | Close a ticket
+CSE-I-012 | Say | Close | Request feedback
+CSE-I-013 | Say | Set expectations | "I'll get back to you by…" (instead of "revert back")
+CSE-I-014 | Say | Close | Thank for patience in writing
+CSE-I-015 | Understand | Listen & clarify | Customer: "I'd appreciate it if you could…"
+CSE-I-016 | Understand | Listen & clarify | Customer: "Please advise."
+CSE-I-017 | Understand | Follow-up | Customer: "I have yet to receive my refund."
+CSE-I-018 | Understand | Follow-up | Customer: "As per our conversation, …"
+CSE-I-019 | Understand | Set expectations | Customer: "I trust this will be resolved promptly."
+CSE-I-020 | Understand | Difficult customer | Customer: "…failing which I will be forced to take further action."
+## Email · Advanced (B2-C1)
+CSE-A-001 | Say | Apologise | Reply to a formal complaint
+CSE-A-002 | Say | Say no politely | Decline a request with alternatives
+CSE-A-003 | Say | Apologise | Apologise for a serious mistake
+CSE-A-004 | Say | Apologise | Offer a goodwill gesture
+CSE-A-005 | Say | Difficult customer | Reply to an email that threatens legal action
+CSE-A-006 | Say | Escalate | Respond to a public/social escalation by email
+CSE-A-007 | Say | Explain | Explain a complex fix simply
+CSE-A-008 | Say | Explain | Partial resolution: what is done and what is not
+CSE-A-009 | Say | Apologise | Correct wrong information sent earlier
+CSE-A-010 | Say | Close | Close a long thread with a summary
+CSE-A-011 | Say | Close | Ask for a review sensitively
+CSE-A-012 | Say | Difficult customer | Reply to an angry email
+CSE-A-013 | Say | Verify | Respond to a request for personal data (privacy)
+CSE-A-014 | Say | Escalate | Escalate internally to management (email to a manager)
+CSE-A-015 | Understand | Difficult customer | Customer: "I am extremely disappointed with the service."
+CSE-A-016 | Understand | Difficult customer | Customer: "I will be taking this further."
+CSE-A-017 | Understand | Difficult customer | Customer: "Your response is unacceptable."
+CSE-A-018 | Understand | Escalate | Customer: "Please treat this as a formal complaint."
+CSE-A-019 | Understand | Listen & clarify | Customer: "I was led to believe that…"
+CSE-A-020 | Understand | Set expectations | Customer: "Should this not be resolved by Friday, …"

@@ -4,7 +4,8 @@
 #
 # It creates or updates the tables (prisma db push), adds the starter modules
 # (seed), loads the 2,227 flashcard words (import-words), and the 1,183 chunks
-# and 247 grammar cards (import-chunks loads both). All four are safe to run again: they update what exists
+# and 247 grammar cards (import-chunks loads both), and the 180 customer-support
+# cards (import-support). All five are safe to run again: they update what exists
 # instead of duplicating it.
 #
 # It deliberately does NOT pass --accept-data-loss. If a schema change would
@@ -62,3 +63,6 @@ jobs:
 
       - name: Load chunk and grammar cards
         run: npx tsx prisma/import-chunks.ts
+
+      - name: Load customer-support cards
+        run: npx tsx prisma/import-support.ts

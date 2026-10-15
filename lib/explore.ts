@@ -8,20 +8,22 @@
 
 import { prisma } from "@/lib/prisma";
 
-export type BuiltIn = { words: number; chunks: number; grammar: number; chunkTypes: { type: string; count: number }[] };
+export type BuiltIn = { words: number; chunks: number; grammar: number; support: number; chunkTypes: { type: string; count: number }[] };
 
 export async function builtInCounts(): Promise<BuiltIn> {
   const built = { deckId: null };
-  const [words, chunks, grammar, types] = await Promise.all([
+  const [words, chunks, grammar, support, types] = await Promise.all([
     prisma.word.count({ where: { kind: "WORD", ...built } }),
     prisma.word.count({ where: { kind: "CHUNK", ...built } }),
     prisma.word.count({ where: { kind: "GRAMMAR", ...built } }),
+    prisma.word.count({ where: { kind: "SUPPORT", ...built } }),
     prisma.word.groupBy({ by: ["category"], where: { kind: "CHUNK", ...built }, _count: true }),
   ]);
   return {
     words,
     chunks,
     grammar,
+    support,
     chunkTypes: types.filter((t) => t.category).map((t) => ({ type: t.category as string, count: t._count })),
   };
 }

@@ -35,11 +35,12 @@ export default async function ExplorePage() {
 
       <section aria-labelledby="builtin" className="mt-6">
         <h2 id="builtin" className="font-display text-lg font-bold text-ink">Built into EduSarthi</h2>
-        <ul className="mt-2 grid gap-2 sm:grid-cols-3">
+        <ul className="mt-2 grid gap-2 sm:grid-cols-2">
           {[
             { href: "/flashcards?kind=words", title: "Words", count: built.words, note: "Meaning, examples, usage" },
             { href: "/flashcards?kind=chunks", title: "Chunks", count: built.chunks, note: "Phrases you can say as one piece" },
             { href: "/flashcards?kind=grammar", title: "Grammar", count: built.grammar, note: "Patterns with examples" },
+            { href: "/flashcards?kind=support", title: "Customer support", count: built.support, note: "Voice, chat and email lines for support agents" },
           ].map((c) => (
             <li key={c.title}>
               <Link href={c.href} className="block h-full">

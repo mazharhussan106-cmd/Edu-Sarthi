@@ -1,0 +1,1159 @@
+@CSE-A-001
+id: CSE-A-001
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Apologise
+sentence: Thank you for setting out your complaint so clearly, Ms Rao. I'm sorry your replacement laptop arrived with a cracked screen, and I have booked a courier to collect it on Thursday.
+speaker: Agent
+situation: A customer has sent a long, formal complaint by email after her replacement laptop arrived damaged, and you are writing the first reply.
+recall_cue: A customer has written a careful, formal complaint about a damaged replacement. What do you thank her for, what exactly do you apologise for, and what action do you name?
+stress: THANK-you · for-SET-ting-OUT · your-com-PLAINT · so-CLEAR-ly · Miz-RAO · i'm-SOR-ry · your-re-PLACE-ment-LAP-top · a-RIVED · with-a-CRACKED-SCREEN · and-i-have-BOOKED · a-COUR-i-er · to-col-LECT-it · on-THURS-day
+linking: If read aloud: setting_out → "set-ting-OUT" · booked_a → "book-ta" · collect_it → "co-LEC-tit"
+intonation: If read aloud: fall on "clearly", pause, then a steady falling tone on "cracked screen", and end firm and low on "Thursday" so the action sounds decided.
+indian_pron_tip: If read aloud, start "Thursday" with "th" (tongue lightly between the teeth), not "Tursday"; and "booked" ends in a short "t" sound ("bookt"), not "book-ed".
+register: Formal
+tone: Respectful, specific, accountable
+importance: 5
+customer_emotion: Let down twice and ready to escalate if the reply is vague.
+memory_hook: Picture three stamps on her letter: THANK for the detail, SORRY for the exact damage, BOOKED for the action already done.
+hindi_meaning: अपनी शिकायत इतने स्पष्ट ढंग से बताने के लिए धन्यवाद, सुश्री राव। मुझे खेद है कि आपका रिप्लेसमेंट लैपटॉप टूटी हुई स्क्रीन के साथ पहुँचा, और मैंने गुरुवार को उसे ले जाने के लिए कूरियर बुक कर दिया है।
+hindi_roman: Apni shikayat itne spasht dhang se batane ke liye dhanyavaad, Sushri Rao. Mujhe khed hai ki aapka replacement laptop tooti hui screen ke saath pahuncha, aur maine guruvaar ko use le jaane ke liye courier book kar diya hai.
+simple_meaning: Thank you for explaining the problem well. I'm sorry the new laptop came broken. A courier will pick it up on Thursday.
+why_it_works: Thanking the customer for the detail treats the complaint as useful, not as an attack. The apology names the exact fault and is followed at once by an action already taken, which is what a formal complainant is looking for.
+key_chunk: I'm sorry your ___, and I have ___.
+grammar_pattern: Thank you for + -ing · I'm sorry (that) + past simple · I have + past participle (action already done)
+grammar_note: "I have booked" (present perfect) shows the action is already done, which is stronger than "I will try to book".
+tone_note: Using her title and surname matches her formal email. "Sorry for the inconvenience" would sound scripted after a second failure and could make her angrier.
+watch_out: ✗ We are sorry for the inconvenience caused to you. → ✓ I'm sorry your replacement laptop arrived with a cracked screen.
+dont_say: "We regret the inconvenience caused." — it hides who is sorry and for what, and it reads like a template.
+positive_swap: Instead of "Your complaint has been noted", write "Thank you for setting out your complaint so clearly; I have already booked a courier."
+alt_1: Thank you for your detailed email, Ms Rao. I'm sorry the replacement laptop reached you damaged; a courier will collect it on Thursday.
+alt_2: I'm sorry that your second laptop also arrived with a fault, Ms Rao. I have arranged a Thursday collection, and I will email you on Friday to confirm what happens next.
+more_formal: Thank you for setting out your concerns in such detail, Ms Rao. Please accept my apology that your replacement laptop arrived damaged; I have arranged for a courier to collect it on Thursday.
+ask_next: Could you tell me whether a morning or an afternoon collection on Thursday suits you better?
+replies_you_may_hear: Thursday is fine, but I want a refund, not another laptop. · Why should I trust the next one? · Thank you, that is the first useful reply I have had.
+if_customer_pushes: Customer: "I don't want another replacement. I want my money back." → Agent: "I understand, after two faulty laptops. I will check your refund options today and email you by 5 pm, so you know exactly what happens once the courier collects the laptop on Thursday."
+cultural_note: Many Indian office replies open with "This is with reference to your mail dated…". International customers may not expect this; they look for thanks, a specific apology and the action in the first two sentences.
+channel_note: Voice: say it more simply and agree a collection time. Chat: split it into two short messages. Email: keep the title and surname if the customer used them.
+when_not_to_use: Do not thank someone for setting out the complaint "so clearly" if the email was short and furious; it can sound sarcastic.
+mini_conversation: Customer: I am writing to complain that the replacement laptop you sent is also faulty. The screen was cracked when I opened the box. | Agent: Thank you for setting out your complaint so clearly, Ms Rao. I'm sorry your replacement laptop arrived with a cracked screen, and I have booked a courier to collect it on Thursday. | Customer: What happens after that? | Agent: I will ask our warehouse to inspect your next laptop before it ships, and I will email you the tracking number by Friday.
+source_rule: Apologise specifically, take responsibility, then offer a fix (Lewicki et al., 2016: responsibility and repair rank highest).
+fill_blank: I'm sorry your replacement laptop arrived with a cracked screen, and I have ____ (book) a courier to collect it on Thursday.
+fill_answer: booked
+mcq_question: A customer sends a formal complaint about a damaged replacement. Which opening line is best?
+mcq_options: A) We regret any inconvenience caused to you and assure you that your complaint is being looked into. | B) Your complaint has been noted and passed to the relevant team, who will contact you in due course. | C) I'm sorry your replacement arrived with a cracked screen, and I have booked a courier for Thursday. | D) Thank you for your email. We take every complaint seriously and apologise for any inconvenience caused.
+mcq_answer: C
+mcq_why: C names the exact fault and an action already taken. B is tempting because it sounds formal, but it names no problem and gives no time. A and D are stock apologies that name no fault.
+reorder_task: courier / a / have / I / booked / Thursday / on / collect / to / it
+reorder_answer: I have booked a courier to collect it on Thursday.
+hindi_to_english: Mujhe khed hai ki aapka order galat size mein pahuncha; maine exchange book kar diya hai.
+hindi_to_english_answer: I'm sorry your order arrived in the wrong size, and I have booked an exchange for you.
+whats_next_customer: Why did this happen twice?
+whats_next_reply: That is a fair question. I have asked our warehouse to check how both units were packed, and I will tell you what they find by Friday.
+role_play: Partner A writes a formal complaint about a second faulty washing machine. Partner B writes the first reply: thanks, a specific apology, and one action already taken, with a day.
+record_task: Write the first two sentences of a reply to a formal complaint about a damaged replacement phone, and send them as text or a photo for audit.
+self_check: Did you name the exact problem in your apology? · Did you state an action already taken, with a day? · Did you avoid "sorry for the inconvenience"?
+
+@CSE-A-002
+id: CSE-A-002
+channel: Email
+level: Advanced
+cefr: B2
+kind: Say it
+call_stage: Say no politely
+sentence: As the 30-day return period ended on 2 May, we can't accept a return now. I understand this isn't the answer you were hoping for, but I can offer you full store credit, or a free repair if the machine has a fault.
+speaker: Agent
+situation: A customer asks to return a coffee machine six weeks after delivery, and the return window has closed, so you must decline and offer other options.
+recall_cue: The return window has closed and the customer still wants to send the item back. How do you say no with a reason, some empathy and two other options?
+stress: as-the-THIR-ty-DAY · re-TURN-PEER-i-od · END-ed-on-the-SEC-ond-of-MAY · we-CAN'T-ac-CEPT-a-re-TURN-NOW · i-un-der-STAND · this-ISN'T-the-AN-swer · you-were-HOP-ing-for · but-i-can-OF-fer-you · full-STORE-CRED-it · or-a-FREE-re-PAIR · if-the-ma-CHINE-has-a-FAULT
+linking: If read aloud: ended_on → "en-di-don" · or_a → "or-ra" · offer_you → "of-fer-yoo"
+intonation: If read aloud: a falling tone on "now" to close the reason, then a short pause; soft and falling on "hoping for"; a slight lift on "store credit" and a final fall on "fault" so the two options sound like real choices.
+indian_pron_tip: If read aloud, "return" is re-TURN (stress on the second part), and "thirty" begins with "th", not "t" ("tirty"); "credit" has a light alveolar "d", tongue behind the top teeth, not curled back.
+register: Formal
+tone: Firm, kind, solution-focused
+importance: 5
+customer_emotion: Hopeful but expecting a refusal and ready to argue.
+memory_hook: A closed door with two open windows beside it: say the door is shut, then point straight to the windows.
+hindi_meaning: 30 दिन की रिटर्न अवधि 2 मई को ख़त्म हो गई, इसलिए अब हम रिटर्न नहीं ले सकते। मैं समझता/समझती हूँ कि यह वह जवाब नहीं है जिसकी आप उम्मीद कर रहे थे, लेकिन मैं आपको पूरा स्टोर क्रेडिट दे सकता/सकती हूँ, या अगर मशीन में कोई ख़राबी है तो मुफ़्त मरम्मत करवा सकता/सकती हूँ।
+hindi_roman: 30 din ki return avadhi 2 May ko khatam ho gayi, isliye ab hum return nahin le sakte. Main samajhta/samajhti hoon ki yeh woh jawaab nahin hai jiski aap ummeed kar rahe the, lekin main aapko poora store credit de sakta/sakti hoon, ya agar machine mein koi kharaabi hai to muft marammat karwa sakta/sakti hoon.
+simple_meaning: The time to return it finished on 2 May, so we cannot take it back now. I know you wanted a different answer, but you can have the full amount as store credit, or a free repair if the machine has a fault.
+why_it_works: It gives a real reason (a date) instead of "policy", softens the refusal with empathy, and ends on two things the customer can actually choose, so the email does not end on "no".
+key_chunk: As ___, we can't ___. I understand ___, but I can offer you ___.
+grammar_pattern: As + reason clause, + we can't + verb + now. · I understand + (that) clause, + but + I can offer you + noun, or + noun + if + condition
+grammar_note: "As" here means "because"; it introduces the reason before the decision.
+tone_note: Putting the reason first and the options last leaves the customer with something to say yes to. "This is not possible as per our policy" sounds like a wall.
+watch_out: ✗ As per policy, return is not possible. → ✓ As the 30-day return period ended on 2 May, we can't accept a return now.
+dont_say: "Unfortunately, we cannot help you with this request." — it closes the conversation and offers nothing.
+positive_swap: Instead of "We cannot accept your return", write "What I can offer you is full store credit, or a free repair if the machine has a fault."
+alt_1: The return period closed on 2 May, so a refund is no longer available. I know you were hoping to return the machine, but I can arrange full store credit, or a free repair if it has a fault.
+alt_2: Because the machine was delivered more than 30 days ago, we can't take it back. I'm sorry this is not the news you wanted, but we can give you store credit, or repair it free of charge if it has a fault.
+more_formal: As the 30-day return period ended on 2 May, we are unable to accept a return. I appreciate that this is not the outcome you had hoped for; however, I would be glad to offer full store credit or, if the machine is faulty, a free repair.
+ask_next: Please let me know which option you prefer, and I will set it up within one working day.
+replies_you_may_hear: Fine, I'll take the store credit. · It was faulty from day one, so the return window should not apply. · I want to speak to a manager.
+if_customer_pushes: Customer: "It was faulty from the start, so the return period is irrelevant." → Agent: "Thank you for telling me. If the machine has a fault, the warranty covers it, so I can book a free repair or replacement. Could you describe what happens when you switch it on?"
+cultural_note: "As per policy, it is not possible" is common in Indian service writing. International customers may read it as hiding behind rules; they expect the actual reason and an alternative.
+channel_note: Voice: say the empathy line slowly and pause before the options. Chat: send the reason and the options as two short messages. Email: put the options on two separate lines.
+when_not_to_use: Do not use this before you know why the customer wants to return the item; if the machine is faulty, check the warranty first, because a fault is usually a repair or replacement case.
+mini_conversation: Customer: I'd like to return the coffee machine I bought in March. | Agent: As the 30-day return period ended on 2 May, we can't accept a return now. I understand this isn't the answer you were hoping for, but I can offer you full store credit, or a free repair if the machine has a fault. | Customer: Store credit is fine. | Agent: Thank you. I will add the credit to your account today and email you a confirmation by 5 pm.
+source_rule: Saying no by email: reason, then empathy, then an alternative, then a follow-up; never a bare "No". Don't hide behind "policy" (derived advice).
+fill_blank: As the 30-day return period ended on 2 May, we can't accept a return now. I understand this isn't the answer you were hoping for, ____ I can offer you full store credit, or a free repair if the machine has a fault.
+fill_answer: but
+mcq_question: A customer asks to return an item after the return window has closed. Which reply follows best practice?
+mcq_options: A) Under our returns policy, items cannot be returned after 30 days, so I am afraid this is not possible. | B) I'm sorry, but we cannot accept returns after 30 days, so I am unable to help with this request. | C) The return period ended on 2 May, so we can't take it back. I can offer store credit or a free repair. | D) Please contact the manufacturer about this, as we are not able to take back items after the return period.
+mcq_answer: C
+mcq_why: C gives the reason and two alternatives. A is tempting because it sounds official, but it hides behind "policy" and offers nothing. B says no with no alternative, and D passes the customer on.
+reorder_task: repair / you / can / free / I / a / offer
+reorder_answer: I can offer you a free repair.
+hindi_to_english: Exchange ka samay khatam ho gaya hai, lekin main aapko store credit de sakta hoon.
+hindi_to_english_answer: The exchange period has ended, but I can offer you store credit instead.
+whats_next_customer: Can you make an exception just this once?
+whats_next_reply: I understand why you are asking, but I'm not able to approve a return after 30 days. What I can do is add the store credit today, or book a free repair this week if the machine has a fault.
+role_play: Partner A asks by email to return shoes 45 days after delivery. Partner B writes a reply that gives the reason, shows empathy and offers two alternatives.
+record_task: Write a three-sentence email declining a late return of a jacket, offering two alternatives, and send it as text or a photo for audit.
+self_check: Did you give a real reason, not just "policy"? · Did you offer at least one alternative? · Did your email end on what you can do, not on "no"?
+
+@CSE-A-003
+id: CSE-A-003
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Apologise
+sentence: I'm sorry we charged your card three times for a single order; that was our mistake. I have refunded the two extra payments of $129 today, and I will email you the bank reference by 5 pm.
+speaker: Agent
+situation: A system error charged a customer three times for one order, and you are writing to apologise and confirm what has been done.
+recall_cue: Your company made a serious billing error. How do you own the mistake in a few words and show that the fix is already done?
+stress: i'm-SOR-ry · we-CHARGED-your-CARD · THREE-TIMES · for-a-SIN-gle-OR-der · that-was-our-mis-TAKE · i-have-re-FUND-ed · the-TWO-EX-tra-PAY-ments · of-a-HUN-dred-and-TWEN-ty-NINE-DOL-lars · to-DAY · and-i-will-E-mail-you · the-BANK-REF-er-ence · by-FIVE-P-M
+linking: If read aloud: charged_your → "charj-jor" · that_was → "that-wuz" · email_you → "ee-may-lyoo"
+intonation: If read aloud: low and serious on "our mistake", a clear pause after it, then a steadier, confident tone on "refunded" and a firm fall on "5 pm".
+indian_pron_tip: If read aloud, say "charged" with a clear final "d" sound joined to the "j" ("charjd"), and "mistake" as mi-STAKE with stress on the second part, not MIS-take.
+register: Formal
+tone: Serious, accountable, direct
+importance: 5
+customer_emotion: Alarmed and angry about money taken without permission.
+memory_hook: Three charges, three moves: say SORRY, say OUR MISTAKE, say what is already REFUNDED, like three coins going back into a wallet.
+hindi_meaning: मुझे खेद है कि हमने एक ही ऑर्डर के लिए आपके कार्ड से तीन बार पैसे काटे; यह हमारी ग़लती थी। मैंने आज $129 के दो अतिरिक्त भुगतान वापस कर दिए हैं, और शाम 5 बजे तक आपको बैंक रेफ़रेंस ईमेल कर दूँगा/दूँगी।
+hindi_roman: Mujhe khed hai ki humne ek hi order ke liye aapke card se teen baar paise kaate; yeh hamari galti thi. Maine aaj $129 ke do atirikt bhugtaan wapas kar diye hain, aur shaam 5 baje tak aapko bank reference email kar doonga/doongi.
+simple_meaning: We took your money three times by mistake. It was our fault. I have sent back the two extra payments today, and I will send you proof by 5 pm.
+why_it_works: It says clearly whose fault it was, which matters most in an apology, and pairs it with a repair already made and a time for proof. The customer does not have to chase anything.
+key_chunk: I'm sorry we ___; that was our mistake. I have ___, and I will ___ by ___.
+grammar_pattern: I'm sorry (that) + we + past simple; that was our mistake. · I have + past participle + today · I will + verb + by + time
+grammar_note: "That was our mistake" is a short, complete sentence that takes responsibility without excuses.
+tone_note: The short, plain sentences sound sincere. Long explanations about "technical issues" before the apology sound like excuses and make the customer angrier.
+watch_out: ✗ Due to some technical issue, your card was charged three times. → ✓ I'm sorry we charged your card three times for a single order; that was our mistake.
+dont_say: "This was due to a technical glitch at our end." — it blames the system, not the company, and sounds like an excuse.
+positive_swap: Instead of "The error occurred due to a system issue", write "That was our mistake, and I have refunded the extra payments today."
+alt_1: I'm very sorry: we charged you three times for one order, and that should never have happened. I have refunded both extra payments of $129 today.
+alt_2: Charging you three times for one order was our error, and I apologise. I have refunded the two extra payments, and I will send you the bank reference by 5 pm today.
+more_formal: Please accept my sincere apology for charging your card three times for a single order; the error was entirely ours. I have refunded the two additional payments of $129 today and will email you the bank reference by 5 pm.
+ask_next: If your bank has charged you any fees because of this, please send me the statement, and I will ask our billing team to refund them and reply to you by Friday.
+replies_you_may_hear: When will I actually see the money? · My account went overdrawn because of this. · Thank you for being honest about it.
+if_customer_pushes: Customer: "My account went overdrawn because of you." → Agent: "I'm sorry our mistake left your account overdrawn. Please send me the bank statement showing the fee, and I will ask our billing team to refund it. I will email you their answer by Friday."
+cultural_note: "Thrice" and "got debited" are common in Indian English. International customers may find "thrice" old-fashioned and "got debited" vague; "three times" and "we charged" are clearer.
+channel_note: Voice: say the apology first, slowly, before any detail. Chat: send the apology and the refund as two short messages. Email: put the refund amount and the time for proof on separate lines.
+when_not_to_use: Do not say "that was our mistake" before you have checked the facts; if the bank caused the extra charges, apologise for the worry and explain what you found.
+mini_conversation: Customer: You have charged me three times! | Agent: I'm sorry we charged your card three times for a single order; that was our mistake. I have refunded the two extra payments of $129 today, and I will email you the bank reference by 5 pm. | Customer: How long until I see it? | Agent: Banks usually show it within a few working days; the reference will help your bank trace it.
+source_rule: Apologise specifically and take responsibility, then offer repair; responsibility ranked most important (Lewicki et al., 2016).
+fill_blank: I'm sorry we charged your card three times for a single order; that was our mistake. I have ____ (refund) the two extra payments of $129 today.
+fill_answer: refunded
+mcq_question: Your company charged a customer three times. Which sentence takes responsibility best?
+mcq_options: A) The error occurred because of a technical issue in our payment system, which is now being fixed. | B) I apologise for the error on our side and for any inconvenience this may have caused you. | C) That was our mistake, and I have refunded the two extra payments to your card today. | D) We are very sorry this happened, and our system has been updated so it will not happen again.
+mcq_answer: C
+mcq_why: C owns the error and shows the repair already made. A is tempting because it explains the cause, but it blames a "technical issue" instead of taking responsibility; B and D apologise but show no repair.
+reorder_task: card / we / three / I'm / sorry / times / charged / your
+reorder_answer: I'm sorry we charged your card three times.
+hindi_to_english: Humne aapko galat bill bheja; yeh hamari galti thi. Maine sahi bill aaj bhej diya hai.
+hindi_to_english_answer: We sent you the wrong bill, and that was our mistake. I have sent the correct bill today.
+whats_next_customer: How do I know this won't happen again?
+whats_next_reply: I have asked our billing team to find the cause, and I will email you their findings by Thursday. If you see any further charge before then, reply to me and I will look at it the same day.
+role_play: Partner A is a customer charged twice for a hotel booking. Partner B writes an apology email that takes responsibility, names the refund already made and gives a time for proof.
+record_task: Write a short apology email for sending a customer the wrong invoice twice, including the fix and a time, and send it as text or a photo for audit.
+self_check: Did you say clearly that it was your company's mistake? · Did you name an action already taken? · Did you give a time for the next update?
+
+@CSE-A-004
+id: CSE-A-004
+channel: Email
+level: Advanced
+cefr: B2
+kind: Say it
+call_stage: Apologise
+sentence: As an apology for the delay, I have added a $20 credit to your account, which you can use on any future order.
+speaker: Agent
+situation: A customer's order arrived nine days late after several broken promises, the problem is now solved, and you are allowed to offer a small goodwill credit.
+recall_cue: The problem is fixed, but the customer waited far too long. How do you offer a small extra gesture without making it sound like a bribe?
+stress: as-an-a-POL-o-gy · for-the-de-LAY · i-have-AD-ded · a-TWEN-ty-DOL-lar-CRED-it · to-your-ac-COUNT · which-you-can-USE · on-an-y-FU-ture-OR-der
+linking: If read aloud: added_a → "ad-di-da" · credit_to → "cred-i-too" · use_on → "yoo-zon"
+intonation: If read aloud: warm and falling on "delay", then a gentle steady tone through "account", and a soft fall on "future order"; no rise, because this is a gift, not a question.
+indian_pron_tip: If read aloud, "apology" is a-POL-o-gy with stress on the second part, and "future" is FEW-cher, not "fu-tyoor"; keep the "t" in "credit" light, tongue behind the top teeth.
+register: Neutral
+tone: Warm, sincere, generous
+importance: 4
+customer_emotion: Relieved the problem is over but still annoyed about the wait.
+memory_hook: A small gift tag tied to the apology: the tag says what it is for, how much, and when to use it.
+hindi_meaning: देरी के लिए माफ़ी के तौर पर, मैंने आपके खाते में $20 का क्रेडिट जोड़ दिया है, जिसे आप अपने किसी भी अगले ऑर्डर पर इस्तेमाल कर सकते हैं।
+hindi_roman: Deri ke liye maafi ke taur par, maine aapke account mein $20 ka credit jod diya hai, jise aap apne kisi bhi agle order par istemaal kar sakte hain.
+simple_meaning: Because we made you wait, I have given you $20 to spend with us next time.
+why_it_works: It links the gesture clearly to the delay, so it reads as part of the apology, not a trick. It is already done and tells the customer exactly how to use it, so there is nothing to claim or chase.
+key_chunk: As an apology for ___, I have added ___ to your account.
+grammar_pattern: As an apology for + noun, + I have + past participle + … + which you can + verb …
+grammar_note: "Which you can use…" adds information about the credit without starting a new sentence.
+tone_note: Saying "as an apology" makes it sincere. "As a special one-time exception" sounds like a favour the customer should be grateful for, which can annoy them.
+watch_out: ✗ As apology of the delay, I have added 20$ credit in your account. → ✓ As an apology for the delay, I have added a $20 credit to your account.
+dont_say: "As a one-time exception, management has approved compensation." — it sounds grudging and makes the gesture about the company, not the customer.
+positive_swap: Instead of "This is a one-time exception", write "As an apology for the delay, I have added a $20 credit to your account."
+alt_1: To say sorry for the long wait, I have added a $20 credit to your account for your next order.
+alt_2: I have also added a $20 credit to your account as an apology for the delay; it will be applied automatically at checkout.
+more_formal: As a gesture of apology for the delay, I have applied a $20 credit to your account, which you are welcome to use on any future order.
+ask_next: The credit is already visible under "My account"; please reply if you cannot see it.
+replies_you_may_hear: Thank you, that is kind. · I'd rather have a refund than credit. · Does the credit expire?
+if_customer_pushes: Customer: "I don't want credit; I want money back." → Agent: "I understand. I will check today whether the $20 can go back to your original card instead, and I will email you the answer by 5 pm."
+cultural_note: Indian-English emails often say "please use the same" or "kindly avail the offer". International customers may not expect these phrases; name the credit and say how to use it.
+channel_note: Voice: say it warmly and confirm the customer heard the amount. Chat: one short message, then a check that it shows in their account. Email: put the amount and how to use it on one clear line.
+when_not_to_use: Do not offer a credit before the main problem is fixed; it can feel like you are trying to buy the customer's silence.
+mini_conversation: Customer: My order finally arrived, nine days late. | Agent: I'm sorry your order arrived nine days late. As an apology for the delay, I have added a $20 credit to your account, which you can use on any future order. | Customer: Does it expire? | Agent: It is valid for 12 months, and I have sent the details to your email.
+source_rule: Apology plus repair: an offer of repair ranked second only to taking responsibility (Lewicki et al., 2016).
+fill_blank: As an apology ____ the delay, I have added a $20 credit to your account, which you can use on any future order.
+fill_answer: for
+mcq_question: Which sentence offers a goodwill credit in the most sincere way?
+mcq_options: A) As a one-time exception, management has approved a $20 credit for your account. | B) As an apology for the delay, I have added a $20 credit to your account today. | C) We have credited $20 to your account, and we hope you will order from us again soon. | D) You can claim a $20 credit for the delay by replying to this email with your order number.
+mcq_answer: B
+mcq_why: B links the credit to the delay and says it is already done. A is tempting because it sounds official, but "one-time exception" makes the credit sound like a favour; C sells instead of apologising, and D makes the customer do the work.
+reorder_task: account / added / to / your / credit / have / a / I
+reorder_answer: I have added a credit to your account.
+hindi_to_english: Der se delivery ke liye maafi ke taur par maine aapke account mein $15 ka credit jod diya hai.
+hindi_to_english_answer: As an apology for the late delivery, I have added a $15 credit to your account.
+whats_next_customer: Can I use it on sale items?
+whats_next_reply: Yes, you can use it on any item, including sale items, and it applies automatically at checkout.
+role_play: Partner A's furniture delivery was a week late after two missed slots. Partner B writes an email that apologises for the delay and offers a credit, saying how to use it.
+record_task: Write two sentences offering a goodwill credit to a customer whose repair took three weeks, and send them as text or a photo for audit.
+self_check: Did you link the gesture to the specific delay? · Did you say it is already done? · Did you explain how the customer can use it?
+
+@CSE-A-005
+id: CSE-A-005
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Difficult customer
+sentence: Thank you for your email. I have passed your case to our customer relations team, and Priya Shah from that team will contact you directly by Wednesday.
+speaker: Agent
+situation: A customer's email says they will take legal action if their insurance claim is not paid, and you must reply calmly without arguing or giving legal opinions; the customer relations team has assigned Priya Shah, who can contact the customer by Wednesday.
+recall_cue: An email mentions lawyers and court. What do you do with the case, who contacts the customer next, and when?
+stress: THANK-you · for-your-E-mail · i've-PASSED-your-CASE · CUS-tom-er-re-LA-tions-TEAM · PRI-ya-SHAH · con-TACT-you · di-RECT-ly · by-WEDNES-day
+linking: If read aloud: passed_your → "pas-chor" · contact_you → "kon-tak-choo" · to_our → "too-wow-er"
+intonation: If read aloud: level and calm throughout, with no rising tones; pause after "email", and finish with a clear fall on "Wednesday" so the date sounds certain.
+indian_pron_tip: If read aloud, "Wednesday" is "WENZ-day" (the first "d" is silent), and "relations" begins with a light "r", not a rolled one; "passed" ends in a "t" sound ("past").
+register: Formal
+tone: Calm, neutral, respectful
+importance: 5
+customer_emotion: Angry, distrustful and trying to force a response.
+memory_hook: A relay baton: you do not run the legal race yourself, you pass the baton to the right runner and say when they will arrive.
+hindi_meaning: आपके ईमेल के लिए धन्यवाद। मैंने आपका मामला हमारी कस्टमर रिलेशन्स टीम को भेज दिया है, और उस टीम की प्रिया शाह बुधवार तक आपसे सीधे संपर्क करेंगी।
+hindi_roman: Aapke email ke liye dhanyavaad. Maine aapka maamla hamari customer relations team ko bhej diya hai, aur us team ki Priya Shah budhvaar tak aapse seedhe sampark karengi.
+simple_meaning: Thanks for writing. A special team now has your case, and a named person from it will contact you by Wednesday.
+why_it_works: It neither argues with the threat nor ignores it. It shows the case has gone to the right people, gives a real name and a day, and keeps the tone level so nothing in the reply can make things worse.
+key_chunk: I have passed your case to ___, and ___ will contact you by ___.
+grammar_pattern: I have + passed + object + to + team, + and + name + will + verb + by + day
+grammar_note: "Will contact you by Wednesday" means "on or before Wednesday", so it is a promise with a limit.
+tone_note: No emotion, no defence and no legal words sounds professional. Lines like "Threats will not help you" or "You are free to go to court" sound hostile and can be quoted against the company.
+watch_out: ✗ Your matter has been forwarded to concerned team, they will contact you soon. → ✓ I have passed your case to our customer relations team, and Priya Shah will contact you directly by Wednesday.
+dont_say: "There is no need to threaten us." — it judges the customer and turns a complaint into a fight.
+positive_swap: Instead of "We cannot discuss legal matters", write "I have passed your case to our customer relations team, who will contact you directly by Wednesday."
+alt_1: Thank you for letting us know how serious this is for you. Your case is now with our customer relations team, and Priya Shah will email you by Wednesday.
+alt_2: I have shared your email and case history with our customer relations team. Priya Shah will be your contact and will be in touch by Wednesday.
+more_formal: Thank you for your email. I have referred your case to our customer relations team, and Priya Shah, who will manage it from now on, will contact you directly by Wednesday.
+ask_next: In the meantime, if you have any documents you would like Priya to see, please reply to this email and I will pass them on today.
+replies_you_may_hear: Why can't you deal with it yourself? · Wednesday is too late. · Fine, but I expect a proper answer this time.
+if_customer_pushes: Customer: "Wednesday is too late; my lawyer is waiting." → Agent: "I understand the urgency. I have asked Priya to contact you as early as possible, and I will confirm by tomorrow afternoon whether she can reply sooner."
+cultural_note: Indian service emails often say "forwarded to the concerned team, they will revert". International customers may not expect "revert" for "reply", and "the concerned team" sounds faceless; a named person and a day build trust.
+channel_note: Voice: stay calm, do not argue, and say you will pass it on. Chat: say you are passing it to a specialist team and give the day. Email: keep it short; every word may be shown to a lawyer.
+when_not_to_use: Do not use this if your company has its own required wording for legal threats; follow that wording and your team lead's instructions.
+mini_conversation: Customer: If my claim is not paid, my lawyer will be in touch. | Agent: Thank you for your email. I have passed your case to our customer relations team, and Priya Shah from that team will contact you directly by Wednesday. | Customer: Why not you? | Agent: Priya's team handles cases like yours and can make decisions that I cannot, so she is the best person to help.
+source_rule: Escalate with a named owner and a clear time; replace vague promises with the next step and a deadline.
+fill_blank: I have ____ (pass) your case to our customer relations team, and Priya Shah from that team will contact you directly by Wednesday.
+fill_answer: passed
+mcq_question: A customer threatens legal action by email. Which reply is the safest and most professional?
+mcq_options: A) I understand you are upset, but there is no need to mention lawyers or courts in an email like this. | B) You are free to take legal action, but it will not make your claim go through any faster than this. | C) I have passed your case to our customer relations team, and Priya Shah will contact you by Wednesday. | D) Your matter has been forwarded to the concerned team, who will get back to you as soon as possible.
+mcq_answer: C
+mcq_why: C names the team, a person and a day without arguing. D is tempting because it is polite, but it is vague and gives no name or time. A and B argue with the customer.
+reorder_task: by / will / Wednesday / Priya / you / contact
+reorder_answer: Priya will contact you by Wednesday.
+hindi_to_english: Maine aapka case hamari senior team ko bhej diya hai; Rahul Mehta Friday tak aapko call karenge.
+hindi_to_english_answer: I have passed your case to our senior team, and Rahul Mehta will call you by Friday.
+whats_next_customer: I want written confirmation that my complaint is on record.
+whats_next_reply: Your complaint is recorded under reference CR-4518, and this email is your written confirmation.
+role_play: Partner A writes an email saying they will "see the company in court" over a lost parcel. Partner B replies without arguing, names the team and person taking over, and gives a day.
+record_task: Write a three-sentence reply to an email that threatens legal action over a refused refund, and send it as text or a photo for audit.
+self_check: Did you avoid arguing with or judging the customer? · Did you name a person or team and a day? · Did you avoid giving any legal opinion?
+
+@CSE-A-006
+id: CSE-A-006
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Escalate
+sentence: I saw your post about the missed installation, and I'm sorry it took a public message to get our attention. I'm now handling your case personally, and an engineer is booked for Saturday morning.
+speaker: Agent
+situation: A customer posted on social media that their broadband installation was missed twice, the social team asked you to follow up privately by email, and you have booked an engineer for Saturday morning.
+recall_cue: A customer complained in public and you are now writing privately. What do you admit about how they had to reach you, and what do you take over?
+stress: i-SAW-your-POST · a-bout-the-MISSED-in-stal-LA-tion · and-i'm-SOR-ry · it-TOOK-a-PUB-lic-MES-sage · to-GET-our-at-TEN-tion · i'm-now-HAN-dling · your-CASE · PER-son-al-ly · and-an-en-gi-NEER · is-BOOKED · for-SAT-ur-day-MORN-ing
+linking: If read aloud: saw_your → "saw-yor" · missed_installation → "mis-tin-stuh-LAY-shun" · get_our → "ge-tower"
+intonation: If read aloud: sincere and falling on "attention", pause, then a confident, steady tone on "personally", and a clear fall on "Saturday morning".
+indian_pron_tip: If read aloud, "engineer" is en-ji-NEER with stress on the last part, not EN-gi-neer; "missed" ends in a "t" sound ("mist"), and "installation" has stress on LA.
+register: Neutral
+tone: Humble, personal, decisive
+importance: 5
+customer_emotion: Frustrated, ignored, and testing whether the company will act now.
+memory_hook: The spotlight is on: step out of the crowd, admit they had to shout, and hand them your own name and a date.
+hindi_meaning: मैंने इंस्टॉलेशन छूटने के बारे में आपकी पोस्ट देखी, और मुझे खेद है कि हमारा ध्यान खींचने के लिए आपको पब्लिक में मैसेज लिखना पड़ा। अब मैं ख़ुद आपका मामला देख रहा/रही हूँ, और शनिवार सुबह के लिए इंजीनियर बुक है।
+hindi_roman: Maine installation chhootne ke baare mein aapki post dekhi, aur mujhe khed hai ki hamara dhyaan kheenchne ke liye aapko public mein message likhna pada. Ab main khud aapka maamla dekh raha/rahi hoon, aur shanivaar subah ke liye engineer book hai.
+simple_meaning: I read what you posted. I'm sorry you had to complain in public before we noticed. I'm now looking after your case myself, and an engineer will come on Saturday morning.
+why_it_works: It admits the real failure, that the customer had to go public to be heard, instead of pretending all is normal. Then it gives a single owner and a booked date, which is what moves a public complaint into a private fix.
+key_chunk: I'm sorry it took ___ to ___. I'm now handling your case personally, and ___.
+grammar_pattern: I'm sorry (that) + it took + noun + to + verb · I'm now + -ing + personally
+grammar_note: "It took a public message to get our attention" means "only a public message made us notice".
+tone_note: Owning the failure sounds human. Asking the customer to "delete the post" or "please DM us for faster resolution" sounds as if the company cares about its image, not the problem.
+watch_out: ✗ Sorry for the inconvenience, we will look into it soon. → ✓ I'm now handling your case personally, and an engineer is booked for Saturday morning.
+dont_say: "Could you please take down the post now that we are in touch?" — it puts the company's image before the customer's problem.
+positive_swap: Instead of "We noticed your negative post", write "I saw your post about the missed installation, and I'm sorry it took a public message to get our attention."
+alt_1: Thank you for raising this, even though you should not have had to do it publicly. I am now your one point of contact, and an engineer is confirmed for Saturday morning.
+alt_2: I have read your post and your earlier emails, and I'm sorry we let you down twice. I have booked an engineer for Saturday morning and will check with you on Saturday afternoon that everything works.
+more_formal: I have seen your post regarding the missed installation, and I apologise that it took a public message to bring this to our attention. I am now managing your case personally, and an engineer has been booked for Saturday morning.
+ask_next: Could you confirm that someone will be at home between 9 am and 12 noon on Saturday?
+replies_you_may_hear: Why did it take a public post? · Saturday works, but I've heard that before. · I'll update my post if it actually happens.
+if_customer_pushes: Customer: "I've heard promises before." → Agent: "That is fair. I will call you on Friday evening to confirm the engineer's name and arrival window, and you can reply to me directly at any time."
+cultural_note: Some Indian support replies to public posts say "Request you to share details over DM, we will look into the same." International customers may not expect "the same" for the problem; they want the problem named and an owner.
+channel_note: Voice: call if possible; a human voice repairs trust faster. Chat: move to a private chat and give your name. Email: one short paragraph with your name, the date and a direct reply address.
+when_not_to_use: Do not use this if you have not actually booked the fix yet; promising a date you have not confirmed will lead to a second public post.
+mini_conversation: Customer: (on social media) Second missed installation. Nobody answers. | Agent: (by email) I saw your post about the missed installation, and I'm sorry it took a public message to get our attention. I'm now handling your case personally, and an engineer is booked for Saturday morning. | Customer: What time? | Agent: Between 9 am and 12 noon. I will call you on Friday to confirm the engineer's name.
+source_rule: Take ownership: "I'll personally follow up… by 4 pm tomorrow"; give a clear timeline and next step, not vague promises.
+fill_blank: I'm now ____ (handle) your case personally, and an engineer is booked for Saturday morning.
+fill_answer: handling
+mcq_question: A customer complained publicly about a missed installation. Which private email line is best?
+mcq_options: A) Thank you for your message. Now that we are in touch, could you please take down your post about us? | B) We are sorry for any inconvenience caused, and your complaint has been forwarded to our installations team. | C) I'm sorry it took a public message to get our attention. I'm now handling your case personally. | D) We have seen your comments about us online and would like to resolve this issue as soon as possible.
+mcq_answer: C
+mcq_why: C admits the failure and takes ownership. A is tempting because the team may want the post gone, but asking for it puts the brand before the customer. B and D give no owner and no date.
+reorder_task: handling / I'm / personally / case / your / now
+reorder_answer: I'm now handling your case personally.
+hindi_to_english: Mujhe khed hai ki aapko public mein likhna pada; ab main khud aapka case dekh raha/rahi hoon.
+hindi_to_english_answer: I'm sorry you had to raise this publicly. I'm now handling your case personally.
+whats_next_customer: Will the engineer actually turn up this time?
+whats_next_reply: That is a fair question after two missed visits. I will confirm the engineer's name and time with you on Friday, and if anything changes I will call you before 8 am on Saturday.
+role_play: Partner A posted publicly that a refund promised three times never arrived. Partner B writes the private follow-up email: admits the failure, takes ownership and gives a date.
+record_task: Write a private email to a customer who complained publicly about a delayed delivery, taking ownership and giving one booked action, and send it as text or a photo for audit.
+self_check: Did you admit the customer had to go public to be heard? · Did you name yourself as the owner? · Did you avoid asking them to delete the post?
+
+@CSE-A-007
+id: CSE-A-007
+channel: Email
+level: Advanced
+cefr: B2
+kind: Say it
+call_stage: Explain
+sentence: Your app was still connecting to our old server, which is why it kept logging you out. To fix it: 1) sign out, 2) delete the app, 3) install it again and sign in.
+speaker: Agent
+situation: After a technical investigation, you found why a customer's banking app logs them out every few minutes, and you must explain the cause and the fix to a non-technical customer.
+recall_cue: The cause is technical and the customer is not. How do you give the reason in one plain sentence and the fix as short numbered steps?
+stress: your-APP · was-STILL-con-NECT-ing · to-our-OLD-SER-ver · which-is-WHY · it-KEPT-LOG-ging-you-OUT · to-FIX-it · SIGN-OUT · de-LETE-the-APP · in-STALL-it-a-GAIN · and-SIGN-IN
+linking: If read aloud: which_is → "wi-chiz" · logging_you_out → "log-ging-yoo-WOUT" · install_it_again → "in-STAL-lit-uh-GEN"
+intonation: If read aloud: a falling tone at the end of the cause, then read each numbered step as a short separate unit with a small pause and a slight rise until the last step, which falls.
+indian_pron_tip: If read aloud, "server" has a "v" sound: top teeth touch the lower lip, not rounded lips as for "w"; and "kept" keeps both final sounds, "p" and "t", not "kep".
+register: Neutral
+tone: Clear, patient, practical
+importance: 4
+customer_emotion: Fed up and a little anxious about losing access to their money.
+memory_hook: A short map with three numbered stops: one line saying why the road was blocked, then stop 1, stop 2, stop 3.
+hindi_meaning: आपका ऐप अब भी हमारे पुराने सर्वर से जुड़ रहा था, इसी वजह से वह आपको बार-बार लॉग आउट कर रहा था। ठीक करने के लिए: 1) साइन आउट करें, 2) ऐप डिलीट करें, 3) उसे दोबारा इंस्टॉल करके साइन इन करें।
+hindi_roman: Aapka app ab bhi hamare purane server se jud raha tha, isi wajah se woh aapko baar-baar log out kar raha tha. Theek karne ke liye: 1) sign out karein, 2) app delete karein, 3) use dobara install karke sign in karein.
+simple_meaning: The app was talking to an old computer of ours, so it kept signing you out. Sign out, remove the app, put it back and sign in again.
+why_it_works: One plain sentence explains the cause without jargon like "cache" or "token", so the customer trusts the fix. Numbered steps are easy to follow on a phone and reduce follow-up questions.
+key_chunk: ___, which is why ___. To fix it: 1) ___, 2) ___, 3) ___.
+grammar_pattern: Past continuous (was connecting) + , which is why + past simple · imperative steps (sign out, delete, install)
+grammar_note: "Which is why" links a cause to its result in one sentence.
+tone_note: Plain words show respect for a non-expert. "Please clear the cache and re-authenticate your session token" sounds like a test of the customer's knowledge.
+watch_out: ✗ You have to clear cache and install again the app. → ✓ To fix it: 1) sign out, 2) delete the app, 3) install it again and sign in.
+dont_say: "The issue is due to legacy endpoint token invalidation." — the customer cannot act on words they do not know.
+positive_swap: Instead of "You have to reinstall the app", write "To fix it: 1) sign out, 2) delete the app, 3) install it again and sign in."
+alt_1: The logouts happened because your app was still linked to our old server. Three quick steps will fix it: sign out, delete the app, then install it again and sign in.
+alt_2: We found the cause: your app was using our old server. Please sign out, delete the app, and install it again; when you sign in, it will connect to the new server.
+more_formal: Our investigation found that your app was still connecting to a server we have retired, which caused the repeated logouts. To resolve this, please: 1) sign out, 2) delete the app, and 3) reinstall it and sign in.
+ask_next: Once you have signed in again, could you reply to let me know whether you stay logged in?
+replies_you_may_hear: Will I lose my saved payees? · Done, it seems to work now. · I'm not sure how to delete an app.
+if_customer_pushes: Customer: "Why should I do the work? It's your fault." → Agent: "You're right that the cause was on our side, and I'm sorry. These steps take about two minutes, and if you prefer, I can call you and go through them together."
+cultural_note: "Kindly do the needful" is common in Indian technical emails. International customers may not expect it, because it does not say what to do; name each action as a numbered step.
+channel_note: Voice: give one step at a time and wait for "done". Chat: send each step as a separate short message. Email: number the steps, one per line.
+when_not_to_use: Do not give numbered self-fix steps to a customer who has said they are not comfortable with technology; offer to call and guide them.
+mini_conversation: Customer: Your app logs me out every five minutes! | Agent: Your app was still connecting to our old server, which is why it kept logging you out. To fix it: 1) sign out, 2) delete the app, 3) install it again and sign in. | Customer: Will I lose my data? | Agent: No, your accounts and payees are stored with us, so they will be there when you sign in.
+source_rule: Email body: plain words, number multi-step instructions, and one clear next step (ICMI plain language).
+fill_blank: Your app was still connecting to our old server, w____ is why it kept logging you out.
+fill_answer: which
+mcq_question: Which explanation of a technical fix is best for a non-technical customer?
+mcq_options: A) The app was using our old server; to fix it, sign out, delete the app and install it again. | B) The logouts are caused by an expired session token, so please clear your cache and sign in again. | C) We are aware of a backend issue with the login service, and our engineers are working on it now. | D) This is a known issue, so you have to delete the app and install it again before you can log in.
+mcq_answer: A
+mcq_why: A gives a plain cause and clear steps. B is tempting because it is technically correct, but most customers do not know what a cache or token is. C gives no steps, and D sounds like an order.
+reorder_task: logging / it / kept / why / is / you / which / out
+reorder_answer: which is why it kept logging you out
+hindi_to_english: Printer purane driver ki wajah se band ho raha tha; naya driver install kariye aur printer restart kariye.
+hindi_to_english_answer: The printer was stopping because of an old driver. To fix it: 1) install the new driver, 2) restart the printer.
+whats_next_customer: It still logs me out after I did all three steps.
+whats_next_reply: I'm sorry that did not fix it, and thank you for trying. I have asked our technical team to reset your account from our side today, and I will email you by 4 pm once it is done.
+role_play: Partner A's smart TV app keeps freezing because of an old version. Partner B writes an email explaining the cause in one plain sentence and the fix in three numbered steps.
+record_task: Write an email explaining in plain words why a customer's emails are not syncing, with a three-step numbered fix, and send it as text or a photo for audit.
+self_check: Did you explain the cause without jargon? · Did you number the steps? · Did each step start with a clear action verb?
+
+@CSE-A-008
+id: CSE-A-008
+channel: Email
+level: Advanced
+cefr: B2
+kind: Say it
+call_stage: Explain
+sentence: Here is where things stand: the refund for your headphones has been processed, but our warehouse team is still tracing the missing charger. I will update you on the charger by Friday.
+speaker: Agent
+situation: A customer raised two problems in one order; one is solved and one is still open, and you need to report both honestly in one email.
+recall_cue: One part of the problem is solved and one is not. How do you report both clearly without making the whole case sound finished?
+stress: HERE-is-WHERE-things-STAND · the-RE-fund · for-your-HEAD-phones · has-been-PRO-cessed · but-our-WARE-house-TEAM · is-still-TRAY-sing · the-MISS-ing-CHAR-ger · i-will-up-DATE-you · on-the-CHAR-ger · by-FRI-day
+linking: If read aloud: here_is → "hee-riz" · update_you → "up-DAY-choo" · you_on → "yoo-won"
+intonation: If read aloud: a slight pause after "stand", a falling, satisfied tone on "processed", a lower, serious tone after "but", and a firm fall on "Friday".
+indian_pron_tip: If read aloud, "things" starts with "th" (tongue between the teeth), not "tings"; "processed" ends with "st" ("PRO-sest"), keeping both final sounds.
+register: Neutral
+tone: Honest, organised, reassuring
+importance: 4
+customer_emotion: Pleased about the refund but worried the rest will be forgotten.
+memory_hook: A two-column scoreboard: DONE on the left, STILL OPEN on the right, with a date written under the open column.
+hindi_meaning: अभी की स्थिति यह है: आपके हेडफ़ोन का रिफ़ंड प्रोसेस हो चुका है, लेकिन हमारी वेयरहाउस टीम अभी भी खोए हुए चार्जर को ढूँढ रही है। मैं चार्जर के बारे में शुक्रवार तक आपको अपडेट दूँगा/दूँगी।
+hindi_roman: Abhi ki sthiti yeh hai: aapke headphones ka refund process ho chuka hai, lekin hamari warehouse team abhi bhi khoye hue charger ko dhoondh rahi hai. Main charger ke baare mein shukravaar tak aapko update doonga/doongi.
+simple_meaning: Your money for the headphones is on its way back. We are still looking for the charger. I will tell you more by Friday.
+why_it_works: It separates what is done from what is not, so the customer does not think the whole case is closed. The open part has an owner and a date, which stops the customer from chasing.
+key_chunk: Here is where things stand: ___ has been ___, but ___ is still ___. I will update you on ___ by ___.
+grammar_pattern: Present perfect passive (has been processed) for done · present continuous (is still tracing) for not done · I will + verb + by + day
+grammar_note: "Has been processed" means it is finished; "is still tracing" means the work is going on now.
+tone_note: Clear, balanced reporting sounds trustworthy. "Your issue has been resolved" when part of it is still open sounds dishonest and leads to angrier emails later.
+watch_out: ✗ Your issue is resolved, only charger is pending. → ✓ The refund for your headphones has been processed, but our warehouse team is still tracing the missing charger.
+dont_say: "Your complaint is resolved." — when only half is fixed, it is not true and the customer will reopen the case angrier.
+positive_swap: Instead of "The charger is not found yet", write "Our warehouse team is still tracing the missing charger, and I will update you by Friday."
+alt_1: Here is an update on both parts of your request. The headphones refund is complete; the missing charger is still being traced, and I will write to you about it by Friday.
+alt_2: Good news first: your headphones refund has gone through. Our warehouse team is still looking for the missing charger, and you will hear from me by Friday.
+more_formal: I would like to update you on both matters. The refund for your headphones has now been processed; however, our warehouse team is still tracing the missing charger, and I will provide an update on this by Friday.
+ask_next: If the charger cannot be found by Friday, would you prefer a replacement or a refund for it?
+replies_you_may_hear: Thanks, I can see the refund. · Why is the charger taking so long? · Just send me a new charger instead.
+if_customer_pushes: Customer: "Just send a new one; I don't care about tracing it." → Agent: "Of course. I have ordered a new charger for you today, and I will email you the tracking number by tomorrow."
+cultural_note: Indian-English updates often say "the matter is under process". International customers may not expect this phrase; it does not say who is doing what or when it will finish.
+channel_note: Voice: say "two updates" first, then each one. Chat: one message for the done part, one for the open part. Email: you can use two short lines, "Done:" and "Still open:".
+when_not_to_use: Do not use this to close a ticket; if part of the issue is still open, the ticket should stay open too.
+mini_conversation: Customer: Any news on my refund and the missing charger? | Agent: Here is where things stand: the refund for your headphones has been processed, but our warehouse team is still tracing the missing charger. I will update you on the charger by Friday. | Customer: And if it is lost? | Agent: Then on Friday I will offer you a new charger at no cost or a refund, whichever you prefer.
+source_rule: Be specific about what will happen and when: a clear timeline, a reference and the next step.
+fill_blank: The refund for your headphones has been ____ (process), but our warehouse team is still tracing the missing charger.
+fill_answer: processed
+mcq_question: One part of a customer's problem is fixed and one is not. Which update is best?
+mcq_options: A) Your issue has been resolved, and we will contact you again only if anything else comes up. | B) The refund is complete, and the charger is being handled by our warehouse team at the moment. | C) We are working on both parts of your case and will update you as soon as we have any news. | D) The refund is done, but the charger is still being traced; I will update you by Friday.
+mcq_answer: D
+mcq_why: D separates the done part from the open part and gives a date. A is tempting because it sounds positive, but it is not true when the charger is still missing. B and C give no date for the open part.
+reorder_task: by / update / will / I / Friday / you
+reorder_answer: I will update you by Friday.
+hindi_to_english: Aapka refund ho gaya hai, lekin replacement abhi tak dispatch nahin hua; main kal tak update doonga/doongi.
+hindi_to_english_answer: Your refund has been processed, but the replacement has not been dispatched yet. I will update you by tomorrow.
+whats_next_customer: So is my case closed now?
+whats_next_reply: Not yet. I will keep it open until the charger question is settled, and I will write to you by Friday either way.
+role_play: Partner A ordered a sofa and cushions; the sofa was refunded but the cushions are still missing. Partner B writes an update that reports both parts and gives a date.
+record_task: Write an email update in which a damaged phone has been replaced but the case is still waiting for a refund of the delivery fee, and send it as text or a photo for audit.
+self_check: Did you clearly say what is done? · Did you clearly say what is still open? · Did you give a date for the open part?
+
+@CSE-A-009
+id: CSE-A-009
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Apologise
+sentence: I need to correct something I told you yesterday: your warranty covers the screen for 12 months, not 24. I'm sorry I gave you the wrong figure, and the repair you booked is still covered.
+speaker: Agent
+situation: You told a customer yesterday that their screen warranty lasts 24 months, but you have checked and it is 12, so you must correct it in writing.
+recall_cue: You gave a customer wrong information yesterday. How do you correct it at once, own the error and reassure them about what still stands?
+stress: i-NEED-to-cor-RECT · SOME-thing · i-TOLD-you-YES-ter-day · your-WAR-ran-ty · COV-ers-the-SCREEN · for-TWELVE-MONTHS · NOT-TWEN-ty-FOUR · i'm-SOR-ry · i-GAVE-you-the-WRONG-FIG-ure · and-the-re-PAIR · you-BOOKED · is-STILL-COV-ered
+linking: If read aloud: need_to → "nee-tuh" · told_you → "tol-joo" · gave_you → "gay-vyoo"
+intonation: If read aloud: steady and direct up to the colon, a short pause, strong contrastive stress on "twelve" and "not twenty-four", then a softer, reassuring fall on "still covered".
+indian_pron_tip: If read aloud, "months" ends in "nths": say the "th" and the "s" ("munths"), not "munts"; "warranty" is WOR-ran-ty with the "w" made with rounded lips, not teeth on lip.
+register: Neutral
+tone: Honest, direct, reassuring
+importance: 4
+customer_emotion: Surprised, possibly suspicious, and worried about what else was wrong.
+memory_hook: A red pen on yesterday's note: cross out 24, write 12, and draw a tick next to the repair that still stands.
+hindi_meaning: मैंने आपको कल जो बताया था, उसमें सुधार करना है: आपकी वारंटी स्क्रीन को 24 नहीं, 12 महीने तक कवर करती है। ग़लत आँकड़ा बताने के लिए मुझे खेद है, और आपने जो रिपेयर बुक किया है वह अब भी कवर है।
+hindi_roman: Maine aapko kal jo bataya tha, usmein sudhaar karna hai: aapki warranty screen ko 24 nahin, 12 mahine tak cover karti hai. Galat aankda batane ke liye mujhe khed hai, aur aapne jo repair book kiya hai woh ab bhi cover hai.
+simple_meaning: I gave you a wrong number yesterday. The screen warranty is one year, not two. Sorry for that. Your booked repair is still covered by the warranty.
+why_it_works: It corrects the mistake in the first sentence instead of hiding it in the middle, and it owns the error with "I told you". It then removes the customer's biggest worry by confirming what has not changed.
+key_chunk: I need to correct something I told you ___: ___, not ___.
+grammar_pattern: I need to + verb · something (that) I told you + time · X, not Y (contrast)
+grammar_note: "X, not Y" is a short way to replace a wrong fact with the right one.
+tone_note: Correcting quickly and plainly builds trust. Writing "There was some miscommunication" hides who made the mistake and sounds evasive.
+watch_out: ✗ Please note there was some miscommunication regarding the warranty period. → ✓ I need to correct something I told you yesterday: your warranty covers the screen for 12 months, not 24.
+dont_say: "There seems to have been a misunderstanding on your part." — it blames the customer for your error.
+positive_swap: Instead of "The information given earlier was wrong", write "I need to correct something I told you yesterday."
+alt_1: I'm writing to correct my email from yesterday: the screen warranty is 12 months, not 24. I'm sorry for the mistake; your booked repair is not affected.
+alt_2: I gave you the wrong warranty period yesterday, and I apologise. It is 12 months for the screen, and your repair on Monday is still covered.
+more_formal: I must correct the information I gave you yesterday: your warranty covers the screen for 12 months, not 24. I apologise for giving you the wrong figure; your booked repair remains fully covered.
+ask_next: If you made any decision based on the 24 months I mentioned, please tell me and I will check your options and reply by tomorrow.
+replies_you_may_hear: Thanks for being honest. · So what else did you get wrong? · I only bought the extended cover because of what you said.
+if_customer_pushes: Customer: "I bought extra cover because you said 24 months." → Agent: "I understand, and I'm sorry my mistake led you to buy it. I will ask for that cover to be cancelled and refunded in full, and I will confirm by tomorrow."
+cultural_note: Indian-English emails sometimes say "please ignore the previous mail" without saying what was wrong. International customers may not expect this; state the correct fact and own the mistake.
+channel_note: Voice: say "I need to correct something" first, slowly, so the caller listens. Chat: one short message with the right fact. Email: put the corrected fact in the first line, and in bold if your tool allows.
+when_not_to_use: Do not send this until you have checked the correct figure yourself; a second wrong number is worse than a short delay.
+mini_conversation: Customer: Thanks for confirming the two-year screen warranty. | Agent: I need to correct something I told you yesterday: your warranty covers the screen for 12 months, not 24. I'm sorry I gave you the wrong figure, and the repair you booked is still covered. | Customer: OK, at least the repair is fine. | Agent: Yes, it is confirmed for Monday at no cost.
+source_rule: Apologise specifically and take responsibility, then confirm what you will do (Lewicki et al., 2016).
+fill_blank: I need to correct something I told you yesterday: your warranty covers the screen for 12 months, ____ 24.
+fill_answer: not
+mcq_question: You gave a customer the wrong warranty period yesterday. Which sentence starts the correction best?
+mcq_options: A) I need to correct something I told you yesterday: your screen warranty is 12 months, not 24. | B) Please ignore my previous email, as it contained some incorrect information about your warranty. | C) There was some miscommunication yesterday about your warranty, and I would like to clarify it. | D) Our records show that your screen warranty is 12 months, so the earlier figure does not apply.
+mcq_answer: A
+mcq_why: A owns the mistake and gives the correct fact. C is tempting because it sounds soft, but it hides who made the error. B and D change the fact without owning the mistake.
+reorder_task: told / to / correct / you / I / something / need / I
+reorder_answer: I need to correct something I told you.
+hindi_to_english: Maine aapko kal jo bataya tha, use sahi karna hai: aapki delivery Tuesday ko nahin, Thursday ko hogi.
+hindi_to_english_answer: I need to correct something I told you yesterday: your delivery is on Thursday, not Tuesday.
+whats_next_customer: How do I know the 12 months is right?
+whats_next_reply: That is a fair question. I have attached the warranty page for your model, and the screen cover is on page 2.
+role_play: Partner A was told a refund would take three days, but it takes ten. Partner B writes an email that corrects the information, apologises and confirms what still stands.
+record_task: Write an email correcting a delivery date you gave a customer by mistake, and send it as text or a photo for audit.
+self_check: Did the correct fact appear in your first sentence? · Did you say "I" told you, not "there was a miscommunication"? · Did you confirm what has not changed?
+
+@CSE-A-010
+id: CSE-A-010
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Close
+sentence: To sum up: your two accounts have been merged, the duplicate charge has been refunded, and your new plan starts on 1 June. As everything is now sorted, I'll close this ticket, but you can reopen it at any time by replying to this email.
+speaker: Agent
+situation: After a two-week email thread with several problems, everything is now fixed and you are writing the final email to close the ticket.
+recall_cue: A long thread is finally finished. How do you list what was done, check it is all settled and tell the customer how to come back?
+stress: to-SUM-UP · your-TWO-ac-COUNTS · have-been-MERGED · the-DU-pli-cate-CHARGE · has-been-re-FUND-ed · and-your-NEW-PLAN · STARTS-on-the-FIRST-of-JUNE · as-EV-ry-thing-is-now-SOR-ted · i'll-CLOSE-this-TICK-et · but-you-can-re-O-pen-it · at-an-y-TIME · by-re-PLY-ing · to-this-E-mail
+linking: If read aloud: sum_up → "suh-mup" · accounts_have → "a-COUNT-sav" · reopen_it → "ree-oh-pe-nit"
+intonation: If read aloud: a short pause after "sum up", a slight rise on each of the first two items and a fall on "1 June", then a friendly, falling tone on "replying to this email".
+indian_pron_tip: If read aloud, "merged" ends in "rjd" said together ("murjd"), not "mer-ged"; "accounts" keeps the final "nts", not "accoun".
+register: Neutral
+tone: Organised, confident, open
+importance: 4
+customer_emotion: Tired of the long thread and relieved it might be over.
+memory_hook: A receipt at the end of shopping: each item listed, a total line saying "done", and a note that returns are welcome.
+hindi_meaning: संक्षेप में: आपके दोनों खाते मर्ज कर दिए गए हैं, दोहरा चार्ज वापस कर दिया गया है, और आपका नया प्लान 1 जून से शुरू होगा। अब सब कुछ ठीक हो गया है, इसलिए मैं यह टिकट बंद कर रहा/रही हूँ, लेकिन आप इस ईमेल का जवाब देकर इसे कभी भी फिर से खोल सकते हैं।
+hindi_roman: Sankshep mein: aapke dono account merge kar diye gaye hain, dohra charge wapas kar diya gaya hai, aur aapka naya plan 1 June se shuru hoga. Ab sab kuch theek ho gaya hai, isliye main yeh ticket band kar raha/rahi hoon, lekin aap is email ka jawaab dekar ise kabhi bhi phir se khol sakte hain.
+simple_meaning: Here is everything we did. It is all finished, so I am closing your case, but just reply if you need us again.
+why_it_works: Listing each outcome lets the customer check nothing was missed after a long thread. Saying how to reopen the ticket makes closing it feel safe, not like being dismissed.
+key_chunk: To sum up: ___, ___, and ___. As everything is now sorted, I'll close this ticket, but ___.
+grammar_pattern: To sum up: + list of present perfect passives (have been merged, has been refunded) · As + reason, + I'll + verb, + but + you can + verb
+grammar_note: "Has been refunded" (present perfect passive) says the job is done without repeating "I did" each time.
+tone_note: A clear summary sounds professional and caring. "Closing this ticket as no further action is required" sounds cold and as if the company wants to get rid of the customer.
+watch_out: ✗ As discussed, all issues are resolved, hence closing the ticket. → ✓ To sum up: your two accounts have been merged, the duplicate charge has been refunded, and your new plan starts on 1 June.
+dont_say: "We are closing this ticket as no further action is required from our end." — it sounds cold and gives no way back.
+positive_swap: Instead of "This ticket will be closed", write "As everything is now sorted, I'll close this ticket, but you can reopen it at any time by replying to this email."
+alt_1: Here is a quick summary: your accounts are merged, the extra charge is refunded, and your new plan begins on 1 June. I'll close the ticket now; just reply to this email if anything else comes up.
+alt_2: Everything we discussed is now done: accounts merged, duplicate charge refunded, new plan from 1 June. I'm closing this ticket, and a reply to this email will reopen it.
+more_formal: To summarise, your two accounts have been merged, the duplicate charge has been refunded, and your new plan will begin on 1 June. As all matters are now resolved, I will close this ticket; however, you may reopen it at any time by replying to this email.
+ask_next: Thank you for your patience over the past two weeks, and I hope the new plan works well for you.
+replies_you_may_hear: Thanks, that all looks right. · Wait, I still haven't received the refund. · Can I keep your name for next time?
+if_customer_pushes: Customer: "The refund still isn't in my account." → Agent: "Thank you for telling me. I will keep the ticket open, check the refund with our payments team today, and send you the bank reference by tomorrow."
+cultural_note: Indian-English closing emails often use "hence closing the ticket" or "thanks and regards". International customers may not expect "hence"; a plain summary and "I'll close this ticket" sound friendlier.
+channel_note: Voice: summarise aloud, then ask whether everything is resolved before closing. Chat: send the summary as a short list, then ask "Is everything sorted on your side?". Email: use the summary line, or a short list if there are more than three items.
+when_not_to_use: Do not send this if any item is still open; use a partial-update email instead and keep the ticket open.
+mini_conversation: Customer: I think that's everything now. | Agent: To sum up: your two accounts have been merged, the duplicate charge has been refunded, and your new plan starts on 1 June. As everything is now sorted, I'll close this ticket, but you can reopen it at any time by replying to this email. | Customer: Great, thanks for sticking with it. | Agent: You're welcome. Thank you for your patience over the past two weeks.
+source_rule: Close by summarising the outcomes and next steps; check the issue is resolved before closing.
+fill_blank: To sum up: your two accounts have been merged, the duplicate charge has been ____ (refund), and your new plan starts on 1 June.
+fill_answer: refunded
+mcq_question: You are closing a long email thread where every issue is now fixed. Which closing is best?
+mcq_options: A) To sum up: accounts merged, charge refunded, new plan from 1 June. Reply to this email to reopen the ticket. | B) As all of your issues are now resolved, this ticket is closed and no further action is required from our end. | C) Your accounts, refund and new plan are all dealt with. Thank you for contacting us, and have a good day. | D) Thank you for your patience over the past two weeks. Is there anything else I can help you with today?
+mcq_answer: A
+mcq_why: A lists every outcome and gives a way back. D is tempting because it is polite, but at the end of a long thread the customer needs a summary, not an open question. B sounds cold, and C gives no way back.
+reorder_task: email / replying / reopen / you / to / it / can / by / this
+reorder_answer: You can reopen it by replying to this email.
+hindi_to_english: Sankshep mein: aapka address update ho gaya hai aur naya card bhej diya gaya hai. Main yeh ticket ab band kar raha/rahi hoon, lekin aap is email ka jawaab dekar ise phir se khol sakte hain.
+hindi_to_english_answer: To sum up: your address has been updated and your new card has been sent. I'll close this ticket now, but you can reply to this email to reopen it.
+whats_next_customer: Thanks. Can I contact you directly if something goes wrong?
+whats_next_reply: Yes. Reply to this email and the ticket will reopen with the full history, so you will not need to explain everything again.
+role_play: Partner A has had a three-week thread about a broken fridge: a repair, a refund of the call-out fee and a new warranty. Partner B writes the closing email with a summary.
+record_task: Write a closing email that summarises three things fixed on a customer's broadband account and tells them how to reopen the ticket, and send it as text or a photo for audit.
+self_check: Did you list every outcome? · Did you check that nothing is still open? · Did you tell the customer how to reopen the ticket?
+
+@CSE-A-011
+id: CSE-A-011
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Close
+sentence: If you feel we have put things right, we would be grateful for a short review. If something still isn't right, please reply to this email so I can fix it.
+speaker: Agent
+situation: A difficult case has just been resolved after a complaint, and you want to ask for a review without pressuring a customer who was recently upset.
+recall_cue: A recently upset customer is now happy. How do you ask for a review without pressure, and what do you offer if they are still not happy?
+stress: if-you-FEEL · we-have-PUT-things-RIGHT · we-would-be-GRATE-ful · for-a-SHORT-re-VIEW · if-SOME-thing · STILL-ISN'T-RIGHT · please-re-PLY-to-this-E-mail · so-i-can-FIX-it
+linking: If read aloud: if_you → "i-fyoo" · so_I → "soh-wy" · fix_it → "fik-sit"
+intonation: If read aloud: a gentle rise on "put things right", a soft fall on "review", a short pause, then a warm, steady tone on "reply to this email".
+indian_pron_tip: If read aloud, "review" has a "v" sound: top teeth touch the lower lip ("ri-VYOO"), not "ri-wyoo"; and "grateful" is GRATE-ful, two syllables, with a clear "t".
+register: Neutral
+tone: Respectful, modest, open
+importance: 3
+customer_emotion: Satisfied now, but still remembering the earlier frustration.
+memory_hook: A door with two handles: one says "review us", the other says "tell me what is wrong", and the customer chooses.
+hindi_meaning: अगर आपको लगता है कि हमने चीज़ें ठीक कर दी हैं, तो एक छोटा रिव्यू देने पर हम आभारी होंगे। अगर अब भी कुछ ठीक नहीं है, तो कृपया इस ईमेल का जवाब दें ताकि मैं उसे ठीक कर सकूँ।
+hindi_roman: Agar aapko lagta hai ki humne cheezein theek kar di hain, to ek chhota review dene par hum aabhaari honge. Agar ab bhi kuch theek nahin hai, to kripya is email ka jawaab dein taaki main use theek kar sakoon.
+simple_meaning: If you are happy with how we fixed this, please write a short review. If not, reply to this email and I will fix it.
+why_it_works: The "if you feel" condition leaves the choice with the customer, so it does not sound like pressure. Offering a route for problems shows you care more about fixing things than about the score.
+key_chunk: If you feel ___, we would be grateful for ___. If ___, please ___ so I can ___.
+grammar_pattern: If + present simple, + we would be grateful for + noun · If + present simple, + please + verb + so (that) + I can + verb
+grammar_note: "We would be grateful for" is a polite, indirect way to ask for something.
+tone_note: The conditional makes the request modest. "Please give us 5 stars" sounds like pressure, and it can feel insulting to a customer who has just had a bad experience.
+watch_out: ✗ Please give 5-star rating for my service, it is very important to me. → ✓ If you feel we have put things right, we would be grateful for a short review.
+dont_say: "Please rate us 5 stars, it helps my performance." — it pressures the customer and makes the review about the agent.
+positive_swap: Instead of "Contact me before you post anything", write "If something still isn't right, please reply to this email so I can fix it."
+alt_1: If you are happy with how this was handled, a short review would mean a lot to our team. If not, please tell me what is still wrong.
+alt_2: When you have a moment, and only if you feel we put things right, we would welcome a short review. I'm also here if anything still needs fixing.
+more_formal: Should you feel that we have resolved matters to your satisfaction, we would be grateful for a brief review. If anything remains unresolved, please reply to me directly so that I can address it.
+ask_next: Thank you again for your patience while we sorted this out.
+replies_you_may_hear: Sure, happy to. · I'll think about it. · Honestly, the delay still annoys me.
+if_customer_pushes: Customer: "Honestly, the delay still annoys me." → Agent: "That is completely fair, and thank you for telling me. Please do not feel any need to leave a review; is there anything I can still do about the delay?"
+cultural_note: Indian-English requests often say "kindly give your valuable feedback" or "kindly rate 5 stars". International customers may not expect this; a soft, optional request sounds more sincere.
+channel_note: Voice: ask lightly at the very end, only if the caller is clearly happy. Chat: one short line after the customer says thanks. Email: put the review request after the summary, never in the subject line.
+when_not_to_use: Do not ask for a review when the customer is still upset or the issue is only partly fixed.
+mini_conversation: Customer: Thanks, the new phone works perfectly. | Agent: I'm glad to hear it. If you feel we have put things right, we would be grateful for a short review. If something still isn't right, please reply to this email so I can fix it. | Customer: Happy to leave one. | Agent: Thank you, and enjoy the new phone.
+source_rule: Close only after checking the issue is resolved; do not ask closing questions on an unresolved case.
+fill_blank: If you feel we have put things right, we would be grateful ____ a short review.
+fill_answer: for
+mcq_question: A customer whose complaint was just fixed seems happy. Which review request is best?
+mcq_options: A) If you have a moment, please give us 5 stars, because good ratings are very important to our team. | B) Please take two minutes to rate us today; your review helps me reach my monthly target. | C) Now that the problem is fixed, we expect you to complete the review form sent to your email. | D) If you feel we have put things right, we would be grateful for a short review of our service.
+mcq_answer: D
+mcq_why: D leaves the choice to the customer and is modest. A is tempting because it is polite in form, but asking for a set score is pressure. B makes it about your target, and C is an order.
+reorder_task: grateful / a / We / for / would / review / short / be
+reorder_answer: We would be grateful for a short review.
+hindi_to_english: Agar aap hamari service se khush hain, to ek chhota review dene par hum aabhaari honge.
+hindi_to_english_answer: If you are happy with our service, we would be grateful for a short review.
+whats_next_customer: Where do I leave the review?
+whats_next_reply: I will send you the review link in a separate email today. You can use it whenever suits you.
+role_play: Partner A's damaged sofa was replaced after a complaint and they are now happy. Partner B writes the final email with a sensitive review request and a route for any remaining problem.
+record_task: Write two sentences asking a customer for a review after a resolved complaint, with a route for any remaining problem, and send them as text or a photo for audit.
+self_check: Did you make the review optional? · Did you avoid asking for a specific star rating? · Did you offer a way to report a remaining problem?
+
+@CSE-A-012
+id: CSE-A-012
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Difficult customer
+sentence: I can see why you are angry: you were promised a callback twice, and we did not call. I'm sorry. I will call you myself at 11 am tomorrow, or at another time that suits you better.
+speaker: Agent
+situation: A customer has sent an angry email in capital letters because two promised callbacks never happened, and you are replying.
+recall_cue: The customer is furious because a promise was broken twice. How do you name the reason for the anger, apologise briefly, and make a promise you will personally keep?
+stress: i-can-SEE-WHY · you-are-AN-gry · you-were-PROM-ised · a-CALL-back-TWICE · and-we-did-not-CALL · i'm-SOR-ry · i-will-CALL-you-my-SELF · at-e-LEV-en-A-M · to-MOR-row · or-at-a-NUTH-er-TIME · that-SUITS-you-BET-ter
+linking: If read aloud: promised_a → "PROM-is-ta" · call_you → "caw-lyoo" · at_another → "a-ta-NUTH-er"
+intonation: If read aloud: low and steady, not rising, on "angry"; pause before "I'm sorry" and say it simply; then a firm, falling tone on "tomorrow".
+indian_pron_tip: If read aloud, "promised" ends in "st" ("PROM-ist"), not "pro-mi-sed"; "eleven" is i-LEV-en with a "v" (teeth on lip), not "i-lewen".
+register: Neutral
+tone: Calm, accountable, personal
+importance: 5
+customer_emotion: Furious, let down and feeling ignored.
+memory_hook: A broken promise gets mended with a stronger knot: name the break, say sorry, tie a new promise to your own name and an exact time.
+hindi_meaning: मैं समझ सकता/सकती हूँ कि आप नाराज़ क्यों हैं: आपसे दो बार कॉलबैक का वादा किया गया और हमने कॉल नहीं किया। मुझे खेद है। मैं कल सुबह 11 बजे ख़ुद आपको कॉल करूँगा/करूँगी, या किसी और समय जो आपके लिए बेहतर हो।
+hindi_roman: Main samajh sakta/sakti hoon ki aap naraaz kyon hain: aapse do baar callback ka vaada kiya gaya aur humne call nahin kiya. Mujhe khed hai. Main kal subah 11 baje khud aapko call karoonga/karoongi, ya kisi aur samay jo aapke liye behtar ho.
+simple_meaning: You are right to be angry; we said we would call you two times and we did not. Sorry. I will call you myself tomorrow at 11, or when you like.
+why_it_works: It names the exact reason for the anger, which shows the agent has read the email properly. A short apology plus a personal, timed promise answers the real problem: the customer no longer trusts the company's promises.
+key_chunk: I can see why you are ___: ___. I'm sorry. I will ___ myself at ___.
+grammar_pattern: I can see why + subject + verb · passive past (you were promised) · I will + verb + myself + at + time
+grammar_note: "You were promised" (passive) focuses on what happened to the customer, not on who forgot.
+tone_note: Naming the feeling and the cause is respectful. "Please calm down" or "There is no need for capital letters" judges the customer and makes them angrier.
+watch_out: ✗ Please calm down, we will arrange callback soon. → ✓ I can see why you are angry: you were promised a callback twice, and we did not call.
+dont_say: "There is no need to write in capitals." — it criticises the customer's style instead of fixing the broken promise.
+positive_swap: Instead of "Please don't be rude", write "I can see why you are angry, and I'm sorry."
+alt_1: You have every reason to be angry; we promised to call you twice and did not. I'm sorry. I will call you myself tomorrow at 11 am, unless another time is better for you.
+alt_2: I understand your anger, as two promised callbacks never happened. I apologise. I have blocked 11 am tomorrow in my own calendar to call you, or you can suggest another time.
+more_formal: I fully understand your frustration: you were promised a callback on two occasions, and neither took place. Please accept my apology. I will telephone you personally at 11 am tomorrow, or at any other time that is more convenient.
+ask_next: Is the number ending 4471 still the best one to reach you on?
+replies_you_may_hear: Fine, 11 is OK. · Why should I believe you this time? · Don't call, just fix it by email.
+if_customer_pushes: Customer: "Why should I believe you this time?" → Agent: "That is fair after what happened. I have put the call in my own calendar, and if anything stops me, I will email you before 11 am."
+cultural_note: "Please calm down" or "Please cooperate" can appear in Indian service replies to angry emails. International customers may not expect this; it reads as blaming them, so name the feeling and act instead.
+channel_note: Voice: let the caller finish, then say this slowly. Chat: send the empathy line and the promise as two messages. Email: reply within the same working day if you can, and keep it short.
+when_not_to_use: Do not promise a personal callback if you will not be on shift at that time; offer a time you can actually keep.
+mini_conversation: Customer: NOBODY HAS CALLED ME. TWICE! | Agent: I can see why you are angry: you were promised a callback twice, and we did not call. I'm sorry. I will call you myself at 11 am tomorrow, or at another time that suits you better. | Customer: 11 is fine. Don't forget. | Agent: I won't. I have put it in my calendar, and I will call the number ending 4471.
+source_rule: Never say "calm down"; name the feeling, then act with "I will" plus a time.
+fill_blank: I can see why you are angry: you were ____ (promise) a callback twice, and we did not call.
+fill_answer: promised
+mcq_question: An angry customer was promised two callbacks that never happened. Which reply is best?
+mcq_options: A) I can see why you are angry, and I'm sorry. I will call you myself at 11 am tomorrow. | B) Please calm down, as I want to help you. A senior colleague will call you back as soon as possible. | C) I understand that you are upset, but there is no need to write in capital letters in an email. | D) We are sorry for the delay in calling you. Our team is very busy, so delays can sometimes happen.
+mcq_answer: A
+mcq_why: A names the feeling, apologises and gives a personal, timed promise. B is tempting because it promises a call, but "calm down" usually makes people angrier, and "soon" is vague. C criticises the customer's capitals, and D makes excuses.
+reorder_task: why / angry / are / I / you / see / can
+reorder_answer: I can see why you are angry.
+hindi_to_english: Main samajh sakta/sakti hoon ki aap pareshaan kyon hain. Main kal subah 10 baje khud aapko call karoonga/karoongi.
+hindi_to_english_answer: I can see why you are upset. I will call you myself at 10 am tomorrow.
+whats_next_customer: And what if you don't call either?
+whats_next_reply: I will call. If anything stops me, I will email you before 11 am with a new time, and you can reply to me directly.
+role_play: Partner A writes an angry email because a technician missed two visits. Partner B replies: names the reason for the anger, apologises briefly and makes a personal, timed promise.
+record_task: Write a reply to an angry email about two missed delivery slots, naming the feeling and making one timed promise, and send it as text or a photo for audit.
+self_check: Did you name the reason for the anger? · Did you avoid "calm down" or any comment on the customer's tone? · Did you make a promise with your name and an exact time?
+
+@CSE-A-013
+id: CSE-A-013
+channel: Email
+level: Advanced
+cefr: B2
+kind: Say it
+call_stage: Verify
+sentence: Thank you for asking for a copy of your personal data. To protect your account, could you reply from the email address registered with us? Once we have confirmed it is you, I will start the request and tell you when to expect the file.
+speaker: Agent
+situation: An email arrives from an unknown address asking for a copy of all the personal data your company holds about an account, and you must check identity before sharing anything.
+recall_cue: Someone asks for all their personal data from an address you do not recognise. What reason do you give, what one thing do you ask for, and what happens next?
+stress: THANK-you · for-ASK-ing · for-a-COP-y · of-your-PER-son-al-DA-ta · to-pro-TECT · your-ac-COUNT · could-you-re-PLY · from-the-E-mail-ad-DRESS · REG-is-tered-with-US · once-we-have-con-FIRMED-it-is-YOU · i-will-START-the-re-QUEST · and-TELL-you · when-to-ex-PECT-the-FILE
+linking: If read aloud: copy_of → "cop-pee-yuv" · protect_your → "pro-tek-chor" · confirmed_it → "con-fir-mdit"
+intonation: If read aloud: a rise on "registered with us?" because it is a yes/no request, a short pause, then a steady fall on "expect the file".
+indian_pron_tip: If read aloud, "data" is DAY-ta or DAH-ta with a light alveolar "t" (tongue behind the top teeth), not a heavy retroflex "t"; "protect" keeps the final "ct", not "protec".
+register: Formal
+tone: Careful, polite, reassuring
+importance: 4
+customer_emotion: Curious or concerned about privacy, possibly suspicious of the company.
+memory_hook: A locked filing cabinet: you show the customer the lock, ask for the one key that fits, then promise to open it.
+hindi_meaning: अपने पर्सनल डेटा की कॉपी माँगने के लिए धन्यवाद। आपके अकाउंट की सुरक्षा के लिए, क्या आप हमारे पास रजिस्टर्ड ईमेल एड्रेस से जवाब दे सकते हैं? जब हम पुष्टि कर लेंगे कि यह आप ही हैं, तब मैं रिक्वेस्ट शुरू करूँगा/करूँगी और बताऊँगा/बताऊँगी कि फ़ाइल कब तक मिलेगी।
+hindi_roman: Apne personal data ki copy maangne ke liye dhanyavaad. Aapke account ki suraksha ke liye, kya aap hamare paas registered email address se jawaab de sakte hain? Jab hum pushti kar lenge ki yeh aap hi hain, tab main request shuru karoonga/karoongi aur bataoonga/bataoongi ki file kab tak milegi.
+simple_meaning: Thanks for asking. To keep your information safe, please write to us from the email address on your account. Then I will start and tell you when the file will come.
+why_it_works: It thanks the customer instead of treating the request as a problem, states the purpose of the check, and asks for only one thing. The customer knows what happens next and why.
+key_chunk: To protect your account, could you ___? Once we have confirmed ___, I will ___.
+grammar_pattern: To + verb (purpose), + could you + verb …? · Once + present perfect, + I will + verb
+grammar_note: "Once we have confirmed" means "after we confirm"; the present perfect shows one step must finish before the next.
+tone_note: Stating the purpose makes the check feel protective, not suspicious. "We cannot share data with unknown persons" sounds like an accusation.
+watch_out: ✗ Please send your Aadhaar, PAN and bank statement for verification. → ✓ To protect your account, could you reply from the email address registered with us?
+dont_say: "We cannot share any data with you." — it sounds like a refusal and does not tell the customer how to get what they are entitled to.
+positive_swap: Instead of "We need your ID proof before we can do anything", write "To protect your account, could you reply from the email address registered with us?"
+alt_1: Thank you for your data request. To keep your information safe, please send your request from the email address on your account, and I will then get it started.
+alt_2: We're happy to help with your data request. For security, could you reply from your registered email address? I will confirm the expected date as soon as we have checked it.
+more_formal: Thank you for your request for a copy of your personal data. To protect your account, we ask that you reply from the email address registered with us; once your identity has been confirmed, I will begin the request and confirm the expected date.
+ask_next: If you no longer have access to that email address, please let me know and I will explain the other way to confirm your identity.
+replies_you_may_hear: I no longer use that email. · Why do you need this? It's my data. · Done, I've replied from my old address.
+if_customer_pushes: Customer: "It's my data; why are you making this hard?" → Agent: "You are right that it is your data, and that is exactly why we check: we must not send it to anyone else by mistake. Replying from your registered address is the quickest way."
+cultural_note: Indian service emails sometimes ask for many documents at once ("Aadhaar, PAN, address proof"). International customers may not expect this; ask only for what is needed and say why.
+channel_note: Voice: ask the standard security questions and explain why. Chat: never ask for full card numbers or passwords in chat; move the request to a secure form or email. Email: never attach personal data to a reply until identity is confirmed.
+when_not_to_use: Do not use this if your company has a required data-request form or legal wording; follow that process and link to it.
+mini_conversation: Customer: Please send me all the personal data you hold on me. | Agent: Thank you for asking for a copy of your personal data. To protect your account, could you reply from the email address registered with us? Once we have confirmed it is you, I will start the request and tell you when to expect the file. | Customer: Done, I've replied from my account email. | Agent: Thank you, that is confirmed. I have started the request, and I will email you the expected date today.
+source_rule: Verification: state the purpose ("To protect your account…") and ask only for what you need.
+fill_blank: Once we have ____ (confirm) it is you, I will start the request and tell you when to expect the file.
+fill_answer: confirmed
+mcq_question: Someone requests a copy of their personal data from an unknown email address. What is the best first reply?
+mcq_options: A) We cannot share personal data with unknown persons, so your request cannot be processed. | B) Thank you for your request. Your data file is attached; please keep it somewhere safe. | C) To process your request, please send a copy of your passport and a recent bank statement. | D) To protect your account, could you reply from the email address registered with us?
+mcq_answer: D
+mcq_why: D gives the purpose and asks for one thing. B is tempting because it is fast, but sending personal data before checking identity could give it to the wrong person. A refuses outright, and C asks for far more than you need.
+reorder_task: address / registered / reply / could / email / from / your / you
+reorder_answer: Could you reply from your registered email address?
+hindi_to_english: Aapke account ki suraksha ke liye, kya aap registered mobile number se call kar sakte hain?
+hindi_to_english_answer: To protect your account, could you call us from your registered mobile number?
+whats_next_customer: How long will it take to get the file?
+whats_next_reply: Once the request has started, I will email you the exact date the same day, and I will send the file only to your registered email address.
+role_play: Partner A emails from a new address asking for all the data a gym holds about them. Partner B replies: thanks, the purpose of the check, one request, and what happens next.
+record_task: Write a reply to a personal-data request from an unrecognised email address, stating the purpose of the check and asking for one thing, and send it as text or a photo for audit.
+self_check: Did you say why you need to check identity? · Did you ask for only one thing? · Did you explain what happens after the check?
+
+@CSE-A-014
+id: CSE-A-014
+channel: Email
+level: Advanced
+cefr: C1
+kind: Say it
+call_stage: Escalate
+sentence: Hi Meera, I'm escalating ticket #48820 because the customer has been charged twice every month since March, and a full refund is above my approval limit. Could you approve a refund of $240 by Thursday?
+speaker: Agent
+situation: You need your manager to approve a refund larger than you are allowed to give, and you are writing an internal email that she can act on quickly.
+recall_cue: Your manager is busy and the customer is waiting. What three things must your internal email say in its first lines?
+stress: HI-MEE-ra · i'm-ES-ca-lat-ing · TICK-et · NUM-ber-FOUR-EIGHT-EIGHT-TWO-OH · be-cause-the-CUS-tom-er · has-been-CHARGED-TWICE · EV-ery-MONTH · since-MARCH · and-a-FULL-RE-fund · is-a-BOVE-my · ap-PROV-al-LIM-it · could-you-ap-PROVE · a-RE-fund-of-two-HUN-dred-and-FOR-ty-DOL-lars · by-THURS-day
+linking: If read aloud: could_you → "cud-joo" · approve_a → "a-PROOV-a" · is_above → "i-za-BUV"
+intonation: If read aloud: quick and businesslike, a fall on "limit", a pause, then a clear rise on "by Thursday?" because it is a direct yes/no request.
+indian_pron_tip: If read aloud, "approve" and "above" both have a "v": top teeth on the lower lip, not "w"; and "escalating" is ES-ca-lat-ing, stress on the first part.
+register: Neutral
+tone: Concise, factual, action-focused
+importance: 4
+customer_emotion: (Manager) Busy and needing the facts fast; (customer) frustrated about repeated charges.
+memory_hook: A sticky note on a busy desk: ticket number, why it is yours to decide, exact ask, deadline.
+hindi_meaning: हाय मीरा, मैं टिकट #48820 आगे भेज रहा/रही हूँ क्योंकि ग्राहक से मार्च से हर महीने दो बार पैसे कटे हैं, और पूरा रिफ़ंड मेरी मंज़ूरी सीमा से ज़्यादा है। क्या आप गुरुवार तक $240 का रिफ़ंड मंज़ूर कर सकती हैं?
+hindi_roman: Hi Meera, main ticket #48820 aage bhej raha/rahi hoon kyonki grahak se March se har mahine do baar paise kate hain, aur poora refund meri manzoori seema se zyada hai. Kya aap guruvaar tak $240 ka refund manzoor kar sakti hain?
+simple_meaning: Meera, I need your help with ticket 48820. The customer paid double every month since March, and I cannot approve that much. Please approve $240 by Thursday.
+why_it_works: The manager sees the ticket, the reason it needs her, the exact amount and the deadline in two sentences, so she can say yes without opening the whole thread. A clear ask gets a faster decision.
+key_chunk: I'm escalating ticket ___ because ___. Could you approve ___ by ___?
+grammar_pattern: I'm + -ing (escalating) + because + present perfect passive (has been charged) · Could you + verb + object + by + day?
+grammar_note: "Has been charged twice every month since March" shows a repeated problem that started in the past and is still going on.
+tone_note: Short and factual respects the manager's time. "Please look into this urgently and take action" gives no facts and no clear request.
+watch_out: ✗ Customer is waiting, please see the ticket and approve urgently. → ✓ Could you approve a refund of $240 by Thursday?
+dont_say: "Customer is very angry, please handle." — it passes on the emotion but not the facts or the decision needed.
+positive_swap: Instead of "Please look into this ASAP", write "Could you approve a refund of $240 by Thursday?"
+alt_1: Hi Meera, ticket #48820 needs your approval: the customer was double-charged monthly from March to August, a total of $240, which is over my limit. Could you approve it by Thursday?
+alt_2: Hi Meera, could you approve a $240 refund on ticket #48820 by Thursday? The customer has been charged twice a month since March, and the amount is above my approval limit.
+more_formal: Dear Meera, I am escalating ticket #48820 for your approval. The customer has been charged twice monthly since March, and the full refund of $240 exceeds my approval limit. Could you approve it by Thursday?
+ask_next: I have attached the six billing statements and the customer's original email, so everything you need is in one place.
+replies_you_may_hear: Approved, go ahead. · Can you check whether all six charges were duplicates? · Offer a $100 credit first.
+if_customer_pushes: Manager: "Can't you offer a credit instead?" → Agent: "I can, but the customer has asked for money back for charges they did not authorise, so I think a refund is the right outcome. Could we approve the refund and add a small credit as an apology?"
+cultural_note: Internal Indian office emails often say "PFA" and "kindly do the needful at the earliest". Managers in international teams may not expect these; name the attachment and give a clear request and day.
+channel_note: Voice: give the ticket number first, then the ask, in under 30 seconds. Chat (internal): one message with the ticket, the reason and the ask. Email: subject "Approval needed: refund $240 – #48820".
+when_not_to_use: Do not escalate before you have checked the facts and the amount; a manager cannot decide quickly on an unclear request.
+mini_conversation: Customer: When will I get my money back? | Agent: (to the manager) Hi Meera, I'm escalating ticket #48820 because the customer has been charged twice every month since March, and a full refund is above my approval limit. Could you approve a refund of $240 by Thursday? | Manager: Approved. | Agent: (to the customer) Your refund of $240 has been approved and will be sent today. | Customer: Thank you, that's a relief.
+source_rule: Ownership and expectations: replace vague requests with a clear next step, a reference and a time.
+fill_blank: I'm escalating ticket #48820 because the customer has ____ charged twice every month since March, and a full refund is above my approval limit.
+fill_answer: been
+mcq_question: You need your manager's approval for a large refund. Which first line of your email is best?
+mcq_options: A) Hi Meera, a customer is waiting for a refund. Please look at ticket #48820 and approve it urgently. | B) Hi Meera, the customer on ticket #48820 is very angry about the double charges, so please handle this today. | C) Hi Meera, could you call me when you are free? I need to discuss a refund that is above my limit. | D) Hi Meera, I'm escalating ticket #48820 as it is above my limit. Could you approve a $240 refund by Thursday?
+mcq_answer: D
+mcq_why: D gives the ticket, the amount, the ask and the deadline. B is tempting because it names the ticket and shows urgency, but it gives no amount and no decision to make. A has no amount or deadline either, and C asks for a call instead of a decision.
+reorder_task: by / approve / Thursday / could / you / it
+reorder_answer: Could you approve it by Thursday?
+hindi_to_english: Hi Arjun, ticket #51290 aapki approval ke liye bhej raha/rahi hoon; kya aap kal tak $90 ka refund approve kar sakte hain?
+hindi_to_english_answer: Hi Arjun, I'm escalating ticket #51290 for your approval. Could you approve a refund of $90 by tomorrow?
+whats_next_customer: (Manager) Were all six charges duplicates?
+whats_next_reply: Yes. I checked all six statements, and each month shows two identical payments of $40; the statements are attached.
+role_play: Partner A is a team lead. Partner B writes an internal email asking A to approve a replacement laptop above B's limit, with the ticket number, reason, ask and deadline.
+record_task: Write an internal email to your team lead asking for approval of a $150 compensation payment, with ticket number, reason, ask and deadline, and send it as text or a photo for audit.
+self_check: Did you put the ticket number in the first line? · Did you make one clear request with an amount? · Did you give a deadline?
+
+@CSE-A-015
+id: CSE-A-015
+channel: Email
+level: Advanced
+cefr: B2
+kind: Understand it
+call_stage: Difficult customer
+sentence: I am extremely disappointed with the service I have received from your company.
+speaker: Customer
+situation: A long-standing customer opens a formal email with this line after a cancelled booking and two unanswered emails.
+recall_cue: A customer writes that they are very disappointed but does not shout or swear. How serious is this, and what does the customer want first?
+stress: i-am-ex-TREME-ly · dis-ap-POINT-ed · with-the-SER-vice · i-have-re-CEIVED · from-your-COM-pa-ny
+linking: If read aloud: am_extremely → "a-mex-TREEM-ly" · service_I → "ser-vi-sigh"
+intonation: If read aloud: slow and heavy, with strong stress on "extremely" and a long fall on "disappointed"; the calm delivery is what makes it serious.
+indian_pron_tip: If read aloud, "disappointed" ends in "-tid" with a light "t" and "d"; "extremely" has the cluster "kstr" said together, not "ex-ter-eem-ly".
+register: Formal
+tone: Cold, controlled, serious
+importance: 5
+customer_emotion: Deeply let down, losing trust, close to leaving.
+memory_hook: Disappointment is quiet anger: a closed door, not a slammed one, and you have one chance to knock.
+hindi_meaning: मैं आपकी कंपनी से मिली सर्विस से बेहद निराश हूँ।
+hindi_roman: Main aapki company se mili service se behad niraash hoon.
+simple_meaning: The customer is very unhappy with how your company has treated them and expected much better.
+why_it_works: A calm "disappointed" in formal English can be more serious than "angry": it means the customer had trust and expectations, and you broke them. They want to be taken seriously, a specific apology, and proof that someone will fix it.
+key_chunk: I am extremely disappointed with ___.
+grammar_pattern: I am + adverb (extremely) + disappointed + with + noun
+grammar_note: "Disappointed with" is used for a thing or service; "disappointed in" is often used for a person.
+tone_note: The polite form hides strong feeling. Treating it as mild ("Sorry to hear that!") would sound careless; treat it as a serious complaint.
+watch_out: ✗ (agent reads it as mild) Sorry to hear that! How can I help? → ✓ I'm sorry we have let you down, Mr Hughes; I have read your emails, and here is what I am doing.
+dont_say: "We are sorry you feel that way." — it puts the problem in the customer's feelings, not in what the company did.
+positive_swap: Instead of "Sorry you feel disappointed", write "I'm sorry we have let you down; here is what I am doing to put it right."
+alt_1: Mr Hughes, we failed you twice: your booking was cancelled and your emails went unanswered. I'm sorry, and I am taking this on personally.
+alt_2: Thank you for telling us how disappointed you are. You were right to expect better, and I will write to you again by 3 pm today with what I have done.
+more_formal: Please accept my sincere apology for the service you have received. You were entitled to expect far better, and I am now handling your case personally.
+ask_next: I'm sorry we let you down, Mr Hughes. Your booking was cancelled without notice and your emails went unanswered; I have restored the booking and will confirm the details by 3 pm today.
+replies_you_may_hear: I have been a customer for eight years. · I expect a proper explanation. · Frankly, I am thinking of leaving.
+if_customer_pushes: Customer: "I am thinking of moving to another provider." → Agent: "I understand, and I would rather earn your trust back than lose you. Here is what I have already done, and I will call you on Friday to check that everything is working."
+cultural_note: Agents who use "disappointed" for small annoyances may read it as mild. In formal British and international English, a calm "extremely disappointed" from a long-time customer is a serious warning that they may leave.
+channel_note: Voice: the caller will sound quiet and cold; do not mistake that for calm. Chat: rarer; reply with an apology and an action at once. Email: reply the same day if possible, with a named owner.
+when_not_to_use: Do not reply with a cheerful template ("Thanks for reaching out!"); the tone would clash with a serious complaint.
+mini_conversation: Customer: I am extremely disappointed with the service I have received from your company. | Agent: I'm sorry we have let you down, Mr Hughes. Your booking was cancelled and your emails were not answered; I have restored the booking today. | Customer: Why was it cancelled at all? | Agent: A system error removed it; I have reported it and will tell you what we find by Friday.
+source_rule: Empathy line, then action: never an empathy line on its own.
+fill_blank: I am extremely ____ (disappoint) with the service I have received from your company.
+fill_answer: disappointed
+mcq_question: A long-time customer writes, "I am extremely disappointed with the service." What does this most likely mean?
+mcq_options: A) They are only slightly upset, because "disappointed" is a gentle word that people use for small problems. | B) They are very serious: their trust is damaged, and they may leave if the reply is weak or slow. | C) They are furious and will probably shout or swear in their next message if nothing changes. | D) They are worried about a mistake of their own and want advice from the company on what to do.
+mcq_answer: B
+mcq_why: B: a calm "extremely disappointed" signals lost trust and a real risk of leaving. A is tempting because "disappointed" sounds gentle, but here the polite wording makes it more serious, not less; C misses that the calm tone is itself the warning, and D does not match the line at all.
+reorder_task: we / let / down / I'm / you / sorry / have
+reorder_answer: I'm sorry we have let you down.
+hindi_to_english: Main aapki service se bahut niraash hoon. (Agent ka jawaab English mein likhiye.)
+hindi_to_english_answer: I'm sorry we have let you down. I have read your emails, and here is what I am doing to put this right.
+whats_next_customer: I want to know why nobody answered my emails.
+whats_next_reply: That is a fair question, and I'm sorry. Your emails were sent to the wrong team; I have checked them all and will answer each point in this email.
+role_play: Partner A writes a formal email saying they are extremely disappointed after a cancelled holiday booking. Partner B explains what A really means and writes a reply with an apology and an action.
+record_task: Write a reply to a customer who says they are extremely disappointed after three late deliveries, with a specific apology and one action, and send it as text or a photo for audit.
+self_check: Did you treat the email as a serious complaint? · Did you apologise for something specific? · Did you give an action with a time?
+
+@CSE-A-016
+id: CSE-A-016
+channel: Email
+level: Advanced
+cefr: C1
+kind: Understand it
+call_stage: Difficult customer
+sentence: If I do not hear back by the end of the week, I will be taking this further.
+speaker: Customer
+situation: A customer ends an email about an unpaid compensation claim with this line after waiting three weeks for a reply.
+recall_cue: The customer says they will "take it further". What could that mean, and what is the most useful thing to do in your reply?
+stress: if-i-do-NOT-hear-BACK · by-the-END-of-the-WEEK · i-will-be-TAK-ing-this-FUR-ther
+linking: If read aloud: if_I → "i-fy" · end_of → "en-dov"
+intonation: If read aloud: level and controlled on "end of the week", then a firm fall on "further" that sounds like a warning, not a question.
+indian_pron_tip: If read aloud, "further" has the "th" sound of "this" (tongue between the teeth), not "d" as in "fur-der"; "week" is a long "ee" with a "w" made by rounded lips.
+register: Formal
+tone: Polite, firm, warning
+importance: 5
+customer_emotion: Out of patience and ready to escalate outside the company.
+memory_hook: The customer is holding a door handle to the next room: a manager, a regulator, a review site or a lawyer. Your reply decides whether they open it.
+hindi_meaning: अगर हफ़्ते के आख़िर तक मुझे जवाब नहीं मिला, तो मैं यह मामला आगे ले जाऊँगा/जाऊँगी।
+hindi_roman: Agar hafte ke aakhir tak mujhe jawaab nahin mila, to main yeh maamla aage le jaoonga/jaoongi.
+simple_meaning: The customer is saying: answer me this week, or I will complain to someone more powerful, such as a manager, a regulator or a lawyer.
+why_it_works: "Taking this further" is a polite warning. The customer feels ignored and wants a real answer and a clear timeline. They are not asking you to argue; they are testing whether anyone is in charge.
+key_chunk: I will be taking this ___.
+grammar_pattern: If + present simple negative, + I will be + -ing (future continuous)
+grammar_note: "I will be taking" (future continuous) sounds like a decided plan, not just an idea.
+tone_note: The wording is calm, but the meaning is serious. Answering with "You may do as you wish" sounds hostile; answering only with "noted" sounds like the company does not care.
+watch_out: ✗ (agent replies) Noted. We will get back to you soon. → ✓ I'm sorry you have waited three weeks. I have reviewed your claim today, and I will email you a decision by Thursday.
+dont_say: "That is your choice." — it sounds like a challenge and almost guarantees the escalation.
+positive_swap: Instead of "You are free to complain wherever you like", write "I understand you have waited too long; here is what I have done today and when you will hear from me next."
+alt_1: You are right to expect a reply by now, and I'm sorry you have not had one. I have reviewed your file myself and will email you our decision by Thursday afternoon.
+alt_2: You should not have had to wait this long, and I apologise. Your claim is now with me, and you will have a full answer before Friday.
+more_formal: I apologise that you have not received a response within a reasonable time. I have now reviewed your claim and will provide a full decision by Thursday.
+ask_next: I'm sorry you have waited three weeks. I have reviewed your claim today, and I will email you a decision by Thursday, before your deadline.
+replies_you_may_hear: Thursday is fine, but no later. · I've already contacted the ombudsman. · Why did it take three weeks?
+if_customer_pushes: Customer: "I've already contacted the ombudsman." → Agent: "Thank you for letting me know, and I'm sorry it has come to that. You are entitled to do that, and I will still give you our full answer by Thursday so you have it for them too."
+cultural_note: Some agents expect customers to say "I will escalate the matter" and may miss the quieter "take this further". In British English it often means going outside the company: a regulator, an ombudsman or a solicitor.
+channel_note: Voice: often said quietly at the end of a call; do not let it pass without a timeline. Chat: rarer; give a clear deadline at once. Email: reply before the customer's deadline, even if only to update.
+when_not_to_use: Do not reply as if the customer has made a legal threat; "take this further" is usually a warning to escalate, not a lawsuit.
+mini_conversation: Customer: If I do not hear back by the end of the week, I will be taking this further. | Agent: I'm sorry you have waited three weeks. I have reviewed your claim today, and I will email you a decision by Thursday. | Customer: Thursday, then. | Agent: Yes, and if anything changes, I will tell you on Wednesday.
+source_rule: Use "I will", plus a time; replace vague promises with a clear timeline, a reference and the next step.
+fill_blank: If I do not hear back by the end of the week, I will be ____ (take) this further.
+fill_answer: taking
+mcq_question: A customer writes, "I will be taking this further." What do they most likely mean?
+mcq_options: A) They will stop using your company and take their account to a competitor if nothing changes. | B) They will take the complaint to someone with more authority, such as a manager or a regulator. | C) They are asking for more time and are willing to wait until the end of next week. | D) They plan to send you more documents about the claim before the end of the week.
+mcq_answer: B
+mcq_why: B: "take this further" means escalate the complaint to someone with more authority. A is tempting because "take it elsewhere" is a similar idiom, but that means leaving the company, not escalating. C and D misread the warning.
+reorder_task: further / taking / this / I / be / will
+reorder_answer: I will be taking this further.
+hindi_to_english: Customer ne likha ki agar Friday tak jawaab nahin mila to woh complaint aage le jayega. Aap jawaab likhiye.
+hindi_to_english_answer: I'm sorry you have had to wait. I have reviewed your complaint today, and I will email you a full answer by Thursday.
+whats_next_customer: Why did it take three weeks to get any reply?
+whats_next_reply: That is a fair question. Your claim was waiting for a document check, and we did not update you; I'm sorry, and I will update you every two days until it is settled.
+role_play: Partner A writes an email that ends "I will be taking this further". Partner B explains what A means and replies with an apology, a review done today and a deadline before A's.
+record_task: Write a reply to a customer who says they will take a delayed refund further, with an apology and a deadline before theirs, and send it as text or a photo for audit.
+self_check: Did you reply before the customer's deadline? · Did you avoid challenging or dismissing the warning? · Did you give a specific date for the next step?
+
+@CSE-A-017
+id: CSE-A-017
+channel: Email
+level: Advanced
+cefr: B2
+kind: Understand it
+call_stage: Difficult customer
+sentence: Your response is unacceptable and does not address any of the points I raised.
+speaker: Customer
+situation: After your team sent a short template reply, the customer writes back with this line, clearly annoyed that their questions were ignored.
+recall_cue: The customer rejects your last reply completely. What went wrong, and what must the next reply do differently?
+stress: your-re-SPONSE · is-un-ac-CEPT-a-ble · does-NOT-ad-DRESS · AN-y-of-the-POINTS · i-RAISED
+linking: If read aloud: response_is → "ri-spon-siz" · not_address → "no-tuh-dres" · points_I → "poyn-tsy"
+intonation: If read aloud: sharp stress on "unacceptable", a short pause, and a heavy fall on "raised", which sounds like an accusation.
+indian_pron_tip: If read aloud, "unacceptable" is un-ac-CEPT-a-ble, stress on CEPT; "raised" ends in "zd" ("rayzd"), not "ray-sed".
+register: Formal
+tone: Sharp, critical, frustrated
+importance: 5
+customer_emotion: Ignored and insulted by a generic reply.
+memory_hook: The customer sent a list and got back a postcard. Your next reply must tick each item on their list.
+hindi_meaning: आपका जवाब स्वीकार करने लायक नहीं है और मेरे उठाए गए किसी भी मुद्दे का जवाब नहीं देता।
+hindi_roman: Aapka jawaab sweekar karne laayak nahin hai aur mere uthaye gaye kisi bhi mudde ka jawaab nahin deta.
+simple_meaning: Your last email did not answer my questions at all, and I am not happy with it.
+why_it_works: The customer is not angry about the wording; they are angry that nobody read their email. They want each point answered, one by one, by someone who has clearly read what they wrote.
+key_chunk: Your response does not address ___.
+grammar_pattern: Your response + is + adjective · does not + address + object
+grammar_note: "Address a point" means "deal with it or answer it", not "a postal address".
+tone_note: "Unacceptable" is strong but still formal. Defending the old reply ("Our previous email clearly explained…") will make it worse; admit the gap and answer properly.
+watch_out: ✗ (agent re-sends the template) As mentioned in our last email, your request is being processed. → ✓ I'm sorry my last reply did not answer your questions. Here are answers to each of your three points.
+dont_say: "As already informed in our previous mail…" — it tells the customer they should have understood, when the real problem is that the reply missed their points.
+positive_swap: Instead of "As mentioned in my last email", write "I'm sorry my last reply missed your questions; here is an answer to each one."
+alt_1: Thank you for writing back. My last email missed your questions, and that was our mistake. I have now answered all three, in the order you asked them.
+alt_2: I'm sorry our previous reply did not deal with what you raised. I have read your email again carefully and answered each point below.
+more_formal: Please accept my apology that our previous response did not address the points you raised. I have reviewed your email in full and respond to each point below.
+ask_next: You are right, and I'm sorry my last reply missed your questions. Here is an answer to each of your three points, numbered as in your email.
+replies_you_may_hear: Finally, a proper answer. · Point 2 is still not clear. · Why was I sent a template in the first place?
+if_customer_pushes: Customer: "Why was I sent a template?" → Agent: "I'm sorry, that was a mistake on our side: the reply did not match your questions. I will handle your case myself from now on, so you will get answers from someone who has read your emails."
+cultural_note: Indian service teams often reply "As informed earlier" or "Your request is under process". International customers may not expect these; they read them as copy-paste and want each point answered.
+channel_note: Voice: "That's not good enough" is the spoken version; repeat their points back before answering. Chat: answer each point in a separate short message. Email: number your answers to match the customer's points.
+when_not_to_use: Do not answer this with a shorter version of the same template; that is exactly what caused the complaint.
+mini_conversation: Customer: Your response is unacceptable and does not address any of the points I raised. | Agent: You are right, and I'm sorry my last reply missed your questions. Here is an answer to each of your three points. | Customer: Fine, let's see. | Agent: 1) The fee was charged in error and is refunded. 2) Your contract ends in May. 3) The engineer's report is attached.
+source_rule: Use a canned reply only when it fully fits; otherwise answer the customer's actual questions.
+fill_blank: Your response is unacceptable and does not a____ any of the points I raised.
+fill_answer: address
+mcq_question: A customer replies, "Your response is unacceptable and does not address any of the points I raised." What should your next email do?
+mcq_options: A) Apologise for missing their points, then answer each one in turn, numbered as in their email. | B) Thank them for their feedback and re-send the same information with a more polite greeting. | C) Explain politely why the previous reply was correct and ask them to read it again carefully. | D) Apologise and ask them to call the helpline, where an agent can explain everything by phone.
+mcq_answer: A
+mcq_why: A fixes the actual problem: unanswered points. D is tempting because a call can help, but it pushes more effort onto the customer when they want written answers. B re-sends the same thing, and C defends the old reply.
+reorder_task: raised / points / you / the / address / not / did / reply / my
+reorder_answer: My reply did not address the points you raised.
+hindi_to_english: Customer keh raha hai ki pichhla jawaab uske sawaalon ka jawaab nahin deta. Aap maafi maangiye aur har point ka jawaab dene ka vaada kariye.
+hindi_to_english_answer: I'm sorry my last reply did not answer your questions. Here is an answer to each of your points.
+whats_next_customer: Point 2 is still not clear to me.
+whats_next_reply: Thank you for telling me. Put simply, your contract ends on 31 May, and after that you can leave without a fee.
+role_play: Partner A sent three questions and got a template reply. Partner A writes "Your response is unacceptable." Partner B explains what A means and writes a reply that answers all three points.
+record_task: Write a reply to a customer who called your last email unacceptable, apologising and answering their three numbered points, and send it as text or a photo for audit.
+self_check: Did you admit the last reply missed their points? · Did you answer every point they raised? · Did you avoid "as informed earlier", which international customers may read as copy-paste?
+
+@CSE-A-018
+id: CSE-A-018
+channel: Email
+level: Advanced
+cefr: B2
+kind: Understand it
+call_stage: Escalate
+sentence: Please treat this email as a formal complaint.
+speaker: Customer
+situation: A customer has explained a problem over several messages and now adds this line, asking for the issue to go into the official complaints process.
+recall_cue: The customer asks for their email to be handled as a formal complaint. What do they want to happen, and what must your reply include?
+stress: PLEASE-TREAT · this-E-mail · as-a-FOR-mal · com-PLAINT
+linking: If read aloud: this_email → "thi-see-mayl" · email_as → "ee-may-laz" · as_a → "uh-zuh"
+intonation: If read aloud: even and deliberate, with stress on "formal" and a final fall on "complaint"; it is an instruction, not a request for discussion.
+indian_pron_tip: If read aloud, "complaint" ends in "nt" said clearly ("kum-PLAINT"), not "kum-plain"; "formal" is FOR-mal with stress on the first syllable, not for-MAL.
+register: Formal
+tone: Formal, decisive, serious
+importance: 5
+customer_emotion: Determined and wanting official recognition of the problem.
+memory_hook: The customer is asking you to move their letter from the ordinary inbox into the red folder that has a number, a deadline and a named person.
+hindi_meaning: कृपया इस ईमेल को एक औपचारिक शिकायत के रूप में दर्ज करें।
+hindi_roman: Kripya is email ko ek aupchaarik shikayat ke roop mein darj karein.
+simple_meaning: The customer wants their problem officially recorded as a complaint, with a reference and a proper response, not just a normal reply.
+why_it_works: The customer wants a record, a process and accountability. They may plan to escalate later, so they need a reference number, the timeline for a response, and who is handling it.
+key_chunk: Please treat this as ___.
+grammar_pattern: Please + treat + object + as + noun phrase
+grammar_note: "Treat X as Y" means "handle X in the way you handle Y".
+tone_note: The polite request is firm. Replying casually ("Sure, we'll look into it") or ignoring the word "formal" sounds dismissive and can harm the company if the case is reviewed later.
+watch_out: ✗ (agent replies) Your concern is noted and will be looked into. → ✓ I have logged your email as a formal complaint, reference FC-2093, and our complaints team will reply in full by 20 May.
+dont_say: "There is no need to make it formal; I can help you here." — it ignores the customer's clear request and may break the company's complaints process.
+positive_swap: Instead of "Your concern has been noted", write "I have logged your email as a formal complaint, and here is your reference number."
+alt_1: Thank you. I have registered this as a formal complaint under reference FC-2093, and you will receive a full response by 20 May.
+alt_2: Understood. Anita Kapoor on our complaints team now owns your complaint, which is open under reference FC-2093. She will send you a full written answer by 20 May.
+more_formal: Further to your request, I have registered your email as a formal complaint under reference FC-2093. Our complaints team will provide a full written response by 20 May.
+ask_next: I have logged your email as a formal complaint, reference FC-2093. Our complaints team will reply in full by 20 May, and I will be your contact until then.
+replies_you_may_hear: Thank you; I'll wait for the response. · What happens if I am not happy with it? · Who will be dealing with it?
+if_customer_pushes: Customer: "What if I'm not satisfied with the outcome?" → Agent: "That is a fair question. The final response will explain the next steps, including how to ask for a review or contact an independent body if that applies to your case."
+cultural_note: Indian service replies often say "Your concern has been noted". International customers may not expect this vague wording after asking for a formal complaint; they look for a reference number, a date and a named owner.
+channel_note: Voice: confirm you are logging it as a formal complaint and read out the reference slowly. Chat: give the reference in its own message so it is easy to find. Email: put the reference in the subject line.
+when_not_to_use: Do not ignore the request just because you think you can fix the problem quickly; log it, then fix it.
+mini_conversation: Customer: Please treat this email as a formal complaint. | Agent: I have logged your email as a formal complaint, reference FC-2093. Our complaints team will reply in full by 20 May, and I will be your contact until then. | Customer: Who is on the complaints team? | Agent: Anita Kapoor is handling it, and she may email you for more details.
+source_rule: Replace vague promises with a clear timeline, a ticket or reference number and the next step.
+fill_blank: Please treat this email ____ a formal complaint.
+fill_answer: as
+mcq_question: A customer writes, "Please treat this email as a formal complaint." What must your reply include?
+mcq_options: A) A warm thank-you, a link to the help pages and an offer to answer any other questions. | B) A reference number, the date of the full response and the name of the person handling it. | C) An apology, an offer to fix the problem informally today and a promise to call the customer. | D) A short note that the email has been received and will be passed to the right department.
+mcq_answer: B
+mcq_why: B gives the customer the record and timeline they asked for. C is tempting because a quick fix seems helpful, but it ignores their clear request for a formal process. A and D give no record or date.
+reorder_task: complaint / formal / I / logged / a / as / it / have
+reorder_answer: I have logged it as a formal complaint.
+hindi_to_english: Customer chahta hai ki uska email formal complaint ki tarah darj ho. Aap jawaab mein reference number aur date dijiye.
+hindi_to_english_answer: I have logged your email as a formal complaint, reference FC-3110, and you will receive a full response by 12 June.
+whats_next_customer: Can I add more details to the complaint?
+whats_next_reply: Yes. Please reply to this email with the details and quote reference FC-2093; I will add them to your complaint the same day.
+role_play: Partner A ends an email about a damaged parcel with "Please treat this as a formal complaint." Partner B explains what A wants and writes a reply with a reference, a date and an owner.
+record_task: Write a reply to a customer who asks for their email to be treated as a formal complaint about a billing error, with a reference, a date and an owner, and send it as text or a photo for audit.
+self_check: Did you confirm it is logged as a formal complaint? · Did you give a reference number? · Did you give a date and a named owner?
+
+@CSE-A-019
+id: CSE-A-019
+channel: Email
+level: Advanced
+cefr: C1
+kind: Understand it
+call_stage: Listen & clarify
+sentence: I was led to believe that the upgrade would be free of charge.
+speaker: Customer
+situation: A customer received a bill for an upgrade and writes that someone from your company told them it would cost nothing.
+recall_cue: The customer says they were "led to believe" something. Who do they think is responsible, and what should you check before answering?
+stress: i-was-LED · to-be-LIEVE · that-the-UP-grade · would-be-FREE · of-CHARGE
+linking: If read aloud: was_led → "wuz-LED" · led_to → "led-too" · free_of → "free-yuv"
+intonation: If read aloud: steady and slightly cold, with stress on "led" and "free", and a falling, pointed tone on "charge".
+indian_pron_tip: If read aloud, "believe" ends in a clear "v" (top teeth on lower lip), not "bileew"; "that" starts with the soft "th" of "this", not "dat".
+register: Formal
+tone: Polite, pointed, accusing
+importance: 4
+customer_emotion: Misled and suspicious that the company changed its story.
+memory_hook: Someone drew the customer a map; the road on the map does not match the real road. Find the map before you argue about the road.
+hindi_meaning: मुझे यक़ीन दिलाया गया था कि अपग्रेड मुफ़्त होगा।
+hindi_roman: Mujhe yakeen dilaya gaya tha ki upgrade muft hoga.
+simple_meaning: Someone from your company made me think the upgrade would cost nothing, and now you are charging me.
+why_it_works: "Led to believe" politely says, "Your company gave me this idea." The customer feels misled and wants you to take the claim seriously, check what was said, and correct the bill if they are right.
+key_chunk: I was led to believe that ___.
+grammar_pattern: I was + led (passive of "lead") + to believe + that-clause
+grammar_note: "Was led to believe" is passive: someone else made the customer believe it, without naming who.
+tone_note: The phrase is polite but contains an accusation. Replying "You must have misunderstood" denies their experience and makes things worse; checking first is respectful.
+watch_out: ✗ (agent replies) You may have misunderstood our executive. → ✓ Thank you for telling me. I'm checking the notes from your call on 3 May and will reply by 4 pm today.
+dont_say: "Our agents never say that." — you do not know yet, and it calls the customer a liar.
+positive_swap: Instead of "You must have misunderstood", write "I'm sorry if we gave you that impression; I'm checking what was said and will reply by 4 pm."
+alt_1: Thank you for explaining. I'm checking the notes and recording from your call, and if the record shows you were told the upgrade was free, I will remove the charge.
+alt_2: I'm sorry this has caused a problem with your bill. Could you tell me roughly when you were told this, and whether it was by phone, chat or email? I will check it today.
+more_formal: Thank you for bringing this to my attention. I am reviewing the record of your conversation with our team and will respond by 4 pm today; if the record shows you were told the upgrade would be free, the charge will be removed.
+ask_next: I'm sorry if we gave you the wrong impression. I'm checking the notes from your call on 3 May, and if the record shows you were told the upgrade was free, I will remove the charge and confirm by 4 pm today.
+replies_you_may_hear: It was on the phone, about two weeks ago. · I have the chat transcript if you want it. · I don't remember the agent's name.
+if_customer_pushes: Customer: "So you think I'm lying?" → Agent: "I'm sorry it sounded that way; not at all. I want to find the record so I can correct the bill quickly, and if I cannot find it, I will ask my manager to review your case by tomorrow."
+cultural_note: Learners from Indian-English backgrounds may hear "led to believe" as a neutral remark. In British formal complaints it is a polite accusation that the company gave a wrong impression, so check the record before you answer.
+channel_note: Voice: "But I was told…" is the spoken version; ask when and how they were told. Chat: ask for a transcript if they have one. Email: promise a check with a time, then reply with what you found.
+when_not_to_use: Do not promise to remove the charge before checking, unless you are allowed to decide in the customer's favour without proof.
+mini_conversation: Customer: I was led to believe that the upgrade would be free of charge. | Agent: I'm sorry if we gave you the wrong impression. I'm checking the notes from your call on 3 May and will reply by 4 pm today. | Customer: Thank you. | Agent: I have checked: you were told it was free, so I have removed the charge, and your next bill will show it.
+source_rule: Paraphrase and check before solving: "So, if I've understood correctly…"; then give a clear time for the answer.
+fill_blank: I was ____ (lead) to believe that the upgrade would be free of charge.
+fill_answer: led
+mcq_question: A customer writes, "I was led to believe that the upgrade would be free." What is the best first response?
+mcq_options: A) I think you may have misunderstood what our agent told you, as the upgrade has always had a price. | B) Our agents are trained not to make promises like that, so I would be surprised if this was said. | C) The upgrade costs $10 per month, as stated on our website, so the charge on your bill is correct. | D) I'm sorry if we gave you that impression. I'm checking the call notes and will reply by 4 pm today.
+mcq_answer: D
+mcq_why: D takes the claim seriously and gives a time. C is tempting because it is a fact, but it ignores what the customer says they were told. A and B doubt the customer before checking.
+reorder_task: free / was / to / I / that / it / led / believe / was
+reorder_answer: I was led to believe that it was free.
+hindi_to_english: Customer ka kehna hai ki use bataya gaya tha ki delivery free hogi. Aap jaanch karne ka vaada kariye aur samay batayiye.
+hindi_to_english_answer: I'm sorry if we gave you the wrong impression. I'm checking what you were told and will reply by 3 pm today.
+whats_next_customer: I can forward you the chat where your agent said it.
+whats_next_reply: Thank you, that would help. Please forward it to this address, and I will check it and reply by 4 pm today.
+role_play: Partner A writes, "I was led to believe that installation was included." Partner B explains what A means and writes a reply that takes the claim seriously and promises a check by a set time.
+record_task: Write a reply to a customer who was "led to believe" that delivery was free, promising a check with a time, and send it as text or a photo for audit.
+self_check: Did you avoid saying the customer misunderstood? · Did you promise to check what was said? · Did you give a time for your answer?
+
+@CSE-A-020
+id: CSE-A-020
+channel: Email
+level: Advanced
+cefr: C1
+kind: Understand it
+call_stage: Set expectations
+sentence: Should this not be resolved by Friday, I will cancel my subscription and request a full refund.
+speaker: Customer
+situation: A customer whose streaming service has not worked for a week ends their email with this conditional deadline.
+recall_cue: The customer's email starts its last line with "Should this not…". What condition and deadline are they setting, and what must you send before it?
+stress: SHOULD-this-NOT · be-re-SOLVED · by-FRI-day · i-will-CAN-cel · my-sub-SCRIP-tion · and-re-QUEST · a-FULL-RE-fund
+linking: If read aloud: not_be → "nop-bee" · request_a → "ri-KWES-tuh" · and_request → "an-dri-KWEST"
+intonation: If read aloud: a rising, held tone on "Friday" (the condition), a short pause, then a firm, falling tone on "full refund" (the consequence).
+indian_pron_tip: If read aloud, "resolved" is ri-ZOLVD, with a "z" sound and a final "vd", not "ri-sol-ved"; "subscription" has stress on SCRIP.
+register: Formal
+tone: Firm, conditional, businesslike
+importance: 5
+customer_emotion: Frustrated, out of patience, but still giving one last chance.
+memory_hook: "Should this not…" is a clock on the wall: it shows the deadline first, then what happens when the alarm rings.
+hindi_meaning: अगर यह शुक्रवार तक हल नहीं हुआ, तो मैं अपना सब्सक्रिप्शन रद्द कर दूँगा/दूँगी और पूरा रिफ़ंड माँगूँगा/माँगूँगी।
+hindi_roman: Agar yeh shukravaar tak hal nahin hua, to main apna subscription radd kar doonga/doongi aur poora refund maangoonga/maangoongi.
+simple_meaning: If you have not fixed this by Friday, I will stop my subscription and ask for all my money back.
+why_it_works: "Should this not…" is a formal way of saying "If this is not…". The customer is giving you one last chance with a clear deadline. They want a real fix, or at least a clear plan, before Friday.
+key_chunk: Should this not be ___ by ___, I will ___.
+grammar_pattern: Should + subject + not + be + past participle (inverted conditional) + by + day, + I will + verb
+grammar_note: Starting with "Should" instead of "If" is a formal way to make a condition.
+tone_note: The inverted "should" sounds cool and decided. Replying "We are trying our best" ignores the deadline; the customer needs a clear plan before Friday.
+watch_out: ✗ (learner reads "Should" as advice) The customer says we should fix it. → ✓ "Should this not be resolved" means "If this is not resolved".
+dont_say: "We will try our best to resolve it soon." — it ignores the customer's Friday deadline and promises nothing.
+positive_swap: Instead of "We will try to fix it soon", write "I will give you a full update by Thursday at noon, before your deadline."
+alt_1: Thank you for being clear about Friday. Our engineers are working on your account now, and I will update you by Thursday at noon.
+alt_2: A week without your service is too long, and I'm sorry. Your case is now marked urgent, and I will email you by Thursday at noon, with your refund options if the fix is not ready.
+more_formal: I appreciate that you need this resolved by Friday. I have escalated your case as urgent and will update you by Thursday at noon; should the issue remain, I will set out your refund options in full.
+ask_next: I understand you need this fixed by Friday. I have raised your case as urgent, and I will update you by Thursday at noon with either the fix or your refund options.
+replies_you_may_hear: Thursday is fine. · I've heard that before. · Just cancel it now.
+if_customer_pushes: Customer: "Just cancel it now." → Agent: "Of course, and I'm sorry it has come to this. I can cancel it today. Before I do, would you like me to check what refund you are due for the days the service did not work?"
+cultural_note: Learners who know "should" only as advice may misread "Should this not…". In formal British and international emails it simply means "if this is not…", so treat it as a deadline, not a suggestion.
+channel_note: Voice: the spoken version is "If this isn't fixed by Friday, I'm cancelling." Chat: confirm the deadline and give a time for your next update. Email: reply before the deadline with a dated plan.
+when_not_to_use: Do not promise a fix by Friday unless the technical team has confirmed it; promise an update instead.
+mini_conversation: Customer: Should this not be resolved by Friday, I will cancel my subscription and request a full refund. | Agent: I understand you need this fixed by Friday. I have raised your case as urgent and will update you by Thursday at noon. | Customer: And if it is still broken then? | Agent: Then I will cancel the subscription for you and process your refund the same day, so you will not need to ask again.
+source_rule: Set expectations: use "I will", plus a time, instead of "we'll try" or "hopefully soon".
+fill_blank: ____ this not be resolved by Friday, I will cancel my subscription and request a full refund.
+fill_answer: Should
+mcq_question: A customer writes, "Should this not be resolved by Friday, I will cancel." What does "Should this not be resolved" mean?
+mcq_options: A) You ought to resolve this before Friday arrives. | B) If this has still not been resolved by Friday. | C) This should never have been left unresolved. | D) I am not sure this can be resolved by Friday.
+mcq_answer: B
+mcq_why: B: in formal English, starting with "Should" makes a condition, like "If". A is tempting because "should" usually means advice, but here the word order shows it is a condition. C and D change the meaning.
+reorder_task: resolved / should / Friday / not / be / by / this
+reorder_answer: Should this not be resolved by Friday
+hindi_to_english: Customer ne likha hai ki agar Monday tak problem theek nahin hui to woh account band kar dega. Aap jawaab likhiye.
+hindi_to_english_answer: I understand you need this fixed by Monday. I have raised it as urgent, and I will update you by Friday afternoon.
+whats_next_customer: Can you guarantee it will be fixed by Friday?
+whats_next_reply: I can't promise the fix itself yet, but I can promise an update by Thursday at noon, and if it is still not working, I will process your refund that day.
+role_play: Partner A writes, "Should this not be resolved by Monday, I will close my account." Partner B explains the meaning and writes a reply with a dated update before the deadline.
+record_task: Write a reply to a customer who says, "Should this not be resolved by Friday, I will cancel", giving a dated update before their deadline, and send it as text or a photo for audit.
+self_check: Did you understand "Should this not" as "If this is not"? · Did you give a time before the customer's deadline? · Did you avoid "we'll try our best"?

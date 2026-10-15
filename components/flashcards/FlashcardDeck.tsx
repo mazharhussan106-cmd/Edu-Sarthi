@@ -9,8 +9,8 @@
 // to go back to. Skips live in the URL (lib/cardSkip), so they survive a
 // refresh and vanish when the student leaves the flashcard tab.
 //
-// Words and chunks share all of this; only the drawing of each side differs
-// (CardSides). It deliberately does NOT draw the card or handle gestures
+// Words, chunks and support cards share all of this; only the drawing of
+// each side differs (CardSides). It deliberately does NOT draw the card or handle gestures
 // (CardSurface) or pick the next card (the page, on the server).
 
 "use client";
@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { CardControls, type Level, type Remarks } from "@/components/flashcards/CardControls";
-import { ChunkSide, WORD_TITLES, WordSide, type ChunkExtras } from "@/components/flashcards/CardSides";
+import { ChunkSide, SUPPORT_TITLES, SupportSide, WORD_TITLES, WordSide, type ChunkExtras } from "@/components/flashcards/CardSides";
 import { CardSurface } from "@/components/flashcards/CardSurface";
 import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi";
 import type { CardColor } from "@/lib/cardColors";
@@ -56,6 +56,7 @@ export function FlashcardDeck({
   skip,
   cardColor,
   chunk,
+  support = false,
   autoSpeak = false,
   tallTop = false,
 }: {
@@ -67,6 +68,8 @@ export function FlashcardDeck({
   cardColor: CardColor;
   /** Present for chunk and grammar cards; words leave it out. */
   chunk?: ChunkExtras;
+  /** A customer-support card: its own sides, and a Slow button. */
+  support?: boolean;
   /** The Chunk tab has one more row of chips above the card. */
   tallTop?: boolean;
   /** Say the word when each card opens (a setting, off by default). */
@@ -90,7 +93,9 @@ export function FlashcardDeck({
     if (h[h.length - 1] !== word.code) writeHistory([...h, word.code]);
   }, [word.code]);
 
-  function speak(quiet = false) {
+  // `rate` is only for the Support card's Listen / Slow buttons; quiet is
+  // the automatic speak on opening, which must not show errors.
+  function speak(quiet = false, rate = 0.85) {
     if (word.audioUrl) {
       void new Audio(word.audioUrl).play().catch(() => quiet || setMessage("The recording would not play. Check the volume and try again."));
       return;
@@ -101,9 +106,12 @@ export function FlashcardDeck({
     if (!synth) return quiet || setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
     const u = new SpeechSynthesisUtterance(chunk ? sayable(word.text) : word.text);
     const voices = synth.getVoices();
-    u.voice = voices.find((v) => v.lang === "en-IN") ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
-    u.lang = u.voice?.lang ?? "en-IN";
-    u.rate = 0.85;
+    // Support agents talk to customers abroad, so those cards prefer a British
+    // or American voice; every other card stays Indian English first.
+    const first = support ? ["en-GB", "en-US"] : ["en-IN"];
+    u.voice = first.map((l) => voices.find((v) => v.lang === l)).find(Boolean) ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
+    u.lang = u.voice?.lang ?? first[0];
+    u.rate = rate;
     synth.cancel();
     synth.speak(u);
   }
@@ -167,7 +175,9 @@ export function FlashcardDeck({
     stage: state.stage,
     dueLabel: state.dueAt ? describeDue(new Date(state.dueAt)) : null,
     recordHref,
-    onSpeak: () => speak(),
+    // Checked as a number: the word and chunk fronts pass this straight to
+    // onClick, which hands over the click event.
+    onSpeak: (rate?: unknown) => speak(false, typeof rate === "number" ? rate : undefined),
     backToFront: (
       <button type="button" onClick={() => setSide(0)} className="self-center rounded-full px-3 py-1 text-xs text-ink-muted hover:bg-hover">
         ↻ Back to the front
@@ -195,13 +205,19 @@ export function FlashcardDeck({
         <div className="absolute inset-0">
         <CardSurface
           side={side}
-          titles={WORD_TITLES}
+          titles={support ? SUPPORT_TITLES : WORD_TITLES}
           word={word.text}
           color={cardColor}
           onTurn={() => setSide((s) => ((s + 1) % 3) as 0 | 1 | 2)}
           onSwipe={(dir) => (dir === "next" ? next() : prev())}
         >
-          {chunk ? <ChunkSide {...sideProps} extras={chunk} /> : <WordSide {...sideProps} />}
+          {support ? (
+            <SupportSide {...sideProps} />
+          ) : chunk ? (
+            <ChunkSide {...sideProps} extras={chunk} />
+          ) : (
+            <WordSide {...sideProps} />
+          )}
         </CardSurface>
         </div>
       </div>

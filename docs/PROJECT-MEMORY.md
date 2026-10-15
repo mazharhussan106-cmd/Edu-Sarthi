@@ -73,6 +73,15 @@ The 21 non-English decks in `content/fde-flashcards/` (924 cards: Microsoft Exce
 
 Not included: the Python and SQL decks (their workbooks are not in the repo — upload them in Admin → Import with a tag such as `programming` or `data`). The Excel deck (40 cards, first made on `claude/happy-galileo-167f8x`) now lives in `content/fde-flashcards/xl/`, audited and listed under data. Its XL-023 answer `#DIV/0!` was saved by Excel as an error value and the importer read it as empty; `lib/xlsxCards.ts` now reads error cells as their code.
 
+## Customer-support English cards (15 Oct 2026)
+
+- 180 cards, 56 fields each (Voice / Chat / Email × Basic / Intermediate / Advanced), workbook `content/support-cards/Support_Cards_EduSarthi.xlsx`, JSON `support.json`, sources and tools in `content/support-cards/source/`, audit logs in `content/support-cards/audit/`. Plan and decisions: `docs/SUPPORT-CARDS-PLAN.md`.
+- Two audit rounds done (round 1 per group, round 2 regression per channel + adversarial passes). Status: DRAFT until a verified teacher checks it.
+- App **Support chip built** (15 Oct 2026, branch `claude/happy-galileo-167f8x`, owner said "Bana do"): new `CardKind` value `SUPPORT` (additive); `prisma/import-support.ts` loads `support.json` (channel → `Word.category` lower-case, level → `Word.partOfSpeech` "Basic"/…, everything else in `details`) and is a step of Actions → Database setup. Tab: `/flashcards?kind=support&ch=voice|chat|email&lv=basic|intermediate|advanced` (tap an active chip to clear it). Card sides: `components/flashcards/support/` (Front, Back, RealLife, Practice, Tasks), parsers in `lib/supportCard.ts`. Same frame, Known/Unknown/Remark and Day 1·3·7·15·30·60 plan as every card.
+- Audit exits: Voice/Chat → "Say the support line for audit" (AUDIO); Email → "Write the support email for audit" (IMAGE, button "Send a photo for audit"). There is no text-only submission type in the app; a photo/screenshot of the written email is the route.
+- To go live: merge to main, then run Actions → Database setup once (adds the enum value and the 180 cards).
+- Rules not to undo: only [Company] as placeholder; Indian-English forms are "switches", never marked as errors; MCQ answers balanced 5/5/5/5 per group; agents never ask for OTP/PIN/password/CVV/full card number or bank details by email.
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

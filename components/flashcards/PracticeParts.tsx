@@ -11,7 +11,7 @@
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
-import { Mic, PlayCircle } from "lucide-react";
+import { Camera, Mic, PlayCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { LADDER_DAYS } from "@/lib/srs";
@@ -97,7 +97,13 @@ export function Mcq({ options, correct }: { options: { key: string; text: string
   );
 }
 
-export function OwnSentence({ id }: { id: string }) {
+export function OwnSentence({
+  id,
+  hint = "Not saved or marked. Say it out loud, then record it below for your teacher.",
+}: {
+  id: string;
+  hint?: string;
+}) {
   const [own, setOwn] = useState("");
   return (
     <>
@@ -110,7 +116,7 @@ export function OwnSentence({ id }: { id: string }) {
         placeholder="Write your sentence here"
         className="mt-2 w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
       />
-      <p className="mt-1 text-xs text-ink-muted">Not saved or marked. Say it out loud, then record it below for your teacher.</p>
+      <p className="mt-1 text-xs text-ink-muted">{hint}</p>
     </>
   );
 }
@@ -150,7 +156,18 @@ export function ReviewPlan({ stage, dueLabel }: { stage: number | null; dueLabel
 
 /// Deliberately large (the owner asked for three times the old height): these
 /// are the point of the card, not a footnote.
-export function ExitButtons({ videoUrl, recordHref }: { videoUrl: string | null; recordHref: string | null }) {
+/// `photo` is for a card that is written, not said (support emails): the
+/// student sends a photo of the writing, so the button says so.
+export function ExitButtons({
+  videoUrl,
+  recordHref,
+  photo = false,
+}: {
+  videoUrl: string | null;
+  recordHref: string | null;
+  photo?: boolean;
+}) {
+  const Icon = photo ? Camera : Mic;
   return (
     <div className="grid grid-cols-2 gap-2 pb-1 pt-1">
       {videoUrl ? (
@@ -174,8 +191,8 @@ export function ExitButtons({ videoUrl, recordHref }: { videoUrl: string | null;
           href={recordHref}
           className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-2xl bg-saffron p-4 text-center font-display text-base font-bold text-on-saffron hover:opacity-90"
         >
-          <Mic className="h-11 w-11" aria-hidden="true" />
-          Record yourself for audit
+          <Icon className="h-11 w-11" aria-hidden="true" />
+          {photo ? "Send a photo for audit" : "Record yourself for audit"}
         </Link>
       ) : null}
     </div>

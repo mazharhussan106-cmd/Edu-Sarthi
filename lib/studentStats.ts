@@ -6,7 +6,12 @@
 // the daily session; student-made decks would otherwise inflate "known".
 // Every query is scoped to the one user.
 
+import type { CardKind } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
+import { channelLabel } from "@/lib/supportCard";
+
+const KIND_NAME: Record<CardKind, string> = { WORD: "Words", CHUNK: "Chunks", GRAMMAR: "Grammar", SUPPORT: "Support" };
 
 export const CRITERIA = [
   { key: "pronunciation", label: "Pronunciation" },
@@ -79,7 +84,12 @@ export async function cardProgress(userId: string): Promise<CardProgressData> {
   ]);
   const tally = new Map<string, number>();
   for (const w of weak) {
-    const name = w.word.category ?? { WORD: "Words", CHUNK: "Chunks", GRAMMAR: "Grammar" }[w.word.kind];
+    // A support card's category is its channel ("voice"), which means nothing
+    // on its own, so it is named with the tab it belongs to.
+    const name =
+      w.word.kind === "SUPPORT"
+        ? `Support · ${channelLabel(w.word.category)}`
+        : w.word.category ?? KIND_NAME[w.word.kind];
     tally.set(name, (tally.get(name) ?? 0) + 1);
   }
   const weakTopics = [...tally.entries()]

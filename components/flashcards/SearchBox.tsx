@@ -1,5 +1,5 @@
 // Owns the interactive part of the search page: the input (focused on open),
-// the Words / Chunk / Grammar choice, and the recent-searches list.
+// the Words / Chunk / Grammar / Support choice, and the recent-searches list.
 //
 // Recent searches are kept in this browser's localStorage, not the account:
 // they are a convenience, nobody else needs them, and storing every query a
@@ -24,6 +24,7 @@ const KINDS = [
   { value: "words", label: "Words" },
   { value: "chunks", label: "Chunk" },
   { value: "grammar", label: "Grammar" },
+  { value: "support", label: "Support" },
 ] as const;
 type Kind = (typeof KINDS)[number]["value"];
 

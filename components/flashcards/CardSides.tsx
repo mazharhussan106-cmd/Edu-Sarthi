@@ -1,6 +1,6 @@
 // Owns choosing what is drawn on each side of a card, for each kind of card:
-// a word (WordMaster sheet), or a chunk or grammar card (Chunk Library; both
-// use the chunk card). The deck hands over
+// a word (WordMaster sheet), a chunk or grammar card (Chunk Library; both
+// use the chunk card), or a customer-support card (content/support-cards). The deck hands over
 // the side number and the card; this file picks the components.
 //
 // It deliberately holds no state and no gestures — FlashcardDeck and
@@ -18,12 +18,20 @@ import { ChunkBack } from "@/components/flashcards/chunk/ChunkBack";
 import { ChunkFront } from "@/components/flashcards/chunk/ChunkFront";
 import { ChunkPractice } from "@/components/flashcards/chunk/ChunkPractice";
 import { ChunkRealLife } from "@/components/flashcards/chunk/ChunkRealLife";
+import { SupportBack } from "@/components/flashcards/support/SupportBack";
+import { SupportFront } from "@/components/flashcards/support/SupportFront";
+import { SupportPractice } from "@/components/flashcards/support/SupportPractice";
+import { SupportRealLife } from "@/components/flashcards/support/SupportRealLife";
 import { chunkDetailsOf } from "@/lib/chunkCard";
+import { supportDetailsOf } from "@/lib/supportCard";
 import { detailsOf } from "@/lib/wordCard";
 
 // Chunk and grammar cards carry the same titles as words: the owner asked
 // for one card design across the tabs.
 export const WORD_TITLES = ["FRONT SIDE · RECOGNITION", "BACK SIDE · UNDERSTANDING & USAGE", "SIDE 3 · REAL LIFE & PRACTICE"] as const;
+// Same band, same three sides; the words name the section, as in the
+// approved mockup (docs/support-card.png).
+export const SUPPORT_TITLES = ["SUPPORT · RECOGNITION", "SUPPORT · MEANING & USE", "SUPPORT · REAL LIFE & PRACTICE"] as const;
 
 export type SideCard = {
   code: string;
@@ -51,7 +59,7 @@ type Common = {
   stage: number | null;
   dueLabel: string | null;
   recordHref: string | null;
-  onSpeak: () => void;
+  onSpeak: (rate?: number) => void;
   backToFront: ReactNode;
 };
 
@@ -94,6 +102,30 @@ export function ChunkSide({ side, card, stage, dueLabel, recordHref, onSpeak, ba
         text={card.text}
         d={d}
         distractors={extras.distractors}
+        stage={stage}
+        dueLabel={dueLabel}
+        videoUrl={card.videoUrl}
+        recordHref={recordHref}
+      />
+      {backToFront}
+    </div>
+  );
+}
+
+export function SupportSide({ side, card, stage, dueLabel, recordHref, onSpeak, backToFront }: Common) {
+  const d = supportDetailsOf(card.details);
+  const email = card.category === "email";
+  if (side === 0) {
+    return <SupportFront code={card.code} text={card.text} channel={card.category} level={card.partOfSpeech} cefr={card.cefr} importance={card.importance} d={d} onSpeak={onSpeak} />;
+  }
+  if (side === 1) return <SupportBack d={d} />;
+  return (
+    <div className="flex flex-col gap-3">
+      <SupportRealLife d={d} />
+      <SupportPractice
+        code={card.code}
+        d={d}
+        email={email}
         stage={stage}
         dueLabel={dueLabel}
         videoUrl={card.videoUrl}

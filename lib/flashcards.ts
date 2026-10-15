@@ -10,8 +10,8 @@
 //
 // Days are counted in India time, as everywhere else in the app.
 //
-// A Deck is one kind of card (words, chunks, grammar), optionally narrowed to
-// one chunk type. Every kind has one learning order, `serial`. The daily
+// A Deck is one kind of card (words, chunks, grammar, support), optionally
+// narrowed to one chunk type, or to one support channel and level. Every kind has one learning order, `serial`. The daily
 // new-card limit counts the whole kind, so filtering to one type does not
 // hand out another ten new cards.
 //
@@ -48,20 +48,36 @@ export const WORD_SELECT = {
   videoUrl: true,
 } satisfies Prisma.WordSelect;
 
-export type Deck = { kind: CardKind; category?: string };
+export type Deck = { kind: CardKind; category?: string; level?: string };
 
 // Must match the exercise titles created by prisma/import-words.ts and
-// prisma/import-chunks.ts (which also loads grammar). "Record yourself" attaches the recording to these.
+// prisma/import-chunks.ts (which also loads grammar) and prisma/import-support.ts.
+// "Record yourself" attaches the recording to these.
 export const PRACTICE_TITLE: Record<CardKind, string> = {
   WORD: "Use the word in your own sentences",
   CHUNK: "Use the chunk in your own sentences",
   GRAMMAR: "Use the grammar frame in your own sentences",
+  SUPPORT: "Say the support line for audit",
 };
+
+// Email cards cannot be said: the student writes the email and sends a photo,
+// so they go to a separate exercise that expects an image.
+export const SUPPORT_EMAIL_TITLE = "Write the support email for audit";
+
+export function practiceTitle(word: { kind: CardKind; category: string | null }): string {
+  return word.kind === "SUPPORT" && word.category === "email" ? SUPPORT_EMAIL_TITLE : PRACTICE_TITLE[word.kind];
+}
 
 function wordWhere(deck: Deck) {
   // deckId null: only built-in cards. Student-made and imported deck cards are
   // Word rows too, and must never leak into the shared daily session.
-  return { kind: deck.kind, deckId: null, ...(deck.category ? { category: deck.category } : {}) };
+  // The support level lives in partOfSpeech, as the sheet writes it ("Basic").
+  return {
+    kind: deck.kind,
+    deckId: null,
+    ...(deck.category ? { category: deck.category } : {}),
+    ...(deck.level ? { partOfSpeech: deck.level } : {}),
+  };
 }
 
 export async function deckCounts(userId: string, deck: Deck, newPerDay = NEW_PER_DAY) {

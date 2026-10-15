@@ -1,0 +1,1159 @@
+@CSC-B-001
+id: CSC-B-001
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Opening
+sentence: Hi, thanks for contacting [Company]. I'm Ananya. How can I help you today?
+speaker: Agent
+situation: A new chat window opens on the website and you send the first message to the customer.
+recall_cue: A customer has just opened a chat with your company. What three things does your first message give them?
+stress: HI · thanks-for-con-TACT-ing-[COM-pa-ny] · i'm-a-NAN-ya · how-can-i-HELP-you-to-DAY
+linking: If read aloud: thanks_for → "thanks-fer" · help_you → "hel-pyoo" · I'm_Ananya → "ai-ma-NAN-ya" (the "m" joins the next vowel)
+intonation: If read aloud: a friendly lift on "Hi", a short pause after the company name, and a falling tone on "How can I help you today?" because it is a wh- question.
+indian_pron_tip: If read aloud: "thanks" starts with a soft "th" (tongue lightly between the teeth), not a hard "t" as in "tanks". Keep the final "s".
+register: Friendly
+tone: Warm, welcoming, ready to help
+importance: 5
+customer_emotion: Hopeful but unsure whether a real person is on the other side.
+memory_hook: Think of a shop door bell: hello, the shop's name, your name tag and "how can I help?", all in one ring.
+hindi_meaning: नमस्ते, [Company] से संपर्क करने के लिए धन्यवाद। मैं अनन्या हूँ। आज मैं आपकी कैसे मदद कर सकता/सकती हूँ?
+hindi_roman: Namaste, [Company] se sampark karne ke liye dhanyavaad. Main Ananya hoon. Aaj main aapki kaise madad kar sakta/sakti hoon?
+simple_meaning: Hello, thank you for writing to us. My name is Ananya. What do you need help with?
+why_it_works: It tells the customer a real person has joined, gives a name they can use, and ends with an open question so they can explain the problem in their own words.
+key_chunk: Hi, thanks for contacting ___. I'm ___.
+grammar_pattern: Thanks + for + verb-ing · How + can + I + base verb + you …?
+grammar_note: After "thanks for", use the -ing form: "thanks for contacting", not "thanks for contact".
+tone_note: "Hi" and "thanks" sound human and friendly. "Dear Customer, state your query" sounds like a robot and makes the customer write back coldly.
+watch_out: ✗ Hi, thanks for contact [Company]. How I can help you? → ✓ Hi, thanks for contacting [Company]. How can I help you today?
+dont_say: "Hello Dear Customer, please state your query." — it is cold, sounds automated and gives no name.
+positive_swap: Instead of "State your query", say "How can I help you today?"
+alt_1: Hello and welcome to [Company]. My name's Ananya. What can I help you with?
+alt_2: Hi there, you're chatting with Ananya from [Company]. How can I help?
+more_formal: Good morning, and thank you for contacting [Company]. My name is Ananya. How may I help you today?
+ask_next: Thanks, Sarah. Could you share your order number so I can take a look?
+replies_you_may_hear: Hi, my parcel hasn't arrived. · I want to change my delivery address. · is this a bot?
+if_customer_pushes: Customer: "Is this a bot?" → Agent: "No, I'm Ananya, a real person on the [Company] support team. How can I help you today?"
+cultural_note: Many Indian agents introduce themselves with "Myself Ananya"; international customers may not expect this, so switch to "I'm Ananya" or "My name's Ananya" in chat.
+channel_note: Voice: "Thank you for calling [Company]. This is Ananya." Email: "Hi Sarah, thanks for getting in touch," with your name in the sign-off.
+when_not_to_use: Do not send the full greeting if a colleague has already greeted the customer and passed the chat to you; write "Hi Sarah, I'm Ananya from billing" instead.
+mini_conversation: Customer: hello | Agent: Hi, thanks for contacting [Company]. I'm Ananya. How can I help you today? | Customer: my parcel is late | Agent: I'm sorry it's late. Could you share your order number so I can check?
+source_rule: Chat: greet with your name, as you would on a call, and ask an open question.
+fill_blank: Hi, thanks for ____ [Company]. I'm Ananya. How can I help you today? (Hint: the verb "contact")
+fill_answer: contacting
+mcq_question: Which first chat message sounds the most natural to an international customer?
+mcq_options: A) Hello. What is your problem? Please tell me your order number first. | B) Dear Customer, welcome to [Company]. Please state your query so we can help. | C) Hi, thanks for contacting [Company]. I'm Ananya. How can I help you today? | D) HELLO!! WELCOME TO [Company]!! HOW CAN I HELP YOU TODAY?? 😊
+mcq_answer: C
+mcq_why: C gives thanks, a name and an open question in plain English. A is blunt and asks for a number before offering help, B reads like a robot template, and D shouts in capitals.
+reorder_task: help / today / can / How / you / I
+reorder_answer: How can I help you today
+hindi_to_english: Namaste, main Ananya hoon. Bataiye, aaj main aapki kya madad kar sakti hoon?
+hindi_to_english_answer: Hi, I'm Ananya. How can I help you today?
+whats_next_customer: hi, my refund hasn't come yet
+whats_next_reply: I'm sorry your refund hasn't arrived yet. Could you share your order number so I can check it for you?
+role_play: Partner A opens a chat about a late parcel. Partner B sends the greeting with their own name and an open question, then asks for the order number in the next message.
+record_task: Record yourself reading aloud the opening message you would send, with your own name, and then your reply when the customer writes "my parcel is late".
+self_check: Did you say your own name with "I'm"? · Did you end with an open question? · Did you thank the customer for contacting you?
+
+@CSC-B-002
+id: CSC-B-002
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Verify
+sentence: Could you type your order number here, please? It's in your confirmation email.
+speaker: Agent
+situation: The customer says there is a problem with an order, and you need the number to find it.
+recall_cue: You need to find the customer's purchase in the system. What do you ask for, and where do you tell them to look?
+stress: could-you-TYPE-your-OR-der-NUM-ber-HERE · PLEASE · it's-in-your-con-fir-MA-tion-E-mail
+linking: If read aloud: could_you → "cud-joo" · it's_in → "it-sin" · confirmation_email → "con-fir-MAY-shu-nee-mail"
+intonation: If read aloud: rise on "please?" because it is a yes/no request, then a falling, helpful tone on the second sentence.
+indian_pron_tip: If read aloud: say "order" as OR-der with the tongue just behind the top teeth for "d", not curled back; "confirmation" is con-fir-MA-tion, with the stress on MA.
+register: Neutral
+tone: Polite request, helpful
+importance: 5
+customer_emotion: Wants a quick answer and may feel slightly impatient at being asked for details.
+memory_hook: The order number is the key to the locker; tell the customer which pocket the key is in: the confirmation email.
+hindi_meaning: क्या आप अपना ऑर्डर नंबर यहाँ टाइप कर सकते हैं? यह आपके कन्फ़र्मेशन ईमेल में है।
+hindi_roman: Kya aap apna order number yahan type kar sakte hain? Yeh aapke confirmation email mein hai.
+simple_meaning: Please write your order number in the chat. You can find it in the email we sent when you ordered.
+why_it_works: It asks politely and tells the customer exactly where to find the number, so they do not have to search or send another message asking where it is.
+key_chunk: Could you type your ___ here, please?
+grammar_pattern: Could + you + base verb + object + here, please? · It's + in + place
+grammar_note: "Could you…?" makes a soft request; "It's in…" tells someone where something is.
+tone_note: The question form and "please" make it a request. "Send order no." sounds like an order and uses shorthand, which looks careless in chat.
+watch_out: ✗ Could you type here your order number, please? → ✓ Could you type your order number here, please?
+dont_say: "Order ID?" — a two-word demand with no "please" feels cold and rushed in writing.
+positive_swap: Instead of "You have to give the order number first", say "Could you type your order number here, please? It's in your confirmation email."
+alt_1: Could you share your order number, please? You'll see it in your confirmation email.
+alt_2: Could I have your order number, please? It starts with "ORD" and it's in the email we sent you.
+more_formal: Could you please provide your order number so that I can locate your order? You will find it in your order confirmation email.
+ask_next: Thank you. Let me look up order ORD-36571 now.
+replies_you_may_hear: ORD-36571 · where do i find it? · i deleted the email
+if_customer_pushes: Customer: "i deleted the email" → Agent: "That's fine. Could you give me the email address you ordered with instead? I can find the order that way."
+cultural_note: "Please share me your order number" is common in Indian English; international customers may not expect "share me", so write "share your order number" or "send me your order number".
+channel_note: Voice: "Could you read me your order number?" Email: "Could you reply with your order number? It's in your confirmation email."
+when_not_to_use: Do not ask for it if the customer has already typed it earlier in the chat; scroll up and use it.
+mini_conversation: Customer: my order hasn't come | Agent: I'm sorry about that. Could you type your order number here, please? It's in your confirmation email. | Customer: ORD-36571 | Agent: Thank you. Let me look that up now.
+source_rule: Verification: ask only for what you need, and make it easy for the customer to find.
+fill_blank: Could you type your order number here, please? It's in your confirmation ____. (Hint: starts with "e")
+fill_answer: email
+mcq_question: Which message asks for the order number in the clearest, most polite way?
+mcq_options: A) You have to give me your order number first, then I can check your problem. | B) Order no. pls. It's in the confirmation email we sent you. | C) Could you type your order number here, please? It's in your confirmation email. | D) PLEASE TYPE YOUR ORDER NUMBER HERE. IT IS IN YOUR CONFIRMATION EMAIL.
+mcq_answer: C
+mcq_why: C is polite and says where to look. A is an order ("You have to"), B uses shorthand ("no.", "pls"), and D is all capitals, which reads as shouting.
+reorder_task: your / Could / here / type / number / you / order / please
+reorder_answer: Could you type your order number here please
+hindi_to_english: Kya aap apna order number yahan likh sakte hain? Woh aapke email mein milega.
+hindi_to_english_answer: Could you type your order number here, please? You'll find it in your email.
+whats_next_customer: where do i find it?
+whats_next_reply: It's in the email we sent when you placed the order. It starts with "ORD".
+role_play: Partner A says their parcel has not arrived but gives no details. Partner B asks politely for the order number, says where to find it, and helps when A says they deleted the email.
+record_task: Record yourself reading aloud the message you would send to ask for an order number, plus your reply when the customer cannot find it.
+self_check: Did you use "Could you … please?" · Did you say where to find the number? · Did you avoid shorthand like "no." and "pls"?
+
+@CSC-B-003
+id: CSC-B-003
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Hold & check
+sentence: Let me check that for you. One moment, please.
+speaker: Agent
+situation: The customer has given their order number and you need a few seconds to look it up.
+recall_cue: You are about to look something up, and the customer will see no reply for a short time. What do you send first?
+stress: let-me-CHECK-that-for-YOU · one-MO-ment · PLEASE
+linking: If read aloud: let_me → "let-mee" (very light "t") · check_that → "chek-that" (touch the "k", then "th") · for_you → "fer-yoo"
+intonation: If read aloud: a falling, confident tone on "for you", a short pause, then a soft fall on "please".
+indian_pron_tip: If read aloud: "that" starts with a voiced "th" (tongue lightly between the teeth), not "dat". "Moment" is MO-ment, with a clear final "t".
+register: Neutral
+tone: Calm, reassuring
+importance: 5
+customer_emotion: Waiting and watching the screen, wondering whether anyone is working on it.
+memory_hook: A silent chat looks like an empty chair; this line puts a "back in a moment" sign on the chair.
+hindi_meaning: मैं आपके लिए यह चेक करता/करती हूँ। कृपया एक पल रुकिए।
+hindi_roman: Main aapke liye yeh check karta/karti hoon. Kripya ek pal rukiye.
+simple_meaning: I'm going to look at this for you now. Please wait a few seconds.
+why_it_works: In chat the customer cannot hear you typing, so silence looks like nobody is there. This tells them you are working on it and that the wait will be short.
+key_chunk: Let me ___ that for you.
+grammar_pattern: Let + me + base verb + that + for you
+grammar_note: "Let me…" offers to do something now; it sounds softer than "I will…".
+tone_note: "Let me" sounds helpful and active. "Wait" or "Hold" on its own sounds like an order and gives no reason.
+watch_out: ✗ Let me to check that for you, wait one minute. → ✓ Let me check that for you. One moment, please.
+dont_say: "Wait." — one word with no reason feels rude, and the customer does not know how long to wait.
+positive_swap: Instead of "Wait, checking", say "Let me check that for you. One moment, please."
+alt_1: I'll look into that for you now. It'll take just a moment.
+alt_2: Thanks, Tom. Let me take a quick look at your order.
+more_formal: Thank you. Please allow me a moment while I check your order details.
+ask_next: Thanks for waiting. I can see your order, and it's out for delivery today.
+replies_you_may_hear: ok · sure · how long will it take?
+if_customer_pushes: Customer: "how long will it take?" → Agent: "About a minute. I'll update you as soon as I have the details."
+cultural_note: "I am checking the same" is common in Indian English; international customers may not expect "the same" used this way, so name the thing ("your order") or say "that".
+channel_note: Voice: ask permission and give a real time: "Could you hold for about two minutes?" Email: not needed; say when you will reply instead.
+when_not_to_use: Do not write "one moment" if the check will take more than a minute; give a real time instead, such as "about three minutes".
+mini_conversation: Customer: my order number is ORD-50927 | Agent: Thanks, Tom. Let me check that for you. One moment, please. | Customer: ok | Agent: Thanks for waiting. Your order is out for delivery today.
+source_rule: Chat: reply fast and never go silent; for a longer check, give a real time, not "a moment".
+fill_blank: ____ me check that for you. One moment, please.
+fill_answer: Let
+mcq_question: Your check will take a few minutes. Which message is best?
+mcq_options: A) Let me check that for you. It'll only take a moment. | B) Let me check that for you. It'll take about three minutes. | C) Please wait. I'm checking your order now. Thank you. | D) Give me some time, please. I'll reply when I have it.
+mcq_answer: B
+mcq_why: B gives a real time, which is right when the check will take a few minutes. A promises "a moment", which is misleading, and C and D give no time at all.
+reorder_task: that / me / for / check / Let / you
+reorder_answer: Let me check that for you
+hindi_to_english: Ek minute, main aapka order check karti hoon.
+hindi_to_english_answer: One moment, please. Let me check your order.
+whats_next_customer: ok thanks, waiting
+whats_next_reply: Thank you, Tom. I'm still checking the delivery details, and I'll have your answer in about a minute.
+role_play: Partner A asks where their order is. Partner B sends the "let me check" message, waits 30 seconds, then thanks A for waiting and gives the update.
+record_task: Record yourself reading aloud the message you send before checking and the message you send when you come back with the answer.
+self_check: Did you send a message before going quiet? · Did you give a real time if the check is long? · Did you thank the customer when you came back?
+
+@CSC-B-004
+id: CSC-B-004
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Hold & check
+sentence: Thanks for waiting, James. Your parcel left our warehouse this morning.
+speaker: Agent
+situation: You told the customer you would check, and you are now back with the answer after a short wait.
+recall_cue: You have just finished checking something while the customer waited. What do you write before you give the answer?
+stress: THANKS-for-WAIT-ing-JAMES · your-PAR-cel-LEFT-our-WARE-house-this-MOR-ning
+linking: If read aloud: thanks_for → "thanks-fer" · left_our → "lef-tower" · this_morning → "this-MOR-ning"
+intonation: If read aloud: a warm fall on "James", a tiny pause, then a clear, falling statement for the news.
+indian_pron_tip: If read aloud: "warehouse" starts with a "w" (round the lips, no teeth on the lip) as in "west", not a "v" as in "vest".
+register: Friendly
+tone: Grateful, clear update
+importance: 4
+customer_emotion: A little impatient after waiting and keen to hear the answer.
+memory_hook: Like a waiter coming back to the table: say "thanks for waiting" before you put the plate down.
+hindi_meaning: इंतज़ार करने के लिए धन्यवाद, जेम्स। आपका पार्सल आज सुबह हमारे गोदाम से निकल गया है।
+hindi_roman: Intezaar karne ke liye dhanyavaad, James. Aapka parcel aaj subah hamare godaam se nikal gaya hai.
+simple_meaning: Thank you for waiting. Your parcel was sent from our storage building this morning.
+why_it_works: Thanking first shows you noticed their time; then the news comes straight away in one clear line, so the customer does not have to wait or ask again.
+key_chunk: Thanks for waiting, ___. + the news
+grammar_pattern: Thanks + for + verb-ing, name. · Subject + past simple + finished time
+grammar_note: Use the past simple ("left") with a finished time like "this morning" or "yesterday".
+tone_note: Thanking sounds respectful. Jumping straight to the news with no thanks feels a little cold, and answering only "Yes, I checked" leaves the customer still waiting.
+watch_out: ✗ Thanks for waiting. Your parcel has left yesterday. → ✓ Thanks for waiting, James. Your parcel left our warehouse this morning.
+dont_say: "Yes, I checked." — it makes the customer ask again for the actual answer.
+positive_swap: Instead of "Sorry for delay, I was busy", say "Thanks for waiting, James. Your parcel left our warehouse this morning."
+alt_1: Thanks for bearing with me, James. Your parcel was sent this morning.
+alt_2: Thanks for waiting! Good news: your order is on its way.
+more_formal: Thank you for waiting, Mr Brown. Your parcel was dispatched from our warehouse this morning.
+ask_next: Would you like me to send you the tracking link, so you can follow it?
+replies_you_may_hear: great, when will it arrive? · ok thanks · why so late?
+if_customer_pushes: Customer: "why so late?" → Agent: "I'm sorry it's taken longer than you expected. It's on its way now and should reach you by Thursday."
+cultural_note: Indian-English scripts often say "Kindly bear with us" or "Thanks for being on hold" in chat; international customers may not expect these there, so switch to "Thanks for waiting" or "Thanks for bearing with me".
+channel_note: Voice: "Thank you for holding, James." Email: "Thanks for waiting while we looked into this," at the start of the reply.
+when_not_to_use: Do not use a thank-you alone after a very long wait; add an apology, such as "Thanks for waiting, and I'm sorry that took so long."
+mini_conversation: Customer: where is my parcel? | Agent: Let me check that for you. One moment, please. | Customer: ok | Agent: Thanks for waiting, James. Your parcel left our warehouse this morning.
+source_rule: Thank the customer first when you return, then give the information.
+fill_blank: ____ for waiting, James. Your parcel left our warehouse this morning.
+fill_answer: Thanks
+mcq_question: You come back to the chat after checking. What should your first words be?
+mcq_options: A) Thanks for waiting, James. Here's what I found. | B) Yes, I checked it. Do you need anything else? | C) Sorry, I was busy with another chat just now. | D) Your parcel left our warehouse this morning.
+mcq_answer: A
+mcq_why: A thanks the customer first and then moves to the news. D gives the news but skips the thank-you, which feels cold. B gives no answer, and C makes the wait about you instead of the customer.
+reorder_task: warehouse / Your / this / left / parcel / morning / our
+reorder_answer: Your parcel left our warehouse this morning
+hindi_to_english: Intezaar ke liye shukriya. Aapka order kal bhej diya gaya tha.
+hindi_to_english_answer: Thanks for waiting. Your order was sent yesterday.
+whats_next_customer: great, when will it arrive?
+whats_next_reply: It should reach you by Thursday. I'll send you the tracking link now.
+role_play: Partner A asks about a parcel. Partner B says they will check, waits 20 seconds, then thanks A for waiting and gives the update with a delivery day.
+record_task: Record yourself reading aloud your "thanks for waiting" message with the update, then your reply when the customer asks "why so late?".
+self_check: Did you thank the customer before the news? · Did you give the actual answer in the same message? · Did you use the past simple with "this morning"?
+
+@CSC-B-005
+id: CSC-B-005
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Apologise
+sentence: I'm sorry your order arrived damaged. I'll send you a replacement today.
+speaker: Agent
+situation: The customer writes that her new lamp arrived broken, and your system shows a free replacement can go out today with no need to return the broken one.
+recall_cue: The customer's item came broken. What two things does a good short apology in chat contain?
+stress: i'm-SOR-ry-your-OR-der-ar-RIVED-DAM-aged · i'll-SEND-you-a-re-PLACE-ment-to-DAY
+linking: If read aloud: order_arrived → "or-de-ra-rived" · arrived_damaged → "a-rive-DAM-ijd" (the two "d" sounds join into one) · send_you → "sen-joo"
+intonation: If read aloud: a sincere, slightly slower fall on "damaged"; a firm, confident fall on "today".
+indian_pron_tip: If read aloud: say the final sounds in "arrived" ("-vd") and "damaged" ("-jd") clearly; do not drop them to "arrive damage".
+register: Neutral
+tone: Sincere, responsible, action-focused
+importance: 5
+customer_emotion: Disappointed and annoyed that they paid for something broken.
+memory_hook: Sorry is the bandage and the replacement is the medicine: one without the other heals nothing.
+hindi_meaning: मुझे खेद है कि आपका ऑर्डर टूटा हुआ पहुँचा। मैं आज ही आपको नया सामान भेज दूँगा/दूँगी।
+hindi_roman: Mujhe khed hai ki aapka order toota hua pahuncha. Main aaj hi aapko naya saamaan bhej doonga/doongi.
+simple_meaning: I apologise that your item came broken. I will send you a new one today.
+why_it_works: It names the exact problem, so the customer knows you read their message, and the second line offers a fix with a time, which matters more to them than the apology words.
+key_chunk: I'm sorry your ___. I'll ___.
+grammar_pattern: I'm sorry + (that) + clause · I'll + base verb + time
+grammar_note: After "I'm sorry" you can add a full sentence: "I'm sorry your order arrived damaged."
+tone_note: A specific apology sounds sincere. A vague "Sorry for the inconvenience" sounds copied and pasted, and with an upset customer it can feel cold.
+watch_out: ✗ I'm sorry for your order arrived damaged. → ✓ I'm sorry your order arrived damaged. I'll send you a replacement today.
+dont_say: "These things happen during delivery." — it sounds like an excuse and does not say what you will do.
+positive_swap: Instead of "Sorry for the inconvenience caused", say "I'm sorry your order arrived damaged. I'll send you a replacement today."
+alt_1: I'm really sorry it reached you broken. I'll arrange a new one for you right away.
+alt_2: Sorry about the damaged item, Grace. I'm sending a replacement today.
+more_formal: I apologise that your order arrived damaged. I will arrange for a replacement to be dispatched today.
+ask_next: Could you send a photo of the damage? It helps our warehouse team stop this happening again.
+replies_you_may_hear: thank you · do i need to send it back? · i need it by friday
+if_customer_pushes: Customer: "this is the second time!" → Agent: "I'm sorry it has happened twice. I'll send the replacement today and add a note asking for extra packing."
+cultural_note: "Sorry for the inconvenience caused" is very common in Indian support scripts; international customers often read it as a template, so name the actual problem instead.
+channel_note: Voice: the same words, said slowly and sincerely. Email: add the case number and the expected delivery date of the replacement.
+when_not_to_use: Do not promise "today" if the replacement cannot go out today; give the real day instead.
+mini_conversation: Customer: my lamp came broken | Agent: I'm sorry your order arrived damaged. I'll send you a replacement today. | Customer: ok, when will it get here? | Agent: It should arrive by Saturday. I'll email you the tracking link today.
+source_rule: Apologise specifically, take responsibility and offer a fix; no emoji with a complaint.
+fill_blank: I'm ____ your order arrived damaged. I'll send you a replacement today.
+fill_answer: sorry
+mcq_question: Which apology works best in chat for a broken item?
+mcq_options: A) Sorry for the inconvenience. We hope to see you again soon. | B) I'm sorry your order arrived damaged. I'll send you a replacement today. | C) I'm so sorry your order arrived damaged 😔 Please let me know how I can help. | D) Parcels sometimes get damaged in delivery, but I'll look into it for you.
+mcq_answer: B
+mcq_why: B names the problem and gives a fix with a time. A is a vague template, C uses an emoji with a complaint and offers no fix, and D sounds like an excuse.
+reorder_task: replacement / send / I'll / today / a / you
+reorder_answer: I'll send you a replacement today
+hindi_to_english: Mujhe afsos hai ki aapka order toota hua aaya. Main aaj hi naya bhej deti hoon.
+hindi_to_english_answer: I'm sorry your order arrived broken. I'll send you a new one today.
+whats_next_customer: do i need to send the broken one back?
+whats_next_reply: No, you don't need to send it back. You can keep it or recycle it.
+role_play: Partner A writes that their new headphones arrived with a cracked case. Partner B apologises for that exact problem, offers a replacement with a time, and answers A's question about returning the broken pair.
+record_task: Record yourself reading aloud your short apology message and the next message, where you ask for a photo of the damage.
+self_check: Did you name the exact problem? · Did you offer a fix with a time? · Did you avoid a vague "sorry for the inconvenience" and emoji?
+
+@CSC-B-006
+id: CSC-B-006
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Listen & clarify
+sentence: Could you send me a screenshot of the error message? It'll help me see exactly what's happening.
+speaker: Agent
+situation: The customer says the app shows an error when they try to pay, but they cannot describe it clearly.
+recall_cue: The customer says "it shows some error" but cannot describe it. What do you ask them to send, and how do you explain why?
+stress: could-you-SEND-me-a-SCREEN-shot · of-the-ER-ror-MES-sage · it'll-HELP-me-SEE-ex-ACT-ly-what's-HAP-pen-ing
+linking: If read aloud: send_me → "sen-mee" · of_the_error → "uv-thee-ER-ror" · what's_happening → "wots-HAP-ning"
+intonation: If read aloud: rise on "message?" because it is a yes/no request; fall on "happening".
+indian_pron_tip: If read aloud: "message" is MES-ij, two syllables with a soft "-ij" ending, not "mes-SAGE" with the stress at the end.
+register: Neutral
+tone: Helpful, patient, curious
+importance: 4
+customer_emotion: Frustrated and a little confused by a technical problem.
+memory_hook: A screenshot is the patient's X-ray: the doctor sees in one look what ten lines of words cannot describe.
+hindi_meaning: क्या आप मुझे एरर मैसेज का स्क्रीनशॉट भेज सकते हैं? इससे मैं ठीक-ठीक देख पाऊँगा/पाऊँगी कि क्या हो रहा है।
+hindi_roman: Kya aap mujhe error message ka screenshot bhej sakte hain? Isse main theek-theek dekh paoonga/paoongi ki kya ho raha hai.
+simple_meaning: Please take a picture of your screen showing the error and send it to me, so I can understand the problem.
+why_it_works: It asks politely and gives the reason, so the customer sees the extra step helps them and is not just more work.
+key_chunk: Could you send me a ___ of ___? It'll help me ___.
+grammar_pattern: Could + you + send + me + a + noun · It'll + help + me + base verb
+grammar_note: After "help me", use the base verb: "help me see", not "help me seeing".
+tone_note: Giving a reason makes it a shared task. "Send screenshot" on its own sounds like a demand and can suggest you do not believe the customer.
+watch_out: ✗ Could you send me screenshot of error message? → ✓ Could you send me a screenshot of the error message?
+dont_say: "I can't help without a screenshot." — it puts the blame on the customer and sounds like a refusal.
+positive_swap: Instead of "I can't help without a screenshot", say "Could you send me a screenshot of the error message? It'll help me see exactly what's happening."
+alt_1: Could you take a screenshot of what you see on the screen and send it here?
+alt_2: If you can, please send a screenshot of the error. That way I can find the cause faster.
+more_formal: Would you be able to send a screenshot of the error message? It will help me identify the problem more quickly.
+ask_next: Thank you, that helps. I can see the card was declined, so let's try another payment method.
+replies_you_may_hear: how do i take a screenshot? · sent · it says payment failed
+if_customer_pushes: Customer: "i already told you what it says, why a screenshot?" → Agent: "Thank you, and I'm sorry for the extra step. The screenshot shows me the exact wording, so I don't have to guess. It only takes a few seconds."
+cultural_note: "Kindly share the screenshot of the same" is common in Indian English; international customers may not expect "of the same", so name the thing: "a screenshot of the error".
+channel_note: Voice: ask the caller to read the error message aloud, or offer to email them so they can reply with the screenshot. Email: "Could you reply with a screenshot of the error message?"
+when_not_to_use: Do not ask for a screenshot of a screen that shows a full card number or password; ask the customer to describe it or cover those parts.
+mini_conversation: Customer: payment not working, some error | Agent: Could you send me a screenshot of the error message? It'll help me see exactly what's happening. | Customer: sent | Agent: Thank you. I can see the card was declined, so let's try another card.
+source_rule: Chat: ask with "Could you…?", give the reason for the extra step, and keep the message short.
+fill_blank: Could you send me a ____ of the error message? It'll help me see exactly what's happening. (Hint: one word for a picture of your screen)
+fill_answer: screenshot
+mcq_question: Why does the agent add "It'll help me see exactly what's happening"?
+mcq_options: A) To make the message longer and sound more formal. | B) To give a reason, so the customer sees why the extra step helps. | C) To suggest that the customer caused the error themselves. | D) To promise the customer that the error will be fixed today.
+mcq_answer: B
+mcq_why: B is right: a reason turns a demand into teamwork. C is the tempting wrong idea, because the line blames no one; A adds nothing for the customer, and D promises something the line never says.
+reorder_task: screenshot / you / me / send / a / Could
+reorder_answer: Could you send me a screenshot
+hindi_to_english: Kya aap error ka screenshot bhej sakte hain? Isse mujhe problem samajhne mein madad milegi.
+hindi_to_english_answer: Could you send me a screenshot of the error? It'll help me understand the problem.
+whats_next_customer: how do i take a screenshot?
+whats_next_reply: On most phones, press the power and volume-down buttons together. If that doesn't work, tell me which phone you have, and I'll walk you through it. Then send the picture here.
+role_play: Partner A says the app shows "some error" when they log in. Partner B asks for a screenshot with a reason, explains how to take one, and responds once A describes what the error says.
+record_task: Record yourself reading aloud your screenshot request and the message explaining how to take a screenshot on a phone.
+self_check: Did you say why you need the screenshot? · Did you name exactly what to send (the error message)? · Did your request start with "Could you"?
+
+@CSC-B-007
+id: CSC-B-007
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Explain
+sentence: You can reset your password here: [Company].com/reset. Just open it and enter your email address.
+speaker: Agent
+situation: The customer cannot log in, and you send them the password reset page.
+recall_cue: You are sending the customer a page where they can fix a login problem. What do you add so they know what to do on it?
+stress: you-can-re-SET-your-PASS-word-HERE · just-O-pen-it · and-EN-ter-your-E-mail-ad-DRESS
+linking: If read aloud: reset_your → "ree-set-cher" · open_it → "oh-pe-nit" · and_enter → "an-den-ter"
+intonation: If read aloud: steady and falling; pause briefly before and after the link, so each part is clear.
+indian_pron_tip: If read aloud: in "password" the "w" is a rounded-lip sound, PASS-wurd, not "pass-vord" with teeth on the lip.
+register: Neutral
+tone: Clear, simple instruction
+importance: 4
+customer_emotion: Locked out and slightly stressed about getting back into the account.
+memory_hook: A link without an instruction is a door with no handle; give one handle: "open it and enter your email".
+hindi_meaning: आप यहाँ अपना पासवर्ड रीसेट कर सकते हैं: [Company].com/reset। बस इसे खोलिए और अपना ईमेल पता डालिए।
+hindi_roman: Aap yahan apna password reset kar sakte hain: [Company].com/reset. Bas ise kholiye aur apna email address daaliye.
+simple_meaning: Here is the page to make a new password. Open it and type your email address.
+why_it_works: One link with one action is easy to follow on a phone. The customer knows exactly what to do next and does not need to come back and ask.
+key_chunk: You can ___ here: ___. Just ___.
+grammar_pattern: You + can + base verb + here · Just + imperative + and + imperative
+grammar_note: "Just" before a verb makes an instruction sound easy and friendly, not bossy.
+tone_note: "You can… here" sounds like help on offer. "You have to go through the link and do the process" sounds like a rule and does not say what the process is.
+watch_out: ✗ You can reset your password in this link. Just open and fill your email. → ✓ You can reset your password here: [Company].com/reset. Just open it and enter your email address.
+dont_say: "Go through the link." — it gives no instruction, so the customer opens the page and does not know what to do.
+positive_swap: Instead of "You have to go through the below link", say "You can reset your password here: [Company].com/reset. Just open it and enter your email address."
+alt_1: Here's the reset page: [Company].com/reset. Enter your email address there, and we'll email you a link to choose a new password.
+alt_2: This link lets you set a new password: [Company].com/reset. Tap it and type your email address.
+more_formal: You can reset your password using this link: [Company].com/reset. Please open it and enter the email address linked to your account.
+ask_next: Let me know once you've done that, and I'll check that you can log in.
+replies_you_may_hear: done · the link isn't opening · i didn't get any email
+if_customer_pushes: Customer: "the link isn't opening" → Agent: "I'm sorry the link isn't opening. Could you copy it into your browser? If it still doesn't open, I'll send the reset email to you directly."
+cultural_note: "Go through the below link and do the needful" is common in Indian business English; international customers may not expect it and find it vague, so say the one action they should take.
+channel_note: Voice: the caller cannot click anything on a call, so offer to send the link by SMS or email. Email: number the steps if there is more than one.
+when_not_to_use: Do not send a link alone when the task has several steps; split it into short, numbered messages instead.
+mini_conversation: Customer: i forgot my password | Agent: You can reset your password here: [Company].com/reset. Just open it and enter your email address. | Customer: done, got the email | Agent: Great. Open that email and choose a new password, and you'll be able to log in.
+source_rule: Chat: short messages, one clear step at a time; number multi-step instructions.
+fill_blank: You can reset your password here: [Company].com/reset. Just open it and ____ your email address. (Hint: starts with "e")
+fill_answer: enter
+mcq_question: What makes a good chat message when you share a link?
+mcq_options: A) The link on its own, so the message is as short as possible. | B) The link plus one clear action the customer should take. | C) The link plus a long explanation of how the system works. | D) The link plus five steps in one long paragraph of text.
+mcq_answer: B
+mcq_why: B is right: one link with one clear action is easy to follow on a phone. A is tempting because it is short, but the customer may not know what to do; C and D bury the action in too much text.
+reorder_task: email / your / open / enter / Just / address / and / it
+reorder_answer: Just open it and enter your email address
+hindi_to_english: Bas is link ko kholiye aur apna email address daaliye.
+hindi_to_english_answer: Just open this link and enter your email address.
+whats_next_customer: i didn't get any email
+whats_next_reply: Could you check your spam folder? If it isn't there, I'll send it again now.
+role_play: Partner A cannot log in. Partner B sends the reset link with one clear instruction, then helps when A says the email has not arrived.
+record_task: Record yourself reading aloud the link message you would send and your next message when the customer says no email arrived.
+self_check: Did you give exactly one clear action with the link? · Did you say what the link is for ("reset your password")? · Is the message short enough to read on a phone?
+
+@CSC-B-008
+id: CSC-B-008
+channel: Chat
+level: Basic
+cefr: B1
+kind: Say it
+call_stage: Verify
+sentence: Just to confirm, you'd like to change the delivery address to 14 Park Road, Pune?
+speaker: Agent
+situation: The customer asked to change where their parcel goes, and you check the new address before you update it.
+recall_cue: Before you change an important detail, how do you check in one short message that you have understood it correctly?
+stress: just-to-con-FIRM · you'd-LIKE-to-CHANGE-the-de-LIV-er-y-ad-DRESS · to-four-TEEN-PARK-ROAD-PU-ne
+linking: If read aloud: just_to → "jus-tuh" · you'd_like → "yood-like" · change_the → "chainj-the"
+intonation: If read aloud: a rising tone at the end, because it is a yes/no check, even though the words look like a statement.
+indian_pron_tip: If read aloud: "fourteen" is four-TEEN, with the stress at the end; "forty" is FOR-ty. Mixing them up changes the address.
+register: Neutral
+tone: Careful, polite check
+importance: 5
+customer_emotion: Wants the change done quickly and correctly, and is a little anxious about mistakes.
+memory_hook: Measure twice, cut once: read the address back before you press save.
+hindi_meaning: बस पक्का करने के लिए, आप डिलीवरी का पता बदलकर 14 पार्क रोड, पुणे करना चाहते हैं?
+hindi_roman: Bas pakka karne ke liye, aap delivery ka pata badalkar 14 Park Road, Pune karna chahte hain?
+simple_meaning: I want to check: is the new delivery address 14 Park Road, Pune?
+why_it_works: Repeating the exact detail lets the customer catch a mistake before it costs them a lost parcel, and it shows you read their message carefully.
+key_chunk: Just to confirm, you'd like to ___?
+grammar_pattern: Just to confirm, + you'd like + to + base verb …?
+grammar_note: A statement with a question mark asks "Is this right?"; "you'd like" is a polite form of "you want".
+tone_note: "Just to confirm" sounds careful, not doubtful. "Are you sure?" can sound as if you think the customer is wrong.
+watch_out: ✗ Just to confirm, you want that I change the address? → ✓ Just to confirm, you'd like to change the delivery address to 14 Park Road, Pune?
+dont_say: "Are you sure about the address?" — it sounds as if you doubt the customer instead of checking your own understanding.
+positive_swap: Instead of "Are you sure it's correct?", say "Just to confirm, you'd like to change the delivery address to 14 Park Road, Pune?"
+alt_1: Can I check: the new address is 14 Park Road, Pune. Is that right?
+alt_2: So the parcel should now go to 14 Park Road, Pune. Have I got that right?
+more_formal: Could you confirm that you would like the delivery address changed to 14 Park Road, Pune?
+ask_next: Thanks. Should I add a flat number or landmark to help the courier find it?
+replies_you_may_hear: yes thats right · no, it's 41 not 14 · yes, and add flat 2B
+if_customer_pushes: Customer: "yes, I already said that!" → Agent: "Sorry to double-check, Imran. I just wanted to be sure your parcel goes to the right place. It's updated now."
+cultural_note: "You want that I change…" copies the Hindi "chahte hain ki…" pattern; international customers may not expect it, so write "you'd like me to change…" or "you'd like to change…".
+channel_note: Voice: say numbers slowly, digit by digit: "one-four Park Road". Email: put the new address on its own line so it is easy to check.
+when_not_to_use: Do not confirm every small detail in a short chat; save it for things that are costly to get wrong, such as addresses, amounts and dates.
+mini_conversation: Customer: can you send it to 14 Park Road, Pune instead | Agent: Just to confirm, you'd like to change the delivery address to 14 Park Road, Pune? | Customer: yes | Agent: Thanks. I've updated it, and you'll get a confirmation email shortly.
+source_rule: Paraphrase before acting: repeat the key detail so the customer can correct you.
+fill_blank: Just to confirm, you'd like to change the delivery ____ to 14 Park Road, Pune?
+fill_answer: address
+mcq_question: The customer writes "please send it to 14 Park Road, Pune instead". What is the best next message?
+mcq_options: A) Done! I've changed your delivery address to 14 Park Road, Pune. | B) Are you sure that is the right address? 14 Park Road, Pune? | C) Just to confirm, you'd like the parcel sent to 14 Park Road, Pune? | D) Could you type the whole address again from the beginning, please?
+mcq_answer: C
+mcq_why: C repeats the detail so the customer can catch an error. B is tempting as a check, but it sounds as if you doubt them. A changes the address without checking, and D makes the customer do the work again.
+reorder_task: confirm / like / Just / you'd / to / change / to / the / address
+reorder_answer: Just to confirm you'd like to change the address
+hindi_to_english: Bas confirm karne ke liye, aap payment ki date badalkar 5 March karna chahte hain?
+hindi_to_english_answer: Just to confirm, you'd like to change the payment date to 5 March?
+whats_next_customer: no, it's 41 not 14
+whats_next_reply: Thanks for catching that. So it's 41 Park Road, Pune. Is that right?
+role_play: Partner A asks to change the delivery address and types it with one digit unclear. Partner B confirms the detail, A corrects it, and B confirms the corrected address before updating it.
+record_task: Record yourself reading aloud your confirm message with a full address, using a rising tone at the end.
+self_check: Did you repeat the exact detail? · Did you use "you'd like to" instead of "you want that"? · Did you wait for a yes before changing it?
+
+@CSC-B-009
+id: CSC-B-009
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Hold & check
+sentence: Are you still there, Sarah? I'm here whenever you're ready.
+speaker: Agent
+situation: The customer has not replied for a few minutes after you asked them a question.
+recall_cue: The customer has gone quiet for several minutes. What friendly message do you send before you think about closing the chat?
+stress: are-you-STILL-THERE-SA-rah · i'm-HERE · when-EV-er-you're-READ-y
+linking: If read aloud: are_you → "ar-yoo" · still_there → "stil-there" · whenever_you're → "wen-ev-er-yor"
+intonation: If read aloud: rise on "there?" because it is a yes/no question, then a soft, warm fall on "ready".
+indian_pron_tip: If read aloud: "there" starts with a voiced "th" (tongue between the teeth), not "dare"; "whenever" begins with a rounded-lip "w", not a "v".
+register: Friendly
+tone: Patient, friendly check-in
+importance: 4
+customer_emotion: Probably busy or distracted, perhaps looking for a document, and not annoyed.
+memory_hook: A gentle knock on the door, not a bang: "Still there? I'm here when you're ready."
+hindi_meaning: सारा, क्या आप अभी भी चैट पर हैं? जब भी आप तैयार हों, मैं यहीं हूँ।
+hindi_roman: Sarah, kya aap abhi bhi chat par hain? Jab bhi aap taiyaar hon, main yahin hoon.
+simple_meaning: Are you still in the chat? Take your time; I'm waiting for you.
+why_it_works: It checks politely without pressure and tells the customer they have not lost their place, so they can come back without starting again.
+key_chunk: Are you still there, ___? I'm here whenever ___.
+grammar_pattern: Are + you + still + there? · whenever + you're + adjective
+grammar_note: "Still" means "continuing from before"; "whenever" means "at any time that".
+tone_note: The second sentence removes pressure. "Hello?? Are you there??" with many question marks sounds impatient.
+watch_out: ✗ Hello? Are you there or not? → ✓ Are you still there, Sarah? I'm here whenever you're ready.
+dont_say: "If you don't reply, I will close the chat." as the first check-in — it sounds like a threat; warn only after a friendly check-in.
+positive_swap: Instead of "No response from your side", say "Are you still there, Sarah? I'm here whenever you're ready."
+alt_1: Just checking in, Sarah. Take your time; I'm still here.
+alt_2: Hi Sarah, are you still with me? There's no rush.
+more_formal: I just wanted to check whether you are still there. I'm happy to wait while you find the details.
+ask_next: I haven't heard back, so I'll close this chat in two minutes. If you still need help, just reply here and I'll keep it open.
+replies_you_may_hear: sorry, here · yes, looking for the receipt · 2 min
+if_customer_pushes: Customer: "stop rushing me" → Agent: "Sorry, Sarah, I didn't mean to rush you. Take all the time you need; I'll wait."
+cultural_note: "No response from your side" is common in Indian support scripts; international customers may read it as blame, so a friendly question works better.
+channel_note: Voice: "Hello, are you still there?" after a few seconds of silence. Email: not used; send a follow-up email later instead.
+when_not_to_use: Do not send it seconds after your own message; give the customer a real gap first, as they may be typing or looking something up.
+mini_conversation: Customer: one sec, finding my receipt | Agent: (four minutes later) Are you still there, Sarah? I'm here whenever you're ready. | Customer: sorry, here it is: ORD-55102 | Agent: Thanks, Sarah. Let me check that now.
+source_rule: Ending a chat: if the customer goes silent, check in, then warn, then close politely.
+fill_blank: Are you ____ there, Sarah? I'm here whenever you're ready.
+fill_answer: still
+mcq_question: A customer has not replied for four minutes. What is the best first step?
+mcq_options: A) Close the chat now, because the customer has probably left. | B) Send a friendly check-in and say you are still there. | C) Send "Hello?? Are you there??" so the customer sees it quickly. | D) Write "If you don't reply, the chat will close" straight away.
+mcq_answer: B
+mcq_why: B follows best practice: check in first, then warn, then close. D is tempting, but it skips the friendly check-in and sounds like a threat; A closes too early and C sounds impatient.
+reorder_task: ready / here / you're / I'm / whenever
+reorder_answer: I'm here whenever you're ready
+hindi_to_english: Kya aap abhi bhi chat par hain? Koi jaldi nahin hai.
+hindi_to_english_answer: Are you still there? There's no rush.
+whats_next_customer: sorry, my phone rang. here now
+whats_next_reply: No worries, Sarah. Could you send me the order number when you have it?
+role_play: Partner B asks for an order number, and Partner A goes silent. B sends a friendly check-in, then a polite warning, and A comes back just before the chat closes.
+record_task: Record yourself reading aloud your check-in message, then the polite warning you would send two minutes later if there is still no reply.
+self_check: Did you check in before warning? · Did you remove pressure with "whenever you're ready"? · Did you avoid capitals and extra question marks?
+
+@CSC-B-010
+id: CSC-B-010
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: You're welcome, Sarah. Thanks for chatting with us, and have a great evening!
+speaker: Agent
+situation: The issue is solved, and the customer has written "thanks, bye".
+recall_cue: The customer thanks you and says goodbye after the problem is fixed. How do you return the goodbye in one message?
+stress: you're-WEL-come-SA-rah · THANKS-for-CHAT-ting-with-us · and-have-a-GREAT-EVE-ning
+linking: If read aloud: thanks_for → "thanks-fer" · with_us → "wi-thus" · have_a → "ha-vuh"
+intonation: If read aloud: a warm fall on "Sarah", then a bright, slightly higher pitch on "great evening" before the final fall.
+indian_pron_tip: If read aloud: "with" ends in a soft "th", not a "t" ("wit"); "evening" is EEV-ning, two syllables, not "ee-ve-ning".
+register: Friendly
+tone: Warm, grateful goodbye
+importance: 4
+customer_emotion: Relieved and satisfied, and ready to leave the chat.
+memory_hook: The customer waved goodbye; wave back with three fingers: "you're welcome", "thanks", "have a great evening".
+hindi_meaning: धन्यवाद की कोई बात नहीं, सारा। हमसे चैट करने के लिए धन्यवाद, आपकी शाम अच्छी हो!
+hindi_roman: Dhanyavaad ki koi baat nahin, Sarah. Humse chat karne ke liye dhanyavaad, aapki shaam acchi ho!
+simple_meaning: No need to thank me. Thank you for talking to us. Enjoy your evening!
+why_it_works: It answers the customer's thanks, thanks them back and says goodbye, so the chat ends warmly instead of stopping suddenly.
+key_chunk: You're welcome, ___. Thanks for ___, and have a great ___!
+grammar_pattern: You're welcome · Thanks + for + verb-ing · Have + a + adjective + noun
+grammar_note: "Have a great evening" is a wish, not an order, even though it starts with a verb.
+tone_note: "You're welcome" is the safe, polite reply to thanks. Saying nothing and closing the window feels cold after a good chat.
+watch_out: ✗ You welcome, Sarah. Thanks for chat with us. → ✓ You're welcome, Sarah. Thanks for chatting with us.
+dont_say: "Chat is being closed." — it is a system message, not a goodbye, and ends a good chat coldly.
+positive_swap: Instead of "Closing the chat now", say "You're welcome, Sarah. Thanks for chatting with us, and have a great evening!"
+alt_1: My pleasure, Sarah! Thanks for getting in touch, and have a lovely evening.
+alt_2: Glad I could help! Take care, Sarah.
+more_formal: You're very welcome. Thank you for contacting [Company], and have a pleasant evening.
+ask_next: If anything else comes up, just message us again any time. Take care, Sarah!
+replies_you_may_hear: bye · thanks again · you too
+if_customer_pushes: Customer: "actually, one more thing" → Agent: "Of course, Sarah. What else can I help with?"
+cultural_note: Many Indian English speakers reply to "thank you" with "Welcome"; international customers may not expect this and usually hear "You're welcome" or "My pleasure".
+channel_note: Voice: "You're welcome, Mr Lee. Have a great evening." Email: end with "Best regards" and your name.
+when_not_to_use: Do not use it while the issue is still open; first tell the customer the next step and when they will hear from you.
+mini_conversation: Customer: that worked, thanks! bye | Agent: You're welcome, Sarah. Thanks for chatting with us, and have a great evening! | Customer: you too | Agent: Thank you, Sarah. Take care!
+source_rule: Ending a chat: return the customer's goodbye; "You're welcome" is the safe default reply to thanks.
+fill_blank: You're ____, Sarah. Thanks for chatting with us, and have a great evening!
+fill_answer: welcome
+mcq_question: The customer writes "thanks so much, bye!" Which reply is the most natural for an international customer?
+mcq_options: A) This chat is now closed. Please rate your experience with us in the survey. | B) YOU'RE WELCOME!! THANKS FOR CHATTING WITH US. HAVE A GREAT EVENING!! | C) No problem, Sarah! Is there anything else I can help you with before I close the chat? | D) You're welcome, Sarah. Thanks for chatting with us, and have a great evening!
+mcq_answer: D
+mcq_why: D returns the thanks and the goodbye. A sounds like a system message, B shouts in capitals, and C asks a new question when the customer is already leaving.
+reorder_task: chatting / us / Thanks / with / for
+reorder_answer: Thanks for chatting with us
+hindi_to_english: Humse chat karne ke liye shukriya. Aapki shaam acchi ho!
+hindi_to_english_answer: Thanks for chatting with us. Have a great evening!
+whats_next_customer: you too, thanks!
+whats_next_reply: Thanks, Sarah. Bye for now!
+role_play: Partner A's refund problem has been solved, and A writes "thanks, bye". Partner B returns the thanks and the goodbye; then A adds "one more thing", and B answers before closing again.
+record_task: Record yourself reading aloud your goodbye message, then your reply if the customer suddenly writes "actually, one more thing".
+self_check: Did you say "You're welcome" in full, with the customer's name? · Did you thank the customer for chatting? · Did you close only after the issue was solved?
+
+@CSC-B-011
+id: CSC-B-011
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: I'm glad that's sorted. Is there anything else I can help you with today?
+speaker: Agent
+situation: You have fixed the customer's problem, and they have confirmed that it works.
+recall_cue: The customer confirms the fix worked. What do you say about the fix, and what do you ask before you close?
+stress: i'm-GLAD-that's-SORT-ed · is-there-AN-y-thing-ELSE · i-can-HELP-you-with-to-DAY
+linking: If read aloud: that's_sorted → "that-SORT-ed" (the two "s" sounds join) · anything_else → "en-ee-thing-els" (the "ng" flows into "else", with no hard g) · help_you → "hel-pyoo"
+intonation: If read aloud: a warm fall on "sorted"; a rise on "today?" because it is a yes/no question.
+indian_pron_tip: If read aloud: "anything" ends in "-thing" with the tongue between the teeth, not "any-ting"; "else" ends in a clear "s", not "el-se".
+register: Friendly
+tone: Warm, open, helpful
+importance: 5
+customer_emotion: Pleased the problem is fixed and perhaps ready to leave.
+memory_hook: Close the first door ("glad that's sorted") before you open the next one ("anything else?").
+hindi_meaning: मुझे खुशी है कि यह ठीक हो गया। क्या आज मैं आपकी किसी और चीज़ में मदद कर सकता/सकती हूँ?
+hindi_roman: Mujhe khushi hai ki yeh theek ho gaya. Kya aaj main aapki kisi aur cheez mein madad kar sakta/sakti hoon?
+simple_meaning: Good, the problem is fixed. Do you need help with something else?
+why_it_works: It first confirms the problem is solved, then gives the customer a clear chance to raise another issue before the chat ends.
+key_chunk: Is there anything else I can help you with ___?
+grammar_pattern: Is + there + anything + else + (that) + I + can + base verb …?
+grammar_note: Use "anything" in questions ("anything else?") and "something" in offers ("something to drink?").
+tone_note: Asking after the fix sounds caring. Asking it before the problem is solved sounds as if you want to end the chat.
+watch_out: ✗ Is there anything else I can help you today? → ✓ Is there anything else I can help you with today?
+dont_say: "Anything else?" while the problem is still open — it suggests the issue is finished when it is not.
+positive_swap: Instead of "Any other query?", say "I'm glad that's sorted. Is there anything else I can help you with today?"
+alt_1: Great, that's working now. Can I help with anything else?
+alt_2: Happy to hear that's fixed! Is there anything else you need today?
+more_formal: I'm pleased the issue is resolved. Is there anything else I can assist you with today?
+ask_next: If it stops working again, Kiran, just message us here and we'll pick it up.
+replies_you_may_hear: no that's all, thanks · yes, one more thing · nope
+if_customer_pushes: Customer: "yes, actually, my last bill looks wrong too" → Agent: "Of course. Could you tell me which amount looks wrong? I'll check it now."
+cultural_note: "Any other query?" is common in Indian support chats; international customers may find "query" formal and a little cold, so ask "anything else I can help you with?".
+channel_note: Voice: the same line, said warmly and not rushed. Email: "If there's anything else I can help with, just reply to this email."
+when_not_to_use: Do not ask it on an unresolved case; tell the customer the next step and when they will hear back instead.
+mini_conversation: Customer: it's working now | Agent: I'm glad that's sorted. Is there anything else I can help you with today? | Customer: no that's all, thanks | Agent: You're welcome, Kiran. Have a great day!
+source_rule: Check the issue is resolved first, then ask "Is there anything else…?"; never ask it on an unresolved case.
+fill_blank: I'm glad that's sorted. Is there anything else I can help you ____ today?
+fill_answer: with
+mcq_question: When should you ask "Is there anything else I can help you with?"
+mcq_options: A) In your very first message. | B) While you are still checking their order. | C) When the customer is angry, to change the topic. | D) After the customer confirms the problem is solved.
+mcq_answer: D
+mcq_why: The question assumes the issue is finished, so ask it only after the customer confirms. B is tempting, but it makes the customer feel rushed.
+reorder_task: help / Is / else / can / there / I / anything / with
+reorder_answer: Is there anything else I can help with
+hindi_to_english: Kya main aapki aur kisi cheez mein madad kar sakti hoon?
+hindi_to_english_answer: Is there anything else I can help you with?
+whats_next_customer: no that's all, thanks
+whats_next_reply: Great. I'll close the chat now. Thanks for getting in touch, Kiran, and take care!
+role_play: Partner B has just fixed Partner A's login problem. B confirms it works, asks the "anything else" question, and A raises a second, small billing question.
+record_task: Record yourself reading aloud both messages: the one confirming the fix and the one asking if there is anything else.
+self_check: Did you confirm the problem was solved first? · Did you finish with "help you with today"? · Did your voice rise at the end of the question?
+
+@CSC-B-012
+id: CSC-B-012
+channel: Chat
+level: Basic
+cefr: B1
+kind: Say it
+call_stage: Transfer
+sentence: I'm transferring you to our billing team now, because they can change your plan. I'll share our chat with them, so you won't need to repeat anything.
+speaker: Agent
+situation: The customer wants to change their plan, which only the billing team can do.
+recall_cue: Another team must handle this request. What three things do you tell the customer before you pass the chat on?
+stress: i'm-trans-FER-ring-you · to-our-BILL-ing-TEAM-NOW · they-can-CHANGE-your-PLAN · i'll-SHARE-our-CHAT · you-WON'T-need-to-re-PEAT-an-y-thing
+linking: If read aloud: transferring_you → "trans-fer-ing-yoo" · share_our → "shair-rour" · need_to → "nee-tuh"
+intonation: If read aloud: steady and reassuring; fall on "plan" and on "anything", with a short pause between the two sentences.
+indian_pron_tip: If read aloud: the verb "transfer" is trans-FER, with the stress at the end (the noun is TRANS-fer). Say "won't" with a long "oh" (like "own" + t), so it is not heard as "want".
+register: Neutral
+tone: Reassuring, clear, responsible
+importance: 5
+customer_emotion: Worried about being passed around and having to explain everything again.
+memory_hook: Hand over the baton with the notes taped to it: the next runner already knows the race.
+hindi_meaning: मैं अभी आपको हमारी बिलिंग टीम के पास ट्रांसफ़र कर रहा/रही हूँ, क्योंकि वे आपका प्लान बदल सकते हैं। मैं हमारी चैट उनके साथ शेयर करूँगा/करूँगी, ताकि आपको कुछ दोहराना न पड़े।
+hindi_roman: Main abhi aapko hamari billing team ke paas transfer kar raha/rahi hoon, kyunki woh aapka plan badal sakte hain. Main hamari chat unke saath share karoonga/karoongi, taaki aapko kuch dohraana na pade.
+simple_meaning: Another team will take over because they can make this change. They will see what we wrote, so you don't need to explain again.
+why_it_works: It says who, why and what happens to the information, so the customer does not feel dropped and will not have to type the problem again.
+key_chunk: I'm transferring you to ___, because ___. I'll share ___, so you won't need to ___.
+grammar_pattern: I'm + verb-ing + now · so + you + won't + need to + base verb
+grammar_note: "So" here gives the result: because I share the chat, you won't need to repeat anything.
+tone_note: Giving the reason makes the transfer feel like help. "Transferring" on its own feels as if the agent is getting rid of the customer.
+watch_out: ✗ I'm transferring you to the billing team because they can to change your plan. → ✓ I'm transferring you to our billing team now, because they can change your plan.
+dont_say: "That's not my department." — it sounds as if you do not care, and it gives no next step.
+positive_swap: Instead of "I can't do plan changes", say "I'm transferring you to our billing team now, because they can change your plan."
+alt_1: Our billing team can make that change for you, so I'll connect you with them now. They'll see our chat, so there's no need to explain again.
+alt_2: I'll pass you to a colleague in billing who can update your plan. I've added a note with all the details.
+more_formal: I will now transfer you to our billing team, who can change your plan. I have shared our conversation with them, so you will not need to repeat any details.
+ask_next: Is that all right with you? I'll stay in the chat until they join.
+replies_you_may_hear: ok · how long will it take? · can't you just do it?
+if_customer_pushes: Customer: "can't you just do it?" → Agent: "I'd like to, but plan changes are handled by billing. I'll stay here until they join, so you're not left waiting alone."
+cultural_note: "Concerned team" and "concerned department" are common in Indian English; international customers may not expect them and want the team's real name ("our billing team").
+channel_note: Voice: ask permission and brief your colleague before connecting (a warm transfer). Email: "I've passed your request to our billing team, and they will reply by tomorrow."
+when_not_to_use: Do not transfer if you can solve the problem yourself; every transfer costs the customer time.
+mini_conversation: Customer: I want to change to the cheaper plan | Agent: I'm transferring you to our billing team now, because they can change your plan. I'll share our chat with them, so you won't need to repeat anything. | Customer: ok thanks | Agent: You're welcome. Ravi from billing will join you in about a minute.
+source_rule: Transfer warm: say who and why, and pass on the details so the customer does not repeat themselves.
+fill_blank: I'll share our chat with them, so you won't need to ____ anything. (Hint: starts with "r")
+fill_answer: repeat
+mcq_question: The customer needs the billing team. Which transfer message is best?
+mcq_options: A) I can't change plans, sorry. I'm transferring you to another team now, so please wait a moment. | B) That's not my department, sorry. Please contact our billing team yourself through the website. | C) I'm transferring you to our billing team, because they can change your plan. I'll share our chat with them. | D) Billing handles plans, not me. I'm passing you to them now, but you may need to explain it all again.
+mcq_answer: C
+mcq_why: C names the team, gives the reason and saves the customer from repeating the story. A does not say which team or why, B sends the customer away, and D admits the customer will have to explain everything again.
+reorder_task: repeat / won't / anything / You / need / to
+reorder_answer: You won't need to repeat anything
+hindi_to_english: Main aapko technical team ko transfer kar rahi hoon, kyunki woh yeh theek kar sakte hain.
+hindi_to_english_answer: I'm transferring you to our technical team, because they can fix this.
+whats_next_customer: how long will it take?
+whats_next_reply: Ravi from billing should join in a minute or two. I'll stay here until he does.
+role_play: Partner A wants to upgrade their plan in a general support chat. Partner B explains the transfer to billing with a reason and reassures A; then A asks "can't you just do it?".
+record_task: Record yourself reading aloud your transfer message, then your answer when the customer asks "can't you just do it?".
+self_check: Did you name the team? · Did you give a reason? · Did you tell the customer they won't need to repeat themselves?
+
+@CSC-B-013
+id: CSC-B-013
+channel: Chat
+level: Basic
+cefr: B1
+kind: Say it
+call_stage: Listen & clarify
+sentence: Could you tell me a bit more about what happened? For example, when did you first notice the problem?
+speaker: Agent
+situation: The customer wrote only "app not working", and you need more information before you can help.
+recall_cue: The customer's first message is very short and vague. How do you ask for more information and make it easy to answer?
+stress: could-you-TELL-me-a-BIT-MORE · a-bout-what-HAP-pened · for-ex-AM-ple · when-did-you-FIRST-NO-tice-the-PROB-lem
+linking: If read aloud: tell_me → "tel-mee" · what_happened → "wot-HAP-nd" (keep the "h") · first_notice → "firs-NO-tis" (the "t" of "first" is very light)
+intonation: If read aloud: rise on "happened?" (a yes/no request); fall on "problem?" (a wh- question).
+indian_pron_tip: If read aloud: "happened" ends in "-nd" and has two syllables, HAP-pnd, not "hap-pen-ed". Say the "st" in "first" clearly; do not drop the "t".
+register: Neutral
+tone: Curious, patient, helpful
+importance: 4
+customer_emotion: Frustrated, and maybe not sure how to describe the problem.
+memory_hook: Give the customer a handle to hold: "For example, when…?" is easier to answer than an empty "please explain".
+hindi_meaning: क्या आप मुझे थोड़ा और बता सकते हैं कि क्या हुआ? जैसे, आपने यह समस्या पहली बार कब देखी?
+hindi_roman: Kya aap mujhe thoda aur bata sakte hain ki kya hua? Jaise, aapne yeh problem pehli baar kab dekhi?
+simple_meaning: Please explain a little more. When did the problem start?
+why_it_works: An open request plus one example question helps customers who do not know which details matter, so you get useful facts in one reply.
+key_chunk: Could you tell me a bit more about ___? For example, ___?
+grammar_pattern: Could + you + tell + me + about + what + happened? · When + did + you + first + base verb …?
+grammar_note: Inside a request, keep normal word order: "tell me what happened", not "tell me what did happen".
+tone_note: "A bit more" sounds gentle. "Your message is not clear" blames the customer for the problem.
+watch_out: ✗ Could you tell me a bit more about what did happen? → ✓ Could you tell me a bit more about what happened?
+dont_say: "Your message is not clear." — it blames the customer instead of helping them explain.
+positive_swap: Instead of "I don't understand your problem", say "Could you tell me a bit more about what happened? For example, when did you first notice the problem?"
+alt_1: I'm sorry the app isn't working. What happens when you open it?
+alt_2: Could you describe what you see on the screen? For example, is there an error message?
+more_formal: Could you please give me a few more details about the issue, such as when it started?
+ask_next: Thanks, that helps. Have you tried closing the app and opening it again?
+replies_you_may_hear: since yesterday · it just shows a white screen · after the update
+if_customer_pushes: Customer: "i already told you it's not working!" → Agent: "I know that's frustrating, and I want to fix it quickly. Knowing when it started helps me find the cause faster."
+cultural_note: "Please elaborate your issue" is common in Indian business English; international customers may find it formal and cold, so ask one simple, specific question.
+channel_note: Voice: ask one question at a time and wait for the answer. Email: list two or three short, numbered questions.
+when_not_to_use: Do not ask for more details if the customer has already explained clearly; repeat back what you understood and act instead.
+mini_conversation: Customer: app not working | Agent: I'm sorry the app isn't working. Could you tell me a bit more about what happened? For example, when did you first notice the problem? | Customer: since the update yesterday | Agent: Thanks, that helps. Let me check what changed in that update.
+source_rule: If you are unsure, ask a clarifying question first instead of guessing or sending a canned reply.
+fill_blank: Could you tell me a bit more about what ____? For example, when did you first notice the problem? (Hint: the past tense of "happen")
+fill_answer: happened
+mcq_question: Which follow-up question is easiest for a customer to answer?
+mcq_options: A) Can you explain the whole problem again in more detail? | B) What exactly is wrong with your app? Please be specific. | C) When did you first notice the problem? Was it today or earlier? | D) Why did you only write three words? Please write more.
+mcq_answer: C
+mcq_why: C asks one specific question the customer can answer quickly. A and B ask for everything at once, and D blames the customer for writing a short message.
+reorder_task: happened / about / tell / a / Could / what / bit / more / me / you
+reorder_answer: Could you tell me a bit more about what happened
+hindi_to_english: Kya aap thoda aur bata sakte hain? Yeh kab se ho raha hai?
+hindi_to_english_answer: Could you tell me a bit more? When did this start?
+whats_next_customer: it just shows a white screen
+whats_next_reply: Thanks, that helps. Does the white screen appear straight away, or after you log in?
+role_play: Partner A writes only "card not working". Partner B asks for more detail with one example question and keeps asking short questions until they know when and where the card fails.
+record_task: Record yourself reading aloud your request for more details and your next message after the customer answers.
+self_check: Did you give an example question? · Did you avoid blaming the customer? · Did you write "what happened", not "what did happen"?
+
+@CSC-B-014
+id: CSC-B-014
+channel: Chat
+level: Basic
+cefr: A2
+kind: Say it
+call_stage: Close
+sentence: Thank you for your patience today, Fatima. Your new card will arrive by Friday.
+speaker: Agent
+situation: The chat took a long time because of several checks; you can now see the new card has been posted with delivery booked for Friday, and you are closing the chat.
+recall_cue: The chat was long and the customer waited a lot. What do you thank them for at the end, and what do you remind them of?
+stress: THANK-you-for-your-PA-tience-to-DAY-FA-ti-ma · your-NEW-CARD · will-ar-RIVE-by-FRI-day
+linking: If read aloud: thank_you → "thang-kyoo" · for_your → "fer-yor" · card_will → "car-dwil"
+intonation: If read aloud: a warm fall on "Fatima"; a clear, falling statement for the next step, with stress on "Friday".
+indian_pron_tip: If read aloud: "patience" is PAY-shuns, two syllables, the same sound as "patients"; do not say "pa-ti-ence".
+register: Friendly
+tone: Grateful, warm, clear
+importance: 4
+customer_emotion: Tired after a long chat but relieved the problem is handled.
+memory_hook: Patience is a gift the customer gave you: say thank you for the gift, then tell them when their card arrives.
+hindi_meaning: आज धैर्य रखने के लिए धन्यवाद, फ़ातिमा। आपका नया कार्ड शुक्रवार तक पहुँच जाएगा।
+hindi_roman: Aaj dhairya rakhne ke liye dhanyavaad, Fatima. Aapka naya card Shukravaar tak pahunch jayega.
+simple_meaning: Thanks for waiting so long today. You will get your new card on or before Friday.
+why_it_works: It recognises the effort the customer made and ends with a clear next step and date, so they leave knowing exactly what will happen.
+key_chunk: Thank you for your patience, ___. + next step with a date
+grammar_pattern: Thank you + for + your + noun · Subject + will + base verb + by + day
+grammar_note: "By Friday" means "on or before Friday"; "till Friday" means "continuing up to Friday".
+tone_note: Thanking for patience sounds respectful. "Sorry for wasting your time" sounds negative and puts the focus back on the problem.
+watch_out: ✗ Your new card will reach till Friday. → ✓ Your new card will arrive by Friday.
+dont_say: "Thanks for your patience." with no next step — it sounds like a script, and the customer still does not know what happens now.
+positive_swap: Instead of "Sorry for wasting your time", say "Thank you for your patience today, Fatima. Your new card will arrive by Friday."
+alt_1: Thanks so much for bearing with me, Fatima. Your new card is on its way and should arrive by Friday.
+alt_2: I really appreciate your patience today. Your replacement card will be with you by Friday.
+more_formal: Thank you for your patience throughout this chat, Ms Khan. Your new card will be delivered by Friday.
+ask_next: Is there anything else I can help you with today?
+replies_you_may_hear: thanks for your help · great, thanks · what if it doesn't come?
+if_customer_pushes: Customer: "this took over an hour, why so long?" → Agent: "I'm sorry the chat took so long. Several checks were needed on your account, and I wanted to get it right. Your card will arrive by Friday."
+cultural_note: "Will reach till Friday" mixes up "till" and "by"; international customers expect "by Friday" for a deadline.
+channel_note: Voice: "Thank you for your patience, Fatima," said slowly and warmly. Email: "Thank you for your patience while we sorted this out."
+when_not_to_use: Do not use it after a very short wait, because it can sound scripted; write "Thanks for waiting" instead.
+mini_conversation: Customer: so is it done now? | Agent: Yes. Thank you for your patience today, Fatima. Your new card will arrive by Friday. | Customer: great, thanks for your help | Agent: You're welcome. Have a lovely evening!
+source_rule: Close by summarising the next step with a clear time.
+fill_blank: Thank you for your ____ today, Fatima. Your new card will arrive by Friday. (Hint: the noun for waiting calmly)
+fill_answer: patience
+mcq_question: The new card will come on Thursday or Friday. Which sentence is correct?
+mcq_options: A) It will arrive till Friday. | B) It will arrive until Friday. | C) It will arrive up to Friday. | D) It will arrive by Friday.
+mcq_answer: D
+mcq_why: D is right: "by Friday" means on or before Friday. "Till" and "until" mean an action continues up to that time, so they do not fit "arrive", and "up to Friday" is not used for a deadline.
+reorder_task: patience / you / your / Thank / for
+reorder_answer: Thank you for your patience
+hindi_to_english: Aapke dhairya ke liye shukriya. Aapka refund Somvaar tak aa jayega.
+hindi_to_english_answer: Thank you for your patience. Your refund will arrive by Monday.
+whats_next_customer: what if it doesn't come?
+whats_next_reply: If it hasn't arrived by Friday, start a chat with us and quote case number 7741, and we'll look into it straight away.
+role_play: Partner B has spent a long chat helping Partner A replace a lost card. B thanks A for their patience, gives the delivery day, and answers A's worry about what to do if it does not arrive.
+record_task: Record yourself reading aloud your closing message with the thank-you and the next step, then your reply to "what if it doesn't come?".
+self_check: Did you thank the customer for their patience? · Did you give a clear next step with a day? · Did you write "by Friday", not "till Friday"?
+
+@CSC-B-015
+id: CSC-B-015
+channel: Chat
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Opening
+sentence: hi good morning
+speaker: Customer
+situation: A customer opens the chat with only a greeting and does not mention a problem yet.
+recall_cue: A customer sends only a greeting and nothing else. What do they want, and how fast should you reply?
+stress: HI · good-MOR-ning
+linking: If read aloud: good_morning → "gud-MOR-ning" · hi_good → "high-gud"
+intonation: If read aloud: friendly and slightly rising; the customer is opening the door, not complaining.
+indian_pron_tip: If you read your reply aloud, "morning" ends in a clean "ng"; do not add a hard "g" after it ("mor-ning-guh").
+register: Friendly
+tone: Polite opening, testing the line
+importance: 4
+customer_emotion: Unsure whether a real person is there, and waiting to see if anyone answers.
+memory_hook: "Hi" is a knock on the door: open it fast, smile, and ask how you can help.
+hindi_meaning: हाय, आपको सुप्रभात।
+hindi_roman: Hi, aapko suprabhaat.
+simple_meaning: The customer is saying hello and checking that someone is there before explaining the problem.
+why_it_works: Many customers send a greeting first to see whether a person will answer. A quick, warm reply with your name and an open question invites them to explain the problem.
+key_chunk: hi + a greeting, with no problem yet
+grammar_pattern: Greeting only: hi + time-of-day greeting
+grammar_note: Customers often skip capitals and commas in chat; this is normal and not rude.
+tone_note: The customer is being polite. A slow reply or a long script can turn a polite start into a frustrated one.
+watch_out: ✗ Good morning! I am Kabir, how can I help to you today? → ✓ Good morning! I'm Kabir from [Company]. How can I help you today?
+dont_say: "Please state your issue." — it is cold and robotic after a friendly greeting.
+positive_swap: Instead of "State your query", say "Good morning! I'm Kabir. How can I help you today?"
+alt_1: hello good afternoon
+alt_2: hi, hello sir
+more_formal: Good morning, I hope you can help me.
+ask_next: Good morning! I'm Kabir from [Company]. How can I help you today?
+replies_you_may_hear: my order is late · i need to change my address · i have a question about my bill
+if_customer_pushes: Customer: "hello?? anyone?" → Agent: "Yes, I'm here! Sorry for the wait. I'm Kabir. How can I help you today?"
+cultural_note: Agents in India often reply "Good morning, sir" or "madam" to every customer; international customers may not expect this, so use "Good morning!" and the customer's name if you have it, then move to the problem quickly.
+channel_note: Voice: the caller usually says hello after your greeting. Email: customers rarely send a greeting alone, so this is mostly a chat habit.
+when_not_to_use: Do not reply with only "hi" back; that wastes a turn. Add your name and an open question.
+mini_conversation: Customer: hi good morning | Agent: Good morning! I'm Kabir from [Company]. How can I help you today? | Customer: my parcel hasn't come | Agent: I'm sorry your parcel hasn't arrived. Could you share your order number so I can check?
+source_rule: Chat: reply fast, greet with your name, and ask an open question.
+fill_blank: Good ____! I'm Kabir from [Company]. How can I help you today? (Hint: return the customer's greeting)
+fill_answer: morning
+mcq_question: A customer types only "hi good morning". What is the best reply?
+mcq_options: A) Good morning! I'm Kabir from [Company]. How can I help you today? | B) Good morning. Please type your order number so I can start. | C) Hello. What is your problem? Please write it clearly in one message. | D) Wait until the customer types the problem, then answer with a greeting.
+mcq_answer: A
+mcq_why: A replies quickly with a name and an open question. D is tempting, but the customer may be waiting to see whether anyone is there; B asks for details before knowing the problem, and C sounds blunt.
+reorder_task: help / Kabir / morning / can / I'm / How / Good / I
+reorder_answer: Good morning I'm Kabir How can I help
+hindi_to_english: Suprabhaat! Main [Company] se Kabir hoon. Bataiye, aaj main aapki kya madad kar sakta hoon?
+hindi_to_english_answer: Good morning! I'm Kabir from [Company]. How can I help you today?
+whats_next_customer: i want to return my shoes
+whats_next_reply: Sure, I can help with that. Could you share your order number?
+role_play: Partner A opens a chat with only "hi good morning" and waits. Partner B replies within a few seconds with a greeting, their name and an open question, then handles A's return request.
+record_task: Record yourself reading aloud your reply to "hi good morning", then your reply when the customer explains they want to return something.
+self_check: Did you reply with more than "hi"? · Did you give your name? · Did you ask an open question?
+
+@CSC-B-016
+id: CSC-B-016
+channel: Chat
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Opening
+sentence: need help with my order
+speaker: Customer
+situation: The customer's first real message names their order but not the problem.
+recall_cue: The customer names their order but not what is wrong. What two things do you need from them?
+stress: NEED-HELP · with-my-OR-der
+linking: If read aloud: need_help → "nee-dhelp" · with_my → "wi-my"
+intonation: If read aloud: flat and falling; it may hide worry or frustration, so read the next messages carefully.
+indian_pron_tip: If you read your reply aloud, say "order" as OR-der: put the tongue just behind the top teeth for the "d" (not curled back) and end with a soft "uh", not a full "ar".
+register: Neutral
+tone: Short, direct request
+importance: 4
+customer_emotion: Possibly worried or irritated, and wants to get to the point quickly.
+memory_hook: The customer handed you a closed box labelled "order"; your open question is the key that opens it.
+hindi_meaning: मुझे अपने ऑर्डर के बारे में मदद चाहिए।
+hindi_roman: Mujhe apne order ke baare mein madad chahiye.
+simple_meaning: I have a problem or a question about something I bought.
+why_it_works: The customer has named the topic, not the problem. It could be tracking, a change, a return or a complaint, so ask for the order number and one open question before you guess.
+key_chunk: need help with ___
+grammar_pattern: (I) + need + help + with + my + noun
+grammar_note: In chat, people often drop "I" at the start: "need help" means "I need help".
+tone_note: The short style is normal in chat, not rudeness. A sharp "What is the problem?" back sounds impatient; "Sure, I can help" sounds ready.
+watch_out: ✗ Tell me the problem. → ✓ Sure, I can help with that. Could you tell me what's happening with your order?
+dont_say: "Which order? Give details." — it sounds impatient and makes the customer feel they did something wrong.
+positive_swap: Instead of "What is your problem?", say "Sure, I can help. What's happening with your order?"
+alt_1: i have a problem with my order
+alt_2: question about my order pls
+more_formal: Hello, I need some help with a recent order.
+ask_next: Sure, I can help with that. Could you share your order number and tell me what's happening?
+replies_you_may_hear: it hasn't arrived · i want to cancel it · wrong size
+if_customer_pushes: Customer: "just check it, you have my email" → Agent: "Of course, I can look you up by your email. To open the right order, could you tell me what you ordered or roughly when?"
+cultural_note: Some customers write "I have one query regarding my order" (a common Indian-English style) and others write "need help with my order"; both mean the same, so answer the need, not the wording.
+channel_note: Voice: "I'm calling about my order." Email: the subject may just say "Order 61834", so read the body for the real problem.
+when_not_to_use: Do not send a tracking link straight away; the customer may want to cancel or return, not track.
+mini_conversation: Customer: need help with my order | Agent: Sure, I can help with that. Could you share your order number and tell me what's happening? | Customer: ORD-61834, wrong size | Agent: Thanks. I'm sorry the size is wrong. Let me set up an exchange for you.
+source_rule: Ask a clarifying question first; use a canned reply only when it fully fits.
+fill_blank: Sure, I can help with that. Could you share your order ____ and tell me what's happening? (Hint: starts with "n")
+fill_answer: number
+mcq_question: The customer writes "need help with my order". What is the best first reply?
+mcq_options: A) Sure, I can help. What's happening with your order, and what is the order number? | B) Here is the tracking link for your latest order. Is there anything else I can help with? | C) I'm transferring you to our returns team now so they can help with your order. | D) Please read our delivery and returns rules first, then tell me your question.
+mcq_answer: A
+mcq_why: The customer has not said the problem yet, so A reassures and asks. B is tempting because many order questions are about tracking, but it is only a guess; C guesses a return, and D makes the customer read rules first.
+reorder_task: what's / tell / Could / happening / me / you
+reorder_answer: Could you tell me what's happening
+hindi_to_english: Ji zaroor, main madad kar sakti hoon. Kya aap apna order number bata sakte hain?
+hindi_to_english_answer: Sure, I can help with that. Could you share your order number?
+whats_next_customer: it was supposed to come yesterday
+whats_next_reply: I'm sorry your order hasn't arrived. Let me check where it is now.
+role_play: Partner A writes only "need help with my order" and waits. Partner B replies with reassurance, asks for the order number and an open question, and finds out that A wants to change the size.
+record_task: Record yourself reading aloud your reply to "need help with my order" and your next message once the customer explains the problem.
+self_check: Did you reassure the customer first? · Did you ask what is happening instead of guessing? · Did you ask for the order number?
+
+@CSC-B-017
+id: CSC-B-017
+channel: Chat
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Listen & clarify
+sentence: recieved wrong item
+speaker: Customer
+situation: The customer opens a chat after unpacking a parcel and finding something they did not order.
+recall_cue: A customer types a short, misspelt message about getting the wrong product. What do they feel, and what do they need first?
+stress: re-CEIVED · WRONG · I-tem
+linking: If read aloud: wrong_item → "rong-eye-tem" (the "g" in "wrong" is silent, and "ng" runs into "item")
+intonation: If read aloud: flat and falling; a short, annoyed report of a problem.
+indian_pron_tip: If you read your reply aloud, "received" is ri-SEEVD, ending in one "vd" sound, not "ri-see-ved"; the "v" needs the top teeth on the lower lip.
+register: Neutral
+tone: Annoyed, short complaint
+importance: 5
+customer_emotion: Disappointed and annoyed, and worried about the trouble of sending it back.
+memory_hook: The spelling doesn't matter, the box does: they opened it and found someone else's present.
+hindi_meaning: मुझे गलत सामान मिला है।
+hindi_roman: Mujhe galat saamaan mila hai.
+simple_meaning: The product I got is not the one I ordered.
+why_it_works: The customer typed fast and misspelt "received", which shows they are annoyed and want action. They need an apology for this exact problem and a quick, easy fix, not a spelling check.
+key_chunk: (I) received + the wrong + noun
+grammar_pattern: (I) + received + (the) + wrong + item
+grammar_note: The correct spelling is "received" ("i before e, except after c"); the typo does not change the meaning.
+tone_note: Never correct a customer's spelling. Replying in clear, warm English and ignoring the typo is the polite choice.
+watch_out: ✗ I'm sorry you received wrong item. Tell me what item came? → ✓ I'm sorry you received the wrong item. Could you tell me what arrived instead?
+dont_say: "Are you sure you ordered the right one?" — it suggests the customer made the mistake before you have even checked.
+positive_swap: Instead of "You must return it first", say "I'm sorry you received the wrong item. Let me check your order and get the right one to you."
+alt_1: got the wrong thing in my parcel
+alt_2: this isn't what I ordered
+more_formal: I have received an item that is different from the one I ordered.
+ask_next: I'm sorry you received the wrong item. Could you share your order number and tell me what arrived instead?
+replies_you_may_hear: ordered a blue kettle, got a toaster · ORD-72405 · do i have to pay to send it back?
+if_customer_pushes: Customer: "why did you send me the wrong thing?" → Agent: "I'm sorry this happened. I don't know yet what went wrong, and I don't want to guess. What I can do is check your order now and get the right item to you as quickly as possible."
+cultural_note: Customers from every country misspell and skip words in chat; respond to the meaning. Avoid "Sorry for the inconvenience caused", which international customers often read as a template.
+channel_note: Voice: the caller will say "I've received the wrong item"; listen for frustration in the voice. Email: they may attach a photo, so thank them for it.
+when_not_to_use: Do not ask the customer to "check again" before you check the order yourself; it suggests they are wrong.
+mini_conversation: Customer: recieved wrong item | Agent: I'm sorry you received the wrong item. Could you share your order number and tell me what arrived instead? | Customer: ORD-72405, i got a toaster not a kettle | Agent: Thank you. I can see the mix-up on your order, so I'll send the kettle today and email you a free return label for the toaster.
+source_rule: Apologise specifically and offer a fix; no emoji with a complaint.
+fill_blank: I'm sorry you ____ the wrong item. Could you tell me what arrived instead? (Hint: the customer misspelt this word)
+fill_answer: received
+mcq_question: What does the customer mainly want when they type "recieved wrong item"?
+mcq_options: A) A polite correction of their spelling, so the chat is clear. | B) A reply asking them to check their order again carefully. | C) A message explaining how the warehouse packs parcels. | D) A quick apology, then help to get the right item.
+mcq_answer: D
+mcq_why: D is right: they want the mistake fixed fast. C is tempting if you think they want to know why it happened, but first they need the right item; B suggests the customer is wrong, and A feels rude.
+reorder_task: wrong / sorry / received / I'm / the / item / you
+reorder_answer: I'm sorry you received the wrong item
+hindi_to_english: Mujhe afsos hai ki aapko galat item mila. Kya aap bata sakte hain ki uski jagah kya aaya?
+hindi_to_english_answer: I'm sorry you received the wrong item. Could you tell me what arrived instead?
+whats_next_customer: do i have to pay to send it back?
+whats_next_reply: Let me check your order first. If we sent the wrong item, the return is free, and I'll email you a prepaid label today.
+role_play: Partner A types "recieved wrong item" and is annoyed. Partner B apologises for that exact problem, asks what arrived, checks the order, and then arranges the correct item and a free return.
+record_task: Record yourself reading aloud your reply to "recieved wrong item" and the message where you explain the fix.
+self_check: Did you ignore the spelling mistake? · Did you name the problem in your apology? · Did you offer a clear fix?
+
+@CSC-B-018
+id: CSC-B-018
+channel: Chat
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Difficult customer
+sentence: pls help asap
+speaker: Customer
+situation: The customer's first message is short and urgent, with no details yet.
+recall_cue: A customer sends a short, urgent message full of short forms and no details. What do they feel, and how should your reply look?
+stress: PLEASE · HELP · AY-sap (or A-S-A-P, letter by letter)
+linking: If read aloud: please_help → "pleez-help" · help_asap → "hel-pay-sap"
+intonation: If read aloud: fast and urgent, with strong stress on "help"; the customer is stressed.
+indian_pron_tip: If you read your reply aloud, "please" ends in a "z" sound (pleez), not an "s"; avoid "pliss".
+register: Neutral
+tone: Urgent, stressed, informal
+importance: 5
+customer_emotion: Stressed and in a hurry, perhaps worried about money or a deadline.
+memory_hook: It's a fire alarm: answer it in seconds, short and steady, then ask where the fire is.
+hindi_meaning: कृपया जल्दी से जल्दी मदद कीजिए।
+hindi_roman: Kripya jaldi se jaldi madad kijiye.
+simple_meaning: Please help me as soon as possible. ("pls" = please, "asap" = as soon as possible.)
+why_it_works: The customer feels the problem is urgent. They need a fast, short reply that shows someone is acting now, plus one quick question to find the problem.
+key_chunk: pls help asap = please help as soon as possible
+grammar_pattern: pls (please) + help + asap (as soon as possible)
+grammar_note: Customers may use short forms; agents should understand them but always reply in full words.
+tone_note: Reply fast and short. A long, scripted greeting feels slow to an urgent customer, and shorthand in your reply looks unprofessional.
+watch_out: ✗ Pls tell ur issue. → ✓ I'm here and I'll help you right now. What's happening?
+dont_say: "Please be patient, all agents are busy." — the customer already has someone, so it makes them feel ignored.
+positive_swap: Instead of "Please be patient", say "I'm here and I'll help you right now. What's happening?"
+alt_1: urgent help needed!!
+alt_2: plz someone help me quickly
+more_formal: I need urgent help, please.
+ask_next: I'm here and I'll help you right now. What's happening?
+replies_you_may_hear: money taken but order failed · can't log in, need my ticket now · card blocked
+if_customer_pushes: Customer: "hurry up!!" → Agent: "I'm on it. I can see the payment now, and I'll update you in two minutes."
+cultural_note: Shorthand like "pls", "asap" and "u" comes from customers everywhere. Some agents copy it back to sound friendly, but international customers expect full, plain words from the agent.
+channel_note: Voice: the caller sounds rushed, so keep your own pace steady and slightly slower. Email: the subject may say "URGENT"; reply quickly and say when you will act.
+when_not_to_use: Do not copy the customer's shorthand back ("pls wait"); always write in full words.
+mini_conversation: Customer: pls help asap | Agent: I'm here and I'll help you right now. What's happening? | Customer: money taken but order failed | Agent: I'm sorry your payment was taken but the order failed. I'm checking it now. What email address did you order with?
+source_rule: If the customer sounds urgent, reply briefly and at once; no shorthand from the agent.
+fill_blank: I'm here and I'll help you right ____. What's happening? (Hint: the opposite of "later")
+fill_answer: now
+mcq_question: What does "asap" mean in "pls help asap"?
+mcq_options: A) As slowly as possible | B) As simply as possible | C) As carefully as possible | D) As soon as possible
+mcq_answer: D
+mcq_why: "Asap" stands for "as soon as possible", so the customer wants a fast reply. The other options are real phrases, but the "s" in "asap" stands for "soon", not "slowly", "simply" or "carefully".
+reorder_task: right / help / I'll / you / now
+reorder_answer: I'll help you right now
+hindi_to_english: Main yahin hoon aapki madad ke liye. Kya hua hai?
+hindi_to_english_answer: I'm here to help. What's happened?
+whats_next_customer: can't log in, need my ticket now
+whats_next_reply: I'm sorry you're locked out. What's the email address on your account? I'll check it straight away.
+role_play: Partner A sends "pls help asap" about a payment taken for a failed order. Partner B replies within seconds, asks one short question, and keeps every message short and in full words.
+record_task: Record yourself reading aloud your first two replies to "pls help asap", keeping each one under 15 words.
+self_check: Did you reply quickly and briefly? · Did you write in full words, with no shorthand? · Did you ask one clear question?
+
+@CSC-B-019
+id: CSC-B-019
+channel: Chat
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Close
+sentence: ok thx bye
+speaker: Customer
+situation: You have just solved the customer's problem, and they are leaving the chat.
+recall_cue: After a solved problem, the customer sends a very short thank-you and goodbye. What does it mean, and what do you send back?
+stress: o-KAY · THANKS · BYE
+linking: If read aloud: okay_thanks → "oh-kay-thanks" · thanks_bye → "thanks-bye"
+intonation: If read aloud: light and falling; the customer is happy and finishing.
+indian_pron_tip: If you read your reply aloud, say the "w" in "welcome" with rounded lips and no teeth on the lip (like "west", not "vest"), so it is not heard as "velcome".
+register: Friendly
+tone: Casual, satisfied goodbye
+importance: 3
+customer_emotion: Satisfied, or at least finished, and ready to leave quickly.
+memory_hook: The customer is already at the door with their coat on: wave back quickly, and don't start a new conversation.
+hindi_meaning: ठीक है, धन्यवाद, बाय।
+hindi_roman: Theek hai, dhanyavaad, bye.
+simple_meaning: Okay, thank you, goodbye. ("thx" = thanks.)
+why_it_works: A short reply like this usually means the customer is happy and finished. They need a quick, warm goodbye back, not more questions or a long script.
+key_chunk: ok thx bye = okay, thanks, goodbye
+grammar_pattern: ok (okay) + thx (thanks) + bye (goodbye)
+grammar_note: "Thx" is a short form of "thanks"; agents read it but always write "thanks" in full.
+tone_note: A short, warm goodbye respects their time. Closing the chat with no reply feels cold, and a long script feels as if you did not notice they are leaving.
+watch_out: ✗ Thx, bye. Chat closed. → ✓ You're welcome, Aisha! Have a great day.
+dont_say: "Before you go, please answer these five questions." — the customer is leaving; one short rating request at most, if your team uses one.
+positive_swap: Instead of "Welcome, closing chat", say "You're welcome, Aisha! Have a great day."
+alt_1: ok thanks bye
+alt_2: thx, that's all
+more_formal: Thank you for your help. Goodbye.
+ask_next: You're welcome, Aisha! Glad I could help. Have a great day.
+replies_you_may_hear: bye then · 👍 · you too, take care
+if_customer_pushes: Customer: "wait, actually, when will the refund come?" → Agent: "Of course. It should reach your account by Wednesday."
+cultural_note: Many Indian English speakers reply "Welcome" alone; international customers may not expect this and usually hear "You're welcome". "No problem" is fine in a casual chat, but "You're welcome" is the safe default.
+channel_note: Voice: the caller says "Okay, thanks, bye", and you return it: "You're welcome, have a great day." Email: a customer may reply "thx"; you need not answer unless the case must be closed.
+when_not_to_use: If the issue is not fully solved, do not just say goodbye; restate the next step first ("Your refund will reach you by Wednesday").
+mini_conversation: Customer: is my refund done? | Agent: Yes, it's done and will reach your account by Wednesday. | Customer: ok thx bye | Agent: You're welcome, Aisha! Glad I could help. Have a great day.
+source_rule: Ending a chat: return the customer's goodbye; "You're welcome" is the safe default reply to thanks.
+fill_blank: You're welcome, Aisha! Glad I could ____. Have a great day. (Hint: starts with "h")
+fill_answer: help
+mcq_question: After you solve the problem, the customer types "ok thx bye". What should you do?
+mcq_options: A) Reply "You're welcome! Have a great day." and then close. | B) Close the chat without a reply, because the customer has already left. | C) Ask five more questions about their experience before you close. | D) Reply "thx bye" in the same style, so the customer feels understood.
+mcq_answer: A
+mcq_why: A returns the goodbye and then closes. D is tempting because it matches their style, but agents write in full words; B feels cold, and C keeps a leaving customer waiting.
+reorder_task: help / Glad / Aisha / could / welcome / I / You're
+reorder_answer: You're welcome Aisha Glad I could help
+hindi_to_english: Dhanyavaad ki koi baat nahin! Aapka din accha ho.
+hindi_to_english_answer: You're welcome! Have a great day.
+whats_next_customer: you too, bye
+whats_next_reply: Bye for now, Aisha. Take care!
+role_play: Partner B has just confirmed Partner A's delivery date. A types "ok thx bye", and B returns the goodbye warmly. On a second try, A adds one last quick question, and B answers before closing.
+record_task: Record yourself reading aloud your reply to "ok thx bye", and your reply if the customer then adds one more question.
+self_check: Did you return the goodbye instead of just closing? · Did you write "thanks" in full, with no shorthand? · Did you check the issue was really solved?
+
+@CSC-B-020
+id: CSC-B-020
+channel: Chat
+level: Basic
+cefr: A2
+kind: Understand it
+call_stage: Difficult customer
+sentence: is anyone there??
+speaker: Customer
+situation: The customer has been waiting a few minutes for a reply and sends this message.
+recall_cue: A customer sends this after waiting with no reply. What are they feeling, and what must your next message do at once?
+stress: is · AN-y-one · THERE??
+linking: If read aloud: is_anyone → "i-zen-ee-wun" · anyone_there → "en-ee-wun-there"
+intonation: If read aloud: a high rise on "there", showing impatience; the double question mark adds annoyance.
+indian_pron_tip: If you read your reply aloud, say "here" with a long "ee" (not "hair"), and start "there" with a voiced "th" (tongue between the teeth, voice on), not "dare".
+register: Neutral
+tone: Impatient, worried, a bit annoyed
+importance: 5
+customer_emotion: Ignored and impatient, worried that nobody is helping.
+memory_hook: Two question marks are two taps on the shoulder: turn round at once and say "I'm here".
+hindi_meaning: क्या कोई है??
+hindi_roman: Kya koi hai??
+simple_meaning: Hello? Is someone reading my messages? I've been waiting.
+why_it_works: Waiting in silence feels like being ignored. The customer needs instant proof that a person is there, a short apology for the wait and a real time for the answer.
+key_chunk: is anyone there??
+grammar_pattern: Is + anyone + there? (a yes/no question)
+grammar_note: Use "anyone" in questions; "??" in chat shows impatience, not a grammar mistake.
+tone_note: The customer is annoyed but not abusive. A fast, honest reply settles it; staying silent again or making excuses makes it worse.
+watch_out: ✗ Yes, I am there. → ✓ Yes, I'm here!
+dont_say: "We are experiencing high chat volumes." — it is an excuse, and the customer cares only about their own wait.
+positive_swap: Instead of "Please wait, I am busy with other chats", say "Yes, I'm here! Sorry for the wait. I'm checking your order now and will update you in two minutes."
+alt_1: hello?? anyone here
+alt_2: anyone??? been waiting 10 min
+more_formal: Hello, is anyone available to help me? I have been waiting for some time.
+ask_next: Yes, I'm here! Sorry for the wait. I'm checking your order now and will update you in two minutes.
+replies_you_may_hear: finally · ok thanks · why did it take so long?
+if_customer_pushes: Customer: "this is so slow, i've waited 10 minutes" → Agent: "You're right to be frustrated, and I'm sorry you waited so long. I'm checking your order now, and I'll update you in two minutes."
+cultural_note: Replying "I am there" is a common slip, because Hindi "main hoon" does not say here or there; in English the agent says "I'm here", since "there" points away from the speaker.
+channel_note: Voice: the caller says "Hello? Are you there?" during silence; answer at once: "Yes, I'm still here." Email: the customer sends a second email, so reply and apologise for the delay.
+when_not_to_use: Do not reply with an automatic "An agent will be with you shortly" if you are already in the chat; reply as yourself.
+mini_conversation: Customer: is anyone there?? | Agent: Yes, I'm here! Sorry for the wait. I'm checking your order now and will update you in two minutes. | Customer: ok | Agent: Thanks for waiting. Your order ships tomorrow morning.
+source_rule: Chat: reply fast, avoid long gaps, make no excuses for delays, and give a real time.
+fill_blank: Yes, I'm ____! Sorry for the wait. I'm checking your order now. (Hint: the opposite of "there")
+fill_answer: here
+mcq_question: Why does the customer write "is anyone there??"
+mcq_options: A) They feel ignored after waiting with no reply. | B) They want to start a friendly conversation. | C) They want to speak to a different agent straight away. | D) They are testing whether the chat works on their phone.
+mcq_answer: A
+mcq_why: The double question mark after a wait shows they feel ignored. D is tempting, but this message usually follows silence from the agent, not a technical test.
+reorder_task: your / Sorry / now / wait / for / I'm / the / checking / order
+reorder_answer: Sorry for the wait I'm checking your order now
+hindi_to_english: Ji, main yahin hoon! Der ke liye maaf kijiye. Main do minute mein aapko update doongi.
+hindi_to_english_answer: Yes, I'm here! Sorry for the wait. I'll update you in two minutes.
+whats_next_customer: why did it take so long?
+whats_next_reply: I'm sorry, the check took longer than I expected, and I should have updated you sooner. Your order ships tomorrow.
+role_play: Partner B leaves Partner A without a reply for two minutes. A writes "is anyone there??". B replies at once with "I'm here", a short apology and a real time, then sends the update.
+record_task: Record yourself reading aloud your reply to "is anyone there??", then the update message you send two minutes later.
+self_check: Did you reply at once and say "I'm here"? · Did you apologise without making excuses? · Did you give a real time for the update?

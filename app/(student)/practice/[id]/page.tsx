@@ -17,6 +17,7 @@ import { MAX_UPLOAD_BYTES } from "@/lib/storage";
 import { STATUS_BADGE } from "@/lib/audits";
 import { detailsOf } from "@/lib/wordCard";
 import { chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
+import { supportDetailsOf } from "@/lib/supportCard";
 
 export const revalidate = 0;
 
@@ -81,11 +82,14 @@ export default async function PracticePage({
       </Link>
 
       <h1 className="mt-3 font-display text-2xl font-bold text-ink">
-        {word ? `Say “${word.text}”` : exercise.title}
+        {word ? `${exercise.expects === "IMAGE" ? "Write" : "Say"} “${word.text}”` : exercise.title}
       </h1>
       {word ? (
         <p className="mt-1 text-sm text-ink-muted">
-          {word.kind !== "WORD"
+          {/* A support card's own task says exactly what to record or write. */}
+          {word.kind === "SUPPORT"
+            ? supportDetailsOf(word.details).record_task ?? ""
+            : word.kind !== "WORD"
             ? chunkGloss(chunkDetailsOf(word.details))
             : `${detailsOf(word.details).hindi_meaning} · ${detailsOf(word.details).ipa}`}
         </p>

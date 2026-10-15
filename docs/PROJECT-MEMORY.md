@@ -73,6 +73,10 @@ The 21 non-English decks in `content/fde-flashcards/` (924 cards: Microsoft Exce
 
 Not included: the Python and SQL decks (their workbooks are not in the repo — upload them in Admin → Import with a tag such as `programming` or `data`). The Excel deck (40 cards, first made on `claude/happy-galileo-167f8x`) now lives in `content/fde-flashcards/xl/`, audited and listed under data. Its XL-023 answer `#DIV/0!` was saved by Excel as an error value and the importer read it as empty; `lib/xlsxCards.ts` now reads error cells as their code.
 
+## Word sections (15 Oct)
+
+The 2,227 built-in words can be studied by **level** (A1 712 / A2 724 / B1+ 791), **topic** (13 topics folded from 163 categories by ordered regex rules in `lib/wordSections.ts`, first match wins; unmatched go to "More words"), **word type** (code prefix VRB/ADJ/ADV/NOU/PHR/grammar words) and **importance** (5 / 4 / ≤3). Each section is cut into packs of 50 by serial. Pages: `/flashcards/sections` and `/flashcards/sections/[key]`; the session takes `&sec=<key>&pack=<n>` and the Words tab shows a "📂 Sections" chip. A section is only a filter (`Deck.extra` in `lib/flashcards.ts`); no table or migration. The daily new-card limit stays global across sections. Checked locally (Postgres + Playwright): section totals add up to 2,227 in every family; a pack session only serves its own cards; pack progress updates after marking Known. Not done: goal-based tracks (IELTS / interview), search inside a section.
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

@@ -33,6 +33,7 @@ const chip = "shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium";
 export function DeckTopBar({
   k,
   type,
+  section,
   list,
   base,
   skipCount,
@@ -41,6 +42,8 @@ export function DeckTopBar({
 }: {
   k: DeckKind;
   type: string | null;
+  /** The word section being studied, if any, so it can be shown and left. */
+  section?: { label: string } | null;
   list: ListKey | undefined;
   base: string;
   skipCount: number;
@@ -63,6 +66,21 @@ export function DeckTopBar({
             </Link>
           ))}
         </nav>
+        {k.value === "words" ? (
+          <>
+            <Link
+              href="/flashcards/sections"
+              className={cn(chip, section ? "border-accent bg-accent/12 text-accent" : "border-border-strong text-ink hover:bg-hover")}
+            >
+              {section ? `📂 ${section.label}` : "📂 Sections"}
+            </Link>
+            {section ? (
+              <Link href="/flashcards?kind=words" aria-label="Study all words again" className={cn(chip, "border-border-strong text-ink-muted hover:bg-hover")}>
+                ✕ All words
+              </Link>
+            ) : null}
+          </>
+        ) : null}
         {/* After the card kinds and before the lists, where the owner placed
             it. On a narrow phone the row scrolls sideways to reach it. */}
         {/* Deck library: the student's own decks, the public library and the

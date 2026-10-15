@@ -48,7 +48,8 @@ export const WORD_SELECT = {
   videoUrl: true,
 } satisfies Prisma.WordSelect;
 
-export type Deck = { kind: CardKind; category?: string };
+/// `extra` narrows the built-in words to one section or pack (lib/wordSections).
+export type Deck = { kind: CardKind; category?: string; extra?: Prisma.WordWhereInput };
 
 // Must match the exercise titles created by prisma/import-words.ts and
 // prisma/import-chunks.ts (which also loads grammar). "Record yourself" attaches the recording to these.
@@ -61,7 +62,13 @@ export const PRACTICE_TITLE: Record<CardKind, string> = {
 function wordWhere(deck: Deck) {
   // deckId null: only built-in cards. Student-made and imported deck cards are
   // Word rows too, and must never leak into the shared daily session.
-  return { kind: deck.kind, deckId: null, ...(deck.category ? { category: deck.category } : {}) };
+  return {
+    kind: deck.kind,
+    deckId: null,
+    ...(deck.category ? { category: deck.category } : {}),
+    // AND, so a section filter that uses OR cannot collide with other keys.
+    ...(deck.extra ? { AND: [deck.extra] } : {}),
+  };
 }
 
 export async function deckCounts(userId: string, deck: Deck, newPerDay = NEW_PER_DAY) {

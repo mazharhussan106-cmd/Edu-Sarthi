@@ -17,6 +17,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
 import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/chunkCard";
+import { packWhere, sectionDef, sectionWhere } from "@/lib/wordSections";
 import { prefsOf } from "@/lib/preferences";
 import { chunkExtras, deckCounts, nextCardId, PRACTICE_TITLE, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
@@ -29,7 +30,7 @@ export const revalidate = 0;
 export default async function FlashcardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ kind?: string; type?: string; card?: string; q?: string; list?: string; more?: string; skip?: string }>;
+  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string }>;
 }) {
   const sp = await searchParams;
   const session = await auth();
@@ -54,10 +55,17 @@ export default async function FlashcardsPage({
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
-  const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}`;
+  // A word section (and optionally one pack of it) narrows the Words session.
+  // Only the Words tab has sections; on any other tab the parameter is ignored.
+  const def = k.kind === "WORD" ? sectionDef(sp.sec) : null;
+  const sectionFilter = def ? await sectionWhere(def.key) : null;
+  const packNo = def && sectionFilter ? Math.max(1, Math.floor(Number(sp.pack)) || 0) : 0;
+  const sectionExtra = sectionFilter ? (packNo ? await packWhere(sectionFilter, packNo) : sectionFilter) : undefined;
+  const sectionQuery = def && sectionFilter ? `&sec=${def.key}${packNo ? `&pack=${packNo}` : ""}` : "";
+  const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}${sectionQuery}`;
   const withMore = sp.more === "1" ? `${base}&more=1` : base;
   const skip = parseSkip(sp.skip);
-  const deck = { kind: k.kind, category: type ?? undefined };
+  const deck = { kind: k.kind, category: type ?? undefined, extra: sectionExtra };
   const counts = k.ready ? await deckCounts(userId, deck, newPerDay) : null;
 
   let body: React.ReactNode;
@@ -160,6 +168,7 @@ export default async function FlashcardsPage({
         type={type}
         list={list}
         base={base}
+        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}` } : null}
         skipCount={skip.length}
         skipHref={withMore}
         counts={counts}

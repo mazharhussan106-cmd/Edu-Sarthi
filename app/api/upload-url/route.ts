@@ -14,7 +14,7 @@ import { uploadUrlSchema } from "@/lib/validations";
 import { ALLOWED_TYPES, createUploadTarget, MAX_UPLOAD_BYTES } from "@/lib/storage";
 
 export async function POST(req: Request) {
-  const gate = await requireUser({ verified: true });
+  const gate = await requireUser({ verified: true, member: true });
   if (!gate.ok) return gate.res;
   const userId = gate.id;
 

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { SocialSignIn } from "@/components/auth/SocialSignIn";
 import {
   emailCodeSchema,
   emailLoginRequestSchema,
@@ -273,6 +274,8 @@ export default function LoginPage() {
           </Link>
         </form>
       )}
+
+      <SocialSignIn />
 
       <p className="mt-6 text-xs text-ink-muted">
         Prefer a password?{" "}

@@ -98,7 +98,7 @@ channel_note: Chat: "Could I have your full name, please?" works as is. Email: t
 when_not_to_use: Do not ask again if the caller already gave their name in the first sentence; use it instead: "Thanks, Mr Walker."
 mini_conversation: Customer: I need help with a refund. | Agent: Sure. Could I have your full name, please? | Customer: It's Anna Brooks. | Agent: Thank you, Ms Brooks. Let me find your account.
 source_rule: Verification: ask only for what you need, and state the purpose when the caller asks why.
-fill_blank: Could I have your full name, ____?
+fill_blank: Could I have your full name, ____ (starts with p)?
 fill_answer: please
 mcq_question: Which way of asking for the caller's name sounds most natural to an international customer?
 mcq_options: A) Please tell me your name quickly. | B) Could I have your full name, please? | C) What is your name? I need it now. | D) First give your name, then I will help.
@@ -504,7 +504,7 @@ channel_note: Chat: "Just to confirm: you were charged twice for one order?" Ema
 when_not_to_use: Do not paraphrase a one-line request like "What are your opening hours?"; just answer it.
 mini_conversation: Customer: I ordered once but my card shows two payments. | Agent: Let me make sure I have this right: you were charged twice for one order. Is that correct? | Customer: Yes, that's it. | Agent: Thank you. Let me find both payments.
 source_rule: Paraphrase before solving: sum up what you heard, then ask a yes/no question so the caller can correct you.
-fill_blank: Let me make ____ I have this right: you were charged twice for one order.
+fill_blank: Let me make ____ (starts with s) I have this right: you were charged twice for one order.
 fill_answer: sure
 mcq_question: The caller has just explained a confusing billing problem. What should you do before you start fixing it?
 mcq_options: A) Start the refund straight away, then explain what you did. | B) Say "Okay, okay, I understand" so they know you are listening. | C) Summarise the problem back to them and ask "Is that correct?" | D) Ask them to email all the details so you can read them properly.
@@ -609,7 +609,7 @@ tone_note: Short and warm sounds confident. "I will try" sounds unsure, and "Tha
 watch_out: ✗ I will try to help you for that. → ✓ Sure, I can help you with that.
 dont_say: "I'll try, but I'm not sure." — it makes a worried caller more worried.
 positive_swap: Instead of "I'll try my best", say "Sure, I can help you with that."
-alt_1: Of course, I can sort that out for you.
+alt_1: Of course, I'm happy to help you with your login.
 alt_2: Don't worry, let's get you back into your account.
 more_formal: Certainly, I'd be glad to help you with that.
 ask_next: First, could you tell me the email address you use to log in?
@@ -904,7 +904,7 @@ alt_2: I've got a question about my delivery.
 more_formal: I'm phoning regarding an order I placed on your website.
 ask_next: Sure, I can help with that. Could you give me your order number and tell me what's happening?
 replies_you_may_hear: It hasn't arrived yet. · I want to cancel it. · I got the wrong item.
-if_customer_pushes: Customer: "Can't you just see it? I gave my phone number already." → Agent: "You're right, and I'm sorry to ask again. I can find it from your number. I can see two recent orders; is it the one from Monday?"
+if_customer_pushes: Customer: "Can't you just see it? I gave my phone number already." → Agent: "You're right, and I'm sorry to ask again. I can find it from your number. To protect your account, could you confirm the email address on it? Then I'll pull up your recent orders."
 cultural_note: Indian callers may say "I have one query regarding my order"; international callers say "I'm calling about my order" or "It's about my order". Both mean the same thing, so respond to the problem, not the wording.
 channel_note: Chat version: "hi its about my order" — reply: "Hi! I can help with that. Could you share your order number and what's happening?" Email: the subject may just say "Order SO37542", so read the body for the actual problem.
 when_not_to_use: Do not treat it as a tracking question before you ask; the caller may want to cancel, return or complain.
@@ -1054,7 +1054,7 @@ speaker: Customer
 situation: You asked for the order number, and the customer needs a moment to look for it.
 recall_cue: The customer goes off to look for something you asked for. What do they mean, and what do you say?
 stress: HANG-ON · a-SEC · let-me-FIND-it
-linking: hang_on → "hang-gon" · let_me → "lem-mee" · find_it → "fine-dit"
+linking: hang_on → "ha-ngon" (the ng slides into "on", no hard g) · let_me → "lem-mee" · find_it → "fine-dit"
 intonation: Quick and casual, falling at the end; the customer is busy searching. Your reply should be short and relaxed, not hurried.
 indian_pron_tip: Listen for the word after "hang": "hang ON" (short o) means wait, and "hang UP" (u as in cup) means end the call. Say the "ng" in "hang" as one nasal sound, with no hard "g".
 register: Friendly

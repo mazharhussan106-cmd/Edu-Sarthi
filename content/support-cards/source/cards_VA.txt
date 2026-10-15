@@ -668,11 +668,11 @@ watch_out: ✗ Address can change only before parcel leave the warehouse. → �
 dont_say: "That's our policy, sir." — it gives no reason, so the customer feels the rule is random and argues.
 positive_swap: Instead of "Policy says we cannot change it", say "After it leaves the warehouse, it's with the courier, but I can ask them to hold it at your local depot."
 alt_1: Once a parcel leaves our warehouse, the courier controls it, so I can't change the address now. I can ask them to keep it at a depot near you.
-alt_2: The address can't be changed now because the courier already has the parcel. The good news is I can have it held for you to collect.
-more_formal: Address changes are possible only before dispatch, as the parcel is then in the courier's care. I would, however, be happy to arrange for it to be held at your local depot.
+alt_2: The address can't be changed now because the courier already has the parcel. The good news is I can ask them to hold it for you to collect.
+more_formal: Address changes are possible only before dispatch, as the parcel is then in the courier's care. I would, however, be happy to ask the courier to hold it at your local depot.
 ask_next: I'm sorry the timing didn't work out. Which area have you moved to? I'll find the closest depot and give you its opening hours.
 replies_you_may_hear: Why can't you just call the courier? · Okay, which depot? · That's really inconvenient.
-if_customer_pushes: Customer: "Why can't you just call the courier and change it?" → Agent: "I did ask, and they can't redirect a parcel already on the road. They can hold it, and I'll text you the depot address."
+if_customer_pushes: Customer: "Why can't you just call the courier and change it?" → Agent: "I understand, you want it at your new place. Once the courier has the parcel, I can't change the address from our side. What I can do is ask them to hold it at your local depot, and I'll text you as soon as they confirm."
 cultural_note: In India "courier boy" or "delivery boy" is a common way to name the driver. International customers may find "boy" odd for an adult; say "the driver" or "the courier".
 channel_note: Chat: give the reason in one short message and the depot option in the next. Email: explain why, offer the depot hold, and list the collection steps.
 when_not_to_use: Do not use it when you do not know the real reason for a rule; find out first rather than inventing one.
@@ -689,7 +689,7 @@ reorder_answer: I can ask them to hold it at your local depot
 hindi_to_english: Parcel nikal chuka hai, isliye address nahin badal sakte. Lekin main courier se use depot par rokne ko keh sakta/sakti hoon.
 hindi_to_english_answer: The parcel has already left the warehouse, so I can't change the address, but I can ask the courier to hold it at a depot for you.
 whats_next_customer: Okay, which depot is closest?
-whats_next_reply: The closest one is on Station Road, open 9 am to 7 pm. I'll text you the address and your collection code.
+whats_next_reply: The closest one is on Station Road, open 9 am to 7 pm. I'll text you the address now, and the collection code as soon as the courier confirms the hold.
 role_play: Partner A has moved and wants a parcel redirected after it has left the warehouse. Partner B explains why it can't be changed without saying "policy" and asks the courier for a depot hold.
 record_task: Record the sentence, then record your answer to "Why can't you just call the courier?"
 self_check: Did you give a real reason instead of "policy"? · Did you offer an alternative? · Did you say "depot" with a silent t?
@@ -821,8 +821,8 @@ sentence: This is absolutely ridiculous!
 speaker: Customer
 situation: A customer has just been told their refund will take another week, after already waiting a month.
 recall_cue: A customer bursts out with a strong word meaning "this makes no sense". What are they really telling you, and how do you answer?
-stress: THIS is AB-so-lute-ly ri-DIC-u-lous
-linking: This_is_absolutely → "thi-siz-AB-suh-loot-lee" · absolutely_ridiculous → no link, a tiny pause before "ri-DIK-yuh-lus"
+stress: THIS is ab-so-LUTE-ly ri-DIC-u-lous
+linking: This_is_absolutely → "thi-siz-ab-suh-LOOT-lee" · absolutely_ridiculous → no link, a tiny pause before "ri-DIK-yuh-lus"
 intonation: Usually loud and high, falling sharply on "-DIC-", with "absolutely" stretched for emphasis. Recognise the anger in the pitch, and answer in a lower, slower voice.
 indian_pron_tip: Listen for the stress on the second syllable, ri-DIC-u-lous; if you repeat the word, do not say RI-di-ku-lus. Native speakers often squeeze "absolutely" to "ab-s'loot-lee", so it can sound shorter than you expect.
 register: Neutral
@@ -904,7 +904,7 @@ alt_2: I understand. Two weeks is too long, and I'd like to get this sorted befo
 more_formal: I understand your frustration entirely. I would like to take personal responsibility for resolving this today.
 ask_next: I understand why you feel that way. Let me arrange your replacement now; could you confirm your delivery address?
 replies_you_may_hear: I'll believe it when it's done. · Fine, but I want a date. · I've already written the review.
-if_customer_pushes: Customer: "I've already written the review." → Agent: "I'm sorry it came to that. Let's get your sofa replaced first, and I'll stay in touch until it arrives."
+if_customer_pushes: Customer: "I've already written the review." → Agent: "I'm sorry it came to that. Let's get your sofa replaced first. I'll text you the delivery slot by 6 pm today, and I'll call you the day after it arrives to check everything is fine."
 cultural_note: Some agents are told to "protect the brand" and may plead with or warn the customer. International customers tend to react better when the agent simply owns the fix, as with any other complaint.
 channel_note: Chat: often written as "im going to post this on social media"; reply with ownership and a date. Email: often in the last line; answer it with the action plan, not a comment on the threat.
 when_not_to_use: Do not offer extra compensation only because of the threat; treat the customer the same as anyone else with the same problem.
@@ -968,7 +968,7 @@ channel_note: Chat: often "need this fixed today, no excuses"; reply with one li
 when_not_to_use: Do not promise "today" if it is not possible; give the honest earliest time and a workaround instead.
 mini_conversation: Customer: My card machine's dead. I want this sorted today. No excuses. | Agent: Understood. I can send a replacement machine by 4 pm today. Is someone at the café to receive it? | Customer: Yes, me. | Agent: Great, it's booked, and I'll text you the courier's tracking link in ten minutes.
 source_rule: Lead with what you can do and give a specific time; make no excuses for delays (Zendesk chat-etiquette guidance).
-fill_blank: Understood. I can send a replacement machine by 4 pm ____, so you can take payments again this evening.
+fill_blank: Understood. I can send a replacement machine by 4 pm ____, so you can take card payments again this afternoon.
 fill_answer: today
 mcq_question: A café owner says, "I want this sorted today. No excuses." What should your answer start with?
 mcq_options: A) What you can do for them today, and by what time you can do it. | B) A clear explanation of why the machine failed and what caused the fault. | C) A sincere apology that you repeat several times until they calm down. | D) A question about when they bought the machine and where they bought it.
@@ -996,7 +996,7 @@ speaker: Customer
 situation: You have just said "I apologise for the inconvenience caused, your concern is valuable to us" for the second time in the call.
 recall_cue: A customer accuses you of sounding like a robot reading lines. What are they asking for, and how do you change your style?
 stress: DON'T READ me a SCRIPT
-linking: Don't_read → "doh-REED" (the t almost disappears) · me_a → "mee-uh" · a_script → "uh-SKRIPT" (weak a, then the s-cluster)
+linking: Don't_read → "dohn-REED" (the t almost disappears) · me_a → "mee-uh" · a_script → "uh-SKRIPT" (weak a, then the s-cluster)
 intonation: Usually sharp and falling, often with every word stressed, and sometimes after a sigh. Hear it as "talk to me like a person".
 indian_pron_tip: "Script" begins with an s-cluster: say it straight, skript, without an added vowel ("is-kript"). Listen for the strong stress on "SCRIPT", the key word.
 register: Neutral
@@ -1074,7 +1074,7 @@ watch_out: ✗ Agent: Thank you so much, sir, please hold. → ✓ Agent: I know
 dont_say: "Great, thank you for holding!" — it takes the sarcasm literally and makes the customer feel unheard.
 positive_swap: Instead of "Please hold the line again", say "I know you've waited a lot today. Would a callback in 15 minutes be easier?"
 alt_1: I'm sorry, I know you've already held twice. Instead of another hold, can I call you back within 15 minutes?
-alt_2: You're right, you've waited far too much. Let me message the team instead, so you don't need to hold again.
+alt_2: I'm sorry, you've waited long enough already. Let me message the team instead, so you don't need to hold again.
 more_formal: I apologise for the repeated holds. Rather than ask you to wait again, may I call you back within 15 minutes with an update?
 ask_next: I know, that's the third time, and I'm sorry. Would it be easier if I called you back within 15 minutes instead?
 replies_you_may_hear: Yes, call me back. · No, I'll hold, just be quick. · Why does everything need a hold?
@@ -1111,10 +1111,10 @@ sentence: I'll take my business elsewhere.
 speaker: Customer
 situation: A customer of six years is upset that their insurance premium rose without warning and says they will move to a competitor.
 recall_cue: A loyal customer says they will move to a competitor. What are they really telling you, and what is your first move?
-stress: i'll TAKE my BIZ-nis ELSE-where
-linking: take_my → "tay-kmy" (no gap between k and m) · my_business → "mai-BIZ-nis" · business_elsewhere → "biz-ni-SELS-wair" (the s joins the e)
+stress: i'll TAKE my BIZ-nis else-WHERE
+linking: take_my → "tay-kmy" (no gap between k and m) · my_business → "mai-BIZ-nis" · business_elsewhere → "biz-ni-sels-WAIR" (the s joins the e)
 intonation: Usually calm, slow and final, falling on "elsewhere"; a quiet delivery can mean the decision is close. A loud one may be a bargaining move.
-indian_pron_tip: "Business" has two syllables, BIZ-nis, with a z sound, not "bi-zi-ness" in three beats. Listen for "elsewhere", stressed ELS-wair on the first part.
+indian_pron_tip: "Business" has two syllables, BIZ-nis, with a z sound, not "bi-zi-ness" in three beats. Listen for "elsewhere": British speakers stress the second part, els-WHERE (American speakers often say ELS-wair).
 register: Neutral
 tone: Calm, final warning
 importance: 5

@@ -211,3 +211,44 @@ All 60 voice cards (CSV-B/I/A-001 to 020) were re-checked against every round-1 
 - Named sources (Lewicki, Polin & Lount; CEB/Gartner; SQM Group; Zendesk; HEARD; LATTE) are kept as citations under rules 30-31, not brands.
 - Round-1 decisions kept: feminine slash forms on the speaker's own verbs, and dollars on Intermediate / rupees on some Advanced cards (both plausible for the deck's customers).
 - Chat-channel open promise questions (CSC-B-005, CSC-B-014, CSC-B-017) are outside this channel and were not touched.
+
+## Adversarial round 1
+
+| ID | field | problem | fix / decision |
+|---|---|---|---|
+| CSV-A-019 | alt_2 | "waited far too much" is not idiomatic | APPLIED (modified): "I'm sorry, you've waited long enough already. Let me message the team instead, so you don't need to hold again." The suggested "You're right, you've waited far too long" would copy the signature line of another Advanced card ("You're right, a month is far too long"), so a different idiomatic phrase was used |
+| CSV-I-015 | hindi_meaning, hindi_roman | "मुझसे ... पैसे काट लिए गए" is unidiomatic; money is deducted from an account | APPLIED: "एक ही चीज़ के लिए मेरे खाते से दो बार पैसे काट लिए गए हैं।" / "Ek hi cheez ke liye mere khaate se do baar paise kaat liye gaye hain." |
+| CSV-I-014 | alt_2 | Says "let me know when you're ready" and then reads the number at once | APPLIED: "I've got a case number for you. Just tell me when you're ready, and I'll read it out slowly." |
+| CSV-B-002 | fill_blank | "sir" / "madam" also fit the blank | APPLIED: "Could I have your full name, ____ (starts with p)?" |
+| CSV-B-009 | fill_blank | "certain" also fits the blank | APPLIED: "Let me make ____ (starts with s) I have this right: you were charged twice for one order." |
+| CSV-I-018 | hindi_to_english_answer | Said Friday 2-6 p.m.; rest of the card says Thursday 9 a.m.-1 p.m. | APPLIED: "Of course. It's due on Thursday, between 9 a.m. and 1 p.m." |
+| CSV-A-012 | if_customer_pushes | "I did ask" and "they can hold it" are an invented action and an unseen promise | APPLIED (modified): added an empathy opener, as the round-1 rule requires in pushback answers: "I understand, you want it at your new place. Once a parcel is on the road, the courier can't redirect it. I can ask them to hold it at your local depot, and I'll text you as soon as they confirm." |
+| CSV-A-012 | alt_2 | "I can have it held" promises the hold | APPLIED: "... The good news is I can ask them to hold it for you to collect." |
+| CSV-A-012 | more_formal | "arrange for it to be held" promises a hold only the courier grants | APPLIED: "... I would, however, be happy to ask the courier to hold it at your local depot." |
+| CSV-A-012 | whats_next_reply | Collection code promised before the courier agrees | APPLIED: "The closest one is on Station Road, open 9 am to 7 pm. I'll text you the address now, and the collection code as soon as the courier confirms the hold." |
+| CSV-B-011 | alt_1 | "I can sort that out for you" promises a result, against the card's own why_it_works | APPLIED (modified): "Of course, I'm happy to help you with your login." The suggested "help you get back into your account" would repeat alt_2 ("let's get you back into your account") and MCQ option D on the same card |
+
+After the changes: `python3 audit.py cards_VB.txt cards_VI.txt cards_VA.txt | grep -v "card missing"` shows only the summary line (the 120 errors are all "card missing" for other channels); `python3 rules_check.py` reports 0 rule issues. No sentence changed, so no quoting fields needed updates; id/channel/level/kind/call_stage/speaker, MCQ order and answers untouched; line counts unchanged.
+
+## Adversarial round 2
+
+| ID | Field | Finding | Outcome |
+|---|---|---|---|
+| CSV-A-015 | stress, linking | "absolutely" stressed AB-so-lute-ly; dictionaries give /ˌæbsəˈluːtli/ | APPLIED: stress "THIS is ab-so-LUTE-ly ri-DIC-u-lous"; linking "thi-siz-ab-suh-LOOT-lee" |
+| CSV-A-020 | indian_pron_tip, stress, linking | "elsewhere" given the American first-syllable stress; British norm is els-WHERE | APPLIED: tip now gives British els-WHERE and notes American ELS-wair; stress "i'll TAKE my BIZ-nis else-WHERE"; linking "biz-ni-sels-WAIR" |
+| CSV-A-018 | linking | "doh-REED" drops the /n/ of "don't" | APPLIED: "dohn-REED" (the t almost disappears) |
+| CSV-B-019 | linking | "hang-gon" spells the hard g the card's own tip warns against | APPLIED: "ha-ngon" (the ng slides into "on", no hard g) |
+| CSV-B-016 | if_customer_pushes | Agent discloses order history after only a phone number | APPLIED: agent asks for the account email to verify before pulling up recent orders |
+| CSV-A-012 | if_customer_pushes | "The courier can't redirect it" is an invented general reason and clashes with the depot-hold offer | APPLIED: "Once the courier has the parcel, I can't change the address from our side. What I can do is ask them to hold it at your local depot..." |
+| CSV-I-007 | situation | "by next Friday at the latest" only holds for a refund processed on a known day; ask_next/channel_note assume Wednesday 14 October | APPLIED: situation now opens "It is Wednesday, and you have just processed a refund; ..." (Wed 14 Oct + 7 working days = Fri 23 Oct) |
+
+After the changes: audit.py shows only the summary line (all errors are "card missing" for other channels); rules_check.py reports no issues. No sentence changed; id/channel/level/kind/call_stage/speaker, MCQ order and answers untouched.
+
+## Adversarial round 3
+
+| ID | Field | Finding | Outcome |
+|---|---|---|---|
+| CSV-A-017 | fill_blank | Machine arrives by 4 pm, so "take payments again this evening" understates the fix | APPLIED: "...by 4 pm ____, so you can take card payments again this afternoon." (fill_answer "today" unchanged) |
+| CSV-A-016 | if_customer_pushes | "I'll stay in touch until it arrives" is an open-ended promise with no time (rule 9) | APPLIED: "...Let's get your sofa replaced first. I'll text you the delivery slot by 6 pm today, and I'll call you the day after it arrives to check everything is fine." |
+
+No other field quotes either changed text; id/channel/level/kind/call_stage/speaker, MCQ order and answers untouched.

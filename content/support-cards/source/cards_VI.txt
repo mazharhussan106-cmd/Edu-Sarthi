@@ -355,7 +355,7 @@ kind: Say it
 call_stage: Set expectations
 sentence: Your refund will reach your account within five to seven working days, so by next Friday at the latest.
 speaker: Agent
-situation: You have just processed a refund, your system shows the standard five to seven working days for it, and the customer wants to know when the money will arrive.
+situation: It is Wednesday, and you have just processed a refund; your system shows the standard five to seven working days for it, and the customer wants to know when the money will arrive.
 recall_cue: The refund is done and the caller asks when they will get the money. How do you give a timeline they can check on a calendar?
 stress: your-RE-fund-will-REACH-your-ac-COUNT · with-IN-FIVE-to-SEV-en-WORK-ing-DAYS · so-by-NEXT-FRI-day · at-the-LATE-est
 linking: refund_will → "REE-fun-wil" · reach_your → "ree-chyer" · five_to_seven → "FYV-tuh-SEV-en" · at_the_latest → "a-thuh-LAY-test"
@@ -784,7 +784,7 @@ watch_out: ✗ Note down your reference number, it is CK4729. → ✓ I have a r
 dont_say: "Note it down: CK4729." said at full speed. The customer hears a blur of letters and numbers.
 positive_swap: Instead of "Note down quickly", say "Do you have something to write it down with? I'll say it slowly."
 alt_1: I'll give you a reference number for this. Have you got a pen handy?
-alt_2: Here's your case number. Let me know when you're ready, and I'll read it slowly: C-K-4-7-2-9.
+alt_2: I've got a case number for you. Just tell me when you're ready, and I'll read it out slowly.
 more_formal: I have a reference number for your complaint. Would you like a moment to find something to note it down with? I will read it slowly.
 ask_next: Thank you. The number is C-K … 4-7 … 2-9. Could you read it back to me, just to make sure I said it clearly?
 replies_you_may_hear: Hang on, let me get a pen. · Okay, go ahead. · Can you text it to me instead?
@@ -830,8 +830,8 @@ tone: Annoyed, worried complaint
 importance: 5
 customer_emotion: Worried about losing money and annoyed at the mistake.
 memory_hook: Picture a shop till ringing up the same item twice while the customer watches: they want the second ring taken off, fast.
-hindi_meaning: मुझसे एक ही चीज़ के लिए दो बार पैसे काट लिए गए हैं।
-hindi_roman: Mujhse ek hi cheez ke liye do baar paise kaat liye gaye hain.
+hindi_meaning: एक ही चीज़ के लिए मेरे खाते से दो बार पैसे काट लिए गए हैं।
+hindi_roman: Ek hi cheez ke liye mere khaate se do baar paise kaat liye gaye hain.
 simple_meaning: The customer paid two times for one product or service and wants one payment back.
 why_it_works: The real need is reassurance that the money is safe and will come back. They may also suspect fraud, so a calm, quick check matters more than a long apology.
 key_chunk: I've been charged ___ for ___.
@@ -1035,7 +1035,7 @@ mcq_why: "Just" means "only" here and signals impatience with long explanations.
 reorder_task: Thursday / arrive / It's / on / to / due
 reorder_answer: It's due to arrive on Thursday
 hindi_to_english: Customer sirf delivery ki date jaanna chahta hai. Seedha date aur time batayiye.
-hindi_to_english_answer: Of course. It's due on Friday, between 2 and 6 p.m.
+hindi_to_english_answer: Of course. It's due on Thursday, between 9 a.m. and 1 p.m.
 whats_next_customer: Thursday? Not before?
 whats_next_reply: I've checked, and Thursday is the earliest. I'll ask the courier to call you an hour before.
 role_play: Partner B starts explaining the warehouse process; Partner A interrupts with "Can you just tell me when it'll arrive?" Partner B stops, gives the date and time window in one sentence, and offers a tracking text.

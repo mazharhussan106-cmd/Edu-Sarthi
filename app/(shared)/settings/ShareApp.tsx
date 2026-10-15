@@ -14,9 +14,12 @@ import { Button } from "@/components/ui/Button";
 const MESSAGE = "EduSarthi: practise spoken English, get a teacher's scored audit, and learn with flashcards.";
 
 function siteUrl(): string {
-  // The configured address wins so a link shared from a preview build still
-  // points at the real site; the page's own origin is the fallback.
-  return (process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin).replace(/\/+$/, "");
+  // The address the student is using right now, not a configured value. A
+  // configured NEXT_PUBLIC_APP_URL can be wrong or point at a domain that is
+  // not connected yet (it also drives email links), and a share link that does
+  // not open is worse than none. Whatever opens this page is, by definition, a
+  // working address.
+  return window.location.origin;
 }
 
 export function ShareApp() {

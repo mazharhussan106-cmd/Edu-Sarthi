@@ -19,6 +19,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
 import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/chunkCard";
+import { packWhere, sectionDef, sectionWhere } from "@/lib/wordSections";
 import { channelLabel, isSupportChannel, isSupportLevel, levelLabel, supportDetailsOf, supportGloss } from "@/lib/supportCard";
 import { prefsOf } from "@/lib/preferences";
 import { chunkExtras, deckCounts, nextCardId, practiceTitle, WORD_SELECT } from "@/lib/flashcards";
@@ -41,7 +42,7 @@ function metaFor(kind: string, w: { category: string | null; partOfSpeech: strin
 export default async function FlashcardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ kind?: string; type?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; ch?: string; lv?: string }>;
+  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; ch?: string; lv?: string }>;
 }) {
   const sp = await searchParams;
   const session = await auth();
@@ -68,12 +69,21 @@ export default async function FlashcardsPage({
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
-  const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}${channel ? `&ch=${channel}` : ""}${level ? `&lv=${level}` : ""}`;
+  // A word section (and optionally one pack of it) narrows the Words session.
+  // Only the Words tab has sections; on any other tab the parameter is ignored.
+  const def = k.kind === "WORD" ? sectionDef(sp.sec) : null;
+  const sectionFilter = def ? await sectionWhere(def.key) : null;
+  // No `pack` means the whole section; only an explicit pack narrows it.
+  const packNo = def && sectionFilter && sp.pack ? Math.max(1, Math.floor(Number(sp.pack)) || 1) : 0;
+  const sectionExtra = sectionFilter ? (packNo ? await packWhere(sectionFilter, packNo) : sectionFilter) : undefined;
+  const sectionQuery = def && sectionFilter ? `&sec=${def.key}${packNo ? `&pack=${packNo}` : ""}` : "";
+  const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}${channel ? `&ch=${channel}` : ""}${level ? `&lv=${level}` : ""}${sectionQuery}`;
   const withMore = sp.more === "1" ? `${base}&more=1` : base;
   const skip = parseSkip(sp.skip);
   // Support keeps its channel in `category`, like a chunk's type, and its
-  // level in `partOfSpeech` as the sheet writes it ("Basic").
-  const deck = { kind: k.kind, category: type ?? channel ?? undefined, level: level ? levelLabel(level) : undefined };
+  // level in `partOfSpeech` as the sheet writes it ("Basic"). Word sections
+  // and packs narrow the built-in words through `extra`.
+  const deck = { kind: k.kind, category: type ?? channel ?? undefined, level: level ? levelLabel(level) : undefined, extra: sectionExtra };
   const counts = k.ready ? await deckCounts(userId, deck, newPerDay) : null;
 
   let body: React.ReactNode;
@@ -86,6 +96,8 @@ export default async function FlashcardsPage({
         deckId: null,
         ...(deck.category ? { category: deck.category } : {}),
         ...(deck.level ? { partOfSpeech: deck.level } : {}),
+        // Inside a section (or pack), search and lists look only in it.
+        ...(sectionExtra ? { AND: [sectionExtra] } : {}),
         ...(q
           ? { OR: [{ text: { contains: q, mode: "insensitive" } }, { code: { equals: q.toUpperCase() } }] }
           : { states: { some: { userId, [list!]: true } } }),
@@ -185,6 +197,7 @@ export default async function FlashcardsPage({
         level={level}
         list={list}
         base={base}
+        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}`, key: def.key } : null}
         skipCount={skip.length}
         skipHref={withMore}
         counts={counts}

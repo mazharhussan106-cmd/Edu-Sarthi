@@ -48,7 +48,9 @@ export const WORD_SELECT = {
   videoUrl: true,
 } satisfies Prisma.WordSelect;
 
-export type Deck = { kind: CardKind; category?: string; level?: string };
+/// `extra` narrows the built-in words to one section or pack (lib/wordSections);
+/// `level` is the Support tab's level filter.
+export type Deck = { kind: CardKind; category?: string; level?: string; extra?: Prisma.WordWhereInput };
 
 // Must match the exercise titles created by prisma/import-words.ts and
 // prisma/import-chunks.ts (which also loads grammar) and prisma/import-support.ts.
@@ -77,6 +79,8 @@ function wordWhere(deck: Deck) {
     deckId: null,
     ...(deck.category ? { category: deck.category } : {}),
     ...(deck.level ? { partOfSpeech: deck.level } : {}),
+    // AND, so a section filter that uses OR cannot collide with other keys.
+    ...(deck.extra ? { AND: [deck.extra] } : {}),
   };
 }
 

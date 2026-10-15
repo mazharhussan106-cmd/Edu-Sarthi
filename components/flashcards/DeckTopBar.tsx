@@ -45,6 +45,7 @@ function supportHref(channel: string | null, level: string | null): string {
 export function DeckTopBar({
   k,
   type,
+  section,
   channel = null,
   level = null,
   list,
@@ -55,6 +56,8 @@ export function DeckTopBar({
 }: {
   k: DeckKind;
   type: string | null;
+  /** The word section being studied, if any, so it can be shown and left. */
+  section?: { label: string; key: string } | null;
   /** Support tab only: the channel and level filters, as in the URL. */
   channel?: string | null;
   level?: string | null;
@@ -80,6 +83,26 @@ export function DeckTopBar({
             </Link>
           ))}
         </nav>
+        {k.value === "words" ? (
+          <>
+            <Link
+              href="/flashcards/sections"
+              className={cn(chip, section ? "border-accent bg-accent/12 text-accent" : "border-border-strong text-ink hover:bg-hover")}
+            >
+              {section ? `📂 ${section.label}` : "📂 Sections"}
+            </Link>
+            {section ? (
+              <Link href={`/search?sec=${section.key}`} aria-label={`Search in ${section.label}`} className={cn(chip, "border-border-strong text-ink hover:bg-hover")}>
+                🔍 Search here
+              </Link>
+            ) : null}
+            {section ? (
+              <Link href="/flashcards?kind=words" aria-label="Study all words again" className={cn(chip, "border-border-strong text-ink-muted hover:bg-hover")}>
+                ✕ All words
+              </Link>
+            ) : null}
+          </>
+        ) : null}
         {/* After the card kinds and before the lists, where the owner placed
             it. On a narrow phone the row scrolls sideways to reach it. */}
         {/* Deck library: the student's own decks, the public library and the

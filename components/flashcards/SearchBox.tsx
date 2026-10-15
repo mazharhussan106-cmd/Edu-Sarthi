@@ -13,6 +13,7 @@
 "use client";
 
 import { Clock, Search } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -28,14 +29,16 @@ const KINDS = [
 ] as const;
 type Kind = (typeof KINDS)[number]["value"];
 
-type Entry = { q: string; kind: Kind };
+// `sec` is set when the search was made inside a word section, so tapping it
+// again searches the same section; `secLabel` is only for showing it.
+type Entry = { q: string; kind: Kind; sec?: string; secLabel?: string };
 
 function load(): Entry[] {
   try {
     const raw = JSON.parse(window.localStorage.getItem(KEY) ?? "[]");
     if (!Array.isArray(raw)) return [];
     return raw
-      .filter((e): e is Entry => typeof e?.q === "string" && KINDS.some((k) => k.value === e?.kind))
+      .filter((e): e is Entry => typeof e?.q === "string" && KINDS.some((k) => k.value === e?.kind) && (e.sec === undefined || typeof e.sec === "string"))
       .slice(0, MAX);
   } catch {
     return [];
@@ -50,7 +53,7 @@ function save(list: Entry[]) {
   }
 }
 
-export function SearchBox() {
+export function SearchBox({ section }: { section?: { key: string; label: string } | null }) {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
   const [q, setQ] = useState("");
@@ -66,10 +69,11 @@ export function SearchBox() {
     const text = entry.q.trim().slice(0, 60);
     if (!text) return;
     // Newest first, and the same search is moved up rather than repeated.
-    const next = [{ q: text, kind: entry.kind }, ...history.filter((h) => !(h.q === text && h.kind === entry.kind))].slice(0, MAX);
+    const same = (h: Entry) => h.q === text && h.kind === entry.kind && h.sec === entry.sec;
+    const next = [{ q: text, kind: entry.kind, sec: entry.sec, secLabel: entry.secLabel }, ...history.filter((h) => !same(h))].slice(0, MAX);
     save(next);
     setHistory(next);
-    router.push(`/flashcards?kind=${entry.kind}&q=${encodeURIComponent(text)}`);
+    router.push(`/flashcards?kind=${entry.kind}${entry.sec ? `&sec=${entry.sec}` : ""}&q=${encodeURIComponent(text)}`);
   }
 
   function clear() {
@@ -83,7 +87,7 @@ export function SearchBox() {
         role="search"
         onSubmit={(e) => {
           e.preventDefault();
-          go({ q, kind });
+          go(section ? { q, kind: "words", sec: section.key, secLabel: section.label } : { q, kind });
         }}
         className="relative"
       >
@@ -101,9 +105,16 @@ export function SearchBox() {
         />
       </form>
 
-      <div className="mt-4">
-        <SegmentedControl label="Search in" options={KINDS} value={kind} onValueChange={(v) => setKind(v)} />
-      </div>
+      {section ? (
+        <p className="mt-4 text-sm text-ink-muted">
+          Searching only in <b className="text-ink">{section.label}</b>.{" "}
+          <Link href="/search" className="font-medium text-accent hover:underline">Search all cards instead</Link>
+        </p>
+      ) : (
+        <div className="mt-4">
+          <SegmentedControl label="Search in" options={KINDS} value={kind} onValueChange={(v) => setKind(v)} />
+        </div>
+      )}
 
       {history.length > 0 ? (
         <section className="mt-6" aria-labelledby="recent-heading">
@@ -113,7 +124,7 @@ export function SearchBox() {
           </div>
           <ul className="mt-2 divide-y divide-border border-y border-border">
             {history.map((h) => (
-              <li key={`${h.kind}-${h.q}`}>
+              <li key={`${h.kind}-${h.sec ?? ""}-${h.q}`}>
                 <button
                   type="button"
                   onClick={() => go(h)}
@@ -121,7 +132,7 @@ export function SearchBox() {
                 >
                   <Clock className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden="true" />
                   <span className="min-w-0 flex-1 truncate">{h.q}</span>
-                  <span className="shrink-0 text-xs text-ink-muted">{KINDS.find((k) => k.value === h.kind)?.label}</span>
+                  <span className="shrink-0 text-xs text-ink-muted">{h.secLabel ?? KINDS.find((k) => k.value === h.kind)?.label}</span>
                 </button>
               </li>
             ))}

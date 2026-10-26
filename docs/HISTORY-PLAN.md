@@ -27,6 +27,8 @@ Branch: `claude/zen-noether-2av4n9`. Built 26 Oct 2026. Owner asked for: both ki
 - **Deleting study history** removes only `ReviewLog` rows. `CardState` (review dates, streak source) is untouched.
 - Dashboard card catches a missing `ReviewLog` table so a deploy before Database setup cannot take the dashboard down. `/history` itself has no such guard.
 
+- **DPDP export** (`app/api/me/route.ts`) now includes `cardStates` and `reviewLogs` (capped at 50,000 log rows). Deletion already removes both through cascades.
+
 ## To go live
 
 1. Merge into `main`.
@@ -34,8 +36,7 @@ Branch: `claude/zen-noether-2av4n9`. Built 26 Oct 2026. Owner asked for: both ki
 
 ## Not done / undecided
 
-- **12-month cleanup of `ReviewLog`** (agreed default, not built). It needs a cron beside `lib/retention.ts`. Until then rows are kept until the student deletes them or the account is deleted (`onDelete: Cascade` handles the account).
-- The DPDP data export (`app/api/me/route.ts`) includes no card data at all — neither `CardState` nor `ReviewLog`. Decide whether it should before the export is described as complete.
+- **No automatic cleanup of `ReviewLog` — owner's decision, 26 Oct (supersedes the earlier 12-month default).** Rows are kept until the student deletes them or the account is deleted (`onDelete: Cascade`). The table grows by one row per card answer; revisit if it gets large.
 - The student sees one page of 20 at a time with Older/Newest links; no date filter or search.
 - Nothing was run against the real Supabase database or opened in a browser. Verified: `tsc` and `next build` (after step 4), and the `lib/history.ts` queries against a throwaway local Postgres (paging, access rule, private-card text withheld). The pages themselves were not rendered.
 - `dashboard/page.tsx` is 243 lines; split it before adding anything else.

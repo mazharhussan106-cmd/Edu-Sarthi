@@ -92,7 +92,7 @@ Done: student `/history` (Practice = recordings and audits; Study = every card a
 
 **Needs before it works live:** merge, then run Actions → Database setup (adds `ReviewLog`; nothing existing is touched). Study history starts that day; earlier answers cannot be recovered.
 
-Not done: 12-month cleanup cron for `ReviewLog`; the DPDP export has no card data; nothing was rendered in a browser or run on the real database.
+The DPDP export now includes card progress and study history. Owner decided **no automatic cleanup** of `ReviewLog`. Not done: nothing was rendered in a browser or run on the real database.
 
 ## Starting a new chat
 

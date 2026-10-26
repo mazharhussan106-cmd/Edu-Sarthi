@@ -83,6 +83,13 @@ model User {
   isGuest           Boolean   @default(false)
   theme             Theme     @default(LIGHT)
   preferences       Json?
+  /// AI card maker. Flashcards the AI has generated for this user, ever (not
+  /// per day): the free plan stops at a fixed total. Counted when generated,
+  /// not when saved, because the cost is in the generating.
+  aiCardsUsed       Int       @default(0)
+  /// Model tokens (input + output) spent on this user's AI requests. Not used
+  /// for a limit yet; kept so a token-based plan can start from real history.
+  aiTokensUsed      Int       @default(0)
 
   // Student side
   submissions Submission[] @relation("StudentSubmissions")

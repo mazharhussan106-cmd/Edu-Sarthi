@@ -40,6 +40,24 @@ function put(url: string, file: File): Promise<boolean> {
   });
 }
 
+/// Adds one PDF or picture as a source for the AI card maker: asks the server
+/// whether it accepts the file, then sends it straight to storage. Returns the
+/// id the questions and make routes take.
+export async function uploadAiSource(file: File): Promise<ApiResult<{ id: string; name: string }>> {
+  const contentType = file.type.split(";")[0].trim();
+  const target = await callApi<{ id: string; name: string; url: string }>("/api/decks/ai-cards/sources", {
+    filename: file.name || "source",
+    contentType,
+    sizeBytes: file.size,
+  });
+  if (!target.ok) return target;
+  const typed = file.type === contentType ? file : new File([file], file.name, { type: contentType });
+  if (!(await put(target.data.url, typed))) {
+    return { ok: false, error: `"${file.name}" did not upload. Check your connection and add it again.` };
+  }
+  return { ok: true, data: { id: target.data.id, name: target.data.name } };
+}
+
 /// Uploads one picture or recording and returns its storage key.
 export async function uploadMedia(file: File, kind: "IMAGE" | "AUDIO"): Promise<ApiResult<{ key: string }>> {
   // "audio/webm;codecs=opus" → "audio/webm": the API matches the bare type.

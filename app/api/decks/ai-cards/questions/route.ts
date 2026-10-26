@@ -13,6 +13,7 @@ import { askQuestions } from "@/lib/aiCards";
 import { loadRemembered } from "@/lib/aiCardPrefs";
 import { mayAsk, remainingCards, settleCards } from "@/lib/aiCardLimits";
 import { requestSchema } from "@/lib/aiCardSchemas";
+import { resolveSources } from "@/lib/aiSources";
 import { AiError } from "@/lib/aiTranscribe";
 import { requireUser } from "@/lib/apiUser";
 import { readJson } from "@/lib/decks";
@@ -36,7 +37,8 @@ export async function POST(req: Request) {
 
   try {
     const remembered = await loadRemembered(gate.id);
-    const asked = await askQuestions({ ...parsed.data, remembered });
+    const { sources } = await resolveSources(gate.id, parsed.data.sources);
+    const asked = await askQuestions({ request: parsed.data.request, sources, remembered });
     // Counted even though no card is made: the call was paid for.
     await settleCards(gate.id, gate.role, 0, 0, asked.tokens).catch(() => undefined);
     return NextResponse.json({

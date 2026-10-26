@@ -151,6 +151,28 @@ function tokens(u: { input_tokens: number; output_tokens: number; cache_creation
   return u.input_tokens + u.output_tokens + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0);
 }
 
+/// Most input tokens one request may use. A PDF page costs roughly 1,500 to
+/// 3,000, so this is a few dozen pages, which is plenty for a chapter and keeps
+/// one request from costing more than the cards are worth.
+export const MAX_SOURCE_TOKENS = 60_000;
+
+/// Counts the request before it is made, when it carries a file. Counting is
+/// free, and it is the only way to know what a PDF will cost: its size in bytes
+/// says almost nothing about its pages. Text-only requests are already bounded
+/// by the pasted-text limit, so they skip the extra call.
+async function checkSize(ai: Anthropic, system: string, content: Anthropic.ContentBlockParam[], m: Material) {
+  if (!m.sources.some((s) => s.type !== "text")) return;
+  let n: number;
+  try {
+    n = (await ai.messages.countTokens({ model: MODEL, system, messages: [{ role: "user", content }] })).input_tokens;
+  } catch (err) {
+    throw failure(err);
+  }
+  if (n > MAX_SOURCE_TOKENS) {
+    throw new AiError("Your files are too long to read in one go. Remove a file, or use fewer pages, then try again.");
+  }
+}
+
 function needKey(client?: Anthropic) {
   if (!client && !process.env.ANTHROPIC_API_KEY) {
     throw new AiError("The AI card maker is not switched on yet. Ask an admin to add the Anthropic key.");
@@ -164,6 +186,8 @@ export async function askQuestions(
   needKey(client);
   const ai = client ?? new Anthropic({ timeout: 40_000, maxRetries: 1 });
   const tail = `<request>\n${input.request}\n</request>\n\nThe learner's answers last time (use them as suggestions where they still fit):\n${JSON.stringify(input.remembered)}`;
+  const content = blocks(input, tail);
+  await checkSize(ai, ASK_SYSTEM, content, input);
   let res;
   try {
     res = await ai.messages.parse({
@@ -173,7 +197,7 @@ export async function askQuestions(
       // call runs before the learner has made a single card.
       output_config: { effort: "low", format: zodOutputFormat(questionsModel) },
       system: ASK_SYSTEM,
-      messages: [{ role: "user", content: blocks(input, tail) }],
+      messages: [{ role: "user", content }],
     });
   } catch (err) {
     throw failure(err);
@@ -192,6 +216,8 @@ export async function makeCards(
   const ai = client ?? new Anthropic({ timeout: 240_000, maxRetries: 0 });
   const answers = input.answers.map((a) => `- ${a.question} ${a.answer}`).join("\n");
   const tail = `<request>\n${input.request}\n</request>\n\n<answers>\n${answers}\n</answers>\n\nMake at most ${count} cards.`;
+  const content = blocks(input, tail);
+  await checkSize(ai, MAKE_SYSTEM, content, input);
   let res;
   try {
     res = await ai.messages.parse({
@@ -199,7 +225,7 @@ export async function makeCards(
       max_tokens: 16000,
       output_config: { effort: "medium", format: zodOutputFormat(cardsModel) },
       system: MAKE_SYSTEM,
-      messages: [{ role: "user", content: blocks(input, tail) }],
+      messages: [{ role: "user", content }],
     });
   } catch (err) {
     throw failure(err);

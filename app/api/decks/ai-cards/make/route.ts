@@ -15,6 +15,7 @@ import { MAX_CARDS_PER_REQUEST, makeCards, rememberAnswers, type Answer } from "
 import { loadRemembered, saveRemembered } from "@/lib/aiCardPrefs";
 import { reserveCards, settleCards } from "@/lib/aiCardLimits";
 import { makeSchema } from "@/lib/aiCardSchemas";
+import { deleteSources, resolveSources } from "@/lib/aiSources";
 import { AiError } from "@/lib/aiTranscribe";
 import { requireUser } from "@/lib/apiUser";
 import { readJson } from "@/lib/decks";
@@ -33,11 +34,22 @@ export async function POST(req: Request) {
 
   const parsed = makeSchema.safeParse(await readJson(req));
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check your answers and try again.", 400);
-  const { request, sources, questions, answers } = parsed.data;
+  const { request, sources: given, questions, answers } = parsed.data;
 
   const countText = answers.count?.[0] ?? "";
   if (!/^\d{1,3}$/.test(countText) || Number(countText) < 1) return fail("Say how many cards you want, then try again.", 400);
   const wanted = Math.min(Number(countText), MAX_CARDS_PER_REQUEST);
+
+  // Files are read before any card is reserved, so a missing or damaged file
+  // costs the person nothing.
+  let files;
+  try {
+    files = await resolveSources(gate.id, given);
+  } catch (err) {
+    if (err instanceof AiError) return fail(err.message, 422);
+    throw err;
+  }
+  const sources = files.sources;
 
   const reserved = await reserveCards(gate.id, gate.role, wanted);
   if (!reserved.ok) return fail(reserved.error, 429);
@@ -59,6 +71,9 @@ export async function POST(req: Request) {
   }
 
   // The cards are already made, so a bookkeeping failure must not hide them.
+  // The files are deleted now that they have been used; on a failure above they
+  // stay, so the person can try again without uploading them twice.
+  await deleteSources(gate.id, files.fileIds).catch(() => undefined);
   await settleCards(gate.id, gate.role, reserved.granted, made.cardCount, made.tokens).catch(() => undefined);
   await loadRemembered(gate.id)
     .then((prev) => saveRemembered(gate.id, rememberAnswers(questions, answers, prev)))

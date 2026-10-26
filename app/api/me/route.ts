@@ -121,6 +121,8 @@ export async function DELETE(req: Request) {
   const keys = await prisma.submission.findMany({ where: { studentId: userId }, select: { mediaUrl: true } });
   // Pictures and recordings on the student's own flashcards.
   const cardMedia = await prisma.word.findMany({ where: { ownerId: userId }, select: { imageUrl: true, audioUrl: true } });
+  // Files added for the AI card maker that are still waiting to be used.
+  const sourceFiles = await prisma.aiSource.findMany({ where: { userId }, select: { key: true } });
   const me = await prisma.user.findUnique({ where: { id: userId }, select: { publicId: true } });
 
   // Rows first, files second. If storage fails the account is still gone and
@@ -137,7 +139,7 @@ export async function DELETE(req: Request) {
       { status: 500 },
     );
   }
-  const failed = await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia)]);
+  const failed = await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia), ...sourceFiles.map((s) => s.key)]);
   try {
     // Kept as the record that an erasure request was carried out. Only the
     // student ID is stored — the email is exactly what was asked to be erased.

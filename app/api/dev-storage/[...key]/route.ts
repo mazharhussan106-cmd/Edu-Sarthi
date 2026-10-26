@@ -11,6 +11,7 @@ import path from "path";
 import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
+import { SOURCE_TYPES } from "@/lib/aiSources";
 import { ALLOWED_TYPES, LOCAL_STORAGE, localPath, MAX_UPLOAD_BYTES, isOwnKey } from "@/lib/storage";
 
 const TYPE_BY_EXT: Record<string, string> = {
@@ -45,7 +46,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ key: str
   }
 
   const type = req.headers.get("content-type") ?? "";
-  if (!ALLOWED_TYPES[type]) return new NextResponse(null, { status: 415 });
+  // Recordings, plus the PDFs and pictures the AI card maker takes as sources.
+  if (!ALLOWED_TYPES[type] && !SOURCE_TYPES[type]) return new NextResponse(null, { status: 415 });
 
   const bytes = Buffer.from(await req.arrayBuffer());
   if (bytes.length === 0 || bytes.length > MAX_UPLOAD_BYTES) {

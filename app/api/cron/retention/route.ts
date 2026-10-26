@@ -6,6 +6,7 @@
 
 import { NextResponse } from "next/server";
 
+import { sweepSources } from "@/lib/aiSources";
 import { purgeBatch, sweepExpiredAuthRows } from "@/lib/retention";
 
 export const dynamic = "force-dynamic";
@@ -23,5 +24,7 @@ export async function GET(req: Request) {
     if (n === 0) break;
   }
   const swept = await sweepExpiredAuthRows();
-  return NextResponse.json({ ok: true, purged: total, swept });
+  // PDFs and photos added for the AI card maker that nobody finished with.
+  const sources = await sweepSources();
+  return NextResponse.json({ ok: true, purged: total, swept, sources });
 }

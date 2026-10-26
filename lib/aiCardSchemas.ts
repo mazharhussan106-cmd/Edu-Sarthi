@@ -2,18 +2,22 @@
 // schemas can run in the form for instant feedback; the routes enforce them,
 // because client checks are assumed bypassed.
 //
-// It deliberately holds no model, database or storage code. Sources are text
-// only for now; files (PDF, photos) are added where uploads are handled.
+// It deliberately holds no model, database or storage code. A source is either
+// pasted text or the id of a file already uploaded through
+// /api/decks/ai-cards/sources; the file itself never travels in these requests.
 
 import { z } from "zod";
 
 export const MAX_SOURCE_TEXT = 30_000;
 export const MAX_SOURCES = 5;
 
-export const sourceSchema = z.object({
+const textSource = z.object({
   type: z.literal("text"),
   text: z.string().trim().min(1, "The pasted text is empty").max(MAX_SOURCE_TEXT, `Keep each pasted text under ${MAX_SOURCE_TEXT.toLocaleString("en-IN")} characters, or split it into two`),
 });
+const fileSource = z.object({ type: z.literal("file"), id: z.string().min(1).max(40) });
+
+export const sourceSchema = z.discriminatedUnion("type", [textSource, fileSource]);
 
 export const requestSchema = z.object({
   request: z.string().trim().min(3, "Tell the AI what you want cards for").max(2000, "Keep the request under 2000 characters"),
@@ -35,3 +39,13 @@ export const makeSchema = requestSchema.extend({
   questions: z.array(questionSchema).min(1).max(6),
   answers: z.record(z.string(), z.array(z.string().trim().max(500)).max(8)),
 });
+
+/// A file to be added: only what the server needs to decide whether to accept
+/// it. The bytes go straight to storage, not through the app.
+export const sourceFileSchema = z.object({
+  filename: z.string().min(1).max(255),
+  contentType: z.string().min(1),
+  sizeBytes: z.number().int().positive("That file appears to be empty"),
+});
+
+export const removeSourceSchema = z.object({ id: z.string().min(1).max(40) });

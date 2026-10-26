@@ -33,6 +33,20 @@ export default function PrivacyPage() {
               six-digit code before the account can be used.
             </li>
             <li>
+              <span className="text-ink">
+                Your name and email from Google, if you sign in with Google.
+              </span>{" "}
+              Google tells us your name and your email address, and that it has
+              checked the email. We do not receive your Google password, your
+              contacts, your files or anything else in your Google account, and
+              we do not post to it.
+            </li>
+            <li>
+              <span className="text-ink">A guest account, if you continue as a guest.</span>{" "}
+              It stores no name or email, only what you study (your flashcard
+              progress). A guest cannot record, publish decks or get audits.
+            </li>
+            <li>
               <span className="text-ink">Your mobile number, if you give it.</span>{" "}
               Optional. We store it but do not verify it and do not currently
               send SMS.
@@ -114,6 +128,11 @@ export default function PrivacyPage() {
             <li>
               <span className="text-ink">Vercel</span> — hosts and serves the
               application.
+            </li>
+            <li>
+              <span className="text-ink">Google</span> — signs you in when you
+              choose &ldquo;Continue with Google&rdquo;. It sees that you signed
+              in to EduSarthi, under Google&apos;s own privacy policy.
             </li>
             <li>
               <span className="text-ink">SendGrid</span> — sends verification

@@ -99,8 +99,9 @@ model User {
   reviewsGiven       Feedback[]   @relation("TeacherFeedback")
   claimedSubmissions Submission[] @relation("ClaimedSubmissions")
   aiDraftLogs        AiDraftLog[]
+  aiSources          AiSource[]
 
-  accounts           Account[]
+  accounts          Account[]
   sessions            Session[]
   verificationCodes   VerificationCode[]
   passwordResetTokens PasswordResetToken[]
@@ -202,6 +203,30 @@ model AiDraftLog {
 
   @@index([teacherId, createdAt]) // "drafts by this teacher today"
   @@index([submissionId]) // "drafts already made for this submission"
+}
+
+/// A file (PDF or photo) a person added as a source for the AI card maker. The
+/// file sits in storage only until the cards are made, or a day if they walk
+/// away; this row is what lets both be done. It also records the type and size
+/// the server accepted, so the model is never sent a file on the browser's word.
+model AiSource {
+  id        String   @id @default(cuid())
+  userId    String
+  /// Storage key under the person's own folder.
+  key       String   @unique
+  mediaType String
+  /// The name on the person's device, shown back to them in the list. Never
+  /// sent to the model.
+  name      String
+  sizeBytes Int
+  createdAt DateTime @default(now())
+
+  // Cascade removes the row; the file itself is removed by account deletion
+  // (app/api/me) and by the daily sweep.
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt]) // "this person's live sources"
+  @@index([createdAt]) // the daily sweep of abandoned ones
 }
 
 /// A teacher's audit of one submission. One-to-one with Submission.

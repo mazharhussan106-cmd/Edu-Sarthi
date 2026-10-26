@@ -137,6 +137,9 @@ export default async function DossierPage({
         {waiting ? <Badge variant="accent">{waiting} waiting</Badge> : null}
       </div>
       <p className="mt-1 text-sm text-ink-muted">Joined {student.createdAt.toLocaleDateString("en-IN")}</p>
+      <Link href={`/students/${student.publicId}/history`} className="mt-1 inline-block text-sm font-medium text-accent hover:underline">
+        Full history
+      </Link>
 
       {audited.length === 0 ? (
         <Card className="mt-6">

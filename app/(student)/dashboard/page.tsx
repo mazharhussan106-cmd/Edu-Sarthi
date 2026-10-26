@@ -32,6 +32,7 @@ import { CardProgress } from "@/components/dashboard/CardProgress";
 import { CriteriaChange } from "@/components/dashboard/CriteriaChange";
 import { TodayWork } from "@/components/dashboard/TodayWork";
 import { WeeklyActivity } from "@/components/dashboard/WeeklyActivity";
+import { RecentHistory } from "@/components/dashboard/RecentHistory";
 
 // Anything reflecting user state must not be cached, or one student's view is
 // served to everyone until it expires.
@@ -200,6 +201,8 @@ export default async function DashboardPage() {
               <WeeklyActivity days={activity} />
             </div>
           </Card>
+
+          <RecentHistory userId={studentId!} isGuest={!!session?.user?.isGuest} />
 
           <Card>
             <CardTitle>Rubric: first audit to latest</CardTitle>

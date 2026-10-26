@@ -98,6 +98,7 @@ model User {
   passwordResetTokens PasswordResetToken[]
   adminActions        AdminLog[]
   cardStates          CardState[]
+  reviewLogs          ReviewLog[]
   decks               Deck[]               @relation("DeckOwner")
   reviewedDecks       Deck[]               @relation("DeckReviewer")
   words               Word[]               @relation("WordOwner")
@@ -421,6 +422,7 @@ model Word {
   owner   User?   @relation("WordOwner", fields: [ownerId], references: [id], onDelete: SetNull)
 
   states      CardState[]
+  reviewLogs  ReviewLog[]
   submissions Submission[]
 
   @@index([deckId])
@@ -470,6 +472,28 @@ model CardState {
 }
 
 /// Who may see a deck. PRIVATE is the default so nothing is shared by accident.
+/// One answer on one card, kept as it happened. CardState only holds the latest
+/// state, so without this a student's "what did I study on Tuesday" is
+/// unanswerable. Append-only: rows are never edited. History starts the day
+/// this table was created; earlier reviews were already overwritten.
+model ReviewLog {
+  id     String  @id @default(cuid())
+  userId String
+  wordId String
+  known  Boolean
+  recall Recall?
+  /// Ladder rung the card moved to by this answer.
+  stage  Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([wordId])
+}
+
 enum DeckVisibility {
   PRIVATE // owner only
   LINK // anyone holding the share link, view-only

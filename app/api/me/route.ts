@@ -1,5 +1,6 @@
 // Owns the student's data rights under India's DPDP Act: GET downloads
-// everything stored about the account as JSON, DELETE erases the account,
+// everything stored about the account as JSON (including card progress and
+// study history), DELETE erases the account,
 // its submissions, their audits and the recordings in storage.
 //
 // It deliberately refuses deletion for teacher and admin accounts. Their
@@ -46,6 +47,30 @@ export async function GET() {
       preferences: true,
       createdAt: true,
       enrollments: { select: { moduleId: true, createdAt: true } },
+      // Card progress and the answer-by-answer study history are personal data
+      // stored about the student too. Capped so a very long history cannot make
+      // the download exhaust memory; oldest first, like submissions.
+      cardStates: {
+        select: {
+          known: true,
+          recall: true,
+          stage: true,
+          dueAt: true,
+          reviews: true,
+          lastReviewedAt: true,
+          confident: true,
+          important: true,
+          favourite: true,
+          doubt: true,
+          note: true,
+          word: { select: { code: true, text: true } },
+        },
+      },
+      reviewLogs: {
+        orderBy: { createdAt: "asc" },
+        take: 50_000,
+        select: { createdAt: true, known: true, recall: true, stage: true, word: { select: { code: true, text: true } } },
+      },
       submissions: {
         orderBy: { createdAt: "asc" },
         select: {

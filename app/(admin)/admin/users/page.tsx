@@ -151,7 +151,14 @@ export default async function UsersPage({
                     <td className="px-3 py-2.5">
                       <p className="text-ink">{u.name ?? "—"}</p>
                       <p className="text-xs text-ink-muted">{u.email}</p>
-                      {u.role === "STUDENT" && u.publicId ? <p className="font-mono text-[11px] text-ink-muted">{u.publicId}</p> : null}
+                      {u.role === "STUDENT" && u.publicId ? (
+                        <p className="font-mono text-[11px] text-ink-muted">
+                          {u.publicId} ·{" "}
+                          <Link href={`/students/${u.publicId}/history`} className="font-sans text-accent hover:underline">
+                            History
+                          </Link>
+                        </p>
+                      ) : null}
                       {u.submissions.length > 0 ? (
                         <details className="mt-1 text-xs">
                           <summary className="cursor-pointer text-accent">Recent activity</summary>

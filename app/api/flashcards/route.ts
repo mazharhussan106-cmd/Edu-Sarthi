@@ -2,10 +2,11 @@
 // the Hard / Medium / Easy level that sets the next review), and toggling a
 // remark or saving a note — none of which moves the card on.
 //
-// Scoped to the signed-in student by the unique (userId, wordId) key; the
+// Each mark also appends a ReviewLog row (study history). Scoped to the
+// signed-in student by the unique (userId, wordId) key; the
 // client never sends a user id.
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { z } from "zod";
 
 import { requireUser } from "@/lib/apiUser";
@@ -89,6 +90,19 @@ export async function POST(req: Request) {
         lastReviewedAt: now,
       },
       select: { dueAt: true },
+    });
+    // History is not the answer: it runs after the response so the student's
+    // tap is not slowed by a second pooler round trip (about a second on the
+    // live database), and a failure to write it can never undo or block the
+    // answer. after() keeps the function alive on serverless until it is done.
+    after(async () => {
+      try {
+        await prisma.reviewLog.create({
+          data: { userId, wordId: a.wordId, known: a.known, recall: a.recall, stage: next.stage },
+        });
+      } catch (err) {
+        console.error("reviewLog write failed", err);
+      }
     });
     return NextResponse.json({ ok: true, dueAt: saved.dueAt.toISOString() });
   }

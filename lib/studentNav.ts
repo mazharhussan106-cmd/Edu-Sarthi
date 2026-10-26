@@ -35,6 +35,7 @@ export const STUDENT_MORE: readonly MenuGroup[] = [
     heading: "You",
     items: [
       { href: "/progress", label: "Progress and reports" },
+      { href: "/history", label: "History" },
       { href: "/settings", label: "Settings" },
     ],
   },

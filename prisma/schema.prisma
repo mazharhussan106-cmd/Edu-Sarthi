@@ -91,8 +91,9 @@ model User {
   // Teacher side
   reviewsGiven       Feedback[]   @relation("TeacherFeedback")
   claimedSubmissions Submission[] @relation("ClaimedSubmissions")
+  aiDraftLogs        AiDraftLog[]
 
-  accounts            Account[]
+  accounts           Account[]
   sessions            Session[]
   verificationCodes   VerificationCode[]
   passwordResetTokens PasswordResetToken[]
@@ -164,6 +165,7 @@ model Submission {
   // to the general queue instead of vanishing.
   assignedTeacher User?     @relation("AssignedSubmissions", fields: [assignedTeacherId], references: [id], onDelete: SetNull)
   feedback        Feedback?
+  aiDraftLogs     AiDraftLog[]
 
   createdAt DateTime @default(now())
 
@@ -174,6 +176,25 @@ model Submission {
   @@index([wordId])
   @@index([exerciseId])
   @@index([createdAt])
+}
+
+/// One AI draft a teacher asked for. It exists only to count: the daily limit
+/// per teacher and the retry cap per submission. The draft itself is not kept
+/// (the teacher edits it into the real Feedback), and the transcript lives on
+/// Submission. A row is written when the draft is requested, not when it
+/// succeeds, so a failing call cannot be retried without limit at our cost.
+model AiDraftLog {
+  id           String   @id @default(cuid())
+  teacherId    String
+  submissionId String
+  createdAt    DateTime @default(now())
+
+  // Cascade: the log has no meaning without either side.
+  teacher    User       @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([teacherId, createdAt]) // "drafts by this teacher today"
+  @@index([submissionId]) // "drafts already made for this submission"
 }
 
 /// A teacher's audit of one submission. One-to-one with Submission.

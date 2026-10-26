@@ -8,6 +8,8 @@
 import Link from "next/link";
 
 import { prisma } from "@/lib/prisma";
+import { aiCardCounts } from "@/lib/decks";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ensureActiveUser } from "@/lib/activeUser";
@@ -34,6 +36,8 @@ export default async function AdminDecksPage() {
     }),
   ]);
 
+  const aiCards = await aiCardCounts([...pending, ...reported].map((d) => d.id));
+
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
       <h1 className="font-display text-2xl font-bold text-ink">Deck review</h1>
@@ -50,7 +54,10 @@ export default async function AdminDecksPage() {
                   <span className="block truncate font-medium text-ink">{d.title}</span>
                   <span className="block text-xs text-ink-muted">Submitted {d.updatedAt.toLocaleDateString("en-IN")} · {d._count.cards} cards</span>
                 </span>
-                {d._count.reports ? <Badge variant="error">{d._count.reports} reports</Badge> : <Badge variant="accent">Review</Badge>}
+                <span className="flex shrink-0 gap-1.5">
+                  {aiCards.get(d.id) ? <AiBadge label={`${aiCards.get(d.id)} AI-assisted`} /> : null}
+                  {d._count.reports ? <Badge variant="error">{d._count.reports} reports</Badge> : <Badge variant="accent">Review</Badge>}
+                </span>
               </Card>
             </Link>
           </li>
@@ -66,6 +73,7 @@ export default async function AdminDecksPage() {
               <Card className="flex items-center justify-between gap-3 p-4 hover:bg-hover">
                 <span className="truncate font-medium text-ink">{d.title}</span>
                 <span className="flex shrink-0 gap-1.5">
+                  {aiCards.get(d.id) ? <AiBadge label={`${aiCards.get(d.id)} AI-assisted`} /> : null}
                   <Badge variant="error">{d._count.reports} open</Badge>
                   {d.status === "PENDING_REVIEW" ? <Badge>hidden</Badge> : null}
                 </span>

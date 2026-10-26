@@ -26,6 +26,9 @@ export type CardFields = {
   videoUrl: string;
   /// Teacher's guide: what to listen for. "" for student cards.
   audit: string;
+  /// Set only by the AI card route, and carried over when a card is edited, so
+  /// the "AI-assisted" label cannot be lost by fixing a typo.
+  aiAssisted?: boolean;
 };
 
 /// Student-made cards carry a "U-" code so they can never collide with the
@@ -53,7 +56,7 @@ export class LimitReached extends Error {}
 export function wordData(c: CardFields) {
   return {
     text: c.front,
-    details: { meaning: c.back, example: c.example, body: c.body, audit: c.audit } satisfies Prisma.InputJsonObject,
+    details: { meaning: c.back, example: c.example, body: c.body, audit: c.audit, ...(c.aiAssisted ? { aiAssisted: true } : {}) } satisfies Prisma.InputJsonObject,
     imageUrl: c.imageKey,
     audioUrl: c.audioKey,
     videoUrl: c.videoUrl || null,
@@ -80,7 +83,19 @@ export function cardText(card: Pick<StoredCard, "details">) {
   // A card from an Excel import carries every field here; hand-made cards do not.
   const r = d.rich && typeof d.rich === "object" ? (d.rich as Record<string, unknown>) : null;
   const rich = r ? Object.fromEntries(Object.entries(r).filter(([, v]) => typeof v === "string")) as Record<string, string> : null;
-  return { back: str("meaning"), example: str("example"), body: str("body"), audit: str("audit"), rich };
+  return { back: str("meaning"), example: str("example"), body: str("body"), audit: str("audit"), rich, aiAssisted: d.aiAssisted === true };
+}
+
+/// The filter for cards the AI helped make, in one place so the editor, the
+/// library and admin review all mean the same thing by "AI-assisted".
+export const AI_CARD_FILTER = { details: { path: ["aiAssisted"], equals: true } } satisfies Prisma.WordWhereInput;
+
+/// How many AI-assisted cards each of these decks holds (decks with none are
+/// absent from the map). One query for a whole page of decks.
+export async function aiCardCounts(deckIds: string[]): Promise<Map<string, number>> {
+  if (!deckIds.length) return new Map();
+  const rows = await prisma.word.groupBy({ by: ["deckId"], where: { deckId: { in: deckIds }, ...AI_CARD_FILTER }, _count: { _all: true } });
+  return new Map(rows.flatMap((r) => (r.deckId ? [[r.deckId, r._count._all] as [string, number]] : [])));
 }
 
 export async function ownDeck(userId: string, id: string) {

@@ -34,6 +34,8 @@ export type EditableCard = {
   audit: string;
   /// Set for a card imported from Excel: it is edited in the sheet, not here.
   rich: Record<string, string> | null;
+  /// The AI helped make this card. Shown, never editable here.
+  aiAssisted?: boolean;
 };
 
 type Slot = { file: File | null; keep: boolean };

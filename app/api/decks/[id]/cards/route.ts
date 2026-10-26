@@ -95,7 +95,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   await sendBackIfPublished(deckId);
-  await prisma.word.updateMany({ where: { id: a.cardId, ...mine }, data: wordData({ ...a, ...extras }) });
+  // Editing a card must not drop the AI-assisted label; it is read from what is
+  // stored, never from the request, so it cannot be added or removed here.
+  await prisma.word.updateMany({ where: { id: a.cardId, ...mine }, data: wordData({ ...a, ...extras, aiAssisted: current ? cardText(current).aiAssisted : false }) });
   // Files the card no longer points at are removed after the row is saved.
   const dropped = [
     current!.imageUrl && current!.imageUrl !== a.imageKey ? current!.imageUrl : null,

@@ -13,6 +13,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CARD_SELECT, faceCard } from "@/lib/decks";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { DeckCardView } from "@/components/decks/DeckCardView";
 
 export const revalidate = 0;
@@ -33,6 +34,7 @@ export default async function LibraryCardPage({ params }: { params: Promise<{ id
   ]);
   if (!row) notFound();
   const prefs = PREFERENCE_SCHEMA.pick({ cardColor: true }).safeParse(user?.preferences ?? {});
+  const face = await faceCard(row);
   const href = (i: number) => (deck.cards[i] ? `/library/${id}/card/${deck.cards[i].id}` : null);
 
   return (
@@ -41,10 +43,12 @@ export default async function LibraryCardPage({ params }: { params: Promise<{ id
         <Link href={`/library/${id}`} className="min-w-0 truncate text-sm font-medium text-accent hover:underline">← {deck.title}</Link>
         <span className="shrink-0 font-mono text-xs text-ink-muted">{at + 1} / {deck.cards.length}</span>
       </div>
+      {/* Outside the card on purpose: every card keeps the one EduSarthi look. */}
+      {face.aiAssisted ? <div className="mt-2"><AiBadge /></div> : null}
       <div className="mt-2">
         <DeckCardView
           key={row.id}
-          card={await faceCard(row)}
+          card={face}
           prevHref={href(at - 1)}
           nextHref={href(at + 1)}
           cardColor={prefs.success ? prefs.data.cardColor : DEFAULT_PREFERENCES.cardColor}

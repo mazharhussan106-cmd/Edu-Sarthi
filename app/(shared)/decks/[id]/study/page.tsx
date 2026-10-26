@@ -17,6 +17,7 @@ import { parseSkip } from "@/lib/cardSkip";
 import { CARD_SELECT, deckStudyCounts, faceCard, nextDeckCardId } from "@/lib/decks";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { Card } from "@/components/ui/Card";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { DeckStudy } from "@/components/decks/DeckStudy";
 
 export const revalidate = 0;
@@ -47,6 +48,8 @@ export default async function StudyPage({ params, searchParams }: { params: Prom
   const prefs = PREFERENCE_SCHEMA.pick({ cardColor: true }).safeParse(user?.preferences ?? {});
   const cardColor = prefs.success ? prefs.data.cardColor : DEFAULT_PREFERENCES.cardColor;
 
+  const face = word ? await faceCard(word) : null;
+
   return (
     <main className="mx-auto max-w-2xl px-3 pb-4 pt-3 sm:px-6 sm:pt-6">
       <div className="flex items-center justify-between gap-3">
@@ -55,12 +58,14 @@ export default async function StudyPage({ params, searchParams }: { params: Prom
           <b className="font-mono text-ink">{counts.due}</b> due · <b className="font-mono text-ink">{counts.fresh}</b> new
         </p>
       </div>
+      {/* Outside the card on purpose: every card keeps the one EduSarthi look. */}
+      {face?.aiAssisted ? <div className="mt-2"><AiBadge /></div> : null}
       <div className="mt-2">
-        {word ? (
+        {word && face ? (
           <DeckStudy
             key={word.id}
             wordId={word.id}
-            card={await faceCard(word)}
+            card={face}
             state={{
               confident: state?.confident ?? false,
               important: state?.important ?? false,

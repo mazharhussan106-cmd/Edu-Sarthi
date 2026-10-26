@@ -14,6 +14,7 @@ import { CARD_SELECT, faceCard } from "@/lib/decks";
 import { REPORT_REASONS } from "@/lib/deckSchemas";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { ensureActiveUser } from "@/lib/activeUser";
@@ -38,6 +39,7 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
   if (!deck || (deck.visibility !== "PUBLIC" && deck.reports.length === 0)) notFound();
 
   const cards = await Promise.all(deck.cards.map(faceCard));
+  const aiCount = cards.filter((c) => c.aiAssisted).length;
   const pending = deck.visibility === "PUBLIC" && deck.status === "PENDING_REVIEW";
   const published = deck.visibility === "PUBLIC" && deck.status === "APPROVED";
 
@@ -49,7 +51,10 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
           <h1 className="font-display text-2xl font-bold text-ink">{deck.title}</h1>
           {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
           <p className="mt-1 text-xs text-ink-muted">By {deck.owner.publicId ?? "a student"} · {cards.length} cards</p>
-          <div className="mt-2 flex flex-wrap gap-1">{deck.tags.map((t) => <Badge key={t}>{t}</Badge>)}</div>
+          <div className="mt-2 flex flex-wrap gap-1">
+            {aiCount ? <AiBadge label={`${aiCount} of ${cards.length} cards AI-assisted`} /> : null}
+            {deck.tags.map((t) => <Badge key={t}>{t}</Badge>)}
+          </div>
         </div>
         <Badge variant={published ? "success" : pending ? "accent" : "neutral"}>
           {published ? "Published" : pending ? "Waiting for review" : deck.status === "REJECTED" ? "Rejected" : "Not submitted"}

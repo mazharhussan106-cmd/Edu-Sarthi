@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CardEditor, type EditableCard } from "@/components/decks/CardEditor";
 import { callApi } from "@/components/decks/deckClient";
@@ -37,7 +38,10 @@ export function CardRow({ deckId, card, staff }: { deckId: string; card: Editabl
     <div>
       <div className="flex items-start justify-between gap-3">
         <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="min-w-0 flex-1 text-left">
-          <span className="block truncate font-medium text-ink">{card.front}</span>
+          <span className="flex items-center gap-2">
+            <span className="min-w-0 truncate font-medium text-ink">{card.front}</span>
+            {card.aiAssisted && !open ? <AiBadge /> : null}
+          </span>
           <span className="block truncate text-xs text-ink-muted">{card.back}</span>
         </button>
         <div className="flex shrink-0 gap-1">

@@ -20,6 +20,7 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { Player } from "@/components/media/Player";
 import { AiDraftPanel } from "@/components/review/AiDraftPanel";
 import { NoteComposer } from "@/components/review/NoteComposer";
+import { mergeAiNotes, mergeAiScores, mergeAiSummary, postAudit } from "@/components/review/auditClient";
 import { SubmitBar } from "@/components/review/SubmitBar";
 import { CRITERIA, ScorePanel, type CriterionKey, type Scores } from "@/components/review/ScorePanel";
 import type { AiDraft } from "@/lib/aiDraft";
@@ -91,18 +92,9 @@ export function RubricForm({
   // "not set" (not added to `touched`): the teacher must still confirm each
   // score after listening, which is what stops an unheard audit being sent.
   function applyAiDraft(d: AiDraft) {
-    setScores((s) => {
-      const next = { ...s };
-      for (const k of ["grammar", "vocabulary", "fluency"] as const) {
-        if (!touchedRef.current.has(k)) next[k] = d[k].score;
-      }
-      return next;
-    });
-    setSummary((cur) => (cur.trim() ? cur : d.summary));
-    setNotes((cur) => {
-      const have = new Set(cur.map((n) => `${n.at}|${n.note}`));
-      return [...cur, ...d.notes.filter((n) => !have.has(`${n.at}|${n.note}`))].sort((a, b) => a.at - b.at);
-    });
+    setScores((s) => mergeAiScores(s, touchedRef.current, d));
+    setSummary((cur) => mergeAiSummary(cur, d));
+    setNotes((cur) => mergeAiNotes(cur, d));
   }
 
   useEffect(() => {
@@ -165,33 +157,16 @@ export function RubricForm({
       return;
     }
     setBusy(true);
-    try {
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
-      });
-      const raw = await res.text();
-      let data: { error?: string } = {};
-      try {
-        data = JSON.parse(raw);
-      } catch {
-        data = { error: "Something went wrong. Your audit is saved here — try again." };
-      }
-      if (!res.ok) {
-        setError(data.error ?? "Could not save the audit. It is saved here — try again.");
-        setBusy(false);
-        setConfirming(false);
-        return;
-      }
-      clearDraft(submissionId);
-      router.push("/queue");
-      router.refresh();
-    } catch {
-      setError("Could not reach the server. Your audit is saved here — try again.");
+    const res = await postAudit(parsed.data);
+    if (!res.ok) {
+      setError(res.error);
       setBusy(false);
       setConfirming(false);
+      return;
     }
+    clearDraft(submissionId);
+    router.push("/queue");
+    router.refresh();
   }
 
   const average = CRITERIA.reduce((t, c) => t + scores[c.key], 0) / 5;

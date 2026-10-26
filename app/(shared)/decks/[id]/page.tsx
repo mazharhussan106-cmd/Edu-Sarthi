@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { CARD_SELECT, deckStudyCounts, faceCard, isStaff } from "@/lib/decks";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { Card } from "@/components/ui/Card";
+import { AiCardsPanel } from "@/components/decks/AiCardsPanel";
 import { CardEditor } from "@/components/decks/CardEditor";
 import { CardRow } from "@/components/decks/CardRow";
 import { DeckActions } from "@/components/decks/DeckActions";
@@ -90,6 +91,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
             </li>
           ))}
         </ul>
+        {counts.total < DECK_LIMITS.cardsPerDeck ? <AiCardsPanel deckId={id} /> : null}
         {counts.total < DECK_LIMITS.cardsPerDeck ? (
           <Card className="mt-3">
             <h3 className="font-display text-sm font-bold text-ink">Add a card</h3>

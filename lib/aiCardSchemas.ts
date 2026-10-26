@@ -11,6 +11,11 @@ import { z } from "zod";
 export const MAX_SOURCE_TEXT = 30_000;
 export const MAX_SOURCES = 5;
 
+/// Small on purpose. Output is generated at tens of tokens a second, so twenty
+/// full cards can run past a serverless time limit; ten finish well inside it,
+/// and the learner can ask again for the next chapter.
+export const MAX_CARDS_PER_REQUEST = 10;
+
 const textSource = z.object({
   type: z.literal("text"),
   text: z.string().trim().min(1, "The pasted text is empty").max(MAX_SOURCE_TEXT, `Keep each pasted text under ${MAX_SOURCE_TEXT.toLocaleString("en-IN")} characters, or split it into two`),
@@ -49,3 +54,17 @@ export const sourceFileSchema = z.object({
 });
 
 export const removeSourceSchema = z.object({ id: z.string().min(1).max(40) });
+
+/// One AI-made card as the person left it after reading and editing. The same
+/// limits as a hand-made card (lib/deckSchemas), plus the chapter it sits in.
+export const aiCardSchema = z.object({
+  front: z.string().trim().min(1, "Every card needs a front").max(200, "Keep each front under 200 characters"),
+  back: z.string().trim().min(1, "Every card needs a back").max(500, "Keep each back under 500 characters"),
+  example: z.string().trim().max(300, "Keep each example under 300 characters").default(""),
+  body: z.string().trim().max(2000, "Keep each card's notes under 2000 characters").default(""),
+  chapter: z.string().trim().max(60, "Keep chapter names under 60 characters").default(""),
+});
+
+export const addAiCardsSchema = z.object({
+  cards: z.array(aiCardSchema).min(1, "Choose at least one card to add").max(20, "Add up to 20 cards at a time"),
+});

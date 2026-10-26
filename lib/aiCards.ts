@@ -13,14 +13,14 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 
 import { ASK_SYSTEM, MAKE_SYSTEM } from "@/lib/aiCardPrompts";
+import { MAX_CARDS_PER_REQUEST } from "@/lib/aiCardSchemas";
 import { AiError } from "@/lib/aiTranscribe";
 
 const MODEL = process.env.AI_CARDS_MODEL || "claude-sonnet-5-5";
 
-/// Small on purpose. Output is generated at tens of tokens a second, so twenty
-/// full cards can run past a serverless time limit; ten finish well inside it,
-/// and the learner can ask again for the next chapter.
-export const MAX_CARDS_PER_REQUEST = 10;
+// Re-exported so server code keeps one import; it lives in aiCardSchemas so the
+// browser can read it without bundling the model SDK.
+export { MAX_CARDS_PER_REQUEST };
 const MAX_QUESTIONS = 6;
 
 /// Question ids whose answers are remembered and offered again next time. The

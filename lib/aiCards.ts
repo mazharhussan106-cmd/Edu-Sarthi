@@ -218,10 +218,13 @@ export async function makeCards(
     for (const raw of c.cards) {
       const ok = strictCard.safeParse(raw);
       const key = ok.success ? ok.data.front.toLowerCase() : "";
-      if (!ok.success || seen.has(key) || total >= count) {
+      if (!ok.success || seen.has(key)) {
         dropped += 1;
         continue;
       }
+      // Extra cards beyond the number asked for are not "dropped": the person
+      // never expected them, so counting them would report a loss that is not one.
+      if (total >= count) continue;
       seen.add(key);
       cards.push(ok.data);
       total += 1;

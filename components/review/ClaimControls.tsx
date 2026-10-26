@@ -130,10 +130,15 @@ export function ClaimTimer({
 }) {
   const router = useRouter();
   const [end, setEnd] = useState(() => new Date(expiresAt).getTime());
-  const [left, setLeft] = useState(() => remaining(new Date(expiresAt).getTime()));
+  // Null until the page is on screen. The seconds left depend on the clock, and
+  // the server and the browser read it a moment apart, so a value worked out
+  // while rendering differs between them and React reports a mismatch. Both
+  // render the same placeholder, and the real number appears after mount.
+  const [left, setLeft] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    setLeft(remaining(end));
     const t = setInterval(() => setLeft(remaining(end)), 1000);
     return () => clearInterval(t);
   }, [end]);
@@ -152,21 +157,24 @@ export function ClaimTimer({
     }
   }
 
-  const mm = Math.floor(left / 60);
-  const ss = String(left % 60).padStart(2, "0");
-  const low = left < 5 * 60;
+  const known = left !== null;
+  const secs = left ?? 0;
+  const mm = Math.floor(secs / 60);
+  const ss = String(secs % 60).padStart(2, "0");
+  const low = known && secs < 5 * 60;
+  const expired = known && secs === 0;
 
   return (
     <span className="inline-flex items-center gap-2">
       <span
         role="timer"
-        aria-label={`Claim ends in ${mm} minutes ${ss} seconds`}
+        aria-label={known ? `Claim ends in ${mm} minutes ${ss} seconds` : "Claim time left"}
         className={cn(
           "rounded-full px-2.5 py-0.5 font-mono text-xs font-medium",
-          left === 0 ? "bg-error/12 text-error" : low ? "bg-error/12 text-error" : "bg-accent/12 text-accent",
+          expired || low ? "bg-error/12 text-error" : "bg-accent/12 text-accent",
         )}
       >
-        {left === 0 ? "Claim expired" : `${mm}:${ss} left`}
+        {!known ? "--:-- left" : expired ? "Claim expired" : `${mm}:${ss} left`}
       </span>
       {submissionId && low ? (
         <Button variant="outline" size="sm" onClick={() => void extend()} disabled={busy}>

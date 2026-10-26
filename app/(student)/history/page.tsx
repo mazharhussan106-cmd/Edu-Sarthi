@@ -65,7 +65,7 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
         {[
           { n: answeredToday, l: "answers today" },
           { n: answeredWeek, l: "answers, 7 days" },
-          { n: days.length, l: "days studied, 30 days" },
+          { n: days.length, l: days.length === 1 ? "day studied, 30 days" : "days studied, 30 days" },
         ].map((s) => (
           <Card key={s.l} className="p-3">
             <p className="font-mono text-2xl font-bold text-ink">{s.n}</p>

@@ -6,7 +6,7 @@
 // signed-in student by the unique (userId, wordId) key; the
 // client never sends a user id.
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { z } from "zod";
 
 import { requireUser } from "@/lib/apiUser";
@@ -91,17 +91,19 @@ export async function POST(req: Request) {
       },
       select: { dueAt: true },
     });
-    // After the upsert, not inside a transaction: the log is history, and a
-    // failure to write it must never undo or block the student's answer. Awaited
-    // (not fire-and-forget) because serverless can freeze the function the
-    // moment the response is sent.
-    try {
-      await prisma.reviewLog.create({
-        data: { userId, wordId: a.wordId, known: a.known, recall: a.recall, stage: next.stage },
-      });
-    } catch (err) {
-      console.error("reviewLog write failed", err);
-    }
+    // History is not the answer: it runs after the response so the student's
+    // tap is not slowed by a second pooler round trip (about a second on the
+    // live database), and a failure to write it can never undo or block the
+    // answer. after() keeps the function alive on serverless until it is done.
+    after(async () => {
+      try {
+        await prisma.reviewLog.create({
+          data: { userId, wordId: a.wordId, known: a.known, recall: a.recall, stage: next.stage },
+        });
+      } catch (err) {
+        console.error("reviewLog write failed", err);
+      }
+    });
     return NextResponse.json({ ok: true, dueAt: saved.dueAt.toISOString() });
   }
 

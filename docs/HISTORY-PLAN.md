@@ -7,7 +7,7 @@ Branch: `claude/zen-noether-2av4n9`. Built 26 Oct 2026. Owner asked for: both ki
 | Piece | Where |
 |---|---|
 | Table `ReviewLog` (append-only: user, card, known, recall, stage, time) | `prisma/schema.prisma` |
-| One row written on every card "mark", after the CardState upsert, outside any transaction, errors swallowed | `app/api/flashcards/route.ts` |
+| One row written on every card "mark", after the CardState upsert, via `after()` (after the response, so the tap is not slowed), errors swallowed | `app/api/flashcards/route.ts` |
 | All queries and the access rule | `lib/history.ts` |
 | Student page `/history` (Practice and Study tabs, `?cursor=` paging, delete-my-study-history) | `app/(student)/history/page.tsx`, `app/api/history/study/route.ts`, `components/history/*` |
 | Menu "You → History", Profile card (students only) | `lib/studentNav.ts`, `app/(shared)/profile/page.tsx` |
@@ -38,5 +38,5 @@ Branch: `claude/zen-noether-2av4n9`. Built 26 Oct 2026. Owner asked for: both ki
 
 - **No automatic cleanup of `ReviewLog` — owner's decision, 26 Oct (supersedes the earlier 12-month default).** Rows are kept until the student deletes them or the account is deleted (`onDelete: Cascade`). The table grows by one row per card answer; revisit if it gets large.
 - The student sees one page of 20 at a time with Older/Newest links; no date filter or search.
-- Nothing was run against the real Supabase database or opened in a browser. Verified: `tsc` and `next build` (after step 4), and the `lib/history.ts` queries against a throwaway local Postgres (paging, access rule, private-card text withheld). The pages themselves were not rendered.
+- Not run against the real Supabase database, SendGrid or Vercel. **Final audit (26 Oct)** on a throwaway local Postgres with a real browser (Playwright, 448px): student, teacher (linked and unlinked), admin and guest all opened the pages; Older/Newest paging, delete-my-history (CardState kept), dashboard card, Profile card, admin log entry, DPDP export (history + card progress) and the real `POST /api/flashcards` write (double-tap makes no duplicate) all behaved. `tsc` and `next build` pass.
 - `dashboard/page.tsx` is 243 lines; split it before adding anything else.

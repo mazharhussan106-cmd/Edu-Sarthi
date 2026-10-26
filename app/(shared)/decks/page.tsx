@@ -9,6 +9,8 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
+import { aiCardCounts } from "@/lib/decks";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { DeckForm } from "@/components/decks/DeckForm";
@@ -37,6 +39,21 @@ export default async function DecksPage() {
   const due = new Map<string, number>();
   for (const w of dueWords) if (w.deckId) due.set(w.deckId, (due.get(w.deckId) ?? 0) + 1);
 
+  // Chapters per deck and the cards the AI helped make: two reads for the whole
+  // page, however many decks there are. Chapters come back in the order their
+  // first card was added, which is the order the person reads them in.
+  const ids = decks.map((d) => d.id);
+  const [aiCards, chapterRows] = await Promise.all([
+    aiCardCounts(ids),
+    ids.length
+      ? prisma.word.groupBy({ by: ["deckId", "category"], where: { deckId: { in: ids }, category: { not: null } }, _min: { serial: true } })
+      : [],
+  ]);
+  const chapters = new Map<string, string[]>();
+  for (const r of [...chapterRows].sort((a, b) => (a._min.serial ?? 0) - (b._min.serial ?? 0))) {
+    if (r.deckId && r.category) chapters.set(r.deckId, [...(chapters.get(r.deckId) ?? []), r.category]);
+  }
+
   return (
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
       <div className="flex items-center justify-between gap-3">
@@ -63,10 +80,16 @@ export default async function DecksPage() {
                   <span className="min-w-0">
                     <span className="block truncate font-display font-bold text-ink">{d.title}</span>
                     {d.description ? <span className="block truncate text-xs text-ink-muted">{d.description}</span> : null}
+                    {chapters.get(d.id)?.length ? (
+                      <span className="block truncate text-xs text-ink-muted">
+                        {chapters.get(d.id)!.length} chapter{chapters.get(d.id)!.length === 1 ? "" : "s"}: {chapters.get(d.id)!.join(" · ")}
+                      </span>
+                    ) : null}
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-1">
                     <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
                     {due.get(d.id) ? <Badge variant="accent">{due.get(d.id)} due</Badge> : null}
+                    {aiCards.get(d.id) ? <AiBadge label={`${aiCards.get(d.id)} AI-assisted`} /> : null}
                     {d.visibility === "PUBLIC" && d.status === "PENDING_REVIEW" ? <Badge variant="accent">in review</Badge> : null}
                     {d.visibility === "PUBLIC" && d.status === "APPROVED" ? <Badge variant="success">published</Badge> : null}
                     {d.status === "REJECTED" ? <Badge variant="error">not approved</Badge> : null}

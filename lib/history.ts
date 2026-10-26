@@ -59,7 +59,7 @@ export type PracticeItem = {
 
 export type Page<T> = { items: T[]; nextCursor: string | null };
 
-export async function practiceHistory(studentId: string, viewer: Viewer, cursor?: string): Promise<Page<PracticeItem>> {
+export async function practiceHistory(studentId: string, viewer: Viewer, cursor?: string, take = PAGE_SIZE): Promise<Page<PracticeItem>> {
   const rows = await prisma.submission.findMany({
     where: {
       studentId,
@@ -68,7 +68,7 @@ export async function practiceHistory(studentId: string, viewer: Viewer, cursor?
       ...(viewer.role === "TEACHER" ? { OR: [{ assignedTeacherId: null }, { assignedTeacherId: viewer.id }] } : {}),
     },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: PAGE_SIZE + 1,
+    take: take + 1,
     ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     select: {
       id: true,
@@ -81,8 +81,8 @@ export async function practiceHistory(studentId: string, viewer: Viewer, cursor?
       feedback: { select: { pronunciation: true, grammar: true, fluency: true, vocabulary: true, confidence: true } },
     },
   });
-  const more = rows.length > PAGE_SIZE;
-  const items = rows.slice(0, PAGE_SIZE).map((r) => ({
+  const more = rows.length > take;
+  const items = rows.slice(0, take).map((r) => ({
     id: r.id,
     createdAt: r.createdAt,
     status: r.status,

@@ -2,9 +2,11 @@
 // you want (and give any material), answer the AI's few questions, read the
 // cards it made as chapters, then add the ones you want to this deck.
 //
-// Nothing enters the deck until the last step, and the cards are saved by
-// /api/decks/[id]/ai-cards, which marks them AI-assisted on the server. It
-// deliberately does NOT make cards itself or count the allowance; the routes do.
+// Nothing enters a deck until the last step. With a deckId the cards are added to
+// that deck (/api/decks/[id]/ai-cards); without one, the person names a new deck
+// and it is created with the cards in one request (/api/decks/ai-cards/new-deck).
+// Both mark the cards AI-assisted on the server. It deliberately does NOT make
+// cards itself or count the allowance; the routes do.
 
 "use client";
 
@@ -14,12 +16,12 @@ import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Label } from "@/components/ui/Input";
+import { Input, Label } from "@/components/ui/Input";
 import { AiDraftList, type Draft } from "@/components/decks/AiDraftList";
 import { AiQuestionForm, type Answers } from "@/components/decks/AiQuestionForm";
 import { AiSourcesField, type SourceItem } from "@/components/decks/AiSourcesField";
 import { callApi } from "@/components/decks/deckClient";
-import { MAX_CARDS_PER_REQUEST, addAiCardsSchema, requestSchema } from "@/lib/aiCardSchemas";
+import { MAX_CARDS_PER_REQUEST, addAiCardsSchema, newAiDeckSchema, requestSchema } from "@/lib/aiCardSchemas";
 import type { Question } from "@/lib/aiCards";
 
 type Stage = "start" | "asking" | "questions" | "making" | "drafts" | "adding";
@@ -27,7 +29,14 @@ type Made = { chapters: { title: string; cards: { front: string; back: string; e
 
 const DISCLAIMER = "EduSarthi can make mistakes. Check important info.";
 
-export function AiCardsPanel({ deckId }: { deckId: string }) {
+/// A starting name for a new deck from what the person asked for: its first
+/// line, cut at a word, without trailing punctuation. They can change it.
+function suggestTitle(request: string): string {
+  const line = request.split("\n")[0].trim().replace(/[.,;:!?\s]+$/, "");
+  return line.length <= 60 ? line : line.slice(0, 60).replace(/\s+\S*$/, "");
+}
+
+export function AiCardsPanel({ deckId }: { deckId?: string }) {
   const router = useRouter();
   const uid = useId();
   const [stage, setStage] = useState<Stage>("start");
@@ -36,6 +45,7 @@ export function AiCardsPanel({ deckId }: { deckId: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Answers>({});
   const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [title, setTitle] = useState("");
   const [remaining, setRemaining] = useState<number | null>(null);
   const [info, setInfo] = useState<string[]>([]);
   const [done, setDone] = useState<string | null>(null);
@@ -84,21 +94,28 @@ export function AiCardsPanel({ deckId }: { deckId: string }) {
     ].filter(Boolean));
     // The server deleted the files once the cards were made.
     setSources((s) => s.filter((x) => x.kind === "text"));
+    setTitle(suggestTitle(request));
     setStage("drafts");
   }
 
   async function add() {
-    const early = addAiCardsSchema.safeParse({ cards: drafts.filter((d) => d.include).map(({ front, back, example, body: b, chapter }) => ({ front, back, example, body: b, chapter })) });
+    const cards = drafts.filter((d) => d.include).map(({ front, back, example, body: b, chapter }) => ({ front, back, example, body: b, chapter }));
+    const early = deckId ? addAiCardsSchema.safeParse({ cards }) : newAiDeckSchema.safeParse({ title, cards });
     if (!early.success) return setError(early.error.issues[0]?.message ?? "Check the cards and try again.");
     setError(null);
     setStage("adding");
-    const res = await callApi(`/api/decks/${deckId}/ai-cards`, early.data);
+    const res = await callApi<{ id?: string }>(deckId ? `/api/decks/${deckId}/ai-cards` : "/api/decks/ai-cards/new-deck", early.data);
     if (!res.ok) {
       setStage("drafts");
       return setError(res.error);
     }
+    if (!deckId) {
+      // The new deck is the place to read and study what was made.
+      router.push(`/decks/${res.data.id}`);
+      return;
+    }
     router.refresh();
-    setDone(`Added ${early.data.cards.length} card${early.data.cards.length === 1 ? "" : "s"} to this deck, marked AI-assisted. Read them before you share the deck.`);
+    setDone(`Added ${cards.length} card${cards.length === 1 ? "" : "s"} to this deck, marked AI-assisted. Read them before you share the deck.`);
     setDrafts([]);
     setRequest("");
     setStage("start");
@@ -115,7 +132,7 @@ export function AiCardsPanel({ deckId }: { deckId: string }) {
   return (
     <Card className="mt-3">
       <h3 className="flex items-center gap-2 font-display text-sm font-bold text-ink">
-        <Sparkles className="size-4 text-accent" aria-hidden="true" /> Make cards with AI
+        <Sparkles className="size-4 text-accent" aria-hidden="true" /> {deckId ? "Make cards with AI" : "Make a new deck with AI"}
       </h3>
       <p className="mt-1 text-xs text-ink-muted">
         Tell the AI what you want. It asks a few questions, then makes cards for you to check. {DISCLAIMER}
@@ -123,7 +140,7 @@ export function AiCardsPanel({ deckId }: { deckId: string }) {
       </p>
       {done ? <p role="status" className="mt-3 rounded-lg bg-success/12 px-3 py-2 text-sm text-success">{done}</p> : null}
       <p role="status" aria-live="polite" className="mt-3 text-sm text-ink-muted">
-        {stage === "asking" ? "Thinking of the right questions…" : stage === "making" ? "Making your cards. This can take a minute or two; keep this page open." : stage === "adding" ? "Adding…" : ""}
+        {stage === "asking" ? "Thinking of the right questions…" : stage === "making" ? "Making your cards. This can take a minute or two; keep this page open." : stage === "adding" ? (deckId ? "Adding…" : "Creating your deck…") : ""}
       </p>
 
       {stage === "start" || stage === "asking" ? (
@@ -159,10 +176,16 @@ export function AiCardsPanel({ deckId }: { deckId: string }) {
       {stage === "drafts" || stage === "adding" ? (
         <div className="mt-3 flex flex-col gap-4">
           {info.length ? <ul className="flex flex-col gap-1 text-sm text-ink-muted">{info.map((t) => <li key={t}>{t}</li>)}</ul> : null}
+          {deckId ? null : (
+            <div>
+              <Label htmlFor={`${uid}-title`}>Name of the new deck</Label>
+              <Input id={`${uid}-title`} value={title} maxLength={80} disabled={busy} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+          )}
           <AiDraftList drafts={drafts} onChange={setDrafts} />
           <p className="text-xs text-ink-muted">{DISCLAIMER} Tick the cards you want, edit any that need it, then add them.</p>
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => void add()} disabled={busy || chosen === 0}>{stage === "adding" ? "Adding…" : `Add ${chosen} card${chosen === 1 ? "" : "s"} to this deck`}</Button>
+            <Button onClick={() => void add()} disabled={busy || chosen === 0}>{stage === "adding" ? (deckId ? "Adding…" : "Creating…") : deckId ? `Add ${chosen} card${chosen === 1 ? "" : "s"} to this deck` : `Create the deck with ${chosen} card${chosen === 1 ? "" : "s"}`}</Button>
             <Button variant="ghost" onClick={discard} disabled={busy}>Discard these cards</Button>
           </div>
         </div>

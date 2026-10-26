@@ -11,7 +11,8 @@ import { NextResponse } from "next/server";
 
 import { addAiCardsSchema } from "@/lib/aiCardSchemas";
 import { requireUser } from "@/lib/apiUser";
-import { LimitReached, lockUser, newCardCode, ownDeck, readJson } from "@/lib/decks";
+import { aiCardRows } from "@/lib/aiCardRows";
+import { LimitReached, lockUser, ownDeck, readJson } from "@/lib/decks";
 import { sendBackIfPublished } from "@/lib/deckReview";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { prisma } from "@/lib/prisma";
@@ -43,19 +44,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         if (have + cards.length > DECK_LIMITS.cardsPerDeck) throw new LimitReached();
         const last = await tx.word.findFirst({ where: mine, orderBy: { serial: "desc" }, select: { serial: true } });
         const first = (last?.serial ?? 0) + 1;
-        await tx.word.createMany({
-          data: cards.map((c, i) => ({
-            text: c.front,
-            code: newCardCode(),
-            serial: first + i,
-            kind: "WORD" as const,
-            deckId,
-            ownerId: userId,
-            // The chapter is what the deck's index is built from.
-            category: c.chapter || null,
-            details: { meaning: c.back, example: c.example, body: c.body, audit: "", aiAssisted: true },
-          })),
-        });
+        await tx.word.createMany({ data: aiCardRows(userId, deckId, first, cards) });
       },
       { maxWait: 10_000, timeout: 20_000 },
     );

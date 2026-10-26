@@ -13,6 +13,7 @@ import { aiCardCounts } from "@/lib/decks";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { AiCardsPanel } from "@/components/decks/AiCardsPanel";
 import { DeckForm } from "@/components/decks/DeckForm";
 
 export const revalidate = 0;
@@ -101,6 +102,10 @@ export default async function DecksPage() {
           </li>
         ))}
       </ul>
+
+      {/* Beside, not instead of, the plain form below: the AI is a way to fill a
+          deck, and some people just want an empty one to type into. */}
+      {decks.length < DECK_LIMITS.decksPerUser ? <div className="mt-6"><AiCardsPanel /></div> : null}
 
       <Card className="mt-6">
         <h2 className="font-display text-base font-bold text-ink">New deck</h2>

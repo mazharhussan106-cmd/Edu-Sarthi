@@ -8,6 +8,8 @@
 
 import { z } from "zod";
 
+import { deckFields } from "@/lib/deckSchemas";
+
 export const MAX_SOURCE_TEXT = 30_000;
 export const MAX_SOURCES = 5;
 
@@ -67,4 +69,11 @@ export const aiCardSchema = z.object({
 
 export const addAiCardsSchema = z.object({
   cards: z.array(aiCardSchema).min(1, "Choose at least one card to add").max(20, "Add up to 20 cards at a time"),
+});
+
+/// A new deck made from the AI's cards in one go: the deck's name and the cards
+/// the person kept. One request, so a deck is never left empty by a half-done add.
+export const newAiDeckSchema = z.object({
+  title: deckFields.title,
+  cards: addAiCardsSchema.shape.cards,
 });

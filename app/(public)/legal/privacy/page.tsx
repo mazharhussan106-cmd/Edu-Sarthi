@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 const CONTACT = "privacy@edusarthi.com";
-const UPDATED = "6 October 2026";
+const UPDATED = "26 October 2026";
 
 export default function PrivacyPage() {
   return (
@@ -53,6 +53,24 @@ export default function PrivacyPage() {
               — five scores, a written summary, and timestamped notes.
             </li>
             <li>
+              <span className="text-ink">
+                What you give the AI card maker, and what it makes.
+              </span>{" "}
+              This is the request you type, your answers to its questions,
+              any text, PDF or photo you add, and the cards it writes, which
+              are marked &ldquo;AI-assisted&rdquo; wherever they appear. We
+              also keep your last answers to the questions, so they can be
+              offered again, and a count of the AI cards and the AI usage on
+              your account.
+            </li>
+            <li>
+              <span className="text-ink">
+                A written transcript of an audio recording.
+              </span>{" "}
+              It is made only when a teacher asks for an AI-assisted draft of
+              your audit, and it is kept with the submission.
+            </li>
+            <li>
               <span className="text-ink">Failed sign-in attempts.</span> We record
               the email address and the time of failed sign-ins, for fifteen
               minutes, to slow down password guessing.
@@ -85,7 +103,7 @@ export default function PrivacyPage() {
             Who we share data with
           </h2>
           <p className="mt-2">
-            We do not sell personal data. We use three processors to run the
+            We do not sell personal data. We use these processors to run the
             service, and each sees only what it needs:
           </p>
           <ul className="mt-2 flex flex-col gap-1">
@@ -101,7 +119,37 @@ export default function PrivacyPage() {
               <span className="text-ink">SendGrid</span> — sends verification
               codes and password reset emails.
             </li>
+            <li>
+              <span className="text-ink">OpenAI</span> — turns an audio
+              recording into text, only when a teacher asks for an AI-assisted
+              draft.
+            </li>
+            <li>
+              <span className="text-ink">Anthropic</span> — receives that text
+              and writes a draft audit for the teacher to check and edit. It also
+              reads what you give the AI card maker and writes the cards.
+            </li>
           </ul>
+          <p className="mt-2">
+            When a teacher asks for an AI-assisted draft, the audio of that one
+            submission goes to OpenAI, and the text of it goes to Anthropic. We
+            do not send your name, email address or student ID with it, but
+            anything you say in the recording, including a name, is part of what
+            is sent. The draft is only a starting point: a teacher listens to
+            your recording, changes the draft and decides what you receive. Both
+            companies keep data under their own terms; read their privacy
+            policies for how long.
+          </p>
+          <p className="mt-2">
+            When you use the AI card maker, what you type, your answers to its
+            questions, and any text, PDF or photo you add go to Anthropic. We do
+            not send your name, email address or student ID with them, but
+            anything you write or photograph, including a name, is part of what
+            is sent. The cards it writes can be wrong, so every one is marked
+            &ldquo;AI-assisted&rdquo; and you choose which to keep. Anthropic
+            keeps data under its own terms; read its privacy policy for how
+            long.
+          </p>
           <p className="mt-2">
             If a teacher&apos;s flashcard includes a video, it plays from YouTube
             or Google Drive, so your phone contacts them when you open that
@@ -129,9 +177,17 @@ export default function PrivacyPage() {
             window.
           </p>
           <p className="mt-2">
+            A PDF or photo you add to the AI card maker is kept in our private
+            storage only until the cards are made, and is then deleted. If you
+            leave before that, it is deleted by our daily clean-up, which can
+            take up to two days. Pasted text is not stored; it is sent with your
+            request. The cards you add to a deck, and your last answers to the
+            questions, are kept while your account exists.
+          </p>
+          <p className="mt-2">
             When you delete your account, your submissions, audits, flashcard
             progress and decks are deleted with it, and we remove your stored
-            recordings and card pictures. If storage is unavailable at that
+            recordings, card pictures and any files waiting in the AI card maker. If storage is unavailable at that
             moment, a file can be left behind until we clear it; write to us if
             you want it confirmed. A copy of one of your decks that another
             person made is theirs and stays with them.

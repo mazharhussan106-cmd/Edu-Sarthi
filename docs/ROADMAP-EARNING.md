@@ -11,8 +11,8 @@ No marketing here, only things to build. Order = my suggested order. Effort: S �
 
 ## Tier 2 — raises price and cuts cost
 6. **AI speech feedback (L)** — transcript + pronunciation/fluency score right after recording; sold as the instant tier, teacher audit as the premium tier.
-7. **AI draft audit for teachers (M)** — pre-filled rubric and notes the teacher edits; more audits per teacher-hour = margin.
-8. **AI card generation (M)** — topic → deck draft, goes through the same admin review; metered by plan.
+7. **AI draft audit for teachers (M)** — pre-filled rubric and notes the teacher edits; more audits per teacher-hour = margin. *Built 26 Oct 2026, see PROJECT-MEMORY.*
+8. **AI card generation (M)** — topic → deck draft, goes through the same admin review; metered by plan. *Built 26 Oct 2026 for decks (free 100 cards, token counts kept); plans and paid tiers are not built, see PROJECT-MEMORY.*
 9. **Express audits (S)** — 24-hour guarantee at a higher price, with queue priority and SLA timer.
 10. **Certificates / skill badges (M)** — verifiable public page per student; institutes pay for branded ones.
 11. **Streaks, reminders, email/push digests (M)** — drives the daily review habit, which is what makes subscriptions renew.

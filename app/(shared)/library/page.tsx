@@ -10,6 +10,8 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
+import { aiCardCounts } from "@/lib/decks";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
@@ -43,6 +45,8 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     take: 30,
     select: { id: true, title: true, description: true, tags: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true, likes: true } } },
   });
+
+  const aiCards = await aiCardCounts(decks.map((d) => d.id));
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
@@ -98,6 +102,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
                     <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards · ♥ {d._count.likes}</span>
                     {d.owner.role === "TEACHER" && d.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}
                     {d.owner.role === "ADMIN" ? <Badge variant="accent">EduSarthi</Badge> : null}
+                    {aiCards.get(d.id) ? <AiBadge label="Has AI-assisted cards" /> : null}
                   </span>
                 </div>
                 {d.tags.length ? <div className="mt-2 flex flex-wrap gap-1">{d.tags.map((t) => <Badge key={t}>{t}</Badge>)}</div> : null}

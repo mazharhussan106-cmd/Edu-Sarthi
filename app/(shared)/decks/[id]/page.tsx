@@ -13,8 +13,11 @@ import { prisma } from "@/lib/prisma";
 import { CARD_SELECT, deckStudyCounts, faceCard, isStaff } from "@/lib/decks";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { Card } from "@/components/ui/Card";
+import { AiCardsPanel } from "@/components/decks/AiCardsPanel";
+import { cardMakerEnabled } from "@/lib/aiEnabled";
 import { CardEditor } from "@/components/decks/CardEditor";
 import { CardRow } from "@/components/decks/CardRow";
+import { ChapterIndex } from "@/components/decks/ChapterIndex";
 import { DeckActions } from "@/components/decks/DeckActions";
 import { DeckForm } from "@/components/decks/DeckForm";
 import { activeMembership } from "@/lib/institutes";
@@ -28,7 +31,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
   const deck = await prisma.deck.findFirst({
     where: { id, ownerId: userId },
-    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
+    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true } } },
   });
   if (!deck) notFound();
 
@@ -38,12 +41,19 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
     Promise.all(
       deck.cards.map(async (c) => ({
         ...(await faceCard(c)),
+        category: c.category,
         imageKey: c.imageUrl,
         audioKey: c.audioUrl,
         videoUrl: c.videoUrl ?? "",
       })),
     ),
   ]);
+  // Chapters, in the order their first card was added. A deck with none (a plain
+  // hand-made one) keeps the flat list; once any card has one, cards without a
+  // chapter sit under "Cards" so nothing disappears from the list.
+  const titles = [...new Set(cards.map((c) => c.category))];
+  const chaptered = titles.some(Boolean);
+  const groups = titles.map((t, i) => ({ anchor: `chapter-${i}`, title: t ?? "Cards", cards: cards.filter((c) => c.category === t) }));
   const member = await activeMembership(userId);
   const studyable = counts.due + counts.fresh;
   // Learners' recordings on this deck's cards, for the teacher who will audit them.
@@ -83,13 +93,32 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
       <section className="mt-6" aria-labelledby="cards-h">
         <h2 id="cards-h" className="font-display text-base font-bold text-ink">Cards</h2>
-        <ul className="mt-2 flex flex-col gap-2">
-          {cards.map((c) => (
-            <li key={c.id}>
-              <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} /></Card>
-            </li>
-          ))}
-        </ul>
+        {chaptered ? (
+          <div className="mt-2 flex flex-col gap-5">
+            <ChapterIndex chapters={groups.map((g) => ({ anchor: g.anchor, title: g.title, count: g.cards.length }))} />
+            {groups.map((g, i) => (
+              <section key={g.anchor} id={g.anchor} aria-labelledby={`${g.anchor}-h`} className="scroll-mt-20">
+                <h3 id={`${g.anchor}-h`} className="font-display text-sm font-bold text-ink">{i + 1}. {g.title}</h3>
+                <ul className="mt-2 flex flex-col gap-2">
+                  {g.cards.map((c) => (
+                    <li key={c.id}>
+                      <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} /></Card>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <ul className="mt-2 flex flex-col gap-2">
+            {cards.map((c) => (
+              <li key={c.id}>
+                <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} /></Card>
+              </li>
+            ))}
+          </ul>
+        )}
+        {counts.total < DECK_LIMITS.cardsPerDeck && cardMakerEnabled() ? <AiCardsPanel deckId={id} /> : null}
         {counts.total < DECK_LIMITS.cardsPerDeck ? (
           <Card className="mt-3">
             <h3 className="font-display text-sm font-bold text-ink">Add a card</h3>

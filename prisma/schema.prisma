@@ -83,6 +83,13 @@ model User {
   isGuest           Boolean   @default(false)
   theme             Theme     @default(LIGHT)
   preferences       Json?
+  /// AI card maker. Flashcards the AI has generated for this user, ever (not
+  /// per day): the free plan stops at a fixed total. Counted when generated,
+  /// not when saved, because the cost is in the generating.
+  aiCardsUsed       Int       @default(0)
+  /// Model tokens (input + output) spent on this user's AI requests. Not used
+  /// for a limit yet; kept so a token-based plan can start from real history.
+  aiTokensUsed      Int       @default(0)
 
   // Student side
   submissions Submission[] @relation("StudentSubmissions")
@@ -91,8 +98,10 @@ model User {
   // Teacher side
   reviewsGiven       Feedback[]   @relation("TeacherFeedback")
   claimedSubmissions Submission[] @relation("ClaimedSubmissions")
+  aiDraftLogs        AiDraftLog[]
+  aiSources          AiSource[]
 
-  accounts            Account[]
+  accounts          Account[]
   sessions            Session[]
   verificationCodes   VerificationCode[]
   passwordResetTokens PasswordResetToken[]
@@ -165,6 +174,7 @@ model Submission {
   // to the general queue instead of vanishing.
   assignedTeacher User?     @relation("AssignedSubmissions", fields: [assignedTeacherId], references: [id], onDelete: SetNull)
   feedback        Feedback?
+  aiDraftLogs     AiDraftLog[]
 
   createdAt DateTime @default(now())
 
@@ -175,6 +185,49 @@ model Submission {
   @@index([wordId])
   @@index([exerciseId])
   @@index([createdAt])
+}
+
+/// One AI draft a teacher asked for. It exists only to count: the daily limit
+/// per teacher and the retry cap per submission. The draft itself is not kept
+/// (the teacher edits it into the real Feedback), and the transcript lives on
+/// Submission. A row is written when the draft is requested, not when it
+/// succeeds, so a failing call cannot be retried without limit at our cost.
+model AiDraftLog {
+  id           String   @id @default(cuid())
+  teacherId    String
+  submissionId String
+  createdAt    DateTime @default(now())
+
+  // Cascade: the log has no meaning without either side.
+  teacher    User       @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([teacherId, createdAt]) // "drafts by this teacher today"
+  @@index([submissionId]) // "drafts already made for this submission"
+}
+
+/// A file (PDF or photo) a person added as a source for the AI card maker. The
+/// file sits in storage only until the cards are made, or up to two days if they walk
+/// away; this row is what lets both be done. It also records the type and size
+/// the server accepted, so the model is never sent a file on the browser's word.
+model AiSource {
+  id        String   @id @default(cuid())
+  userId    String
+  /// Storage key under the person's own folder.
+  key       String   @unique
+  mediaType String
+  /// The name on the person's device, shown back to them in the list. Never
+  /// sent to the model.
+  name      String
+  sizeBytes Int
+  createdAt DateTime @default(now())
+
+  // Cascade removes the row; the file itself is removed by account deletion
+  // (app/api/me) and by the daily sweep.
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt]) // "this person's live sources"
+  @@index([createdAt]) // the daily sweep of abandoned ones
 }
 
 /// A teacher's audit of one submission. One-to-one with Submission.

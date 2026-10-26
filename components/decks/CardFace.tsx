@@ -5,6 +5,7 @@
 // It deliberately does NOT decide which side is showing (StudyCard) or fetch
 // media — signed URLs arrive already resolved from the server page.
 
+import { AiBadge } from "@/components/decks/AiBadge";
 import { CardMarkdown } from "@/components/decks/CardMarkdown";
 
 export type FaceCard = {
@@ -20,6 +21,8 @@ export type FaceCard = {
   audit: string;
   /// Every field of an Excel-imported 56-point card, or null for a hand-made one.
   rich: Record<string, string> | null;
+  /// The AI helped make this card (see lib/decks cardText).
+  aiAssisted?: boolean;
 };
 
 export function CardFront({ card }: { card: FaceCard }) {
@@ -35,6 +38,7 @@ export function CardFront({ card }: { card: FaceCard }) {
   }
   return (
     <div className="flex flex-col items-center gap-3 text-center">
+      {card.aiAssisted ? <AiBadge /> : null}
       <p className="font-display text-2xl font-bold text-ink">{card.front}</p>
       {card.imageSrc ? (
         // eslint-disable-next-line @next/next/no-img-element -- signed storage URL, not optimisable by next/image

@@ -14,6 +14,7 @@ import { prisma } from "@/lib/prisma";
 import { CARD_SELECT, faceCard } from "@/lib/decks";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
 
@@ -37,6 +38,7 @@ export default async function SharedDeckPage({ params }: { params: Promise<{ tok
       {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{cards.length} cards</span>
+        {cards.some((c) => c.aiAssisted) ? <AiBadge label={`${cards.filter((c) => c.aiAssisted).length} of ${cards.length} cards AI-assisted`} /> : null}
         {deck.tags.map((t) => <Badge key={t}>{t}</Badge>)}
       </div>
       <div className="mt-4"><CopyDeckButton token={token} signedIn={Boolean(session?.user?.id)} /></div>

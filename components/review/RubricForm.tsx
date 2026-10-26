@@ -18,9 +18,12 @@ import type { MediaKind } from "@prisma/client";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Player } from "@/components/media/Player";
+import { AiDraftPanel } from "@/components/review/AiDraftPanel";
 import { NoteComposer } from "@/components/review/NoteComposer";
+import { mergeAiNotes, mergeAiScores, mergeAiSummary, postAudit } from "@/components/review/auditClient";
 import { SubmitBar } from "@/components/review/SubmitBar";
 import { CRITERIA, ScorePanel, type CriterionKey, type Scores } from "@/components/review/ScorePanel";
+import type { AiDraft } from "@/lib/aiDraft";
 import { clearDraft, readDraft, saveDraft } from "@/lib/draftStorage";
 import { feedbackSchema, type NoteInput } from "@/lib/validations";
 
@@ -35,11 +38,14 @@ export function RubricForm({
   mediaUrl,
   mediaKind,
   durationSec,
+  aiDraft = false,
 }: {
   submissionId: string;
   mediaUrl: string;
   mediaKind: MediaKind;
   durationSec: number | null;
+  /// Whether the AI draft is switched on (its keys are set); decided on the server.
+  aiDraft?: boolean;
 }) {
   const router = useRouter();
   // Refs, not state: onTimeUpdate fires several times a second, and state here
@@ -77,6 +83,22 @@ export function RubricForm({
   }, [submissionId]);
 
   const dirty = touched.size > 0 || notes.length > 0 || summary.trim().length > 0;
+
+  // Mirrors the latest touched set. applyAiDraft runs after a network call, so
+  // a plain closure would see the set from the render that started it.
+  const touchedRef = useRef(touched);
+  useEffect(() => {
+    touchedRef.current = touched;
+  }, [touched]);
+
+  // Fills only what the teacher has not already done. Sliders move but stay
+  // "not set" (not added to `touched`): the teacher must still confirm each
+  // score after listening, which is what stops an unheard audit being sent.
+  function applyAiDraft(d: AiDraft) {
+    setScores((s) => mergeAiScores(s, touchedRef.current, d));
+    setSummary((cur) => mergeAiSummary(cur, d));
+    setNotes((cur) => mergeAiNotes(cur, d));
+  }
 
   useEffect(() => {
     if (!loaded || !dirty) return;
@@ -138,33 +160,16 @@ export function RubricForm({
       return;
     }
     setBusy(true);
-    try {
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
-      });
-      const raw = await res.text();
-      let data: { error?: string } = {};
-      try {
-        data = JSON.parse(raw);
-      } catch {
-        data = { error: "Something went wrong. Your audit is saved here — try again." };
-      }
-      if (!res.ok) {
-        setError(data.error ?? "Could not save the audit. It is saved here — try again.");
-        setBusy(false);
-        setConfirming(false);
-        return;
-      }
-      clearDraft(submissionId);
-      router.push("/queue");
-      router.refresh();
-    } catch {
-      setError("Could not reach the server. Your audit is saved here — try again.");
+    const res = await postAudit(parsed.data);
+    if (!res.ok) {
+      setError(res.error);
       setBusy(false);
       setConfirming(false);
+      return;
     }
+    clearDraft(submissionId);
+    router.push("/queue");
+    router.refresh();
   }
 
   const average = CRITERIA.reduce((t, c) => t + scores[c.key], 0) / 5;
@@ -216,6 +221,7 @@ export function RubricForm({
         </div>
 
         <div className="flex flex-col gap-4">
+          {mediaKind === "AUDIO" && aiDraft ? <AiDraftPanel submissionId={submissionId} onApply={applyAiDraft} /> : null}
           <Card>
             <CardTitle>Scores</CardTitle>
             <div className="mt-4">

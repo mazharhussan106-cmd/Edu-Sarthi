@@ -15,9 +15,10 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CARD_SELECT, faceCard } from "@/lib/decks";
+import { AI_CARD_FILTER, CARD_SELECT, faceCard } from "@/lib/decks";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
 import { LikeButton } from "@/components/decks/LikeButton";
@@ -45,6 +46,10 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
   const topics = new Map<string, { id: string; text: string }[]>();
   if (imported) for (const c of index) topics.set(c.category ?? "Cards", [...(topics.get(c.category ?? "Cards") ?? []), { id: c.id, text: c.text }]);
 
+  // Which cards the AI helped make: ids only, so an imported deck's heavy
+  // card data is still never loaded just to draw the list.
+  const aiIds = new Set((await prisma.word.findMany({ where: { deckId: id, ...AI_CARD_FILTER }, select: { id: true } })).map((c) => c.id));
+  const aiCount = aiIds.size;
   const own = deck.ownerId === session?.user?.id;
   const liked = session?.user?.id ? (await prisma.deckLike.count({ where: { deckId: id, userId: session.user.id } })) > 0 : false;
   // Recording for the teacher is offered on a verified teacher's deck, to students.
@@ -59,6 +64,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
         <span className="font-mono text-xs text-ink-muted">{index.length} cards</span>
         {deck.owner.role === "TEACHER" && deck.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}
         {deck.owner.role === "ADMIN" ? <Badge variant="accent">EduSarthi</Badge> : null}
+        {aiCount ? <AiBadge label={`${aiCount} of ${index.length} cards AI-assisted`} /> : null}
         {deck.tags.map((t) => <Link key={t} href={`/library?tag=${encodeURIComponent(t)}`}><Badge>{t}</Badge></Link>)}
       </div>
       <div className="mt-4 flex flex-wrap items-start gap-3">
@@ -77,7 +83,10 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
                 {rows.map((c) => (
                   <li key={c.id}>
                     <Link href={`/library/${id}/card/${c.id}`} className="block">
-                      <Card className="p-3 hover:bg-hover"><span className="block truncate font-medium text-ink">{c.text}</span></Card>
+                      <Card className="flex items-center justify-between gap-2 p-3 hover:bg-hover">
+                        <span className="min-w-0 truncate font-medium text-ink">{c.text}</span>
+                        {aiIds.has(c.id) ? <AiBadge /> : null}
+                      </Card>
                     </Link>
                   </li>
                 ))}

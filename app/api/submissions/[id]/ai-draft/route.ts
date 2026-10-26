@@ -16,6 +16,7 @@ import { NextResponse } from "next/server";
 
 import { AiError, MAX_AUDIO_BYTES, speechStats, transcribeAudio } from "@/lib/aiTranscribe";
 import { draftAudit } from "@/lib/aiDraft";
+import { AI_OFF_MESSAGE, auditDraftEnabled } from "@/lib/aiEnabled";
 import { reserveDraft } from "@/lib/aiLimits";
 import { requireUser } from "@/lib/apiUser";
 import { readMediaBytes } from "@/lib/mediaBytes";
@@ -56,6 +57,10 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       { status: 422 },
     );
   }
+
+  // Before the draft is counted: without the keys nothing can be made, and a
+  // click that fails must not use up the teacher's drafts.
+  if (!auditDraftEnabled()) return NextResponse.json({ error: AI_OFF_MESSAGE }, { status: 503 });
 
   const reserved = await reserveDraft(gate.id, id);
   if (!reserved.ok) return NextResponse.json({ error: reserved.error }, { status: 429 });

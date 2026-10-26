@@ -38,11 +38,14 @@ export function RubricForm({
   mediaUrl,
   mediaKind,
   durationSec,
+  aiDraft = false,
 }: {
   submissionId: string;
   mediaUrl: string;
   mediaKind: MediaKind;
   durationSec: number | null;
+  /// Whether the AI draft is switched on (its keys are set); decided on the server.
+  aiDraft?: boolean;
 }) {
   const router = useRouter();
   // Refs, not state: onTimeUpdate fires several times a second, and state here
@@ -218,7 +221,7 @@ export function RubricForm({
         </div>
 
         <div className="flex flex-col gap-4">
-          {mediaKind === "AUDIO" ? <AiDraftPanel submissionId={submissionId} onApply={applyAiDraft} /> : null}
+          {mediaKind === "AUDIO" && aiDraft ? <AiDraftPanel submissionId={submissionId} onApply={applyAiDraft} /> : null}
           <Card>
             <CardTitle>Scores</CardTitle>
             <div className="mt-4">

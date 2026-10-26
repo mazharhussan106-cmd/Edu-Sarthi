@@ -23,6 +23,7 @@ import { SendBackForm } from "@/components/review/SendBackForm";
 import { cardNoun, chunkDetailsOf, chunkGloss } from "@/lib/chunkCard";
 import { supportDetailsOf } from "@/lib/supportCard";
 import { ensureActiveUser } from "@/lib/activeUser";
+import { auditDraftEnabled } from "@/lib/aiEnabled";
 
 export const revalidate = 0;
 
@@ -171,6 +172,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         mediaUrl={mediaUrl}
         mediaKind={submission.mediaKind}
         durationSec={submission.durationSec}
+        aiDraft={auditDraftEnabled()}
       />
     </main>
   );

@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 const CONTACT = "privacy@edusarthi.com";
-const UPDATED = "6 October 2026";
+const UPDATED = "26 October 2026";
 
 export default function PrivacyPage() {
   return (
@@ -53,6 +53,13 @@ export default function PrivacyPage() {
               — five scores, a written summary, and timestamped notes.
             </li>
             <li>
+              <span className="text-ink">
+                A written transcript of an audio recording.
+              </span>{" "}
+              It is made only when a teacher asks for an AI-assisted draft of
+              your audit, and it is kept with the submission.
+            </li>
+            <li>
               <span className="text-ink">Failed sign-in attempts.</span> We record
               the email address and the time of failed sign-ins, for fifteen
               minutes, to slow down password guessing.
@@ -85,7 +92,7 @@ export default function PrivacyPage() {
             Who we share data with
           </h2>
           <p className="mt-2">
-            We do not sell personal data. We use three processors to run the
+            We do not sell personal data. We use these processors to run the
             service, and each sees only what it needs:
           </p>
           <ul className="mt-2 flex flex-col gap-1">
@@ -101,7 +108,26 @@ export default function PrivacyPage() {
               <span className="text-ink">SendGrid</span> — sends verification
               codes and password reset emails.
             </li>
+            <li>
+              <span className="text-ink">OpenAI</span> — turns an audio
+              recording into text, only when a teacher asks for an AI-assisted
+              draft.
+            </li>
+            <li>
+              <span className="text-ink">Anthropic</span> — receives that text
+              and writes a draft audit for the teacher to check and edit.
+            </li>
           </ul>
+          <p className="mt-2">
+            When a teacher asks for an AI-assisted draft, the audio of that one
+            submission goes to OpenAI, and the text of it goes to Anthropic. We
+            do not send your name, email address or student ID with it, but
+            anything you say in the recording, including a name, is part of what
+            is sent. The draft is only a starting point: a teacher listens to
+            your recording, changes the draft and decides what you receive. Both
+            companies keep data under their own terms; read their privacy
+            policies for how long.
+          </p>
           <p className="mt-2">
             If a teacher&apos;s flashcard includes a video, it plays from YouTube
             or Google Drive, so your phone contacts them when you open that

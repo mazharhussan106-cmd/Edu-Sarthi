@@ -101,3 +101,23 @@ Done: **Continue with Google** and **Continue as guest** under the login and reg
 Needs before Google works live: create an OAuth client in Google Cloud Console, redirect URI `https://<site>/api/auth/callback/google`, put the ID and secret in Vercel as `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`, redeploy.
 
 Not done, by choice: deleting old guest rows (needs a check of what cascades first), hiding guests from the teacher Students list and admin counts, friendlier guest messages inside Explore's "Import and study".
+
+## AI draft audit (26 Oct 2026, branch `claude/magical-hopper-juy9yr`)
+
+**What it is.** On the teacher's audit page, an audio submission has an "AI draft" card. The teacher presses a button; the server transcribes the recording (OpenAI `whisper-1`, the only model that returns word times and confidence), measures the speech, and asks Claude (default `claude-sonnet-5-5`, override with `AI_DRAFT_MODEL`) for grammar, vocabulary and fluency scores with a reason each, timestamped notes (including hedged "Listen again here: …" pronunciation hints from Whisper's low-confidence stretches) and a student-facing summary. Plan A of the owner's "add AI" request; owner chose it over student-facing instant AI feedback.
+
+**Files.** `lib/aiTranscribe.ts` (Whisper call + `speechStats`: pace, pauses, hesitation sounds, repeats), `lib/aiDraft.ts` (Claude call, Zod-checked, clamps scores, drops notes past the recording end), `lib/aiLimits.ts` (limits, IST day), `lib/mediaBytes.ts` (reads the stored recording; passes the transcription service a generic `audio.<ext>` name, never the student's file name), `app/api/submissions/[id]/ai-draft/route.ts`, `components/review/AiDraftPanel.tsx`, edits to `components/review/RubricForm.tsx` (`applyAiDraft`), the new `AiDraftLog` table in `prisma/schema.prisma`, and a paragraph + two processors on `app/(public)/legal/privacy/page.tsx`.
+
+**Decisions not to undo.**
+- AI never scores **pronunciation** or **confidence** (a transcript cannot show either); those stay the teacher's. Pronunciation help is notes only, worded as a guess.
+- Only audio, only the teacher holding the claim (or an admin who claimed it), any teacher may use it. Limits: 500 drafts per teacher per **IST** day, 3 per submission, counted in `AiDraftLog` (row written when asked, not when it succeeds).
+- The AI fills the form automatically but only what the teacher has not done: sliders move yet stay "not set" until the teacher confirms each (the existing guard against sending an unheard audit), summary only if empty, notes are added without duplicates. Nothing goes to the student except through the teacher's normal submit.
+- **No "AI" label on the student's feedback** (owner's decision, against the assistant's advice). The privacy page does disclose that audio and text go to OpenAI and Anthropic when a teacher asks for a draft.
+- Only the transcript is stored (`Submission.transcript`); the draft itself is not.
+- The transcript is student speech and is put in `<transcript>` tags with an instruction to treat it as data, so a student cannot talk the AI into a score.
+
+**Not tested against the real services** (no keys in the cloud session): tested with a mocked OpenAI/Anthropic on a local Postgres, a running dev server and Playwright (9 route cases, limits, IST boundary, form fill without overwriting). Still to verify with real keys: that Whisper keeps grammar mistakes in the transcript (it tends to tidy speech; the prompt asks it not to), the Supabase signed-URL read path, and how close the drafts are to real audits (compare 10-20 before relying on it).
+
+**To go live.** Merge; set `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` in Vercel (spend limits on both dashboards); run **Actions → Database setup** once (adds the `AiDraftLog` table; nothing existing changes). Privacy page promise: "Changes" says account holders are emailed before a change takes effect — adding two processors is such a change; the owner should decide how to notify. The page is a draft and still needs a lawyer's review.
+
+**Open / not built.** Plan B: AI card generation (topic → deck draft through the same admin review, English only, 56-field format) — not started. Known gaps: `RubricForm.tsx` is 291 lines (over the 250 guideline; move state into a hook); pre-existing hydration mismatch in `ClaimTimer` (`components/review/ClaimControls.tsx`); the draft is lost on reload and asking again counts toward the limits; no cost log beyond the count; no fallback for Claude safety refusals (the teacher is told to write by hand).

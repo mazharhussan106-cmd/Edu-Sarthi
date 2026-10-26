@@ -32,9 +32,13 @@ const PUBLIC_DIR = path.join(process.cwd(), "public");
 const tooLarge = () => new AiError("This recording is over 25 MB, which is too large for the AI draft. Write this audit by hand.");
 
 function describe(key: string) {
-  const filename = key.split("/").pop() || "recording";
-  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
-  return { filename, contentType: AUDIO_TYPES[ext] ?? "audio/webm" };
+  const last = key.split("/").pop() || "";
+  const ext = last.includes(".") ? (last.split(".").pop()?.toLowerCase() ?? "") : "";
+  // The stored file name is whatever the student's device called it, and can
+  // hold their name. The transcription service only needs the extension to
+  // recognise the format, so that is all it is given.
+  const known = ext in AUDIO_TYPES ? ext : "webm";
+  return { filename: `audio.${known}`, contentType: AUDIO_TYPES[known] };
 }
 
 function toBuffer(b: Buffer): ArrayBuffer {

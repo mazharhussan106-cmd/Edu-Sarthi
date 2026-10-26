@@ -210,6 +210,18 @@ export default async function ProfilePage() {
         </div>
       </Card>
 
+      {!isTeacher ? (
+        <Link href="/history" className="mt-4 block">
+          <Card className="flex items-center justify-between p-4 transition-colors hover:bg-hover">
+            <span>
+              <span className="block font-display text-base font-bold text-ink">History</span>
+              <span className="text-sm text-ink-muted">Your recordings, audits and the cards you answered</span>
+            </span>
+            <span aria-hidden="true" className="text-ink-muted">›</span>
+          </Card>
+        </Link>
+      ) : null}
+
       <Link href="/settings" className="mt-4 block">
         <Card className="flex items-center justify-between p-4 transition-colors hover:bg-hover">
           <span>

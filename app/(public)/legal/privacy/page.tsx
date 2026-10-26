@@ -54,6 +54,17 @@ export default function PrivacyPage() {
             </li>
             <li>
               <span className="text-ink">
+                What you give the AI card maker, and what it makes.
+              </span>{" "}
+              This is the request you type, your answers to its questions,
+              any text, PDF or photo you add, and the cards it writes, which
+              are marked &ldquo;AI-assisted&rdquo; wherever they appear. We
+              also keep your last answers to the questions, so they can be
+              offered again, and a count of the AI cards and the AI usage on
+              your account.
+            </li>
+            <li>
+              <span className="text-ink">
                 A written transcript of an audio recording.
               </span>{" "}
               It is made only when a teacher asks for an AI-assisted draft of
@@ -115,7 +126,8 @@ export default function PrivacyPage() {
             </li>
             <li>
               <span className="text-ink">Anthropic</span> — receives that text
-              and writes a draft audit for the teacher to check and edit.
+              and writes a draft audit for the teacher to check and edit. It also
+              reads what you give the AI card maker and writes the cards.
             </li>
           </ul>
           <p className="mt-2">
@@ -127,6 +139,16 @@ export default function PrivacyPage() {
             your recording, changes the draft and decides what you receive. Both
             companies keep data under their own terms; read their privacy
             policies for how long.
+          </p>
+          <p className="mt-2">
+            When you use the AI card maker, what you type, your answers to its
+            questions, and any text, PDF or photo you add go to Anthropic. We do
+            not send your name, email address or student ID with them, but
+            anything you write or photograph, including a name, is part of what
+            is sent. The cards it writes can be wrong, so every one is marked
+            &ldquo;AI-assisted&rdquo; and you choose which to keep. Anthropic
+            keeps data under its own terms; read its privacy policy for how
+            long.
           </p>
           <p className="mt-2">
             If a teacher&apos;s flashcard includes a video, it plays from YouTube
@@ -155,9 +177,17 @@ export default function PrivacyPage() {
             window.
           </p>
           <p className="mt-2">
+            A PDF or photo you add to the AI card maker is kept in our private
+            storage only until the cards are made, and is then deleted. If you
+            leave before that, it is deleted by our daily clean-up, which can
+            take up to two days. Pasted text is not stored; it is sent with your
+            request. The cards you add to a deck, and your last answers to the
+            questions, are kept while your account exists.
+          </p>
+          <p className="mt-2">
             When you delete your account, your submissions, audits, flashcard
             progress and decks are deleted with it, and we remove your stored
-            recordings and card pictures. If storage is unavailable at that
+            recordings, card pictures and any files waiting in the AI card maker. If storage is unavailable at that
             moment, a file can be left behind until we clear it; write to us if
             you want it confirmed. A copy of one of your decks that another
             person made is theirs and stays with them.

@@ -2,7 +2,7 @@
 // accepting an upload (type and size decided here, before a URL is issued),
 // reading the file back for the model, and deleting it afterwards.
 //
-// A file lives in storage only until the cards are made, or a day if the person
+// A file lives in storage only until the cards are made, or up to two days if the person
 // walks away (sweepSources, run by the daily cron). It deliberately does NOT
 // call the model or count tokens (lib/aiCards), and never trusts the browser's
 // word for what a file is: the type is checked again against the file's first
@@ -16,7 +16,9 @@ import { prisma } from "@/lib/prisma";
 import { createUploadTarget, objectExists, removeObjects } from "@/lib/storage";
 
 export const MAX_SOURCE_FILE_BYTES = 10 * 1024 * 1024;
-/// How long an unused source file may sit in storage.
+/// A file this old is removed by the next sweep. The cron runs once a day, so
+/// a file added just after a run waits for the run after that: up to twice this.
+/// The privacy page says "up to two days" for that reason.
 export const SOURCE_KEEP_MS = 24 * 60 * 60 * 1000;
 
 export const SOURCE_TYPES: Record<string, "pdf" | "image"> = {

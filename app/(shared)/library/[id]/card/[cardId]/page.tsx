@@ -1,6 +1,7 @@
 // Owns one card inside a library deck, shown on the same EduSarthi card as the
 // built-in words (frame, three sides that turn, swipe, zoom), with Previous and
-// Next in the deck's study order. Only an approved public deck resolves — any
+// Next in the deck's study order. Only a deck listed in the library resolves
+// (lib/decks LISTED: not one whose owner or institute is suspended) — any
 // other id is a 404.
 //
 // It deliberately offers no Known / Unknown here (a copy is the learner's own,
@@ -11,7 +12,7 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CARD_SELECT, faceCard } from "@/lib/decks";
+import { CARD_SELECT, LISTED, faceCard } from "@/lib/decks";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { DeckCardView } from "@/components/decks/DeckCardView";
@@ -21,7 +22,7 @@ export const revalidate = 0;
 export default async function LibraryCardPage({ params }: { params: Promise<{ id: string; cardId: string }> }) {
   const [{ id, cardId }, session] = await Promise.all([params, auth()]);
   const deck = await prisma.deck.findFirst({
-    where: { id, visibility: "PUBLIC", status: "APPROVED" },
+    where: { id, ...LISTED },
     select: { title: true, cards: { orderBy: { serial: "asc" }, select: { id: true } } },
   });
   if (!deck) notFound();

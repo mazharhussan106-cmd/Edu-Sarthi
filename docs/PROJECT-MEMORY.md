@@ -80,11 +80,20 @@ An English spoken-communication training platform: students record or upload, te
    - Details: `docs/LIBRARY-V2-PLAN.md` → Phase 4.
 4h. **Phases 1–4 merged into `main` (27 Oct, PR #18).** Actions → Database setup ran straight after (run #8: "in sync", no data-loss warning, no card changed).
    Still to do, in this order:
-   1. Actions → **Load flashcard decks**, so the 21 subject decks get the © EduSarthi label.
+   1. ~~Actions → **Load flashcard decks**~~ — done 27 Oct (run 4: 21 decks, licence set, no card changed).
    2. Check that `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL` are set in Vercel (invite and fix-undone emails).
    3. The owner's phone test, `docs/PHASE0-LIVE-TEST.md`. Its "Before you start" step 1 is now done; the submit step has the new consent form.
-   4. Phase 5 (institutes publish with their logo).
+   4. ~~Phase 5~~ — built, see 4i.
    5. Phase 6 (lawyer review; telling account holders about the new Terms section).
+4i. **Library v2 Phase 5 built (27 Oct) on `claude/sweet-davinci-d313f6`, NOT merged yet: institutes publish to the library under their name and logo.** Decisions 18–21 in `docs/LIBRARY-V2-PLAN.md`.
+   - **Who and how:** the institute's admin and teachers choose "Publish as <Institute>" in the submit form and tick "I may publish this on behalf of <Institute>". A deck shared inside the institute can be submitted, but only as the institute. Licence: always CC BY-SA.
+   - **Data:** a deck published as an institute is a `PUBLIC` deck with `instituteId` set. New columns `Institute.logoKey`, `pendingLogoKey`, `logoNote` (additive). **After merging, run Actions → Database setup.**
+   - **Logo:** PNG/JPG/WebP up to 1 MB, uploaded on the Institute page (`lib/instituteLogo.ts`, `components/institute/LogoForm.tsx`), approved or refused under Admin → Institutes → Logos to check. Nothing shows until approved.
+   - **Credit:** "[logo] by <Institute> (<person>)" through `components/decks/DeckCredit.tsx` (now an async server component, so never import it into a client component).
+   - **Don't undo:** `LISTED` (`lib/decks.ts`) also hides decks of a suspended institute; library pages and the copy route now use `LISTED` instead of repeating the check. `drop()` in `lib/institutes.ts` keeps a leaving teacher's institute-published decks public under their own name. Withdraw and takedown clear `instituteId`.
+   - The institute's admin can take the institute's name off any deck (Institute page → Published by the institute).
+   - Undecided: decks of someone who leaves a *suspended* institute come back under their own name — should they go back to review instead? Should the owner be emailed when the institute's admin removes the name?
+   - `lib/decks.ts` is now 260 lines (was already over 250); split it when it is next changed.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

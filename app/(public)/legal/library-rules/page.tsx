@@ -40,8 +40,9 @@ export default function LibraryRulesPage() {
           <h2 className={h2}>Every deck is checked first</h2>
           <p className="mt-2">
             An admin reads every deck before anyone else can find it in the library, and checks it against the rules below.
-            If it is not approved, you see the reason on the deck and can fix it and submit again. If you change a published
-            deck, it goes back to review.
+            If it is not approved, you see the reason on the deck and can fix it and submit again. Small fixes to a published
+            deck go live at once and are checked afterwards; bigger changes go in a new version, which is checked before it
+            replaces the published one.
           </p>
         </section>
 
@@ -61,11 +62,24 @@ export default function LibraryRulesPage() {
         </section>
 
         <section>
+          <h2 className={h2}>Publishing for an institute</h2>
+          <p className="mt-2">
+            An institute&apos;s admin and its teachers can publish a deck under the institute&apos;s name, with its logo
+            once the EduSarthi admin has approved the logo. You tick that you may publish on the institute&apos;s behalf, and
+            the deck is checked like any other. The person who made it is named beside the institute, unless they chose no
+            name. The institute&apos;s admin can take its name off any of its decks; the deck then stays in the library under
+            the person who made it, and so does a deck whose maker leaves the institute. While an institute is suspended, its
+            decks are not shown.
+          </p>
+        </section>
+
+        <section>
           <h2 className={h2}>Licence and credit</h2>
           <p className="mt-2">
             Decks you publish carry the{" "}
             <a href={LICENCES.CC_BY_SA.href} target="_blank" rel="noopener noreferrer" className={link}>{LICENCES.CC_BY_SA.label}</a>{" "}
-            licence: anyone may share and change them, with credit to you, as long as they share their version the same way.
+            licence: anyone may share and change them, with credit to you (and to the institute, for its decks), as long as
+            they share their version the same way.
             You choose how your name shows, and can change it in Settings. You also let EduSarthi use your public decks in
             paid features. The details are in the <Link href="/legal/terms" className={link}>Terms</Link>.
           </p>

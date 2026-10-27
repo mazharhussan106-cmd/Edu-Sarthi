@@ -13,7 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { copyObject, removeObjects } from "@/lib/storage";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { CARD_SELECT, LimitReached, lockUser, newCardCode } from "@/lib/decks";
-import { CREDIT_SELECT, LICENCES, creditName, sourceLine } from "@/lib/libraryTerms";
+import { CREDIT_SELECT, LICENCES, byLine, sourceLine } from "@/lib/libraryTerms";
 
 /// Copies a deck the caller may read (by link or from the library) into the user's own account as a private deck.
 /// Files are copied before the transaction — they are slow and not atomic —
@@ -22,8 +22,9 @@ export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Pr
   const source = await prisma.deck.findFirst({
     where,
     select: {
-      id: true, title: true, description: true, tags: true, licence: true, sourceCredit: true, sourceLicence: true,
+      id: true, title: true, description: true, tags: true, licence: true, sourceCredit: true, sourceLicence: true, visibility: true,
       owner: { select: CREDIT_SELECT },
+      institute: { select: { name: true } },
       cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true } },
     },
   });
@@ -67,7 +68,9 @@ export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Pr
             description: source.description,
             tags: source.tags,
             sourceDeckId: source.id,
-            sourceCredit: sourceLine(source.title, creditName(source.owner), source.sourceCredit),
+            // The institute is credited only on a deck it published; one shared
+            // inside it never went out under its name.
+            sourceCredit: sourceLine(source.title, byLine(source.owner, source.visibility === "PUBLIC" && source.institute ? { name: source.institute.name, logoKey: null } : null), source.sourceCredit),
             sourceLicence: fromEduSarthi ? edu : source.licence,
           },
           select: { id: true },

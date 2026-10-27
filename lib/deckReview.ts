@@ -1,5 +1,6 @@
 // Owns the public-library life cycle of a deck: the owner asking to publish
-// (with the 18+ answer, the licence ticks and their name choice), the admin
+// (with the 18+ answer, the licence ticks, their name choice, and whether it
+// goes out under their institute's name), the admin
 // approving or rejecting, readers reporting, and the admin acting on reports. Every state change lives here so the rules cannot drift between the
 // owner's route, the admin's route and the pages.
 //
@@ -19,6 +20,7 @@ import { DECK_LIMITS, type PublishConsent } from "@/lib/deckSchemas";
 import { LIBRARY_TERMS_VERSION, LICENCES, licenceFor } from "@/lib/libraryTerms";
 import { mergeVersion } from "@/lib/deckVersion";
 import { editorsWithoutTerms } from "@/lib/deckMembers";
+import { activeMembership } from "@/lib/institutes";
 
 type Result = { ok: true } | { error: string };
 
@@ -28,9 +30,11 @@ export async function publishDeck(userId: string, id: string, consent: PublishCo
     select: {
       status: true,
       visibility: true,
+      instituteId: true,
       description: true,
       sourceLicence: true,
       draftOfId: true,
+      draftOf: { select: { instituteId: true } },
       owner: { select: { role: true, teacherVerifiedAt: true, name: true, adultConfirmedAt: true } },
       _count: { select: { cards: true } },
     },
@@ -60,8 +64,22 @@ export async function publishDeck(userId: string, id: string, consent: PublishCo
   if (deck.owner.role === "TEACHER" && !deck.owner.teacherVerifiedAt) {
     return { error: "An admin needs to verify your teacher account before you can publish. Ask them to verify you, then submit again." };
   }
-  if (deck.visibility === "INSTITUTE") return { error: "This deck is shared with your institute. Stop sharing it there first — an institute deck stays inside the institute." };
   if (deck.visibility === "PUBLIC" && deck.status !== "REJECTED") return { error: "This deck is already waiting for review or published." };
+  // A new version keeps whatever name the published deck went out under; only
+  // a first submission (or a resubmission) chooses.
+  const choosing = !deck.draftOfId;
+  if (choosing && deck.visibility === "INSTITUTE" && !consent.asInstitute) {
+    return { error: "This deck is shared with your institute, so it goes to the library under the institute’s name. Choose that, or stop sharing it with the institute first to publish it as yourself." };
+  }
+  // Owner's decision: an institute's admin and its teachers may publish under
+  // its name. Checked now, not when the form was drawn: a role can change.
+  const member = choosing && consent.asInstitute ? await activeMembership(userId) : null;
+  if (choosing && consent.asInstitute && (!member || member.role === "STUDENT")) {
+    return { error: "Only an institute’s admin and teachers can publish under its name. Choose to publish it as yourself instead." };
+  }
+  if (member && deck.visibility === "INSTITUTE" && deck.instituteId !== member.institute.id) {
+    return { error: "This deck is shared with a different institute. Stop sharing it there first, then submit again." };
+  }
   if (deck._count.cards < DECK_LIMITS.minCardsToPublish) {
     return { error: `Add at least ${DECK_LIMITS.minCardsToPublish} cards before submitting — it is the minimum for the public library.` };
   }
@@ -85,7 +103,8 @@ export async function publishDeck(userId: string, id: string, consent: PublishCo
         rejectReason: null,
         reviewedById: null,
         reviewedAt: null,
-        licence: licenceFor(deck.owner.role),
+        licence: licenceFor(deck.owner.role, choosing ? Boolean(member) : Boolean(deck.draftOf?.instituteId)),
+        ...(choosing ? { instituteId: member ? member.institute.id : null } : {}),
         termsVersion: LIBRARY_TERMS_VERSION,
         termsAcceptedAt: now,
       },
@@ -102,7 +121,9 @@ export async function unpublishDeck(userId: string, id: string): Promise<Result>
   if (deck.visibility === "INSTITUTE") return { error: "This deck is shared with your institute, not the library. Use “Stop sharing” instead." };
   await prisma.deck.updateMany({
     where: { id, ownerId: userId },
-    data: { visibility: deck.shareToken ? "LINK" : "PRIVATE", status: "DRAFT", rejectReason: null },
+    // Withdrawn means private, the same for an institute's deck: the
+    // institute's name is no longer on it, and the owner may share it there again.
+    data: { visibility: deck.shareToken ? "LINK" : "PRIVATE", status: "DRAFT", rejectReason: null, instituteId: null },
   });
   // Owner's decision: followers lose a deck its author withdraws. Their card
   // progress stays, in case it is published again and they follow it again.
@@ -177,7 +198,7 @@ export async function resolveReports(adminId: string, deckId: string, outcome: "
   const now = new Date();
   await prisma.deckReport.updateMany({ where: { deckId, resolvedAt: null }, data: { resolvedAt: now, resolvedById: adminId } });
   if (outcome === "takedown") {
-    await prisma.deck.update({ where: { id: deckId }, data: { visibility: "PRIVATE", shareToken: null, status: "REJECTED", rejectReason: reason, reviewedById: adminId, reviewedAt: now } });
+    await prisma.deck.update({ where: { id: deckId }, data: { visibility: "PRIVATE", shareToken: null, instituteId: null, status: "REJECTED", rejectReason: reason, reviewedById: adminId, reviewedAt: now } });
     await prisma.deckFollow.deleteMany({ where: { deckId } });
   } else if (deck.status === "PENDING_REVIEW") {
     // Auto-hidden by reports and found fine: back into the library.

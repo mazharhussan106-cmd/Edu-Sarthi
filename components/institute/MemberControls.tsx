@@ -1,5 +1,6 @@
-// Owns the institute admin's controls: a member's role and removal, and the
-// join code with its "new code" button.
+// Owns the institute admin's controls: a member's role and removal, the join
+// code with its "new code" button, and taking the institute's name off a deck
+// published under it.
 //
 // It deliberately does NOT decide who may use them — the API checks the caller
 // is the institute's admin; these only offer the buttons to someone who is.
@@ -36,6 +37,21 @@ export function MemberControls({ userId, role }: { userId: string; role: "TEACHE
           Remove
         </Button>
       </span>
+      {error ? <span role="alert" className="max-w-56 text-right text-xs text-error">{error}</span> : null}
+    </span>
+  );
+}
+
+/// The deck stays in the library, under the name of the person who made it.
+export function RemoveNameButton({ deckId }: { deckId: string }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <span className="flex flex-col items-end gap-1">
+      <Button size="sm" variant="ghost" disabled={busy} className="text-error" onClick={() => { if (window.confirm("Take the institute’s name and logo off this deck? It stays in the library under the name of the person who made it.")) void act(router, { action: "removeName", deckId }, setError, setBusy); }}>
+        Remove institute’s name
+      </Button>
       {error ? <span role="alert" className="max-w-56 text-right text-xs text-error">{error}</span> : null}
     </span>
   );

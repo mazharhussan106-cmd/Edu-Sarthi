@@ -1,7 +1,7 @@
-// Owns the admin's institute list: applications waiting for a decision first,
-// then running, rejected and suspended ones. Approve and reject sit on each
-// application; a reason is required to reject or suspend and the institute's
-// admin reads it.
+// Owns the admin's institute list: logos waiting to be checked, applications
+// waiting for a decision, then running, rejected and suspended ones. Approve
+// and reject sit on each application and logo; a reason is required to reject,
+// suspend or refuse a logo, and the institute's admin reads it.
 //
 // It deliberately shows the applicant's contact line as typed — that is what
 // the admin needs to check the application is real — and nothing else about
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { ensureActiveUser } from "@/lib/activeUser";
+import { resolveMediaUrl } from "@/lib/storage";
 
 export const revalidate = 0;
 
@@ -24,8 +25,13 @@ export default async function AdminInstitutesPage() {
   const institutes = await prisma.institute.findMany({
     orderBy: [{ status: "asc" }, { createdAt: "asc" }],
     take: 200,
-    select: { id: true, name: true, description: true, contact: true, status: true, statusNote: true, createdAt: true, _count: { select: { members: true, decks: true } } },
+    select: { id: true, name: true, description: true, contact: true, status: true, statusNote: true, createdAt: true, pendingLogoKey: true, _count: { select: { members: true, decks: true } } },
   });
+  // A logo goes on public decks, so it is checked like a deck: nothing shows
+  // until an admin has looked at it.
+  const logos = await Promise.all(
+    institutes.flatMap((i) => (i.pendingLogoKey ? [resolveMediaUrl(i.pendingLogoKey).then((url) => ({ id: i.id, name: i.name, url }))] : [])),
+  );
   const pending = institutes.filter((i) => i.status === "PENDING");
   const rest = institutes.filter((i) => i.status !== "PENDING");
 
@@ -60,6 +66,26 @@ export default async function AdminInstitutesPage() {
     <main className="mx-auto max-w-4xl px-6 py-10">
       <h1 className="font-display text-2xl font-bold text-ink">Institutes</h1>
       <p className="mt-1 text-sm text-ink-muted">Check the contact line is real before approving. An approved institute gets its own members and private decks.</p>
+      <h2 className="mt-8 font-display text-base font-bold text-ink">Logos to check ({logos.length})</h2>
+      <p className="text-xs text-ink-muted">Approve only the institute’s own logo: no other brand, no person’s photo, nothing the library rules forbid.</p>
+      <ul className="mt-2 flex flex-col gap-2">
+        {logos.length === 0 ? <li><Card className="text-sm text-ink-muted">No logos waiting.</Card></li> : null}
+        {logos.map((l) => (
+          <li key={l.id}>
+            <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+              <span className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {l.url ? <img src={l.url} alt={`Logo uploaded by ${l.name}`} className="size-16 rounded-lg border border-border bg-surface object-contain" /> : <span className="text-xs text-error">The file could not be loaded.</span>}
+                <span className="font-medium text-ink">{l.name}</span>
+              </span>
+              <span className="flex flex-wrap gap-2">
+                <ActionButton url="/api/admin/institutes" body={{ action: "rejectLogo", id: l.id }} label="Refuse" askReason />
+                <ActionButton url="/api/admin/institutes" body={{ action: "approveLogo", id: l.id }} label="Approve logo" variant="primary" />
+              </span>
+            </Card>
+          </li>
+        ))}
+      </ul>
       <h2 className="mt-8 font-display text-base font-bold text-ink">Applications ({pending.length})</h2>
       <ul className="mt-2 flex flex-col gap-2">
         {pending.length === 0 ? <li><Card className="text-sm text-ink-muted">No applications waiting.</Card></li> : pending.map(row)}

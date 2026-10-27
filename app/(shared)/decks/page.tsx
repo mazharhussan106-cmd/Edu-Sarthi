@@ -37,7 +37,7 @@ export default async function DecksPage() {
   const follows = await prisma.deckFollow.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    select: { deck: { select: { id: true, title: true, visibility: true, status: true, owner: { select: { suspendedAt: true, ...CREDIT_SELECT } }, _count: { select: { cards: true } } } } },
+    select: { deck: { select: { id: true, title: true, visibility: true, status: true, institute: { select: { name: true, logoKey: true, status: true } }, owner: { select: { suspendedAt: true, ...CREDIT_SELECT } }, _count: { select: { cards: true } } } } },
   });
   const followedIds = follows.map((f) => f.deck.id);
   const [invitations, sharedWithMe, me] = await Promise.all([
@@ -166,7 +166,8 @@ export default async function DecksPage() {
           <p className="text-xs text-ink-muted">Library decks you study as their authors keep them. Up to {DECK_LIMITS.followsPerUser}.</p>
           <ul className="mt-2 flex flex-col gap-2">
             {follows.map(({ deck: d }) => {
-              const open = d.visibility === "PUBLIC" && d.status === "APPROVED" && !d.owner.suspendedAt;
+              // The same test as lib/decks LISTED, on rows already loaded.
+              const open = d.visibility === "PUBLIC" && d.status === "APPROVED" && !d.owner.suspendedAt && d.institute?.status !== "SUSPENDED";
               return (
                 <li key={d.id}>
                   <Link href={`/library/${d.id}/study`} className="block">
@@ -174,7 +175,7 @@ export default async function DecksPage() {
                       <div className="flex items-start justify-between gap-3">
                         <span className="min-w-0">
                           <span className="block truncate font-display font-bold text-ink">{d.title}</span>
-                          <DeckCredit owner={d.owner} className="truncate" />
+                          <DeckCredit owner={d.owner} institute={d.visibility === "PUBLIC" ? d.institute : null} className="truncate" />
                         </span>
                         <span className="flex shrink-0 flex-col items-end gap-1">
                           <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>

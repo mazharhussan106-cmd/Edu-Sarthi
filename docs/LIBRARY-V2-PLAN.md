@@ -1,6 +1,6 @@
 # Flashcard library v2 — plan
 
-Status: **Phases 1–4 BUILT and MERGED (27 Oct 2026, PR #18).** Phase 5 (institutes) and Phase 6 (legal review, telling users) are not built. The Phase 0 phone test (`docs/PHASE0-LIVE-TEST.md`) is still to do.
+Status: **Phases 1–4 BUILT and MERGED (27 Oct 2026, PR #18). Phase 5 (institutes) BUILT on branch `claude/sweet-davinci-d313f6`, NOT merged yet.** Phase 6 (legal review, telling users) is not built. The Phase 0 phone test (`docs/PHASE0-LIVE-TEST.md`) is still to do.
 
 This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `main`, but **none of it has been tested on the live site**). The owner's answers below are confirmed decisions. Anything marked **PROPOSAL** is the assistant's suggestion and still needs the owner's yes.
 
@@ -30,6 +30,15 @@ This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `
 | 15 | Edit sharing | Only by named invite, never by link. | — |
 | 16 | Teacher's guide | Learners keep seeing the Teacher's guide on the back of a card. Only the input box in the editor is staff-only. | — (confirms how it works today) |
 | 17 | Card recordings | A recording on a deck card stays at a minimum of 15 seconds. | — (confirms how it works today) |
+
+### Third round — Phase 5 (27 Oct 2026) — CONFIRMED
+
+| # | Topic | Decision | Supersedes |
+|---|---|---|---|
+| 18 | Who publishes for an institute | Its admin **and** its teachers. The institute's admin can take the institute's name off any deck published under it. | The PROPOSAL in Phase 5 |
+| 19 | Institute licence | CC BY-SA 4.0, like everyone else's decks. | — |
+| 20 | A teacher leaves | Their decks published under the institute's name stay in the library, under the teacher's own name. | — |
+| 21 | Suspended institute | Its library decks are hidden until it is reinstated. | — |
 
 ## Review of the decisions — what they imply and where they clash
 
@@ -244,10 +253,45 @@ Not built: due counts for shared decks in My decks (they show on the study page)
 
 ### Phase 5 — Institutes in the public library, with their logo
 
-- Decision 9: an institute may submit a deck to the public library under its name and logo. It goes through the same admin review as every deck. Today an institute deck cannot be published while it is shared inside the institute (`lib/deckReview.ts`); that rule changes.
-- Who may submit for an institute: its admin and its teachers (PROPOSAL, matching who can share inside the institute today).
-- New `Institute.logoKey`: PNG, JPG or WebP up to 1 MB, uploaded by the institute's admin. The site admin approves it, because a logo is shown to the public.
-- The library shows the institute's logo and name, and the teacher's name if they chose to show it.
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. NOT merged yet.** Type check and production build pass. The owner said "yes" to the file list and to decisions 18–21.
+
+How it is built:
+- **Database (additive, no data loss):** `Institute.logoKey` (the approved logo), `pendingLogoKey` (waiting for the site admin) and `logoNote` (why a logo was refused). A deck published as an institute is a `PUBLIC` deck whose `instituteId` is set; no new deck column.
+- **Publishing as the institute** (`lib/deckReview.ts`, `components/decks/PublishConsent.tsx`): the submit form asks "Publish as: Myself / <Institute> (the institute)" for the institute's admin and teachers. Choosing the institute adds the tick "I may publish this deck on behalf of <Institute>, under its name and logo". The server checks the role again at submit time, and a student member is refused. The licence is always CC BY-SA, even for a site admin publishing for an institute.
+- **A deck shared inside the institute** can now be submitted, but only under the institute's name ("Submit to the library as <Institute>"). It moves to the public library and keeps its `instituteId`. To publish it as yourself, stop sharing it with the institute first.
+- **A new version** of a published deck keeps the name the live deck is under. Only a first submission or a resubmission chooses.
+- **Withdrawing** (or a takedown) makes the deck private and clears the institute, the same as any deck. The owner can share it with the institute again.
+- **Credit** (`components/decks/DeckCredit.tsx`, now a server component): "[logo] by Sunrise Academy (Asha K.)". The person is left out if they chose "No name". Shown in the library list, on the library deck page, on Explore, in Following on My decks, and on the share-link page. A copy's "Copied from" line credits the institute as well (`lib/deckCopy.ts`, `copiedFrom`). An institute is credited only for a deck it published, never for one only shared inside it.
+- **Logo** (`lib/instituteLogo.ts`, `components/institute/LogoForm.tsx`): the institute's admin uploads a PNG, JPG or WebP file of up to 1 MB on the Institute page. It waits under **Logos to check** on the admin's Institutes page until it is approved or refused (with a reason the institute sees). The approved logo keeps showing while a new one waits. Remove logo takes it off every deck and deletes the file. Each page asks for one signed URL per logo (React `cache`), however many of the institute's decks it lists.
+- **Institute page:** a new **Published by the institute** list. Members see the decks in the library. The institute's admin also sees decks still in review, with their status, and a **Remove institute's name** button on each (`removeInstituteName` in `lib/institutes.ts`). The deck stays in the library under the person who made it.
+- **A teacher leaving** (or being removed): `drop()` in `lib/institutes.ts` now makes only decks shared inside the institute private. Their decks published under its name stay public and simply lose the institute (decision 20).
+- **Suspended institute** (decision 21): `LISTED` in `lib/decks.ts` now also requires that the deck's institute is not suspended. The same rule was applied to the library list, the library deck page and its card pages, Explore, "copy from the library", following, studying a followed deck, and recording on a teacher's deck. Those pages and routes used to repeat the check without the institute, and the library deck page and card pages also missed the owner's suspension; all of them now use `LISTED`. Reinstating brings the decks back.
+- **Admin review page** says "Published as the institute <name>", with the credit as it will show.
+- **Library rules page** has a new section, "Publishing for an institute". It also corrects an old line that still said any change to a published deck sends it back to review (true before Phase 3).
+
+A local browser test passed 18 of 18 checks:
+- logo: too big or the wrong type is refused; a teacher cannot upload one; the institute admin's upload waits; the site admin refuses it (the reason shows), then approves a new one;
+- a teacher publishes as the institute (the "on behalf" tick is required, on screen and on the server); a student member cannot;
+- an institute-shared deck can go out only as the institute;
+- the admin review page shows "Published as";
+- the library list, the deck page and Explore show the credit, and the logo file loads;
+- a copy says "Copied from … by <Institute> (Test)";
+- the institute page lists published decks for members, and badges plus Remove for the admin; only the admin can remove the name, and the deck stays listed;
+- suspension hides the decks and stops following; reinstating brings them back;
+- withdrawing clears the institute; a teacher who leaves keeps the public deck under their own name, and their institute-only deck goes private;
+- Remove logo deletes the file.
+
+Regressions still pass: Phase 1 15 of 15, Phase 2 12 of 12, Phase 3 15 of 15 (its test now clears small fixes other tests left waiting before it starts), Phase 4 14 of 14.
+
+Beyond the approved list, for the suspension rule and the credit: `app/(shared)/library/[id]/card/[cardId]/page.tsx`, `app/api/decks/route.ts` (copy from the library), `app/(shared)/decks/page.tsx` (Following), `app/(public)/d/[token]/page.tsx`, `lib/deckCopy.ts`, and `components/institute/MemberControls.tsx` / `InstituteForms.tsx` (the Remove-name button and a clearer Leave warning).
+
+**After merging:** run Actions → Database setup (the three new Institute columns). Nothing else is needed.
+
+**Undecided (asked in the chat, not yet answered):**
+- A person who leaves a **suspended** institute: decision 20 applies as written, so their decks come back in the library under their own name. Say if those decks should go back to review instead.
+- The deck's owner is not told when the institute's admin takes the institute's name off their deck. An email could be added.
+
+Not built: the logo on institute decks shared only inside the institute, and the like button still accepts a like on a hidden deck (harmless; the count is not shown while it is hidden).
 
 ### Phase 6 — Tell people and update the docs
 

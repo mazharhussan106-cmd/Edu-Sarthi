@@ -1,12 +1,15 @@
 // Owns what an institute is allowed to do: who belongs to which, who may manage
-// it, how a deck is shared inside it, and the admin's approve / reject /
-// suspend. The rules live here so the routes and pages cannot disagree.
+// it, how a deck is shared inside it, the institute admin taking its name off
+// a library deck, and the site admin's approve / reject / suspend. The rules
+// live here so the routes and pages cannot disagree.
 //
 // Every function takes the acting user's id and checks membership itself; a
 // membership is looked up by userId (unique), so "my institute" has one answer.
 //
-// It deliberately does NOT parse requests (lib/instituteSchemas) or render
-// anything. Institute decks are never offered to the public library.
+// It deliberately does NOT parse requests (lib/instituteSchemas), publish
+// decks (lib/deckReview: a deck shared here can be submitted to the library
+// under the institute's name), handle the logo (lib/instituteLogo) or render
+// anything.
 
 import { randomInt } from "crypto";
 import type { InstituteRole, InstituteStatus } from "@prisma/client";
@@ -26,7 +29,7 @@ export function newJoinCode(): string {
 export async function myMembership(userId: string) {
   return prisma.instituteMember.findUnique({
     where: { userId },
-    select: { role: true, institute: { select: { id: true, name: true, status: true, statusNote: true, joinCode: true } } },
+    select: { role: true, institute: { select: { id: true, name: true, status: true, statusNote: true, joinCode: true, logoKey: true, pendingLogoKey: true, logoNote: true } } },
   });
 }
 
@@ -74,8 +77,11 @@ async function drop(userId: string, instituteId: string) {
   // Back to what the owner had before: link-only if a share link is on, else
   // private. Setting PRIVATE while keeping the link would hide the truth from
   // the owner — the deck would still open for anyone holding the link.
-  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, shareToken: { not: null } }, data: { visibility: "LINK", instituteId: null } });
-  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId }, data: { visibility: "PRIVATE", instituteId: null } });
+  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "INSTITUTE", shareToken: { not: null } }, data: { visibility: "LINK", instituteId: null } });
+  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "INSTITUTE" }, data: { visibility: "PRIVATE", instituteId: null } });
+  // Owner's decision: decks they published under the institute's name stay in
+  // the library, under their own name only. Their followers keep them.
+  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "PUBLIC" }, data: { instituteId: null } });
 }
 
 export async function leaveInstitute(userId: string): Promise<Result> {
@@ -88,7 +94,7 @@ export async function leaveInstitute(userId: string): Promise<Result> {
   return { ok: true };
 }
 
-async function asAdmin(userId: string) {
+export async function asAdmin(userId: string) {
   const m = await prisma.instituteMember.findUnique({ where: { userId }, select: { role: true, instituteId: true, institute: { select: { status: true } } } });
   return m && m.role === "ADMIN" && m.institute.status === "APPROVED" ? m : null;
 }
@@ -138,6 +144,17 @@ export async function unshareDeck(userId: string, deckId: string): Promise<Resul
   if (!deck) return { error: "That deck is not shared with an institute." };
   await prisma.deck.updateMany({ where: { id: deckId, ownerId: userId }, data: { visibility: deck.shareToken ? "LINK" : "PRIVATE", instituteId: null } });
   return { ok: true };
+}
+
+/// The institute's admin may take its name (and logo) off any deck published
+/// under it — a teacher's too (owner's decision). The deck stays in the
+/// library, credited to the person who made it.
+export async function removeInstituteName(adminUserId: string, deckId: string): Promise<Result> {
+  const a = await asAdmin(adminUserId);
+  if (!a) return { error: "Only the institute’s admin can do that." };
+  // Scoped by institute: an admin can only touch decks published as their own.
+  const res = await prisma.deck.updateMany({ where: { id: deckId, instituteId: a.instituteId, visibility: "PUBLIC" }, data: { instituteId: null } });
+  return res.count ? { ok: true } : { error: "That deck is not published under your institute’s name any more. Refresh the page." };
 }
 
 /// Where-clause for decks a member may read: shared with their institute, and

@@ -833,6 +833,14 @@ model Institute {
   applicantId  String?
   reviewedById String?
   reviewedAt   DateTime?
+  /// The approved logo shown beside the institute's name on decks it
+  /// publishes. Only the site admin moves a file here, from pendingLogoKey.
+  logoKey        String?
+  /// Uploaded by the institute's admin and waiting for the site admin; never
+  /// shown on a public page until approved.
+  pendingLogoKey String?
+  /// Why the site admin refused the last logo, shown to the institute's admin.
+  logoNote       String?
 
   // Restrict: an account that applied cannot be deleted out from under its
   // institute without an admin deciding what happens to it.

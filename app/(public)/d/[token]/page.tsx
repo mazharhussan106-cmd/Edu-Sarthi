@@ -20,7 +20,7 @@ import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
 import { DeckCredit } from "@/components/decks/DeckCredit";
-import { CREDIT_SELECT, SOURCE_SELECT, copiedFrom } from "@/lib/libraryTerms";
+import { CREDIT_INSTITUTE_SELECT, CREDIT_SELECT, SOURCE_SELECT, copiedFrom } from "@/lib/libraryTerms";
 
 export const revalidate = 0;
 export const metadata: Metadata = { robots: { index: false, follow: false }, title: "Shared flashcard deck" };
@@ -30,7 +30,7 @@ export default async function SharedDeckPage({ params }: { params: Promise<{ tok
 
   const deck = await prisma.deck.findFirst({
     where: { shareToken: token },
-    select: { title: true, description: true, tags: true, visibility: true, status: true, licence: true, ...SOURCE_SELECT, owner: { select: CREDIT_SELECT }, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
+    select: { title: true, description: true, tags: true, visibility: true, status: true, licence: true, ...SOURCE_SELECT, ...CREDIT_INSTITUTE_SELECT, owner: { select: CREDIT_SELECT }, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
   });
   if (!deck) notFound();
 
@@ -41,7 +41,7 @@ export default async function SharedDeckPage({ params }: { params: Promise<{ tok
       <h1 className="font-display text-2xl font-bold text-ink">{deck.title}</h1>
       {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
       {/* The original's credit always travels with a copy; the sharer's own name only once they chose it for the library. */}
-      <DeckCredit {...(deck.visibility === "PUBLIC" && deck.status === "APPROVED" ? { owner: deck.owner, licence: deck.licence } : {})} source={copiedFrom(deck)} linked className="mt-1" />
+      <DeckCredit {...(deck.visibility === "PUBLIC" && deck.status === "APPROVED" ? { owner: deck.owner, institute: deck.institute, licence: deck.licence } : {})} source={copiedFrom(deck)} linked className="mt-1" />
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{cards.length} cards</span>
         {cards.some((c) => c.aiAssisted) ? <AiBadge label={`${cards.filter((c) => c.aiAssisted).length} of ${cards.length} cards AI-assisted`} /> : null}

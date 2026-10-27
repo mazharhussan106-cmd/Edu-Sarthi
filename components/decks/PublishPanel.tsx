@@ -1,6 +1,7 @@
 // Owns the owner's view of a deck's place in the public library: what state it
-// is in, why it was rejected, and the buttons to submit (through the consent
-// form, PublishConsent) or withdraw.
+// is in, why it was rejected, which institute's name it is under, and the
+// buttons to submit (through the consent form, PublishConsent) or withdraw. A
+// deck shared with an institute can be submitted under the institute's name.
 //
 // It deliberately does NOT decide anything — approval is an admin's. The copy
 // is plain about waiting, and about edits sending a published deck back.
@@ -13,7 +14,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { callApi } from "@/components/decks/deckClient";
-import { PublishConsent, type ConsentDefaults } from "@/components/decks/PublishConsent";
+import { PublishConsent, type ConsentDefaults, type PublishAs } from "@/components/decks/PublishConsent";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 
 type Props = {
@@ -29,9 +30,13 @@ type Props = {
   /// A new version of a published deck: submitted the same way, but approving
   /// it updates the live deck instead of publishing a second one.
   version?: boolean;
+  /// The institute the owner may publish under (its admin and teachers only).
+  institute?: PublishAs;
+  /// The institute this deck is in the library under, if any.
+  publishedAs?: string | null;
 };
 
-export function PublishPanel({ deckId, visibility, status, rejectReason, cardCount, canShareInstitute, consent, version = false }: Props) {
+export function PublishPanel({ deckId, visibility, status, rejectReason, cardCount, canShareInstitute, consent, version = false, institute = null, publishedAs = null }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [asking, setAsking] = useState(false);
@@ -55,7 +60,15 @@ export function PublishPanel({ deckId, visibility, status, rejectReason, cardCou
           <Badge variant="success">Shared with your institute</Badge>
         </div>
         <p className="text-xs text-ink-muted">Members of your institute can read and copy this deck. It is not in the public library and needs no admin review.</p>
-        <div><Button variant="outline" disabled={busy} onClick={() => act("unshareDeck")}>Stop sharing with the institute</Button></div>
+        {asking && institute ? (
+          <PublishConsent deckId={deckId} defaults={consent} institute={{ name: institute.name, locked: true }} onCancel={() => setAsking(false)} onDone={() => { setAsking(false); router.refresh(); }} />
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" disabled={busy} onClick={() => act("unshareDeck")}>Stop sharing with the institute</Button>
+            {institute ? <Button variant="outline" disabled={busy || cardCount < DECK_LIMITS.minCardsToPublish} onClick={() => setAsking(true)}>Submit to the library as {institute.name}</Button> : null}
+          </div>
+        )}
+        {institute && !asking ? <p className="text-xs text-ink-muted">Submitting moves it from inside the institute to the public library, under the institute’s name and logo, once an admin approves it.</p> : null}
         {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       </div>
     );
@@ -69,6 +82,7 @@ export function PublishPanel({ deckId, visibility, status, rejectReason, cardCou
         {inLibrary && status === "APPROVED" ? <Badge variant="success">Published</Badge> : null}
         {status === "REJECTED" ? <Badge variant="error">Not approved</Badge> : null}
       </div>
+      {inLibrary && publishedAs ? <p className="text-sm text-ink">Published as <b>{publishedAs}</b>.</p> : null}
       {status === "REJECTED" && rejectReason ? (
         <p className="rounded-lg bg-error/12 p-2 text-sm text-ink">
           <b>Reviewer’s note:</b> {rejectReason} Fix this, then submit again.
@@ -86,9 +100,12 @@ export function PublishPanel({ deckId, visibility, status, rejectReason, cardCou
               : "An admin will look at it. You can keep working; changes are included in the review."}
       </p>
       {inLibrary ? (
-        <div><Button variant="outline" disabled={busy} onClick={() => act("unpublish")}>{status === "APPROVED" ? "Remove from library" : "Withdraw submission"}</Button></div>
+        <>
+          <div><Button variant="outline" disabled={busy} onClick={() => act("unpublish")}>{status === "APPROVED" ? "Remove from library" : "Withdraw submission"}</Button></div>
+          {publishedAs && !version ? <p className="text-xs text-ink-muted">Removing it makes it private and takes the institute’s name off. You can share it with the institute again afterwards.</p> : null}
+        </>
       ) : asking ? (
-        <PublishConsent deckId={deckId} defaults={consent} onCancel={() => setAsking(false)} onDone={() => { setAsking(false); router.refresh(); }} />
+        <PublishConsent deckId={deckId} defaults={consent} institute={version || !institute ? null : { name: institute.name, locked: false }} onCancel={() => setAsking(false)} onDone={() => { setAsking(false); router.refresh(); }} />
       ) : (
         <div><Button variant="outline" disabled={busy || cardCount < DECK_LIMITS.minCardsToPublish} onClick={() => setAsking(true)}>{version ? "Submit this version for review" : "Submit for the public library"}</Button></div>
       )}

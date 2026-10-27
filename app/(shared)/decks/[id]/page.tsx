@@ -43,7 +43,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
   const deck = await prisma.deck.findFirst({
     where: { id, ...editableBy(userId) },
-    select: { id: true, ownerId: true, owner: { select: { name: true } }, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, sourceLicence: true, draftOfId: true, draftOf: { select: { id: true, title: true } }, drafts: { select: { id: true, status: true } }, ...SOURCE_SELECT, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true, updatedAt: true } } },
+    select: { id: true, ownerId: true, owner: { select: { name: true } }, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, sourceLicence: true, draftOfId: true, institute: { select: { name: true } }, draftOf: { select: { id: true, title: true, institute: { select: { name: true } } } }, drafts: { select: { id: true, status: true } }, ...SOURCE_SELECT, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true, updatedAt: true } } },
   });
   if (!deck) {
     if (await deckAccess(userId, id)) redirect(`/decks/${id}/shared`);
@@ -94,6 +94,8 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
   const chaptered = titles.some(Boolean);
   const groups = titles.map((t, i) => ({ anchor: `chapter-${i}`, title: t ?? "Cards", cards: cards.filter((c) => c.category === t) }));
   const member = await activeMembership(userId);
+  // Its admin and teachers may publish under the institute's name (owner's decision).
+  const publishAs = member && member.role !== "STUDENT" && !version ? { name: member.institute.name, locked: deck.visibility === "INSTITUTE" } : null;
   const studyable = counts.due + counts.fresh;
   // Learners' recordings on this deck's cards, for the teacher who will audit them.
   const [waiting, audited] = staff
@@ -201,7 +203,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
       {owner ? (
         <section className="mt-6" aria-labelledby="pub-h">
           <h2 id="pub-h" className="sr-only">Public library</h2>
-          <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} canShareInstitute={!version && Boolean(member && member.role !== "STUDENT")} version={Boolean(version)} consent={{ role: me.role, accountName: me.name, adultConfirmed: Boolean(me.adultConfirmedAt), creditStyle: me.creditStyle, publicName: me.publicName }} /></Card>
+          <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} canShareInstitute={!version && Boolean(member && member.role !== "STUDENT")} version={Boolean(version)} institute={publishAs} publishedAs={(version ? deck.draftOf?.institute : deck.visibility === "PUBLIC" ? deck.institute : null)?.name ?? null} consent={{ role: me.role, accountName: me.name, adultConfirmed: Boolean(me.adultConfirmedAt), creditStyle: me.creditStyle, publicName: me.publicName }} /></Card>
         </section>
       ) : null}
 

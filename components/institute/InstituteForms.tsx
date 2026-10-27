@@ -84,7 +84,7 @@ export function LeaveButton() {
   const { busy, error, run } = useAction();
   return (
     <div>
-      <Button variant="ghost" disabled={busy} onClick={() => { if (window.confirm("Leave this institute? Decks you shared with it go back to private.")) void run({ action: "leave" }); }} className="text-error">
+      <Button variant="ghost" disabled={busy} onClick={() => { if (window.confirm("Leave this institute? Decks you shared with it go back to private. Decks you published under its name stay in the library, under your own name.")) void run({ action: "leave" }); }} className="text-error">
         Leave institute
       </Button>
       {error ? <p role="alert" className="mt-1 text-sm text-error">{error}</p> : null}

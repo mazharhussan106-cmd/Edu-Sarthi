@@ -56,9 +56,17 @@ export async function lockUser(tx: Prisma.TransactionClient, userId: string): Pr
 export class LimitReached extends Error {}
 
 /// A deck anyone signed in may find, follow and study: approved for the
-/// library, and its owner not suspended. Leaving this state (withdrawn, taken
-/// down, back in review) stops followers studying it at once.
-export const LISTED = { visibility: "PUBLIC", status: "APPROVED", owner: { suspendedAt: null } } satisfies Prisma.DeckWhereInput;
+/// library, its owner not suspended, and — for a deck published as an
+/// institute — the institute not suspended (owner's decision: hidden until it
+/// is reinstated). Leaving this state (withdrawn, taken down, back in review)
+/// stops followers studying it at once.
+export const LISTED = {
+  visibility: "PUBLIC",
+  status: "APPROVED",
+  owner: { suspendedAt: null },
+  // isNot also matches decks with no institute at all (checked against the SQL).
+  institute: { isNot: { status: "SUSPENDED" } },
+} satisfies Prisma.DeckWhereInput;
 
 export function wordData(c: CardFields) {
   return {
@@ -241,7 +249,7 @@ export async function practiceWord(where: Prisma.WordWhereInput) {
         {
           OR: [
             { deckId: null },
-            { deck: { visibility: "PUBLIC", status: "APPROVED", owner: { role: "TEACHER", teacherVerifiedAt: { not: null }, suspendedAt: null } } },
+            { deck: { ...LISTED, owner: { role: "TEACHER", teacherVerifiedAt: { not: null }, suspendedAt: null } } },
           ],
         },
       ],

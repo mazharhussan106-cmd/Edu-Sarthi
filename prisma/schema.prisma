@@ -123,6 +123,7 @@ model User {
   deckReports         DeckReport[]
   deckLikes           DeckLike[]
   deckFollows         DeckFollow[]
+  deckChanges         DeckChange[]
   instituteMembership InstituteMember?
   institutesApplied   Institute[]          @relation("InstituteApplicant")
   assignedSubmissions Submission[]         @relation("AssignedSubmissions")
@@ -483,13 +484,21 @@ model Word {
   ownerId String?
   deck    Deck?   @relation(fields: [deckId], references: [id], onDelete: Cascade)
   owner   User?   @relation("WordOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  /// On a card in a deck's new version (working copy): the live card it came
+  /// from, so approving the version updates that card and followers keep their
+  /// progress. Null for a card added in the new version, and on every live card.
+  liveWordId String?
+  liveWord   Word?   @relation("WordVersion", fields: [liveWordId], references: [id], onDelete: SetNull)
+  draftWords Word[]  @relation("WordVersion")
 
   states      CardState[]
   reviewLogs  ReviewLog[]
   submissions Submission[]
+  changes     DeckChange[]
 
   @@index([deckId])
   @@index([ownerId])
+  @@index([liveWordId])
   @@index([kind, serial])
   @@index([kind, serialB])
   @@index([text])
@@ -621,6 +630,12 @@ model Deck {
   /// The original's licence when copied. A copy of an EduSarthi deck may be
   /// studied, but not published or shared by link (owner's decision).
   sourceLicence String?
+  /// Set on a new version (working copy) of a published deck: the live deck it
+  /// will replace once an admin approves it. One at a time per deck, enforced
+  /// in lib/deckVersion under a lock — not a unique constraint, because adding
+  /// one makes Database setup stop on Prisma's data-loss warning.
+  /// SetNull: if the live deck is deleted, the working copy is an ordinary deck.
+  draftOfId     String?
 
   // Cascade: deleting an account removes its decks. Cards made by that user
   // inside them go with the deck.
@@ -633,6 +648,9 @@ model Deck {
   follows  DeckFollow[]
   source   Deck?        @relation("DeckSource", fields: [sourceDeckId], references: [id], onDelete: SetNull)
   copies   Deck[]       @relation("DeckSource")
+  draftOf  Deck?        @relation("DeckVersion", fields: [draftOfId], references: [id], onDelete: SetNull)
+  drafts   Deck[]       @relation("DeckVersion")
+  changes  DeckChange[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -641,6 +659,7 @@ model Deck {
   @@index([visibility, status]) // the library and the review queue read on this
   @@index([instituteId, visibility])
   @@index([sourceDeckId]) // deleting an original sets its copies' link to null
+  @@index([draftOfId]) // "does this deck have a new version in progress?"
 }
 
 enum ReportReason {
@@ -681,6 +700,36 @@ model DeckReport {
 /// A learner following a library deck: they study the original with their
 /// own progress (CardState) and get the author's fixes, instead of copying it.
 /// Removed when the author withdraws the deck or an admin takes it down.
+/// One small fix made straight to a published deck (owner's decision: small
+/// fixes go live without waiting). The admin checks it afterwards: Accept, or
+/// Undo, which restores `before`. Also what the daily limits count.
+model DeckChange {
+  id           String    @id @default(cuid())
+  deckId       String
+  wordId       String
+  editorId     String?
+  /// Only the fields that changed: { front?, back?, example?, body? }.
+  before       Json
+  after        Json
+  reviewedAt   DateTime?
+  reviewedById String?
+  /// Set when the admin undid it; the creator is told and sees a note.
+  undone       Boolean   @default(false)
+  undoReason   String?   @db.Text
+
+  deck   Deck  @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  word   Word  @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  // SetNull: the fix and its record outlive the account that made it.
+  editor User? @relation(fields: [editorId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([deckId, createdAt]) // today's fixes on this deck
+  @@index([reviewedAt]) // the admin's "Fixes to check"
+  @@index([wordId])
+  @@index([editorId])
+}
+
 model DeckFollow {
   id     String @id @default(cuid())
   userId String

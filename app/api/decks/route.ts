@@ -1,6 +1,7 @@
 // Owns a student's writes on their decks: create, rename, delete, the share
-// link, copying a deck into their account, following a library deck, and
-// asking for (or withdrawing) a place in the public library.
+// link, copying a deck into their account, following a library deck, asking
+// for (or withdrawing) a place in the public library, and starting a new
+// version of a published deck (lib/deckVersion).
 //
 // Scoped to the signed-in student; the client never sends a user id, and every
 // write names the owner in its WHERE clause.
@@ -17,7 +18,8 @@ import { copyDeck } from "@/lib/deckCopy";
 import { followDeck, unfollowDeck } from "@/lib/deckFollow";
 import { LICENCES } from "@/lib/libraryTerms";
 import { instituteDeckScope } from "@/lib/institutes";
-import { publishDeck, sendBackIfPublished, unpublishDeck } from "@/lib/deckReview";
+import { publishDeck, unpublishDeck } from "@/lib/deckReview";
+import { isLive, startVersion } from "@/lib/deckVersion";
 import { DECK_LIMITS, deckActionSchema } from "@/lib/deckSchemas";
 
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status });
@@ -40,7 +42,8 @@ export async function POST(req: Request) {
         const deck = await prisma.$transaction(
           async (tx) => {
             await lockUser(tx, userId);
-            if ((await tx.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
+            // A new version (working copy) is not one of the person's decks.
+            if ((await tx.deck.count({ where: { ownerId: userId, draftOfId: null } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
             return tx.deck.create({ data: { ownerId: userId, title: a.title, description: a.description || null, tags: a.tags }, select: { id: true } });
           },
           { maxWait: 10_000, timeout: 20_000 },
@@ -76,15 +79,19 @@ export async function POST(req: Request) {
       return done(await followDeck(userId, a.deckId));
     case "unfollow":
       return done(await unfollowDeck(userId, a.deckId));
+    case "startVersion": {
+      const res = await startVersion(userId, a.id);
+      return "error" in res ? fail(res.error, 400) : NextResponse.json({ ok: true, id: res.id });
+    }
   }
 
   const deck = await ownDeck(userId, a.id);
   if (!deck) return fail("That deck no longer exists.", 404);
 
   if (a.action === "update") {
-    // Back to review first, then the edit: if the second step failed, approved
-    // content must never be left changed without a fresh look.
-    await sendBackIfPublished(a.id);
+    // The library must keep showing what an admin approved: a published deck's
+    // name, description and tags change only in a new version.
+    if (isLive(deck)) return fail("This deck is published. Start a new version to change its name, description or tags; the current version stays live while it is reviewed.", 400);
     await prisma.deck.updateMany({
       where: { id: a.id, ownerId: userId },
       data: { title: a.title, description: a.description || null, tags: a.tags },
@@ -94,6 +101,7 @@ export async function POST(req: Request) {
 
   // share: turning it off clears the token, which revokes every copy of the
   // link; turning it on again issues a fresh one rather than reviving the old.
+  if (a.on && deck.draftOfId) return fail("This is a new version that is not published yet. Share the published deck instead.", 400);
   // A share link opens signed out, so it would put EduSarthi's own material in
   // front of anyone holding it.
   if (a.on && deck.sourceLicence === LICENCES.EDUSARTHI.id) return fail("This deck is a copy of an EduSarthi deck. You can keep studying it, but it cannot be shared by link.", 400);

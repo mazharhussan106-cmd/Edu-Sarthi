@@ -66,7 +66,12 @@ An English spoken-communication training platform: students record or upload, te
    - **Follow and study:** `DeckFollow` table, `lib/deckFollow.ts`, `/library/[id]/study`. Learners study the original deck with their own `CardState`, up to 50 follows. Answers go through `/api/flashcards`, and `canStudyWord` allows a followed deck only while it is listed.
    - **Copied from:** `Deck.sourceDeckId`, `sourceCredit` and `sourceLicence`; copying lives in `lib/deckCopy.ts`. The line is built fresh while the original exists and falls back to the saved credit once it is deleted (`copiedFrom` in `lib/libraryTerms.ts`).
    - **Rules:** a copy of an EduSarthi deck can't be published or link-shared. Withdrawing or taking down a deck deletes its follows. Admin review of a copy shows how many cards changed.
-   - **Until Phase 3:** an edit hides the deck from followers until it is re-approved.
+   - The old gap (an edit hid the deck from followers until it was re-approved) is closed by Phase 3 (4f).
+4f. **Library v2 Phase 3 built (27 Oct, same branch, NOT merged). Design: `docs/PHASE3-DESIGN.md`.**
+   - **Small fixes:** on a published deck, Edit is a small fix (`lib/smallFix.ts`): text only, at most 30 characters per field (edit distance), each card once per IST day, at most 10 cards a day. A fix goes live at once and is logged in `DeckChange`; the admin uses **Admin → Decks → Fixes to check** to Accept or Undo, and Undo emails the creator and shows a note on their deck.
+   - **New versions:** bigger edits go in a new version (`lib/deckVersion.ts`), a working copy with `Deck.draftOfId`, whose cards carry `Word.liveWordId`. It shares files with the live deck (`unusedKeys` guards deletion). Approving merges it onto the same live cards, so followers keep their progress; removed cards lose it. Small fixes pause while a version exists.
+   - `sendBackIfPublished` is retired.
+   - **Don't undo:** "one version per deck" is enforced in code, not by a unique constraint, because the constraint would trip Database setup's data-loss check.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

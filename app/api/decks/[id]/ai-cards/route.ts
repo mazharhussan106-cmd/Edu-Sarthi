@@ -13,7 +13,7 @@ import { addAiCardsSchema } from "@/lib/aiCardSchemas";
 import { requireUser } from "@/lib/apiUser";
 import { aiCardRows } from "@/lib/aiCardRows";
 import { LimitReached, lockUser, ownDeck, readJson } from "@/lib/decks";
-import { sendBackIfPublished } from "@/lib/deckReview";
+import { isLive } from "@/lib/deckVersion";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { prisma } from "@/lib/prisma";
 
@@ -29,11 +29,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the cards and try again.", 400);
   const { cards } = parsed.data;
 
-  if (!(await ownDeck(userId, deckId))) return fail("That deck no longer exists.", 404);
+  const deck = await ownDeck(userId, deckId);
+  if (!deck) return fail("That deck no longer exists.", 404);
+  // A published deck changes through a new version, which stays private until
+  // approved, so the library keeps showing what an admin checked.
+  if (isLive(deck)) return fail("This deck is published. Start a new version to add cards; the current version stays live while it is reviewed.", 400);
   const mine = { deckId, ownerId: userId };
 
-  // A published deck goes back to review when its cards change, as for any edit.
-  await sendBackIfPublished(deckId);
   try {
     await prisma.$transaction(
       async (tx) => {

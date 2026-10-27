@@ -144,7 +144,7 @@ Owner's answers ("yes" to the recommendations):
 
 Built as: `lib/deckFollow.ts`, `lib/deckCopy.ts`, `components/decks/FollowButton.tsx`, `/library/[id]/study`, a Following section in My decks, "Follow and study" on Explore and the library deck page, and the "Copied from" line on the library, deck editor and share pages. Beyond the list: `components/decks/CopyDeckButton.tsx` got an outline style for "Make my own copy".
 
-Known until Phase 3: editing a published deck still sends it back to review, so followers see "not available right now" until the admin approves again. Their progress is kept. Copies made before Phase 2 have no link to their original.
+The interim gap (an edit hid the deck from followers until it was re-approved) is closed by Phase 3. Copies made before Phase 2 have no link to their original.
 
 **After merging:** run Actions → Database setup (new columns and the DeckFollow table only).
 
@@ -160,6 +160,25 @@ Known until Phase 3: editing a published deck still sends it back to review, so 
 - Schema (additive): `Deck.sourceDeckId`, `Deck.sourceCredit`; new table `DeckFollow`.
 
 ### Phase 3 — Small fixes go live; big edits become a reviewed version
+
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test.** Design and the differences from it: `docs/PHASE3-DESIGN.md`. Type check and production build pass.
+
+A local browser test passed 15 of 15 checks:
+- on a live deck: no Add, no Delete, details locked, "Start a new version" shown;
+- a small fix goes live and is logged;
+- a second fix to the same card that day is refused, and so is a change over 30 characters (with the new-version hint);
+- add, delete and rename on a live deck are refused;
+- the admin's Undo restores the text, emails the creator and shows a note on the deck;
+- a new version shows its banner, stays out of My decks, and the live deck shows "new version in progress";
+- small fixes pause while a version exists;
+- while a version waits, the library is unchanged and followers keep studying;
+- the admin sees "1 card added · 1 changed · 1 removed";
+- approving updates the same live deck, keeping follower progress and the shared picture;
+- discard and reject both leave the live deck untouched.
+
+A further check showed that a picture is kept while the live deck uses it and deleted after a version removes it. The Phase 1 (15 of 15) and Phase 2 (12 of 12) tests still pass; one Phase 2 check was updated, because a small fix now reaches followers at once.
+
+**After merging:** run Actions → Database setup. It adds `Deck.draftOfId`, `Word.liveWordId` and the `DeckChange` table, and pushes without Prisma's data-loss warning.
 
 - **Small fix (decision 10)**, all of these must hold:
   - It only changes the text of existing cards (front, back, example, notes).

@@ -94,12 +94,24 @@ export async function sendDeckDecision(to: string, title: string, outcome: "appr
   }[outcome];
   const next =
     outcome === "approved"
-      ? "Anyone signed in can now find and copy it. If you change it later, it goes back to review."
+      ? "Anyone signed in can now find, follow and copy it. Small fixes go live at once; for bigger changes, start a new version, and this one stays live while it is reviewed."
       : "Open the deck in My decks to read the note, fix what is needed, and submit it again.";
   const note = reason ? `\n\nReviewer’s note: ${reason}` : "";
   const text = `${headline}.${note}\n\n${next}`;
   const html = `<p>${headline}.</p>${reason ? `<p><b>Reviewer’s note:</b> ${reason.replace(/[<>&]/g, " ")}</p>` : ""}<p>${next}</p>`;
   await send(to, headline, text, html);
+}
+
+/// Tells a creator an admin undid one of their small fixes, and why. The card
+/// is named by its front, so they can find it; the deck page shows it too.
+export async function sendFixUndone(to: string, title: string, card: string, reason: string) {
+  const safe = title.replace(/[<>&"]/g, " ");
+  const front = card.replace(/[<>&"]/g, " ").slice(0, 80);
+  const subject = `A fix in your deck “${safe}” was undone`;
+  const next = "The card is back to how it was before your fix. You can fix it again tomorrow, or start a new version for a bigger change.";
+  const text = `An admin undid your fix to the card “${front}”.\n\nReason: ${reason}\n\n${next}`;
+  const html = `<p>An admin undid your fix to the card “${front}”.</p><p><b>Reason:</b> ${reason.replace(/[<>&]/g, " ")}</p><p>${next}</p>`;
+  await send(to, subject, text, html);
 }
 
 /// Tells a student their recording has been audited. Links to the audit, never

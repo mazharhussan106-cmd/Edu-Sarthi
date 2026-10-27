@@ -1,6 +1,14 @@
 # Phase 3 design — small fixes live, big edits as a reviewed version
 
-Status: **PROPOSAL, waiting for the owner's approval.** Part of `docs/LIBRARY-V2-PLAN.md`. Written 27 Oct 2026.
+Status: **APPROVED by the owner and BUILT (27 Oct 2026)** on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test. Part of `docs/LIBRARY-V2-PLAN.md`.
+
+The owner answered "yes" to all three questions: small fixes pause during a new version; an undone fix is emailed to the creator and noted on their deck page; the working-copy approach and file list are approved.
+
+**Where the build differs from this note** (both decided while building, and safer):
+- The working copy **shares** pictures and audio with the live deck instead of copying them. Starting a version is instant and uses no extra storage. `unusedKeys` (`lib/decks.ts`) makes sure a file is deleted only once no card uses it; this applies to card delete, card edit, discard, and the files replaced or removed on approval.
+- **"One new version per deck"** is enforced in code under a per-deck lock, not as a unique constraint. Prisma treats adding a unique constraint as possible data loss, and Actions → Database setup refuses to run on that warning.
+
+Extra files beyond the list: `lib/email.ts` (the undone-fix email, and new wording in the "approved" email) and `lib/decks.ts` (`unusedKeys`). `lib/deckCopy.ts` did not need to change, apart from leaving working copies out of the deck limit.
 
 ## What the owner decided (CONFIRMED)
 

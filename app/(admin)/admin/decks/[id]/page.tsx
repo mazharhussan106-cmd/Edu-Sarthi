@@ -21,6 +21,7 @@ import { ActionButton } from "@/components/admin/ActionButton";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { ensureActiveUser } from "@/lib/activeUser";
 import { CREDIT_SELECT, LIBRARY_RULES, SOURCE_SELECT, copiedFrom, creditName, licenceInfo } from "@/lib/libraryTerms";
+import { versionSummary } from "@/lib/deckVersion";
 
 export const revalidate = 0;
 
@@ -33,7 +34,7 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
     where: { id },
     select: {
       title: true, description: true, tags: true, visibility: true, status: true, rejectReason: true,
-      licence: true, termsVersion: true, termsAcceptedAt: true, sourceDeckId: true, ...SOURCE_SELECT,
+      licence: true, termsVersion: true, termsAcceptedAt: true, sourceDeckId: true, draftOfId: true, ...SOURCE_SELECT,
       owner: { select: { publicId: true, ...CREDIT_SELECT } },
       cards: { orderBy: { serial: "asc" }, select: CARD_SELECT },
       reports: { where: { resolvedAt: null }, orderBy: { createdAt: "asc" }, select: { id: true, reason: true, note: true } },
@@ -49,8 +50,10 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
   const credit = creditName(deck.owner);
   // A copy's worth is in what it adds: count its cards that are not word for
   // word the original's. Compared on the stored card, so a reworded back counts.
-  const copy = copiedFrom(deck);
-  const original = deck.sourceDeckId ? await prisma.word.findMany({ where: { deckId: deck.sourceDeckId }, select: { text: true, details: true } }) : null;
+  // A new version is judged against its live deck, not as a copy of anything.
+  const version = deck.draftOfId ? await versionSummary(id) : null;
+  const copy = deck.draftOfId ? null : copiedFrom(deck);
+  const original = copy && deck.sourceDeckId ? await prisma.word.findMany({ where: { deckId: deck.sourceDeckId }, select: { text: true, details: true } }) : null;
   const same = new Set((original ?? []).map((w) => JSON.stringify([w.text, w.details])));
   const changed = original ? deck.cards.filter((c) => !same.has(JSON.stringify([c.text, c.details]))).length : null;
 
@@ -76,6 +79,17 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
           {published ? "Published" : pending ? "Waiting for review" : deck.status === "REJECTED" ? "Rejected" : "Not submitted"}
         </Badge>
       </div>
+
+      {version ? (
+        <Card className="mt-5">
+          <h2 className="font-display text-base font-bold text-ink">New version of “{version.liveTitle}”</h2>
+          <p className="mt-1 text-sm text-ink">
+            {version.added} card{version.added === 1 ? "" : "s"} added · {version.changed} changed · {version.removed} removed, compared with the{" "}
+            {version.liveListed ? <Link href={`/library/${version.liveId}`} className="text-accent underline">published deck</Link> : "deck as it was last approved"}.
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">Approving copies these changes onto the published deck. Followers keep their progress, except on removed cards. Rejecting leaves the published deck as it is.</p>
+        </Card>
+      ) : null}
 
       {copy ? (
         <Card className="mt-5">

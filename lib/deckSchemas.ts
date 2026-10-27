@@ -25,6 +25,10 @@ export const DECK_LIMITS = {
   /// Library decks one person may follow. Separate from decksPerUser: a follow
   /// is a pointer, not a deck of their own.
   followsPerUser: 50,
+  /// A small fix to a published deck (owner's decision): characters changed
+  /// per field, and cards per deck per IST day. Each card once a day.
+  smallFixChars: 30,
+  smallFixCardsPerDay: 10,
 } as const;
 
 const tag = z
@@ -79,6 +83,7 @@ export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("copyInstitute"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("publish"), id: z.string().min(1), consent: publishConsentSchema }),
   z.object({ action: z.literal("unpublish"), id: z.string().min(1) }),
+  z.object({ action: z.literal("startVersion"), id: z.string().min(1) }),
   z.object({ action: z.literal("follow"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("unfollow"), deckId: z.string().min(1) }),
 ]);

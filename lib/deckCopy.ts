@@ -33,7 +33,7 @@ export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Pr
   // share action).
   const edu = LICENCES.EDUSARTHI.id;
   const fromEduSarthi = source.owner.role === "ADMIN" || source.licence === edu || source.sourceLicence === edu;
-  if ((await prisma.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) {
+  if ((await prisma.deck.count({ where: { ownerId: userId, draftOfId: null } })) >= DECK_LIMITS.decksPerUser) {
     return { error: `You have ${DECK_LIMITS.decksPerUser} decks already. Delete one you no longer need, then copy again.` };
   }
 
@@ -59,7 +59,7 @@ export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Pr
       async (tx) => {
         await lockUser(tx, userId);
         // The real check, under the lock; the one above only saves work.
-        if ((await tx.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
+        if ((await tx.deck.count({ where: { ownerId: userId, draftOfId: null } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
         const created = await tx.deck.create({
           data: {
             ownerId: userId,

@@ -27,9 +27,10 @@ export default async function DecksPage() {
   const userId = session!.user.id;
   const staff = session!.user.role !== "STUDENT";
   const decks = await prisma.deck.findMany({
-    where: { ownerId: userId },
+    // A new version (working copy) opens from its published deck, not here.
+    where: { ownerId: userId, draftOfId: null },
     orderBy: { createdAt: "desc" },
-    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, _count: { select: { cards: true } } },
+    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, drafts: { select: { status: true } }, _count: { select: { cards: true } } },
   });
   const follows = await prisma.deckFollow.findMany({
     where: { userId },
@@ -104,6 +105,7 @@ export default async function DecksPage() {
                     {d.visibility === "PUBLIC" && d.status === "PENDING_REVIEW" ? <Badge variant="accent">in review</Badge> : null}
                     {d.visibility === "PUBLIC" && d.status === "APPROVED" ? <Badge variant="success">published</Badge> : null}
                     {d.status === "REJECTED" ? <Badge variant="error">not approved</Badge> : null}
+                    {d.drafts.length ? <Badge variant="accent">{d.drafts[0].status === "PENDING_REVIEW" ? "new version in review" : "new version in progress"}</Badge> : null}
                     {d.shareToken ? <Badge>shared by link</Badge> : null}
                   </span>
                 </div>

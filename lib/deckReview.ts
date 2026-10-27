@@ -17,6 +17,7 @@ import { logAdmin } from "@/lib/admin";
 import { sendDeckDecision } from "@/lib/email";
 import { DECK_LIMITS, type PublishConsent } from "@/lib/deckSchemas";
 import { LIBRARY_TERMS_VERSION, LICENCES, licenceFor } from "@/lib/libraryTerms";
+import { mergeVersion } from "@/lib/deckVersion";
 
 type Result = { ok: true } | { error: string };
 
@@ -113,20 +114,20 @@ async function tellOwner(deckId: string, outcome: "approved" | "rejected" | "rem
   }
 }
 
-/// Called after any edit to a deck's text or cards. A published deck that
-/// changes goes back to review, or approval would only prove what the deck
-/// looked like on one day. Rejected and draft decks are left alone.
-export async function sendBackIfPublished(deckId: string): Promise<void> {
-  await prisma.deck.updateMany({
-    where: { id: deckId, visibility: "PUBLIC", status: "APPROVED" },
-    data: { status: "PENDING_REVIEW", reviewedAt: null, reviewedById: null },
-  });
-}
-
 export async function reviewDeck(adminId: string, id: string, decision: "approve" | "reject", reason: string): Promise<Result> {
-  const deck = await prisma.deck.findFirst({ where: { id, visibility: "PUBLIC", status: "PENDING_REVIEW" }, select: { title: true } });
+  const deck = await prisma.deck.findFirst({ where: { id, visibility: "PUBLIC", status: "PENDING_REVIEW" }, select: { title: true, draftOfId: true } });
   if (!deck) return { error: "That deck is not waiting for review any more. Refresh the page." };
   const approve = decision === "approve";
+  // A new version of a published deck: approving copies it onto the live deck
+  // (same cards, so followers keep their progress) instead of publishing a
+  // second deck. Rejecting it is the same as rejecting any deck below.
+  if (approve && deck.draftOfId) {
+    const merged = await mergeVersion(adminId, id);
+    if ("error" in merged) return merged;
+    await tellOwner(merged.liveId, "approved", "");
+    await logAdmin(adminId, "Approved new version of a public deck", "deck", merged.liveId, { title: merged.title });
+    return { ok: true };
+  }
   await prisma.deck.updateMany({
     // Same condition again: two admins clicking at once decide it only once.
     where: { id, visibility: "PUBLIC", status: "PENDING_REVIEW" },

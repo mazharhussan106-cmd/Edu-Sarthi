@@ -161,6 +161,16 @@ export function mediaKeys(cards: { imageUrl: string | null; audioUrl: string | n
   return cards.flatMap((c) => [c.imageUrl, c.audioUrl]).filter((k): k is string => Boolean(k));
 }
 
+/// Of these files, the ones no card points at any more. A deck's new version
+/// shares pictures and audio with the live deck (lib/deckVersion), so a file is
+/// deleted only once neither uses it. Call after the rows are gone.
+export async function unusedKeys(keys: string[]): Promise<string[]> {
+  if (!keys.length) return [];
+  const used = await prisma.word.findMany({ where: { OR: [{ imageUrl: { in: keys } }, { audioUrl: { in: keys } }] }, select: { imageUrl: true, audioUrl: true } });
+  const inUse = new Set(mediaKeys(used));
+  return keys.filter((k) => !inUse.has(k));
+}
+
 export async function deleteDeck(userId: string, id: string): Promise<boolean> {
   const cards = await prisma.word.findMany({ where: { deckId: id, ownerId: userId }, select: { imageUrl: true, audioUrl: true } });
   // Scoped delete: count 0 means it was not this user's deck.
@@ -168,7 +178,7 @@ export async function deleteDeck(userId: string, id: string): Promise<boolean> {
   if (res.count === 0) return false;
   // Rows first, files second: a failed file delete leaves an unreachable
   // orphan, whereas the other order could leave cards whose pictures vanished.
-  await removeObjects(mediaKeys(cards));
+  await removeObjects(await unusedKeys(mediaKeys(cards)));
   return true;
 }
 

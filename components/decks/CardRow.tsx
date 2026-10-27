@@ -15,7 +15,9 @@ import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CardEditor, type EditableCard } from "@/components/decks/CardEditor";
 import { callApi } from "@/components/decks/deckClient";
 
-export function CardRow({ deckId, card, staff }: { deckId: string; card: EditableCard; staff: boolean }) {
+/// On a published deck: Edit is a small fix (and is paused while a new version
+/// is in progress), and cards are removed only in a new version.
+export function CardRow({ deckId, card, staff, canEdit = true, canDelete = true }: { deckId: string; card: EditableCard; staff: boolean; canEdit?: boolean; canDelete?: boolean }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [open, setOpen] = useState(false);
@@ -45,8 +47,8 @@ export function CardRow({ deckId, card, staff }: { deckId: string; card: Editabl
           <span className="block truncate text-xs text-ink-muted">{card.back}</span>
         </button>
         <div className="flex shrink-0 gap-1">
-          {card.rich ? null : <Button variant="outline" size="sm" onClick={() => setEditing(true)}>Edit</Button>}
-          <Button variant="ghost" size="sm" disabled={busy} onClick={remove} aria-label={`Delete card ${card.front}`}>Delete</Button>
+          {card.rich || !canEdit ? null : <Button variant="outline" size="sm" onClick={() => setEditing(true)}>Edit</Button>}
+          {canDelete ? <Button variant="ghost" size="sm" disabled={busy} onClick={remove} aria-label={`Delete card ${card.front}`}>Delete</Button> : null}
         </div>
       </div>
       {open ? (

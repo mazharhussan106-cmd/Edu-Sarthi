@@ -39,6 +39,8 @@ This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `
 | 19 | Institute licence | CC BY-SA 4.0, like everyone else's decks. | — |
 | 20 | A teacher leaves | Their decks published under the institute's name stay in the library, under the teacher's own name. | — |
 | 21 | Suspended institute | Its library decks are hidden until it is reinstated. | — |
+| 22 | Leaving a suspended institute | The person's decks published under its name go back to review, under their own name. | Decision 20, for a suspended institute only |
+| 23 | Institute's name removed | The deck's owner gets an email when the institute's admin takes the institute's name off their deck. | — |
 
 ## Review of the decisions — what they imply and where they clash
 
@@ -287,9 +289,10 @@ Beyond the approved list, for the suspension rule and the credit: `app/(shared)/
 
 **After merging:** run Actions → Database setup (the three new Institute columns). Nothing else is needed.
 
-**Undecided (asked in the chat, not yet answered):**
-- A person who leaves a **suspended** institute: decision 20 applies as written, so their decks come back in the library under their own name. Say if those decks should go back to review instead.
-- The deck's owner is not told when the institute's admin takes the institute's name off their deck. An email could be added.
+**Answered after the build (decisions 22 and 23), built 27 Oct:**
+- Leaving a **suspended** institute: `drop()` sends the person's approved institute decks back to review (`PENDING_REVIEW`, institute cleared) and writes "Decks back to review: maker left a suspended institute" to the admin log. Followers keep the follow but cannot study the deck until it is approved again. The Leave warning on the suspended institute's page says so, and so does the library rules page.
+- When the institute's admin takes the institute's name off a deck, the owner gets an email (`sendInstituteNameRemoved` in `lib/email.ts`). Best effort, after the change is saved; skipped for phone-only accounts and for the admin's own decks.
+- Local test: 2 of 2 (the email is sent to the owner; leaving a suspended institute puts the deck back in review, logs it, and the review page no longer says "Published as"). Phase 5's 18 checks still pass.
 
 Not built: the logo on institute decks shared only inside the institute, and the like button still accepts a like on a hidden deck (harmless; the count is not shown while it is hidden).
 

@@ -69,7 +69,7 @@ export default function LibraryRulesPage() {
             the deck is checked like any other. The person who made it is named beside the institute, unless they chose no
             name. The institute&apos;s admin can take its name off any of its decks; the deck then stays in the library under
             the person who made it, and so does a deck whose maker leaves the institute. While an institute is suspended, its
-            decks are not shown.
+            decks are not shown; a deck whose maker leaves a suspended institute is checked again before it returns.
           </p>
         </section>
 

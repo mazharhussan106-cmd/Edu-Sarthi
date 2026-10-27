@@ -102,6 +102,18 @@ export async function sendDeckDecision(to: string, title: string, outcome: "appr
   await send(to, headline, text, html);
 }
 
+/// Tells a deck's owner that their institute's admin took the institute's name
+/// (and logo) off their library deck. Nothing else about the deck changed.
+export async function sendInstituteNameRemoved(to: string, title: string, institute: string) {
+  const safe = title.replace(/[<>&"]/g, " ");
+  const inst = institute.replace(/[<>&"]/g, " ");
+  const subject = `“${safe}” is no longer published as ${inst}`;
+  const next = "The deck stays in the public library under your own name, as you chose to be credited. Your followers keep it. If you think this is a mistake, talk to your institute’s admin.";
+  const text = `The admin of ${inst} took the institute’s name and logo off your deck “${safe}”.\n\n${next}`;
+  const html = `<p>The admin of ${inst} took the institute’s name and logo off your deck “${safe}”.</p><p>${next}</p>`;
+  await send(to, subject, text, html);
+}
+
 /// Invites someone to a deck shared with them by name. Sent to an address the
 /// owner typed, so it says who invited them and links only to My decks, where
 /// the invitation waits until they sign in with this email and accept it.

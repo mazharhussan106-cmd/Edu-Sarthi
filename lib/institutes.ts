@@ -15,6 +15,7 @@ import { randomInt } from "crypto";
 import type { InstituteRole, InstituteStatus } from "@prisma/client";
 
 import { logAdmin } from "@/lib/admin";
+import { sendInstituteNameRemoved } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
 type Result = { ok: true } | { error: string };
@@ -72,15 +73,26 @@ export async function joinInstitute(userId: string, code: string): Promise<Resul
 }
 
 /// Takes a person out and pulls back any of their decks they shared there.
-async function drop(userId: string, instituteId: string) {
+/// `suspended`: the institute is suspended as they leave.
+async function drop(userId: string, instituteId: string, suspended = false) {
   await prisma.instituteMember.deleteMany({ where: { userId, instituteId } });
   // Back to what the owner had before: link-only if a share link is on, else
   // private. Setting PRIVATE while keeping the link would hide the truth from
   // the owner — the deck would still open for anyone holding the link.
   await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "INSTITUTE", shareToken: { not: null } }, data: { visibility: "LINK", instituteId: null } });
   await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "INSTITUTE" }, data: { visibility: "PRIVATE", instituteId: null } });
-  // Owner's decision: decks they published under the institute's name stay in
-  // the library, under their own name only. Their followers keep them.
+  // Owner's decision: from a suspended institute, their published decks go
+  // back to review under their own name. Otherwise leaving would bring decks
+  // the suspension hid straight back into the library, unchecked.
+  if (suspended) {
+    const back = await prisma.deck.updateMany({
+      where: { ownerId: userId, instituteId, visibility: "PUBLIC", status: "APPROVED" },
+      data: { instituteId: null, status: "PENDING_REVIEW", reviewedById: null, reviewedAt: null },
+    });
+    if (back.count) await logAdmin(null, "Decks back to review: maker left a suspended institute", "institute", instituteId, { decks: back.count });
+  }
+  // Owner's decision: otherwise decks they published under the institute's
+  // name stay in the library, under their own name only. Followers keep them.
   await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "PUBLIC" }, data: { instituteId: null } });
 }
 
@@ -90,7 +102,7 @@ export async function leaveInstitute(userId: string): Promise<Result> {
   // An admin of a running institute cannot walk away from it, but one whose
   // institute was rejected or suspended is not stuck for ever.
   if (m.role === "ADMIN" && m.institute.status === "APPROVED") return { error: "You run this institute, so you cannot leave it. Ask the site admin to hand it over first." };
-  await drop(userId, m.instituteId);
+  await drop(userId, m.instituteId, m.institute.status === "SUSPENDED");
   return { ok: true };
 }
 
@@ -154,7 +166,18 @@ export async function removeInstituteName(adminUserId: string, deckId: string): 
   if (!a) return { error: "Only the institute’s admin can do that." };
   // Scoped by institute: an admin can only touch decks published as their own.
   const res = await prisma.deck.updateMany({ where: { id: deckId, instituteId: a.instituteId, visibility: "PUBLIC" }, data: { instituteId: null } });
-  return res.count ? { ok: true } : { error: "That deck is not published under your institute’s name any more. Refresh the page." };
+  if (!res.count) return { error: "That deck is not published under your institute’s name any more. Refresh the page." };
+  // Owner's decision: the deck's owner is told. Best effort, after the change
+  // is saved: a mail failure must not undo it. Accounts with no email (phone
+  // sign-ups) and the admin's own decks are skipped.
+  try {
+    const d = await prisma.deck.findUnique({ where: { id: deckId }, select: { title: true, ownerId: true, owner: { select: { email: true } } } });
+    const inst = await prisma.institute.findUnique({ where: { id: a.instituteId }, select: { name: true } });
+    if (d?.owner.email && d.ownerId !== adminUserId && inst) await sendInstituteNameRemoved(d.owner.email, d.title, inst.name);
+  } catch {
+    console.error("Could not send the institute-name email");
+  }
+  return { ok: true };
 }
 
 /// Where-clause for decks a member may read: shared with their institute, and

@@ -65,7 +65,7 @@ export default async function InstitutePage() {
           {inst.status === "REJECTED" && m.role === "ADMIN" ? (
             <div className="mt-4"><p className="mb-2 text-sm text-ink-muted">Fix what the note says, then apply again.</p><ApplyForm label="Apply again" /></div>
           ) : null}
-          {inst.status === "SUSPENDED" && m.role !== "ADMIN" ? <div className="mt-4"><LeaveButton /></div> : null}
+          {inst.status === "SUSPENDED" && m.role !== "ADMIN" ? <div className="mt-4"><LeaveButton suspended /></div> : null}
         </Card>
       </main>
     );

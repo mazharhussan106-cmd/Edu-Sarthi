@@ -92,7 +92,7 @@ An English spoken-communication training platform: students record or upload, te
    - **Credit:** "[logo] by <Institute> (<person>)" through `components/decks/DeckCredit.tsx` (now an async server component, so never import it into a client component).
    - **Don't undo:** `LISTED` (`lib/decks.ts`) also hides decks of a suspended institute; library pages and the copy route now use `LISTED` instead of repeating the check. `drop()` in `lib/institutes.ts` keeps a leaving teacher's institute-published decks public under their own name. Withdraw and takedown clear `instituteId`.
    - The institute's admin can take the institute's name off any deck (Institute page → Published by the institute).
-   - Undecided: decks of someone who leaves a *suspended* institute come back under their own name — should they go back to review instead? Should the owner be emailed when the institute's admin removes the name?
+   - Decisions 22–23 (built): leaving a *suspended* institute sends the person's approved institute decks back to review; the owner is emailed when the institute's admin removes the institute's name.
    - `lib/decks.ts` is now 260 lines (was already over 250); split it when it is next changed.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 

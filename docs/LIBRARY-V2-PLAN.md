@@ -1,6 +1,6 @@
 # Flashcard library v2 — plan
 
-Status: **PLANNING. Nothing in this file is built yet.** Written 27 Oct 2026 on branch `claude/sweet-davinci-d313f6`.
+Status: **Phases 1–4 BUILT and MERGED (27 Oct 2026, PR #18).** Phase 5 (institutes) and Phase 6 (legal review, telling users) are not built. The Phase 0 phone test (`docs/PHASE0-LIVE-TEST.md`) is still to do.
 
 This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `main`, but **none of it has been tested on the live site**). The owner's answers below are confirmed decisions. Anything marked **PROPOSAL** is the assistant's suggestion and still needs the owner's yes.
 
@@ -69,7 +69,7 @@ Every schema change listed is **additive** (new nullable columns or new tables),
 
 ### Phase 1 — Publishing terms: age, public name, licence, rules
 
-**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test.** Type check and production build pass. A browser test on a local copy passed 15 of 15 checks:
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. MERGED into `main` on 27 Oct 2026 (PR #18); Actions → Database setup run #8 succeeded right after.** Type check and production build pass. A browser test on a local copy passed 15 of 15 checks:
 - the form, the 18+ refusal, the missing-tick refusal, a phone number in a display name refused;
 - what is saved;
 - the second deck doesn't ask about age again;
@@ -121,7 +121,7 @@ Before more decks go public, every public deck needs the creator's consent on re
 
 ### Phase 2 — "Copied from" and Follow
 
-**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test, like Phase 1.** Type check and production build pass.
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. MERGED into `main` on 27 Oct 2026 (PR #18); Actions → Database setup run #8 succeeded right after.** Type check and production build pass.
 
 A local browser test passed 12 of 12 checks:
 - following opens the study page on the original's cards, and Known is saved as the learner's own progress;
@@ -161,7 +161,7 @@ The interim gap (an edit hid the deck from followers until it was re-approved) i
 
 ### Phase 3 — Small fixes go live; big edits become a reviewed version
 
-**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test.** Design and the differences from it: `docs/PHASE3-DESIGN.md`. Type check and production build pass.
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. MERGED into `main` on 27 Oct 2026 (PR #18); Actions → Database setup run #8 succeeded right after.** Design and the differences from it: `docs/PHASE3-DESIGN.md`. Type check and production build pass.
 
 A local browser test passed 15 of 15 checks:
 - on a live deck: no Add, no Delete, details locked, "Start a new version" shown;
@@ -196,7 +196,7 @@ A further check showed that a picture is kept while the live deck uses it and de
 
 ### Phase 4 — Share with people: view and edit
 
-**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test.** Type check and production build pass.
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. MERGED into `main` on 27 Oct 2026 (PR #18); Actions → Database setup run #8 succeeded right after.** Type check and production build pass.
 
 The owner said "yes" to the file list and the recommendations:
 - invited people get an email, capped at 20 invites per person per IST day;

@@ -65,7 +65,7 @@ revises cards with the spaced-repetition ladder that already exists.
 
 ### Phase 4 — Teacher decks — DONE
 
-- Teachers and admins get two extra card sections: a video link (YouTube or Google Drive only, stored as our own rebuilt embed address) and a Teacher's guide ("what to listen for"). Students never see these fields, and a student editing a copied teacher card cannot erase them.
+- Teachers and admins get two extra card sections: a video link (YouTube or Google Drive only, stored as our own rebuilt embed address) and a Teacher's guide ("what to listen for"). Students never get these fields in the card editor, and a student editing a copied teacher card cannot erase them. Learners do see the Teacher's guide on the back of the card; the owner confirmed this on 27 Oct 2026.
 - Admin verifies a teacher (Users page, with a reason). An unverified teacher can build decks but cannot publish. Changing the role clears verification.
 - "Verified teacher" badge in the library.
 - Decks live in the shared shell, so teachers keep teacher navigation.

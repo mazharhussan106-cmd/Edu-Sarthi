@@ -28,6 +28,8 @@ This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `
 | 13 | Withdrawn decks | When an author withdraws a deck, followers lose it. A takedown removes it too. | — |
 | 14 | Creator rewards | Creators get a revenue share, free AI cards and badges. Amounts and payouts are decided later, with the paid plans. | — |
 | 15 | Edit sharing | Only by named invite, never by link. | — |
+| 16 | Teacher's guide | Learners keep seeing the Teacher's guide on the back of a card. Only the input box in the editor is staff-only. | — (confirms how it works today) |
+| 17 | Card recordings | A recording on a deck card stays at a minimum of 15 seconds. | — (confirms how it works today) |
 
 ## Review of the decisions — what they imply and where they clash
 

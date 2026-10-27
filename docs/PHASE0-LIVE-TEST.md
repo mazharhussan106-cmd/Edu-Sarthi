@@ -81,7 +81,7 @@ Send a screenshot, the step number, and the time it happened. To find the error:
 - Extra: report → admin dismiss; Explore → "Import and study" opens the study page.
 - Not checked locally: YouTube playback (the test computer has no internet), Supabase uploads (the local copy stores files on disk), real emails (printed instead of sent), Google sign-in and the AI features (no keys).
 
-## Two questions this test raised (owner decides)
+## Two questions this test raised — answered by the owner, 27 Oct 2026
 
-1. **The Teacher's guide shows to students on the library page**, on the back of the card. The code does this on purpose ("what to listen for" helps the learner). The old plan's line "students never see these fields" means the input boxes in the card editor. Should learners keep seeing it, or should it be teacher-only?
-2. **A recording on a deck card must be at least 15 seconds** (`prisma/import-words.ts`, the shared "Word" exercise). For a one-line card like "Could you repeat that?", that is long. Should card recordings have a shorter minimum (for example 3 seconds)?
+1. **Learners keep seeing the Teacher's guide** on the back of the card. This is not a bug. "Students never see these fields" in the old plan means the input boxes in the card editor.
+2. **Recordings on deck cards stay at a minimum of 15 seconds** (`prisma/import-words.ts`, the shared "Word" exercise). In Round 2, step 6, record at least 15 seconds or the app refuses the clip.

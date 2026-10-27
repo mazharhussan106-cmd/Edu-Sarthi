@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         // The same per-user lock the deck and card routes take, so this cannot
         // pass the deck limit together with another request.
         await lockUser(tx, userId);
-        if ((await tx.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
+        if ((await tx.deck.count({ where: { ownerId: userId, draftOfId: null } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
         const created = await tx.deck.create({ data: { ownerId: userId, title, tags: [] }, select: { id: true } });
         await tx.word.createMany({ data: aiCardRows(userId, created.id, 1, cards) });
         return created;

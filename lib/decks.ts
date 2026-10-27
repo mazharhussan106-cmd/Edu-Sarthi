@@ -1,5 +1,7 @@
 // Owns reading and writing a student's decks: ownership checks, the card
-// <-> Word mapping, picking the next card to study, and copying a shared deck.
+// <-> Word mapping, and picking the next card to study — in their own decks
+// and in library decks they follow. Copying lives in lib/deckCopy, following
+// in lib/deckFollow.
 //
 // Every function takes the current user's id and puts it in the WHERE clause.
 // A deck or card the user does not own simply does not exist as far as this
@@ -12,7 +14,7 @@ import { randomBytes } from "crypto";
 import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { copyObject, removeObjects, resolveMediaUrl } from "@/lib/storage";
+import { removeObjects, resolveMediaUrl } from "@/lib/storage";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 
 export type CardFields = {
@@ -52,6 +54,11 @@ export async function lockUser(tx: Prisma.TransactionClient, userId: string): Pr
 }
 
 export class LimitReached extends Error {}
+
+/// A deck anyone signed in may find, follow and study: approved for the
+/// library, and its owner not suspended. Leaving this state (withdrawn, taken
+/// down, back in review) stops followers studying it at once.
+export const LISTED = { visibility: "PUBLIC", status: "APPROVED", owner: { suspendedAt: null } } satisfies Prisma.DeckWhereInput;
 
 export function wordData(c: CardFields) {
   return {
@@ -102,31 +109,48 @@ export async function ownDeck(userId: string, id: string) {
   return prisma.deck.findFirst({ where: { id, ownerId: userId } });
 }
 
-/// Rows the student may mark, remark or note: the built-in cards and their own.
-/// Cards in someone else's deck — even one shared by link — are view-only.
+/// Rows the student may mark, remark or note: the built-in cards, their own,
+/// cards of decks shared with them by name, and of library decks they follow. Cards in a deck shared by link, or a
+/// followed deck that has left the library, are view-only.
 export async function canStudyWord(userId: string, wordId: string): Promise<boolean> {
   const w = await prisma.word.findFirst({
-    where: { id: wordId, OR: [{ deckId: null }, { ownerId: userId }] },
+    where: {
+      id: wordId,
+      OR: [
+        { deckId: null },
+        { ownerId: userId },
+        { deck: { ...LISTED, follows: { some: { userId } } } },
+        // Shared by name, to view or edit: studied with the person's own progress.
+        { deck: { draftOfId: null, members: { some: { userId, acceptedAt: { not: null } } } } },
+      ],
+    },
     select: { id: true },
   });
   return w !== null;
 }
 
-export async function deckStudyCounts(userId: string, deckId: string) {
+/// The cards a study session may pick from: the user's own cards in their own
+/// deck, or every card of a deck they follow (the caller has checked the follow).
+function studyCards(userId: string, deckId: string, followed: boolean): Prisma.WordWhereInput {
+  return followed ? { deckId } : { deckId, ownerId: userId };
+}
+
+export async function deckStudyCounts(userId: string, deckId: string, followed = false) {
   const now = new Date();
+  const cards = studyCards(userId, deckId, followed);
   const [total, due, started] = await Promise.all([
-    prisma.word.count({ where: { deckId, ownerId: userId } }),
-    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { deckId, ownerId: userId } } }),
-    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, word: { deckId, ownerId: userId } } }),
+    prisma.word.count({ where: cards }),
+    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: cards } }),
+    prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, word: cards } }),
   ]);
   return { total, due, fresh: Math.max(0, total - started) };
 }
 
 /// Due cards first (oldest due first), then cards never seen, in deck order.
-/// Own decks have no daily new-card limit: the student chose every card.
-export async function nextDeckCardId(userId: string, deckId: string, skip: string[] = []): Promise<string | null> {
+/// Own and followed decks have no daily new-card limit: the student chose them.
+export async function nextDeckCardId(userId: string, deckId: string, skip: string[] = [], followed = false): Promise<string | null> {
   // Skipped cards ("›") are "not now", kept in the URL, never a review answer.
-  const mine = { deckId, ownerId: userId, ...(skip.length ? { code: { notIn: skip } } : {}) };
+  const mine = { ...studyCards(userId, deckId, followed), ...(skip.length ? { code: { notIn: skip } } : {}) };
   const due = await prisma.cardState.findFirst({
     where: { userId, reviews: { gt: 0 }, dueAt: { lte: new Date() }, word: mine },
     orderBy: { dueAt: "asc" },
@@ -146,6 +170,16 @@ export function mediaKeys(cards: { imageUrl: string | null; audioUrl: string | n
   return cards.flatMap((c) => [c.imageUrl, c.audioUrl]).filter((k): k is string => Boolean(k));
 }
 
+/// Of these files, the ones no card points at any more. A deck's new version
+/// shares pictures and audio with the live deck (lib/deckVersion), so a file is
+/// deleted only once neither uses it. Call after the rows are gone.
+export async function unusedKeys(keys: string[]): Promise<string[]> {
+  if (!keys.length) return [];
+  const used = await prisma.word.findMany({ where: { OR: [{ imageUrl: { in: keys } }, { audioUrl: { in: keys } }] }, select: { imageUrl: true, audioUrl: true } });
+  const inUse = new Set(mediaKeys(used));
+  return keys.filter((k) => !inUse.has(k));
+}
+
 export async function deleteDeck(userId: string, id: string): Promise<boolean> {
   const cards = await prisma.word.findMany({ where: { deckId: id, ownerId: userId }, select: { imageUrl: true, audioUrl: true } });
   // Scoped delete: count 0 means it was not this user's deck.
@@ -153,80 +187,8 @@ export async function deleteDeck(userId: string, id: string): Promise<boolean> {
   if (res.count === 0) return false;
   // Rows first, files second: a failed file delete leaves an unreachable
   // orphan, whereas the other order could leave cards whose pictures vanished.
-  await removeObjects(mediaKeys(cards));
+  await removeObjects(await unusedKeys(mediaKeys(cards)));
   return true;
-}
-
-/// Copies a deck the caller may read (by link or from the library) into the user's own account as a private deck.
-/// Files are copied before the transaction — they are slow and not atomic —
-/// so the transaction only holds the cheap row inserts.
-export async function copyDeck(userId: string, where: Prisma.DeckWhereInput): Promise<{ id: string } | { error: string }> {
-  const source = await prisma.deck.findFirst({
-    where,
-    select: { id: true, title: true, description: true, tags: true, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true } } },
-  });
-  if (!source) return { error: "This deck is no longer available. Go back and pick another." };
-  if ((await prisma.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) {
-    return { error: `You have ${DECK_LIMITS.decksPerUser} decks already. Delete one you no longer need, then copy again.` };
-  }
-
-  // Files are copied a handful at a time, never hundreds at once: a 184-card
-  // deck with pictures would otherwise open hundreds of storage requests in one go.
-  const cards: { c: (typeof source.cards)[number]; imageKey: string | null; audioKey: string | null }[] = [];
-  for (let i = 0; i < source.cards.length; i += 8) {
-    cards.push(
-      ...(await Promise.all(
-        source.cards.slice(i, i + 8).map(async (c) => ({
-          c,
-          imageKey: c.imageUrl ? await copyObject(c.imageUrl, userId) : null,
-          audioKey: c.audioUrl ? await copyObject(c.audioUrl, userId) : null,
-        })),
-      )),
-    );
-  }
-  const copiedKeys = cards.flatMap((x) => [x.imageKey, x.audioKey]).filter((k): k is string => Boolean(k));
-
-  let deck: { id: string };
-  try {
-    deck = await prisma.$transaction(
-      async (tx) => {
-        await lockUser(tx, userId);
-        // The real check, under the lock; the one above only saves work.
-        if ((await tx.deck.count({ where: { ownerId: userId } })) >= DECK_LIMITS.decksPerUser) throw new LimitReached();
-        const created = await tx.deck.create({
-          data: { ownerId: userId, title: source.title.slice(0, 70) + " (copy)", description: source.description, tags: source.tags },
-          select: { id: true },
-        });
-        await tx.word.createMany({
-          data: cards.map(({ c, imageKey, audioKey }, i) => ({
-            code: newCardCode(),
-            serial: i + 1,
-            kind: "WORD" as const,
-            deckId: created.id,
-            ownerId: userId,
-            text: c.text,
-            // Imported cards keep their topic, so the copy lists the same way.
-            category: c.category,
-            details: (c.details ?? {}) as Prisma.InputJsonObject,
-            imageUrl: imageKey,
-            audioUrl: audioKey,
-            videoUrl: c.videoUrl,
-          })),
-        });
-        return created;
-      },
-      { maxWait: 10_000, timeout: 20_000 },
-    );
-  } catch (e) {
-    // Nothing points at the copied files now, so they would sit in storage for good.
-    await removeObjects(copiedKeys);
-    if (e instanceof LimitReached) return { error: `You have ${DECK_LIMITS.decksPerUser} decks already. Delete one you no longer need, then copy again.` };
-    throw e;
-  }
-  // Counted only after the copy really exists, and outside the transaction:
-  // a missed increment must not undo a copy.
-  await prisma.deck.updateMany({ where: { id: source.id }, data: { copyCount: { increment: 1 } } });
-  return deck;
 }
 
 /// Reads a JSON body without throwing: a malformed or empty body is the

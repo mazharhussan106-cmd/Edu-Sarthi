@@ -20,6 +20,9 @@ import { cardActionSchema } from "@/lib/deckSchemas";
 
 export type EditableCard = {
   id: string;
+  /// When the card last changed, as the page saw it: sent back on save so a
+  /// change someone else made since is not silently overwritten.
+  updatedAt?: string;
   front: string;
   back: string;
   example: string;
@@ -68,7 +71,7 @@ export function CardEditor({ deckId, card, staff, onDone }: { deckId: string; ca
     setError(null);
     // Checked before any upload, so a missing field does not cost a 2 MB PUT.
     const draft = { front, back, example, body, imageKey: null, audioKey: null, videoUrl: staff ? videoUrl : "", audit: staff ? audit : "" };
-    const early = cardActionSchema.safeParse(card ? { action: "edit", cardId: card.id, ...draft } : { action: "add", ...draft });
+    const early = cardActionSchema.safeParse(card ? { action: "edit", cardId: card.id, openedAt: card.updatedAt, ...draft } : { action: "add", ...draft });
     if (!early.success) return setError(early.error.issues[0]?.message ?? "Check the fields and try again.");
 
     setBusy(true);

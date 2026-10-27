@@ -22,6 +22,18 @@ export const DECK_LIMITS = {
   minCardsToPublish: 3,
   /// Distinct open reports that pull a public deck back to review on their own.
   reportsToHide: 3,
+  /// Library decks one person may follow. Separate from decksPerUser: a follow
+  /// is a pointer, not a deck of their own.
+  followsPerUser: 50,
+  /// A small fix to a published deck (owner's decision): characters changed
+  /// per field, and cards per deck per IST day. Each card once a day.
+  smallFixChars: 30,
+  smallFixCardsPerDay: 10,
+  /// People one deck may be shared with by name, invited or accepted.
+  membersPerDeck: 10,
+  /// Invitations one person may send a day: each one sends an email, so the
+  /// cap keeps the invite form from becoming a way to mail strangers.
+  invitesPerDay: 20,
 } as const;
 
 const tag = z
@@ -37,6 +49,35 @@ export const deckFields = {
   tags: z.array(tag).max(5, "Use up to 5 tags"),
 };
 
+/// How a creator's name shows on public decks. A typed display name is
+/// shown to everyone, so it must not smuggle in contact details or links —
+/// the library is no place to collect students' phone numbers.
+export const publicNameSchema = z
+  .object({
+    creditStyle: z.enum(["FULL_NAME", "FIRST_NAME", "DISPLAY_NAME", "NONE"], "Choose how your name shows"),
+    publicName: z.string().trim().max(40, "Keep the display name under 40 characters").default(""),
+  })
+  .superRefine((v, ctx) => {
+    if (v.creditStyle !== "DISPLAY_NAME") return;
+    const n = v.publicName;
+    const issue = (message: string) => ctx.addIssue({ code: "custom", path: ["publicName"], message });
+    if (n.length < 2) return issue("Type a display name of at least 2 characters, or choose another option.");
+    if (!/^[\p{L}\p{N} .'-]+$/u.test(n)) return issue("Use only letters, numbers, spaces, dots, hyphens and apostrophes in the display name.");
+    if (/\d{5,}/.test(n) || /(www|http|\.com|\.in)/i.test(n)) return issue("Leave phone numbers and website addresses out of the display name.");
+  });
+
+/// The submit form. The three ticks are required every time a deck is
+/// submitted; `adult` only matters until the account has confirmed it once.
+export const publishConsentSchema = z.object({
+  adult: z.boolean(),
+  ownWork: z.literal(true, "Tick that you made this deck or have the right to share it."),
+  licence: z.literal(true, "Tick that you agree to the licence the deck is published under."),
+  paidUse: z.literal(true, "Tick that EduSarthi may use the deck in paid features."),
+  name: publicNameSchema,
+});
+
+export type PublishConsent = z.infer<typeof publishConsentSchema>;
+
 export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), ...deckFields }),
   z.object({ action: z.literal("update"), id: z.string().min(1), ...deckFields }),
@@ -45,8 +86,23 @@ export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("copy"), token: z.string().min(8).max(64) }),
   z.object({ action: z.literal("copyPublic"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("copyInstitute"), deckId: z.string().min(1) }),
-  z.object({ action: z.literal("publish"), id: z.string().min(1) }),
+  z.object({ action: z.literal("copyMember"), deckId: z.string().min(1) }),
+  z.object({ action: z.literal("publish"), id: z.string().min(1), consent: publishConsentSchema }),
   z.object({ action: z.literal("unpublish"), id: z.string().min(1) }),
+  z.object({ action: z.literal("startVersion"), id: z.string().min(1) }),
+  z.object({ action: z.literal("follow"), deckId: z.string().min(1) }),
+  z.object({ action: z.literal("unfollow"), deckId: z.string().min(1) }),
+]);
+
+/// Sharing a deck with named people (lib/deckMembers). `adult` and `terms`
+/// matter only for an editor of a deck in the public library.
+export const memberActionSchema = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("invite"), deckId: z.string().min(1), email: z.string().trim().toLowerCase().pipe(z.email("Enter the email address they sign in with")), role: z.enum(["VIEW", "EDIT"], "Choose view or edit") }),
+  z.object({ action: z.literal("accept"), memberId: z.string().min(1), adult: z.boolean().default(false), terms: z.boolean().default(false) }),
+  z.object({ action: z.literal("decline"), memberId: z.string().min(1) }),
+  z.object({ action: z.literal("confirm"), deckId: z.string().min(1), adult: z.boolean(), terms: z.boolean() }),
+  z.object({ action: z.literal("remove"), memberId: z.string().min(1) }),
+  z.object({ action: z.literal("leave"), deckId: z.string().min(1) }),
 ]);
 
 export const reportSchema = z.object({
@@ -86,7 +142,9 @@ const cardFields = {
 
 export const cardActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("add"), ...cardFields }),
-  z.object({ action: z.literal("edit"), cardId: z.string().min(1), ...cardFields }),
+  /// openedAt: when the person opened the card, so a save over someone else's
+  /// newer change is refused instead of silently overwriting it.
+  z.object({ action: z.literal("edit"), cardId: z.string().min(1), openedAt: z.iso.datetime().optional(), ...cardFields }),
   z.object({ action: z.literal("delete"), cardId: z.string().min(1) }),
 ]);
 

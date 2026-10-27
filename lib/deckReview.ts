@@ -1,6 +1,6 @@
-// Owns the public-library life cycle of a deck: the owner asking to publish,
-// the admin approving or rejecting, readers reporting, and the admin acting on
-// reports. Every state change lives here so the rules cannot drift between the
+// Owns the public-library life cycle of a deck: the owner asking to publish
+// (with the 18+ answer, the licence ticks and their name choice), the admin
+// approving or rejecting, readers reporting, and the admin acting on reports. Every state change lives here so the rules cannot drift between the
 // owner's route, the admin's route and the pages.
 //
 // The states (DeckStatus) are: DRAFT (never asked) → PENDING_REVIEW → APPROVED
@@ -15,16 +15,46 @@ import type { ReportReason } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { logAdmin } from "@/lib/admin";
 import { sendDeckDecision } from "@/lib/email";
-import { DECK_LIMITS } from "@/lib/deckSchemas";
+import { DECK_LIMITS, type PublishConsent } from "@/lib/deckSchemas";
+import { LIBRARY_TERMS_VERSION, LICENCES, licenceFor } from "@/lib/libraryTerms";
+import { mergeVersion } from "@/lib/deckVersion";
+import { editorsWithoutTerms } from "@/lib/deckMembers";
 
 type Result = { ok: true } | { error: string };
 
-export async function publishDeck(userId: string, id: string): Promise<Result> {
+export async function publishDeck(userId: string, id: string, consent: PublishConsent): Promise<Result> {
   const deck = await prisma.deck.findFirst({
     where: { id, ownerId: userId },
-    select: { status: true, visibility: true, description: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true } } },
+    select: {
+      status: true,
+      visibility: true,
+      description: true,
+      sourceLicence: true,
+      draftOfId: true,
+      owner: { select: { role: true, teacherVerifiedAt: true, name: true, adultConfirmedAt: true } },
+      _count: { select: { cards: true } },
+    },
   });
   if (!deck) return { error: "That deck no longer exists." };
+  // Republishing it would hand EduSarthi's own material out under CC BY-SA.
+  if (deck.sourceLicence === LICENCES.EDUSARTHI.id) {
+    return { error: "This deck is a copy of an EduSarthi deck. You can keep studying it, but it cannot be published to the library." };
+  }
+  // What editors added goes public too, under the same licence: each must
+  // have accepted the library terms first (owner's decision).
+  const unconfirmed = await editorsWithoutTerms(deck.draftOfId ?? id);
+  if (unconfirmed) {
+    return { error: `${unconfirmed} editor${unconfirmed === 1 ? " has" : "s have"} not accepted the library terms yet. Ask them to open the deck and confirm, or remove them under People, then submit again.` };
+  }
+  // Owner's decision: under-18s may not publish. Asked once per account; the
+  // form keeps sending it, but only the first "yes" is recorded.
+  if (!deck.owner.adultConfirmedAt && !consent.adult) {
+    return { error: "Publishing to the public library is open from age 18. You can still keep this deck private or share it by link." };
+  }
+  const style = consent.name.creditStyle;
+  if ((style === "FULL_NAME" || style === "FIRST_NAME") && !deck.owner.name?.trim()) {
+    return { error: "Your account has no name yet. Add it on your Profile page, or choose a display name or no name." };
+  }
   // A teacher's deck carries their name's weight in the library, so an admin
   // vouches for the teacher first. Students and admins are not held to this.
   if (deck.owner.role === "TEACHER" && !deck.owner.teacherVerifiedAt) {
@@ -35,10 +65,32 @@ export async function publishDeck(userId: string, id: string): Promise<Result> {
   if (deck._count.cards < DECK_LIMITS.minCardsToPublish) {
     return { error: `Add at least ${DECK_LIMITS.minCardsToPublish} cards before submitting — it is the minimum for the public library.` };
   }
-  await prisma.deck.updateMany({
-    where: { id, ownerId: userId },
-    data: { visibility: "PUBLIC", status: "PENDING_REVIEW", rejectReason: null, reviewedById: null, reviewedAt: null },
-  });
+  const now = new Date();
+  // Together: a deck must never sit in the queue without the consent that
+  // lets it be public, and the name choice is part of that consent.
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: userId },
+      data: {
+        adultConfirmedAt: deck.owner.adultConfirmedAt ?? now,
+        creditStyle: style,
+        ...(style === "DISPLAY_NAME" ? { publicName: consent.name.publicName } : {}),
+      },
+    }),
+    prisma.deck.updateMany({
+      where: { id, ownerId: userId },
+      data: {
+        visibility: "PUBLIC",
+        status: "PENDING_REVIEW",
+        rejectReason: null,
+        reviewedById: null,
+        reviewedAt: null,
+        licence: licenceFor(deck.owner.role),
+        termsVersion: LIBRARY_TERMS_VERSION,
+        termsAcceptedAt: now,
+      },
+    }),
+  ]);
   return { ok: true };
 }
 
@@ -52,6 +104,9 @@ export async function unpublishDeck(userId: string, id: string): Promise<Result>
     where: { id, ownerId: userId },
     data: { visibility: deck.shareToken ? "LINK" : "PRIVATE", status: "DRAFT", rejectReason: null },
   });
+  // Owner's decision: followers lose a deck its author withdraws. Their card
+  // progress stays, in case it is published again and they follow it again.
+  await prisma.deckFollow.deleteMany({ where: { deckId: id } });
   return { ok: true };
 }
 
@@ -67,20 +122,20 @@ async function tellOwner(deckId: string, outcome: "approved" | "rejected" | "rem
   }
 }
 
-/// Called after any edit to a deck's text or cards. A published deck that
-/// changes goes back to review, or approval would only prove what the deck
-/// looked like on one day. Rejected and draft decks are left alone.
-export async function sendBackIfPublished(deckId: string): Promise<void> {
-  await prisma.deck.updateMany({
-    where: { id: deckId, visibility: "PUBLIC", status: "APPROVED" },
-    data: { status: "PENDING_REVIEW", reviewedAt: null, reviewedById: null },
-  });
-}
-
 export async function reviewDeck(adminId: string, id: string, decision: "approve" | "reject", reason: string): Promise<Result> {
-  const deck = await prisma.deck.findFirst({ where: { id, visibility: "PUBLIC", status: "PENDING_REVIEW" }, select: { title: true } });
+  const deck = await prisma.deck.findFirst({ where: { id, visibility: "PUBLIC", status: "PENDING_REVIEW" }, select: { title: true, draftOfId: true } });
   if (!deck) return { error: "That deck is not waiting for review any more. Refresh the page." };
   const approve = decision === "approve";
+  // A new version of a published deck: approving copies it onto the live deck
+  // (same cards, so followers keep their progress) instead of publishing a
+  // second deck. Rejecting it is the same as rejecting any deck below.
+  if (approve && deck.draftOfId) {
+    const merged = await mergeVersion(adminId, id);
+    if ("error" in merged) return merged;
+    await tellOwner(merged.liveId, "approved", "");
+    await logAdmin(adminId, "Approved new version of a public deck", "deck", merged.liveId, { title: merged.title });
+    return { ok: true };
+  }
   await prisma.deck.updateMany({
     // Same condition again: two admins clicking at once decide it only once.
     where: { id, visibility: "PUBLIC", status: "PENDING_REVIEW" },
@@ -123,6 +178,7 @@ export async function resolveReports(adminId: string, deckId: string, outcome: "
   await prisma.deckReport.updateMany({ where: { deckId, resolvedAt: null }, data: { resolvedAt: now, resolvedById: adminId } });
   if (outcome === "takedown") {
     await prisma.deck.update({ where: { id: deckId }, data: { visibility: "PRIVATE", shareToken: null, status: "REJECTED", rejectReason: reason, reviewedById: adminId, reviewedAt: now } });
+    await prisma.deckFollow.deleteMany({ where: { deckId } });
   } else if (deck.status === "PENDING_REVIEW") {
     // Auto-hidden by reports and found fine: back into the library.
     await prisma.deck.updateMany({ where: { id: deckId, visibility: "PUBLIC", status: "PENDING_REVIEW" }, data: { status: "APPROVED", reviewedById: adminId, reviewedAt: now } });

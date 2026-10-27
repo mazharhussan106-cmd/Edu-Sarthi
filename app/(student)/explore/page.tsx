@@ -1,10 +1,10 @@
 // Owns the Explore page: one place to see every kind of flashcard available,
-// import a library deck, study it, and — where a verified teacher made the
+// follow a library deck and study it, and — where a verified teacher made the
 // deck — record yourself for that teacher's audit.
 //
-// It deliberately does NOT copy anything itself or show whole decks. Import is
-// one tap on a deck row; reading a deck's cards happens on its own page, so
-// this list stays light on a slow phone.
+// It deliberately does NOT copy anything or show whole decks. Following is
+// one tap on a deck row; reading a deck's cards (and copying it) happens on
+// its own page, so this list stays light on a slow phone.
 //
 // Honest about audits: only decks by a verified teacher can send a recording
 // to that teacher. Other decks are for studying, and the page says so.
@@ -13,7 +13,10 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
-import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
+import { DeckCredit } from "@/components/decks/DeckCredit";
+import { FollowButton } from "@/components/decks/FollowButton";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { chunkTypeLabel } from "@/lib/chunkCard";
 import { builtInCounts, librarySubjects } from "@/lib/explore";
 
@@ -24,7 +27,13 @@ const n = (x: number) => x.toLocaleString("en-IN");
 const slug = (s: string) => `s-${s.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
 export default async function ExplorePage() {
-  const [built, subjects] = await Promise.all([builtInCounts(), librarySubjects()]);
+  const session = await auth();
+  const [built, subjects, follows] = await Promise.all([
+    builtInCounts(),
+    librarySubjects(),
+    prisma.deckFollow.findMany({ where: { userId: session!.user.id }, select: { deckId: true } }),
+  ]);
+  const followed = new Set(follows.map((f) => f.deckId));
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-8 pt-3 sm:px-6 sm:pt-6">
@@ -103,6 +112,7 @@ export default async function ExplorePage() {
                       <Card className="p-3">
                         <Link href={`/library/${d.id}`} className="block">
                           <span className="block truncate font-medium text-ink">{d.title}</span>
+                          <DeckCredit owner={d.owner} licence={d.licence} className="truncate" />
                           <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-ink-muted">
                             <span className="font-mono">{n(d.cards)} cards</span>
                             {d.teacherVerified ? <Badge variant="success">Teacher audit</Badge> : null}
@@ -110,7 +120,7 @@ export default async function ExplorePage() {
                           </span>
                         </Link>
                         <div className="mt-2 flex flex-wrap items-center gap-2">
-                          <CopyDeckButton deckId={d.id} signedIn size="sm" label="Import and study" then="study" />
+                          <FollowButton deckId={d.id} following={followed.has(d.id)} size="sm" />
                           <Link href={`/library/${d.id}`} className="inline-flex h-9 items-center rounded-lg border border-border-strong px-3 text-sm text-ink hover:bg-hover">
                             {d.teacherVerified ? "Preview and record" : "Preview"}
                           </Link>

@@ -12,6 +12,7 @@ import type { Prisma } from "@prisma/client";
 
 import { logAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { LICENCES } from "@/lib/libraryTerms";
 import type { ParsedCard } from "@/lib/xlsxCards";
 
 export type ImportResult = { ok: true; deckId: string; created: number; updated: number } | { error: string };
@@ -70,11 +71,15 @@ export async function importDeck(
         status: "APPROVED",
         reviewedById: adminId,
         reviewedAt: new Date(),
+        // EduSarthi's own material: not CC BY-SA (owner's decision).
+        licence: LICENCES.EDUSARTHI.id,
       },
       select: { id: true },
     });
   } else {
-    await prisma.deck.update({ where: { id: deck.id }, data: { description: meta.description || null, tags: meta.tags } });
+    // The licence too, so decks imported before the library terms get it on
+    // their next upload.
+    await prisma.deck.update({ where: { id: deck.id }, data: { description: meta.description || null, tags: meta.tags, licence: LICENCES.EDUSARTHI.id } });
   }
 
   const stored = new Map(taken.map((t) => [t.code, t]));

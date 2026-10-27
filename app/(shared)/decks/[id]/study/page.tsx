@@ -1,10 +1,11 @@
-// Owns a study session on one of the student's own decks: the next card by the
-// review ladder (due first, then new), or a card named in the URL (‹ back),
-// shown on the same EduSarthi card as the built-in words.
+// Owns a study session on one of the student's own decks, or one shared with
+// them by name (to view or edit): the next card by the review ladder (due
+// first, then new), or a card named in the URL (‹ back), shown on the same
+// EduSarthi card as the built-in words.
 //
 // The card is chosen here, on the server, so a refresh never skips or repeats
-// one. Which card may be opened is decided by the query — only this deck and
-// only the signed-in owner's — never by trusting the URL. It deliberately does
+// one. Which card may be opened is decided by the query — only this deck, and
+// only if it is the person's own or shared with them — never by trusting the URL. It deliberately does
 // NOT save answers; DeckStudy posts them to /api/flashcards, the endpoint the
 // built-in cards use.
 
@@ -15,6 +16,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
 import { CARD_SELECT, deckStudyCounts, faceCard, nextDeckCardId } from "@/lib/decks";
+import { readableBy } from "@/lib/deckAccess";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { Card } from "@/components/ui/Card";
 import { AiBadge } from "@/components/decks/AiBadge";
@@ -26,16 +28,20 @@ export default async function StudyPage({ params, searchParams }: { params: Prom
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const userId = session!.user.id;
 
-  const deck = await prisma.deck.findFirst({ where: { id, ownerId: userId }, select: { title: true } });
+  // Not a working copy: its cards are replaced when the version is approved,
+  // so progress made on them would be lost.
+  const deck = await prisma.deck.findFirst({ where: { id, draftOfId: null, ...readableBy(userId) }, select: { title: true, ownerId: true } });
   if (!deck) notFound();
+  // Cards are the owner's whoever added them; a shared deck counts them all.
+  const shared = deck.ownerId !== userId;
 
   const skip = parseSkip(sp.skip);
   const [counts, picked] = await Promise.all([
-    deckStudyCounts(userId, id),
-    sp.card ? prisma.word.findFirst({ where: { code: sp.card, deckId: id, ownerId: userId }, select: { id: true } }) : null,
+    deckStudyCounts(userId, id, shared),
+    sp.card ? prisma.word.findFirst({ where: { code: sp.card, deckId: id, ownerId: deck.ownerId }, select: { id: true } }) : null,
   ]);
-  const wordId = picked?.id ?? (await nextDeckCardId(userId, id, skip));
-  const word = wordId ? await prisma.word.findFirst({ where: { id: wordId, deckId: id, ownerId: userId }, select: CARD_SELECT }) : null;
+  const wordId = picked?.id ?? (await nextDeckCardId(userId, id, skip, shared));
+  const word = wordId ? await prisma.word.findFirst({ where: { id: wordId, deckId: id, ownerId: deck.ownerId }, select: CARD_SELECT }) : null;
 
   const [state, user] = word
     ? await Promise.all([

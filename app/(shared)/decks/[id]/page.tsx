@@ -1,12 +1,15 @@
 // Owns the deck editor: the deck's details, its cards, the form for a new
-// card, the study button, and the share and delete actions.
+// card, the study button, and the share and delete actions. A published deck
+// shows small-fix Edit only and "Start a new version"; a new version (working
+// copy) is edited freely under a banner (components/decks/VersionPanel).
 //
-// Scoped by owner in the query — another student's deck id is a 404 here, not
-// a page that fetches and then refuses.
-// It deliberately does NOT run a study session (./study).
+// Scoped in the query to its owner and the editors it is shared with
+// (lib/deckAccess): anyone else's deck id is a 404, and a viewer is sent to the
+// read-only page (./shared). Publishing, the share link, People and deleting
+// are the owner's alone. It deliberately does NOT run a study session (./study).
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -22,6 +25,15 @@ import { DeckActions } from "@/components/decks/DeckActions";
 import { DeckForm } from "@/components/decks/DeckForm";
 import { activeMembership } from "@/lib/institutes";
 import { PublishPanel } from "@/components/decks/PublishPanel";
+import { VersionPanel } from "@/components/decks/VersionPanel";
+import { isLive } from "@/lib/deckVersion";
+import { istDayStart } from "@/lib/aiLimits";
+import { DeckCredit } from "@/components/decks/DeckCredit";
+import { LICENCES, SOURCE_SELECT, copiedFrom } from "@/lib/libraryTerms";
+import { deckAccess, editableBy } from "@/lib/deckAccess";
+import { DeckPeople } from "@/components/decks/DeckPeople";
+import { EditorTerms } from "@/components/decks/EditorTerms";
+import { LeaveButton } from "@/components/decks/InviteList";
 
 export const revalidate = 0;
 
@@ -30,14 +42,28 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
   const userId = session!.user.id;
 
   const deck = await prisma.deck.findFirst({
-    where: { id, ownerId: userId },
-    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true } } },
+    where: { id, ...editableBy(userId) },
+    select: { id: true, ownerId: true, owner: { select: { name: true } }, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, sourceLicence: true, draftOfId: true, draftOf: { select: { id: true, title: true } }, drafts: { select: { id: true, status: true } }, ...SOURCE_SELECT, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true, updatedAt: true } } },
   });
-  if (!deck) notFound();
+  if (!deck) {
+    if (await deckAccess(userId, id)) redirect(`/decks/${id}/shared`);
+    notFound();
+  }
+  const owner = deck.ownerId === userId;
+  // An editor of a deck in the library (or of its new version) edits only after
+  // accepting the library terms: what they add goes public too.
+  const membership = owner ? null : await prisma.deckMember.findFirst({ where: { deckId: deck.draftOfId ?? id, userId }, select: { termsAcceptedAt: true } });
+  const termsMissing = !owner && !membership?.termsAcceptedAt;
+  const needsTerms = termsMissing && (deck.visibility === "PUBLIC" || Boolean(deck.draftOfId));
+  const canChange = !needsTerms;
+  const people = owner && !deck.draftOfId
+    ? await prisma.deckMember.findMany({ where: { deckId: id }, orderBy: { createdAt: "asc" }, select: { id: true, email: true, role: true, acceptedAt: true, termsAcceptedAt: true } })
+    : [];
 
-  const [counts, staff, cards] = await Promise.all([
-    deckStudyCounts(userId, id),
+  const [counts, staff, me, cards] = await Promise.all([
+    deckStudyCounts(userId, id, !owner),
     isStaff(userId),
+    prisma.user.findUnique({ where: { id: userId }, select: { role: true, name: true, adultConfirmedAt: true, creditStyle: true, publicName: true } }),
     Promise.all(
       deck.cards.map(async (c) => ({
         ...(await faceCard(c)),
@@ -45,9 +71,22 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
         imageKey: c.imageUrl,
         audioKey: c.audioUrl,
         videoUrl: c.videoUrl ?? "",
+        updatedAt: c.updatedAt.toISOString(),
       })),
     ),
   ]);
+  if (!me) notFound();
+  const live = isLive(deck);
+  const draft = deck.drafts[0] ?? null;
+  const version = deck.draftOf;
+  // Small-fix allowance used today, and fixes an admin undid in the last two
+  // weeks (the creator was emailed; this is the note on the deck page).
+  const [fixedToday, undone] = live
+    ? await Promise.all([
+        prisma.deckChange.findMany({ where: { deckId: id, createdAt: { gte: istDayStart() } }, select: { wordId: true } }).then((r) => new Set(r.map((x) => x.wordId)).size),
+        prisma.deckChange.findMany({ where: { deckId: id, undone: true, reviewedAt: { gte: new Date(Date.now() - 14 * 86_400_000) } }, orderBy: { reviewedAt: "desc" }, take: 5, select: { id: true, undoReason: true, word: { select: { text: true } } } }),
+      ])
+    : [0, []];
   // Chapters, in the order their first card was added. A deck with none (a plain
   // hand-made one) keeps the flat list; once any card has one, cards without a
   // chapter sit under "Cards" so nothing disappears from the list.
@@ -68,12 +107,28 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
       <Link href="/decks" className="text-sm font-medium text-accent hover:underline">← My decks</Link>
       <h1 className="mt-2 font-display text-xl font-bold text-ink">{deck.title}</h1>
+      {owner ? null : (
+        <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
+          Shared with you to edit by {deck.owner.name?.trim() || "its owner"}. <LeaveButton deckId={deck.draftOfId ?? id} />
+        </p>
+      )}
+      {termsMissing ? <div className="mt-3"><EditorTerms deckId={id} adultConfirmed={Boolean(me.adultConfirmedAt)} blocking={needsTerms} /></div> : null}
+      <DeckCredit source={copiedFrom(deck)} linked className="mt-0.5" />
+      {deck.sourceLicence === LICENCES.EDUSARTHI.id ? <p className="mt-1 text-xs text-ink-muted">A copy of an EduSarthi deck: yours to study and change, but it cannot be published to the library or shared by link.</p> : null}
+      {version ? <div className="mt-3"><VersionPanel mode="draft" deckId={id} liveId={version.id} liveTitle={version.title} canDiscard={owner} /></div> : null}
+      {undone.length ? (
+        <ul className="mt-3 flex flex-col gap-1 rounded-lg bg-error/12 p-3 text-sm text-ink">
+          {undone.map((u) => <li key={u.id}>An admin undid your fix to “{u.word.text}”. Reason: {u.undoReason}</li>)}
+        </ul>
+      ) : null}
 
       <Card className="mt-3 flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-ink-muted">
           <b className="font-mono text-ink">{counts.total}</b> cards · <b className="font-mono text-ink">{counts.due}</b> due · <b className="font-mono text-ink">{counts.fresh}</b> new
         </p>
-        {studyable > 0 ? (
+        {version ? (
+          <span className="text-sm text-ink-muted">This is a version for editing. Study the published deck.</span>
+        ) : studyable > 0 ? (
           <Link href={`/decks/${id}/study`} className="inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark">
             Study now
           </Link>
@@ -102,7 +157,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
                 <ul className="mt-2 flex flex-col gap-2">
                   {g.cards.map((c) => (
                     <li key={c.id}>
-                      <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} /></Card>
+                      <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} canEdit={canChange && (!live || !draft)} canDelete={canChange && !live} /></Card>
                     </li>
                   ))}
                 </ul>
@@ -113,13 +168,13 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
           <ul className="mt-2 flex flex-col gap-2">
             {cards.map((c) => (
               <li key={c.id}>
-                <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} /></Card>
+                <Card className="p-3"><CardRow deckId={id} card={c} staff={staff} canEdit={canChange && (!live || !draft)} canDelete={canChange && !live} /></Card>
               </li>
             ))}
           </ul>
         )}
-        {counts.total < DECK_LIMITS.cardsPerDeck && cardMakerEnabled() ? <AiCardsPanel deckId={id} /> : null}
-        {counts.total < DECK_LIMITS.cardsPerDeck ? (
+        {canChange && !live && counts.total < DECK_LIMITS.cardsPerDeck && cardMakerEnabled() ? <AiCardsPanel deckId={id} /> : null}
+        {live || !canChange ? null : counts.total < DECK_LIMITS.cardsPerDeck ? (
           <Card className="mt-3">
             <h3 className="font-display text-sm font-bold text-ink">Add a card</h3>
             <div className="mt-3"><CardEditor deckId={id} staff={staff} /></div>
@@ -131,18 +186,40 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
       <section className="mt-6" aria-labelledby="det-h">
         <h2 id="det-h" className="font-display text-base font-bold text-ink">Deck details</h2>
-        <Card className="mt-2"><DeckForm deck={{ id, title: deck.title, description: deck.description, tags: deck.tags }} /></Card>
+        <Card className="mt-2">
+          {live ? <p className="text-sm text-ink-muted">The name, description and tags of a published deck change in a new version.</p> : canChange ? <DeckForm deck={{ id, title: deck.title, description: deck.description, tags: deck.tags }} /> : <p className="text-sm text-ink-muted">Confirm the library terms above to edit this deck.</p>}
+        </Card>
       </section>
 
-      <section className="mt-6" aria-labelledby="pub-h">
-        <h2 id="pub-h" className="sr-only">Public library</h2>
-        <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} canShareInstitute={Boolean(member && member.role !== "STUDENT")} /></Card>
-      </section>
+      {live ? (
+        <section className="mt-6" aria-labelledby="ver-h">
+          <h2 id="ver-h" className="sr-only">Changing a published deck</h2>
+          <Card><VersionPanel mode="live" deckId={id} draft={draft} fixedToday={fixedToday} canStart={owner} /></Card>
+        </section>
+      ) : null}
 
-      <section className="mt-6" aria-labelledby="share-h">
-        <h2 id="share-h" className="font-display text-base font-bold text-ink">Sharing</h2>
-        <Card className="mt-2"><DeckActions deckId={id} shareToken={deck.shareToken} cardCount={counts.total} /></Card>
-      </section>
+      {owner ? (
+        <section className="mt-6" aria-labelledby="pub-h">
+          <h2 id="pub-h" className="sr-only">Public library</h2>
+          <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} canShareInstitute={!version && Boolean(member && member.role !== "STUDENT")} version={Boolean(version)} consent={{ role: me.role, accountName: me.name, adultConfirmed: Boolean(me.adultConfirmedAt), creditStyle: me.creditStyle, publicName: me.publicName }} /></Card>
+        </section>
+      ) : null}
+
+      {owner && !version ? (
+        <section className="mt-6" aria-labelledby="people-h">
+          <h2 id="people-h" className="font-display text-base font-bold text-ink">People</h2>
+          <Card className="mt-2">
+            <DeckPeople deckId={id} isPublic={deck.visibility === "PUBLIC"} people={people.map((p) => ({ id: p.id, email: p.email, role: p.role, accepted: Boolean(p.acceptedAt), termsAccepted: Boolean(p.termsAcceptedAt) }))} />
+          </Card>
+        </section>
+      ) : null}
+
+      {version || !owner ? null : (
+        <section className="mt-6" aria-labelledby="share-h">
+          <h2 id="share-h" className="font-display text-base font-bold text-ink">Sharing</h2>
+          <Card className="mt-2"><DeckActions deckId={id} shareToken={deck.shareToken} cardCount={counts.total} /></Card>
+        </section>
+      )}
     </main>
   );
 }

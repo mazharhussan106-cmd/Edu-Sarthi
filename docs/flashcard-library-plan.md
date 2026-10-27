@@ -2,6 +2,8 @@
 
 Status: **All five phases are built and pushed.** Phase 5 (Institute) was built before the live test, at the owner's request, so it has had the least real-world checking.
 
+**Next version planned (27 Oct 2026): `docs/LIBRARY-V2-PLAN.md`.** The owner's decisions there replace four rows of the table below: sharing (edit sharing is now wanted), licence and credit (creator name, CC BY-SA 4.0, EduSarthi may use public decks in paid features), editing a published deck (small fixes go live without waiting for review), and studying a library deck (follow the original; copy stays an option). Nothing from v2 is built yet.
+
 Before any of it works on the live site, run GitHub → Actions → **Database setup** → Run workflow. It adds the new tables and columns (all additive, no data is removed).
 
 ## Goal
@@ -63,7 +65,7 @@ revises cards with the spaced-repetition ladder that already exists.
 
 ### Phase 4 — Teacher decks — DONE
 
-- Teachers and admins get two extra card sections: a video link (YouTube or Google Drive only, stored as our own rebuilt embed address) and a Teacher's guide ("what to listen for"). Students never see these fields, and a student editing a copied teacher card cannot erase them.
+- Teachers and admins get two extra card sections: a video link (YouTube or Google Drive only, stored as our own rebuilt embed address) and a Teacher's guide ("what to listen for"). Students never get these fields in the card editor, and a student editing a copied teacher card cannot erase them. Learners do see the Teacher's guide on the back of the card; the owner confirmed this on 27 Oct 2026.
 - Admin verifies a teacher (Users page, with a reason). An unverified teacher can build decks but cannot publish. Changing the role clears verification.
 - "Verified teacher" badge in the library.
 - Decks live in the shared shell, so teachers keep teacher navigation.

@@ -11,6 +11,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
+import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { ShareApp } from "@/app/(shared)/settings/ShareApp";
 import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
@@ -24,7 +25,7 @@ export default async function SettingsPage() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { theme: true, preferences: true },
+    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true },
   });
 
   // Each key parsed on its own over the defaults, so one retired value does
@@ -54,6 +55,16 @@ export default async function SettingsPage() {
           <CardTitle>Flashcard</CardTitle>
           <div className="mt-4">
             <CardColorPicker initial={preferences.cardColor} />
+          </div>
+        </Card>
+      ) : null}
+
+      {/* Guests cannot publish, and admins' decks are credited to EduSarthi. */}
+      {user && !user.isGuest && user.role !== "ADMIN" ? (
+        <Card className="mt-6">
+          <CardTitle>How your name shows on public decks</CardTitle>
+          <div className="mt-4">
+            <PublicNameForm accountName={user.name} initialStyle={user.creditStyle} initialPublicName={user.publicName} teacher={user.role === "TEACHER"} />
           </div>
         </Card>
       ) : null}

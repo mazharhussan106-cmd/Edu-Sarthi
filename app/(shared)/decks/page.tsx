@@ -1,8 +1,9 @@
-// Owns the "My decks" page: the student's own decks with how many cards are
-// due in each, and the form to start a new one.
+// Owns the "My decks" page: the student's own decks, invitations waiting for
+// them, decks shared with them by name, and the library decks they follow,
+// with how many cards are due, and the form to start a new deck.
 //
-// It deliberately does NOT show other people's decks — shared decks open from
-// their link, and the public library is a later phase.
+// It deliberately does NOT list other decks — shared decks open from their
+// link, and the rest of the library lives at /library.
 
 import Link from "next/link";
 
@@ -16,6 +17,10 @@ import { Card } from "@/components/ui/Card";
 import { AiCardsPanel } from "@/components/decks/AiCardsPanel";
 import { cardMakerEnabled } from "@/lib/aiEnabled";
 import { DeckForm } from "@/components/decks/DeckForm";
+import { DeckCredit } from "@/components/decks/DeckCredit";
+import { CREDIT_SELECT } from "@/lib/libraryTerms";
+import { invitationsFor } from "@/lib/deckMembers";
+import { InviteList } from "@/components/decks/InviteList";
 
 export const revalidate = 0;
 
@@ -24,14 +29,30 @@ export default async function DecksPage() {
   const userId = session!.user.id;
   const staff = session!.user.role !== "STUDENT";
   const decks = await prisma.deck.findMany({
-    where: { ownerId: userId },
+    // A new version (working copy) opens from its published deck, not here.
+    where: { ownerId: userId, draftOfId: null },
     orderBy: { createdAt: "desc" },
-    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, _count: { select: { cards: true } } },
+    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, drafts: { select: { status: true } }, _count: { select: { cards: true } } },
   });
+  const follows = await prisma.deckFollow.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    select: { deck: { select: { id: true, title: true, visibility: true, status: true, owner: { select: { suspendedAt: true, ...CREDIT_SELECT } }, _count: { select: { cards: true } } } } },
+  });
+  const followedIds = follows.map((f) => f.deck.id);
+  const [invitations, sharedWithMe, me] = await Promise.all([
+    invitationsFor(userId),
+    prisma.deckMember.findMany({
+      where: { userId, acceptedAt: { not: null }, deck: { draftOfId: null } },
+      orderBy: { acceptedAt: "desc" },
+      select: { role: true, deck: { select: { id: true, title: true, owner: { select: { name: true } }, _count: { select: { cards: true } } } } },
+    }),
+    prisma.user.findUnique({ where: { id: userId }, select: { adultConfirmedAt: true } }),
+  ]);
   const now = new Date();
   const dueRows = await prisma.cardState.groupBy({
     by: ["wordId"],
-    where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { ownerId: userId, deckId: { not: null } } },
+    where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { OR: [{ ownerId: userId, deckId: { not: null } }, { deckId: { in: followedIds } }] } },
   });
   // Due per deck: one extra read of the due cards' decks rather than a count
   // per deck, so the page costs three queries however many decks there are.
@@ -68,6 +89,16 @@ export default async function DecksPage() {
       </div>
       <p className="mt-1 text-sm text-ink-muted">Make your own cards. Decks are private until you share a link or submit one to the library.</p>
 
+      {invitations.length ? (
+        <section className="mt-6" aria-labelledby="inv-h">
+          <h2 id="inv-h" className="font-display text-base font-bold text-ink">Invitations</h2>
+          <InviteList
+            adultConfirmed={Boolean(me?.adultConfirmedAt)}
+            invitations={invitations.map((i) => ({ id: i.id, role: i.role, title: i.deck.title, from: i.deck.owner.name?.trim() || "Someone on EduSarthi", isPublic: i.deck.visibility === "PUBLIC" }))}
+          />
+        </section>
+      ) : null}
+
       <ul className="mt-4 flex flex-col gap-2">
         {decks.length === 0 ? (
           <li>
@@ -95,6 +126,7 @@ export default async function DecksPage() {
                     {d.visibility === "PUBLIC" && d.status === "PENDING_REVIEW" ? <Badge variant="accent">in review</Badge> : null}
                     {d.visibility === "PUBLIC" && d.status === "APPROVED" ? <Badge variant="success">published</Badge> : null}
                     {d.status === "REJECTED" ? <Badge variant="error">not approved</Badge> : null}
+                    {d.drafts.length ? <Badge variant="accent">{d.drafts[0].status === "PENDING_REVIEW" ? "new version in review" : "new version in progress"}</Badge> : null}
                     {d.shareToken ? <Badge>shared by link</Badge> : null}
                   </span>
                 </div>
@@ -103,6 +135,61 @@ export default async function DecksPage() {
           </li>
         ))}
       </ul>
+
+      {sharedWithMe.length ? (
+        <section className="mt-6" aria-labelledby="swm-h">
+          <h2 id="swm-h" className="font-display text-base font-bold text-ink">Shared with me</h2>
+          <ul className="mt-2 flex flex-col gap-2">
+            {sharedWithMe.map(({ role, deck: d }) => (
+              <li key={d.id}>
+                <Link href={role === "EDIT" ? `/decks/${d.id}` : `/decks/${d.id}/shared`} className="block">
+                  <Card className="flex items-start justify-between gap-3 p-4 hover:bg-hover">
+                    <span className="min-w-0">
+                      <span className="block truncate font-display font-bold text-ink">{d.title}</span>
+                      <span className="block truncate text-xs text-ink-muted">from {d.owner.name?.trim() || "its owner"}</span>
+                    </span>
+                    <span className="flex shrink-0 flex-col items-end gap-1">
+                      <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
+                      <Badge>{role === "EDIT" ? "you can edit" : "you can view"}</Badge>
+                    </span>
+                  </Card>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {follows.length ? (
+        <section className="mt-6" aria-labelledby="following-h">
+          <h2 id="following-h" className="font-display text-base font-bold text-ink">Following</h2>
+          <p className="text-xs text-ink-muted">Library decks you study as their authors keep them. Up to {DECK_LIMITS.followsPerUser}.</p>
+          <ul className="mt-2 flex flex-col gap-2">
+            {follows.map(({ deck: d }) => {
+              const open = d.visibility === "PUBLIC" && d.status === "APPROVED" && !d.owner.suspendedAt;
+              return (
+                <li key={d.id}>
+                  <Link href={`/library/${d.id}/study`} className="block">
+                    <Card className="p-4 hover:bg-hover">
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="min-w-0">
+                          <span className="block truncate font-display font-bold text-ink">{d.title}</span>
+                          <DeckCredit owner={d.owner} className="truncate" />
+                        </span>
+                        <span className="flex shrink-0 flex-col items-end gap-1">
+                          <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
+                          {open && due.get(d.id) ? <Badge variant="accent">{due.get(d.id)} due</Badge> : null}
+                          {open ? null : <Badge>not available now</Badge>}
+                        </span>
+                      </div>
+                    </Card>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       {/* Beside, not instead of, the plain form below: the AI is a way to fill a
           deck, and some people just want an empty one to type into. */}

@@ -2,14 +2,16 @@
 // filter. Open to every signed-in role.
 //
 // Only APPROVED + PUBLIC decks are queried — a deck waiting for review, rejected
-// or pulled after reports is simply not here. It shows no owner name: credit and
-// licence are still undecided, so nothing is attributed yet.
+// or pulled after reports is simply not here. Each deck shows its creator as
+// they chose to be credited, and its licence (components/decks/DeckCredit).
 // It deliberately does NOT list the viewer's own drafts (that is My decks).
 
 import Link from "next/link";
 import { Search } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
+import { CREDIT_SELECT } from "@/lib/libraryTerms";
+import { DeckCredit } from "@/components/decks/DeckCredit";
 import { aiCardCounts } from "@/lib/decks";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { Badge } from "@/components/ui/Badge";
@@ -43,7 +45,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     // Newest is the tiebreak, so equal counts do not shuffle between loads.
     orderBy: sort === "liked" ? [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }] : sort === "copied" ? [{ copyCount: "desc" }, { reviewedAt: "desc" }] : [{ reviewedAt: "desc" }],
     take: 30,
-    select: { id: true, title: true, description: true, tags: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true, likes: true } } },
+    select: { id: true, title: true, description: true, tags: true, licence: true, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, _count: { select: { cards: true, likes: true } } },
   });
 
   const aiCards = await aiCardCounts(decks.map((d) => d.id));
@@ -97,6 +99,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
                   <span className="min-w-0">
                     <span className="block truncate font-display font-bold text-ink">{d.title}</span>
                     {d.description ? <span className="block truncate text-xs text-ink-muted">{d.description}</span> : null}
+                    <DeckCredit owner={d.owner} licence={d.licence} className="mt-0.5 truncate" />
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-1">
                     <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards · ♥ {d._count.likes}</span>

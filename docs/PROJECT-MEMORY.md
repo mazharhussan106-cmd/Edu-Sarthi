@@ -21,6 +21,7 @@ An English spoken-communication training platform: students record or upload, te
 - **Flashcards are always written in English.** Every flashcard deck made by any chat or by the flashcard-maker skill (explanations, memory stories, analogies, mini conversations, practice questions) is written in plain English, not Hinglish. Commands and code stay as they are. Owner's instruction, 6 Oct 2026; supersedes the skill's default of Hinglish for Hindi speakers.
 - Built-in cards have `deckId = null`. Anything that picks "the next built-in card", counts built-in cards, or opens a card by code must filter on that, or student-made and imported deck cards leak into everyone's daily session.
 - Card code from an uploaded Excel file is only ever **shown**, never run by the server.
+- Learners see the Teacher's guide on the back of a teacher's card; only the editor field is staff-only. Recordings on deck cards need at least 15 seconds. Both confirmed by the owner on 27 Oct 2026, so do not "fix" either.
 - Public decks are reviewed by an admin first; institute decks stay inside the institute; imported 56-point cards are read-only in the app (edit the sheet, upload again, same ID updates).
 - Words and chunk data were audited for repeated examples and "label instead of mistake" cells (`docs/CHUNK-PLAN.md`, `content/wordmaster-2000/tools/word_fixes.py`). Do not undo.
 
@@ -29,8 +30,54 @@ An English spoken-communication training platform: students record or upload, te
 1. **Done (6 Oct):** imported 56-point cards and hand-made deck cards now use the EduSarthi card (`components/decks/rich/*`, `DeckStudy`). Do not add another card look.
 1b. **Audit done (6 Oct):** see `docs/AUDIT-2026-10.md` — what was fixed, and the deferred list (session end on password reset, register throttle, CSRF/CSP, upload quotas, DPDP consent, repo clutter for the owner to decide). Next ideas for revenue: `docs/ROADMAP-EARNING.md`.
 2. Merge the branches into `main` (a pull request from `happy-galileo`), then run **Actions → Database setup** so the new tables, indexes and the nullable `Institute.applicantId` exist on the live database.
-3. Hosting choice (Vercel or Hostinger) — see `LIVE-TESTING-GUIDE.md` and `DEPLOY.md`.
-4. Owner's backlog after a live test: orphan-upload cleanup, in-app notifications, licence and credit for public decks, institute recordings.
+3. **Hosting decided (27 Oct): Vercel.** Nothing has been tested live yet — see `LIVE-TESTING-GUIDE.md` and `DEPLOY.md`.
+4. Owner's backlog after a live test: orphan-upload cleanup, in-app notifications, licence and credit for public decks (now decided, see 4b), institute recordings.
+4b. **Flashcard library v2 planned (27 Oct, branch `claude/sweet-davinci-d313f6`): `docs/LIBRARY-V2-PLAN.md`.** Owner's decisions:
+   - small fixes to a published deck go live without waiting for review;
+   - learners follow the original deck (copying stays an option);
+   - public decks show the creator's name (the student chooses what is shown), with "Copied from …" on copies;
+   - CC BY-SA 4.0, and EduSarthi will use public decks in paid features;
+   - only the admin reviews, and every deck is reviewed;
+   - view-only and edit sharing;
+   - no public publishing for under-18s.
+
+   Second round of answers (also 27 Oct):
+   - institutes may publish to the library under their name and logo;
+   - small fix = one fix per card per day, at most 10 cards a day, at most 30 characters per field;
+   - big edits keep the approved version live;
+   - under-18s may share by link and edit private decks shared with them;
+   - followers lose a deck its author withdraws;
+   - creators get a revenue share, free AI cards and badges;
+   - edit sharing only by named invite.
+
+   Phase 1 is built (see 4d); nothing later is.
+4c. **Phase 0 started (27 Oct).**
+   - Actions → Database setup was run on the live database (run #7, success). It had not run since PR #17, so the AI columns were missing on the live database.
+   - The full round (student deck, teacher deck with recording and audit, institute, report, Explore) passed on a local copy.
+   - The owner's phone checklist is `docs/PHASE0-LIVE-TEST.md`. **Next: the owner runs it on the live site**, then Phase 1.
+   - The test raised two questions. The owner answered both: learners keep seeing the Teacher's guide, and card recordings keep the 15-second minimum.
+4d. **Library v2 Phase 1 built (27 Oct, same branch, NOT merged; it waits for the Phase 0 live test).**
+   - What it does: submitting a deck now opens a form with a one-time "I am 18 or older" tick, how the creator's name shows (full name, first name, display name or no name), and three required ticks (own work, CC BY-SA 4.0, EduSarthi may use it in paid features).
+   - What is saved: on the account, `adultConfirmedAt`, `creditStyle` and `publicName`; on the deck, `licence`, `termsVersion` and `termsAcceptedAt`.
+   - Where it shows: "by <name> · licence" in the library, on Explore and on public share pages. Settings → "How your name shows on public decks". Admin review gets a checklist built from the same rules list (`LIBRARY_RULES` in `lib/libraryTerms.ts`), and Admin → Users can clear a bad display name. New pages: `/legal/library-rules` and the Terms section "Decks you publish to the library".
+   - Decks approved before the terms show no licence, and no name until their owner chooses one (a name choice applies to all of a person's public decks).
+   - Full details, provisional defaults and the steps after merging: `docs/LIBRARY-V2-PLAN.md` → Phase 1.
+4e. **Library v2 Phase 2 built (27 Oct, same branch, NOT merged).**
+   - **Follow and study:** `DeckFollow` table, `lib/deckFollow.ts`, `/library/[id]/study`. Learners study the original deck with their own `CardState`, up to 50 follows. Answers go through `/api/flashcards`, and `canStudyWord` allows a followed deck only while it is listed.
+   - **Copied from:** `Deck.sourceDeckId`, `sourceCredit` and `sourceLicence`; copying lives in `lib/deckCopy.ts`. The line is built fresh while the original exists and falls back to the saved credit once it is deleted (`copiedFrom` in `lib/libraryTerms.ts`).
+   - **Rules:** a copy of an EduSarthi deck can't be published or link-shared. Withdrawing or taking down a deck deletes its follows. Admin review of a copy shows how many cards changed.
+   - The old gap (an edit hid the deck from followers until it was re-approved) is closed by Phase 3 (4f).
+4f. **Library v2 Phase 3 built (27 Oct, same branch, NOT merged). Design: `docs/PHASE3-DESIGN.md`.**
+   - **Small fixes:** on a published deck, Edit is a small fix (`lib/smallFix.ts`): text only, at most 30 characters per field (edit distance), each card once per IST day, at most 10 cards a day. A fix goes live at once and is logged in `DeckChange`; the admin uses **Admin → Decks → Fixes to check** to Accept or Undo, and Undo emails the creator and shows a note on their deck.
+   - **New versions:** bigger edits go in a new version (`lib/deckVersion.ts`), a working copy with `Deck.draftOfId`, whose cards carry `Word.liveWordId`. It shares files with the live deck (`unusedKeys` guards deletion). Approving merges it onto the same live cards, so followers keep their progress; removed cards lose it. Small fixes pause while a version exists.
+   - `sendBackIfPublished` is retired.
+   - **Don't undo:** "one version per deck" is enforced in code, not by a unique constraint, because the constraint would trip Database setup's data-loss check.
+4g. **Library v2 Phase 4 built (27 Oct, same branch, NOT merged): share a deck with named people, to view or edit.**
+   - **Data:** the `DeckMember` table (invite by email, works before the person has an account, never reveals whether one exists) and `Word.updatedAt` (the "someone changed this card" check).
+   - **Access** lives in `lib/deckAccess.ts`, the member actions in `lib/deckMembers.ts`. Screens: People on the deck (owner), Invitations at the top of My decks, Shared with me, and `/decks/[id]/shared` for viewers.
+   - **Don't undo:** cards an editor adds belong to the deck's owner.
+   - **Rules:** an editor of a public deck must accept the library terms (18+), and the owner can't submit until every editor has. Limits: 10 people per deck, 20 invites a day (each sends an email). New versions stay owner-only to start and submit.
+   - Details: `docs/LIBRARY-V2-PLAN.md` → Phase 4.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

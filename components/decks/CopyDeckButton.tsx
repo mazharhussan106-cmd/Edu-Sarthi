@@ -18,19 +18,25 @@ export function CopyDeckButton({
   token,
   deckId,
   institute,
+  shared,
   signedIn,
   label = "Copy to my decks",
   then = "deck",
   size,
+  variant,
 }: {
   token?: string;
   deckId?: string;
   institute?: boolean;
+  /** A deck shared with this person by name. */
+  shared?: boolean;
   signedIn: boolean;
   label?: string;
   /** Where to go after the copy: the deck page, or straight into studying it. */
   then?: "deck" | "study";
   size?: "sm" | "md";
+  /** Outline where copying is the second choice after following. */
+  variant?: "outline";
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -47,7 +53,7 @@ export function CopyDeckButton({
   async function copy() {
     setBusy(true);
     setError(null);
-    const res = await callApi<{ id: string }>("/api/decks", token ? { action: "copy", token } : { action: institute ? "copyInstitute" : "copyPublic", deckId });
+    const res = await callApi<{ id: string }>("/api/decks", token ? { action: "copy", token } : { action: institute ? "copyInstitute" : shared ? "copyMember" : "copyPublic", deckId });
     if (!res.ok) {
       setBusy(false);
       return setError(res.error);
@@ -57,7 +63,7 @@ export function CopyDeckButton({
 
   return (
     <div>
-      <Button size={size} disabled={busy} onClick={copy}>{busy ? "Importing…" : label}</Button>
+      <Button size={size} variant={variant} disabled={busy} onClick={copy}>{busy ? "Importing…" : label}</Button>
       {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
     </div>
   );

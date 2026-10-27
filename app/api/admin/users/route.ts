@@ -1,5 +1,6 @@
-// Owns admin actions on accounts (spec A-04): change a role, suspend, and
-// lift a suspension. Each takes a reason, and each is logged.
+// Owns admin actions on accounts (spec A-04): change a role, suspend, lift a
+// suspension, verify a teacher, and clear an unacceptable public display name.
+// Each takes a reason, and each is logged.
 //
 // Two guards stop an admin locking everyone out: nobody can change their own
 // role or suspend themselves, and the last active admin cannot be demoted.
@@ -19,6 +20,7 @@ const schema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("verifyTeacher"), userId: z.string().min(1), on: z.boolean(), reason }),
   z.object({ action: z.literal("suspend"), userId: z.string().min(1), reason }),
   z.object({ action: z.literal("unsuspend"), userId: z.string().min(1), reason }),
+  z.object({ action: z.literal("clearPublicName"), userId: z.string().min(1), reason }),
 ]);
 
 /// Recordings routed to one teacher's deck are invisible to everyone else. When
@@ -56,6 +58,14 @@ export async function POST(req: Request) {
     if (admins <= 1) {
       return NextResponse.json({ error: "This is the last active admin. Make someone else an admin first." }, { status: 409 });
     }
+  }
+
+  // Display names go live without review (owner's decision); this is the
+  // admin's way back. Their decks then credit "an EduSarthi learner".
+  if (a.action === "clearPublicName") {
+    await prisma.user.update({ where: { id: target.id }, data: { publicName: null } });
+    await logAdmin(admin.id, "Cleared public display name", "user", target.id, { student: target.publicId, reason: a.reason });
+    return NextResponse.json({ ok: true });
   }
 
   if (a.action === "verifyTeacher") {

@@ -75,6 +75,8 @@ export default async function UsersPage({
         suspendedAt: true,
         suspendReason: true,
         teacherVerifiedAt: true,
+        creditStyle: true,
+        publicName: true,
         createdAt: true,
         _count: { select: { submissions: true, reviewsGiven: true } },
         submissions: {
@@ -203,6 +205,12 @@ export default async function UsersPage({
                             ) : (
                               <ActionButton url="/api/admin/users" body={{ action: "verifyTeacher", userId: u.id, on: true }} label="Verify teacher" askReason />
                             )
+                          ) : null}
+                          {u.creditStyle === "DISPLAY_NAME" && u.publicName ? (
+                            <span className="flex items-center gap-1.5 text-xs text-ink-muted">
+                              Public name “{u.publicName}”
+                              <ActionButton url="/api/admin/users" body={{ action: "clearPublicName", userId: u.id }} label="Clear" variant="ghost" askReason />
+                            </span>
                           ) : null}
                         </span>
                       )}

@@ -116,10 +116,29 @@ export default function TermsPage() {
             announced.
           </p>
           <p className="mt-2">
-            If you withdraw a deck, it leaves the library and EduSarthi stops
-            offering it in new features. Copies other people already made under
-            the licence stay theirs: a CC BY-SA licence cannot be taken back for
-            copies already made.
+            Small fixes to a published deck go live at once and are checked
+            afterwards; an admin may undo one. Bigger changes go in a new version,
+            which is checked before it replaces the published one.
+          </p>
+          <p className="mt-2">
+            If you withdraw a deck, it leaves the library, people who follow it
+            lose it, and EduSarthi stops offering it in new features. Copies other
+            people already made under the licence stay theirs: a CC BY-SA licence
+            cannot be taken back for copies already made.
+          </p>
+          <p className="mt-2">
+            If someone shares a deck with you to edit, what you add becomes part
+            of their deck and stays there if you leave or delete your account. If
+            that deck is in the public library, you accept these terms and the
+            library rules before you edit it, and what you add is published under
+            the same licence. You are credited only if you chose a name.
+          </p>
+          <p className="mt-2">
+            If you publish a deck under an institute&apos;s name, you confirm you
+            are allowed to do so on its behalf. The institute&apos;s admin can take
+            its name off; the deck then stays in the library under your own name.
+            An institute&apos;s admin who uploads a logo confirms that the
+            institute may let us show it on its decks.
           </p>
           <p className="mt-2">
             Decks made by EduSarthi itself are {LICENCES.EDUSARTHI.label} and are
@@ -165,8 +184,10 @@ export default function TermsPage() {
             Ending your use
           </h2>
           <p className="mt-2">
-            You can ask us to close your account at any time; your submissions
-            and audits are deleted with it. We may suspend or close an account
+            You can ask us to close your account at any time; your submissions,
+            audits and decks are deleted with it. Copies others made of your
+            public decks, and cards you added to someone else&apos;s deck, stay
+            with them, as the privacy page explains. We may suspend or close an account
             that breaks these terms, and will tell you why.
           </p>
         </section>

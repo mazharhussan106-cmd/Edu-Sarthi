@@ -84,7 +84,7 @@ An English spoken-communication training platform: students record or upload, te
    2. Check that `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL` are set in Vercel (invite and fix-undone emails).
    3. The owner's phone test, `docs/PHASE0-LIVE-TEST.md`. Its "Before you start" step 1 is now done; the submit step has the new consent form.
    4. ~~Phase 5~~ — built, see 4i.
-   5. Phase 6 (lawyer review; telling account holders about the new Terms section).
+   5. ~~Phase 6~~ — built, see 4j; a lawyer still has to review.
 4i. **Library v2 Phase 5 built (27 Oct) on `claude/sweet-davinci-d313f6`, NOT merged yet: institutes publish to the library under their name and logo.** Decisions 18–21 in `docs/LIBRARY-V2-PLAN.md`.
    - **Who and how:** the institute's admin and teachers choose "Publish as <Institute>" in the submit form and tick "I may publish this on behalf of <Institute>". A deck shared inside the institute can be submitted, but only as the institute. Licence: always CC BY-SA.
    - **Data:** a deck published as an institute is a `PUBLIC` deck with `instituteId` set. New columns `Institute.logoKey`, `pendingLogoKey`, `logoNote` (additive). **After merging, run Actions → Database setup.**
@@ -94,6 +94,10 @@ An English spoken-communication training platform: students record or upload, te
    - The institute's admin can take the institute's name off any deck (Institute page → Published by the institute).
    - Decisions 22–23 (built): leaving a *suspended* institute sends the person's approved institute decks back to review; the owner is emailed when the institute's admin removes the institute's name.
    - `lib/decks.ts` is now 260 lines (was already over 250); split it when it is next changed.
+4j. **Library v2 Phase 6 built (27 Oct) on the same branch, in PR #19, NOT merged yet.** Decisions 24–28.
+   - **Legal:** no lawyer yet. `docs/LEGAL-REVIEW-PACK.md` is the assistant's review and the lawyer's reading list. The Privacy and Terms pages were corrected to match Phases 1–5. **Open and important:** parental consent for under-18s (DPDP Act) and naming the legal operator — both need the owner and a lawyer.
+   - **Announcements:** Admin → Announcements emails every account holder with a verified email, at most 80 a day from the daily reminders cron, and posts a dashboard notice for 30 days. Tables `Announcement`, `AnnouncementDelivery`. The approved Terms-update email is pre-filled.
+   - **After merging:** Database setup; check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send yourself a test, then Start (type SEND).
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

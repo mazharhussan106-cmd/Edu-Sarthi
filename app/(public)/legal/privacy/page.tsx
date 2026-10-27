@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 const CONTACT = "privacy@edusarthi.com";
-const UPDATED = "26 October 2026";
+const UPDATED = "27 October 2026";
 
 export default function PrivacyPage() {
   return (
@@ -71,6 +71,26 @@ export default function PrivacyPage() {
               your audit, and it is kept with the submission.
             </li>
             <li>
+              <span className="text-ink">The decks you make and share.</span>{" "}
+              Their cards, pictures and audio; the email address of each person
+              you invite to a deck, kept even before they have an account; the
+              decks you follow, like or report; and, for a deck in the public
+              library, a log of small fixes (the text before and after, and who
+              made it).
+            </li>
+            <li>
+              <span className="text-ink">Your choices for the deck library.</span>{" "}
+              Your answer that you are 18 or older (asked once), how your name
+              shows on public decks and any display name you type, and the date
+              and version of the library terms you accepted for each deck you
+              publish or edit.
+            </li>
+            <li>
+              <span className="text-ink">Institutes.</span> If you apply for an
+              institute: its name, a description, a contact line and its logo. For
+              every institute: who belongs to it and their role.
+            </li>
+            <li>
               <span className="text-ink">Failed sign-in attempts.</span> We record
               the email address and the time of failed sign-ins, for fifteen
               minutes, to slow down password guessing.
@@ -116,8 +136,11 @@ export default function PrivacyPage() {
               application.
             </li>
             <li>
-              <span className="text-ink">SendGrid</span> — sends verification
-              codes and password reset emails.
+              <span className="text-ink">SendGrid</span> — sends our emails:
+              sign-in and verification codes, password resets, news about your
+              decks (decisions, invitations, undone fixes), the audit and study
+              reminders you switch on, and announcements such as changes to
+              these pages.
             </li>
             <li>
               <span className="text-ink">OpenAI</span> — turns an audio
@@ -158,6 +181,14 @@ export default function PrivacyPage() {
             signed-in user once an administrator approves them.
           </p>
           <p className="mt-2">
+            A public deck shows your name the way you chose (or no name), the
+            institute&apos;s name and logo if you published it for an institute,
+            and the names of editors who chose to show one. People you share a
+            deck with by name can see it; you see the email addresses you
+            invited. An institute&apos;s admin sees its members&apos; names and
+            email addresses.
+          </p>
+          <p className="mt-2">
             We may disclose data where we are legally required to, and we will
             tell you where we are permitted to do so.
           </p>
@@ -191,6 +222,15 @@ export default function PrivacyPage() {
             moment, a file can be left behind until we clear it; write to us if
             you want it confirmed. A copy of one of your decks that another
             person made is theirs and stays with them.
+          </p>
+          <p className="mt-2">
+            Your public decks leave the library with your account, but two things
+            stay with other people. A copy made under the CC BY-SA licence keeps
+            its &ldquo;Copied from&rdquo; line, with the name you chose, because
+            the licence requires the credit. Cards you added to someone
+            else&apos;s deck as an editor stay in their deck. An invitation to
+            your email address that you never accepted stays in the inviter&apos;s
+            deck until they remove it or delete the deck.
           </p>
         </section>
 

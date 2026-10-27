@@ -1,6 +1,6 @@
 # Flashcard library v2 — plan
 
-Status: **Phases 1–4 BUILT and MERGED (27 Oct 2026, PR #18). Phase 5 (institutes) BUILT on branch `claude/sweet-davinci-d313f6`, NOT merged yet.** Phase 6 (legal review, telling users) is not built. The Phase 0 phone test (`docs/PHASE0-LIVE-TEST.md`) is still to do.
+Status: **Phases 1–4 BUILT and MERGED (27 Oct 2026, PR #18). Phases 5 (institutes) and 6 (announcements, legal review pack) BUILT on branch `claude/sweet-davinci-d313f6`, in PR #19, NOT merged yet.** A lawyer has not reviewed anything yet (`docs/LEGAL-REVIEW-PACK.md`). The Phase 0 phone test (`docs/PHASE0-LIVE-TEST.md`) is still to do.
 
 This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `main`, but **none of it has been tested on the live site**). The owner's answers below are confirmed decisions. Anything marked **PROPOSAL** is the assistant's suggestion and still needs the owner's yes.
 
@@ -41,6 +41,16 @@ This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `
 | 21 | Suspended institute | Its library decks are hidden until it is reinstated. | — |
 | 22 | Leaving a suspended institute | The person's decks published under its name go back to review, under their own name. | Decision 20, for a suspended institute only |
 | 23 | Institute's name removed | The deck's owner gets an email when the institute's admin takes the institute's name off their deck. | — |
+
+### Fourth round — Phase 6 (27 Oct 2026) — CONFIRMED
+
+| # | Topic | Decision | Supersedes |
+|---|---|---|---|
+| 24 | Telling account holders | An email to every account holder **and** an in-app notice. | — |
+| 25 | Sending limit | At most 80 announcement emails a day. | — |
+| 26 | Language | English only. | — |
+| 27 | Wording | The assistant's draft is approved as written (in `lib/announcements.ts`, `termsUpdateDraft`). | — |
+| 28 | Lawyer | There is no lawyer yet. The assistant reviews the pages now; a lawyer approves later. | — |
 
 ## Review of the decisions — what they imply and where they clash
 
@@ -298,9 +308,36 @@ Not built: the logo on institute decks shared only inside the institute, and the
 
 ### Phase 6 — Tell people and update the docs
 
-- A lawyer reviews the Terms, the privacy page and the new library rules before the library is advertised.
-- The owner decides how existing account holders are told. The privacy page promises an email before a change takes effect.
-- Update `docs/flashcard-library-plan.md` and `docs/PROJECT-MEMORY.md` after every phase.
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`, in PR #19, NOT merged yet.** Type check and production build pass. Decisions 24–28.
+
+**Legal pages (assistant's review, not a lawyer's):** `docs/LEGAL-REVIEW-PACK.md` says what a lawyer must read, what changed, what was fixed, and 11 open questions. Fixed now, because the pages no longer matched the code:
+- Privacy: what we collect (decks and sharing, invitees' email addresses, the 18+ answer and name choice, institute details and logo, the small-fix log), what SendGrid sends, who sees what on a public deck, and what stays with others after an account is deleted. Date now 27 October 2026.
+- Terms: small fixes, followers losing a withdrawn deck, editors' contributions, publishing for an institute and its logo, and what stays after account deletion.
+
+**Biggest open legal question (for the lawyer, nothing built):** India's DPDP Act likely needs verifiable parental consent for under-18 users, and sign-up asks no age today. The pages also never name the legal operator. Both need the owner's input; details in the pack.
+
+**Announcements** (`lib/announcements.ts`, Admin → Announcements):
+- New tables `Announcement` (subject, email text, dashboard notice, started and finished times) and `AnnouncementDelivery` (one row per person, unique per announcement). Additive, no data loss.
+- The admin writes a draft (the approved Terms-update wording is pre-filled when there is none), emails themselves a test, then starts it by typing SEND. Starting posts the dashboard notice for 30 days. One announcement sends at a time; Stop (typed STOP) ends it; only drafts can be deleted.
+- Recipients: every account with a verified email address that existed when sending started, all roles. Phone-only accounts get the dashboard notice only.
+- The daily reminders job (`/api/cron/reminders`, about 7 pm IST) sends the day's batch first: at most 80 per IST day across all announcements, 5 at a time, inside a 20-second budget. Each person's row is written before their email, so nobody gets it twice and a failed run carries on the next day. A failed email is not retried.
+
+A local browser test passed 11 of 11:
+- the draft is offered with working links; the form checks its fields;
+- the test email goes to the admin only; a non-admin cannot start one;
+- Start needs SEND and posts the notice, which shows on a student's dashboard;
+- only one sends at a time; the daily job refuses without its secret;
+- day 1 sends exactly 80, a second run that day sends none, nobody gets two, and an account made after Start gets none;
+- day 2 sends the rest and the announcement finishes;
+- Stop needs STOP; a started announcement cannot be deleted; a draft can.
+
+Regressions still pass: Phase 1 15/15, Phase 2 12/12, Phase 3 15/15, Phase 4 14/14, Phase 5 18/18 and its follow-ups 2/2.
+
+**After merging:**
+1. Actions → Database setup (Institute logo columns and the two announcement tables).
+2. Check in Vercel that `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL` and `CRON_SECRET` are set.
+3. Admin → Announcements: open the draft, **Email me a test**, read it, then **Start sending** (type SEND).
+4. The SendGrid free plan allows about 100 emails a day in total. With 80 announcements, sign-in codes and reminders share the remaining 20 on those days.
 
 ## Open questions for the owner
 

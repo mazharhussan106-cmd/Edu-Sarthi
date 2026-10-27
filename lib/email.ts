@@ -1,5 +1,6 @@
-// Owns outbound email: verification codes, sign-in codes and links, and
-// password reset links.
+// Owns outbound email: verification codes, sign-in codes and links, password
+// reset links, and every notice the app sends (decks, audits, reminders,
+// announcements).
 //
 // It deliberately does NOT decide when to send. Callers own that, so a route
 // handler can issue a code and skip the email in a test without this file
@@ -100,6 +101,18 @@ export async function sendDeckDecision(to: string, title: string, outcome: "appr
   const text = `${headline}.${note}\n\n${next}`;
   const html = `<p>${headline}.</p>${reason ? `<p><b>Reviewer’s note:</b> ${reason.replace(/[<>&]/g, " ")}</p>` : ""}<p>${next}</p>`;
   await send(to, headline, text, html);
+}
+
+/// An announcement an admin wrote (lib/announcements), sent as typed. The HTML
+/// copy is built from the plain text: escaped first, so nothing an admin types
+/// can become markup, then blank lines become paragraphs and web addresses links.
+export async function sendAnnouncement(to: string, subject: string, body: string) {
+  const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const html = body
+    .split(/\n\s*\n/)
+    .map((para) => `<p>${escape(para).replace(/https?:\/\/[^\s<]+/g, (u) => `<a href="${u}">${u}</a>`).replace(/\n/g, "<br>")}</p>`)
+    .join("");
+  await send(to, subject, body, html);
 }
 
 /// Tells a deck's owner that their institute's admin took the institute's name

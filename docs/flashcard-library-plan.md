@@ -2,7 +2,7 @@
 
 Status: **All five phases are built and pushed.** Phase 5 (Institute) was built before the live test, at the owner's request, so it has had the least real-world checking.
 
-**Next version planned (27 Oct 2026): `docs/LIBRARY-V2-PLAN.md`.** The owner's decisions there replace four rows of the table below: sharing (edit sharing is now wanted), licence and credit (creator name, CC BY-SA 4.0, EduSarthi may use public decks in paid features), editing a published deck (small fixes go live without waiting for review), and studying a library deck (follow the original; copy stays an option). Nothing from v2 is built yet.
+**Library v2 (27 Oct 2026): `docs/LIBRARY-V2-PLAN.md` — the current source of truth for the library.** Its decisions replace four rows of the table below: sharing (view and edit sharing with named people), licence and credit (creator's chosen name, CC BY-SA 4.0, EduSarthi may use public decks in paid features), editing a published deck (small fixes go live; bigger changes are a reviewed new version), and studying a library deck (follow the original; copy stays an option). Phases 1–4 are merged (PR #18). Phase 5 (institutes publish with their logo) and Phase 6 (announcements, the legal review pack) are built on `claude/sweet-davinci-d313f6` and wait in PR #19. The "Licence and credit" items in the backlog and known gaps below are done by v2, except a `LICENSE` file.
 
 Before any of it works on the live site, run GitHub → Actions → **Database setup** → Run workflow. It adds the new tables and columns (all additive, no data is removed).
 

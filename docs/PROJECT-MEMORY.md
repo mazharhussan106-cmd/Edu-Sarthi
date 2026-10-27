@@ -50,12 +50,18 @@ An English spoken-communication training platform: students record or upload, te
    - creators get a revenue share, free AI cards and badges;
    - edit sharing only by named invite.
 
-   Nothing from v2 is built.
+   Phase 1 is built (see 4d); nothing later is.
 4c. **Phase 0 started (27 Oct).**
    - Actions → Database setup was run on the live database (run #7, success). It had not run since PR #17, so the AI columns were missing on the live database.
    - The full round (student deck, teacher deck with recording and audit, institute, report, Explore) passed on a local copy.
    - The owner's phone checklist is `docs/PHASE0-LIVE-TEST.md`. **Next: the owner runs it on the live site**, then Phase 1.
    - The test raised two questions. The owner answered both: learners keep seeing the Teacher's guide, and card recordings keep the 15-second minimum.
+4d. **Library v2 Phase 1 built (27 Oct, same branch, NOT merged; it waits for the Phase 0 live test).**
+   - What it does: submitting a deck now opens a form with a one-time "I am 18 or older" tick, how the creator's name shows (full name, first name, display name or no name), and three required ticks (own work, CC BY-SA 4.0, EduSarthi may use it in paid features).
+   - What is saved: on the account, `adultConfirmedAt`, `creditStyle` and `publicName`; on the deck, `licence`, `termsVersion` and `termsAcceptedAt`.
+   - Where it shows: "by <name> · licence" in the library, on Explore and on public share pages. Settings → "How your name shows on public decks". Admin review gets a checklist built from the same rules list (`LIBRARY_RULES` in `lib/libraryTerms.ts`), and Admin → Users can clear a bad display name. New pages: `/legal/library-rules` and the Terms section "Decks you publish to the library".
+   - Decks approved before the terms show no name and no licence.
+   - Full details, provisional defaults and the steps after merging: `docs/LIBRARY-V2-PLAN.md` → Phase 1.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

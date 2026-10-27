@@ -69,6 +69,35 @@ Every schema change listed is **additive** (new nullable columns or new tables),
 
 ### Phase 1 — Publishing terms: age, public name, licence, rules
 
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test.** Type check and production build pass. A browser test on a local copy passed 15 of 15 checks:
+- the form, the 18+ refusal, the missing-tick refusal, a phone number in a display name refused;
+- what is saved;
+- the second deck doesn't ask about age again;
+- the server refuses a submit with no consent, and a first-time "under 18";
+- the admin checklist and consent record;
+- the credit line in the library, on the deck page and on Explore;
+- an older deck shows no credit;
+- Settings changes the name everywhere at once;
+- the admin clears a display name;
+- the rules page and Terms open signed out.
+
+Defaults taken when the owner answered "yes" without picking (PROVISIONAL, easy to change):
+- EduSarthi's own decks are © EduSarthi, not CC BY-SA.
+- A display name goes live at once, and the admin can clear it (Admin → Users → Clear).
+- The age check is a tick, not a date of birth.
+- Teachers get the same name choice as students; "no name" shows "an EduSarthi teacher".
+
+Files beyond the approved list:
+- `components/decks/DeckCredit.tsx`: the shared credit line.
+- `app/api/admin/users/route.ts` and `app/(admin)/admin/users/page.tsx`: the Clear button. The page is now 251 lines; split the row actions into a component when it next changes.
+- `lib/xlsxImport.ts`: admin imports get © EduSarthi.
+
+**After merging:**
+1. Run Actions → Database setup (new columns only).
+2. Run Actions → Load flashcard decks, so the 21 subject decks get the © EduSarthi label.
+3. The owner decides how to tell account holders about the new Terms section; the Terms promise an email before a significant change.
+4. A lawyer reviews the Terms, the library rules and the licence wording.
+
 Before more decks go public, every public deck needs the creator's consent on record.
 
 - **Age check:** a one-time "I am 18 or older" before the first submit. Someone who says no sees: "Publishing to the public library is open from age 18. You can still keep this deck private or share it by link."

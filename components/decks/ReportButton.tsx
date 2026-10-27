@@ -6,6 +6,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -45,6 +46,9 @@ export function ReportButton({ deckId }: { deckId: string }) {
           {Object.entries(REPORT_REASONS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
       </div>
+      <p className="text-xs text-ink-muted">
+        Every deck must follow the <Link href="/legal/library-rules" target="_blank" className="text-accent underline">library rules</Link>.
+      </p>
       <div>
         <Label htmlFor={`${uid}-n`}>Details (optional)</Label>
         <textarea id={`${uid}-n`} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2 text-sm text-ink focus:border-accent" />

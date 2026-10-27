@@ -4,7 +4,9 @@
 //
 // It deliberately shows the owner's student ID, not their name or email: the
 // decision is about the deck, and the rest of the app keeps names from staff
-// the same way.
+// the same way. The one exception is the credit line the creator chose to make
+// public, which the admin must see to check it. The checklist is the same
+// list as the public library rules (lib/libraryTerms).
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,6 +20,7 @@ import { AiBadge } from "@/components/decks/AiBadge";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { ensureActiveUser } from "@/lib/activeUser";
+import { CREDIT_SELECT, LIBRARY_RULES, creditName, licenceInfo } from "@/lib/libraryTerms";
 
 export const revalidate = 0;
 
@@ -30,7 +33,8 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
     where: { id },
     select: {
       title: true, description: true, tags: true, visibility: true, status: true, rejectReason: true,
-      owner: { select: { publicId: true } },
+      licence: true, termsVersion: true, termsAcceptedAt: true,
+      owner: { select: { publicId: true, ...CREDIT_SELECT } },
       cards: { orderBy: { serial: "asc" }, select: CARD_SELECT },
       reports: { where: { resolvedAt: null }, orderBy: { createdAt: "asc" }, select: { id: true, reason: true, note: true } },
     },
@@ -42,6 +46,7 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
   const aiCount = cards.filter((c) => c.aiAssisted).length;
   const pending = deck.visibility === "PUBLIC" && deck.status === "PENDING_REVIEW";
   const published = deck.visibility === "PUBLIC" && deck.status === "APPROVED";
+  const credit = creditName(deck.owner);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
@@ -51,6 +56,11 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
           <h1 className="font-display text-2xl font-bold text-ink">{deck.title}</h1>
           {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
           <p className="mt-1 text-xs text-ink-muted">By {deck.owner.publicId ?? "a student"} · {cards.length} cards</p>
+          <p className="mt-1 text-xs text-ink-muted">
+            {deck.termsAcceptedAt
+              ? `Library terms ${deck.termsVersion} ticked on ${deck.termsAcceptedAt.toLocaleDateString("en-IN")} · shown as: ${credit ? `by ${credit}` : "no name"} · ${licenceInfo(deck.licence)?.label ?? "no licence"}`
+              : "Submitted before the library terms: no consent or licence recorded."}
+          </p>
           <div className="mt-2 flex flex-wrap gap-1">
             {aiCount ? <AiBadge label={`${aiCount} of ${cards.length} cards AI-assisted`} /> : null}
             {deck.tags.map((t) => <Badge key={t}>{t}</Badge>)}
@@ -73,6 +83,16 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
             <ActionButton url="/api/admin/decks" body={{ action: "dismiss", id }} label="Dismiss reports" variant="outline" />
             <ActionButton url="/api/admin/decks" body={{ action: "takedown", id }} label="Take the deck down" askReason />
           </div>
+        </Card>
+      ) : null}
+
+      {pending ? (
+        <Card className="mt-5">
+          <h2 className="font-display text-base font-bold text-ink">Check against the library rules</h2>
+          <ol className="mt-2 flex list-decimal flex-col gap-1 pl-5 text-sm text-ink">
+            {LIBRARY_RULES.map((r) => <li key={r.title}><b>{r.title}.</b> <span className="text-ink-muted">{r.detail}</span></li>)}
+            {deck.owner.creditStyle === "DISPLAY_NAME" ? <li><b>Display name.</b> <span className="text-ink-muted">“{credit}” is acceptable to show publicly.</span></li> : null}
+          </ol>
         </Card>
       ) : null}
 

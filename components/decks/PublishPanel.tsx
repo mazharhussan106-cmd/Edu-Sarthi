@@ -1,5 +1,6 @@
 // Owns the owner's view of a deck's place in the public library: what state it
-// is in, why it was rejected, and the buttons to submit or withdraw.
+// is in, why it was rejected, and the buttons to submit (through the consent
+// form, PublishConsent) or withdraw.
 //
 // It deliberately does NOT decide anything — approval is an admin's. The copy
 // is plain about waiting, and about edits sending a published deck back.
@@ -12,6 +13,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { callApi } from "@/components/decks/deckClient";
+import { PublishConsent, type ConsentDefaults } from "@/components/decks/PublishConsent";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 
 type Props = {
@@ -22,15 +24,18 @@ type Props = {
   status: "DRAFT" | "PENDING_REVIEW" | "APPROVED" | "REJECTED";
   rejectReason: string | null;
   cardCount: number;
+  /// What the submit form starts from: the account's saved answers.
+  consent: ConsentDefaults;
 };
 
-export function PublishPanel({ deckId, visibility, status, rejectReason, cardCount, canShareInstitute }: Props) {
+export function PublishPanel({ deckId, visibility, status, rejectReason, cardCount, canShareInstitute, consent }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [asking, setAsking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inLibrary = visibility === "PUBLIC";
 
-  async function act(action: "publish" | "unpublish" | "shareDeck" | "unshareDeck") {
+  async function act(action: "unpublish" | "shareDeck" | "unshareDeck") {
     setBusy(true);
     setError(null);
     const res = await callApi(action === "shareDeck" || action === "unshareDeck" ? "/api/institute" : "/api/decks", action === "shareDeck" || action === "unshareDeck" ? { action, deckId } : { action, id: deckId });
@@ -73,14 +78,14 @@ export function PublishPanel({ deckId, visibility, status, rejectReason, cardCou
             ? "Anyone signed in can find and copy this deck. If you change it, it goes back to review until an admin approves it again."
             : "An admin will look at it. You can keep working; changes are included in the review."}
       </p>
-      <div>
-        {inLibrary ? (
-          <Button variant="outline" disabled={busy} onClick={() => act("unpublish")}>{status === "APPROVED" ? "Remove from library" : "Withdraw submission"}</Button>
-        ) : (
-          <Button variant="outline" disabled={busy || cardCount < DECK_LIMITS.minCardsToPublish} onClick={() => act("publish")}>Submit for the public library</Button>
-        )}
-      </div>
-      {canShareInstitute && !inLibrary ? (
+      {inLibrary ? (
+        <div><Button variant="outline" disabled={busy} onClick={() => act("unpublish")}>{status === "APPROVED" ? "Remove from library" : "Withdraw submission"}</Button></div>
+      ) : asking ? (
+        <PublishConsent deckId={deckId} defaults={consent} onCancel={() => setAsking(false)} onDone={() => { setAsking(false); router.refresh(); }} />
+      ) : (
+        <div><Button variant="outline" disabled={busy || cardCount < DECK_LIMITS.minCardsToPublish} onClick={() => setAsking(true)}>Submit for the public library</Button></div>
+      )}
+      {canShareInstitute && !inLibrary && !asking ? (
         <div className="mt-2 border-t border-border pt-3">
           <p className="text-xs text-ink-muted">Or keep it inside your institute: members can read and copy it, and it is never public.</p>
           <Button className="mt-2" variant="outline" disabled={busy} onClick={() => act("shareDeck")}>Share with my institute</Button>

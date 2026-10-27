@@ -21,6 +21,8 @@ import { Card } from "@/components/ui/Card";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
+import { DeckCredit } from "@/components/decks/DeckCredit";
+import { CREDIT_SELECT } from "@/lib/libraryTerms";
 import { LikeButton } from "@/components/decks/LikeButton";
 import { ReportButton } from "@/components/decks/ReportButton";
 
@@ -32,7 +34,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const deck = await prisma.deck.findFirst({
     where: { id, visibility: "PUBLIC", status: "APPROVED" },
-    select: { title: true, description: true, tags: true, ownerId: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { likes: true } } },
+    select: { title: true, description: true, tags: true, ownerId: true, licence: true, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, _count: { select: { likes: true } } },
   });
   if (!deck) notFound();
 
@@ -60,6 +62,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
       <Link href="/library" className="text-sm font-medium text-accent hover:underline">← Library</Link>
       <h1 className="mt-2 font-display text-2xl font-bold text-ink">{deck.title}</h1>
       {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
+      <DeckCredit owner={deck.owner} licence={deck.licence} linked className="mt-1" />
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{index.length} cards</span>
         {deck.owner.role === "TEACHER" && deck.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}

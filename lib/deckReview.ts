@@ -1,6 +1,6 @@
-// Owns the public-library life cycle of a deck: the owner asking to publish,
-// the admin approving or rejecting, readers reporting, and the admin acting on
-// reports. Every state change lives here so the rules cannot drift between the
+// Owns the public-library life cycle of a deck: the owner asking to publish
+// (with the 18+ answer, the licence ticks and their name choice), the admin
+// approving or rejecting, readers reporting, and the admin acting on reports. Every state change lives here so the rules cannot drift between the
 // owner's route, the admin's route and the pages.
 //
 // The states (DeckStatus) are: DRAFT (never asked) → PENDING_REVIEW → APPROVED
@@ -15,16 +15,32 @@ import type { ReportReason } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { logAdmin } from "@/lib/admin";
 import { sendDeckDecision } from "@/lib/email";
-import { DECK_LIMITS } from "@/lib/deckSchemas";
+import { DECK_LIMITS, type PublishConsent } from "@/lib/deckSchemas";
+import { LIBRARY_TERMS_VERSION, licenceFor } from "@/lib/libraryTerms";
 
 type Result = { ok: true } | { error: string };
 
-export async function publishDeck(userId: string, id: string): Promise<Result> {
+export async function publishDeck(userId: string, id: string, consent: PublishConsent): Promise<Result> {
   const deck = await prisma.deck.findFirst({
     where: { id, ownerId: userId },
-    select: { status: true, visibility: true, description: true, owner: { select: { role: true, teacherVerifiedAt: true } }, _count: { select: { cards: true } } },
+    select: {
+      status: true,
+      visibility: true,
+      description: true,
+      owner: { select: { role: true, teacherVerifiedAt: true, name: true, adultConfirmedAt: true } },
+      _count: { select: { cards: true } },
+    },
   });
   if (!deck) return { error: "That deck no longer exists." };
+  // Owner's decision: under-18s may not publish. Asked once per account; the
+  // form keeps sending it, but only the first "yes" is recorded.
+  if (!deck.owner.adultConfirmedAt && !consent.adult) {
+    return { error: "Publishing to the public library is open from age 18. You can still keep this deck private or share it by link." };
+  }
+  const style = consent.name.creditStyle;
+  if ((style === "FULL_NAME" || style === "FIRST_NAME") && !deck.owner.name?.trim()) {
+    return { error: "Your account has no name yet. Add it on your Profile page, or choose a display name or no name." };
+  }
   // A teacher's deck carries their name's weight in the library, so an admin
   // vouches for the teacher first. Students and admins are not held to this.
   if (deck.owner.role === "TEACHER" && !deck.owner.teacherVerifiedAt) {
@@ -35,10 +51,32 @@ export async function publishDeck(userId: string, id: string): Promise<Result> {
   if (deck._count.cards < DECK_LIMITS.minCardsToPublish) {
     return { error: `Add at least ${DECK_LIMITS.minCardsToPublish} cards before submitting — it is the minimum for the public library.` };
   }
-  await prisma.deck.updateMany({
-    where: { id, ownerId: userId },
-    data: { visibility: "PUBLIC", status: "PENDING_REVIEW", rejectReason: null, reviewedById: null, reviewedAt: null },
-  });
+  const now = new Date();
+  // Together: a deck must never sit in the queue without the consent that
+  // lets it be public, and the name choice is part of that consent.
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: userId },
+      data: {
+        adultConfirmedAt: deck.owner.adultConfirmedAt ?? now,
+        creditStyle: style,
+        ...(style === "DISPLAY_NAME" ? { publicName: consent.name.publicName } : {}),
+      },
+    }),
+    prisma.deck.updateMany({
+      where: { id, ownerId: userId },
+      data: {
+        visibility: "PUBLIC",
+        status: "PENDING_REVIEW",
+        rejectReason: null,
+        reviewedById: null,
+        reviewedAt: null,
+        licence: licenceFor(deck.owner.role),
+        termsVersion: LIBRARY_TERMS_VERSION,
+        termsAcceptedAt: now,
+      },
+    }),
+  ]);
   return { ok: true };
 }
 

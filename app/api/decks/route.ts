@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     case "delete":
       return (await deleteDeck(userId, a.id)) ? NextResponse.json({ ok: true }) : fail("That deck no longer exists.", 404);
     case "publish":
-      return done(await publishDeck(userId, a.id));
+      return done(await publishDeck(userId, a.id, a.consent));
     case "unpublish":
       return done(await unpublishDeck(userId, a.id));
   }

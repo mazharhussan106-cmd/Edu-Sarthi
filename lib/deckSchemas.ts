@@ -37,6 +37,35 @@ export const deckFields = {
   tags: z.array(tag).max(5, "Use up to 5 tags"),
 };
 
+/// How a creator's name shows on public decks. A typed display name is
+/// shown to everyone, so it must not smuggle in contact details or links —
+/// the library is no place to collect students' phone numbers.
+export const publicNameSchema = z
+  .object({
+    creditStyle: z.enum(["FULL_NAME", "FIRST_NAME", "DISPLAY_NAME", "NONE"], "Choose how your name shows"),
+    publicName: z.string().trim().max(40, "Keep the display name under 40 characters").default(""),
+  })
+  .superRefine((v, ctx) => {
+    if (v.creditStyle !== "DISPLAY_NAME") return;
+    const n = v.publicName;
+    const issue = (message: string) => ctx.addIssue({ code: "custom", path: ["publicName"], message });
+    if (n.length < 2) return issue("Type a display name of at least 2 characters, or choose another option.");
+    if (!/^[\p{L}\p{N} .'-]+$/u.test(n)) return issue("Use only letters, numbers, spaces, dots, hyphens and apostrophes in the display name.");
+    if (/\d{5,}/.test(n) || /(www|http|\.com|\.in)/i.test(n)) return issue("Leave phone numbers and website addresses out of the display name.");
+  });
+
+/// The submit form. The three ticks are required every time a deck is
+/// submitted; `adult` only matters until the account has confirmed it once.
+export const publishConsentSchema = z.object({
+  adult: z.boolean(),
+  ownWork: z.literal(true, "Tick that you made this deck or have the right to share it."),
+  licence: z.literal(true, "Tick that you agree to the licence the deck is published under."),
+  paidUse: z.literal(true, "Tick that EduSarthi may use the deck in paid features."),
+  name: publicNameSchema,
+});
+
+export type PublishConsent = z.infer<typeof publishConsentSchema>;
+
 export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), ...deckFields }),
   z.object({ action: z.literal("update"), id: z.string().min(1), ...deckFields }),
@@ -45,7 +74,7 @@ export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("copy"), token: z.string().min(8).max(64) }),
   z.object({ action: z.literal("copyPublic"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("copyInstitute"), deckId: z.string().min(1) }),
-  z.object({ action: z.literal("publish"), id: z.string().min(1) }),
+  z.object({ action: z.literal("publish"), id: z.string().min(1), consent: publishConsentSchema }),
   z.object({ action: z.literal("unpublish"), id: z.string().min(1) }),
 ]);
 

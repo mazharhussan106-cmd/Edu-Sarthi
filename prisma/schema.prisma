@@ -90,6 +90,15 @@ model User {
   /// Model tokens (input + output) spent on this user's AI requests. Not used
   /// for a limit yet; kept so a token-based plan can start from real history.
   aiTokensUsed      Int       @default(0)
+  /// When the person said "I am 18 or older" before their first public deck.
+  /// Under-18s may not publish (owner's decision); a self-declaration, so it
+  /// records what they said, not a verified age.
+  adultConfirmedAt  DateTime?
+  /// How their name shows on public decks. Null until the first submit asks.
+  creditStyle       CreditStyle?
+  /// The name they typed, used only when creditStyle is DISPLAY_NAME. An admin
+  /// can clear it (Admin → Users) if it is not acceptable.
+  publicName        String?
 
   // Student side
   submissions Submission[] @relation("StudentSubmissions")
@@ -554,6 +563,15 @@ enum DeckVisibility {
   INSTITUTE // members of the deck's institute only; never in the public library
 }
 
+/// How a creator's name shows on their public decks. They choose it the first
+/// time they submit and can change it in Settings.
+enum CreditStyle {
+  FULL_NAME
+  FIRST_NAME
+  DISPLAY_NAME
+  NONE // "an EduSarthi learner"
+}
+
 /// Where a deck is in the admin review. Only a deck that asks to go PUBLIC
 /// enters PENDING_REVIEW; private and link-shared decks stay DRAFT.
 enum DeckStatus {
@@ -586,6 +604,13 @@ model Deck {
   /// How many times readers copied it from the library, for sorting. Counted,
   /// not derived, because copies are independent decks the owner cannot see.
   copyCount    Int            @default(0)
+  /// The licence the owner agreed to when submitting (lib/libraryTerms). Null
+  /// for decks approved before the library terms existed: no licence is shown
+  /// and EduSarthi does not use them in paid features until the owner agrees.
+  licence      String?
+  /// Which version of the library terms they ticked, and when.
+  termsVersion String?
+  termsAcceptedAt DateTime?
 
   // Cascade: deleting an account removes its decks. Cards made by that user
   // inside them go with the deck.

@@ -7,13 +7,17 @@
 // This is a working draft, not legal advice. It needs review by a lawyer before
 // launch, particularly the liability and governing-law sections.
 
+import Link from "next/link";
+
+import { LICENCES } from "@/lib/libraryTerms";
+
 export const metadata = {
   title: "Terms — EduSarthi",
   description: "The terms you agree to when you use EduSarthi.",
 };
 
 const CONTACT = "support@edusarthi.com";
-const UPDATED = "26 August 2026";
+const UPDATED = "27 October 2026";
 
 export default function TermsPage() {
   return (
@@ -78,6 +82,49 @@ export default function TermsPage() {
           <p className="mt-2">
             We may remove submissions that break these rules and close accounts
             that do so repeatedly.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-base font-bold text-ink">
+            Decks you publish to the library
+          </h2>
+          <p className="mt-2">
+            You must be 18 or older to publish a deck to the public library. An
+            admin checks every deck against the{" "}
+            <Link href="/legal/library-rules" className="font-medium text-accent hover:underline">
+              library rules
+            </Link>{" "}
+            before anyone else can find it.
+          </p>
+          <p className="mt-2">
+            You keep ownership of your deck. When you publish it, you license it
+            to everyone under{" "}
+            <a href={LICENCES.CC_BY_SA.href} target="_blank" rel="noopener noreferrer" className="font-medium text-accent hover:underline">
+              {LICENCES.CC_BY_SA.label}
+            </a>
+            : anyone may share and adapt it, including commercially, as long as
+            they credit you and share their version under the same licence. You
+            choose how your name appears and can change it in Settings.
+          </p>
+          <p className="mt-2">
+            You also give EduSarthi a separate, non-exclusive, royalty-free
+            permission to use, copy, adapt and include your public deck in
+            EduSarthi&apos;s features, including paid ones. EduSarthi plans to
+            reward creators with a revenue share, free AI cards and badges; how
+            that works is not decided yet, and nothing is owed until it is
+            announced.
+          </p>
+          <p className="mt-2">
+            If you withdraw a deck, it leaves the library and EduSarthi stops
+            offering it in new features. Copies other people already made under
+            the licence stay theirs: a CC BY-SA licence cannot be taken back for
+            copies already made.
+          </p>
+          <p className="mt-2">
+            Decks made by EduSarthi itself are {LICENCES.EDUSARTHI.label} and are
+            not under CC BY-SA. We may remove any deck that breaks the library
+            rules.
           </p>
         </section>
 

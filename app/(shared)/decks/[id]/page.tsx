@@ -35,9 +35,10 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
   });
   if (!deck) notFound();
 
-  const [counts, staff, cards] = await Promise.all([
+  const [counts, staff, me, cards] = await Promise.all([
     deckStudyCounts(userId, id),
     isStaff(userId),
+    prisma.user.findUnique({ where: { id: userId }, select: { role: true, name: true, adultConfirmedAt: true, creditStyle: true, publicName: true } }),
     Promise.all(
       deck.cards.map(async (c) => ({
         ...(await faceCard(c)),
@@ -48,6 +49,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
       })),
     ),
   ]);
+  if (!me) notFound();
   // Chapters, in the order their first card was added. A deck with none (a plain
   // hand-made one) keeps the flat list; once any card has one, cards without a
   // chapter sit under "Cards" so nothing disappears from the list.
@@ -136,7 +138,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
       <section className="mt-6" aria-labelledby="pub-h">
         <h2 id="pub-h" className="sr-only">Public library</h2>
-        <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} canShareInstitute={Boolean(member && member.role !== "STUDENT")} /></Card>
+        <Card><PublishPanel deckId={id} visibility={deck.visibility} status={deck.status} rejectReason={deck.rejectReason} cardCount={counts.total} canShareInstitute={Boolean(member && member.role !== "STUDENT")} consent={{ role: me.role, accountName: me.name, adultConfirmed: Boolean(me.adultConfirmedAt), creditStyle: me.creditStyle, publicName: me.publicName }} /></Card>
       </section>
 
       <section className="mt-6" aria-labelledby="share-h">

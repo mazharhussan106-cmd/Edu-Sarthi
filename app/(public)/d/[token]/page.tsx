@@ -3,8 +3,10 @@
 //
 // Readable signed out — possession of the link is the permission. It
 // deliberately shows no owner name or email (the link goes to people the owner
-// chose, but the page can be forwarded), and asks search engines not to index
-// it. It does NOT let the viewer change or study the original; a copy is theirs.
+// chose, but the page can be forwarded) unless the deck is also published in
+// the library, where the owner already chose how they are credited. It asks
+// search engines not to index it, and does NOT let the viewer change or study
+// the original; a copy is theirs.
 
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -17,6 +19,8 @@ import { Card } from "@/components/ui/Card";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
+import { DeckCredit } from "@/components/decks/DeckCredit";
+import { CREDIT_SELECT } from "@/lib/libraryTerms";
 
 export const revalidate = 0;
 export const metadata: Metadata = { robots: { index: false, follow: false }, title: "Shared flashcard deck" };
@@ -26,7 +30,7 @@ export default async function SharedDeckPage({ params }: { params: Promise<{ tok
 
   const deck = await prisma.deck.findFirst({
     where: { shareToken: token },
-    select: { title: true, description: true, tags: true, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
+    select: { title: true, description: true, tags: true, visibility: true, status: true, licence: true, owner: { select: CREDIT_SELECT }, cards: { orderBy: { serial: "asc" }, select: CARD_SELECT } },
   });
   if (!deck) notFound();
 
@@ -36,6 +40,7 @@ export default async function SharedDeckPage({ params }: { params: Promise<{ tok
     <main className="mx-auto max-w-2xl px-3 pb-8 pt-4 sm:px-6 sm:pt-8">
       <h1 className="font-display text-2xl font-bold text-ink">{deck.title}</h1>
       {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
+      {deck.visibility === "PUBLIC" && deck.status === "APPROVED" ? <DeckCredit owner={deck.owner} licence={deck.licence} linked className="mt-1" /> : null}
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{cards.length} cards</span>
         {cards.some((c) => c.aiAssisted) ? <AiBadge label={`${cards.filter((c) => c.aiAssisted).length} of ${cards.length} cards AI-assisted`} /> : null}

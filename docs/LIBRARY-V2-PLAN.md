@@ -17,18 +17,30 @@ This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `
 | 7 | Sharing | Both view-only and edit sharing. | "No can-edit sharing" |
 | 8 | Age | Students under 18 cannot publish to the public library. | — (new) |
 
+### Second round (27 Oct 2026) — CONFIRMED
+
+| # | Topic | Decision | Supersedes |
+|---|---|---|---|
+| 9 | Institutes | Institutes may publish to the public library under their name and logo, after admin review like every deck. | "Institute decks stay inside the institute and are never in the public library" |
+| 10 | Small fix size | One fix per card per day, at most 10 cards a day per deck, at most 30 characters changed per field. A title change was not answered, so it counts as a big edit. | — |
+| 11 | Big edits | The approved version stays live while the edit waits for review. | "Editing a published deck sends it back to review" (for big edits) |
+| 12 | Under 18 | The only restriction is publishing to the public library. Under-18s may share by link and edit private decks shared with them. They cannot edit a public deck, because their changes would be published. | — |
+| 13 | Withdrawn decks | When an author withdraws a deck, followers lose it. A takedown removes it too. | — |
+| 14 | Creator rewards | Creators get a revenue share, free AI cards and badges. Amounts and payouts are decided later, with the paid plans. | — |
+| 15 | Edit sharing | Only by named invite, never by link. | — |
+
 ## Review of the decisions — what they imply and where they clash
 
 1. **Small fixes (2) clash with "every deck always reviewed" (6).** A fix that goes live without review is, for a while, unreviewed. **PROPOSAL:** small fixes go live at once *and* land in an admin list "Fixes to check", where the admin accepts or undoes each one. Every change is still reviewed by the admin: small ones after, big ones before. A strict size limit stops someone from changing an approved deck into something else one "small" fix at a time.
-2. **Big edits are not covered by answer 2.** Today a bigger edit hides the whole deck from the library until it is approved again. With followers (3), that would cut off everyone studying it. **PROPOSAL:** the approved version stays live; the edit waits as a draft version; approving it updates the same cards, so followers keep their progress.
-3. **The institute logo (4) clashes with an existing decision.** Institute decks "stay inside the institute and are never in the public library". So either the logo shows only inside the institute, or institutes may now publish to the library under their name and logo, which reverses that decision. **The owner must choose.**
+2. **Big edits are not covered by answer 2.** Today a bigger edit hides the whole deck from the library until it is approved again. With followers (3), that would cut off everyone studying it. **Confirmed (decision 11):** the approved version stays live; the edit waits as a draft version; approving it updates the same cards, so followers keep their progress.
+3. **The institute logo (4) clashed with an existing decision.** Institute decks "stay inside the institute and are never in the public library". **Resolved by decision 9:** institutes may now publish to the library under their name and logo, after admin review.
 4. **Paid use (5) needs its own permission.** CC BY-SA lets anyone, EduSarthi included, reuse a deck with credit. But paid features built on students' decks need a clear, separate permission that the creator agrees to when they submit: a tick box plus a clause in the Terms, saved with the date and the version of the terms. The wording needs a lawyer. If any real person already has a public deck when this ships, they must agree before their deck is used in a paid feature.
 5. **Credit must survive copies.** CC BY-SA requires credit to carry through. "Copied from" must keep the original's title and creator name even if the original is later deleted. When a copy is submitted to the library, the admin must see that it is a copy and how much was changed.
 6. **"No under 18" (8) needs to know age, and the app does not store it.** **PROPOSAL:** a one-time "I am 18 or older" confirmation before the first submit and before accepting an edit invite on a public deck. A self-declaration can be false; it records that the person said so. Separately, the DPDP Act 2023 treats everyone under 18 as a child and requires verifiable parental consent to process their data at all. That is bigger than publishing, is already on the audit's deferred list (`docs/AUDIT-2026-10.md`), and needs legal advice (UNVERIFIED: not checked with a lawyer).
 7. **Edit sharing (7) needs a safe shape.** An edit link that leaks lets anyone change the deck. **PROPOSAL:** view-only sharing works by link and with named people. Edit access goes only to a named EduSarthi account (by email), and that person must accept it. Only the owner can publish, withdraw, delete, change sharing or invite. On a public deck, editors' changes follow the same small-fix and big-edit rules.
 8. **Following (3) has side effects.**
    - When the author deletes a card, followers lose their progress on that card (`CardState` is deleted with the card).
-   - When the deck leaves the library, followers lose access. After a takedown it must always disappear. Whether followers keep studying a deck its author withdrew is **the owner's call**.
+   - When the deck leaves the library, followers lose access. That holds for a takedown and for a deck its author withdraws (decision 13).
    - Copies made before this change stay copies.
 9. **Nothing has been tested live (1).** Every phase below adds to code that has never run against the real Supabase bucket or SendGrid. Test first, so that when something fails we know whether the old code or the new code caused it.
 
@@ -91,13 +103,14 @@ Before more decks go public, every public deck needs the creator's consent on re
 
 ### Phase 3 — Small fixes go live; big edits become a reviewed version
 
-- **Small fix (PROPOSAL)**, all of these must hold:
+- **Small fix (decision 10)**, all of these must hold:
   - It only changes the text of existing cards (front, back, example, notes).
   - It changes at most 30 characters in each field.
-  - The deck has had at most 10 small fixes that day.
+  - The card has not had a small fix yet that day.
+  - At most 10 cards in the deck have had a small fix that day.
 
   Anything else is a **big edit**: a new or deleted card, a picture, audio or video change, the title, tags or description, or a bigger text change.
-- **Small fix:** it goes live at once and is logged, before and after, in a new `DeckChange` table. The admin's "Fixes to check" list has Accept and Undo. A fix over the daily limit counts as a big edit.
+- **Small fix:** it goes live at once and is logged, before and after, in a new `DeckChange` table. The admin's "Fixes to check" list has Accept and Undo. A fix over the daily limits counts as a big edit.
 - **Big edit:** saved as a draft version in a new `DeckRevision` table, while the approved version stays in the library.
   - Approved: the edit is applied to the same cards, so followers keep their progress.
   - Rejected: the owner sees the reason and the live version stays as it was.
@@ -115,11 +128,12 @@ Before more decks go public, every public deck needs the creator's consent on re
   - Add `Word.updatedAt`, so that when two people edit the same card the second one is warned "this card changed since you opened it" instead of silently overwriting it.
 - Removing an editor keeps the cards they added.
 
-### Phase 5 — Institute logo
+### Phase 5 — Institutes in the public library, with their logo
 
-- Waits on Review point 3: inside the institute only, or in the library too.
+- Decision 9: an institute may submit a deck to the public library under its name and logo. It goes through the same admin review as every deck. Today an institute deck cannot be published while it is shared inside the institute (`lib/deckReview.ts`); that rule changes.
+- Who may submit for an institute: its admin and its teachers (PROPOSAL, matching who can share inside the institute today).
 - New `Institute.logoKey`: PNG, JPG or WebP up to 1 MB, uploaded by the institute's admin. The site admin approves it, because a logo is shown to the public.
-- Shown with the institute's decks and its teachers' credit line.
+- The library shows the institute's logo and name, and the teacher's name if they chose to show it.
 
 ### Phase 6 — Tell people and update the docs
 
@@ -129,13 +143,10 @@ Before more decks go public, every public deck needs the creator's consent on re
 
 ## Open questions for the owner
 
-1. **Institute logo:** only inside the institute, or may institutes publish to the public library under their name and logo?
-2. **Small fixes:** are 30 characters per field and 10 fixes per deck per day right? Should a title change count as small?
-3. **Big edits:** keep the approved version live while the new one waits for review *(recommended)*?
-4. **Age:** is "I am 18 or older" enough, or do you want the date of birth? Can under-18s still share by link and edit private decks shared with them?
-5. **Withdrawn decks:** when an author withdraws a deck, do followers keep studying it (frozen as it was) or lose it? A takedown always removes it.
-6. **Paid features:** will creators get anything back (a revenue share, free AI cards, a badge)? The answer changes the Terms wording. `docs/ROADMAP-EARNING.md` item 5 already mentions a revenue share for paid decks.
-7. **Edit sharing:** only by named invite, never by link. Is that OK?
+The seven questions of the first round were answered on 27 Oct (decisions 9–15). Still open:
+
+- **Age check:** a "I am 18 or older" tick or the date of birth? Not answered; the build uses the tick unless the owner says otherwise.
+- **Creator rewards:** the revenue share percentage, payouts (and the identity and tax details they need), how many free AI cards, and which badges. These are decided with the paid plans and do not block this plan. The Terms written in Phase 1 only say that creators may be rewarded.
 
 ## Not in this plan
 

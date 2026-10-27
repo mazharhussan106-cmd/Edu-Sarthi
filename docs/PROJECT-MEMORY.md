@@ -40,7 +40,21 @@ An English spoken-communication training platform: students record or upload, te
    - view-only and edit sharing;
    - no public publishing for under-18s.
 
-   Phase 0 is the live test; nothing from v2 is built. Seven open questions are at the end of that file.
+   Second round of answers (also 27 Oct):
+   - institutes may publish to the library under their name and logo;
+   - small fix = one fix per card per day, at most 10 cards a day, at most 30 characters per field;
+   - big edits keep the approved version live;
+   - under-18s may share by link and edit private decks shared with them;
+   - followers lose a deck its author withdraws;
+   - creators get a revenue share, free AI cards and badges;
+   - edit sharing only by named invite.
+
+   Nothing from v2 is built.
+4c. **Phase 0 started (27 Oct).**
+   - Actions → Database setup was run on the live database (run #7, success). It had not run since PR #17, so the AI columns were missing on the live database.
+   - The full round (student deck, teacher deck with recording and audit, institute, report, Explore) passed on a local copy.
+   - The owner's phone checklist is `docs/PHASE0-LIVE-TEST.md`. **Next: the owner runs it on the live site**, then Phase 1.
+   - The test raised two questions for the owner: should students see the Teacher's guide, and should card recordings keep a 15-second minimum?
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

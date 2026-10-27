@@ -2,8 +2,8 @@
 // button.
 //
 // Only an APPROVED public deck resolves; any other id is a 404, whatever state
-// it is really in. It deliberately does NOT offer study on the original — a
-// copy is the learner's own, with their own schedule.
+// it is really in. Studying happens by following (./study, the original with
+// the learner's own progress) or on a copy; this page never changes the deck.
 //
 // Cost on a slow phone: the deck's cards are first read as id, title and topic
 // only. An imported deck (hundreds of cards, each with dozens of fields) is
@@ -22,7 +22,9 @@ import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
 import { DeckCredit } from "@/components/decks/DeckCredit";
-import { CREDIT_SELECT } from "@/lib/libraryTerms";
+import { CREDIT_SELECT, SOURCE_SELECT, copiedFrom } from "@/lib/libraryTerms";
+import { isFollowing } from "@/lib/deckFollow";
+import { FollowButton } from "@/components/decks/FollowButton";
 import { LikeButton } from "@/components/decks/LikeButton";
 import { ReportButton } from "@/components/decks/ReportButton";
 
@@ -34,7 +36,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const deck = await prisma.deck.findFirst({
     where: { id, visibility: "PUBLIC", status: "APPROVED" },
-    select: { title: true, description: true, tags: true, ownerId: true, licence: true, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, _count: { select: { likes: true } } },
+    select: { title: true, description: true, tags: true, ownerId: true, licence: true, ...SOURCE_SELECT, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, _count: { select: { likes: true } } },
   });
   if (!deck) notFound();
 
@@ -54,6 +56,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
   const aiCount = aiIds.size;
   const own = deck.ownerId === session?.user?.id;
   const liked = session?.user?.id ? (await prisma.deckLike.count({ where: { deckId: id, userId: session.user.id } })) > 0 : false;
+  const following = session?.user?.id ? await isFollowing(session.user.id, id) : false;
   // Recording for the teacher is offered on a verified teacher's deck, to students.
   const canRecord = session?.user?.role === "STUDENT" && deck.owner.role === "TEACHER" && Boolean(deck.owner.teacherVerifiedAt);
 
@@ -62,7 +65,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
       <Link href="/library" className="text-sm font-medium text-accent hover:underline">← Library</Link>
       <h1 className="mt-2 font-display text-2xl font-bold text-ink">{deck.title}</h1>
       {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
-      <DeckCredit owner={deck.owner} licence={deck.licence} linked className="mt-1" />
+      <DeckCredit owner={deck.owner} licence={deck.licence} source={copiedFrom(deck)} linked className="mt-1" />
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{index.length} cards</span>
         {deck.owner.role === "TEACHER" && deck.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}
@@ -71,11 +74,12 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
         {deck.tags.map((t) => <Link key={t} href={`/library?tag=${encodeURIComponent(t)}`}><Badge>{t}</Badge></Link>)}
       </div>
       <div className="mt-4 flex flex-wrap items-start gap-3">
-        <CopyDeckButton deckId={id} signedIn />
+        {own ? null : <FollowButton deckId={id} following={following} />}
+        <CopyDeckButton deckId={id} signedIn label="Make my own copy" variant={own ? undefined : "outline"} />
         <LikeButton deckId={id} likes={deck._count.likes} liked={liked} disabled={own} />
         {own ? null : <ReportButton deckId={id} />}
       </div>
-      <p className="mt-2 text-xs text-ink-muted">A copy is private to you. Changes you make to it do not affect the original.</p>
+      <p className="mt-2 text-xs text-ink-muted">Following keeps you on the author’s latest version, with your own progress. A copy is yours to change, and never updates.</p>
 
       {imported ? (
         <div className="mt-5 flex flex-col gap-5">

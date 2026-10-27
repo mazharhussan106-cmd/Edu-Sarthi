@@ -62,6 +62,11 @@ An English spoken-communication training platform: students record or upload, te
    - Where it shows: "by <name> · licence" in the library, on Explore and on public share pages. Settings → "How your name shows on public decks". Admin review gets a checklist built from the same rules list (`LIBRARY_RULES` in `lib/libraryTerms.ts`), and Admin → Users can clear a bad display name. New pages: `/legal/library-rules` and the Terms section "Decks you publish to the library".
    - Decks approved before the terms show no name and no licence.
    - Full details, provisional defaults and the steps after merging: `docs/LIBRARY-V2-PLAN.md` → Phase 1.
+4e. **Library v2 Phase 2 built (27 Oct, same branch, NOT merged).**
+   - **Follow and study:** `DeckFollow` table, `lib/deckFollow.ts`, `/library/[id]/study`. Learners study the original deck with their own `CardState`, up to 50 follows. Answers go through `/api/flashcards`, and `canStudyWord` allows a followed deck only while it is listed.
+   - **Copied from:** `Deck.sourceDeckId`, `sourceCredit` and `sourceLicence`; copying lives in `lib/deckCopy.ts`. The line is built fresh while the original exists and falls back to the saved credit once it is deleted (`copiedFrom` in `lib/libraryTerms.ts`).
+   - **Rules:** a copy of an EduSarthi deck can't be published or link-shared. Withdrawing or taking down a deck deletes its follows. Admin review of a copy shows how many cards changed.
+   - **Until Phase 3:** an edit hides the deck from followers until it is re-approved.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

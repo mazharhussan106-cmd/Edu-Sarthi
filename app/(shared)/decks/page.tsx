@@ -1,8 +1,9 @@
-// Owns the "My decks" page: the student's own decks with how many cards are
-// due in each, and the form to start a new one.
+// Owns the "My decks" page: the student's own decks and the library decks
+// they follow, with how many cards are due in each, and the form to start a
+// new deck.
 //
-// It deliberately does NOT show other people's decks — shared decks open from
-// their link, and the public library is a later phase.
+// It deliberately does NOT list other decks — shared decks open from their
+// link, and the rest of the library lives at /library.
 
 import Link from "next/link";
 
@@ -16,6 +17,8 @@ import { Card } from "@/components/ui/Card";
 import { AiCardsPanel } from "@/components/decks/AiCardsPanel";
 import { cardMakerEnabled } from "@/lib/aiEnabled";
 import { DeckForm } from "@/components/decks/DeckForm";
+import { DeckCredit } from "@/components/decks/DeckCredit";
+import { CREDIT_SELECT } from "@/lib/libraryTerms";
 
 export const revalidate = 0;
 
@@ -28,10 +31,16 @@ export default async function DecksPage() {
     orderBy: { createdAt: "desc" },
     select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, _count: { select: { cards: true } } },
   });
+  const follows = await prisma.deckFollow.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    select: { deck: { select: { id: true, title: true, visibility: true, status: true, owner: { select: { suspendedAt: true, ...CREDIT_SELECT } }, _count: { select: { cards: true } } } } },
+  });
+  const followedIds = follows.map((f) => f.deck.id);
   const now = new Date();
   const dueRows = await prisma.cardState.groupBy({
     by: ["wordId"],
-    where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { ownerId: userId, deckId: { not: null } } },
+    where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word: { OR: [{ ownerId: userId, deckId: { not: null } }, { deckId: { in: followedIds } }] } },
   });
   // Due per deck: one extra read of the due cards' decks rather than a count
   // per deck, so the page costs three queries however many decks there are.
@@ -103,6 +112,37 @@ export default async function DecksPage() {
           </li>
         ))}
       </ul>
+
+      {follows.length ? (
+        <section className="mt-6" aria-labelledby="following-h">
+          <h2 id="following-h" className="font-display text-base font-bold text-ink">Following</h2>
+          <p className="text-xs text-ink-muted">Library decks you study as their authors keep them. Up to {DECK_LIMITS.followsPerUser}.</p>
+          <ul className="mt-2 flex flex-col gap-2">
+            {follows.map(({ deck: d }) => {
+              const open = d.visibility === "PUBLIC" && d.status === "APPROVED" && !d.owner.suspendedAt;
+              return (
+                <li key={d.id}>
+                  <Link href={`/library/${d.id}/study`} className="block">
+                    <Card className="p-4 hover:bg-hover">
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="min-w-0">
+                          <span className="block truncate font-display font-bold text-ink">{d.title}</span>
+                          <DeckCredit owner={d.owner} className="truncate" />
+                        </span>
+                        <span className="flex shrink-0 flex-col items-end gap-1">
+                          <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
+                          {open && due.get(d.id) ? <Badge variant="accent">{due.get(d.id)} due</Badge> : null}
+                          {open ? null : <Badge>not available now</Badge>}
+                        </span>
+                      </div>
+                    </Card>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       {/* Beside, not instead of, the plain form below: the AI is a way to fill a
           deck, and some people just want an empty one to type into. */}

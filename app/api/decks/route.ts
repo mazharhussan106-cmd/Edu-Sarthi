@@ -1,6 +1,6 @@
 // Owns a student's writes on their decks: create, rename, delete, the share
-// link, copying a deck into their account, and asking for (or withdrawing)
-// a place in the public library.
+// link, copying a deck into their account, following a library deck, and
+// asking for (or withdrawing) a place in the public library.
 //
 // Scoped to the signed-in student; the client never sends a user id, and every
 // write names the owner in its WHERE clause.
@@ -12,7 +12,10 @@ import { NextResponse } from "next/server";
 
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
-import { copyDeck, deleteDeck, LimitReached, lockUser, newShareToken, ownDeck, readJson } from "@/lib/decks";
+import { deleteDeck, LimitReached, lockUser, newShareToken, ownDeck, readJson } from "@/lib/decks";
+import { copyDeck } from "@/lib/deckCopy";
+import { followDeck, unfollowDeck } from "@/lib/deckFollow";
+import { LICENCES } from "@/lib/libraryTerms";
 import { instituteDeckScope } from "@/lib/institutes";
 import { publishDeck, sendBackIfPublished, unpublishDeck } from "@/lib/deckReview";
 import { DECK_LIMITS, deckActionSchema } from "@/lib/deckSchemas";
@@ -69,6 +72,10 @@ export async function POST(req: Request) {
       return done(await publishDeck(userId, a.id, a.consent));
     case "unpublish":
       return done(await unpublishDeck(userId, a.id));
+    case "follow":
+      return done(await followDeck(userId, a.deckId));
+    case "unfollow":
+      return done(await unfollowDeck(userId, a.deckId));
   }
 
   const deck = await ownDeck(userId, a.id);
@@ -87,6 +94,9 @@ export async function POST(req: Request) {
 
   // share: turning it off clears the token, which revokes every copy of the
   // link; turning it on again issues a fresh one rather than reviving the old.
+  // A share link opens signed out, so it would put EduSarthi's own material in
+  // front of anyone holding it.
+  if (a.on && deck.sourceLicence === LICENCES.EDUSARTHI.id) return fail("This deck is a copy of an EduSarthi deck. You can keep studying it, but it cannot be shared by link.", 400);
   if (a.on && deck.visibility === "INSTITUTE") return fail("This deck is shared inside your institute only. Stop sharing it with the institute first if you want a link.", 400);
   if (a.on && deck.status === "REJECTED") return fail("An admin did not approve this deck, so it cannot be shared by link. Fix what the reviewer's note says and submit it again.", 400);
   if (a.on && deck.shareToken) return NextResponse.json({ ok: true, token: deck.shareToken });

@@ -20,7 +20,7 @@ import { AiBadge } from "@/components/decks/AiBadge";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { ensureActiveUser } from "@/lib/activeUser";
-import { CREDIT_SELECT, LIBRARY_RULES, creditName, licenceInfo } from "@/lib/libraryTerms";
+import { CREDIT_SELECT, LIBRARY_RULES, SOURCE_SELECT, copiedFrom, creditName, licenceInfo } from "@/lib/libraryTerms";
 
 export const revalidate = 0;
 
@@ -33,7 +33,7 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
     where: { id },
     select: {
       title: true, description: true, tags: true, visibility: true, status: true, rejectReason: true,
-      licence: true, termsVersion: true, termsAcceptedAt: true,
+      licence: true, termsVersion: true, termsAcceptedAt: true, sourceDeckId: true, ...SOURCE_SELECT,
       owner: { select: { publicId: true, ...CREDIT_SELECT } },
       cards: { orderBy: { serial: "asc" }, select: CARD_SELECT },
       reports: { where: { resolvedAt: null }, orderBy: { createdAt: "asc" }, select: { id: true, reason: true, note: true } },
@@ -47,6 +47,12 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
   const pending = deck.visibility === "PUBLIC" && deck.status === "PENDING_REVIEW";
   const published = deck.visibility === "PUBLIC" && deck.status === "APPROVED";
   const credit = creditName(deck.owner);
+  // A copy's worth is in what it adds: count its cards that are not word for
+  // word the original's. Compared on the stored card, so a reworded back counts.
+  const copy = copiedFrom(deck);
+  const original = deck.sourceDeckId ? await prisma.word.findMany({ where: { deckId: deck.sourceDeckId }, select: { text: true, details: true } }) : null;
+  const same = new Set((original ?? []).map((w) => JSON.stringify([w.text, w.details])));
+  const changed = original ? deck.cards.filter((c) => !same.has(JSON.stringify([c.text, c.details]))).length : null;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
@@ -70,6 +76,20 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
           {published ? "Published" : pending ? "Waiting for review" : deck.status === "REJECTED" ? "Rejected" : "Not submitted"}
         </Badge>
       </div>
+
+      {copy ? (
+        <Card className="mt-5">
+          <h2 className="font-display text-base font-bold text-ink">This deck is a copy</h2>
+          <p className="mt-1 text-sm text-ink">
+            Copied from {copy.href ? <Link href={copy.href} className="text-accent underline">{copy.line}</Link> : copy.line}.
+          </p>
+          <p className="mt-1 text-sm text-ink-muted">
+            {changed === null
+              ? "The original has been deleted, so the cards cannot be compared."
+              : `${changed} of ${cards.length} cards are new or changed compared with the original. Approve a copy only if it adds something and keeps the credit.`}
+          </p>
+        </Card>
+      ) : null}
 
       {deck.reports.length ? (
         <Card className="mt-5">

@@ -80,6 +80,38 @@ export function creditName(owner: CreditOwner): string | null {
   }
 }
 
+/// What a query selects to say where a copy came from.
+export const SOURCE_SELECT = {
+  sourceCredit: true,
+  source: { select: { id: true, title: true, sourceCredit: true, visibility: true, status: true, owner: { select: CREDIT_SELECT } } },
+} as const;
+
+type SourceRow = {
+  sourceCredit: string | null;
+  source: { id: string; title: string; sourceCredit: string | null; visibility: string; status: string; owner: CreditOwner } | null;
+};
+
+/// The "Copied from …" line, and a link while the original is in the library.
+/// While the original exists the line is built fresh, so a name its creator
+/// changed (or an admin cleared) is not frozen into every copy; once it is
+/// deleted, the saved line keeps the credit CC BY-SA requires.
+export function copiedFrom(d: SourceRow): { line: string; href: string | null } | null {
+  if (d.source) {
+    const s = d.source;
+    return {
+      line: sourceLine(s.title, creditName(s.owner), s.sourceCredit),
+      href: s.visibility === "PUBLIC" && s.status === "APPROVED" ? `/library/${s.id}` : null,
+    };
+  }
+  return d.sourceCredit ? { line: d.sourceCredit, href: null } : null;
+}
+
+/// "Deck B by Ravi, from Deck A by Asha": a copy of a copy keeps crediting
+/// the first creator too. Capped so a long chain cannot grow without end.
+export function sourceLine(title: string, name: string | null, earlier: string | null): string {
+  return [`${title}${name ? ` by ${name}` : ""}`, earlier ? `from ${earlier}` : null].filter(Boolean).join(", ").slice(0, 300);
+}
+
 /// What the creator sees in the form before they submit, so the choice is
 /// made with the real result in front of them.
 export function creditPreview(style: CreditStyle, name: string | null, publicName: string, role: Role): string {

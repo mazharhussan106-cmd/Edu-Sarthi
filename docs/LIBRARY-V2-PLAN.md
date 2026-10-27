@@ -121,6 +121,33 @@ Before more decks go public, every public deck needs the creator's consent on re
 
 ### Phase 2 — "Copied from" and Follow
 
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test, like Phase 1.** Type check and production build pass.
+
+A local browser test passed 12 of 12 checks:
+- following opens the study page on the original's cards, and Known is saved as the learner's own progress;
+- the deck appears under My decks → Following;
+- the author's fix reaches the follower once approved (blocked while in review);
+- "Make my own copy" records "Copied from <title> by <name>", with a link;
+- the admin sees "This deck is a copy" with "0 of 3 cards changed";
+- a copy of an EduSarthi deck is refused for both publishing and a share link;
+- a non-follower cannot mark the deck's cards;
+- unfollow works;
+- followers lose a withdrawn deck;
+- the 50-follow limit holds.
+
+The Phase 1 test still passes 15 of 15, and institute and share-link copies still work and record their source.
+
+Owner's answers ("yes" to the recommendations):
+- copies of EduSarthi decks can't be published or link-shared;
+- the follow limit is 50, separate from the 20-deck limit;
+- copying moved to `lib/deckCopy.ts`, which brought `lib/decks.ts` from 290 to about 233 lines.
+
+Built as: `lib/deckFollow.ts`, `lib/deckCopy.ts`, `components/decks/FollowButton.tsx`, `/library/[id]/study`, a Following section in My decks, "Follow and study" on Explore and the library deck page, and the "Copied from" line on the library, deck editor and share pages. Beyond the list: `components/decks/CopyDeckButton.tsx` got an outline style for "Make my own copy".
+
+Known until Phase 3: editing a published deck still sends it back to review, so followers see "not available right now" until the admin approves again. Their progress is kept. Copies made before Phase 2 have no link to their original.
+
+**After merging:** run Actions → Database setup (new columns and the DeckFollow table only).
+
 - `Deck.sourceDeckId` (nullable; cleared if the original is deleted) and `Deck.sourceCredit`, a saved line with the original's title and creator name, so the credit survives.
 - The copy and its library page show "Copied from <title> by <name>". When a copy is submitted, the admin sees the original next to it and how many cards changed.
 - **Follow:** a new `DeckFollow` table. In the library and on Explore:

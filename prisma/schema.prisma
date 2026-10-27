@@ -122,6 +122,7 @@ model User {
   words               Word[]               @relation("WordOwner")
   deckReports         DeckReport[]
   deckLikes           DeckLike[]
+  deckFollows         DeckFollow[]
   instituteMembership InstituteMember?
   institutesApplied   Institute[]          @relation("InstituteApplicant")
   assignedSubmissions Submission[]         @relation("AssignedSubmissions")
@@ -611,6 +612,15 @@ model Deck {
   /// Which version of the library terms they ticked, and when.
   termsVersion String?
   termsAcceptedAt DateTime?
+  /// The deck this one was copied from. SetNull: deleting the original must
+  /// not delete copies; sourceCredit keeps the credit line instead.
+  sourceDeckId  String?
+  /// "Title by Name" of the original when it was copied. CC BY-SA requires
+  /// credit to survive, even after the original is gone.
+  sourceCredit  String?
+  /// The original's licence when copied. A copy of an EduSarthi deck may be
+  /// studied, but not published or shared by link (owner's decision).
+  sourceLicence String?
 
   // Cascade: deleting an account removes its decks. Cards made by that user
   // inside them go with the deck.
@@ -620,6 +630,9 @@ model Deck {
   cards    Word[]
   reports  DeckReport[]
   likes    DeckLike[]
+  follows  DeckFollow[]
+  source   Deck?        @relation("DeckSource", fields: [sourceDeckId], references: [id], onDelete: SetNull)
+  copies   Deck[]       @relation("DeckSource")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -627,6 +640,7 @@ model Deck {
   @@index([ownerId, createdAt])
   @@index([visibility, status]) // the library and the review queue read on this
   @@index([instituteId, visibility])
+  @@index([sourceDeckId]) // deleting an original sets its copies' link to null
 }
 
 enum ReportReason {
@@ -664,6 +678,23 @@ model DeckReport {
 
 /// One like per person per deck. Likes only matter on published decks, but the
 /// row is kept if a deck is pulled and later republished.
+/// A learner following a library deck: they study the original with their
+/// own progress (CardState) and get the author's fixes, instead of copying it.
+/// Removed when the author withdraws the deck or an admin takes it down.
+model DeckFollow {
+  id     String @id @default(cuid())
+  userId String
+  deckId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, deckId])
+  @@index([deckId])
+}
+
 model DeckLike {
   id     String @id @default(cuid())
   deckId String

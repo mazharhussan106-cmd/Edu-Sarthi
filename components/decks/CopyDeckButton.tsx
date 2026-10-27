@@ -22,6 +22,7 @@ export function CopyDeckButton({
   label = "Copy to my decks",
   then = "deck",
   size,
+  variant,
 }: {
   token?: string;
   deckId?: string;
@@ -31,6 +32,8 @@ export function CopyDeckButton({
   /** Where to go after the copy: the deck page, or straight into studying it. */
   then?: "deck" | "study";
   size?: "sm" | "md";
+  /** Outline where copying is the second choice after following. */
+  variant?: "outline";
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -57,7 +60,7 @@ export function CopyDeckButton({
 
   return (
     <div>
-      <Button size={size} disabled={busy} onClick={copy}>{busy ? "Importing…" : label}</Button>
+      <Button size={size} variant={variant} disabled={busy} onClick={copy}>{busy ? "Importing…" : label}</Button>
       {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
     </div>
   );

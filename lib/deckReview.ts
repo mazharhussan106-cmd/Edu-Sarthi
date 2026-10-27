@@ -16,7 +16,7 @@ import { prisma } from "@/lib/prisma";
 import { logAdmin } from "@/lib/admin";
 import { sendDeckDecision } from "@/lib/email";
 import { DECK_LIMITS, type PublishConsent } from "@/lib/deckSchemas";
-import { LIBRARY_TERMS_VERSION, licenceFor } from "@/lib/libraryTerms";
+import { LIBRARY_TERMS_VERSION, LICENCES, licenceFor } from "@/lib/libraryTerms";
 
 type Result = { ok: true } | { error: string };
 
@@ -27,11 +27,16 @@ export async function publishDeck(userId: string, id: string, consent: PublishCo
       status: true,
       visibility: true,
       description: true,
+      sourceLicence: true,
       owner: { select: { role: true, teacherVerifiedAt: true, name: true, adultConfirmedAt: true } },
       _count: { select: { cards: true } },
     },
   });
   if (!deck) return { error: "That deck no longer exists." };
+  // Republishing it would hand EduSarthi's own material out under CC BY-SA.
+  if (deck.sourceLicence === LICENCES.EDUSARTHI.id) {
+    return { error: "This deck is a copy of an EduSarthi deck. You can keep studying it, but it cannot be published to the library." };
+  }
   // Owner's decision: under-18s may not publish. Asked once per account; the
   // form keeps sending it, but only the first "yes" is recorded.
   if (!deck.owner.adultConfirmedAt && !consent.adult) {
@@ -90,6 +95,9 @@ export async function unpublishDeck(userId: string, id: string): Promise<Result>
     where: { id, ownerId: userId },
     data: { visibility: deck.shareToken ? "LINK" : "PRIVATE", status: "DRAFT", rejectReason: null },
   });
+  // Owner's decision: followers lose a deck its author withdraws. Their card
+  // progress stays, in case it is published again and they follow it again.
+  await prisma.deckFollow.deleteMany({ where: { deckId: id } });
   return { ok: true };
 }
 
@@ -161,6 +169,7 @@ export async function resolveReports(adminId: string, deckId: string, outcome: "
   await prisma.deckReport.updateMany({ where: { deckId, resolvedAt: null }, data: { resolvedAt: now, resolvedById: adminId } });
   if (outcome === "takedown") {
     await prisma.deck.update({ where: { id: deckId }, data: { visibility: "PRIVATE", shareToken: null, status: "REJECTED", rejectReason: reason, reviewedById: adminId, reviewedAt: now } });
+    await prisma.deckFollow.deleteMany({ where: { deckId } });
   } else if (deck.status === "PENDING_REVIEW") {
     // Auto-hidden by reports and found fine: back into the library.
     await prisma.deck.updateMany({ where: { id: deckId, visibility: "PUBLIC", status: "PENDING_REVIEW" }, data: { status: "APPROVED", reviewedById: adminId, reviewedAt: now } });

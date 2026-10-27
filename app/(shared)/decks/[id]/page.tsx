@@ -22,6 +22,8 @@ import { DeckActions } from "@/components/decks/DeckActions";
 import { DeckForm } from "@/components/decks/DeckForm";
 import { activeMembership } from "@/lib/institutes";
 import { PublishPanel } from "@/components/decks/PublishPanel";
+import { DeckCredit } from "@/components/decks/DeckCredit";
+import { LICENCES, SOURCE_SELECT, copiedFrom } from "@/lib/libraryTerms";
 
 export const revalidate = 0;
 
@@ -31,7 +33,7 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
 
   const deck = await prisma.deck.findFirst({
     where: { id, ownerId: userId },
-    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true } } },
+    select: { id: true, title: true, description: true, tags: true, shareToken: true, visibility: true, status: true, rejectReason: true, sourceLicence: true, ...SOURCE_SELECT, cards: { orderBy: { serial: "asc" }, select: { ...CARD_SELECT, category: true } } },
   });
   if (!deck) notFound();
 
@@ -70,6 +72,8 @@ export default async function DeckPage({ params }: { params: Promise<{ id: strin
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
       <Link href="/decks" className="text-sm font-medium text-accent hover:underline">← My decks</Link>
       <h1 className="mt-2 font-display text-xl font-bold text-ink">{deck.title}</h1>
+      <DeckCredit source={copiedFrom(deck)} linked className="mt-0.5" />
+      {deck.sourceLicence === LICENCES.EDUSARTHI.id ? <p className="mt-1 text-xs text-ink-muted">A copy of an EduSarthi deck: yours to study and change, but it cannot be published to the library or shared by link.</p> : null}
 
       <Card className="mt-3 flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-ink-muted">

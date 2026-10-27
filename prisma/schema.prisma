@@ -126,6 +126,7 @@ model User {
   deckChanges         DeckChange[]
   deckMemberships     DeckMember[]         @relation("DeckMemberUser")
   deckInvitesSent     DeckMember[]         @relation("DeckMemberInviter")
+  announcementDeliveries AnnouncementDelivery[]
   instituteMembership InstituteMember?
   institutesApplied   Institute[]          @relation("InstituteApplicant")
   assignedSubmissions Submission[]         @relation("AssignedSubmissions")
@@ -833,6 +834,14 @@ model Institute {
   applicantId  String?
   reviewedById String?
   reviewedAt   DateTime?
+  /// The approved logo shown beside the institute's name on decks it
+  /// publishes. Only the site admin moves a file here, from pendingLogoKey.
+  logoKey        String?
+  /// Uploaded by the institute's admin and waiting for the site admin; never
+  /// shown on a public page until approved.
+  pendingLogoKey String?
+  /// Why the site admin refused the last logo, shown to the institute's admin.
+  logoNote       String?
 
   // Restrict: an account that applied cannot be deleted out from under its
   // institute without an admin deciding what happens to it.
@@ -860,4 +869,44 @@ model InstituteMember {
   createdAt DateTime @default(now())
 
   @@index([instituteId, role])
+}
+
+/// An email to every account holder with a verified address — for changes the
+/// Terms and Privacy pages promise to email about (owner's decision). Written
+/// by an admin; the daily cron sends it in batches (lib/announcements).
+model Announcement {
+  id          String    @id @default(cuid())
+  subject     String
+  body        String    @db.Text
+  /// The short line posted on students' dashboards when sending starts.
+  notice      String
+  createdById String?
+  createdAt   DateTime  @default(now())
+  /// Set when an admin starts sending; a draft until then. Only accounts
+  /// created before this moment receive it.
+  startedAt   DateTime?
+  /// Set when everyone has been tried, or an admin stopped it.
+  finishedAt  DateTime?
+
+  deliveries AnnouncementDelivery[]
+
+  @@index([startedAt, finishedAt])
+}
+
+/// One person's copy of an announcement. Written before the email is sent, so
+/// two overlapping runs can never mail the same person twice.
+model AnnouncementDelivery {
+  id             String    @id @default(cuid())
+  announcementId String
+  userId         String
+  sentAt         DateTime?
+  failed         Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId])
+  @@index([createdAt])
+  @@index([userId])
 }

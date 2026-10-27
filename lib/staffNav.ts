@@ -21,6 +21,7 @@ export const ADMIN_LINKS: readonly NavLink[] = [
   { href: "/admin/decks", label: "Decks" },
   { href: "/admin/institutes", label: "Institutes" },
   { href: "/admin/notices", label: "Notices" },
+  { href: "/admin/announcements", label: "Announcements" },
   { href: "/admin/import", label: "Import" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/compliance", label: "Compliance" },

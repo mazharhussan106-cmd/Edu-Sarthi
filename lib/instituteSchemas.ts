@@ -1,10 +1,21 @@
 // Owns the shape of every institute request: applying, joining, managing
-// members. Shared by the forms (instant feedback) and the API (enforcement).
+// members, the logo, and the site admin's decisions. Shared by the forms
+// (instant feedback) and the API (enforcement).
 //
 // It deliberately holds no database code and no rules about who may do what —
 // lib/institutes decides that.
 
 import { z } from "zod";
+
+/// The logo is small on every deck it marks, so 1 MB is plenty; the three
+/// types are the pictures every phone and browser can show.
+export const LOGO_LIMITS = { bytes: 1024 * 1024, types: ["image/png", "image/jpeg", "image/webp"] } as const;
+
+export const logoFileSchema = z.object({
+  filename: z.string().min(1).max(255),
+  contentType: z.enum(LOGO_LIMITS.types, "Use a PNG, JPG or WebP picture for the logo."),
+  sizeBytes: z.number().int().positive("That file appears to be empty. Pick the logo file again.").max(LOGO_LIMITS.bytes, "The logo must be 1 MB or smaller. Shrink it first, then try again."),
+});
 
 export const applySchema = z.object({
   name: z.string().trim().min(3, "Enter the institute’s name (at least 3 characters)").max(100, "Keep the name under 100 characters"),
@@ -21,6 +32,10 @@ export const instituteActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("newCode") }),
   z.object({ action: z.literal("shareDeck"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("unshareDeck"), deckId: z.string().min(1) }),
+  z.object({ action: z.literal("removeName"), deckId: z.string().min(1) }),
+  z.object({ action: z.literal("logoUpload"), ...logoFileSchema.shape }),
+  z.object({ action: z.literal("setLogo"), key: z.string().min(1).max(200) }),
+  z.object({ action: z.literal("removeLogo") }),
 ]);
 
 export const adminInstituteSchema = z.discriminatedUnion("action", [
@@ -28,4 +43,6 @@ export const adminInstituteSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("reject"), id: z.string().min(1), reason: z.string().trim().min(3, "Write a short reason the applicant can act on").max(500) }),
   z.object({ action: z.literal("suspend"), id: z.string().min(1), reason: z.string().trim().min(3, "Write a short reason").max(500) }),
   z.object({ action: z.literal("reinstate"), id: z.string().min(1) }),
+  z.object({ action: z.literal("approveLogo"), id: z.string().min(1) }),
+  z.object({ action: z.literal("rejectLogo"), id: z.string().min(1), reason: z.string().trim().min(3, "Write a short reason the institute can act on").max(300) }),
 ]);

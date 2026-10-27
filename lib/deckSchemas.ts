@@ -68,13 +68,20 @@ export const publicNameSchema = z
 
 /// The submit form. The three ticks are required every time a deck is
 /// submitted; `adult` only matters until the account has confirmed it once.
-export const publishConsentSchema = z.object({
-  adult: z.boolean(),
-  ownWork: z.literal(true, "Tick that you made this deck or have the right to share it."),
-  licence: z.literal(true, "Tick that you agree to the licence the deck is published under."),
-  paidUse: z.literal(true, "Tick that EduSarthi may use the deck in paid features."),
-  name: publicNameSchema,
-});
+/// `asInstitute` publishes under the institute's name and logo, and then
+/// needs the fourth tick, `behalf`; who may choose it is checked in
+/// lib/deckReview.
+export const publishConsentSchema = z
+  .object({
+    adult: z.boolean(),
+    ownWork: z.literal(true, "Tick that you made this deck or have the right to share it."),
+    licence: z.literal(true, "Tick that you agree to the licence the deck is published under."),
+    paidUse: z.literal(true, "Tick that EduSarthi may use the deck in paid features."),
+    name: publicNameSchema,
+    asInstitute: z.boolean().default(false),
+    behalf: z.boolean().default(false),
+  })
+  .refine((v) => !v.asInstitute || v.behalf, { path: ["behalf"], message: "Tick that you may publish this deck on behalf of your institute, or choose to publish it as yourself." });
 
 export type PublishConsent = z.infer<typeof publishConsentSchema>;
 

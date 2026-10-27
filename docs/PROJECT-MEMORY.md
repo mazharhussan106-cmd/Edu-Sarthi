@@ -56,28 +56,48 @@ An English spoken-communication training platform: students record or upload, te
    - The full round (student deck, teacher deck with recording and audit, institute, report, Explore) passed on a local copy.
    - The owner's phone checklist is `docs/PHASE0-LIVE-TEST.md`. **Next: the owner runs it on the live site**, then Phase 1.
    - The test raised two questions. The owner answered both: learners keep seeing the Teacher's guide, and card recordings keep the 15-second minimum.
-4d. **Library v2 Phase 1 built (27 Oct, same branch, NOT merged; it waits for the Phase 0 live test).**
+4d. **Library v2 Phase 1 built and merged (27 Oct, PR #18).**
    - What it does: submitting a deck now opens a form with a one-time "I am 18 or older" tick, how the creator's name shows (full name, first name, display name or no name), and three required ticks (own work, CC BY-SA 4.0, EduSarthi may use it in paid features).
    - What is saved: on the account, `adultConfirmedAt`, `creditStyle` and `publicName`; on the deck, `licence`, `termsVersion` and `termsAcceptedAt`.
    - Where it shows: "by <name> · licence" in the library, on Explore and on public share pages. Settings → "How your name shows on public decks". Admin review gets a checklist built from the same rules list (`LIBRARY_RULES` in `lib/libraryTerms.ts`), and Admin → Users can clear a bad display name. New pages: `/legal/library-rules` and the Terms section "Decks you publish to the library".
    - Decks approved before the terms show no licence, and no name until their owner chooses one (a name choice applies to all of a person's public decks).
    - Full details, provisional defaults and the steps after merging: `docs/LIBRARY-V2-PLAN.md` → Phase 1.
-4e. **Library v2 Phase 2 built (27 Oct, same branch, NOT merged).**
+4e. **Library v2 Phase 2 built and merged (27 Oct, PR #18).**
    - **Follow and study:** `DeckFollow` table, `lib/deckFollow.ts`, `/library/[id]/study`. Learners study the original deck with their own `CardState`, up to 50 follows. Answers go through `/api/flashcards`, and `canStudyWord` allows a followed deck only while it is listed.
    - **Copied from:** `Deck.sourceDeckId`, `sourceCredit` and `sourceLicence`; copying lives in `lib/deckCopy.ts`. The line is built fresh while the original exists and falls back to the saved credit once it is deleted (`copiedFrom` in `lib/libraryTerms.ts`).
    - **Rules:** a copy of an EduSarthi deck can't be published or link-shared. Withdrawing or taking down a deck deletes its follows. Admin review of a copy shows how many cards changed.
    - The old gap (an edit hid the deck from followers until it was re-approved) is closed by Phase 3 (4f).
-4f. **Library v2 Phase 3 built (27 Oct, same branch, NOT merged). Design: `docs/PHASE3-DESIGN.md`.**
+4f. **Library v2 Phase 3 built and merged (27 Oct, PR #18). Design: `docs/PHASE3-DESIGN.md`.**
    - **Small fixes:** on a published deck, Edit is a small fix (`lib/smallFix.ts`): text only, at most 30 characters per field (edit distance), each card once per IST day, at most 10 cards a day. A fix goes live at once and is logged in `DeckChange`; the admin uses **Admin → Decks → Fixes to check** to Accept or Undo, and Undo emails the creator and shows a note on their deck.
    - **New versions:** bigger edits go in a new version (`lib/deckVersion.ts`), a working copy with `Deck.draftOfId`, whose cards carry `Word.liveWordId`. It shares files with the live deck (`unusedKeys` guards deletion). Approving merges it onto the same live cards, so followers keep their progress; removed cards lose it. Small fixes pause while a version exists.
    - `sendBackIfPublished` is retired.
    - **Don't undo:** "one version per deck" is enforced in code, not by a unique constraint, because the constraint would trip Database setup's data-loss check.
-4g. **Library v2 Phase 4 built (27 Oct, same branch, NOT merged): share a deck with named people, to view or edit.**
+4g. **Library v2 Phase 4 built and merged (27 Oct, PR #18): share a deck with named people, to view or edit.**
    - **Data:** the `DeckMember` table (invite by email, works before the person has an account, never reveals whether one exists) and `Word.updatedAt` (the "someone changed this card" check).
    - **Access** lives in `lib/deckAccess.ts`, the member actions in `lib/deckMembers.ts`. Screens: People on the deck (owner), Invitations at the top of My decks, Shared with me, and `/decks/[id]/shared` for viewers.
    - **Don't undo:** cards an editor adds belong to the deck's owner.
    - **Rules:** an editor of a public deck must accept the library terms (18+), and the owner can't submit until every editor has. Limits: 10 people per deck, 20 invites a day (each sends an email). New versions stay owner-only to start and submit.
    - Details: `docs/LIBRARY-V2-PLAN.md` → Phase 4.
+4h. **Phases 1–4 merged into `main` (27 Oct, PR #18).** Actions → Database setup ran straight after (run #8: "in sync", no data-loss warning, no card changed).
+   Still to do, in this order:
+   1. ~~Actions → **Load flashcard decks**~~ — done 27 Oct (run 4: 21 decks, licence set, no card changed).
+   2. Check that `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL` are set in Vercel (invite and fix-undone emails).
+   3. The owner's phone test, `docs/PHASE0-LIVE-TEST.md`. Its "Before you start" step 1 is now done; the submit step has the new consent form.
+   4. ~~Phase 5~~ — built, see 4i.
+   5. ~~Phase 6~~ — built, see 4j; a lawyer still has to review.
+4i. **Library v2 Phase 5 built (27 Oct) on `claude/sweet-davinci-d313f6`, NOT merged yet: institutes publish to the library under their name and logo.** Decisions 18–21 in `docs/LIBRARY-V2-PLAN.md`.
+   - **Who and how:** the institute's admin and teachers choose "Publish as <Institute>" in the submit form and tick "I may publish this on behalf of <Institute>". A deck shared inside the institute can be submitted, but only as the institute. Licence: always CC BY-SA.
+   - **Data:** a deck published as an institute is a `PUBLIC` deck with `instituteId` set. New columns `Institute.logoKey`, `pendingLogoKey`, `logoNote` (additive). **After merging, run Actions → Database setup.**
+   - **Logo:** PNG/JPG/WebP up to 1 MB, uploaded on the Institute page (`lib/instituteLogo.ts`, `components/institute/LogoForm.tsx`), approved or refused under Admin → Institutes → Logos to check. Nothing shows until approved.
+   - **Credit:** "[logo] by <Institute> (<person>)" through `components/decks/DeckCredit.tsx` (now an async server component, so never import it into a client component).
+   - **Don't undo:** `LISTED` (`lib/decks.ts`) also hides decks of a suspended institute; library pages and the copy route now use `LISTED` instead of repeating the check. `drop()` in `lib/institutes.ts` keeps a leaving teacher's institute-published decks public under their own name. Withdraw and takedown clear `instituteId`.
+   - The institute's admin can take the institute's name off any deck (Institute page → Published by the institute).
+   - Decisions 22–23 (built): leaving a *suspended* institute sends the person's approved institute decks back to review; the owner is emailed when the institute's admin removes the institute's name.
+   - `lib/decks.ts` is now 260 lines (was already over 250); split it when it is next changed.
+4j. **Library v2 Phase 6 built (27 Oct) on the same branch, in PR #19, NOT merged yet.** Decisions 24–28.
+   - **Legal:** no lawyer yet. `docs/LEGAL-REVIEW-PACK.md` is the assistant's review and the lawyer's reading list. The Privacy and Terms pages were corrected to match Phases 1–5. **Open and important:** parental consent for under-18s (DPDP Act) and naming the legal operator — both need the owner and a lawyer.
+   - **Announcements:** Admin → Announcements emails every account holder with a verified email, at most 80 a day from the daily reminders cron, and posts a dashboard notice for 30 days. Tables `Announcement`, `AnnouncementDelivery`. The approved Terms-update email is pre-filled.
+   - **After merging:** Database setup; check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send yourself a test, then Start (type SEND).
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

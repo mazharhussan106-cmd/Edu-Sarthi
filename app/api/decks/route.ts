@@ -13,7 +13,7 @@ import { NextResponse } from "next/server";
 
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
-import { deleteDeck, LimitReached, lockUser, newShareToken, ownDeck, readJson } from "@/lib/decks";
+import { deleteDeck, LISTED, LimitReached, lockUser, newShareToken, ownDeck, readJson } from "@/lib/decks";
 import { copyDeck } from "@/lib/deckCopy";
 import { followDeck, unfollowDeck } from "@/lib/deckFollow";
 import { LICENCES } from "@/lib/libraryTerms";
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
     case "copyPublic": {
       // A link copies whatever the link points at; the library copies only
       // decks an admin has approved.
-      const where = a.action === "copy" ? { shareToken: a.token } : { id: a.deckId, visibility: "PUBLIC" as const, status: "APPROVED" as const };
+      const where = a.action === "copy" ? { shareToken: a.token } : { id: a.deckId, ...LISTED };
       const res = await copyDeck(userId, where);
       return "error" in res ? fail(res.error, 400) : NextResponse.json({ ok: true, id: res.id });
     }

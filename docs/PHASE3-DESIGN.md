@@ -1,6 +1,6 @@
 # Phase 3 design — small fixes live, big edits as a reviewed version
 
-Status: **APPROVED by the owner and BUILT (27 Oct 2026)** on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test. Part of `docs/LIBRARY-V2-PLAN.md`.
+Status: **APPROVED by the owner and BUILT (27 Oct 2026)** on branch `claude/sweet-davinci-d313f6`. Merged into `main` on 27 Oct 2026 (PR #18). Part of `docs/LIBRARY-V2-PLAN.md`.
 
 The owner answered "yes" to all three questions: small fixes pause during a new version; an undone fix is emailed to the creator and noted on their deck page; the working-copy approach and file list are approved.
 

@@ -1,8 +1,8 @@
 // Owns one library deck: its cards, "Copy to my decks", like, and the report
 // button.
 //
-// Only an APPROVED public deck resolves; any other id is a 404, whatever state
-// it is really in. Studying happens by following (./study, the original with
+// Only a listed deck resolves (lib/decks LISTED); any other id is a 404,
+// whatever state it is really in. Studying happens by following (./study, the original with
 // the learner's own progress) or on a copy; this page never changes the deck.
 //
 // Cost on a slow phone: the deck's cards are first read as id, title and topic
@@ -15,14 +15,14 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { AI_CARD_FILTER, CARD_SELECT, faceCard } from "@/lib/decks";
+import { AI_CARD_FILTER, CARD_SELECT, LISTED, faceCard } from "@/lib/decks";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { CopyDeckButton } from "@/components/decks/CopyDeckButton";
 import { DeckCredit } from "@/components/decks/DeckCredit";
-import { CREDIT_SELECT, SOURCE_SELECT, copiedFrom } from "@/lib/libraryTerms";
+import { CREDIT_INSTITUTE_SELECT, CREDIT_SELECT, SOURCE_SELECT, copiedFrom } from "@/lib/libraryTerms";
 import { isFollowing } from "@/lib/deckFollow";
 import { FollowButton } from "@/components/decks/FollowButton";
 import { LikeButton } from "@/components/decks/LikeButton";
@@ -35,8 +35,8 @@ const PAGE = 25;
 export default async function LibraryDeckPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ page?: string }> }) {
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const deck = await prisma.deck.findFirst({
-    where: { id, visibility: "PUBLIC", status: "APPROVED" },
-    select: { title: true, description: true, tags: true, ownerId: true, licence: true, ...SOURCE_SELECT, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, members: { where: { role: "EDIT", acceptedAt: { not: null }, termsAcceptedAt: { not: null } }, select: { user: { select: CREDIT_SELECT } } }, _count: { select: { likes: true } } },
+    where: { id, ...LISTED },
+    select: { title: true, description: true, tags: true, ownerId: true, licence: true, ...SOURCE_SELECT, ...CREDIT_INSTITUTE_SELECT, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, members: { where: { role: "EDIT", acceptedAt: { not: null }, termsAcceptedAt: { not: null } }, select: { user: { select: CREDIT_SELECT } } }, _count: { select: { likes: true } } },
   });
   if (!deck) notFound();
 
@@ -65,7 +65,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
       <Link href="/library" className="text-sm font-medium text-accent hover:underline">← Library</Link>
       <h1 className="mt-2 font-display text-2xl font-bold text-ink">{deck.title}</h1>
       {deck.description ? <p className="mt-1 text-sm text-ink-muted">{deck.description}</p> : null}
-      <DeckCredit owner={deck.owner} contributors={deck.members.flatMap((m) => (m.user ? [m.user] : []))} licence={deck.licence} source={copiedFrom(deck)} linked className="mt-1" />
+      <DeckCredit owner={deck.owner} institute={deck.institute} contributors={deck.members.flatMap((m) => (m.user ? [m.user] : []))} licence={deck.licence} source={copiedFrom(deck)} linked className="mt-1" />
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-xs text-ink-muted">{index.length} cards</span>
         {deck.owner.role === "TEACHER" && deck.owner.teacherVerifiedAt ? <Badge variant="success">Verified teacher</Badge> : null}

@@ -1,17 +1,23 @@
 // Owns the credit lines under a deck: "by Asha K. with Ravi S. · CC BY-SA
-// 4.0", and for a copy "Copied from <title> by <name>". Each name follows
-// that person's own choice (lib/libraryTerms).
+// 4.0", for an institute's deck "[logo] by Sunrise Academy (Asha K.)", and for
+// a copy "Copied from <title> by <name>". Each name follows that person's own
+// choice (lib/libraryTerms).
 //
-// It deliberately shows no name or licence for a deck approved before the
-// library terms: nothing the owner never chose or agreed to.
+// A server component: the institute's approved logo is turned into a signed
+// URL here, once per logo per page (lib/instituteLogo). It deliberately shows
+// no name or licence for a deck approved before the library terms: nothing the
+// owner never chose or agreed to.
 
 import Link from "next/link";
 
-import { creditName, licenceInfo, type CreditOwner } from "@/lib/libraryTerms";
+import { creditName, licenceInfo, personCredit, type CreditInstitute, type CreditOwner } from "@/lib/libraryTerms";
+import { logoUrl } from "@/lib/instituteLogo";
 import { cn } from "@/lib/utils";
 
 type Props = {
   owner?: CreditOwner;
+  /// The institute the deck was published as; pass it only for a public deck.
+  institute?: CreditInstitute | null;
   /// Editors it is shared with, credited by their own name choice; those who
   /// never chose one are left out rather than named without asking.
   contributors?: CreditOwner[];
@@ -23,18 +29,23 @@ type Props = {
   className?: string;
 };
 
-export function DeckCredit({ owner, contributors = [], licence = null, source, linked = false, className }: Props) {
-  const name = owner ? creditName(owner) : null;
+export async function DeckCredit({ owner, institute = null, contributors = [], licence = null, source, linked = false, className }: Props) {
+  const name = owner ? personCredit(owner, institute) : null;
   const helpers = contributors.map(creditName).filter((n): n is string => Boolean(n));
   const lic = licenceInfo(licence);
-  if (!name && !lic && !source) return null;
+  const logo = institute?.logoKey ? await logoUrl(institute.logoKey) : null;
+  const by = institute || name;
+  if (!by && !lic && !source) return null;
   return (
     <>
-      {name || lic ? (
+      {by || lic ? (
         <span className={cn("block text-xs text-ink-muted", className)}>
-          {name ? <>by <b className="font-medium text-ink">{name}</b></> : null}
-          {name && helpers.length ? <> with <b className="font-medium text-ink">{helpers.join(", ")}</b></> : null}
-          {name && lic ? " · " : null}
+          {/* Decorative: the institute's name follows in text. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {logo ? <img src={logo} alt="" width={16} height={16} className="mr-1 inline-block size-4 rounded-sm object-contain align-[-3px]" /> : null}
+          {institute ? <>by <b className="font-medium text-ink">{institute.name}</b>{name ? ` (${name})` : null}</> : name ? <>by <b className="font-medium text-ink">{name}</b></> : null}
+          {by && helpers.length ? <> with <b className="font-medium text-ink">{helpers.join(", ")}</b></> : null}
+          {by && lic ? " · " : null}
           {lic ? (linked && lic.href ? <a href={lic.href} target="_blank" rel="noopener noreferrer" className="text-accent underline">{lic.label}</a> : lic.label) : null}
         </span>
       ) : null}

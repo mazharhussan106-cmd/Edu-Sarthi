@@ -20,7 +20,7 @@ import { AiBadge } from "@/components/decks/AiBadge";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { CardBack, CardFront } from "@/components/decks/CardFace";
 import { ensureActiveUser } from "@/lib/activeUser";
-import { CREDIT_SELECT, LIBRARY_RULES, SOURCE_SELECT, copiedFrom, creditName, licenceInfo } from "@/lib/libraryTerms";
+import { CREDIT_SELECT, LIBRARY_RULES, SOURCE_SELECT, byLine, copiedFrom, licenceInfo } from "@/lib/libraryTerms";
 import { versionSummary } from "@/lib/deckVersion";
 
 export const revalidate = 0;
@@ -35,6 +35,9 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
     select: {
       title: true, description: true, tags: true, visibility: true, status: true, rejectReason: true,
       licence: true, termsVersion: true, termsAcceptedAt: true, sourceDeckId: true, draftOfId: true, ...SOURCE_SELECT,
+      // A new version goes out under whatever name its live deck is under.
+      institute: { select: { name: true, status: true } },
+      draftOf: { select: { institute: { select: { name: true, status: true } } } },
       owner: { select: { publicId: true, ...CREDIT_SELECT } },
       members: { where: { role: "EDIT", acceptedAt: { not: null } }, select: { termsAcceptedAt: true, user: { select: { publicId: true } } } },
       cards: { orderBy: { serial: "asc" }, select: CARD_SELECT },
@@ -48,7 +51,8 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
   const aiCount = cards.filter((c) => c.aiAssisted).length;
   const pending = deck.visibility === "PUBLIC" && deck.status === "PENDING_REVIEW";
   const published = deck.visibility === "PUBLIC" && deck.status === "APPROVED";
-  const credit = creditName(deck.owner);
+  const institute = deck.draftOfId ? (deck.draftOf?.institute ?? null) : deck.visibility === "PUBLIC" ? deck.institute : null;
+  const credit = byLine(deck.owner, institute ? { name: institute.name, logoKey: null } : null);
   // A copy's worth is in what it adds: count its cards that are not word for
   // word the original's. Compared on the stored card, so a reworded back counts.
   // A new version is judged against its live deck, not as a copy of anything.
@@ -71,6 +75,11 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
               ? `Library terms ${deck.termsVersion} ticked on ${deck.termsAcceptedAt.toLocaleDateString("en-IN")} · shown as: ${credit ? `by ${credit}` : "no name"} · ${licenceInfo(deck.licence)?.label ?? "no licence"}`
               : "Submitted before the library terms: no consent or licence recorded."}
           </p>
+          {institute ? (
+            <p className="mt-1 text-xs text-ink">
+              Published as the institute <b>{institute.name}</b>{institute.status === "APPROVED" ? "" : ` (institute ${institute.status.toLowerCase()})`}: the submitter is its admin or a teacher there and ticked that they may publish on its behalf. Its logo shows only if you approved one on the Institutes page.
+            </p>
+          ) : null}
           {deck.members.length ? (
             <p className="mt-1 text-xs text-ink-muted">
               Editors: {deck.members.map((m) => `${m.user?.publicId ?? "a learner"} (${m.termsAcceptedAt ? "accepted the terms" : "has NOT accepted the terms"})`).join(", ")}

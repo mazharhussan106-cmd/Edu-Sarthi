@@ -1,4 +1,6 @@
-// Owns the daily flashcard reminder email (vercel.json → once a day).
+// Owns the daily emails (vercel.json → once a day): first today's batch of an
+// announcement, if one is sending (lib/announcements, at most 80 a day), then
+// the flashcard reminders.
 //
 // Same guard as the retention cron: Vercel sends "Authorization: Bearer
 // <CRON_SECRET>", and without it the route refuses — an open endpoint here is
@@ -17,6 +19,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 
 import { appUrl } from "@/lib/appUrl";
+import { sendAnnouncementBatch } from "@/lib/announcements";
 import { sendStudyReminder } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
@@ -25,6 +28,9 @@ export const maxDuration = 60;
 
 const PAGE = 100;
 const BUDGET_MS = 45_000;
+/// The announcement goes first, inside the same function time: a promised
+/// notice matters more than a nudge, and 80 emails need far less than this.
+const ANNOUNCEMENT_BUDGET_MS = 20_000;
 
 function authorised(req: Request): boolean {
   const secret = process.env.CRON_SECRET;
@@ -40,6 +46,11 @@ export async function GET(req: Request) {
   if (!authorised(req)) return NextResponse.json({ error: "Not allowed." }, { status: 401 });
 
   const started = Date.now();
+  // Its own failure must not stop the reminders; the next run carries on.
+  const announcement = await sendAnnouncementBatch(ANNOUNCEMENT_BUDGET_MS).catch((err) => {
+    console.error("Announcement batch failed", err instanceof Error ? err.message : "unknown error");
+    return { sent: 0, failed: 0 };
+  });
   const link = `${appUrl(req)}/flashcards`;
   const now = new Date();
   let checked = 0;
@@ -85,5 +96,5 @@ export async function GET(req: Request) {
       }
     }
   }
-  return NextResponse.json({ ok: true, checked, sent });
+  return NextResponse.json({ ok: true, checked, sent, announcement });
 }

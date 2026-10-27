@@ -1,17 +1,21 @@
 // Owns what an institute is allowed to do: who belongs to which, who may manage
-// it, how a deck is shared inside it, and the admin's approve / reject /
-// suspend. The rules live here so the routes and pages cannot disagree.
+// it, how a deck is shared inside it, the institute admin taking its name off
+// a library deck, and the site admin's approve / reject / suspend. The rules
+// live here so the routes and pages cannot disagree.
 //
 // Every function takes the acting user's id and checks membership itself; a
 // membership is looked up by userId (unique), so "my institute" has one answer.
 //
-// It deliberately does NOT parse requests (lib/instituteSchemas) or render
-// anything. Institute decks are never offered to the public library.
+// It deliberately does NOT parse requests (lib/instituteSchemas), publish
+// decks (lib/deckReview: a deck shared here can be submitted to the library
+// under the institute's name), handle the logo (lib/instituteLogo) or render
+// anything.
 
 import { randomInt } from "crypto";
 import type { InstituteRole, InstituteStatus } from "@prisma/client";
 
 import { logAdmin } from "@/lib/admin";
+import { sendInstituteNameRemoved } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
 type Result = { ok: true } | { error: string };
@@ -26,7 +30,7 @@ export function newJoinCode(): string {
 export async function myMembership(userId: string) {
   return prisma.instituteMember.findUnique({
     where: { userId },
-    select: { role: true, institute: { select: { id: true, name: true, status: true, statusNote: true, joinCode: true } } },
+    select: { role: true, institute: { select: { id: true, name: true, status: true, statusNote: true, joinCode: true, logoKey: true, pendingLogoKey: true, logoNote: true } } },
   });
 }
 
@@ -69,13 +73,27 @@ export async function joinInstitute(userId: string, code: string): Promise<Resul
 }
 
 /// Takes a person out and pulls back any of their decks they shared there.
-async function drop(userId: string, instituteId: string) {
+/// `suspended`: the institute is suspended as they leave.
+async function drop(userId: string, instituteId: string, suspended = false) {
   await prisma.instituteMember.deleteMany({ where: { userId, instituteId } });
   // Back to what the owner had before: link-only if a share link is on, else
   // private. Setting PRIVATE while keeping the link would hide the truth from
   // the owner — the deck would still open for anyone holding the link.
-  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, shareToken: { not: null } }, data: { visibility: "LINK", instituteId: null } });
-  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId }, data: { visibility: "PRIVATE", instituteId: null } });
+  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "INSTITUTE", shareToken: { not: null } }, data: { visibility: "LINK", instituteId: null } });
+  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "INSTITUTE" }, data: { visibility: "PRIVATE", instituteId: null } });
+  // Owner's decision: from a suspended institute, their published decks go
+  // back to review under their own name. Otherwise leaving would bring decks
+  // the suspension hid straight back into the library, unchecked.
+  if (suspended) {
+    const back = await prisma.deck.updateMany({
+      where: { ownerId: userId, instituteId, visibility: "PUBLIC", status: "APPROVED" },
+      data: { instituteId: null, status: "PENDING_REVIEW", reviewedById: null, reviewedAt: null },
+    });
+    if (back.count) await logAdmin(null, "Decks back to review: maker left a suspended institute", "institute", instituteId, { decks: back.count });
+  }
+  // Owner's decision: otherwise decks they published under the institute's
+  // name stay in the library, under their own name only. Followers keep them.
+  await prisma.deck.updateMany({ where: { ownerId: userId, instituteId, visibility: "PUBLIC" }, data: { instituteId: null } });
 }
 
 export async function leaveInstitute(userId: string): Promise<Result> {
@@ -84,11 +102,11 @@ export async function leaveInstitute(userId: string): Promise<Result> {
   // An admin of a running institute cannot walk away from it, but one whose
   // institute was rejected or suspended is not stuck for ever.
   if (m.role === "ADMIN" && m.institute.status === "APPROVED") return { error: "You run this institute, so you cannot leave it. Ask the site admin to hand it over first." };
-  await drop(userId, m.instituteId);
+  await drop(userId, m.instituteId, m.institute.status === "SUSPENDED");
   return { ok: true };
 }
 
-async function asAdmin(userId: string) {
+export async function asAdmin(userId: string) {
   const m = await prisma.instituteMember.findUnique({ where: { userId }, select: { role: true, instituteId: true, institute: { select: { status: true } } } });
   return m && m.role === "ADMIN" && m.institute.status === "APPROVED" ? m : null;
 }
@@ -137,6 +155,28 @@ export async function unshareDeck(userId: string, deckId: string): Promise<Resul
   const deck = await prisma.deck.findFirst({ where: { id: deckId, ownerId: userId, visibility: "INSTITUTE" }, select: { shareToken: true } });
   if (!deck) return { error: "That deck is not shared with an institute." };
   await prisma.deck.updateMany({ where: { id: deckId, ownerId: userId }, data: { visibility: deck.shareToken ? "LINK" : "PRIVATE", instituteId: null } });
+  return { ok: true };
+}
+
+/// The institute's admin may take its name (and logo) off any deck published
+/// under it — a teacher's too (owner's decision). The deck stays in the
+/// library, credited to the person who made it.
+export async function removeInstituteName(adminUserId: string, deckId: string): Promise<Result> {
+  const a = await asAdmin(adminUserId);
+  if (!a) return { error: "Only the institute’s admin can do that." };
+  // Scoped by institute: an admin can only touch decks published as their own.
+  const res = await prisma.deck.updateMany({ where: { id: deckId, instituteId: a.instituteId, visibility: "PUBLIC" }, data: { instituteId: null } });
+  if (!res.count) return { error: "That deck is not published under your institute’s name any more. Refresh the page." };
+  // Owner's decision: the deck's owner is told. Best effort, after the change
+  // is saved: a mail failure must not undo it. Accounts with no email (phone
+  // sign-ups) and the admin's own decks are skipped.
+  try {
+    const d = await prisma.deck.findUnique({ where: { id: deckId }, select: { title: true, ownerId: true, owner: { select: { email: true } } } });
+    const inst = await prisma.institute.findUnique({ where: { id: a.instituteId }, select: { name: true } });
+    if (d?.owner.email && d.ownerId !== adminUserId && inst) await sendInstituteNameRemoved(d.owner.email, d.title, inst.name);
+  } catch {
+    console.error("Could not send the institute-name email");
+  }
   return { ok: true };
 }
 

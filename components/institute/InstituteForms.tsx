@@ -80,11 +80,16 @@ export function ApplyForm({ label = "Send application" }: { label?: string }) {
   );
 }
 
-export function LeaveButton() {
+/// `suspended`: the institute is suspended, so published decks go back to
+/// review instead of staying in the library (lib/institutes drop()).
+export function LeaveButton({ suspended = false }: { suspended?: boolean }) {
   const { busy, error, run } = useAction();
+  const published = suspended
+    ? "Decks you published under its name go back to review under your own name, and return to the library once an admin approves them."
+    : "Decks you published under its name stay in the library, under your own name.";
   return (
     <div>
-      <Button variant="ghost" disabled={busy} onClick={() => { if (window.confirm("Leave this institute? Decks you shared with it go back to private.")) void run({ action: "leave" }); }} className="text-error">
+      <Button variant="ghost" disabled={busy} onClick={() => { if (window.confirm(`Leave this institute? Decks you shared with it go back to private. ${published}`)) void run({ action: "leave" }); }} className="text-error">
         Leave institute
       </Button>
       {error ? <p role="alert" className="mt-1 text-sm text-error">{error}</p> : null}

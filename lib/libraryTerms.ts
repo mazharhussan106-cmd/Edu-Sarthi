@@ -1,6 +1,7 @@
 // Owns the public library's terms: which licence a deck is published under,
 // which version of the terms a creator agreed to, and the credit line shown
-// with a public deck ("by Asha K.", "by an EduSarthi learner", "EduSarthi").
+// with a public deck ("by Asha K.", "by an EduSarthi learner", "EduSarthi",
+// "by Sunrise Academy (Asha K.)" for a deck published as an institute).
 // Kept free of database code so the submit form and the pages share it.
 //
 // It deliberately does NOT decide who may publish or save anything — the
@@ -21,8 +22,10 @@ export const LICENCES = {
   EDUSARTHI: { id: "EDUSARTHI", label: "© EduSarthi", href: null },
 } as const;
 
-export function licenceFor(role: Role): string {
-  return role === "ADMIN" ? LICENCES.EDUSARTHI.id : LICENCES.CC_BY_SA.id;
+/// An institute's decks are CC BY-SA like everyone else's (owner's
+/// decision), whoever in it publishes them.
+export function licenceFor(role: Role, asInstitute = false): string {
+  return role === "ADMIN" && !asInstitute ? LICENCES.EDUSARTHI.id : LICENCES.CC_BY_SA.id;
 }
 
 /// Null when the deck predates the terms: showing a licence the owner never
@@ -58,6 +61,12 @@ export const CREDIT_SELECT = { role: true, name: true, creditStyle: true, public
 
 export type CreditOwner = { role: Role; name: string | null; creditStyle: CreditStyle | null; publicName: string | null };
 
+/// What a query selects on a deck to credit the institute it was published as.
+/// The logo is the approved one only; a pending upload never reaches a page.
+export const CREDIT_INSTITUTE_SELECT = { institute: { select: { name: true, logoKey: true } } } as const;
+
+export type CreditInstitute = { name: string; logoKey: string | null };
+
 /// The name shown after "by". Null when the owner has never chosen (decks
 /// approved before the terms), so nothing about them is shown by default.
 export function creditName(owner: CreditOwner): string | null {
@@ -80,15 +89,30 @@ export function creditName(owner: CreditOwner): string | null {
   }
 }
 
+/// The person behind a deck. On an institute's deck the institute comes first
+/// and the person is left out if they chose no name — "an EduSarthi teacher"
+/// beside the institute's own name would say nothing.
+export function personCredit(owner: CreditOwner, institute: CreditInstitute | null): string | null {
+  return institute && owner.creditStyle === "NONE" ? null : creditName(owner);
+}
+
+/// The whole credit as plain text, for a copy's "Copied from" line:
+/// "Sunrise Academy (Asha K.)", or just the person's credit.
+export function byLine(owner: CreditOwner, institute: CreditInstitute | null): string | null {
+  const person = personCredit(owner, institute);
+  if (!institute) return person;
+  return person ? `${institute.name} (${person})` : institute.name;
+}
+
 /// What a query selects to say where a copy came from.
 export const SOURCE_SELECT = {
   sourceCredit: true,
-  source: { select: { id: true, title: true, sourceCredit: true, visibility: true, status: true, owner: { select: CREDIT_SELECT } } },
+  source: { select: { id: true, title: true, sourceCredit: true, visibility: true, status: true, owner: { select: CREDIT_SELECT }, institute: { select: { name: true } } } },
 } as const;
 
 type SourceRow = {
   sourceCredit: string | null;
-  source: { id: string; title: string; sourceCredit: string | null; visibility: string; status: string; owner: CreditOwner } | null;
+  source: { id: string; title: string; sourceCredit: string | null; visibility: string; status: string; owner: CreditOwner; institute: { name: string } | null } | null;
 };
 
 /// The "Copied from …" line, and a link while the original is in the library.
@@ -98,8 +122,11 @@ type SourceRow = {
 export function copiedFrom(d: SourceRow): { line: string; href: string | null } | null {
   if (d.source) {
     const s = d.source;
+    // The institute is credited only for a deck it published: one shared inside
+    // it was never put out under its name.
+    const inst = s.visibility === "PUBLIC" && s.institute ? { name: s.institute.name, logoKey: null } : null;
     return {
-      line: sourceLine(s.title, creditName(s.owner), s.sourceCredit),
+      line: sourceLine(s.title, byLine(s.owner, inst), s.sourceCredit),
       href: s.visibility === "PUBLIC" && s.status === "APPROVED" ? `/library/${s.id}` : null,
     };
   }

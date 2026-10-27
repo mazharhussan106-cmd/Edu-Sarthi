@@ -7,7 +7,8 @@
 // each, and one with none goes under "More decks".
 
 import { prisma } from "@/lib/prisma";
-import { CREDIT_SELECT, type CreditOwner } from "@/lib/libraryTerms";
+import { LISTED } from "@/lib/decks";
+import { CREDIT_INSTITUTE_SELECT, CREDIT_SELECT, type CreditInstitute, type CreditOwner } from "@/lib/libraryTerms";
 
 export type BuiltIn = { words: number; chunks: number; grammar: number; support: number; chunkTypes: { type: string; count: number }[] };
 
@@ -29,14 +30,14 @@ export async function builtInCounts(): Promise<BuiltIn> {
   };
 }
 
-export type ExploreDeck = { id: string; title: string; cards: number; teacherVerified: boolean; official: boolean; owner: CreditOwner; licence: string | null };
+export type ExploreDeck = { id: string; title: string; cards: number; teacherVerified: boolean; official: boolean; owner: CreditOwner; institute: CreditInstitute | null; licence: string | null };
 export type Subject = { name: string; total: number; decks: ExploreDeck[] };
 
 const MORE = "More decks";
 
 export async function librarySubjects(perSubject = 6, maxSubjects = 12): Promise<Subject[]> {
   const decks = await prisma.deck.findMany({
-    where: { visibility: "PUBLIC", status: "APPROVED", owner: { suspendedAt: null } },
+    where: LISTED,
     // Most copied first, so what other learners actually use leads each subject.
     orderBy: [{ copyCount: "desc" }, { reviewedAt: "desc" }],
     take: 200,
@@ -45,6 +46,7 @@ export async function librarySubjects(perSubject = 6, maxSubjects = 12): Promise
       title: true,
       tags: true,
       licence: true,
+      ...CREDIT_INSTITUTE_SELECT,
       owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } },
       _count: { select: { cards: true } },
     },
@@ -59,6 +61,7 @@ export async function librarySubjects(perSubject = 6, maxSubjects = 12): Promise
       teacherVerified: d.owner.role === "TEACHER" && Boolean(d.owner.teacherVerifiedAt),
       official: d.owner.role === "ADMIN",
       owner: { role: d.owner.role, name: d.owner.name, creditStyle: d.owner.creditStyle, publicName: d.owner.publicName },
+      institute: d.institute,
       licence: d.licence,
     };
     const names = d.tags.length ? d.tags : [MORE];

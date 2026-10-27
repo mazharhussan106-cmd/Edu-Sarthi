@@ -112,7 +112,7 @@ export default async function ExplorePage() {
                       <Card className="p-3">
                         <Link href={`/library/${d.id}`} className="block">
                           <span className="block truncate font-medium text-ink">{d.title}</span>
-                          <DeckCredit owner={d.owner} licence={d.licence} className="truncate" />
+                          <DeckCredit owner={d.owner} institute={d.institute} licence={d.licence} className="truncate" />
                           <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-ink-muted">
                             <span className="font-mono">{n(d.cards)} cards</span>
                             {d.teacherVerified ? <Badge variant="success">Teacher audit</Badge> : null}

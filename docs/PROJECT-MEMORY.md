@@ -29,8 +29,18 @@ An English spoken-communication training platform: students record or upload, te
 1. **Done (6 Oct):** imported 56-point cards and hand-made deck cards now use the EduSarthi card (`components/decks/rich/*`, `DeckStudy`). Do not add another card look.
 1b. **Audit done (6 Oct):** see `docs/AUDIT-2026-10.md` — what was fixed, and the deferred list (session end on password reset, register throttle, CSRF/CSP, upload quotas, DPDP consent, repo clutter for the owner to decide). Next ideas for revenue: `docs/ROADMAP-EARNING.md`.
 2. Merge the branches into `main` (a pull request from `happy-galileo`), then run **Actions → Database setup** so the new tables, indexes and the nullable `Institute.applicantId` exist on the live database.
-3. Hosting choice (Vercel or Hostinger) — see `LIVE-TESTING-GUIDE.md` and `DEPLOY.md`.
-4. Owner's backlog after a live test: orphan-upload cleanup, in-app notifications, licence and credit for public decks, institute recordings.
+3. **Hosting decided (27 Oct): Vercel.** Nothing has been tested live yet — see `LIVE-TESTING-GUIDE.md` and `DEPLOY.md`.
+4. Owner's backlog after a live test: orphan-upload cleanup, in-app notifications, licence and credit for public decks (now decided, see 4b), institute recordings.
+4b. **Flashcard library v2 planned (27 Oct, branch `claude/sweet-davinci-d313f6`): `docs/LIBRARY-V2-PLAN.md`.** Owner's decisions:
+   - small fixes to a published deck go live without waiting for review;
+   - learners follow the original deck (copying stays an option);
+   - public decks show the creator's name (the student chooses what is shown), with "Copied from …" on copies;
+   - CC BY-SA 4.0, and EduSarthi will use public decks in paid features;
+   - only the admin reviews, and every deck is reviewed;
+   - view-only and edit sharing;
+   - no public publishing for under-18s.
+
+   Phase 0 is the live test; nothing from v2 is built. Seven open questions are at the end of that file.
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

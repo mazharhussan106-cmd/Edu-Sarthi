@@ -2,6 +2,8 @@
 
 Status: **All five phases are built and pushed.** Phase 5 (Institute) was built before the live test, at the owner's request, so it has had the least real-world checking.
 
+**Next version planned (27 Oct 2026): `docs/LIBRARY-V2-PLAN.md`.** The owner's decisions there replace four rows of the table below: sharing (edit sharing is now wanted), licence and credit (creator name, CC BY-SA 4.0, EduSarthi may use public decks in paid features), editing a published deck (small fixes go live without waiting for review), and studying a library deck (follow the original; copy stays an option). Nothing from v2 is built yet.
+
 Before any of it works on the live site, run GitHub → Actions → **Database setup** → Run workflow. It adds the new tables and columns (all additive, no data is removed).
 
 ## Goal

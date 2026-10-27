@@ -18,6 +18,7 @@ import { sendDeckDecision } from "@/lib/email";
 import { DECK_LIMITS, type PublishConsent } from "@/lib/deckSchemas";
 import { LIBRARY_TERMS_VERSION, LICENCES, licenceFor } from "@/lib/libraryTerms";
 import { mergeVersion } from "@/lib/deckVersion";
+import { editorsWithoutTerms } from "@/lib/deckMembers";
 
 type Result = { ok: true } | { error: string };
 
@@ -29,6 +30,7 @@ export async function publishDeck(userId: string, id: string, consent: PublishCo
       visibility: true,
       description: true,
       sourceLicence: true,
+      draftOfId: true,
       owner: { select: { role: true, teacherVerifiedAt: true, name: true, adultConfirmedAt: true } },
       _count: { select: { cards: true } },
     },
@@ -37,6 +39,12 @@ export async function publishDeck(userId: string, id: string, consent: PublishCo
   // Republishing it would hand EduSarthi's own material out under CC BY-SA.
   if (deck.sourceLicence === LICENCES.EDUSARTHI.id) {
     return { error: "This deck is a copy of an EduSarthi deck. You can keep studying it, but it cannot be published to the library." };
+  }
+  // What editors added goes public too, under the same licence: each must
+  // have accepted the library terms first (owner's decision).
+  const unconfirmed = await editorsWithoutTerms(deck.draftOfId ?? id);
+  if (unconfirmed) {
+    return { error: `${unconfirmed} editor${unconfirmed === 1 ? " has" : "s have"} not accepted the library terms yet. Ask them to open the deck and confirm, or remove them under People, then submit again.` };
   }
   // Owner's decision: under-18s may not publish. Asked once per account; the
   // form keeps sending it, but only the first "yes" is recorded.

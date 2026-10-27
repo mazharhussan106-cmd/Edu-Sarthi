@@ -29,6 +29,11 @@ export const DECK_LIMITS = {
   /// per field, and cards per deck per IST day. Each card once a day.
   smallFixChars: 30,
   smallFixCardsPerDay: 10,
+  /// People one deck may be shared with by name, invited or accepted.
+  membersPerDeck: 10,
+  /// Invitations one person may send a day: each one sends an email, so the
+  /// cap keeps the invite form from becoming a way to mail strangers.
+  invitesPerDay: 20,
 } as const;
 
 const tag = z
@@ -81,11 +86,23 @@ export const deckActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("copy"), token: z.string().min(8).max(64) }),
   z.object({ action: z.literal("copyPublic"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("copyInstitute"), deckId: z.string().min(1) }),
+  z.object({ action: z.literal("copyMember"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("publish"), id: z.string().min(1), consent: publishConsentSchema }),
   z.object({ action: z.literal("unpublish"), id: z.string().min(1) }),
   z.object({ action: z.literal("startVersion"), id: z.string().min(1) }),
   z.object({ action: z.literal("follow"), deckId: z.string().min(1) }),
   z.object({ action: z.literal("unfollow"), deckId: z.string().min(1) }),
+]);
+
+/// Sharing a deck with named people (lib/deckMembers). `adult` and `terms`
+/// matter only for an editor of a deck in the public library.
+export const memberActionSchema = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("invite"), deckId: z.string().min(1), email: z.string().trim().toLowerCase().pipe(z.email("Enter the email address they sign in with")), role: z.enum(["VIEW", "EDIT"], "Choose view or edit") }),
+  z.object({ action: z.literal("accept"), memberId: z.string().min(1), adult: z.boolean().default(false), terms: z.boolean().default(false) }),
+  z.object({ action: z.literal("decline"), memberId: z.string().min(1) }),
+  z.object({ action: z.literal("confirm"), deckId: z.string().min(1), adult: z.boolean(), terms: z.boolean() }),
+  z.object({ action: z.literal("remove"), memberId: z.string().min(1) }),
+  z.object({ action: z.literal("leave"), deckId: z.string().min(1) }),
 ]);
 
 export const reportSchema = z.object({
@@ -125,7 +142,9 @@ const cardFields = {
 
 export const cardActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("add"), ...cardFields }),
-  z.object({ action: z.literal("edit"), cardId: z.string().min(1), ...cardFields }),
+  /// openedAt: when the person opened the card, so a save over someone else's
+  /// newer change is refused instead of silently overwriting it.
+  z.object({ action: z.literal("edit"), cardId: z.string().min(1), openedAt: z.iso.datetime().optional(), ...cardFields }),
   z.object({ action: z.literal("delete"), cardId: z.string().min(1) }),
 ]);
 

@@ -1,5 +1,6 @@
-// Owns writes on the cards inside one of the student's decks: add, edit,
-// delete. A card is a Word row with the deck and owner set.
+// Owns writes on the cards inside a deck: add, edit, delete — by its owner or
+// an editor it is shared with (lib/deckAccess). A card is a Word row with the
+// deck set and, whoever added it, the deck's owner as its owner.
 //
 // Media arrives as storage keys the browser got from /api/decks/media. A key
 // is accepted only if it carries this user's prefix AND the file really
@@ -20,7 +21,8 @@ import { NextResponse } from "next/server";
 
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
-import { cardText, isStaff, LimitReached, lockUser, newCardCode, ownDeck, readJson, unusedKeys, wordData } from "@/lib/decks";
+import { cardText, isStaff, LimitReached, lockUser, newCardCode, readJson, unusedKeys, wordData } from "@/lib/decks";
+import { deckAccess, editBlock } from "@/lib/deckAccess";
 import { isLive } from "@/lib/deckVersion";
 import { applySmallFix, bigReason, fixText } from "@/lib/smallFix";
 import { DECK_LIMITS, cardActionSchema } from "@/lib/deckSchemas";
@@ -45,10 +47,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Could not save that card. Check the fields and try again.", 400);
   const a = parsed.data;
 
-  const deck = await ownDeck(userId, deckId);
-  if (!deck) return fail("That deck no longer exists.", 404);
+  const access = await deckAccess(userId, deckId);
+  if (!access) return fail("That deck no longer exists.", 404);
+  const blocked = editBlock(access);
+  if (blocked) return fail(blocked, 403);
+  const deck = access.deck;
   const live = isLive(deck);
-  const mine = { deckId, ownerId: userId };
+  // Cards stay the deck owner's whoever adds them: every owner-scoped query
+  // keeps working, and an editor deleting their account never takes a card's
+  // files with them.
+  const mine = { deckId, ownerId: deck.ownerId };
   if (live && a.action !== "edit") return fail(`This deck is published, so cards are added or removed in a new version. ${NEW_VERSION}`, 400);
 
   if (a.action === "delete") {
@@ -60,8 +68,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ ok: true });
   }
 
-  const current = a.action === "edit" ? await prisma.word.findFirst({ where: { id: a.cardId, ...mine }, select: { text: true, imageUrl: true, audioUrl: true, videoUrl: true, details: true } }) : null;
+  const current = a.action === "edit" ? await prisma.word.findFirst({ where: { id: a.cardId, ...mine }, select: { text: true, imageUrl: true, audioUrl: true, videoUrl: true, details: true, updatedAt: true } }) : null;
   if (a.action === "edit" && !current) return fail("That card no longer exists.", 404);
+  // Two editors on one card: the later save must not silently erase the other.
+  if (a.action === "edit" && a.openedAt && current!.updatedAt.getTime() > Date.parse(a.openedAt)) {
+    return fail("Someone changed this card after you opened it. Reload the page to see their version, then make your change again.", 409);
+  }
   // An imported 56-point card has dozens of fields this form cannot show;
   // saving it would overwrite them with four. Edit the Excel sheet instead.
   if (current && cardText(current).rich) return fail("This card came from an Excel file, so it cannot be edited here. Change it in the sheet and upload the file again.", 400);
@@ -95,17 +107,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   if (a.action === "add") {
-    // Limit check and insert under one per-user lock (see lockUser), and the
-    // new card's number taken inside it, so parallel adds neither pass the
-    // limit together nor share a position.
+    // Limit check and insert under one per-deck lock (see lockUser), and the
+    // new card's number taken inside it, so parallel adds — by the owner and
+    // editors — neither pass the limit together nor share a position.
     try {
       const card = await prisma.$transaction(
         async (tx) => {
-          await lockUser(tx, userId);
+          await lockUser(tx, deckId);
           if ((await tx.word.count({ where: mine })) >= DECK_LIMITS.cardsPerDeck) throw new LimitReached();
           const last = await tx.word.findFirst({ where: mine, orderBy: { serial: "desc" }, select: { serial: true } });
           return tx.word.create({
-            data: { ...wordData({ ...a, ...extras }), code: newCardCode(), serial: (last?.serial ?? 0) + 1, kind: "WORD", deckId, ownerId: userId },
+            data: { ...wordData({ ...a, ...extras }), code: newCardCode(), serial: (last?.serial ?? 0) + 1, kind: "WORD", deckId, ownerId: deck.ownerId },
             select: { id: true },
           });
         },

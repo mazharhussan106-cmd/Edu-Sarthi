@@ -110,11 +110,20 @@ export async function ownDeck(userId: string, id: string) {
 }
 
 /// Rows the student may mark, remark or note: the built-in cards, their own,
-/// and cards of library decks they follow. Cards in a deck shared by link, or a
+/// cards of decks shared with them by name, and of library decks they follow. Cards in a deck shared by link, or a
 /// followed deck that has left the library, are view-only.
 export async function canStudyWord(userId: string, wordId: string): Promise<boolean> {
   const w = await prisma.word.findFirst({
-    where: { id: wordId, OR: [{ deckId: null }, { ownerId: userId }, { deck: { ...LISTED, follows: { some: { userId } } } }] },
+    where: {
+      id: wordId,
+      OR: [
+        { deckId: null },
+        { ownerId: userId },
+        { deck: { ...LISTED, follows: { some: { userId } } } },
+        // Shared by name, to view or edit: studied with the person's own progress.
+        { deck: { draftOfId: null, members: { some: { userId, acceptedAt: { not: null } } } } },
+      ],
+    },
     select: { id: true },
   });
   return w !== null;

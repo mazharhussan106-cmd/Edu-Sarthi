@@ -1,6 +1,6 @@
-// Owns the "My decks" page: the student's own decks and the library decks
-// they follow, with how many cards are due in each, and the form to start a
-// new deck.
+// Owns the "My decks" page: the student's own decks, invitations waiting for
+// them, decks shared with them by name, and the library decks they follow,
+// with how many cards are due, and the form to start a new deck.
 //
 // It deliberately does NOT list other decks — shared decks open from their
 // link, and the rest of the library lives at /library.
@@ -19,6 +19,8 @@ import { cardMakerEnabled } from "@/lib/aiEnabled";
 import { DeckForm } from "@/components/decks/DeckForm";
 import { DeckCredit } from "@/components/decks/DeckCredit";
 import { CREDIT_SELECT } from "@/lib/libraryTerms";
+import { invitationsFor } from "@/lib/deckMembers";
+import { InviteList } from "@/components/decks/InviteList";
 
 export const revalidate = 0;
 
@@ -38,6 +40,15 @@ export default async function DecksPage() {
     select: { deck: { select: { id: true, title: true, visibility: true, status: true, owner: { select: { suspendedAt: true, ...CREDIT_SELECT } }, _count: { select: { cards: true } } } } },
   });
   const followedIds = follows.map((f) => f.deck.id);
+  const [invitations, sharedWithMe, me] = await Promise.all([
+    invitationsFor(userId),
+    prisma.deckMember.findMany({
+      where: { userId, acceptedAt: { not: null }, deck: { draftOfId: null } },
+      orderBy: { acceptedAt: "desc" },
+      select: { role: true, deck: { select: { id: true, title: true, owner: { select: { name: true } }, _count: { select: { cards: true } } } } },
+    }),
+    prisma.user.findUnique({ where: { id: userId }, select: { adultConfirmedAt: true } }),
+  ]);
   const now = new Date();
   const dueRows = await prisma.cardState.groupBy({
     by: ["wordId"],
@@ -78,6 +89,16 @@ export default async function DecksPage() {
       </div>
       <p className="mt-1 text-sm text-ink-muted">Make your own cards. Decks are private until you share a link or submit one to the library.</p>
 
+      {invitations.length ? (
+        <section className="mt-6" aria-labelledby="inv-h">
+          <h2 id="inv-h" className="font-display text-base font-bold text-ink">Invitations</h2>
+          <InviteList
+            adultConfirmed={Boolean(me?.adultConfirmedAt)}
+            invitations={invitations.map((i) => ({ id: i.id, role: i.role, title: i.deck.title, from: i.deck.owner.name?.trim() || "Someone on EduSarthi", isPublic: i.deck.visibility === "PUBLIC" }))}
+          />
+        </section>
+      ) : null}
+
       <ul className="mt-4 flex flex-col gap-2">
         {decks.length === 0 ? (
           <li>
@@ -114,6 +135,30 @@ export default async function DecksPage() {
           </li>
         ))}
       </ul>
+
+      {sharedWithMe.length ? (
+        <section className="mt-6" aria-labelledby="swm-h">
+          <h2 id="swm-h" className="font-display text-base font-bold text-ink">Shared with me</h2>
+          <ul className="mt-2 flex flex-col gap-2">
+            {sharedWithMe.map(({ role, deck: d }) => (
+              <li key={d.id}>
+                <Link href={role === "EDIT" ? `/decks/${d.id}` : `/decks/${d.id}/shared`} className="block">
+                  <Card className="flex items-start justify-between gap-3 p-4 hover:bg-hover">
+                    <span className="min-w-0">
+                      <span className="block truncate font-display font-bold text-ink">{d.title}</span>
+                      <span className="block truncate text-xs text-ink-muted">from {d.owner.name?.trim() || "its owner"}</span>
+                    </span>
+                    <span className="flex shrink-0 flex-col items-end gap-1">
+                      <span className="font-mono text-xs text-ink-muted">{d._count.cards} cards</span>
+                      <Badge>{role === "EDIT" ? "you can edit" : "you can view"}</Badge>
+                    </span>
+                  </Card>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {follows.length ? (
         <section className="mt-6" aria-labelledby="following-h">

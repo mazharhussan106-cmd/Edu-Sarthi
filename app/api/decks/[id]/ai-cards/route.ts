@@ -12,7 +12,8 @@ import { NextResponse } from "next/server";
 import { addAiCardsSchema } from "@/lib/aiCardSchemas";
 import { requireUser } from "@/lib/apiUser";
 import { aiCardRows } from "@/lib/aiCardRows";
-import { LimitReached, lockUser, ownDeck, readJson } from "@/lib/decks";
+import { LimitReached, lockUser, readJson } from "@/lib/decks";
+import { deckAccess, editBlock } from "@/lib/deckAccess";
 import { isLive } from "@/lib/deckVersion";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { prisma } from "@/lib/prisma";
@@ -29,24 +30,28 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the cards and try again.", 400);
   const { cards } = parsed.data;
 
-  const deck = await ownDeck(userId, deckId);
-  if (!deck) return fail("That deck no longer exists.", 404);
+  // The owner or an editor; the cards are the owner's whoever adds them.
+  const access = await deckAccess(userId, deckId);
+  if (!access) return fail("That deck no longer exists.", 404);
+  const blocked = editBlock(access);
+  if (blocked) return fail(blocked, 403);
+  const deck = access.deck;
   // A published deck changes through a new version, which stays private until
   // approved, so the library keeps showing what an admin checked.
   if (isLive(deck)) return fail("This deck is published. Start a new version to add cards; the current version stays live while it is reviewed.", 400);
-  const mine = { deckId, ownerId: userId };
+  const mine = { deckId, ownerId: deck.ownerId };
 
   try {
     await prisma.$transaction(
       async (tx) => {
-        // Count and insert under the same per-user lock the single-card route
+        // Count and insert under the same per-deck lock the single-card route
         // uses, so the two cannot together pass the deck's card limit.
-        await lockUser(tx, userId);
+        await lockUser(tx, deckId);
         const have = await tx.word.count({ where: mine });
         if (have + cards.length > DECK_LIMITS.cardsPerDeck) throw new LimitReached();
         const last = await tx.word.findFirst({ where: mine, orderBy: { serial: "desc" }, select: { serial: true } });
         const first = (last?.serial ?? 0) + 1;
-        await tx.word.createMany({ data: aiCardRows(userId, deckId, first, cards) });
+        await tx.word.createMany({ data: aiCardRows(deck.ownerId, deckId, first, cards) });
       },
       { maxWait: 10_000, timeout: 20_000 },
     );

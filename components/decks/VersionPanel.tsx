@@ -18,9 +18,11 @@ import { Button } from "@/components/ui/Button";
 import { callApi } from "@/components/decks/deckClient";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 
+/// canStart / canDiscard: only the owner starts or throws away a version;
+/// editors the deck is shared with work inside it.
 type Props =
-  | { mode: "live"; deckId: string; draft: { id: string; status: string } | null; fixedToday: number }
-  | { mode: "draft"; deckId: string; liveId: string; liveTitle: string };
+  | { mode: "live"; deckId: string; draft: { id: string; status: string } | null; fixedToday: number; canStart?: boolean }
+  | { mode: "draft"; deckId: string; liveId: string; liveTitle: string; canDiscard?: boolean };
 
 export function VersionPanel(props: Props) {
   const router = useRouter();
@@ -59,7 +61,7 @@ export function VersionPanel(props: Props) {
         </p>
         <div className="flex flex-wrap gap-2">
           <Link href={`/decks/${props.liveId}`} className="inline-flex h-9 items-center rounded-lg border border-border-strong px-3 text-sm text-ink hover:bg-hover">See the published deck</Link>
-          <Button variant="ghost" size="sm" disabled={busy} onClick={() => void discard()}>Discard this version</Button>
+          {props.canDiscard === false ? null : <Button variant="ghost" size="sm" disabled={busy} onClick={() => void discard()}>Discard this version</Button>}
         </div>
         {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       </div>
@@ -85,7 +87,11 @@ export function VersionPanel(props: Props) {
           <span className="text-xs text-ink-muted">Small fixes are paused until it is approved or discarded.</span>
         </div>
       ) : (
-        <div><Button variant="outline" disabled={busy} onClick={() => void start()}>{busy ? "Starting…" : "Start a new version"}</Button></div>
+        props.canStart === false ? (
+          <p className="text-xs text-ink-muted">Only the deck’s owner can start a new version. Once they do, you can edit it here.</p>
+        ) : (
+          <div><Button variant="outline" disabled={busy} onClick={() => void start()}>{busy ? "Starting…" : "Start a new version"}</Button></div>
+        )
       )}
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
     </div>

@@ -18,6 +18,7 @@ export function CopyDeckButton({
   token,
   deckId,
   institute,
+  shared,
   signedIn,
   label = "Copy to my decks",
   then = "deck",
@@ -27,6 +28,8 @@ export function CopyDeckButton({
   token?: string;
   deckId?: string;
   institute?: boolean;
+  /** A deck shared with this person by name. */
+  shared?: boolean;
   signedIn: boolean;
   label?: string;
   /** Where to go after the copy: the deck page, or straight into studying it. */
@@ -50,7 +53,7 @@ export function CopyDeckButton({
   async function copy() {
     setBusy(true);
     setError(null);
-    const res = await callApi<{ id: string }>("/api/decks", token ? { action: "copy", token } : { action: institute ? "copyInstitute" : "copyPublic", deckId });
+    const res = await callApi<{ id: string }>("/api/decks", token ? { action: "copy", token } : { action: institute ? "copyInstitute" : shared ? "copyMember" : "copyPublic", deckId });
     if (!res.ok) {
       setBusy(false);
       return setError(res.error);

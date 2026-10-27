@@ -36,6 +36,7 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
       title: true, description: true, tags: true, visibility: true, status: true, rejectReason: true,
       licence: true, termsVersion: true, termsAcceptedAt: true, sourceDeckId: true, draftOfId: true, ...SOURCE_SELECT,
       owner: { select: { publicId: true, ...CREDIT_SELECT } },
+      members: { where: { role: "EDIT", acceptedAt: { not: null } }, select: { termsAcceptedAt: true, user: { select: { publicId: true } } } },
       cards: { orderBy: { serial: "asc" }, select: CARD_SELECT },
       reports: { where: { resolvedAt: null }, orderBy: { createdAt: "asc" }, select: { id: true, reason: true, note: true } },
     },
@@ -70,6 +71,11 @@ export default async function AdminDeckPage({ params }: { params: Promise<{ id: 
               ? `Library terms ${deck.termsVersion} ticked on ${deck.termsAcceptedAt.toLocaleDateString("en-IN")} · shown as: ${credit ? `by ${credit}` : "no name"} · ${licenceInfo(deck.licence)?.label ?? "no licence"}`
               : "Submitted before the library terms: no consent or licence recorded."}
           </p>
+          {deck.members.length ? (
+            <p className="mt-1 text-xs text-ink-muted">
+              Editors: {deck.members.map((m) => `${m.user?.publicId ?? "a learner"} (${m.termsAcceptedAt ? "accepted the terms" : "has NOT accepted the terms"})`).join(", ")}
+            </p>
+          ) : null}
           <div className="mt-2 flex flex-wrap gap-1">
             {aiCount ? <AiBadge label={`${aiCount} of ${cards.length} cards AI-assisted`} /> : null}
             {deck.tags.map((t) => <Badge key={t}>{t}</Badge>)}

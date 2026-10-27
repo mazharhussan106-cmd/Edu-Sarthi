@@ -1,6 +1,6 @@
-// Owns the credit lines under a deck: "by Asha K. · CC BY-SA 4.0", and for a
-// copy "Copied from <title> by <name>". The name follows each creator's own
-// choice (lib/libraryTerms).
+// Owns the credit lines under a deck: "by Asha K. with Ravi S. · CC BY-SA
+// 4.0", and for a copy "Copied from <title> by <name>". Each name follows
+// that person's own choice (lib/libraryTerms).
 //
 // It deliberately shows no name or licence for a deck approved before the
 // library terms: nothing the owner never chose or agreed to.
@@ -12,6 +12,9 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   owner?: CreditOwner;
+  /// Editors it is shared with, credited by their own name choice; those who
+  /// never chose one are left out rather than named without asking.
+  contributors?: CreditOwner[];
   licence?: string | null;
   /// From copiedFrom(): the original, linked while it is in the library.
   source?: { line: string; href: string | null } | null;
@@ -20,8 +23,9 @@ type Props = {
   className?: string;
 };
 
-export function DeckCredit({ owner, licence = null, source, linked = false, className }: Props) {
+export function DeckCredit({ owner, contributors = [], licence = null, source, linked = false, className }: Props) {
   const name = owner ? creditName(owner) : null;
+  const helpers = contributors.map(creditName).filter((n): n is string => Boolean(n));
   const lic = licenceInfo(licence);
   if (!name && !lic && !source) return null;
   return (
@@ -29,6 +33,7 @@ export function DeckCredit({ owner, licence = null, source, linked = false, clas
       {name || lic ? (
         <span className={cn("block text-xs text-ink-muted", className)}>
           {name ? <>by <b className="font-medium text-ink">{name}</b></> : null}
+          {name && helpers.length ? <> with <b className="font-medium text-ink">{helpers.join(", ")}</b></> : null}
           {name && lic ? " · " : null}
           {lic ? (linked && lic.href ? <a href={lic.href} target="_blank" rel="noopener noreferrer" className="text-accent underline">{lic.label}</a> : lic.label) : null}
         </span>

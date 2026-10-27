@@ -124,6 +124,8 @@ model User {
   deckLikes           DeckLike[]
   deckFollows         DeckFollow[]
   deckChanges         DeckChange[]
+  deckMemberships     DeckMember[]         @relation("DeckMemberUser")
+  deckInvitesSent     DeckMember[]         @relation("DeckMemberInviter")
   instituteMembership InstituteMember?
   institutesApplied   Institute[]          @relation("InstituteApplicant")
   assignedSubmissions Submission[]         @relation("AssignedSubmissions")
@@ -496,6 +498,11 @@ model Word {
   submissions Submission[]
   changes     DeckChange[]
 
+  /// When the card last changed. Lets two editors of a shared deck see that
+  /// someone saved over the card they had open, instead of silently
+  /// overwriting it. The default fills existing rows, so adding it is safe.
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@index([deckId])
   @@index([ownerId])
   @@index([liveWordId])
@@ -651,6 +658,7 @@ model Deck {
   draftOf  Deck?        @relation("DeckVersion", fields: [draftOfId], references: [id], onDelete: SetNull)
   drafts   Deck[]       @relation("DeckVersion")
   changes  DeckChange[]
+  members  DeckMember[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -700,6 +708,44 @@ model DeckReport {
 /// A learner following a library deck: they study the original with their
 /// own progress (CardState) and get the author's fixes, instead of copying it.
 /// Removed when the author withdraws the deck or an admin takes it down.
+/// What a person a deck is shared with by name may do. Editing is only ever by
+/// named invite, never by link (owner's decision).
+enum DeckRole {
+  VIEW
+  EDIT
+}
+
+/// One person a deck is shared with by name. Invited by email, so someone can
+/// be invited before they have an account, and the app never says whether an
+/// email has one; it becomes theirs when they accept, signed in with it.
+model DeckMember {
+  id          String    @id @default(cuid())
+  deckId      String
+  /// Lower-cased, as typed by the owner. Kept after acceptance so the owner
+  /// still sees who they invited.
+  email       String
+  /// Null until accepted by an account with this verified email.
+  userId      String?
+  role        DeckRole
+  invitedById String?
+  acceptedAt  DateTime?
+  /// An editor of a deck in the public library: when they confirmed they are
+  /// 18 or older and accepted the library terms for what they add.
+  termsAcceptedAt DateTime?
+
+  deck      Deck  @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user      User? @relation("DeckMemberUser", fields: [userId], references: [id], onDelete: Cascade)
+  // SetNull: the invite outlives the inviter's account (the owner, normally).
+  invitedBy User? @relation("DeckMemberInviter", fields: [invitedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@unique([deckId, email])
+  @@index([email]) // "invitations for me"
+  @@index([userId])
+  @@index([invitedById, createdAt]) // the daily invite limit
+}
+
 /// One small fix made straight to a published deck (owner's decision: small
 /// fixes go live without waiting). The admin checks it afterwards: Accept, or
 /// Undo, which restores `before`. Also what the daily limits count.

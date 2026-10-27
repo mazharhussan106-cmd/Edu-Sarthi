@@ -17,6 +17,7 @@ import { deleteDeck, LimitReached, lockUser, newShareToken, ownDeck, readJson } 
 import { copyDeck } from "@/lib/deckCopy";
 import { followDeck, unfollowDeck } from "@/lib/deckFollow";
 import { LICENCES } from "@/lib/libraryTerms";
+import { deckAccess, editBlock, editableBy } from "@/lib/deckAccess";
 import { instituteDeckScope } from "@/lib/institutes";
 import { publishDeck, unpublishDeck } from "@/lib/deckReview";
 import { isLive, startVersion } from "@/lib/deckVersion";
@@ -62,6 +63,11 @@ export async function POST(req: Request) {
       const res = await copyDeck(userId, where);
       return "error" in res ? fail(res.error, 400) : NextResponse.json({ ok: true, id: res.id });
     }
+    case "copyMember": {
+      // A deck shared with this person by name, to view or edit.
+      const res = await copyDeck(userId, { id: a.deckId, draftOfId: null, members: { some: { userId, acceptedAt: { not: null } } } });
+      return "error" in res ? fail(res.error, 400) : NextResponse.json({ ok: true, id: res.id });
+    }
     case "copyInstitute": {
       // Only members of an approved institute, and only decks shared with it.
       const scope = await instituteDeckScope(userId);
@@ -85,19 +91,25 @@ export async function POST(req: Request) {
     }
   }
 
-  const deck = await ownDeck(userId, a.id);
-  if (!deck) return fail("That deck no longer exists.", 404);
-
   if (a.action === "update") {
+    // The owner, or an editor the deck is shared with.
+    const access = await deckAccess(userId, a.id);
+    if (!access) return fail("That deck no longer exists.", 404);
+    const blocked = editBlock(access);
+    if (blocked) return fail(blocked, 403);
     // The library must keep showing what an admin approved: a published deck's
     // name, description and tags change only in a new version.
-    if (isLive(deck)) return fail("This deck is published. Start a new version to change its name, description or tags; the current version stays live while it is reviewed.", 400);
+    if (isLive(access.deck)) return fail("This deck is published. Start a new version to change its name, description or tags; the current version stays live while it is reviewed.", 400);
     await prisma.deck.updateMany({
-      where: { id: a.id, ownerId: userId },
+      where: { id: a.id, ...editableBy(userId) },
       data: { title: a.title, description: a.description || null, tags: a.tags },
     });
     return NextResponse.json({ ok: true });
   }
+
+  // Everything below (the share link) is the owner's alone.
+  const deck = await ownDeck(userId, a.id);
+  if (!deck) return fail("That deck no longer exists.", 404);
 
   // share: turning it off clears the token, which revokes every copy of the
   // link; turning it on again issues a fresh one rather than reviving the old.

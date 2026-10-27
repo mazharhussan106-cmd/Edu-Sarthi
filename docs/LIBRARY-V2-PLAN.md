@@ -196,6 +196,43 @@ A further check showed that a picture is kept while the live deck uses it and de
 
 ### Phase 4 — Share with people: view and edit
 
+**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. Not merged; it waits for the Phase 0 live test.** Type check and production build pass.
+
+The owner said "yes" to the file list and the recommendations:
+- invited people get an email, capped at 20 invites per person per IST day;
+- people can be invited before they have an account (the invite waits on their email, and the app never says whether an email has an account);
+- editors of a published deck must accept the library terms, and the owner can't submit until every editor has;
+- viewers can study with their own progress, and can copy;
+- only the owner starts or submits a new version (editors work inside it).
+
+How it is built:
+- `DeckMember` table (email, user once accepted, View/Edit, terms acceptance) and `Word.updatedAt` (with a default, so it pushes without a warning).
+- `lib/deckAccess.ts`: owner, editor or viewer, with the permission inside the query. A working copy is shared with the live deck's editors only.
+- `lib/deckMembers.ts`, the `/api/decks/members` route, and the screens: **People** on the deck (owner), **Invitations** at the top of My decks, **Shared with me**, and `/decks/[id]/shared` for viewers.
+- **Cards an editor adds belong to the deck's owner.** All owner-scoped queries keep working, and an editor's account deletion never removes files from someone else's deck.
+- **A save over someone else's newer change is refused** with "Someone changed this card after you opened it".
+- **On a private deck,** editors see a non-blocking request to accept the terms. Without it the owner could never submit.
+- The public credit reads "by <owner> with <editors who accepted the terms and chose a name>".
+
+A local browser test passed 14 of 14 checks:
+- invites by email (also an address with no account) and the invite email;
+- accepting, and an editor's card belonging to the owner;
+- no owner-only sections for editors;
+- a viewer reads and studies but cannot edit, and can copy;
+- the overwrite check;
+- the owner is blocked until the editor accepts the terms;
+- a new editor of a public deck must tick 18+ and the terms;
+- admin sees the editors, and the library credits "with Ravi S.";
+- the 10-people limit; remove; leave.
+
+Extra checks: the 21st invitation in a day is refused, and an editor works inside the owner's new version but cannot start or submit it. Regressions still pass: Phase 1 15 of 15, Phase 2 12 of 12, Phase 3 15 of 15.
+
+Beyond the list: `components/decks/EditorTerms.tsx` (the editor's terms box), `components/decks/VersionPanel.tsx` (owner-only Start and Discard) and `components/decks/CopyDeckButton.tsx` ("copy a shared deck").
+
+**After merging:** run Actions → Database setup (the DeckMember table and `Word.updatedAt`). Invitation emails need `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL`; without them the invite still waits in My decks.
+
+Not built: due counts for shared decks in My decks (they show on the study page); a phone-only account (no email) cannot be invited.
+
 - A new `DeckMember` table: the deck, the person, VIEW or EDIT, who invited them and when they accepted. The owner invites by the person's account email; the person accepts in My decks → "Shared with me". The share link stays view-only.
 - **Editors** can add, edit and delete cards, and edit the title and description. **Only the owner** can publish, withdraw, delete the deck, change sharing or invite.
 - **PROPOSAL:** at most 10 people per deck.

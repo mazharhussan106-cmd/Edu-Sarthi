@@ -82,7 +82,9 @@ export function MenuGroupDetails({
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex min-h-11 items-center rounded-lg px-3 font-body text-sm",
-                  active ? "bg-accent/12 font-medium text-accent" : "text-ink-muted hover:bg-hover hover:text-ink",
+                  // accent-dark: plain accent on its own 12% tint is about
+                  // 4.2:1 in the light theme, short of the 4.5:1 text needs.
+                  active ? "bg-accent/12 font-medium text-accent-dark" : "text-ink-muted hover:bg-hover hover:text-ink",
                 )}
               >
                 {item.icon ? <span aria-hidden="true" className="mr-2">{item.icon}</span> : null}

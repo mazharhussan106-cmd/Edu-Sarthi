@@ -17,7 +17,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { LogOut, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
@@ -29,6 +29,10 @@ import { MAIN_PAGES, type MenuGroup } from "@/lib/studentNav";
 export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: readonly MenuGroup[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const openButton = useRef<HTMLButtonElement>(null);
+  const sheet = useRef<HTMLDivElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
 
   // Closing on navigation is not automatic: Next keeps the component mounted
   // across a route change, so the sheet would stay open over the new page.
@@ -43,20 +47,43 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
 
   // Scroll lock while open, or the page behind scrolls under the sheet on iOS
   // and the user loses their place.
+  //
+  // Keyboard: the sheet is portalled to the end of <body>, so without help Tab
+  // from the menu button walks the whole page behind the overlay before it
+  // reaches the sheet. Focus moves into the sheet on open, Tab cycles inside
+  // it, and it returns to the menu button on close.
   useEffect(() => {
     if (!open) return;
 
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    closeButton.current?.focus();
+    const trigger = openButton.current;
 
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") return setOpen(false);
+      if (e.key !== "Tab" || !sheet.current) return;
+      // Only what can be seen: links inside a closed group, or a group hidden
+      // on a computer, have no box and cannot take focus.
+      const stops = [...sheet.current.querySelectorAll<HTMLElement>("a[href], button, summary")].filter((el) => el.getClientRects().length > 0);
+      if (!stops.length) return;
+      const first = stops[0];
+      const last = stops[stops.length - 1];
+      const inside = sheet.current.contains(document.activeElement);
+      if (e.shiftKey && (document.activeElement === first || !inside)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
+        e.preventDefault();
+        first.focus();
+      }
     }
     document.addEventListener("keydown", onKeyDown);
 
     return () => {
       document.body.style.overflow = previous;
       document.removeEventListener("keydown", onKeyDown);
+      trigger?.focus();
     };
   }, [open]);
 
@@ -65,6 +92,7 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
     // is the phone-only navigation sheet it always was.
     <div className={more ? "" : "md:hidden"}>
       <button
+        ref={openButton}
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
@@ -85,12 +113,19 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
 
           {/* The student sheet is wider on a computer, where there is room, so
               each row of the card-list chips fits on one line. */}
-          <div className={cn("absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col border-l border-border bg-surface", more && "md:w-[36rem]")}>
+          <div
+            ref={sheet}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            className={cn("absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col border-l border-border bg-surface", more && "md:w-[36rem]")}
+          >
             <div className="flex items-center justify-between border-b border-border p-4">
-              <span className="font-display text-base font-bold text-ink">
+              <span id={titleId} className="font-display text-base font-bold text-ink">
                 Menu
               </span>
               <button
+                ref={closeButton}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
@@ -144,8 +179,10 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
                           // min-h-12, not py-2: 48px is the smallest tap target
                           // that works reliably on a phone.
                           "flex min-h-12 items-center rounded-lg px-3 font-body text-sm",
+                          // accent-dark: plain accent on its own 12% tint is
+                          // about 4.2:1 in the light theme, short of 4.5:1.
                           active
-                            ? "bg-accent/12 font-medium text-accent"
+                            ? "bg-accent/12 font-medium text-accent-dark"
                             : "text-ink-muted hover:bg-hover hover:text-ink",
                         )}
                       >

@@ -68,6 +68,25 @@ Look at:
 Do this with 10-20 real student recordings and compare each draft with the
 teacher's own audit before teachers rely on it.
 
+## 3b. Help chatbot
+
+```
+npx tsx --env-file=.env scripts/ai-smoke.ts help "How do I change my email?" "Aur mobile number kaise hataun?"
+```
+
+Look at:
+- Is the answer right, short (about 120 words or less) and in the language of
+  the question (the second one is Hinglish)?
+- Ask something the help text does not cover ("What does a paid plan cost?"):
+  it should say it does not know and point to support@edusarthi.com.
+- Ask an English question ("Correct my sentence: I goed to school"): it should
+  say it only helps with the app.
+- The tokens printed for the second question should be lower or similar even
+  though the history grew: the help text is read from the cache.
+
+The words it answers from are in `lib/helpContent.ts`; its rules are `RULES` in
+`lib/aiHelp.ts`. Default model `claude-haiku-5-5`; set `AI_HELP_MODEL` to try another.
+
 ## 4. In the deployed app (after merge, keys in Vercel, Database setup run)
 
 - Make cards with a **PDF** from the deck page. Supabase may refuse the upload
@@ -77,6 +96,8 @@ teacher's own audit before teachers rely on it.
 - Add a file, leave without making cards, and check the file is gone after the
   daily retention run (up to two days; needs `CRON_SECRET` set).
 - Sign in as a teacher: "Make an AI draft" on a real submission.
+- Help page: ask the AI help a question as a student and as a guest; the
+  count of questions left goes down by one each time.
 
 ## What to send back
 

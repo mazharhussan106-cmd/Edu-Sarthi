@@ -5,6 +5,7 @@
 // Importing this file anywhere Edge-bound pulls in Prisma and bcrypt and fails.
 
 import NextAuth, { CredentialsSignin } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -62,6 +63,16 @@ function sessionUser(user: {
   };
 }
 
+// When a Google sign-in finds a session already in the browser, Auth.js links
+// the Google account to that session's user instead of the one with the
+// email. A guest is allowed on /login to upgrade, so a guest pressing
+// "Continue with Google" had the Google account linked to the guest row, and
+// every Google sign-in after that came back as the guest. The email alone
+// decides whose account it is (signIn below), so Auth.js is never told who is
+// signed in. It asks getUser for nothing else here (it is also used by
+// passkeys, which this site does not have).
+const adapter: Adapter = { ...PrismaAdapter(prisma), getUser: async () => null };
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   callbacks: {
@@ -79,6 +90,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       const user = await userForProvenEmail(email);
       if (user.suspendedAt) return false;
+
+      // Repairs links the bug above already made: a Google account stuck on a
+      // guest row moves to its email's account before Auth.js looks it up.
+      await prisma.account.updateMany({
+        where: { provider: "google", providerAccountId: account.providerAccountId, user: { isGuest: true } },
+        data: { userId: user.id },
+      });
 
       if (!user.name && typeof profile.name === "string" && profile.name.trim()) {
         await prisma.user.update({ where: { id: user.id }, data: { name: profile.name.trim().slice(0, 80) } });
@@ -101,7 +119,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
   },
-  adapter: PrismaAdapter(prisma),
+  adapter,
   providers: [
     // Present only when both keys are set, so the site still builds and runs
     // before Google is configured; the login page asks /api/auth/providers

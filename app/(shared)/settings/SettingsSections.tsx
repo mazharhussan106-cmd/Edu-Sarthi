@@ -26,10 +26,12 @@ import { VoiceSettings } from "@/app/(shared)/settings/VoiceSettings";
 
 type Variant = "page" | "panel";
 
-function Section({ variant, id, title, children }: { variant: Variant; id: string; title: string; children: ReactNode }) {
+// "anchor" is set on the page only: menu links such as /settings#share land on
+// it, and the dropdown can be open on the same page, so it must not repeat it.
+function Section({ variant, id, anchor, title, children }: { variant: Variant; id: string; anchor?: string; title: string; children: ReactNode }) {
   if (variant === "page") {
     return (
-      <Card className="mt-6">
+      <Card id={anchor} className="mt-6 scroll-mt-20">
         <CardTitle>{title}</CardTitle>
         <div className="mt-4">{children}</div>
       </Card>
@@ -91,7 +93,7 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
 
       {/* Guests cannot publish, and admins' decks are credited to EduSarthi. */}
       {audience.member && user.role !== "ADMIN" ? (
-        <Section variant={variant} id={id("credit")} title="How your name shows on public decks">
+        <Section variant={variant} id={id("credit")} anchor="public-name" title="How your name shows on public decks">
           <PublicNameForm
             accountName={user.name}
             initialStyle={user.creditStyle}
@@ -101,7 +103,7 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
         </Section>
       ) : null}
 
-      <Section variant={variant} id={id("share")} title="Share EduSarthi">
+      <Section variant={variant} id={id("share")} anchor="share" title="Share EduSarthi">
         <ShareApp />
       </Section>
 

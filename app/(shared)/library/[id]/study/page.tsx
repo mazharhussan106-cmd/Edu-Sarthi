@@ -20,12 +20,14 @@ import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { Card } from "@/components/ui/Card";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { DeckStudy } from "@/components/decks/DeckStudy";
+import { ListSessionBar } from "@/components/flashcards/ListSessionBar";
+import { listNextHref, parseListSession } from "@/lib/listSession";
 
 export const revalidate = 0;
 
 const button = "inline-flex h-10 items-center rounded-lg border border-border-strong px-4 text-sm text-ink hover:bg-hover";
 
-export default async function FollowedStudyPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ card?: string; skip?: string }> }) {
+export default async function FollowedStudyPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ card?: string; skip?: string; inlist?: string; sid?: string; left?: string }> }) {
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const userId = session!.user.id;
 
@@ -48,6 +50,9 @@ export default async function FollowedStudyPage({ params, searchParams }: { para
     deckStudyCounts(userId, id, true),
     sp.card ? prisma.word.findFirst({ where: { code: sp.card, deckId: id }, select: { id: true } }) : null,
   ]);
+  // A card opened by "Study this list": answering goes back to the list, and
+  // the list's strip replaces this deck's due / new counts.
+  const inList = picked ? parseListSession(sp) : null;
   const wordId = picked?.id ?? (await nextDeckCardId(userId, id, skip, true));
   const word = wordId ? await prisma.word.findFirst({ where: { id: wordId, deckId: id }, select: CARD_SELECT }) : null;
 
@@ -63,11 +68,14 @@ export default async function FollowedStudyPage({ params, searchParams }: { para
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-4 pt-3 sm:px-6 sm:pt-6">
+      {inList ? <div className="mb-2"><ListSessionBar s={inList} /></div> : null}
       <div className="flex items-center justify-between gap-3">
         <Link href={`/library/${id}`} className="min-w-0 truncate text-sm font-medium text-accent hover:underline">← {deck.title}</Link>
-        <p className="shrink-0 text-xs text-ink-muted">
-          <b className="font-mono text-ink">{counts.due}</b> due · <b className="font-mono text-ink">{counts.fresh}</b> new
-        </p>
+        {inList ? null : (
+          <p className="shrink-0 text-xs text-ink-muted">
+            <b className="font-mono text-ink">{counts.due}</b> due · <b className="font-mono text-ink">{counts.fresh}</b> new
+          </p>
+        )}
       </div>
       {/* Outside the card on purpose: every card keeps the one EduSarthi look. */}
       {face?.aiAssisted ? <div className="mt-2"><AiBadge /></div> : null}
@@ -87,7 +95,7 @@ export default async function FollowedStudyPage({ params, searchParams }: { para
               stage: state && state.reviews > 0 ? state.stage : null,
               dueAt: state && state.reviews > 0 ? state.dueAt.toISOString() : null,
             }}
-            nextHref={`/library/${id}/study?deck=1`}
+            nextHref={inList ? listNextHref(inList) : `/library/${id}/study?deck=1`}
             skip={skip}
             cardColor={cardColor}
           />

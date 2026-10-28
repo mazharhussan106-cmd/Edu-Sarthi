@@ -11,6 +11,7 @@ import { cookies } from "next/headers";
 import { Inter, JetBrains_Mono, Sora } from "next/font/google";
 
 import { ServiceWorker } from "@/components/layout/ServiceWorker";
+import { CAPTURE_INSTALL_JS } from "@/lib/installPrompt";
 import { attrFromCookie, THEME_COOKIE } from "@/lib/theme";
 import { DATA_SAVER_COOKIE, saverAttrFromCookie } from "@/lib/dataSaver";
 import { HINDI_COOKIE, hindiAttrFromCookie } from "@/lib/hindiToggle";
@@ -77,6 +78,13 @@ export default async function RootLayout({
       data-motion={motion}
       className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        {/* A plain inline script, run while the HTML is read: the browser's
+            install offer comes once per page load, and next/script's
+            beforeInteractive only runs once the app's code has downloaded,
+            which on a slow phone can be after the offer was made. */}
+        <script dangerouslySetInnerHTML={{ __html: CAPTURE_INSTALL_JS }} />
+      </head>
       {/* Browser extensions — Grammarly especially — inject attributes into
           <body> before React hydrates, which React reports as a mismatch.
           Suppression is scoped to this one element, not the whole tree. */}

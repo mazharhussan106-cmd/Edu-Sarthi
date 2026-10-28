@@ -153,7 +153,8 @@ export function DataRights() {
   }
 
   return (
-    <Card className="mt-4">
+    // The menu's "Download or delete my data" link lands here.
+    <Card id="your-data" className="mt-4 scroll-mt-20">
       <CardTitle>Your data</CardTitle>
       <p className="mt-2 text-sm text-ink-muted">
         Download everything stored about your account, or delete it for good.

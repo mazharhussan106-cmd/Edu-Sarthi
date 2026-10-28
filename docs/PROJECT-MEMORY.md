@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged; see items 4h–4j). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; next-features plan, see item 4k). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -99,6 +99,7 @@ An English spoken-communication training platform: students record or upload, te
    - **Legal:** no lawyer yet. `docs/LEGAL-REVIEW-PACK.md` is the assistant's review and the lawyer's reading list. The Privacy and Terms pages were corrected to match Phases 1–5. **Open and important:** parental consent for under-18s (DPDP Act) and naming the legal operator — both need the owner and a lawyer.
    - **Announcements:** Admin → Announcements emails every account holder with a verified email, at most 80 a day from the daily reminders cron, and posts a dashboard notice for 30 days. Tables `Announcement`, `AnnouncementDelivery`. The approved Terms-update email is pre-filled.
    - **Done:** Database setup run #10 (success, 28 Oct: "in sync", no data-loss warning, no card changed) added the announcement tables. **Still for the owner:** check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; on Admin → Announcements send yourself a test, then Start (type SEND).
+4k. **Next features planned, nothing built (28 Oct 2026, branch `claude/adoring-gates-7h67av`): `docs/NEXT-FEATURES-PLAN.md`.** Owner's list: notification inbox (read/unread), messages with a teacher, profile photo, change email/phone, per-student reminder time, photo/audio on AI cards, Hindi/Hinglish app (owner undecided), help chatbot. The plan checks what exists in the code, proposes the order A inbox → B email/phone → C photo → D reminder time → E help bot → F AI card media → G teacher messages (H language: decide now, build last), and lists nine questions (Q1–Q9) for the owner. **Next: the owner answers Q1–Q9; record the answers in that file before building any phase.** Hosting fact found: on Vercel Hobby each cron job runs at most once a day, with hourly precision, so a chosen reminder time means one cron entry per time slot (or Pro).
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

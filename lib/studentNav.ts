@@ -2,8 +2,9 @@
 // mobile bottom bar both read this list, so the two can never disagree about
 // what "Learn" points at.
 //
-// It deliberately holds no icons. Icons are React components, and this file
-// is imported by server layouts that should not pull in client code.
+// It deliberately holds no icon components. Those are React components, and
+// this file is imported by server layouts that should not pull in client
+// code; the menu groups' icons are plain emoji strings for that reason.
 
 import type { NavLink } from "@/components/layout/NavLinks";
 
@@ -15,7 +16,13 @@ export const STUDENT_LINKS: readonly NavLink[] = [
   { href: "/profile", label: "Profile" },
 ];
 
-export type MenuGroup = { heading: string; items: readonly NavLink[] };
+/// `icon` is an emoji shown before the heading (hidden from screen readers),
+/// like the 📚 / 🧭 chips on the Flashcard tab.
+export type MenuGroup = { icon: string; heading: string; items: readonly NavLink[] };
+
+/// The menu's first group on phones: the five STUDENT_LINKS above, folded like
+/// the rest. On a computer they are in the header row, so the group is hidden.
+export const MAIN_PAGES = { icon: "📌", heading: "Main pages" } as const;
 
 /// The menu (hamburger) sections, below the primary links. Kept apart from
 /// STUDENT_LINKS so the bottom bar and header row stay at five destinations;
@@ -30,7 +37,8 @@ export type MenuGroup = { heading: string; items: readonly NavLink[] };
 export function studentMore({ member, aiCards }: { member: boolean; aiCards: boolean }): readonly MenuGroup[] {
   return [
     {
-      heading: "Today",
+      icon: "📅",
+      heading: "Today's tasks",
       items: [
         { href: "/today", label: "Today's review" },
         // The In review tab is exactly Pending + In review: sent, not yet audited.
@@ -39,7 +47,8 @@ export function studentMore({ member, aiCards }: { member: boolean; aiCards: boo
       ],
     },
     {
-      heading: "Study",
+      icon: "📖",
+      heading: "Learn and practise",
       items: [
         { href: "/explore", label: "Explore flashcards" },
         { href: "/flashcards/sections", label: "Word sections (level, topic, goal)" },
@@ -48,7 +57,8 @@ export function studentMore({ member, aiCards }: { member: boolean; aiCards: boo
       ],
     },
     {
-      heading: "Make your own",
+      icon: "✏️",
+      heading: "Create flashcards",
       items: [
         { href: "/decks", label: "My decks" },
         ...(member ? [{ href: "/decks#new-deck", label: "New deck" }] : []),
@@ -58,7 +68,8 @@ export function studentMore({ member, aiCards }: { member: boolean; aiCards: boo
       ],
     },
     {
-      heading: "Decks from others",
+      icon: "🤝",
+      heading: "Shared and library decks",
       items: [
         // ?shared=1 and ?following=1 make those sections show even when they
         // are empty, so the link never lands on a page with nothing about them.
@@ -69,7 +80,8 @@ export function studentMore({ member, aiCards }: { member: boolean; aiCards: boo
       ],
     },
     {
-      heading: "You",
+      icon: "👤",
+      heading: "My account and progress",
       items: [
         { href: "/progress", label: "Progress and reports" },
         { href: "/history", label: "History" },
@@ -80,14 +92,16 @@ export function studentMore({ member, aiCards }: { member: boolean; aiCards: boo
       ],
     },
     {
-      heading: "Help",
+      icon: "❓",
+      heading: "Help and support",
       items: [
         { href: "/help", label: "Help and FAQ" },
         { href: "/support", label: "Contact support" },
       ],
     },
     {
-      heading: "About",
+      icon: "ℹ️",
+      heading: "About and policies",
       items: [
         { href: "/about", label: "About EduSarthi" },
         { href: "/legal/terms", label: "Terms" },

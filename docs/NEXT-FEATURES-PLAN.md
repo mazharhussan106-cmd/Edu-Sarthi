@@ -1,6 +1,6 @@
 # Next features — plan (notifications, messages, profile, reminders, AI media, language, help bot)
 
-Status: **PLAN ONLY (28 Oct 2026, branch `claude/adoring-gates-7h67av`). Nothing is built yet.** Everything marked **PROPOSAL** is the assistant's suggestion and still needs the owner's yes. When the owner answers, copy each answer into "Owner's decisions" below. Do not build a phase until its questions are answered.
+Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phase A (notification inbox) is being built on the same branch.** Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
 
 ## The owner's list (28 Oct 2026)
 
@@ -242,4 +242,21 @@ Already decided, and this does not change it: flashcards are always in English, 
 
 ## Owner's decisions
 
-None yet. Add each answer here with its date, the way `docs/LIBRARY-V2-PLAN.md` does, and mark any older decision it replaces.
+### First round (28 Oct 2026) — CONFIRMED
+
+| # | Topic | Decision | Replaces |
+|---|---|---|---|
+| N1 | Teachers and student names | Teachers keep seeing only the student ID (`STU-xxxx`), in messages and everywhere else. | — (confirms how it works today) |
+| N2 | Google sign-in after an email change | "Continue with Google" with the old Gmail address must still open the same account, not make a new one. Phase B has to tie a Google sign-in to the account itself, not only to the email. | The plan's "the screen must say so" |
+| N3 | Phone number | The phone field stays. It will be used later (how is not decided). For now: edit or remove, unverified. | Q3 options (b) and (c) |
+| N4 | Hosting | The owner will move to Vercel Pro when student sign-ups start. | — |
+| N5 | Announcements | Sent only in the 7 pm reminder run. | — |
+| N6 | Order (Q1) | A → B → C → D → E → G, then H. | — |
+| N7 | Notifications (Q2) | Read items deleted after 90 days, unread after 180. Push notifications to the phone (Phase A2) come after Phase A. | — |
+| N8 | Email change (Q3) | Other devices are signed out; at most 3 changes in 30 days. | — |
+| N9 | Photos (Q4) | A student's photo is seen only by the student. A teacher's photo is shown to students. | — |
+| N10 | Reminder time (Q5) | The student chooses any time, to the minute. This needs Pro (a cron every minute), so Phase D waits for the move to Pro. | The fixed slots in Phase D |
+| N11 | Help bot (Q6) | 20 questions a day for members, 5 for guests. App help only, no English teaching. | — |
+| N12 | AI card media (Q7) | **Skipped for now.** Phase F is not built. | — |
+| N13 | Messages (Q8) | G1 ("Ask about this audit"). Phone numbers, emails and links are blocked. Messages are kept 1 year. Teachers must reply. Replies are not paid. | — |
+| N14 | Language (Q9) | Settings gets a language option. For now it offers English only; the owner adds languages later. | Options H0–H4 |

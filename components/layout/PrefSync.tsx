@@ -1,5 +1,6 @@
 // Owns bringing this device's display settings (text size, Hindi, data saver)
-// in line with the signed-in account's saved ones.
+// in line with the signed-in account's saved ones, and stamping the voice and
+// motion settings on <html> for the components that read them there.
 //
 // Those three live in cookies so the server can paint them on the first frame,
 // but a cookie belongs to a device, not an account. On a new phone, or a shared
@@ -15,7 +16,20 @@ import { useEffect } from "react";
 
 export type SyncPrefs = { textSize: "small" | "normal" | "large"; hideHindi: boolean; dataSaver: boolean };
 
-export function PrefSync({ prefs }: { prefs: SyncPrefs }) {
+/// Settings that nothing paints from, so they need no cookie: read when a card
+/// speaks (lib/speech) or turns (CardSurface). On a full page load the opening
+/// card can turn in once before this runs; every later turn sees the setting.
+export type LivePrefs = { voiceAccent: string; voiceSpeed: string; reduceMotion: boolean };
+
+export function PrefSync({ prefs, live }: { prefs: SyncPrefs; live: LivePrefs }) {
+  useEffect(() => {
+    const el = document.documentElement;
+    const set = (name: string, value: string | null) => (value ? el.setAttribute(name, value) : el.removeAttribute(name));
+    set("data-voice", live.voiceAccent === "auto" ? null : live.voiceAccent);
+    set("data-voice-speed", live.voiceSpeed === "slow" ? "slow" : null);
+    set("data-motion", live.reduceMotion ? "reduce" : null);
+  }, [live.voiceAccent, live.voiceSpeed, live.reduceMotion]);
+
   useEffect(() => {
     const el = document.documentElement;
     const now = {

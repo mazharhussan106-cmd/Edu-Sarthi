@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, see "Settings, phase E"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role and read-aloud voice, see "Settings, phase E" and "phase F"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -141,7 +141,34 @@ Tested on a local Postgres with a production build and Playwright: 52 checks (wh
 
 **Needs before it works live:** merge. No Database setup run is needed. The queue email needs `SENDGRID_API_KEY`, `CRON_SECRET` and `NEXT_PUBLIC_APP_URL`, the same as the reminders.
 
-Still open (proposals, not decisions): a per-student reminder time (needs an hourly cron); voice speed and accent for "say the word"; a daily review limit; Hide Hindi does not yet hide the Hindi-to-English question or Hindi in Excel-imported cards; an in-app reduce-motion switch; changing email or phone; turning a guest into a full account; profile photo; a list of signed-in devices; Hindi/English UI language; a "your password was changed" email. Small doc mismatch noticed: `components/ui/Switch.tsx` says the whole row is clickable, but only the switch button is.
+Still open after phase E: see the list at the end of phase F below.
+
+## Settings, phase F: read-aloud voice, reduce motion, Hide Hindi fix, password email (28 Oct, same branch)
+
+The owner said "start next phase"; this is the next group from the phase E list that needs no database change and no product decision. Same branch as phase E, stacked on it (phase E was not merged yet).
+
+Done:
+- **Read-aloud voice** (students and guests, Settings → Flashcard): accent Automatic / Indian / British / American (`voiceAccent`) and speed Slow / Normal (`voiceSpeed`). All three card screens now speak through one helper, `lib/speech.ts` (`sayText`): the built-in cards (`FlashcardDeck`), deck study (`DeckStudy`) and the library card view (`DeckCardView`, which before used no voice choice and no rate). Automatic keeps the old behaviour (Indian English; British or American for support cards). The support card's Listen (0.9) and Slow (0.6) buttons keep their own speed; the accent applies to them. Normal is the old rate (0.85), Slow is 0.6. A card's own recording plays as recorded. A phone without the chosen accent uses any English voice.
+- **Reduce motion** (everyone): `reduceMotion`. Stops the card-turn animation (`CardSurface`) and cuts CSS animations and transitions to near zero (`globals.css`, `html[data-motion="reduce"]`), on top of the phone's own setting, which was already respected.
+- How these reach the page: they are attributes on `<html>` (`data-voice`, `data-voice-speed`, `data-motion`), set by Settings at once and by `PrefSync` on every signed-in page, and read when a card speaks or turns, the same way the recorder reads `data-saver`. No cookie: nothing paints from them. Known small gap: on a full page load the opening card can still turn in once before PrefSync runs; a cookie stamped by `app/layout.tsx` (like `data-hindi`) would close it.
+- **Hide Hindi bug fixed:** the support card's "हिंदी मतलब · Hindi meaning" box and the imported decks' "In Your Language" box were not hidden, because hiding matched labels starting with "Hindi". `Item` in `components/flashcards/chunk/parts.tsx` now has a `hindi` flag. (In the test data only the Excel deck's 40 cards fill "In Your Language", all in Hindi.) The Hindi-to-English practice question still stays, as the setting says.
+- **"Your password was changed" email** after a change in Settings (`sendPasswordChanged`); sent after the change and never fatal.
+- `useSavePreference` (`app/(shared)/settings/`) is the shared save for `SettingsForm` and `VoiceSettings`.
+
+Tested on a local Postgres with a production build, the real imports (2,227 words, 180 support cards, 21 subject decks) and Playwright with a stand-in voice engine: 19 phase F checks (each screen's accent and speed, support buttons, Hindi hidden and shown again, the turn animation present by default and absent with reduce motion, who sees what, password change with the email failing) and the 52 phase E checks again. `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run. The password email needs `SENDGRID_API_KEY`, like every other email.
+
+Still open (proposals, not decisions):
+- A per-student reminder time. It needs a cron more often than daily. Vercel's Hobby plan is believed to allow only daily crons (check before building), so this probably waits for Pro or an outside scheduler.
+- A daily review limit. `CardState.lastReviewedAt` exists, so it is feasible. It needs a decision on what happens to the cards over the limit.
+- Whether "Hide Hindi" should also hide the Hindi-to-English practice questions. Today the setting deliberately keeps them.
+- Changing email or phone (a re-verification flow).
+- Turning a guest into a full account.
+- Profile photo.
+- A list of signed-in devices (needs a session table).
+- Hindi/English UI language (undecided).
+- Small doc mismatch: `components/ui/Switch.tsx` says the whole row is clickable, but only the switch button is.
 
 ## Flashcard phone layout: lesson (10 Oct)
 

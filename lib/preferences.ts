@@ -12,6 +12,7 @@ import { z } from "zod";
 
 import { CARD_COLOR_VALUES, type CardColor } from "@/lib/cardColors";
 import { TEXT_SIZE_VALUES } from "@/lib/textSize";
+import { VOICE_ACCENT_VALUES, VOICE_SPEED_VALUES } from "@/lib/speech";
 
 /// Self-described on the profile, never tested. "unset" is a real value so a
 /// student who skips it is not silently labelled Beginner.
@@ -48,6 +49,12 @@ export const PREFERENCE_SCHEMA = z.object({
   playbackRate: z.union([z.literal(1), z.literal(1.25), z.literal(1.5)]),
   // Teachers and admins only: one evening email when recordings are waiting.
   emailQueueDigest: z.boolean(),
+  // The phone voice that reads cards aloud (lib/speech). "auto" keeps each
+  // card's own choice: Indian English, British or American for support cards.
+  voiceAccent: z.enum(VOICE_ACCENT_VALUES),
+  voiceSpeed: z.enum(VOICE_SPEED_VALUES),
+  // On top of the phone's own "reduce motion", for anyone who has not found it.
+  reduceMotion: z.boolean(),
 });
 
 export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
@@ -70,6 +77,9 @@ export const DEFAULT_PREFERENCES: Preferences = {
   playbackRate: 1,
   // Opt-in like the student reminder: no one gets a daily email unasked.
   emailQueueDigest: false,
+  voiceAccent: "auto",
+  voiceSpeed: "normal",
+  reduceMotion: false,
 };
 
 /// The speeds the audit player offers, in the order shown. The schema above

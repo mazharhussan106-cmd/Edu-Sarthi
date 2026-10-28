@@ -20,24 +20,16 @@ import type { Theme } from "@prisma/client";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Switch } from "@/components/ui/Switch";
+import { useSavePreference } from "@/app/(shared)/settings/useSavePreference";
 import { attrFromTheme, THEMES } from "@/lib/theme";
-import { TEXT_SIZES, type TextSize } from "@/lib/textSize";
-import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, type PlaybackRate } from "@/lib/preferences";
+import { TEXT_SIZES } from "@/lib/textSize";
+import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, type PlaybackRate, type Preferences } from "@/lib/preferences";
 
 const THEME_OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
-export type PreferenceState = {
-  emailOnAudit: boolean;
-  autoplayAudit: boolean;
-  textSize: TextSize;
-  newPerDay: number;
-  emailReminder: boolean;
-  dataSaver: boolean;
-  hideHindi: boolean;
-  autoSpeak: boolean;
-  playbackRate: PlaybackRate;
-  emailQueueDigest: boolean;
-};
+/// Everything this form edits. Profile owns level and goal; the card colour and
+/// the read-aloud voice have their own controls in the Flashcard section.
+export type PreferenceState = Omit<Preferences, "level" | "goal" | "cardColor" | "voiceAccent" | "voiceSpeed">;
 
 export type SettingsAudience = {
   /// A student: studies flashcards and receives audits.
@@ -59,13 +51,15 @@ export function SettingsForm({
 }) {
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const [prefs, setPrefs] = useState<PreferenceState>(initialPreferences);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [themeNotice, setThemeNotice] = useState<string | null>(null);
+  const { save, notice: saveNotice } = useSavePreference();
+  const notice = themeNotice ?? saveNotice;
   const { learner, member, reviewer } = audience;
   const student = learner && member;
 
   async function saveTheme(next: Theme) {
     setTheme(next);
-    setNotice(null);
+    setThemeNotice(null);
 
     // Applied to the live document, not just to state. Nothing re-renders from
     // this value — the CSS variables hang off the attribute.
@@ -82,26 +76,17 @@ export function SettingsForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ theme: next }),
       });
-      if (!res.ok) setNotice("Theme applied, but it may not stick next visit.");
+      if (!res.ok) setThemeNotice("Theme applied, but it may not stick next visit.");
     } catch {
-      setNotice("Theme applied, but it may not stick next visit.");
+      setThemeNotice("Theme applied, but it may not stick next visit.");
     }
   }
 
-  async function savePreference(key: keyof PreferenceState, value: boolean | string | number) {
+  function savePreference<K extends keyof PreferenceState>(key: K, value: PreferenceState[K]) {
     setPrefs((p) => ({ ...p, [key]: value }));
-    setNotice(null);
-
-    try {
-      const res = await fetch("/api/profile/preferences", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [key]: value }),
-      });
-      if (!res.ok) setNotice("That change may not have saved. Reload to check.");
-    } catch {
-      setNotice("That change may not have saved. Reload to check.");
-    }
+    setThemeNotice(null);
+    // Same type, but TypeScript cannot see through Omit on a generic key.
+    void save(key, value as Preferences[K]);
   }
 
   return (
@@ -162,7 +147,7 @@ export function SettingsForm({
         {learner ? (
           <Switch
             label="Hide Hindi meanings on cards"
-            description="Hides the Hindi boxes so you think in English. The Hindi to English practice question stays."
+            description="Hides the Hindi boxes, and “In your language” on imported decks, so you think in English. The Hindi to English practice question stays."
             checked={prefs.hideHindi}
             onCheckedChange={(v) => {
               // Applied now, like the text size, then saved.
@@ -180,6 +165,17 @@ export function SettingsForm({
             onCheckedChange={(v) => void savePreference("autoSpeak", v)}
           />
         ) : null}
+        <Switch
+          label="Reduce motion"
+          description="Cards change sides without turning, and other movement in the app stops. Your phone's own reduce-motion setting already does this when it is on."
+          checked={prefs.reduceMotion}
+          onCheckedChange={(v) => {
+            // Applied now, like the text size, then saved.
+            if (v) document.documentElement.setAttribute("data-motion", "reduce");
+            else document.documentElement.removeAttribute("data-motion");
+            void savePreference("reduceMotion", v);
+          }}
+        />
       </div>
 
       <div className="mt-4 border-t border-border pt-4">
@@ -217,7 +213,7 @@ export function SettingsForm({
             description="The speed your recording starts at when you open an audit. The buttons under the player still change it for one listen."
             options={PLAYBACK_RATES.map((r) => ({ value: String(r), label: `${r}x` }))}
             value={String(prefs.playbackRate)}
-            onValueChange={(v) => void savePreference("playbackRate", Number(v))}
+            onValueChange={(v) => void savePreference("playbackRate", Number(v) as PlaybackRate)}
           />
         </div>
       ) : null}

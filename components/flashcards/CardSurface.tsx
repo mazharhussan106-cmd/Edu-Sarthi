@@ -60,7 +60,8 @@ export function CardSurface({
   useEffect(() => {
     setView(RESET);
     box.current?.scrollTo({ top: 0 });
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // The phone's own setting, or "Reduce motion" in Settings (PrefSync).
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "reduce") return;
     face.current?.animate(
       [{ transform: "perspective(1200px) rotateY(-70deg)", opacity: 0.3 }, { transform: "none", opacity: 1 }],
       { duration: 220, easing: "ease-out" },

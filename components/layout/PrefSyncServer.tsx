@@ -12,5 +12,10 @@ export async function PrefSyncServer() {
   if (!id) return null;
   const row = await prisma.user.findUnique({ where: { id }, select: { preferences: true } });
   const p = prefsOf(row?.preferences);
-  return <PrefSync prefs={{ textSize: p.textSize, hideHindi: p.hideHindi, dataSaver: p.dataSaver }} />;
+  return (
+    <PrefSync
+      prefs={{ textSize: p.textSize, hideHindi: p.hideHindi, dataSaver: p.dataSaver }}
+      live={{ voiceAccent: p.voiceAccent, voiceSpeed: p.voiceSpeed, reduceMotion: p.reduceMotion }}
+    />
+  );
 }

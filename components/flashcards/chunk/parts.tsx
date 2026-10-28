@@ -50,7 +50,10 @@ export function Tip({ tone, title, children, className }: { tone: Tone; title: s
   );
 }
 
-export type Item = { tone: Tone; label: string; body?: ReactNode };
+/// `hindi` marks a box the "Hide Hindi meanings" setting hides. A label that
+/// starts with "Hindi" counts too; anything else (a label in Devanagari, the
+/// imported decks' "In Your Language") has to say so.
+export type Item = { tone: Tone; label: string; body?: ReactNode; hindi?: boolean };
 
 /// A bordered group of fields: stacked with dashed rules, or two side by side
 /// for short lists. Empty fields are dropped, a pair left with one field is
@@ -70,7 +73,7 @@ export function Box({ tone, cols = 1, items }: { tone: Tone; cols?: 1 | 2; items
       )}
     >
       {shown.map((i) => (
-        <div key={i.label} data-hindi={i.label.startsWith("Hindi") ? "" : undefined} className="min-w-0 px-[0.6em] py-[0.35em]">
+        <div key={i.label} data-hindi={i.hindi || i.label.startsWith("Hindi") ? "" : undefined} className="min-w-0 px-[0.6em] py-[0.35em]">
           <p className={cn("text-[0.72em] font-bold", TEXT[i.tone])}>{i.label}</p>
           <div className="text-[0.8em] leading-snug text-ink">{i.body}</div>
         </div>

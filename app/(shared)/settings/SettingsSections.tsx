@@ -18,6 +18,7 @@ import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { ShareApp } from "@/app/(shared)/settings/ShareApp";
 import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
+import { VoiceSettings } from "@/app/(shared)/settings/VoiceSettings";
 
 type Variant = "page" | "panel";
 
@@ -67,7 +68,10 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
       {/* Students only: teachers and admins have no flashcards. */}
       {audience.learner ? (
         <Section variant={variant} id={id("card")} title="Flashcard">
-          <CardColorPicker initial={preferences.cardColor} />
+          <div className="flex flex-col gap-4">
+            <CardColorPicker initial={preferences.cardColor} />
+            <VoiceSettings initialAccent={preferences.voiceAccent} initialSpeed={preferences.voiceSpeed} />
+          </div>
         </Section>
       ) : null}
 

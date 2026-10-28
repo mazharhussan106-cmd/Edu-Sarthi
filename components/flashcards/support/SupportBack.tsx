@@ -25,6 +25,7 @@ export function SupportBack({ d }: { d: SupportDetails }) {
           {
             tone: "saffron",
             label: "हिंदी मतलब · Hindi meaning",
+            hindi: true,
             body: d.hindi_meaning ? (
               <>
                 <p>{d.hindi_meaning}</p>

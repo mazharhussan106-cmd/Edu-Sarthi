@@ -183,3 +183,13 @@ export async function sendQueueDigest(to: string, waiting: number, urgent: numbe
   const html = `<p>${subject}.</p>${urgentLine ? `<p><b>${urgentLine}</b></p>` : ""}<p><a href="${url}">Open the queue</a></p><p style="color:#666;font-size:12px">${off}</p>`;
   await send(to, subject, text, html);
 }
+
+/// Sent after a password is changed from Settings. Every session has already
+/// ended, so if this was not the owner, Forgot password is the way back in.
+export async function sendPasswordChanged(to: string, url: string) {
+  const subject = "Your EduSarthi password was changed";
+  const ifNot = "If you did not do this, use Forgot password on the sign-in page now to set a new one, then write to us from the Support page.";
+  const text = `The password for your EduSarthi account was just changed, and every device was signed out.\n\nIf this was you, there is nothing to do.\n\n${ifNot}\n\nSign in: ${url}`;
+  const html = `<p>The password for your EduSarthi account was just changed, and every device was signed out.</p><p>If this was you, there is nothing to do.</p><p><b>${ifNot}</b></p><p><a href="${url}">Go to sign in</a></p>`;
+  await send(to, subject, text, html);
+}

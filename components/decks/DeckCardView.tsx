@@ -16,6 +16,7 @@ import { CardSurface } from "@/components/flashcards/CardSurface";
 import { WORD_TITLES } from "@/components/flashcards/CardSides";
 import { DeckSide, type DeckCardData } from "@/components/decks/DeckSides";
 import type { CardColor } from "@/lib/cardColors";
+import { sayText } from "@/lib/speech";
 
 export function DeckCardView({ card, prevHref, nextHref, cardColor }: { card: DeckCardData; prevHref: string | null; nextHref: string | null; cardColor: CardColor }) {
   const router = useRouter();
@@ -40,12 +41,9 @@ export function DeckCardView({ card, prevHref, nextHref, cardColor }: { card: De
             card={card}
             stage={null}
             dueLabel={null}
-            onSpeak={() => {
-              const u = new SpeechSynthesisUtterance(card.rich?.term ?? card.front);
-              u.lang = "en-IN";
-              window.speechSynthesis?.cancel();
-              window.speechSynthesis?.speak(u);
-            }}
+            // A phone that cannot speak just stays quiet here: reading a
+            // library card has no message area to explain it in.
+            onSpeak={() => void sayText(card.rich?.term ?? card.front)}
             backToFront={<button type="button" onClick={() => setSide(0)} className="self-center rounded-full px-3 py-1 text-xs text-ink-muted hover:bg-hover">↻ Back to the front</button>}
           />
         </CardSurface>

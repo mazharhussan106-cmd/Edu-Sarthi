@@ -15,6 +15,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 import { requireUser } from "@/lib/apiUser";
+import { appUrl } from "@/lib/appUrl";
+import { sendPasswordChanged } from "@/lib/email";
 import { clearLoginAttempts, isRateLimited, recordFailedLogin } from "@/lib/loginRateLimit";
 import { prisma } from "@/lib/prisma";
 import { changePasswordSchema } from "@/lib/validations";
@@ -71,6 +73,16 @@ export async function POST(req: Request) {
     await clearLoginAttempts(throttleKey);
   } catch {
     console.error("Could not clear login attempts after a password change");
+  }
+
+  // Tells the owner, in case this was not them. After the write and never
+  // fatal: the password has changed whether or not the email goes.
+  if (user.email) {
+    try {
+      await sendPasswordChanged(user.email, `${appUrl(req)}/login`);
+    } catch (err) {
+      console.error("Password-changed email not sent", err instanceof Error ? err.message : "unknown error");
+    }
   }
 
   return NextResponse.json({ ok: true });

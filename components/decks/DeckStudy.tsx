@@ -22,6 +22,7 @@ import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi
 import { DeckSide, type DeckCardData } from "@/components/decks/DeckSides";
 import type { CardColor } from "@/lib/cardColors";
 import { skipQuery, withSkipped } from "@/lib/cardSkip";
+import { sayText } from "@/lib/speech";
 import { describeDue } from "@/lib/srs";
 
 export type DeckCardState = Remarks & {
@@ -52,16 +53,8 @@ export function DeckStudy({
       void new Audio(card.audioSrc).play().catch(() => setMessage("The recording would not play. Check the volume and try again."));
       return;
     }
-    const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
-    if (!synth) return setMessage("This phone cannot read aloud. Read the card out loud yourself instead.");
-    const u = new SpeechSynthesisUtterance(card.rich?.term ?? card.front);
-    const voices = synth.getVoices();
-    // Indian English first, so the voice matches what students hear around them.
-    u.voice = voices.find((v) => v.lang === "en-IN") ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
-    u.lang = u.voice?.lang ?? "en-IN";
-    u.rate = 0.85;
-    synth.cancel();
-    synth.speak(u);
+    // Indian English first unless the student chose an accent in Settings.
+    if (!sayText(card.rich?.term ?? card.front)) setMessage("This phone cannot read aloud. Read the card out loud yourself instead.");
   }
 
   async function mark(known: boolean) {

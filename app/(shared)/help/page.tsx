@@ -49,6 +49,10 @@ const FAQ = [
     a: "Settings → Email and phone. For a new email you enter your password (or a code sent to your current address), then a code sent to the new address. Changing it signs you out on every device; sign in again with the new address. You can change your email three times in 30 days.",
   },
   {
+    q: "Who can see my profile photo?",
+    a: "Settings → Profile photo, or tap the circle on your Profile. A student's photo is seen only by that student; teachers know you by your student ID. A teacher's photo is shown to students on their audits after an admin checks it.",
+  },
+  {
     q: "I lost my phone or used a shared computer.",
     a: "Settings → Security → Sign out of all devices. Then change your password from the sign-in page with Forgot password.",
   },

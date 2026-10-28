@@ -51,6 +51,10 @@ export async function GET() {
       adultConfirmedAt: true,
       creditStyle: true,
       publicName: true,
+      // Whether there is a photo and when an admin checked it; the photo
+      // itself is on the Profile page (a link here would expire in minutes).
+      avatarKey: true,
+      avatarApprovedAt: true,
       decks: { where: { termsAcceptedAt: { not: null } }, select: { title: true, licence: true, termsVersion: true, termsAcceptedAt: true } },
       enrollments: { select: { moduleId: true, createdAt: true } },
       // Card progress and the answer-by-answer study history are personal data
@@ -117,7 +121,10 @@ export async function GET() {
   await logAdmin(null, "Student exported own data", "user", data?.publicId ?? null);
 
   const stamp = new Date().toISOString().slice(0, 10);
-  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data }, null, 2), {
+  // The storage path is ours, not theirs; they get whether a photo exists.
+  const { avatarKey, ...rest } = data ?? { avatarKey: null };
+  const account = data ? { ...rest, hasProfilePhoto: Boolean(avatarKey) } : null;
+  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account }, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Content-Disposition": `attachment; filename="edusarthi-my-data-${stamp}.json"`,
@@ -161,7 +168,7 @@ export async function DELETE(req: Request) {
   const cardMedia = await prisma.word.findMany({ where: { ownerId: userId }, select: { imageUrl: true, audioUrl: true } });
   // Files added for the AI card maker that are still waiting to be used.
   const sourceFiles = await prisma.aiSource.findMany({ where: { userId }, select: { key: true } });
-  const me = await prisma.user.findUnique({ where: { id: userId }, select: { publicId: true } });
+  const me = await prisma.user.findUnique({ where: { id: userId }, select: { publicId: true, avatarKey: true } });
 
   // Rows first, files second. If storage fails the account is still gone and
   // the orphaned files are unreachable (no row points at them); the other
@@ -177,7 +184,8 @@ export async function DELETE(req: Request) {
       { status: 500 },
     );
   }
-  const failed = await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia), ...sourceFiles.map((s) => s.key)]);
+  const photo = me?.avatarKey ? [me.avatarKey] : [];
+  const failed = await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia), ...sourceFiles.map((s) => s.key), ...photo]);
   try {
     // Kept as the record that an erasure request was carried out. Only the
     // student ID is stored — the email is exactly what was asked to be erased.

@@ -39,3 +39,24 @@ export const phoneSchema = z.object({
 });
 
 export type EmailChangeInput = z.infer<typeof emailChangeSchema>;
+
+/// The browser shrinks a photo to 256×256 before upload, so a real one is a
+/// few tens of KB; 1 MB leaves room for an older phone's PNG.
+export const AVATAR_LIMITS = { bytes: 1024 * 1024, types: ["image/webp", "image/jpeg", "image/png"] } as const;
+
+export const avatarActionSchema = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("upload"),
+    contentType: z.enum(AVATAR_LIMITS.types, "Use a JPG, PNG or WebP picture."),
+    sizeBytes: z.number().int().positive("That picture appears to be empty. Choose it again.").max(AVATAR_LIMITS.bytes, "That picture is too large. Choose a smaller one."),
+  }),
+  z.object({ action: z.literal("save"), key: z.string().min(1).max(200) }),
+  z.object({ action: z.literal("remove") }),
+]);
+
+/// The admin's decision on a teacher's photo. `key` is the photo the admin
+/// looked at, so a newer upload in between is never approved unseen.
+export const adminPhotoSchema = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("approve"), id: z.string().min(1), key: z.string().min(1).max(200) }),
+  z.object({ action: z.literal("refuse"), id: z.string().min(1), key: z.string().min(1).max(200), reason: z.string().trim().min(3, "Write a short reason the teacher can act on").max(300) }),
+]);

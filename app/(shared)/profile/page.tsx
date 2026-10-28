@@ -15,10 +15,12 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { DataRights, NameForm } from "@/components/student/AccountActions";
+import { ownPhoto } from "@/lib/avatar";
 import { displayId } from "@/lib/publicId";
 import { badgesFor } from "@/lib/badges";
 import { prefsOf } from "@/lib/preferences";
@@ -41,7 +43,7 @@ export default async function ProfilePage() {
   const isTeacher =
     session.user.role === "TEACHER" || session.user.role === "ADMIN";
 
-  const [user, submissionCount, auditsWritten, auditsReceived] =
+  const [user, submissionCount, auditsWritten, auditsReceived, photo] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
@@ -60,6 +62,7 @@ export default async function ProfilePage() {
       prisma.submission.count({ where: { studentId: userId } }),
       prisma.feedback.count({ where: { teacherId: userId } }),
       prisma.submission.count({ where: { studentId: userId, status: "REVIEWED" } }),
+      ownPhoto(userId),
     ]);
 
   if (!user) redirect("/login");
@@ -93,11 +96,12 @@ export default async function ProfilePage() {
 
       <Card className="mt-6">
         <div className="flex items-start justify-between gap-4">
-          {/* Initials, not a photo: a photo upload needs storage rules, size
-              limits and moderation, and none of that exists for avatars yet. */}
-          <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/12 font-display text-lg font-bold text-accent">
-            {(user.name ?? user.email ?? "?").trim().slice(0, 1).toUpperCase()}
-          </span>
+          {/* The photo is the way to change it (Settings → Profile photo); guests have none. */}
+          {session.user.isGuest ? <Avatar src={null} name={user.name ?? user.email} alt="" /> : (
+            <Link href="/settings#photo" aria-label={photo?.url ? "Change your profile photo" : "Add a profile photo"} className="shrink-0 rounded-full">
+              <Avatar src={photo?.url ?? null} name={user.name ?? user.email} alt="" />
+            </Link>
+          )}
           <div className="min-w-0 flex-1">
             <CardTitle>{user.name ?? "Unnamed"}</CardTitle>
             <p className="mt-1 truncate text-sm text-ink-muted">{user.email}</p>

@@ -1,6 +1,7 @@
 // Owns the finished-audit view (spec S-11): overall score, the sticky player
-// with timestamped notes, the five scores, the teacher's summary, and the
-// "try again" call to action.
+// with timestamped notes, the five scores, the teacher's summary (with their
+// photo once an admin has checked it, never their name), and the "try again"
+// call to action.
 //
 // Notes come before scores on purpose. "Where exactly did I go wrong" is the
 // thing a student opens an audit for; the numbers are the summary of it.
@@ -11,6 +12,7 @@
 import Link from "next/link";
 import type { MediaKind } from "@prisma/client";
 
+import { Avatar } from "@/components/ui/Avatar";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { AuditPlayback } from "@/components/review/AuditPlayback";
 import { NoteList } from "@/components/review/NoteList";
@@ -35,6 +37,7 @@ export function AuditReport({
   feedback,
   previousAverage,
   autoPlay,
+  teacherPhoto = null,
 }: {
   exerciseId: string;
   mediaUrl: string | null;
@@ -43,6 +46,8 @@ export function AuditReport({
   feedback: Scores & { summary: string };
   previousAverage: number | null;
   autoPlay: boolean;
+  /// The teacher's checked photo (lib/avatar), or null: never their name.
+  teacherPhoto?: string | null;
 }) {
   const overall = averageScore(feedback);
   const delta = previousAverage === null ? null : overall - previousAverage;
@@ -131,7 +136,10 @@ export function AuditReport({
       </Card>
 
       <Card className="mt-4">
-        <CardTitle>What your teacher said</CardTitle>
+        <div className="flex items-center gap-3">
+          {teacherPhoto ? <Avatar src={teacherPhoto} name={null} alt="Your teacher" size="sm" /> : null}
+          <CardTitle>What your teacher said</CardTitle>
+        </div>
         {/* whitespace-pre-line so the teacher's paragraph breaks survive. */}
         <p className="mt-2 whitespace-pre-line text-sm text-ink-muted">{feedback.summary}</p>
       </Card>

@@ -1,6 +1,6 @@
 # Next features — plan (notifications, messages, profile, reminders, AI media, language, help bot)
 
-Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phases A (notification inbox) and B (change email or phone) are BUILT on the same branch, tested on a local copy, not merged yet — see "Phase A — what was built" and "Phase B — what was built".** Next phase by the agreed order: C (profile photo). Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
+Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phases A (notification inbox), B (change email or phone) and C (profile photo) are BUILT on the same branch, tested on a local copy, not merged yet — see each phase's "what was built".** Next phase by the agreed order: D (reminder time) — it waits for the move to Vercel Pro (decision N10), so E (help chatbot) can come first. Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
 
 ## The owner's list (28 Oct 2026)
 
@@ -143,6 +143,19 @@ Every phase touches more than 6 files, so each one is its own branch and pull re
 ---
 
 ## Phase C — Profile photo
+
+### Phase C — what was built (28 Oct 2026)
+
+- **Who sees what (decision N9):** a student's photo is seen only by that student (Settings and Profile). A teacher's photo is shown to students on the audits that teacher wrote, beside "What your teacher said" — never the teacher's name, which students did not see before either — and only after an admin has checked it (`avatarApprovedAt`), because many students are under 18. A new upload clears the check. An admin's own photo is approved at once.
+- **Where:** Settings → **Profile photo** (`#photo`; not for guests). On Profile the circle is the photo and links there. Admin → **Photos** (new header link) lists teachers' photos waiting; Approve, or Refuse with a reason (the photo is deleted and the teacher reads the reason in Settings). Both send the teacher an inbox note (`photo_approved`, `photo_refused`).
+- **Upload:** the browser crops the centre square and shrinks it to 256×256 (WebP, JPEG where WebP cannot be written, white behind transparent PNGs) before upload — a 250 KB test picture became 14 KB. The server takes only JPEG/PNG/WebP up to 1 MB, only a key this account was issued, and checks the file's own first bytes; anything else is deleted and refused. Replacing or removing a photo deletes the old file; deleting the account deletes it too.
+- **Data:** three nullable columns on `User`: `avatarKey`, `avatarApprovedAt`, `avatarNote` (additive; `db push` gave no data-loss warning). The data export says `hasProfilePhoto` (not the storage path). Privacy page: a "profile photo" entry under what we collect, and the photo in the deletion paragraph. Help: "Who can see my profile photo?".
+- **Files:** `lib/avatar.ts`, `components/ui/Avatar.tsx`, `app/(shared)/settings/AvatarForm.tsx`, `app/api/profile/avatar/route.ts`, `app/api/admin/photos/route.ts`, `app/(admin)/admin/photos/page.tsx`, and edits to `lib/accountSchemas.ts`, `lib/notifications.ts`, `lib/staffNav.ts`, Settings, Profile, the student audit page and `AuditReport`, `/api/me`, Privacy, Help.
+- **Tested (local Postgres, dev server, Playwright at 390×844):** 27 checks — student upload (shrunk to a 256×256 WebP), no check needed for students, Profile shows it, replacing deletes the old file, remove, GIF and over-1-MB refused, a non-picture file refused and deleted, another account's upload refused, teacher "waiting", hidden from students until approved, admin list, approve (+ inbox note), the student's audit then shows it, a new upload hides it again, approving a photo the admin did not see is refused, refuse with reason (photo deleted, reason shown), students cannot use the admin route, admin's own photo auto-approved, guests refused, export, account deletion removes the file. `tsc` and `next build` pass.
+- **Local-only limit:** the development stand-in for storage (`/api/dev-storage`) lets only the owner and staff read a file, so on a laptop the teacher's photo shows as broken for a student (the test checked the link points at the right file). Live, Supabase's signed link works for whoever the page gives it to.
+- **Not done:** the teacher's photo on library deck credits (would need every library query to carry it); a photo in the header.
+- **`app/(shared)/profile/page.tsx` is now 255 lines** (it was 251). Suggested split: move the account card (photo, name, email, role, name form) into `components/student/AccountCard.tsx`.
+- **To go live:** merge, then run **Actions → Database setup** once (adds the three columns; nothing existing changes).
 
 - **Upload:** PNG, JPG or WebP. The browser shrinks it to 256×256 WebP (about 20–40 KB) before uploading, so it is quick on mobile data. The server still checks the type from the first bytes and caps the size at 1 MB, because the browser step can be skipped.
 - **Storage:** the same private bucket, key `avatars/<userId>/<random>`. It is read through a short-lived signed link, like every other file. The old file is deleted when the photo is replaced or removed, and when the account is deleted. The data export includes it.

@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
+import { AvatarForm } from "@/app/(shared)/settings/AvatarForm";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
 import { EmailChangeForm } from "@/app/(shared)/settings/EmailChangeForm";
 import { PhoneForm } from "@/app/(shared)/settings/PhoneForm";
@@ -18,6 +19,7 @@ import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { ShareApp } from "@/app/(shared)/settings/ShareApp";
 import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
+import { ownPhoto } from "@/lib/avatar";
 import { prefsOf } from "@/lib/preferences";
 
 export const revalidate = 0;
@@ -26,10 +28,13 @@ export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true, email: true, phone: true, passwordHash: true },
-  });
+  const [user, photo] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true, email: true, phone: true, passwordHash: true },
+    }),
+    ownPhoto(session.user.id),
+  ]);
 
   // Each key parsed on its own over the defaults, so one retired value does
   // not reset the rest.
@@ -79,7 +84,17 @@ export default async function SettingsPage() {
         </div>
       </Card>
 
-      {/* Guests have no email or phone; theirs is "create an account". */}
+      {/* Guests have no profile, email or phone; theirs is "create an account". */}
+      {user && !user.isGuest && photo ? (
+        // scroll-mt clears the sticky header when the bell or Profile links to #photo.
+        <Card id="photo" className="mt-6 scroll-mt-20">
+          <CardTitle>Profile photo</CardTitle>
+          <div className="mt-4">
+            <AvatarForm url={photo.url} name={user.name ?? user.email} shownToStudents={photo.shownToStudents} note={photo.note} />
+          </div>
+        </Card>
+      ) : null}
+
       {user && !user.isGuest ? (
         <Card className="mt-6">
           <CardTitle>Email and phone</CardTitle>

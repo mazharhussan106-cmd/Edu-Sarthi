@@ -99,6 +99,14 @@ model User {
   /// The name they typed, used only when creditStyle is DISPLAY_NAME. An admin
   /// can clear it (Admin → Users) if it is not acceptable.
   publicName        String?
+  /// Profile photo (lib/avatar): a storage key, shrunk to 256×256 in the
+  /// browser. A student's is seen only by them (owner's decision N9).
+  avatarKey         String?
+  /// When an admin checked this photo. Students see a teacher's photo only
+  /// once this is set; a new upload clears it. An admin's own photo is set at once.
+  avatarApprovedAt  DateTime?
+  /// Why an admin refused the last photo, shown to its owner in Settings.
+  avatarNote        String?
 
   // Student side
   submissions Submission[] @relation("StudentSubmissions")

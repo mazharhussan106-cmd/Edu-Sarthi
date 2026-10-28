@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Player } from "@/components/media/Player";
 import { AuditReport } from "@/components/student/AuditReport";
+import { staffPhotoForStudents } from "@/lib/avatar";
 import { SendBackView } from "@/components/student/SendBackView";
 import { averageScore, STATUS_BADGE } from "@/lib/audits";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
@@ -60,6 +61,7 @@ export default async function SubmissionPage({
           confidence: true,
           summary: true,
           notes: true,
+          teacherId: true,
           createdAt: true,
         },
       },
@@ -165,11 +167,12 @@ async function Reviewed({
       confidence: number;
       summary: string;
       notes: unknown;
+      teacherId: string;
     };
   };
   mediaUrl: string | null;
 }) {
-  const [previous, user] = await Promise.all([
+  const [previous, user, teacherPhoto] = await Promise.all([
     // The audit just before this one, for the "+0.8 since last time" line.
     prisma.feedback.findFirst({
       where: {
@@ -185,6 +188,8 @@ async function Reviewed({
       },
     }),
     prisma.user.findUnique({ where: { id: studentId }, select: { preferences: true } }),
+    // Only a photo an admin has checked (owner's decision N9); otherwise nothing.
+    staffPhotoForStudents(submission.feedback.teacherId),
   ]);
 
   const prefs = PREFERENCE_SCHEMA.partial().safeParse(user?.preferences ?? {});
@@ -203,6 +208,7 @@ async function Reviewed({
       feedback={submission.feedback}
       previousAverage={previous ? averageScore(previous) : null}
       autoPlay={autoPlay}
+      teacherPhoto={teacherPhoto}
     />
   );
 }

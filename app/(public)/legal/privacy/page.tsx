@@ -38,6 +38,13 @@ export default function PrivacyPage() {
               send SMS. You can change or remove it in Settings.
             </li>
             <li>
+              <span className="text-ink">A profile photo, if you add one.</span>{" "}
+              Optional, made smaller on your phone before it is uploaded. A
+              student&apos;s photo is seen only by that student. A teacher&apos;s
+              photo is shown to students on the audits they write, after an
+              EduSarthi admin has checked it. Remove it any time in Settings.
+            </li>
+            <li>
               <span className="text-ink">Your password, hashed.</span> We store a
               bcrypt hash, never the password itself. Nobody at EduSarthi can
               read or recover it.
@@ -226,7 +233,7 @@ export default function PrivacyPage() {
           <p className="mt-2">
             When you delete your account, your submissions, audits, flashcard
             progress and decks are deleted with it, and we remove your stored
-            recordings, card pictures and any files waiting in the AI card maker. If storage is unavailable at that
+            recordings, card pictures, profile photo and any files waiting in the AI card maker. If storage is unavailable at that
             moment, a file can be left behind until we clear it; write to us if
             you want it confirmed. A copy of one of your decks that another
             person made is theirs and stays with them.

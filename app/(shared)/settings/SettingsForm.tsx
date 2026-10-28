@@ -28,9 +28,9 @@ import { PLAYBACK_RATES, type PlaybackRate, type Preferences } from "@/lib/prefe
 const THEME_OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
 /// Everything this form edits. Profile owns level and goal; the card colour,
-/// the daily limits and the read-aloud voice have their own controls in the
-/// Flashcard section.
-export type PreferenceState = Omit<Preferences, "level" | "goal" | "cardColor" | "voiceAccent" | "voiceSpeed" | "newPerDay" | "reviewsPerDay">;
+/// the new-card limit, the daily reminder and the read-aloud voice have their
+/// own controls in the Flashcard section.
+export type PreferenceState = Omit<Preferences, "level" | "goal" | "cardColor" | "voiceAccent" | "voiceSpeed" | "newPerDay" | "emailReminder" | "reminderHour">;
 
 export type SettingsAudience = {
   /// A student: studies flashcards and receives audits.
@@ -107,14 +107,6 @@ export function SettingsForm({
             description="One email per audit, with a link. The scores stay behind sign-in."
             checked={prefs.emailOnAudit}
             onCheckedChange={(v) => void savePreference("emailOnAudit", v)}
-          />
-        ) : null}
-        {student ? (
-          <Switch
-            label="Daily flashcard reminder email"
-            description="One email around 7 pm India time, only on days when cards are due. The time is fixed for now."
-            checked={prefs.emailReminder}
-            onCheckedChange={(v) => void savePreference("emailReminder", v)}
           />
         ) : null}
         {reviewer ? (

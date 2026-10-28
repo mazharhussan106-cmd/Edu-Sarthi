@@ -22,7 +22,7 @@ const FAQ = [
   },
   {
     q: "How do flashcards decide what I see?",
-    a: "Cards due for review come first, then new cards in order, up to your daily limit (change it in Settings → Flashcard, where you can also cap reviews per day). Marking a card Known pushes it further out, 1, 3, 7, 15, 30, then 60 days. Unknown brings it back sooner.",
+    a: "Cards due for review come first, then new cards in order, up to your daily limit (change it in Settings). Marking a card Known pushes it further out, 1, 3, 7, 15, 30, then 60 days. Unknown brings it back sooner.",
   },
   {
     q: "What do Important, Favourite, Doubt and Confident do?",
@@ -39,6 +39,10 @@ const FAQ = [
   {
     q: "Uploads are slow on my data connection.",
     a: "Turn on Data saver in Settings. New recordings are made at a lower quality and upload faster. You can also upload a short file instead of a long one.",
+  },
+  {
+    q: "How many recordings can I send for audit?",
+    a: "Two a day, so teachers can audit everyone's on time. A new recording that a teacher asked for when sending one back does not count. The count starts again at midnight India time. Flashcards have no limit.",
   },
   {
     q: "I lost my phone or used a shared computer.",

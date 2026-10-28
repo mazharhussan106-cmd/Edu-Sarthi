@@ -242,3 +242,19 @@ export async function sendEmailChanged(to: string, newEmail: string) {
   const html = `<p>The email for your EduSarthi account was changed to <b>${safe}</b>, and every device was signed out.</p><p>If this was you, there is nothing to do.</p><p><b>${ifNot}</b></p>`;
   await send(to, subject, text, html);
 }
+
+/// The code a guest types to add their guest progress to the account this
+/// address already has. Says what it does, so the account's owner, if it was
+/// not them, knows nothing happens without it.
+export async function sendGuestMergeCode(to: string, code: string) {
+  const subject = "Your code to add guest progress to your EduSarthi account";
+  const ignore = "If you did not ask for this, you can ignore this email. Nothing changes without the code.";
+  const text = `Your code is ${code}. Type it in EduSarthi to add the flashcards you studied as a guest to the account for this email. It expires in 10 minutes.\n\n${ignore}`;
+  const html = `
+    <p>Your code to add your guest progress to your EduSarthi account is:</p>
+    <p style="font-size:28px;letter-spacing:6px;font-weight:700">${code}</p>
+    <p>Type it in EduSarthi to add the flashcards you studied as a guest to the account for this email. It expires in 10 minutes.</p>
+    <p style="color:#5f6773;font-size:13px">${ignore}</p>
+  `;
+  await send(to, subject, text, html);
+}

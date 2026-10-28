@@ -225,6 +225,8 @@ export const uploadUrlSchema = z.object({
   contentType: z.string().min(1, "Could not read the file type"),
   sizeBytes: z.number().int().positive("That file appears to be empty"),
   exerciseId: z.string().min(1),
+  // A replacement for a sent-back recording, which the daily limit lets through.
+  retryOfId: z.string().min(1).optional(),
 });
 
 export const submissionSchema = z.object({

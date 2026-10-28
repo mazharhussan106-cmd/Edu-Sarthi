@@ -21,7 +21,7 @@ import { DAILY_GOAL, sentToday, streakDays } from "@/lib/progress";
 import { TodayStrip } from "@/components/student/TodayStrip";
 import { deckCounts } from "@/lib/flashcards";
 import { nextAction } from "@/lib/dashboardNext";
-import { prefsOf } from "@/lib/preferences";
+import { newPerDayOf } from "@/lib/preferences";
 import { cardProgress, criteriaChange, weeklyActivity } from "@/lib/studentStats";
 import { NoticesCard } from "@/components/dashboard/NoticesCard";
 import { activeNotices } from "@/lib/notices";
@@ -121,8 +121,7 @@ export default async function DashboardPage() {
   ]);
 
   const prefRow = await prisma.user.findUnique({ where: { id: studentId! }, select: { preferences: true } });
-  const studyPrefs = prefsOf(prefRow?.preferences);
-  const cards = await deckCounts(studentId!, { kind: "WORD" }, studyPrefs.newPerDay, studyPrefs.reviewsPerDay);
+  const cards = await deckCounts(studentId!, { kind: "WORD" }, newPerDayOf(prefRow?.preferences));
 
   // Independent of everything above, so they run together.
   const [activity, cardStats, notices] = await Promise.all([

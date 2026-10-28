@@ -8,6 +8,7 @@
 import { NextResponse } from "next/server";
 
 import { requireUser } from "@/lib/apiUser";
+import { AUDIT_LIMIT_REACHED, auditsLeftToday } from "@/lib/auditLimit";
 import { prisma } from "@/lib/prisma";
 import { practiceWord } from "@/lib/decks";
 import { submissionSchema } from "@/lib/validations";
@@ -104,6 +105,12 @@ export async function POST(req: Request) {
         { status: 409 },
       );
     }
+  }
+
+  // The daily limit, enforced here as well as before the upload. Two sends at
+  // the same moment can both pass and make it three; that is rare and harmless.
+  if (!retryOfId && (await auditsLeftToday(userId)) === 0) {
+    return NextResponse.json({ error: AUDIT_LIMIT_REACHED }, { status: 429 });
   }
 
   // Last, because it is the only check that calls storage. A key that was

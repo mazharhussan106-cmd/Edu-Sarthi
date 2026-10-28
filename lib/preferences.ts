@@ -13,6 +13,7 @@ import { z } from "zod";
 import { CARD_COLOR_VALUES, type CardColor } from "@/lib/cardColors";
 import { TEXT_SIZE_VALUES } from "@/lib/textSize";
 import { VOICE_ACCENT_VALUES, VOICE_SPEED_VALUES } from "@/lib/speech";
+import { isReminderHour, MAIN_REMINDER_HOUR } from "@/lib/reminderTimes";
 
 /// Self-described on the profile, never tested. "unset" is a real value so a
 /// student who skips it is not silently labelled Beginner.
@@ -39,6 +40,9 @@ export const PREFERENCE_SCHEMA = z.object({
   cardColor: z.enum(CARD_COLOR_VALUES),
   newPerDay: z.number().int().min(5).max(50),
   emailReminder: z.boolean(),
+  // The India hour the reminder goes out (lib/reminderTimes): one of the times
+  // a daily cron job runs, not any hour.
+  reminderHour: z.number().int().refine(isReminderHour, "Choose one of the reminder times."),
   level: z.enum(LEVELS.map((l) => l.value) as [string, ...string[]]),
   goal: z.enum(GOALS.map((g) => g.value) as [string, ...string[]]),
   dataSaver: z.boolean(),
@@ -55,8 +59,6 @@ export const PREFERENCE_SCHEMA = z.object({
   voiceSpeed: z.enum(VOICE_SPEED_VALUES),
   // On top of the phone's own "reduce motion", for anyone who has not found it.
   reduceMotion: z.boolean(),
-  // 0 is no limit. A cap on today's reviews per tab (lib/flashcards).
-  reviewsPerDay: z.number().int().min(0).max(1000),
   // Hides the Hindi to English practice questions, which "Hide Hindi
   // meanings" deliberately keeps.
   hideHindiTask: z.boolean(),
@@ -72,6 +74,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   newPerDay: 10,
   // Off until the student opts in: nobody gets a daily email they never asked for.
   emailReminder: false,
+  reminderHour: MAIN_REMINDER_HOUR,
   level: "unset",
   goal: "unset",
   dataSaver: false,
@@ -85,12 +88,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   voiceAccent: "auto",
   voiceSpeed: "normal",
   reduceMotion: false,
-  reviewsPerDay: 0,
   hideHindiTask: false,
 };
-
-/// Choices for the daily review limit; 0 is "No limit".
-export const REVIEWS_PER_DAY_OPTIONS = [0, 50, 100, 200] as const;
 
 /// The speeds the audit player offers, in the order shown. The schema above
 /// lists the same three; a speed added here must be added there too.

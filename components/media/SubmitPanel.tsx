@@ -114,6 +114,7 @@ export function SubmitPanel({
           contentType: file.type,
           sizeBytes: file.size,
           exerciseId,
+          ...(retryOfId ? { retryOfId } : {}),
         }),
       });
 

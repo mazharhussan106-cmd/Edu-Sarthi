@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, read-aloud voice, guest upgrade, email change and study limits, see "Settings, phase E" to "phase I"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to J; phase J has the owner's 28 Oct decisions). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -24,6 +24,16 @@ An English spoken-communication training platform: students record or upload, te
 - Learners see the Teacher's guide on the back of a teacher's card; only the editor field is staff-only. Recordings on deck cards need at least 15 seconds. Both confirmed by the owner on 27 Oct 2026, so do not "fix" either.
 - Public decks are reviewed by an admin first; institute decks stay inside the institute; imported 56-point cards are read-only in the app (edit the sheet, upload again, same ID updates).
 - Words and chunk data were audited for repeated examples and "label instead of mistake" cells (`docs/CHUNK-PLAN.md`, `content/wordmaster-2000/tools/word_fixes.py`). Do not undo.
+- **Owner's decisions, 28 Oct 2026 (Settings phase J):**
+  - Flashcard reviews have **no daily limit**; only new cards have one.
+  - A student may send **2 recordings a day for a teacher's audit**, "for now" (`AUDITS_PER_DAY` in `lib/auditLimit.ts`). A replacement the teacher asked for does not count.
+  - "Hide Hindi meanings" must **not** hide the Hindi-to-English practice questions. Their separate opt-in switch stays.
+- **Assistant's decisions, delegated by the owner on 28 Oct ("best jo hoga so karo"):**
+  - A guest's progress can merge into an existing **student** account. Rule: the card with more reviews wins, and the account's card wins a tie.
+  - **No profile photo for now.** Teachers deliberately see students only by anonymous ID, a photo would break that, and many users may be minors with DPDP consent still open.
+  - **No signed-in device list for now.** "Sign out of all devices" and the sign-out on a password or email change cover the need. A list needs a session table written on every page load.
+  - **The app's screens stay in English.** It is an English-speaking course, Hindi help already sits where it matters (card meanings, Indian pronunciation), and translating every screen doubles the copy to maintain.
+  - Revisit any of these if users ask.
 
 ## Open work, most important first
 
@@ -256,13 +266,51 @@ Phase F's 19 checks pass again. Phase G's suite passed except one check that cat
 
 **Needs before it works live:** merge. No Database setup run.
 
-Still open (proposals, not decisions):
-- **A per-student reminder time.** First check the Vercel plan's cron limit.
-- **Merging a guest into an existing account.**
-- **Profile photo.** It needs storage rules, size limits and moderation.
-- **A list of signed-in devices.** It needs a session table, which means a schema change.
-- **Hindi/English UI language.**
-- **Phases E to I are all on `claude/blissful-euler-9j0h4c` and not merged.** The longer they wait, the bigger the merge.
+Superseded in part by phase J: the owner said flashcard reviews have no limit, so "Reviews per day" was removed. The Hindi-question switch stays.
+
+## Settings, phase J: owner's answers built: audit limit, reminder time, guest merge (28 Oct, same branch)
+
+The owner answered the open questions:
+- The limit of 2 is for **teacher audits**. Flashcard reviews have **no** limit.
+- "Hide Hindi" must not hide the Hindi-to-English questions; **keep** the separate switch.
+- **Check the Vercel plan:** it is the free Hobby plan.
+- For guest merge, photo, device list and UI language: **"do what is best"**.
+Same branch, stacked on E to I. No database change.
+
+Done:
+- **Review limit removed.** `lib/flashcards.ts`, the flashcards page, the dashboard, `DeckDone` and Help are back to their phase H versions. `reviewsPerDay` is gone from the preferences. `StudyLimits.tsx` keeps only "New cards per day", which now says reviews have no limit.
+- **Audit limit: 2 recordings a day per student**, by the India day.
+  - `lib/auditLimit.ts` (`AUDITS_PER_DAY`, `auditsLeftToday`).
+  - Enforced before the upload (`/api/upload-url`, so nobody uploads a file in vain) and again at `/api/submissions`.
+  - A replacement for a sent-back recording does not count. `SubmitPanel` now passes `retryOfId` to upload-url, which checks that the replacement is real.
+  - `components/student/AuditGate.tsx` shows "N left today" above the recorder on the practice page and the library card practice page. At 0, it shows a card instead of the recorder.
+  - Help has the answer.
+- **Reminder time** (Settings → Flashcard → Daily flashcard reminder email → Reminder time): 7 am, 9 am, 1 pm, 5 pm, 7 pm (default) or 9 pm India time. Preference `reminderHour`.
+  - Hobby runs a cron job at most once a day, anywhere inside its hour, and allows 100 jobs per project. So each time has its own daily job in `vercel.json`, at half past the UTC hour, and emails arrive within about half an hour of the chosen time.
+  - The main job `/api/cron/reminders` (7 pm) still sends announcements and the teachers' queue email.
+  - `/api/cron/reminders/[hour]` sends only that hour's reminders and refuses 7 pm, so nobody is emailed twice.
+  - Code: `lib/reminderTimes.ts`, `lib/studyReminders.ts`, `lib/cronAuth.ts`.
+  - The reminder switch moved from the main settings list to the Flashcard section (`ReminderSettings.tsx`).
+- **Guest merge.** A guest who enters the email of an existing **student** account gets a code at that address (`guest-merge` purpose). Confirming moves their cards and study history into that account (`lib/guestMerge.ts`, one transaction), deletes the guest, and asks them to sign in there.
+  - For a card both studied, the one with more reviews wins, and the account's own on a tie.
+  - Teacher, admin and suspended accounts are refused.
+- **Bug fixed that the tests found:** saving two settings at the same moment lost one. This is what happens when you switch the reminder on and then pick its time. `/api/profile/preferences` read the row and wrote the whole object back; it now merges in the database in one statement (`jsonb ||`). Five settings sent at once all saved, cookies included.
+- Decisions on photo, device list and UI language: see "Decisions that must not be undone".
+
+Tested on a local Postgres with Playwright:
+- **Dev server** (emails are logged): 23 phase J checks.
+  - Reminders: the 9 am job emailed only the 9 am student; the 7 pm job only the default-time one; 19, 8 and missing-secret calls refused.
+  - Audit limit: 2 left → card at the limit; upload and submission refused; a real replacement allowed, a made-up one refused.
+  - Merge: teacher refused, code to the account, cards merged by the rule (3 vs 1 → 3, 5 vs 2 → 5, guest-only card moved), history moved, guest gone and its session dead.
+- **Phase H email-change suite:** all pass but its known test bug (psql's `t`).
+- **Production build:** phase F's 19 checks, plus the five-at-once save.
+- `tsc` and `next build` pass.
+
+**Needs before it works live:** merge, so `vercel.json`'s new jobs deploy. Then check Vercel → Settings → Cron Jobs shows seven jobs. No Database setup run. `CRON_SECRET`, `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL` as before.
+
+Still open:
+- **Phases E to J** are all on `claude/blissful-euler-9j0h4c` and **not merged**.
+- The audit limit is a constant; if it should change often, make it an admin setting.
 
 ## Flashcard phone layout: lesson (10 Oct)
 

@@ -1,6 +1,7 @@
 // Owns the six-digit codes that prove an inbox for one account change: a guest
-// adding an email, and a member changing theirs (a code to the new address,
-// and one to the current address for an account with no password).
+// adding an email, a guest adding their progress to the account that email
+// already has, and a member changing theirs (a code to the new address, and
+// one to the current address for an account with no password).
 //
 // They live in Auth.js's VerificationToken table, like the email-code sign-in
 // (lib/emailLogin), but each under "<purpose>:<user id>:<email>". A code sent
@@ -14,7 +15,7 @@ import { createHash, randomInt } from "crypto";
 
 import { prisma } from "@/lib/prisma";
 
-export type CodePurpose = "guest-upgrade" | "email-new" | "email-old";
+export type CodePurpose = "guest-upgrade" | "guest-merge" | "email-new" | "email-old";
 
 const TTL_MS = 10 * 60 * 1000;
 const RESEND_COOLDOWN_MS = 60 * 1000;

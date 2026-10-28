@@ -17,6 +17,7 @@ import { ChangeEmail } from "@/app/(shared)/settings/ChangeEmail";
 import { GuestUpgrade } from "@/app/(shared)/settings/GuestUpgrade";
 import { ChangePassword } from "@/app/(shared)/settings/ChangePassword";
 import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
+import { ReminderSettings } from "@/app/(shared)/settings/ReminderSettings";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { ShareApp } from "@/app/(shared)/settings/ShareApp";
 import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
@@ -80,7 +81,9 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
         <Section variant={variant} id={id("card")} title="Flashcard">
           <div className="flex flex-col gap-4">
             <CardColorPicker initial={preferences.cardColor} />
-            <StudyLimits initialNew={preferences.newPerDay} initialReviews={preferences.reviewsPerDay} />
+            <StudyLimits initialNew={preferences.newPerDay} />
+            {/* A guest has no email to send a reminder to. */}
+            {audience.member ? <ReminderSettings initialOn={preferences.emailReminder} initialHour={preferences.reminderHour} /> : null}
             <VoiceSettings initialAccent={preferences.voiceAccent} initialSpeed={preferences.voiceSpeed} />
           </div>
         </Section>

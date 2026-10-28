@@ -17,6 +17,7 @@ import { MAX_UPLOAD_BYTES } from "@/lib/storage";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardFront } from "@/components/decks/CardFace";
 import { SubmitPanel } from "@/components/media/SubmitPanel";
+import { AuditGate } from "@/components/student/AuditGate";
 
 export const revalidate = 0;
 
@@ -50,7 +51,9 @@ export default async function PracticeCardPage({ params }: { params: Promise<{ i
       </Card>
       <div className="mt-4">
         {exercise ? (
-          <SubmitPanel exerciseId={exercise.id} expects="AUDIO" maxSeconds={exercise.maxSeconds} maxBytes={MAX_UPLOAD_BYTES} wordId={cardId} />
+          <AuditGate studentId={session.user.id}>
+            <SubmitPanel exerciseId={exercise.id} expects="AUDIO" maxSeconds={exercise.maxSeconds} maxBytes={MAX_UPLOAD_BYTES} wordId={cardId} />
+          </AuditGate>
         ) : (
           <Card className="text-sm text-ink-muted">Recording is not set up yet. Ask an admin to add the speaking practice exercise, then try again.</Card>
         )}

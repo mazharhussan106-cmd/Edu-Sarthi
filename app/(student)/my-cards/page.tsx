@@ -2,7 +2,8 @@
 // every deck they can still open, one list at a time, chosen from three rows —
 // Remarks (⭐ ❤️ ❓ 💯 📝), Answer (✅ Known, 🔁 Unknown) and Level (🔴 Hard,
 // 🟡 Medium, 🟢 Easy). Each card shows all its marks and opens where it is
-// studied, so changing a mark there moves it between these lists.
+// studied, so changing a mark there moves it between these lists. "Study this
+// list" goes through the whole list card by card (my-cards/study).
 //
 // The Flashcard tab has the remark lists too, but only for the tab that is
 // open and only for built-in cards; this is the one place that shows them all.
@@ -62,9 +63,20 @@ export default async function MyCardsPage({ searchParams }: { searchParams: Prom
         ))}
       </div>
 
-      <h2 className="mt-5 font-display text-base font-bold text-ink">
-        <span aria-hidden="true">{current.icon}</span> {current.label} <span className="font-mono text-ink-muted">{counts[list]}</span>
-      </h2>
+      <div className="mt-5 flex items-center justify-between gap-3">
+        <h2 className="font-display text-base font-bold text-ink">
+          <span aria-hidden="true">{current.icon}</span> {current.label} <span className="font-mono text-ink-muted">{counts[list]}</span>
+        </h2>
+        {/* Goes through every card of this list, one at a time, on the card itself. */}
+        {counts[list] ? (
+          <Link
+            href={`/my-cards/study?list=${list}`}
+            className="inline-flex h-10 shrink-0 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark"
+          >
+            ▶ Study this list
+          </Link>
+        ) : null}
+      </div>
 
       {cards.length === 0 ? (
         <Card className="mt-2 text-sm text-ink-muted">

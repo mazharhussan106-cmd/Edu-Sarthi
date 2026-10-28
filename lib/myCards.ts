@@ -10,6 +10,8 @@
 // withdrawn, an invitation removed, a deck deleted) are left out of every
 // list and count, so a withdrawn deck's cards are never shown from here.
 //
+// And `listStep`: the next card of a "Study this list" session.
+//
 // It does not render anything, and it never changes a mark: marking still
 // happens only on the card, through /api/flashcards.
 
@@ -19,6 +21,7 @@ import { prisma } from "@/lib/prisma";
 import { LISTED } from "@/lib/decks";
 import { readableBy } from "@/lib/deckAccess";
 import { LIST_SIZE, type CardListKey } from "@/lib/cardLists";
+import { listParams } from "@/lib/listSession";
 
 export { CARD_LISTS, LIST_ROWS, LIST_SIZE, parseList, type CardListKey } from "@/lib/cardLists";
 
@@ -127,19 +130,55 @@ export async function cardList(userId: string, list: CardListKey) {
     easy: answered((g) => g.known && g.recall === "EASY"),
   };
 
-  const cards: ListedCard[] = rows.map((r) => {
-    const deck = r.word.deckId ? decks.get(r.word.deckId) : null;
-    const card = encodeURIComponent(r.word.code);
-    return {
-      id: r.id,
-      kind: r.word.kind,
-      text: r.word.text,
-      note: r.note?.trim() || null,
-      marks: marksOf(r),
-      href: deck ? `${deck.href}?card=${card}` : `/flashcards?card=${card}`,
-      deck: deck?.title ?? null,
-    };
-  });
+  const cards: ListedCard[] = rows.map((r) => ({
+    id: r.id,
+    kind: r.word.kind,
+    text: r.word.text,
+    note: r.note?.trim() || null,
+    marks: marksOf(r),
+    href: cardHref(r.word, decks),
+    deck: (r.word.deckId && decks.get(r.word.deckId)?.title) || null,
+  }));
 
   return { cards, counts };
+}
+
+/// Where a card is studied: the Flashcard tab for a built-in card, its deck's
+/// study page otherwise. Every caller has already left out unreachable decks.
+function cardHref(word: { code: string; deckId: string | null }, decks: Map<string, StudyDeck>): string {
+  const card = encodeURIComponent(word.code);
+  const deck = word.deckId ? decks.get(word.deckId) : null;
+  return deck ? `${deck.href}?card=${card}` : `/flashcards?card=${card}`;
+}
+
+/// One step of a "Study this list" session (app/(student)/my-cards/study):
+/// the next card of the list after `after`, or the card `card` when ‹ asked
+/// for it, as the URL that opens it with the session attached (lib/listSession).
+/// Cards go in a fixed order, oldest mark first (CardState id), so a card that
+/// leaves the list once answered — Unknown marked Known — cannot make the
+/// session skip or repeat one. `done` when nothing is left; `total` is how many
+/// the list holds now.
+export async function listStep(
+  userId: string,
+  list: CardListKey,
+  at: { after?: string; card?: string },
+): Promise<{ href: string } | { done: true; total: number }> {
+  const decks = await studyDecks(userId);
+  const base: Prisma.CardStateWhereInput = { userId, ...reachable([...decks.keys()]) };
+  const inList: Prisma.CardStateWhereInput = { AND: [base, LIST_WHERE[list]] };
+  const select = { id: true, word: { select: { code: true, deckId: true } } } as const;
+
+  // ‹ may go back to a card that has since left the list; it is still the
+  // person's own card, so it opens, and the session carries on after it.
+  const target =
+    (at.card ? await prisma.cardState.findFirst({ where: { AND: [base, { word: { code: at.card } }] }, select }) : null) ??
+    (await prisma.cardState.findFirst({
+      where: at.after ? { AND: [inList, { id: { gt: at.after } }] } : inList,
+      orderBy: { id: "asc" },
+      select,
+    }));
+  if (!target) return { done: true, total: await prisma.cardState.count({ where: inList }) };
+
+  const left = await prisma.cardState.count({ where: { AND: [inList, { id: { gt: target.id } }] } });
+  return { href: cardHref(target.word, decks) + listParams(list, target.id, left) };
 }

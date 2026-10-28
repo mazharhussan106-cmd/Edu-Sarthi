@@ -25,6 +25,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 | Word sections | Words by level, topic, word type, importance and goal (Daily English, Interviews, IELTS and exams, Work English), in packs of 50 | Flashcard → Words → 📂 Sections; Menu → Learn and practise → Word sections (`/flashcards/sections`) |
 | Remark lists on one tab | ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident for the open tab | Flashcard → chips in the top row |
 | My card lists | Ten lists across every kind of card and every deck you can open — Remarks: ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident, 📝 My notes; Answer: ✅ Known, 🔁 Unknown; Level (of Known cards): 🔴 Hard, 🟡 Medium, 🟢 Easy. Each card shows all its marks; tap it to open the card and change them | Menu → 🗂️ My card lists → any list (`/my-cards?list=…`) |
+| Study this list | Go through every card of one list (e.g. only 🔴 Hard) one at a time on the usual EduSarthi card: Known / Unknown / Remark, › to move on, ‹ to go back, End to stop; a page says when the list is done | My cards → ▶ Study this list (`/my-cards/study?list=…`) |
 | Search | Find a card by word or code; recent searches; search inside a section | Search (`/search`) |
 | Explore | Every kind of card, and approved library decks by subject, one tap to follow | Menu → Learn and practise → Explore flashcards (`/explore`); Flashcard → 🧭 Explore |
 | Record yourself | Say (or, for support emails, write and photograph) the card for a teacher's audit | On a card |

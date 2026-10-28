@@ -14,6 +14,8 @@
 //   /flashcards?list=important          → a remark list
 //   /flashcards?more=1                  → keep going past today's new-card limit
 //   /flashcards?skip=A.B                → cards passed over with › this session
+//   /flashcards?card=VRB-006&inlist=hard&sid=…&left=3 → that card inside a
+//                                          "Study this list" session (lib/listSession)
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -27,6 +29,8 @@ import { detailsOf } from "@/lib/wordCard";
 import { ComingSoon, DeckDone, DeckResults } from "@/components/flashcards/DeckMessages";
 import { DECK_KINDS, DECK_LISTS, DeckTopBar, type ListKey } from "@/components/flashcards/DeckTopBar";
 import { FlashcardDeck } from "@/components/flashcards/FlashcardDeck";
+import { ListSessionBar } from "@/components/flashcards/ListSessionBar";
+import { listNextHref, parseListSession } from "@/lib/listSession";
 
 export const revalidate = 0;
 
@@ -42,7 +46,7 @@ function metaFor(kind: string, w: { category: string | null; partOfSpeech: strin
 export default async function FlashcardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; ch?: string; lv?: string }>;
+  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; ch?: string; lv?: string; inlist?: string; sid?: string; left?: string }>;
 }) {
   const sp = await searchParams;
   const session = await auth();
@@ -54,6 +58,9 @@ export default async function FlashcardsPage({
     ? await prisma.word.findFirst({ where: { code: sp.card, deckId: null }, select: { id: true, kind: true } })
     : null;
   const k = DECK_KINDS.find((x) => (byCode ? x.kind === byCode.kind : x.value === sp.kind)) ?? DECK_KINDS[0];
+  // A card opened by "Study this list": answering goes back to the list, not
+  // to this tab's next card, and the list's strip replaces the tab's top bar.
+  const inList = byCode ? parseListSession(sp) : null;
   // Grammar cards are drawn and searched like chunks; only the Chunk tab
   // has types to filter by.
   const isChunk = k.kind === "CHUNK" || k.kind === "GRAMMAR";
@@ -84,7 +91,7 @@ export default async function FlashcardsPage({
   // level in `partOfSpeech` as the sheet writes it ("Basic"). Word sections
   // and packs narrow the built-in words through `extra`.
   const deck = { kind: k.kind, category: type ?? channel ?? undefined, level: level ? levelLabel(level) : undefined, extra: sectionExtra };
-  const counts = k.ready ? await deckCounts(userId, deck, newPerDay) : null;
+  const counts = k.ready && !inList ? await deckCounts(userId, deck, newPerDay) : null;
 
   let body: React.ReactNode;
   if (!k.ready) {
@@ -158,7 +165,7 @@ export default async function FlashcardsPage({
               dueAt: state && state.reviews > 0 ? state.dueAt.toISOString() : null,
             }}
             recordHref={exercise ? `/practice/${exercise.id}?word=${word.code}` : null}
-            nextHref={withMore}
+            nextHref={inList ? listNextHref(inList) : withMore}
             skip={skip}
             cardColor={cardColor}
             tallTop={k.kind === "CHUNK" || k.kind === "SUPPORT"}
@@ -190,7 +197,7 @@ export default async function FlashcardsPage({
       // plus the bottom bar (3.5rem) plus their borders.
       className="mx-auto flex h-[calc(100dvh-7.25rem-env(safe-area-inset-bottom,0px))] max-w-2xl flex-col px-3 pb-1 pt-3 sm:px-6 sm:pt-6 md:block md:h-auto md:pb-4"
     >
-      <DeckTopBar
+      {inList ? <ListSessionBar s={inList} /> : <DeckTopBar
         k={k}
         type={type}
         channel={channel}
@@ -201,7 +208,7 @@ export default async function FlashcardsPage({
         skipCount={skip.length}
         skipHref={withMore}
         counts={counts}
-      />
+      />}
       {body}
     </main>
   );

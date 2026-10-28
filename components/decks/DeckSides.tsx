@@ -114,9 +114,9 @@ export function DeckSide({ side, card, stage, dueLabel, onSpeak, backToFront }: 
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="practice-steps flex flex-col gap-3">
       <dl><Row icon={Volume2} tone="blue" label="Say it" value="Say the card out loud, then write it in your own sentence." /></dl>
-      <Block n={1} title="Use It In Your Own Sentence" tone="text-tag-teal">
+      <Block title="Use It In Your Own Sentence" tone="text-tag-teal">
         <p>{card.front}</p>
         <OwnSentence id={`${card.code}-own`} />
       </Block>

@@ -18,6 +18,14 @@ const password = z
   .min(8, "Use at least 8 characters")
   .max(MAX_PASSWORD_BYTES, "Use 72 characters or fewer");
 
+// An Indian mobile number, or empty for "none". Shared by sign-up and the
+// profile so the two cannot accept different numbers.
+const phoneField = z
+  .string()
+  .trim()
+  .regex(/^[6-9]\d{9}$/, "Enter a 10-digit mobile number, or leave it empty")
+  .or(z.literal(""));
+
 const email = z
   .string()
   .min(1, "Enter your email")
@@ -34,11 +42,7 @@ export const registerSchema = z
     confirmPassword: z.string(),
     // Collected unverified. SMS stays gated behind SMS_ENABLED until DLT
     // registration completes.
-    phone: z
-      .string()
-      .regex(/^[6-9]\d{9}$/, "Enter a 10-digit mobile number")
-      .optional()
-      .or(z.literal("")),
+    phone: phoneField.optional(),
   })
   // Role is absent on purpose. A client-supplied role means anyone can sign up
   // as a teacher and read every student's submissions.
@@ -66,6 +70,39 @@ export const emailCodeSchema = z.object({
 
 export const emailLinkSchema = z.object({ token: z.string().min(20).max(200) });
 
+// --- Changing the account's email ---------------------------------------------
+
+const sixDigitCode = z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code from your email");
+
+// The current password is checked on the server, and only for an account that
+// has one; an account without one proves itself with a code instead.
+export const emailChangeStartSchema = z.object({
+  newEmail: email,
+  currentPassword: z.string().max(200).optional(),
+});
+
+export const emailChangeConfirmSchema = z.object({
+  newEmail: email,
+  newCode: sixDigitCode,
+  currentPassword: z.string().max(200).optional(),
+  oldCode: sixDigitCode.optional(),
+});
+
+// --- Guest to full account ---------------------------------------------------
+
+const accountName = z.string().trim().min(2, "Enter your name").max(80, "Keep it under 80 characters");
+
+export const guestUpgradeSendSchema = z.object({ name: accountName, email });
+
+export const guestUpgradeVerifySchema = z.object({
+  name: accountName,
+  email,
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter the 6-digit code from your email"),
+});
+
 export const verifyCodeSchema = z.object({
   code: z
     .string()
@@ -84,6 +121,23 @@ export const resetPasswordSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
+  });
+
+// Settings → Security. The current password is checked against the hash on
+// the server; here it only has to be present.
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Enter your current password"),
+    password,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
+  .refine((data) => data.password !== data.currentPassword, {
+    message: "Choose a password different from your current one",
+    path: ["password"],
   });
 
 // --- Teacher review --------------------------------------------------------
@@ -171,6 +225,8 @@ export const uploadUrlSchema = z.object({
   contentType: z.string().min(1, "Could not read the file type"),
   sizeBytes: z.number().int().positive("That file appears to be empty"),
   exerciseId: z.string().min(1),
+  // A replacement for a sent-back recording, which the daily limit lets through.
+  retryOfId: z.string().min(1).optional(),
 });
 
 export const submissionSchema = z.object({
@@ -195,6 +251,8 @@ export const submissionSchema = z.object({
 });
 
 // --- Account ---------------------------------------------------------------
+
+export const phoneSchema = z.object({ phone: phoneField });
 
 export const nameSchema = z.object({
   name: z.string().trim().min(2, "Enter your name").max(80, "Keep it under 80 characters"),

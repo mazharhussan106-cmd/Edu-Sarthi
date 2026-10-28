@@ -35,7 +35,9 @@ export function RichBack({ f }: { f: F }) {
         tone="blue"
         items={[
           { tone: "blue", label: "Meaning (Simple)", body: text(f.meaning) },
-          { tone: "saffron", label: "In Your Language", body: text(f.native_meaning) },
+          // The import fills this from a "Hindi meaning" column too, so
+          // "Hide Hindi meanings" hides it.
+          { tone: "saffron", label: "In Your Language", body: text(f.native_meaning), hindi: true },
           { tone: "navy", label: "How / Why It Works", body: text(f.explanation) },
           { tone: "teal", label: "Simple Explanation", body: text(f.simple_explain) },
           { tone: "amber", label: "Like In Real Life", body: text(f.analogy) },

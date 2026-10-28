@@ -7,12 +7,14 @@
 
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { CARD_COLORS, cardFrameStyle, cardSheetStyle, cardSwatch, type CardColor } from "@/lib/cardColors";
 import { cn } from "@/lib/utils";
 
 export function CardColorPicker({ initial }: { initial: CardColor }) {
+  // Unique per copy: the Settings page and the header's dropdown can both be open.
+  const labelId = useId();
   const [color, setColor] = useState<CardColor>(initial);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -34,9 +36,9 @@ export function CardColorPicker({ initial }: { initial: CardColor }) {
   return (
     <div className="grid gap-5 sm:grid-cols-[1fr_12rem]">
       <div>
-        <p id="card-colour-label" className="text-sm font-medium text-ink">Flashcard colour</p>
+        <p id={labelId} className="text-sm font-medium text-ink">Flashcard colour</p>
         <p className="mt-0.5 text-xs text-ink-muted">Only the flashcard changes. The rest of the app keeps your theme.</p>
-        <div role="radiogroup" aria-labelledby="card-colour-label" className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
+        <div role="radiogroup" aria-labelledby={labelId} className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
           {CARD_COLORS.map((c) => (
             <button
               key={c.value}

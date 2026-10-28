@@ -25,6 +25,7 @@ import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi
 import type { CardColor } from "@/lib/cardColors";
 import { skipQuery, withSkipped } from "@/lib/cardSkip";
 import { sayable } from "@/lib/chunkCard";
+import { sayText } from "@/lib/speech";
 import { describeDue } from "@/lib/srs";
 
 export type DeckWord = {
@@ -95,25 +96,17 @@ export function FlashcardDeck({
 
   // `rate` is only for the Support card's Listen / Slow buttons; quiet is
   // the automatic speak on opening, which must not show errors.
-  function speak(quiet = false, rate = 0.85) {
+  function speak(quiet = false, rate?: number) {
     if (word.audioUrl) {
       void new Audio(word.audioUrl).play().catch(() => quiet || setMessage("The recording would not play. Check the volume and try again."));
       return;
     }
-    // The phone's own voice until recorded audio exists. Indian English
-    // first, so the model matches what students hear around them.
-    const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
-    if (!synth) return quiet || setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
-    const u = new SpeechSynthesisUtterance(chunk ? sayable(word.text) : word.text);
-    const voices = synth.getVoices();
-    // Support agents talk to customers abroad, so those cards prefer a British
-    // or American voice; every other card stays Indian English first.
-    const first = support ? ["en-GB", "en-US"] : ["en-IN"];
-    u.voice = first.map((l) => voices.find((v) => v.lang === l)).find(Boolean) ?? voices.find((v) => v.lang.startsWith("en")) ?? null;
-    u.lang = u.voice?.lang ?? first[0];
-    u.rate = rate;
-    synth.cancel();
-    synth.speak(u);
+    // The phone's own voice until recorded audio exists. Support agents talk
+    // to customers abroad, so those cards prefer a British or American voice;
+    // every other card stays Indian English first, so the model matches what
+    // students hear around them. The student's accent setting overrides both.
+    const spoke = sayText(chunk ? sayable(word.text) : word.text, { prefer: support ? ["en-GB", "en-US"] : ["en-IN"], rate });
+    if (!spoke && !quiet) setMessage("This phone cannot read words aloud. Use the IPA and Indian pronunciation instead.");
   }
 
   // Browsers only let a page speak after the student has touched it, so the

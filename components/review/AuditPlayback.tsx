@@ -24,11 +24,13 @@ export function AuditPlayback({
   mediaKind,
   notes,
   autoPlay = false,
+  playbackRate = 1,
 }: {
   mediaUrl: string;
   mediaKind: MediaKind;
   notes: readonly NoteInput[];
   autoPlay?: boolean;
+  playbackRate?: number;
 }) {
   const seekRef = useRef<((seconds: number) => void) | null>(null);
 
@@ -40,6 +42,7 @@ export function AuditPlayback({
           src={mediaUrl}
           kind={mediaKind === "VIDEO" ? "VIDEO" : "AUDIO"}
           showSpeed
+          initialRate={playbackRate}
           onReady={(seekTo) => {
             seekRef.current = seekTo;
             if (autoPlay) seekTo(0);

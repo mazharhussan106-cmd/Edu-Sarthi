@@ -37,7 +37,14 @@ export function Switch({
         className,
       )}
     >
-      <div className="min-w-0">
+      {/* The text toggles too, for the tap target; the button stays the one
+          keyboard stop, so this needs no key handling of its own. */}
+      <div
+        className={cn("min-w-0", disabled ? "cursor-not-allowed" : "cursor-pointer")}
+        onClick={() => {
+          if (!disabled) onCheckedChange(!checked);
+        }}
+      >
         <p id={labelId} className="font-body text-sm font-medium text-ink">
           {label}
         </p>

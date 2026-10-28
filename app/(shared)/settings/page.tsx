@@ -1,5 +1,5 @@
-// Owns the settings page: reads the current theme and preferences on the
-// server, then hands them to the client form that saves changes.
+// Owns the settings page: the heading and the sign-in check. What appears on
+// it, and for whom, is SettingsSections, shared with the header's dropdown.
 //
 // It deliberately reads preferences from the database rather than a cookie.
 // The theme needs a cookie because it must be known before first paint;
@@ -8,29 +8,13 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { Card, CardTitle } from "@/components/ui/Card";
-import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
-import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
-import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
-import { ShareApp } from "@/app/(shared)/settings/ShareApp";
-import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
-import { prefsOf } from "@/lib/preferences";
+import { SettingsSections } from "@/app/(shared)/settings/SettingsSections";
 
 export const revalidate = 0;
 
 export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true },
-  });
-
-  // Each key parsed on its own over the defaults, so one retired value does
-  // not reset the rest.
-  const preferences = prefsOf(user?.preferences);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
@@ -39,49 +23,7 @@ export default async function SettingsPage() {
         Changes save on their own. There is no save button.
       </p>
 
-      <Card className="mt-6">
-        <CardTitle>Appearance and notifications</CardTitle>
-        <div className="mt-4">
-          <SettingsForm
-            initialTheme={user?.theme ?? "LIGHT"}
-            initialPreferences={preferences}
-          />
-        </div>
-      </Card>
-
-      {/* Students only: teachers and admins have no flashcards. */}
-      {session.user.role === "STUDENT" ? (
-        <Card className="mt-6">
-          <CardTitle>Flashcard</CardTitle>
-          <div className="mt-4">
-            <CardColorPicker initial={preferences.cardColor} />
-          </div>
-        </Card>
-      ) : null}
-
-      {/* Guests cannot publish, and admins' decks are credited to EduSarthi. */}
-      {user && !user.isGuest && user.role !== "ADMIN" ? (
-        <Card className="mt-6">
-          <CardTitle>How your name shows on public decks</CardTitle>
-          <div className="mt-4">
-            <PublicNameForm accountName={user.name} initialStyle={user.creditStyle} initialPublicName={user.publicName} teacher={user.role === "TEACHER"} />
-          </div>
-        </Card>
-      ) : null}
-
-      <Card className="mt-6">
-        <CardTitle>Share EduSarthi</CardTitle>
-        <div className="mt-4">
-          <ShareApp />
-        </div>
-      </Card>
-
-      <Card className="mt-6">
-        <CardTitle>Security</CardTitle>
-        <div className="mt-4">
-          <SignOutEverywhere />
-        </div>
-      </Card>
+      <SettingsSections userId={session.user.id} variant="page" />
     </main>
   );
 }

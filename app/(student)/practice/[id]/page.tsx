@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { SubmitPanel } from "@/components/media/SubmitPanel";
+import { AuditGate } from "@/components/student/AuditGate";
 import { MAX_UPLOAD_BYTES } from "@/lib/storage";
 import { STATUS_BADGE } from "@/lib/audits";
 import { detailsOf } from "@/lib/wordCard";
@@ -111,13 +112,15 @@ export default async function PracticePage({
         {/* MAX_UPLOAD_BYTES crosses from a server component to a client one as
             a plain number, so lib/storage — and the service-role key it uses —
             never reaches the browser. */}
-        <SubmitPanel
-          exerciseId={exercise.id}
-          expects={exercise.expects}
-          maxSeconds={exercise.maxSeconds}
-          maxBytes={MAX_UPLOAD_BYTES}
-          wordId={word?.id}
-        />
+        <AuditGate studentId={studentId!}>
+          <SubmitPanel
+            exerciseId={exercise.id}
+            expects={exercise.expects}
+            maxSeconds={exercise.maxSeconds}
+            maxBytes={MAX_UPLOAD_BYTES}
+            wordId={word?.id}
+          />
+        </AuditGate>
       </div>
 
       {previous.length > 0 ? (

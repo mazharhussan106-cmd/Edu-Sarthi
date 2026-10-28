@@ -12,6 +12,8 @@ import { z } from "zod";
 
 import { CARD_COLOR_VALUES, type CardColor } from "@/lib/cardColors";
 import { TEXT_SIZE_VALUES } from "@/lib/textSize";
+import { VOICE_ACCENT_VALUES, VOICE_SPEED_VALUES } from "@/lib/speech";
+import { isReminderHour, MAIN_REMINDER_HOUR } from "@/lib/reminderTimes";
 
 /// Self-described on the profile, never tested. "unset" is a real value so a
 /// student who skips it is not silently labelled Beginner.
@@ -38,11 +40,30 @@ export const PREFERENCE_SCHEMA = z.object({
   cardColor: z.enum(CARD_COLOR_VALUES),
   newPerDay: z.number().int().min(5).max(50),
   emailReminder: z.boolean(),
+  // The India hour the reminder goes out (lib/reminderTimes): one of the times
+  // a daily cron job runs, not any hour.
+  reminderHour: z.number().int().refine(isReminderHour, "Choose one of the reminder times."),
   level: z.enum(LEVELS.map((l) => l.value) as [string, ...string[]]),
   goal: z.enum(GOALS.map((g) => g.value) as [string, ...string[]]),
   dataSaver: z.boolean(),
   hideHindi: z.boolean(),
   autoSpeak: z.boolean(),
+  // The speed an audit starts at. The player's own buttons still change it for
+  // one listen; this is only where it starts.
+  playbackRate: z.union([z.literal(1), z.literal(1.25), z.literal(1.5)]),
+  // Teachers and admins only: one evening email when recordings are waiting.
+  emailQueueDigest: z.boolean(),
+  // Teachers and admins only: one email per new recording in their queue.
+  emailOnNewRecording: z.boolean(),
+  // The phone voice that reads cards aloud (lib/speech). "auto" keeps each
+  // card's own choice: Indian English, British or American for support cards.
+  voiceAccent: z.enum(VOICE_ACCENT_VALUES),
+  voiceSpeed: z.enum(VOICE_SPEED_VALUES),
+  // On top of the phone's own "reduce motion", for anyone who has not found it.
+  reduceMotion: z.boolean(),
+  // Hides the Hindi to English practice questions, which "Hide Hindi
+  // meanings" deliberately keeps.
+  hideHindiTask: z.boolean(),
 });
 
 export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
@@ -55,6 +76,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   newPerDay: 10,
   // Off until the student opts in: nobody gets a daily email they never asked for.
   emailReminder: false,
+  reminderHour: MAIN_REMINDER_HOUR,
   level: "unset",
   goal: "unset",
   dataSaver: false,
@@ -62,7 +84,21 @@ export const DEFAULT_PREFERENCES: Preferences = {
   // Off by default for the same reason as autoplayAudit: a phone that speaks
   // on every card is a surprise on a bus.
   autoSpeak: false,
+  playbackRate: 1,
+  // Opt-in like the student reminder: no one gets a daily email unasked.
+  emailQueueDigest: false,
+  // Off: on a busy day this is many emails, so only those who want it ask.
+  emailOnNewRecording: false,
+  voiceAccent: "auto",
+  voiceSpeed: "normal",
+  reduceMotion: false,
+  hideHindiTask: false,
 };
+
+/// The speeds the audit player offers, in the order shown. The schema above
+/// lists the same three; a speed added here must be added there too.
+export const PLAYBACK_RATES = [1, 1.25, 1.5] as const;
+export type PlaybackRate = (typeof PLAYBACK_RATES)[number];
 
 /// Choices offered in settings. A short list, not a free number: a student who
 /// types 500 has not chosen a plan, they have broken their daily session.

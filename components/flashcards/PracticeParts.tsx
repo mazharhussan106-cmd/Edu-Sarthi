@@ -18,12 +18,16 @@ import { LADDER_DAYS } from "@/lib/srs";
 import { cn } from "@/lib/utils";
 import { sameAnswer } from "@/lib/wordCard";
 
-export function Block({ n, title, tone, children }: { n: number; title: string; tone: string; children: ReactNode }) {
+/// `hindiTask` marks a question that gives Hindi to put into English, so the
+/// "Hide the Hindi to English practice questions" setting can hide it by CSS.
+///
+/// The number comes from a CSS counter (globals.css, .practice-steps), not a
+/// prop: a hidden question, or one this card has no data for, is skipped by
+/// the counter, so the numbers never show a gap.
+export function Block({ title, tone, hindiTask, children }: { title: string; tone: string; hindiTask?: boolean; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-border bg-surface p-3">
-      <p className={cn("font-display text-[0.8em] font-bold", tone)}>
-        {n}. {title}
-      </p>
+    <div data-hindi-task={hindiTask ? "" : undefined} className="practice-step rounded-xl border border-border bg-surface p-3">
+      <p className={cn("practice-step-title font-display text-[0.8em] font-bold", tone)}>{title}</p>
       <div className="mt-2 text-sm text-ink">{children}</div>
     </div>
   );

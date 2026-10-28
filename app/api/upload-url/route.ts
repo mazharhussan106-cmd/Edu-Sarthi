@@ -9,6 +9,7 @@
 import { NextResponse } from "next/server";
 
 import { requireUser } from "@/lib/apiUser";
+import { auditAllowance, auditLimitReached } from "@/lib/auditLimit";
 import { prisma } from "@/lib/prisma";
 import { uploadUrlSchema } from "@/lib/validations";
 import { ALLOWED_TYPES, createUploadTarget, MAX_UPLOAD_BYTES } from "@/lib/storage";
@@ -33,7 +34,18 @@ export async function POST(req: Request) {
     );
   }
 
-  const { filename, contentType, sizeBytes, exerciseId } = parsed.data;
+  const { filename, contentType, sizeBytes, exerciseId, retryOfId } = parsed.data;
+
+  // Before the upload, so a student over the limit is told now instead of
+  // after sending a whole file (app/api/submissions checks again). A claimed
+  // replacement must really be this student's sent-back recording.
+  if (retryOfId) {
+    const original = await prisma.submission.findFirst({ where: { id: retryOfId, studentId: userId, status: "RETURNED", retry: null }, select: { id: true } });
+    if (!original) return NextResponse.json({ error: "That attempt cannot be replaced. Open it again from My Audits." }, { status: 400 });
+  } else {
+    const { perDay, left } = await auditAllowance(userId);
+    if (left === 0) return NextResponse.json({ error: auditLimitReached(perDay) }, { status: 429 });
+  }
 
   const kind = ALLOWED_TYPES[contentType];
   if (!kind) {

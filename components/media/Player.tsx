@@ -13,6 +13,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 
+import { PLAYBACK_RATES } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 
 function formatTime(seconds: number): string {
@@ -28,6 +29,7 @@ export function Player({
   onTimeUpdate,
   onReady,
   showSpeed = false,
+  initialRate = 1,
   className,
 }: {
   src: string;
@@ -40,6 +42,8 @@ export function Player({
   /// Adds 1x / 1.25x / 1.5x. The student side wants it for re-listening to
   /// their own answer; the teacher's form does not.
   showSpeed?: boolean;
+  /// The speed to start at: the student's "Audit playback speed" setting.
+  initialRate?: number;
   className?: string;
 }) {
   const mediaRef = useRef<HTMLVideoElement>(null);
@@ -47,7 +51,19 @@ export function Player({
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
   const [failed, setFailed] = useState(false);
-  const [rate, setRate] = useState(1);
+  const [rate, setRate] = useState(initialRate);
+
+  // Metadata can arrive before hydration, while onLoadedMetadata is not yet
+  // listening (a slow phone, a cached file). A source already loaded by then
+  // gets its length and starting speed here instead.
+  useEffect(() => {
+    const el = mediaRef.current;
+    if (!el || el.readyState < 1) return;
+    setDuration(el.duration);
+    el.playbackRate = initialRate;
+    // Once per mounted element, like the effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const el = mediaRef.current;
@@ -107,7 +123,12 @@ export function Player({
         ref={mediaRef}
         src={src}
         className={cn("w-full rounded-lg", kind === "AUDIO" && "hidden")}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onLoadedMetadata={(e) => {
+          setDuration(e.currentTarget.duration);
+          // Set here, not on mount: loading a source resets the element to its
+          // default speed, which would quietly undo a rate set any earlier.
+          e.currentTarget.playbackRate = rate;
+        }}
         onTimeUpdate={handleTimeUpdate}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
@@ -168,7 +189,7 @@ export function Player({
 
       {showSpeed ? (
         <div className="mt-2 flex items-center justify-end gap-1" role="group" aria-label="Playback speed">
-          {[1, 1.25, 1.5].map((r) => (
+          {PLAYBACK_RATES.map((r) => (
             <button
               key={r}
               type="button"

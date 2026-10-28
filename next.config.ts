@@ -1,9 +1,23 @@
-// Owns Next.js configuration. Today that is only response headers for the
-// service worker and the Android asset-links file.
+// Owns Next.js configuration: response headers for the service worker and the
+// Android asset-links file, and what is left out of the server function
+// bundles Vercel stores for every deployment.
 
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Prisma's runtime folder carries WebAssembly engines for every database it
+  // supports (CockroachDB, MySQL, SQL Server, SQLite, and Postgres for the edge),
+  // each twice, about 53 MB. File tracing copied all of them into every function,
+  // and Vercel's Hobby plan caps the stored size of all deployments' functions
+  // at 10 GB. This app runs Prisma's native Node engine (the .so.node file),
+  // which never loads them. If the generator ever switches to driver adapters
+  // or engineType "client", these files are needed again and this must go.
+  outputFileTracingExcludes: {
+    "/*": [
+      "node_modules/@prisma/client/runtime/*.wasm-base64.*",
+      "node_modules/.prisma/client/*.wasm",
+    ],
+  },
   async headers() {
     return [
       {

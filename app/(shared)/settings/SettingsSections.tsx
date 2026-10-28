@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { prefsOf } from "@/lib/preferences";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
+import { GuestUpgrade } from "@/app/(shared)/settings/GuestUpgrade";
 import { ChangePassword } from "@/app/(shared)/settings/ChangePassword";
 import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
@@ -61,6 +62,13 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
 
   const sections = (
     <>
+      {/* First for a guest: the one step that keeps their progress. */}
+      {!audience.member ? (
+        <Section variant={variant} id={id("upgrade")} title="Keep your progress">
+          <GuestUpgrade />
+        </Section>
+      ) : null}
+
       <Section variant={variant} id={id("general")} title="Appearance and notifications">
         <SettingsForm initialTheme={user.theme} initialPreferences={preferences} audience={audience} />
       </Section>
@@ -105,7 +113,8 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
           // no password or email to sign back in with.
           <p className="text-sm text-ink-muted">
             A guest account has no password or email, so there is nothing to change here. Signing
-            out ends this guest account, and it cannot be opened again.
+            out ends this guest account, and it cannot be opened again. Add your email under Keep
+            your progress first if you want to come back to it.
           </p>
         )}
       </Section>

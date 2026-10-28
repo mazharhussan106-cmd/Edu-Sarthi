@@ -14,8 +14,8 @@ export async function PrefSyncServer() {
   const p = prefsOf(row?.preferences);
   return (
     <PrefSync
-      prefs={{ textSize: p.textSize, hideHindi: p.hideHindi, dataSaver: p.dataSaver }}
-      live={{ voiceAccent: p.voiceAccent, voiceSpeed: p.voiceSpeed, reduceMotion: p.reduceMotion }}
+      prefs={{ textSize: p.textSize, hideHindi: p.hideHindi, dataSaver: p.dataSaver, reduceMotion: p.reduceMotion }}
+      live={{ voiceAccent: p.voiceAccent, voiceSpeed: p.voiceSpeed }}
     />
   );
 }

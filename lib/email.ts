@@ -193,3 +193,18 @@ export async function sendPasswordChanged(to: string, url: string) {
   const html = `<p>The password for your EduSarthi account was just changed, and every device was signed out.</p><p>If this was you, there is nothing to do.</p><p><b>${ifNot}</b></p><p><a href="${url}">Go to sign in</a></p>`;
   await send(to, subject, text, html);
 }
+
+/// The code a guest types to make their guest account a full one. Worded so
+/// that someone who never asked for it knows they can ignore it.
+export async function sendGuestUpgradeCode(to: string, code: string) {
+  const subject = "Your code to save your EduSarthi progress";
+  const ignore = "If you did not ask for this, you can ignore this email. Nothing changes without the code.";
+  const text = `Your code is ${code}. Type it in EduSarthi to make your guest account a full account with this email. It expires in 10 minutes.\n\n${ignore}`;
+  const html = `
+    <p>Your code to save your EduSarthi progress is:</p>
+    <p style="font-size:28px;letter-spacing:6px;font-weight:700">${code}</p>
+    <p>Type it in EduSarthi to make your guest account a full account with this email. It expires in 10 minutes.</p>
+    <p style="color:#5f6773;font-size:13px">${ignore}</p>
+  `;
+  await send(to, subject, text, html);
+}

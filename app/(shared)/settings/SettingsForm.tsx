@@ -220,8 +220,8 @@ export function SettingsForm({
 
       {learner && !member ? (
         <p className="mt-4 border-t border-border pt-4 text-xs text-ink-muted">
-          You are using a guest account, so email, recording and audit settings are not shown. Sign
-          out, then create a free account or continue with Google to get them.
+          You are using a guest account, so email, recording and audit settings are not shown. Add
+          your email under Keep your progress to get them; your cards stay.
         </p>
       ) : null}
 

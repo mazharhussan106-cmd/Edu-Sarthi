@@ -94,9 +94,9 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
         {tab === "practice" && isGuest ? (
           <Card>
             <CardTitle>Recordings need a free account</CardTitle>
-            <p className="mt-2 text-sm text-ink-muted">Guests can study the flashcards but cannot send recordings. Create a free account to record, get audits and see them here.</p>
-            <Link href="/register" className="mt-4 inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark">
-              Create a free account
+            <p className="mt-2 text-sm text-ink-muted">Guests can study the flashcards but cannot send recordings. Add your email to make this a full account; your cards and progress stay. Then you can record, get audits and see them here.</p>
+            <Link href="/settings" className="mt-4 inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark">
+              Keep my progress
             </Link>
           </Card>
         ) : practice && practice.items.length === 0 ? (

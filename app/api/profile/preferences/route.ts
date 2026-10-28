@@ -15,6 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { DATA_SAVER_COOKIE } from "@/lib/dataSaver";
 import { HINDI_COOKIE } from "@/lib/hindiToggle";
+import { MOTION_COOKIE } from "@/lib/motion";
 import { TEXT_SIZE_COOKIE } from "@/lib/textSize";
 
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
@@ -87,6 +88,17 @@ export async function PATCH(req: Request) {
   if (typeof parsed.data.dataSaver === "boolean") {
     const store = await cookies();
     store.set(DATA_SAVER_COOKIE, parsed.data.dataSaver ? "on" : "off", {
+      maxAge: ONE_YEAR_SECONDS,
+      path: "/",
+      sameSite: "lax",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
+
+  if (typeof parsed.data.reduceMotion === "boolean") {
+    const store = await cookies();
+    store.set(MOTION_COOKIE, parsed.data.reduceMotion ? "reduce" : "normal", {
       maxAge: ONE_YEAR_SECONDS,
       path: "/",
       sameSite: "lax",

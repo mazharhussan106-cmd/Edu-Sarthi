@@ -18,6 +18,14 @@ const password = z
   .min(8, "Use at least 8 characters")
   .max(MAX_PASSWORD_BYTES, "Use 72 characters or fewer");
 
+// An Indian mobile number, or empty for "none". Shared by sign-up and the
+// profile so the two cannot accept different numbers.
+const phoneField = z
+  .string()
+  .trim()
+  .regex(/^[6-9]\d{9}$/, "Enter a 10-digit mobile number, or leave it empty")
+  .or(z.literal(""));
+
 const email = z
   .string()
   .min(1, "Enter your email")
@@ -34,11 +42,7 @@ export const registerSchema = z
     confirmPassword: z.string(),
     // Collected unverified. SMS stays gated behind SMS_ENABLED until DLT
     // registration completes.
-    phone: z
-      .string()
-      .regex(/^[6-9]\d{9}$/, "Enter a 10-digit mobile number")
-      .optional()
-      .or(z.literal("")),
+    phone: phoneField.optional(),
   })
   // Role is absent on purpose. A client-supplied role means anyone can sign up
   // as a teacher and read every student's submissions.
@@ -65,6 +69,21 @@ export const emailCodeSchema = z.object({
 });
 
 export const emailLinkSchema = z.object({ token: z.string().min(20).max(200) });
+
+// --- Guest to full account ---------------------------------------------------
+
+const accountName = z.string().trim().min(2, "Enter your name").max(80, "Keep it under 80 characters");
+
+export const guestUpgradeSendSchema = z.object({ name: accountName, email });
+
+export const guestUpgradeVerifySchema = z.object({
+  name: accountName,
+  email,
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter the 6-digit code from your email"),
+});
 
 export const verifyCodeSchema = z.object({
   code: z
@@ -212,6 +231,8 @@ export const submissionSchema = z.object({
 });
 
 // --- Account ---------------------------------------------------------------
+
+export const phoneSchema = z.object({ phone: phoneField });
 
 export const nameSchema = z.object({
   name: z.string().trim().min(2, "Enter your name").max(80, "Keep it under 80 characters"),

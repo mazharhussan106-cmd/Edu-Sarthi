@@ -35,7 +35,7 @@ export async function requireUser(opts: { verified?: boolean; member?: boolean }
     return { ok: false, res: NextResponse.json({ error: "You were signed out of all devices. Sign in again." }, { status: 401 }) };
   }
   if (opts.member && row.isGuest) {
-    return { ok: false, res: NextResponse.json({ error: "Guests can only study the flashcards. Sign out, then create a free account or continue with Google to do this." }, { status: 403 }) };
+    return { ok: false, res: NextResponse.json({ error: "Guests can only study the flashcards. Add your email in Settings, under Keep your progress, to do this. Your cards stay." }, { status: 403 }) };
   }
   if (opts.verified && !row.emailVerified) {
     return { ok: false, res: NextResponse.json({ error: "Verify your email first. Open the verification page and enter the code we sent you." }, { status: 403 }) };

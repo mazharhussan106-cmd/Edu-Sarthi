@@ -18,7 +18,7 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
-import { DataRights, NameForm } from "@/components/student/AccountActions";
+import { DataRights, NameForm, PhoneForm } from "@/components/student/AccountActions";
 import { displayId } from "@/lib/publicId";
 import { badgesFor } from "@/lib/badges";
 import { prefsOf } from "@/lib/preferences";
@@ -50,6 +50,7 @@ export default async function ProfilePage() {
           name: true,
           email: true,
           phone: true,
+          isGuest: true,
           role: true,
           emailVerified: true,
           createdAt: true,
@@ -111,6 +112,8 @@ export default async function ProfilePage() {
         {!isTeacher ? (
           <div className="mt-5 border-t border-border pt-4">
             <NameForm initialName={user.name} />
+            {/* Not for a guest: a study-only account has no use for a number. */}
+            {!user.isGuest ? <div className="mt-4"><PhoneForm initialPhone={user.phone} /></div> : null}
             <p className="mt-3 text-xs text-ink-muted">
               Teachers see you only as{" "}
               <span className="font-mono text-ink">{displayId(user.publicId)}</span>, never

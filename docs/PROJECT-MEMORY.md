@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role and read-aloud voice, see "Settings, phase E" and "phase F"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, read-aloud voice and guest upgrade, see "Settings, phase E", "phase F" and "phase G"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -150,7 +150,7 @@ The owner said "start next phase"; this is the next group from the phase E list 
 Done:
 - **Read-aloud voice** (students and guests, Settings → Flashcard): accent Automatic / Indian / British / American (`voiceAccent`) and speed Slow / Normal (`voiceSpeed`). All three card screens now speak through one helper, `lib/speech.ts` (`sayText`): the built-in cards (`FlashcardDeck`), deck study (`DeckStudy`) and the library card view (`DeckCardView`, which before used no voice choice and no rate). Automatic keeps the old behaviour (Indian English; British or American for support cards). The support card's Listen (0.9) and Slow (0.6) buttons keep their own speed; the accent applies to them. Normal is the old rate (0.85), Slow is 0.6. A card's own recording plays as recorded. A phone without the chosen accent uses any English voice.
 - **Reduce motion** (everyone): `reduceMotion`. Stops the card-turn animation (`CardSurface`) and cuts CSS animations and transitions to near zero (`globals.css`, `html[data-motion="reduce"]`), on top of the phone's own setting, which was already respected.
-- How these reach the page: they are attributes on `<html>` (`data-voice`, `data-voice-speed`, `data-motion`), set by Settings at once and by `PrefSync` on every signed-in page, and read when a card speaks or turns, the same way the recorder reads `data-saver`. No cookie: nothing paints from them. Known small gap: on a full page load the opening card can still turn in once before PrefSync runs; a cookie stamped by `app/layout.tsx` (like `data-hindi`) would close it.
+- How these reach the page: they are attributes on `<html>` (`data-voice`, `data-voice-speed`, `data-motion`), set by Settings at once and by `PrefSync` on every signed-in page, and read when a card speaks or turns, the same way the recorder reads `data-saver`. The voice needs no cookie, since nothing paints from it. Reduce motion got a cookie in phase G, so the opening card on a page load does not turn in either.
 - **Hide Hindi bug fixed:** the support card's "हिंदी मतलब · Hindi meaning" box and the imported decks' "In Your Language" box were not hidden, because hiding matched labels starting with "Hindi". `Item` in `components/flashcards/chunk/parts.tsx` now has a `hindi` flag. (In the test data only the Excel deck's 40 cards fill "In Your Language", all in Hindi.) The Hindi-to-English practice question still stays, as the setting says.
 - **"Your password was changed" email** after a change in Settings (`sendPasswordChanged`); sent after the change and never fatal.
 - `useSavePreference` (`app/(shared)/settings/`) is the shared save for `SettingsForm` and `VoiceSettings`.
@@ -159,16 +159,46 @@ Tested on a local Postgres with a production build, the real imports (2,227 word
 
 **Needs before it works live:** merge. No Database setup run. The password email needs `SENDGRID_API_KEY`, like every other email.
 
+Still open after phase F: see the list at the end of phase G below.
+
+## Settings, phase G: guest to full account, phone number, two fixes (28 Oct, same branch)
+
+The owner said "start next phase" again without answering the phase F questions, so this phase takes the open items that need no product decision. Same branch, stacked on E and F. No database change: the upgrade code uses Auth.js's existing `VerificationToken` table.
+
+Done:
+- **Guest to full account, progress kept** (Settings → "Keep your progress", shown first to a guest). The guest gives a name and an email, gets a 6-digit code (`sendGuestUpgradeCode`), and types it. The same `User` row then gets the email, a verified date, the name, and `isGuest = false`, so cards, history and settings stay.
+  - Logic: `lib/guestUpgrade.ts`, `app/api/profile/guest-upgrade` (actions `send` and `verify`), `app/(shared)/settings/GuestUpgrade.tsx`.
+  - The code is stored under its own identifier (`guest-upgrade:<guest id>:<email>`), so it cannot be used to sign in, and a sign-in code cannot upgrade a guest (tested).
+  - Sends and wrong codes each have their own throttle on the sign-in throttle's table: 8 per 15 minutes per guest.
+  - An email that already has an account is refused: "sign out and sign in with that email; this guest's progress cannot be moved". Merging two sets of progress was left out on purpose.
+  - Afterwards the session is refreshed in place. `lib/auth.ts` now re-reads `isGuest` on `update()`. Note: `update()` must get an argument; with none, next-auth only reads the session.
+  - The guest messages now point here instead of to /register: the member-only API error in `lib/apiUser.ts`, the History practice tab, and the guest notes in Settings. The account has no password afterwards; it signs in with an email code or Forgot password.
+- **Mobile number** on the Profile page (non-guests): change or remove. Rules:
+  - Stored unverified, as at sign-up; the privacy page already says this. `phoneVerified` is cleared on change.
+  - A number on another account is refused (the column is unique).
+  - The 10-digit rule is now one shared `phoneField` in `lib/validations.ts`, used by sign-up too.
+- **Switch rows:** tapping a setting's text now toggles it, as `components/ui/Switch.tsx` always said it did.
+- **Reduce motion cookie:** `lib/motion.ts`. `app/layout.tsx` stamps `data-motion` from it, the preferences route sets it, and `PrefSync` keeps it in line with the account. The opening card on a page load no longer turns in.
+
+Tested on a local Postgres with Playwright:
+- Production build: 25 checks. They cover the switch text, reduce motion on first load (including a new device), the phone rules, and the guest upgrade. The upgrade checks were: refused email, honest send error without a mail key, wrong and right code, the same row converted, a second confirm refused, member routes working afterwards, a full account refused, and the wrong-code throttle.
+- Dev server, which logs emails: the full upgrade in the browser with the real code. The session stopped being a guest without signing in again, and the earlier card progress stayed. The upgrade code also failed as a sign-in code, and no account was made.
+- The 19 phase F checks again.
+- `tsc` and `next build` pass.
+
+`app/(shared)/profile/page.tsx` is now 254 lines. Split it next time it changes, for example by moving the student extras into a component.
+
+**Needs before it works live:** merge. No Database setup run. The upgrade email needs `SENDGRID_API_KEY`.
+
 Still open (proposals, not decisions):
-- A per-student reminder time. It needs a cron more often than daily. Vercel's Hobby plan is believed to allow only daily crons (check before building), so this probably waits for Pro or an outside scheduler.
-- A daily review limit. `CardState.lastReviewedAt` exists, so it is feasible. It needs a decision on what happens to the cards over the limit.
-- Whether "Hide Hindi" should also hide the Hindi-to-English practice questions. Today the setting deliberately keeps them.
-- Changing email or phone (a re-verification flow).
-- Turning a guest into a full account.
-- Profile photo.
-- A list of signed-in devices (needs a session table).
-- Hindi/English UI language (undecided).
-- Small doc mismatch: `components/ui/Switch.tsx` says the whole row is clickable, but only the switch button is.
+- **Changing the email address.** Suggested design: a code to the new address, plus the current password, or a code to the old address for accounts without one. Also email the old address. Note that a Google account's email is the Google login.
+- **A per-student reminder time.** It needs a cron that runs more often than daily. Vercel's Hobby plan is believed to allow only daily crons (check before building).
+- **A daily review limit.** It needs a decision on what happens to the cards over the limit.
+- **"Hide Hindi" and the Hindi-to-English practice questions:** should the setting also hide them?
+- **Merging a guest into an existing account.**
+- **Profile photo.**
+- **A list of signed-in devices.**
+- **Hindi/English UI language.**
 
 ## Flashcard phone layout: lesson (10 Oct)
 

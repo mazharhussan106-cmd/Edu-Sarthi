@@ -14,6 +14,7 @@ import { ServiceWorker } from "@/components/layout/ServiceWorker";
 import { attrFromCookie, THEME_COOKIE } from "@/lib/theme";
 import { DATA_SAVER_COOKIE, saverAttrFromCookie } from "@/lib/dataSaver";
 import { HINDI_COOKIE, hindiAttrFromCookie } from "@/lib/hindiToggle";
+import { MOTION_COOKIE, motionAttrFromCookie } from "@/lib/motion";
 import { TEXT_SIZE_COOKIE, textAttrFromCookie } from "@/lib/textSize";
 import "./globals.css";
 
@@ -64,6 +65,7 @@ export default async function RootLayout({
   const hindi = hindiAttrFromCookie(cookieStore.get(HINDI_COOKIE)?.value);
   const saver = saverAttrFromCookie(cookieStore.get(DATA_SAVER_COOKIE)?.value);
   const textSize = textAttrFromCookie(cookieStore.get(TEXT_SIZE_COOKIE)?.value);
+  const motion = motionAttrFromCookie(cookieStore.get(MOTION_COOKIE)?.value);
 
   return (
     <html
@@ -72,6 +74,7 @@ export default async function RootLayout({
       data-text={textSize}
       data-hindi={hindi}
       data-saver={saver}
+      data-motion={motion}
       className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       {/* Browser extensions — Grammarly especially — inject attributes into

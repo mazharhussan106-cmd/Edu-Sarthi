@@ -86,14 +86,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true;
     },
     // On update() the browser's payload is ignored; the account's own row is
-    // the only source for "verified" and for the role.
+    // the only source for "verified", the role and "guest".
     async jwt(params) {
       const token = await authConfig.callbacks.jwt(params);
       if (params.trigger === "update" && token.sub) {
-        const row = await prisma.user.findUnique({ where: { id: token.sub }, select: { emailVerified: true, role: true } });
+        const row = await prisma.user.findUnique({ where: { id: token.sub }, select: { emailVerified: true, role: true, isGuest: true } });
         if (row) {
           token.emailVerified = row.emailVerified;
           token.role = row.role;
+          // A guest who adds an email becomes a full account in place.
+          token.isGuest = row.isGuest;
         }
       }
       return token;

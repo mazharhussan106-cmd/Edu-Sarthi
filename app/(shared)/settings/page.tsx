@@ -61,7 +61,8 @@ export default async function SettingsPage() {
 
       {/* Guests cannot publish, and admins' decks are credited to EduSarthi. */}
       {user && !user.isGuest && user.role !== "ADMIN" ? (
-        <Card className="mt-6">
+        // The menu's "How my name shows on public decks" link lands here.
+        <Card id="public-name" className="mt-6 scroll-mt-20">
           <CardTitle>How your name shows on public decks</CardTitle>
           <div className="mt-4">
             <PublicNameForm accountName={user.name} initialStyle={user.creditStyle} initialPublicName={user.publicName} teacher={user.role === "TEACHER"} />

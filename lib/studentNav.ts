@@ -22,10 +22,12 @@ export type MenuGroup = { heading: string; items: readonly NavLink[] };
 /// everything else lives here, each group folded under its heading until
 /// tapped (MobileMenu).
 ///
-/// A function, not a constant, because one link depends on the server: the
-/// AI card maker is listed only when its key is set and the person is not a
-/// guest (guests cannot make decks), so the menu never offers a dead end.
-export function studentMore({ aiCards }: { aiCards: boolean }): readonly MenuGroup[] {
+/// A function, not a constant, because some links depend on the server, so
+/// the menu never offers a dead end:
+/// - `member` is false for a guest. Guests cannot make decks or publish, so
+///   New deck and "How my name shows on public decks" are left out for them.
+/// - `aiCards` is whether the AI card maker's key is set.
+export function studentMore({ member, aiCards }: { member: boolean; aiCards: boolean }): readonly MenuGroup[] {
   return [
     {
       heading: "Today",
@@ -46,15 +48,22 @@ export function studentMore({ aiCards }: { aiCards: boolean }): readonly MenuGro
       ],
     },
     {
-      heading: "My cards and decks",
+      heading: "Make your own",
       items: [
+        { href: "/decks", label: "My decks" },
+        ...(member ? [{ href: "/decks#new-deck", label: "New deck" }] : []),
+        ...(member && aiCards ? [{ href: "/decks#ai-cards", label: "Make cards with AI" }] : []),
         { href: "/my-cards", label: "Saved cards" },
         { href: "/my-cards?list=unknown", label: "Cards I find hard" },
-        { href: "/decks", label: "My decks" },
-        ...(aiCards ? [{ href: "/decks#ai-cards", label: "Make cards with AI" }] : []),
-        // ?shared=1 makes the section show even when it is empty, so the link
-        // never lands on a page with nothing about sharing on it.
+      ],
+    },
+    {
+      heading: "Decks from others",
+      items: [
+        // ?shared=1 and ?following=1 make those sections show even when they
+        // are empty, so the link never lands on a page with nothing about them.
         { href: "/decks?shared=1#shared-with-me", label: "Shared with me" },
+        { href: "/decks?following=1#following", label: "Decks I follow" },
         { href: "/library", label: "Library" },
         { href: "/institute", label: "Institute" },
       ],
@@ -65,6 +74,7 @@ export function studentMore({ aiCards }: { aiCards: boolean }): readonly MenuGro
         { href: "/progress", label: "Progress and reports" },
         { href: "/history", label: "History" },
         { href: "/settings", label: "Settings" },
+        ...(member ? [{ href: "/settings#public-name", label: "How my name shows on public decks" }] : []),
         { href: "/settings#share", label: "Share EduSarthi" },
         { href: "/profile#your-data", label: "Download or delete my data" },
       ],

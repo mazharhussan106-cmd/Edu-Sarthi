@@ -37,7 +37,7 @@ export default async function SharedLayout({
         links={isTeacher ? staffNav(session?.user?.role).links : STUDENT_LINKS}
         theme={theme}
         search={isTeacher ? undefined : <HeaderSearch />}
-        more={isTeacher ? undefined : studentMore({ aiCards: cardMakerEnabled() && !session?.user?.isGuest })}
+        more={isTeacher ? undefined : studentMore({ member: !session?.user?.isGuest, aiCards: cardMakerEnabled() })}
         settingsPanel={<SettingsPanel />}
         homeHref={isTeacher ? staffNav(session?.user?.role).home : "/dashboard"}
       />

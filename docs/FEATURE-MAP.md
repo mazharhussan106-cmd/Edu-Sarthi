@@ -24,7 +24,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 | Customer-support English | Voice / Chat / Email × Basic / Intermediate / Advanced | Flashcard → Support tab; Menu → Study → Customer-support English |
 | Word sections | Words by level, topic, word type, importance and goal (Daily English, Interviews, IELTS and exams, Work English), in packs of 50 | Flashcard → Words → 📂 Sections; Menu → Study → Word sections (`/flashcards/sections`) |
 | Remark lists on one tab | ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident for the open tab | Flashcard → chips in the top row |
-| My cards | The same remarks across every kind of card and every deck, plus "Marked Unknown" and "My notes" | Menu → My cards and decks → Saved cards / Cards I find hard (`/my-cards`) |
+| My cards | The same remarks across every kind of card and every deck, plus "Marked Unknown" and "My notes" | Menu → Make your own → Saved cards / Cards I find hard (`/my-cards`) |
 | Search | Find a card by word or code; recent searches; search inside a section | Search (`/search`) |
 | Explore | Every kind of card, and approved library decks by subject, one tap to follow | Menu → Study → Explore flashcards (`/explore`); Flashcard → 🧭 Explore |
 | Record yourself | Say (or, for support emails, write and photograph) the card for a teacher's audit | On a card |
@@ -33,12 +33,15 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 
 | Feature | What it does | Where |
 |---|---|---|
-| My decks | Make your own decks and cards; study them; share by link; submit to the library | Menu → My cards and decks → My decks (`/decks`); Flashcard → 📚 My decks |
-| Make cards with AI | Say what the cards are for, answer a few questions, check the cards, add them. 100 AI cards per account in total. Shown only when the AI key is set; not for guests | Menu → My cards and decks → Make cards with AI (`/decks#ai-cards`) |
-| Shared with me / Invitations | Decks people shared with you by name, to view or edit; invitations to accept | Menu → My cards and decks → Shared with me (`/decks?shared=1#shared-with-me`) |
-| Following | Library decks you study as their authors keep them (up to 50) | My decks → Following |
-| Library | Approved public decks: search, tags, like, report, copy, follow and study | Menu → My cards and decks → Library (`/library`) |
-| Institute | Join with a code or apply; institute decks, members, logo, decks published under the institute's name | Menu → My cards and decks → Institute (`/institute`) |
+| My decks | Your own decks, with cards due; open one to study or edit it | Menu → Make your own → My decks (`/decks`); Flashcard → 📚 My decks |
+| New deck | Name, description and tags for a new deck (up to 20 decks); not for guests | Menu → Make your own → New deck (`/decks#new-deck`) |
+| Make cards with AI | Say what the cards are for, answer a few questions, check the cards, add them. 100 AI cards per account in total. Shown only when the AI key is set; not for guests | Menu → Make your own → Make cards with AI (`/decks#ai-cards`) |
+| Inside one deck | Add, edit or delete cards (front, back, example, notes, picture, recording), chapters, Study, share link on/off, People (invite to view or edit), submit to the library or withdraw, small fix and new version once published, delete the deck | My decks → open the deck (`/decks/<id>`) |
+| Shared with me / Invitations | Decks people shared with you by name, to view or edit; invitations to accept | Menu → Decks from others → Shared with me (`/decks?shared=1#shared-with-me`) |
+| Decks I follow | Library decks you study as their authors keep them (up to 50) | Menu → Decks from others → Decks I follow (`/decks?following=1#following`) |
+| Library | Approved public decks: search, tags, like, report, copy, follow and study; record yourself on a verified teacher's deck | Menu → Decks from others → Library (`/library`) |
+| Institute | Join with a code or apply; institute decks, members, logo, decks published under the institute's name | Menu → Decks from others → Institute (`/institute`) |
+| How my name shows on public decks | Full name, first name, a display name or no name, on decks you publish; not for guests | Menu → You → How my name shows on public decks (`/settings#public-name`) |
 | Share link page | Anyone with a deck's link can read it and copy it | `/d/<link>` (signed out too) |
 
 ### Speaking practice and audits

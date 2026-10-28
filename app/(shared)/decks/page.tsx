@@ -24,10 +24,12 @@ import { InviteList } from "@/components/decks/InviteList";
 
 export const revalidate = 0;
 
-export default async function DecksPage({ searchParams }: { searchParams: Promise<{ shared?: string }> }) {
-  // The menu's "Shared with me" link sets this, so the section shows (empty)
-  // instead of the link landing on a page with nothing about sharing.
-  const showShared = (await searchParams).shared === "1";
+export default async function DecksPage({ searchParams }: { searchParams: Promise<{ shared?: string; following?: string }> }) {
+  // The menu's "Shared with me" and "Decks I follow" links set these, so the
+  // section shows (empty) instead of the link landing on nothing about it.
+  const sp = await searchParams;
+  const showShared = sp.shared === "1";
+  const showFollowing = sp.following === "1";
   const session = await auth();
   const userId = session!.user.id;
   const staff = session!.user.role !== "STUDENT";
@@ -168,10 +170,15 @@ export default async function DecksPage({ searchParams }: { searchParams: Promis
         </section>
       ) : null}
 
-      {follows.length ? (
-        <section className="mt-6" aria-labelledby="following-h">
+      {follows.length || showFollowing ? (
+        <section id="following" className="mt-6 scroll-mt-20" aria-labelledby="following-h">
           <h2 id="following-h" className="font-display text-base font-bold text-ink">Following</h2>
           <p className="text-xs text-ink-muted">Library decks you study as their authors keep them. Up to {DECK_LIMITS.followsPerUser}.</p>
+          {follows.length ? null : (
+            <p className="mt-2 text-sm text-ink-muted">
+              You follow no decks yet. Open the <Link href="/library" className="font-medium text-accent hover:underline">Library</Link>, choose a deck and tap Follow and study.
+            </p>
+          )}
           <ul className="mt-2 flex flex-col gap-2">
             {follows.map(({ deck: d }) => {
               // The same test as lib/decks LISTED, on rows already loaded.
@@ -204,7 +211,8 @@ export default async function DecksPage({ searchParams }: { searchParams: Promis
           deck, and some people just want an empty one to type into. */}
       {decks.length < DECK_LIMITS.decksPerUser && cardMakerEnabled() ? <div id="ai-cards" className="mt-6 scroll-mt-20"><AiCardsPanel /></div> : null}
 
-      <Card className="mt-6">
+      {/* The menu's "New deck" link lands here. */}
+      <Card id="new-deck" className="mt-6 scroll-mt-20">
         <h2 className="font-display text-base font-bold text-ink">New deck</h2>
         {decks.length >= DECK_LIMITS.decksPerUser ? (
           <p className="mt-2 text-sm text-ink-muted">You have {DECK_LIMITS.decksPerUser} decks, the most allowed. Delete one you no longer need to start another.</p>

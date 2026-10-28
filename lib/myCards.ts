@@ -1,46 +1,44 @@
-// Owns the student's own card lists across every kind of card: the ones they
-// saved (⭐ Important, ❤️ Favourite), doubted, wrote a note on, marked Unknown,
-// or are confident about. Built-in words, chunks, grammar and support cards
-// and deck cards all count, because the remarks live on CardState for all of
-// them.
+// Owns the student's own card lists across every kind of card, in three rows:
+//   Remarks — ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident, 📝 My notes
+//   Answer  — ✅ Known, 🔁 Unknown
+//   Level   — 🔴 Hard, 🟡 Medium, 🟢 Easy (of the cards marked Known)
+// Built-in words, chunks, grammar and support cards and deck cards all count,
+// because every mark lives on CardState for all of them.
 //
 // It also owns `studyDecks`: which decks this person may study right now and
 // the page that opens each. Deck cards in decks they have lost (a follow
 // withdrawn, an invitation removed, a deck deleted) are left out of every
 // list and count, so a withdrawn deck's cards are never shown from here.
 //
-// It does not render anything, and it never changes a remark: marking still
+// It does not render anything, and it never changes a mark: marking still
 // happens only on the card, through /api/flashcards.
 
-import type { CardKind, Prisma } from "@prisma/client";
+import type { CardKind, Prisma, Recall } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { LISTED } from "@/lib/decks";
 import { readableBy } from "@/lib/deckAccess";
+import { LIST_SIZE, type CardListKey } from "@/lib/cardLists";
 
-export const CARD_LISTS = [
-  { value: "saved", label: "⭐❤️ Saved", empty: "Tap ⭐ Important or ❤️ Favourite on any card to keep it here." },
-  { value: "unknown", label: "🔁 Marked Unknown", empty: "Cards you mark Unknown come here until you mark them Known." },
-  { value: "doubt", label: "❓ Doubt", empty: "Tap ❓ Doubt on a card you want to ask about or check again." },
-  { value: "notes", label: "📝 My notes", empty: "Write a note in a card's Remark box and it shows here." },
-  { value: "confident", label: "💯 Confident", empty: "Tap 💯 Confident on a card you are sure of." },
-] as const;
-export type CardListKey = (typeof CARD_LISTS)[number]["value"];
+export { CARD_LISTS, LIST_ROWS, LIST_SIZE, parseList, type CardListKey } from "@/lib/cardLists";
 
-export const LIST_SIZE = 100;
-
-export function parseList(raw: string | undefined): CardListKey {
-  return CARD_LISTS.find((l) => l.value === raw)?.value ?? "saved";
-}
-
+// reviews > 0 on Known and Unknown: a card only tagged or noted, never
+// answered, is neither. The level is read only on Known cards, and Known with
+// no level counts as Medium, as it does in the review plan (lib/srs).
 const LIST_WHERE: Record<CardListKey, Prisma.CardStateWhereInput> = {
-  saved: { OR: [{ important: true }, { favourite: true }] },
-  // reviews > 0: a card only tagged or noted, never answered, is not "Unknown".
-  unknown: { known: false, reviews: { gt: 0 } },
+  important: { important: true },
+  favourite: { favourite: true },
   doubt: { doubt: true },
-  notes: { AND: [{ note: { not: null } }, { note: { not: "" } }] },
   confident: { confident: true },
+  notes: { AND: [{ note: { not: null } }, { note: { not: "" } }] },
+  known: { known: true, reviews: { gt: 0 } },
+  unknown: { known: false, reviews: { gt: 0 } },
+  hard: { known: true, reviews: { gt: 0 }, recall: "HARD" },
+  medium: { known: true, reviews: { gt: 0 }, OR: [{ recall: "MEDIUM" }, { recall: null }] },
+  easy: { known: true, reviews: { gt: 0 }, recall: "EASY" },
 };
+
+const LEVEL_NAME: Record<Recall, string> = { HARD: "Hard", MEDIUM: "Medium", EASY: "Easy" };
 
 export type StudyDeck = { title: string; href: string };
 
@@ -72,6 +70,8 @@ export type ListedCard = {
   kind: CardKind;
   text: string;
   note: string | null;
+  /// Every mark on the card at a glance, e.g. "⭐ ❓ · Known · Hard".
+  marks: string;
   /// Where the card opens: the Flashcard tab for built-in cards, its deck's
   /// study page otherwise.
   href: string;
@@ -79,35 +79,52 @@ export type ListedCard = {
   deck: string | null;
 };
 
+type Marks = { important: boolean; favourite: boolean; doubt: boolean; confident: boolean; known: boolean; recall: Recall | null; reviews: number };
+
+function marksOf(s: Marks): string {
+  const remarks = [s.important && "⭐", s.favourite && "❤️", s.doubt && "❓", s.confident && "💯"].filter(Boolean).join(" ");
+  const answer = s.reviews === 0 ? "Not answered yet" : s.known ? `Known · ${LEVEL_NAME[s.recall ?? "MEDIUM"]}` : "Unknown";
+  return [remarks, answer].filter(Boolean).join(" · ");
+}
+
 export async function cardList(userId: string, list: CardListKey) {
   const decks = await studyDecks(userId);
   const base: Prisma.CardStateWhereInput = { userId, ...reachable([...decks.keys()]) };
 
-  const [rows, flags, notes, unknown] = await Promise.all([
+  // Three grouped reads give all ten counts, instead of a count per list.
+  const [rows, flags, answers, notes] = await Promise.all([
     prisma.cardState.findMany({
-      where: { ...base, ...LIST_WHERE[list] },
+      where: { AND: [base, LIST_WHERE[list]] },
       // Most recently answered first: what the student was just working on.
       orderBy: [{ lastReviewedAt: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }],
       take: LIST_SIZE,
-      select: { id: true, note: true, word: { select: { kind: true, code: true, text: true, deckId: true } } },
+      select: {
+        id: true, note: true, important: true, favourite: true, doubt: true, confident: true, known: true, recall: true, reviews: true,
+        word: { select: { kind: true, code: true, text: true, deckId: true } },
+      },
     }),
-    // One grouped read for the four remark flags instead of four counts.
     prisma.cardState.groupBy({
       by: ["important", "favourite", "doubt", "confident"],
-      where: { ...base, OR: [{ important: true }, { favourite: true }, { doubt: true }, { confident: true }] },
+      where: { AND: [base, { OR: [{ important: true }, { favourite: true }, { doubt: true }, { confident: true }] }] },
       _count: true,
     }),
-    prisma.cardState.count({ where: { ...base, ...LIST_WHERE.notes } }),
-    prisma.cardState.count({ where: { ...base, ...LIST_WHERE.unknown } }),
+    prisma.cardState.groupBy({ by: ["known", "recall"], where: { AND: [base, { reviews: { gt: 0 } }] }, _count: true }),
+    prisma.cardState.count({ where: { AND: [base, LIST_WHERE.notes] } }),
   ]);
 
-  const sum = (test: (g: (typeof flags)[number]) => boolean) => flags.filter(test).reduce((n, g) => n + g._count, 0);
+  const flag = (test: (g: (typeof flags)[number]) => boolean) => flags.filter(test).reduce((n, g) => n + g._count, 0);
+  const answered = (test: (g: (typeof answers)[number]) => boolean) => answers.filter(test).reduce((n, g) => n + g._count, 0);
   const counts: Record<CardListKey, number> = {
-    saved: sum((g) => g.important || g.favourite),
-    unknown,
-    doubt: sum((g) => g.doubt),
+    important: flag((g) => g.important),
+    favourite: flag((g) => g.favourite),
+    doubt: flag((g) => g.doubt),
+    confident: flag((g) => g.confident),
     notes,
-    confident: sum((g) => g.confident),
+    known: answered((g) => g.known),
+    unknown: answered((g) => !g.known),
+    hard: answered((g) => g.known && g.recall === "HARD"),
+    medium: answered((g) => g.known && (g.recall === "MEDIUM" || g.recall === null)),
+    easy: answered((g) => g.known && g.recall === "EASY"),
   };
 
   const cards: ListedCard[] = rows.map((r) => {
@@ -118,6 +135,7 @@ export async function cardList(userId: string, list: CardListKey) {
       kind: r.word.kind,
       text: r.word.text,
       note: r.note?.trim() || null,
+      marks: marksOf(r),
       href: deck ? `${deck.href}?card=${card}` : `/flashcards?card=${card}`,
       deck: deck?.title ?? null,
     };

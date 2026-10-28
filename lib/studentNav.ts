@@ -7,6 +7,7 @@
 // code; the menu groups' icons are plain emoji strings for that reason.
 
 import type { NavLink } from "@/components/layout/NavLinks";
+import { CARD_LISTS } from "@/lib/cardLists";
 
 export const STUDENT_LINKS: readonly NavLink[] = [
   { href: "/dashboard", label: "Dashboard" },
@@ -63,9 +64,13 @@ export function studentMore({ member, aiCards }: { member: boolean; aiCards: boo
         { href: "/decks", label: "My decks" },
         ...(member ? [{ href: "/decks#new-deck", label: "New deck" }] : []),
         ...(member && aiCards ? [{ href: "/decks#ai-cards", label: "Make cards with AI" }] : []),
-        { href: "/my-cards", label: "Saved cards" },
-        { href: "/my-cards?list=unknown", label: "Cards I find hard" },
       ],
+    },
+    {
+      icon: "🗂️",
+      heading: "My card lists",
+      // Every mark a card can carry, each its own list (lib/cardLists).
+      items: CARD_LISTS.map((l) => ({ href: `/my-cards?list=${l.value}`, label: l.label, icon: l.icon })),
     },
     {
       icon: "🤝",

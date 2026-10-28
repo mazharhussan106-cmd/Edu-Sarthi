@@ -61,6 +61,7 @@ export function MenuGroupDetails({
                 active ? "bg-accent/12 font-medium text-accent" : "text-ink-muted hover:bg-hover hover:text-ink",
               )}
             >
+              {item.icon ? <span aria-hidden="true" className="mr-2">{item.icon}</span> : null}
               {item.label}
             </Link>
           );

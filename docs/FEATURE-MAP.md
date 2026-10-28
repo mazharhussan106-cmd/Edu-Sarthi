@@ -2,7 +2,7 @@
 
 Written 28 Oct 2026 from the code on branch `claude/practical-ritchie-w4vnex` (each page's header comment, `lib/studentNav.ts`, `lib/staffNav.ts`). It lists what is **built**, not what is planned. If a page is added or moved, update this file in the same change.
 
-How to read "Where": **Bar** = the bottom bar on phones (the header row on a computer). **Menu** = the ☰ button, top right: "Install the app" on top, then folding groups (every group starts closed; tap a name to open it) — 📌 Main pages (phone only), 📅 Today's tasks, 📖 Learn and practise, ✏️ Create flashcards, 🤝 Shared and library decks, 👤 My account and progress, ❓ Help and support, ℹ️ About and policies — then Sign out. **Gear** = the ⚙ settings button in the header. **Search** = the 🔍 in the header.
+How to read "Where": **Bar** = the bottom bar on phones (the header row on a computer). **Menu** = the ☰ button, top right: "Install the app" on top, then folding groups (every group starts closed; tap a name to open it) — 📌 Main pages (phone only), 📅 Today's tasks, 📖 Learn and practise, ✏️ Create flashcards, 🗂️ My card lists, 🤝 Shared and library decks, 👤 My account and progress, ❓ Help and support, ℹ️ About and policies — then Sign out. **Gear** = the ⚙ settings button in the header. **Search** = the 🔍 in the header.
 
 ## Student
 
@@ -24,7 +24,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 | Customer-support English | Voice / Chat / Email × Basic / Intermediate / Advanced | Flashcard → Support tab; Menu → Learn and practise → Customer-support English |
 | Word sections | Words by level, topic, word type, importance and goal (Daily English, Interviews, IELTS and exams, Work English), in packs of 50 | Flashcard → Words → 📂 Sections; Menu → Learn and practise → Word sections (`/flashcards/sections`) |
 | Remark lists on one tab | ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident for the open tab | Flashcard → chips in the top row |
-| My cards | The same remarks across every kind of card and every deck, plus "Marked Unknown" and "My notes" | Menu → Create flashcards → Saved cards / Cards I find hard (`/my-cards`) |
+| My card lists | Ten lists across every kind of card and every deck you can open — Remarks: ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident, 📝 My notes; Answer: ✅ Known, 🔁 Unknown; Level (of Known cards): 🔴 Hard, 🟡 Medium, 🟢 Easy. Each card shows all its marks; tap it to open the card and change them | Menu → 🗂️ My card lists → any list (`/my-cards?list=…`) |
 | Search | Find a card by word or code; recent searches; search inside a section | Search (`/search`) |
 | Explore | Every kind of card, and approved library decks by subject, one tap to follow | Menu → Learn and practise → Explore flashcards (`/explore`); Flashcard → 🧭 Explore |
 | Record yourself | Say (or, for support emails, write and photograph) the card for a teacher's audit | On a card |

@@ -18,6 +18,8 @@ export interface NavLink {
   /// Only lit on this exact path. For a section root like /admin whose
   /// siblings (/admin/users) would otherwise light it too.
   exact?: boolean;
+  /// Emoji before the label in the menu sheet (hidden from screen readers).
+  icon?: string;
 }
 
 export function NavLinks({

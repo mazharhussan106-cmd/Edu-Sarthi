@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { prefsOf } from "@/lib/preferences";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
+import { ChangeEmail } from "@/app/(shared)/settings/ChangeEmail";
 import { GuestUpgrade } from "@/app/(shared)/settings/GuestUpgrade";
 import { ChangePassword } from "@/app/(shared)/settings/ChangePassword";
 import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
@@ -45,7 +46,7 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
   // than a promotion or a demotion.
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true, passwordHash: true },
+    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, email: true, creditStyle: true, publicName: true, passwordHash: true },
   });
   if (!user) return null;
 
@@ -102,8 +103,11 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
       <Section variant={variant} id={id("security")} title="Security">
         {audience.member ? (
           <div className="flex flex-col gap-5">
+            {user.email ? <ChangeEmail currentEmail={user.email} hasPassword={Boolean(user.passwordHash)} /> : null}
             {/* Only whether a password exists crosses to the browser, never the hash. */}
-            <ChangePassword hasPassword={Boolean(user.passwordHash)} />
+            <div className={user.email ? "border-t border-border pt-4" : undefined}>
+              <ChangePassword hasPassword={Boolean(user.passwordHash)} />
+            </div>
             <div className="border-t border-border pt-4">
               <SignOutEverywhere />
             </div>

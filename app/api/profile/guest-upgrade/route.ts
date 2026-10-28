@@ -16,7 +16,7 @@ import { Prisma } from "@prisma/client";
 
 import { requireUser } from "@/lib/apiUser";
 import { sendGuestUpgradeCode } from "@/lib/email";
-import { issueUpgradeCode, redeemUpgradeCode } from "@/lib/guestUpgrade";
+import { issueAccountCode, redeemAccountCode } from "@/lib/accountCodes";
 import { clearLoginAttempts, isRateLimited, recordFailedLogin } from "@/lib/loginRateLimit";
 import { prisma } from "@/lib/prisma";
 import { guestUpgradeSendSchema, guestUpgradeVerifySchema } from "@/lib/validations";
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     if (await isRateLimited(sendKey)) {
       return NextResponse.json({ error: "Too many codes asked for. Wait 15 minutes, then try again." }, { status: 429 });
     }
-    const issued = await issueUpgradeCode(userId, email);
+    const issued = await issueAccountCode("guest-upgrade", userId, email);
     if (!issued.ok) {
       return NextResponse.json({ error: `A code was just sent. Wait ${issued.retryInSec} seconds before asking for another.` }, { status: 429 });
     }
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     if (await isRateLimited(checkKey)) {
       return NextResponse.json({ error: "Too many wrong codes. Wait 15 minutes, then ask for a new code." }, { status: 429 });
     }
-    if (!(await redeemUpgradeCode(userId, email, code))) {
+    if (!(await redeemAccountCode("guest-upgrade", userId, email, code))) {
       await recordFailedLogin(checkKey);
       return NextResponse.json({ error: "That code is not right, or it has expired. Check the newest email, or ask for a new code." }, { status: 400 });
     }

@@ -70,6 +70,24 @@ export const emailCodeSchema = z.object({
 
 export const emailLinkSchema = z.object({ token: z.string().min(20).max(200) });
 
+// --- Changing the account's email ---------------------------------------------
+
+const sixDigitCode = z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code from your email");
+
+// The current password is checked on the server, and only for an account that
+// has one; an account without one proves itself with a code instead.
+export const emailChangeStartSchema = z.object({
+  newEmail: email,
+  currentPassword: z.string().max(200).optional(),
+});
+
+export const emailChangeConfirmSchema = z.object({
+  newEmail: email,
+  newCode: sixDigitCode,
+  currentPassword: z.string().max(200).optional(),
+  oldCode: sixDigitCode.optional(),
+});
+
 // --- Guest to full account ---------------------------------------------------
 
 const accountName = z.string().trim().min(2, "Enter your name").max(80, "Keep it under 80 characters");

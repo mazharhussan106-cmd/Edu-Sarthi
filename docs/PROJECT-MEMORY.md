@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, read-aloud voice and guest upgrade, see "Settings, phase E", "phase F" and "phase G"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, read-aloud voice, guest upgrade and email change, see "Settings, phase E" to "phase H"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -167,7 +167,7 @@ The owner said "start next phase" again without answering the phase F questions,
 
 Done:
 - **Guest to full account, progress kept** (Settings → "Keep your progress", shown first to a guest). The guest gives a name and an email, gets a 6-digit code (`sendGuestUpgradeCode`), and types it. The same `User` row then gets the email, a verified date, the name, and `isGuest = false`, so cards, history and settings stay.
-  - Logic: `lib/guestUpgrade.ts`, `app/api/profile/guest-upgrade` (actions `send` and `verify`), `app/(shared)/settings/GuestUpgrade.tsx`.
+  - Logic: `lib/accountCodes.ts` (was `lib/guestUpgrade.ts` until phase H), `app/api/profile/guest-upgrade` (actions `send` and `verify`), `app/(shared)/settings/GuestUpgrade.tsx`.
   - The code is stored under its own identifier (`guest-upgrade:<guest id>:<email>`), so it cannot be used to sign in, and a sign-in code cannot upgrade a guest (tested).
   - Sends and wrong codes each have their own throttle on the sign-in throttle's table: 8 per 15 minutes per guest.
   - An email that already has an account is refused: "sign out and sign in with that email; this guest's progress cannot be moved". Merging two sets of progress was left out on purpose.
@@ -190,14 +190,43 @@ Tested on a local Postgres with Playwright:
 
 **Needs before it works live:** merge. No Database setup run. The upgrade email needs `SENDGRID_API_KEY`.
 
+Still open after phase G: see the list at the end of phase H below.
+
+## Settings, phase H: change email (28 Oct, same branch)
+
+The owner said "start next phase" again; changing the email was the clearest next item from the phase G list. Same branch, stacked on E, F and G. No database change.
+
+Done:
+- **Settings → Security → Change email** (members, every role): `app/(shared)/settings/ChangeEmail.tsx` and `app/api/profile/email` (actions `start` and `confirm`). Being signed in is not enough proof that this is the owner:
+  - An account with a password must type it. Wrong tries count on the sign-in throttle for its current address.
+  - An account without one gets a second code at its current address, worded as a possible warning.
+  - The new address always gets a code.
+  - Both calls check again, because nothing is kept between them. Both codes are checked before either is spent.
+- **On success, in one transaction:** the email moves and is marked verified, every session ends (this device too, so it signs in again), unused reset links are cancelled, and the account's Google link (`Account` rows with provider `google`) is deleted.
+  - Why the unlink: without it the old Google account would keep signing in to this account, and the Google sign-in callback would also create an empty account for the old address. After the change, "Continue with Google" works with the Google account for the new address. The form says so.
+  - The old address is then told (`sendEmailChanged`).
+- Refused with a next step: the same address, an address that already has an account, a guest (guests use Keep your progress), wrong codes (8 per 15 minutes), and too many sends.
+- **Shared code helper:** `lib/accountCodes.ts` replaces `lib/guestUpgrade.ts`. One helper now issues, checks and spends codes for `guest-upgrade`, `email-new` and `email-old`, each under its own identifier. The guest upgrade's code format is unchanged.
+- Help has a "How do I change my email?" answer. The Profile page's header comment points to Settings.
+- **For the owner:** if an admin changes their email, update the repository variable `ADMIN_EMAIL`, which "Load flashcard decks" uses to pick the admin. If it is not set, the oldest admin is used.
+
+Tested on a local Postgres with Playwright against the dev server, so the emails and their codes are logged. 27 checks:
+- Password account: wrong password, taken address, same address, wrong code, then success. After success: signed out here and on another device, email verified, Google link and reset link gone, old address told, old address no longer signs in, new one signs in with the same password.
+- No-password account: two codes. A right new code with a wrong old code changed nothing.
+- Guests: refused by the route, and their upgrade still works on the new helper.
+- The wrong-code throttle.
+
+One check failed only on the test's own mistake (psql prints a boolean as `t`); the database showed the reset link cancelled. `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run. Needs `SENDGRID_API_KEY`.
+
 Still open (proposals, not decisions):
-- **Changing the email address.** Suggested design: a code to the new address, plus the current password, or a code to the old address for accounts without one. Also email the old address. Note that a Google account's email is the Google login.
 - **A per-student reminder time.** It needs a cron that runs more often than daily. Vercel's Hobby plan is believed to allow only daily crons (check before building).
 - **A daily review limit.** It needs a decision on what happens to the cards over the limit.
 - **"Hide Hindi" and the Hindi-to-English practice questions:** should the setting also hide them?
 - **Merging a guest into an existing account.**
-- **Profile photo.**
-- **A list of signed-in devices.**
+- **Profile photo.** It needs storage rules, size limits and moderation.
+- **A list of signed-in devices.** It needs a session table.
 - **Hindi/English UI language.**
 
 ## Flashcard phone layout: lesson (10 Oct)

@@ -208,3 +208,37 @@ export async function sendGuestUpgradeCode(to: string, code: string) {
   `;
   await send(to, subject, text, html);
 }
+
+/// A code for changing the account's email. "new" goes to the address being
+/// added; "old" goes to the current one, for an account with no password, and
+/// says plainly what it is for, since it may be a warning.
+export async function sendEmailChangeCode(to: string, code: string, which: "new" | "old") {
+  const subject = which === "new" ? "Your code to change your EduSarthi email" : "Someone asked to change your EduSarthi email";
+  const lead =
+    which === "new"
+      ? "Type this code in EduSarthi to make this the email for your account."
+      : "Someone asked to change the email on your EduSarthi account. If it was you, type this code in EduSarthi.";
+  const ignore =
+    which === "new"
+      ? "If you did not ask for this, you can ignore this email. Nothing changes without the code."
+      : "If it was not you, do not share this code with anyone. Nothing changes without it. Write to us from the Support page if it keeps happening.";
+  const text = `${lead}\n\nYour code is ${code}. It expires in 10 minutes.\n\n${ignore}`;
+  const html = `
+    <p>${lead}</p>
+    <p style="font-size:28px;letter-spacing:6px;font-weight:700">${code}</p>
+    <p>It expires in 10 minutes.</p>
+    <p style="color:#5f6773;font-size:13px">${ignore}</p>
+  `;
+  await send(to, subject, text, html);
+}
+
+/// Sent to the old address once the email has changed, so an owner who did
+/// not do it finds out at the address they still read.
+export async function sendEmailChanged(to: string, newEmail: string) {
+  const subject = "Your EduSarthi email was changed";
+  const safe = newEmail.replace(/[<>&"]/g, "");
+  const ifNot = "If you did not do this, write to us from the Support page right away.";
+  const text = `The email for your EduSarthi account was changed to ${safe}, and every device was signed out.\n\nIf this was you, there is nothing to do.\n\n${ifNot}`;
+  const html = `<p>The email for your EduSarthi account was changed to <b>${safe}</b>, and every device was signed out.</p><p>If this was you, there is nothing to do.</p><p><b>${ifNot}</b></p>`;
+  await send(to, subject, text, html);
+}

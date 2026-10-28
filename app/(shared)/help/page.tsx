@@ -45,6 +45,10 @@ const FAQ = [
     a: "Settings → Security → Change password. That also signs you out on every device. If you sign in with an email code or Google, use Sign out of all devices there instead.",
   },
   {
+    q: "How do I change my email?",
+    a: "Settings → Security → Change email. We send a code to the new address, and ask for your password (or send a second code to your current address if you have no password). Then you sign in again with the new address.",
+  },
+  {
     q: "How do I delete my account or download my data?",
     a: "Both are on your Profile page, under your data rights. Deleting removes your recordings, audits and account and cannot be undone.",
   },

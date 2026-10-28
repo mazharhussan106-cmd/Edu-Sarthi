@@ -2,7 +2,7 @@
 // email code start with no name at all, so the profile page asks for one.
 //
 // It deliberately does NOT touch email. Changing an email means re-verifying
-// it, which is a flow of its own.
+// it, which is its own flow (app/api/profile/email).
 
 import { NextResponse } from "next/server";
 

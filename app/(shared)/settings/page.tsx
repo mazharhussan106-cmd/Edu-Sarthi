@@ -3,7 +3,8 @@
 //
 // It deliberately reads preferences from the database rather than a cookie.
 // The theme needs a cookie because it must be known before first paint;
-// nothing else here does.
+// nothing else here does. The password hash is read only to know whether one
+// exists; the browser gets a yes or no, never the hash.
 
 import { redirect } from "next/navigation";
 
@@ -11,6 +12,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
+import { EmailChangeForm } from "@/app/(shared)/settings/EmailChangeForm";
+import { PhoneForm } from "@/app/(shared)/settings/PhoneForm";
 import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
 import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { ShareApp } from "@/app/(shared)/settings/ShareApp";
@@ -25,7 +28,7 @@ export default async function SettingsPage() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true },
+    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true, email: true, phone: true, passwordHash: true },
   });
 
   // Each key parsed on its own over the defaults, so one retired value does
@@ -75,6 +78,17 @@ export default async function SettingsPage() {
           <ShareApp />
         </div>
       </Card>
+
+      {/* Guests have no email or phone; theirs is "create an account". */}
+      {user && !user.isGuest ? (
+        <Card className="mt-6">
+          <CardTitle>Email and phone</CardTitle>
+          <div className="mt-4 flex flex-col gap-6">
+            {user.email ? <EmailChangeForm currentEmail={user.email} hasPassword={!!user.passwordHash} /> : null}
+            <PhoneForm initialPhone={user.phone} />
+          </div>
+        </Card>
+      ) : null}
 
       <Card className="mt-6">
         <CardTitle>Security</CardTitle>

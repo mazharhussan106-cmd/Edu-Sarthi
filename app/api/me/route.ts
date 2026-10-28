@@ -77,6 +77,8 @@ export async function GET() {
         take: 50_000,
         select: { createdAt: true, known: true, recall: true, stage: true, word: { select: { code: true, text: true } } },
       },
+      // Sign-in email changes in the last 30 days (older records are swept).
+      emailChanges: { where: { consumedAt: { not: null } }, select: { newEmail: true, consumedAt: true } },
       // The inbox is kept at most 180 days, so this stays small.
       notifications: {
         orderBy: { createdAt: "asc" },

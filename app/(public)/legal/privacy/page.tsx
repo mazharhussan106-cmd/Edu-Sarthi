@@ -35,7 +35,7 @@ export default function PrivacyPage() {
             <li>
               <span className="text-ink">Your mobile number, if you give it.</span>{" "}
               Optional. We store it but do not verify it and do not currently
-              send SMS.
+              send SMS. You can change or remove it in Settings.
             </li>
             <li>
               <span className="text-ink">Your password, hashed.</span> We store a
@@ -205,7 +205,9 @@ export default function PrivacyPage() {
             point of the service. Verification
             codes expire after ten minutes and password reset links after one
             hour. Failed sign-in records are only read within a fifteen-minute
-            window.
+            window. When you change your sign-in email, we keep a record of the
+            change (the new address and when) for 30 days, because an email can
+            be changed at most three times in that time.
           </p>
           <p className="mt-2">
             A PDF or photo you add to the AI card maker is kept in our private

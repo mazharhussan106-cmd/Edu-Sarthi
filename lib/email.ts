@@ -170,3 +170,42 @@ export async function sendStudyReminder(to: string, due: number, url: string) {
   const html = `<p>${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.</p><p><a href="${url}">Start reviewing</a></p><p style="color:#666;font-size:12px">You get this email because the daily reminder is on in Settings. You can switch it off there.</p>`;
   await send(to, subject, text, html);
 }
+
+// --- Changing the sign-in email (lib/emailChange) --------------------------
+
+/// The code that proves the new address. It names no account and no old
+/// address: whoever reads it learns only that someone typed this address.
+export async function sendEmailChangeCode(to: string, code: string) {
+  const subject = `${code} is your code to change your EduSarthi email`;
+  const text = `Your code is ${code}. Enter it in Settings to make this your EduSarthi sign-in email. It works once and expires in 10 minutes.\n\nIf you did not ask for this, ignore this email; nothing changes.`;
+  const html = `<p>Your code is <b style="font-size:20px;letter-spacing:2px">${code}</b>.</p><p>Enter it in Settings to make this your EduSarthi sign-in email. It works once and expires in 10 minutes.</p><p style="color:#666;font-size:12px">If you did not ask for this, ignore this email; nothing changes.</p>`;
+  await send(to, subject, text, html);
+}
+
+/// For an account with no password: the second code, sent to the address the
+/// account uses now, so a borrowed phone that is signed in cannot move it.
+export async function sendEmailChangeCurrentCode(to: string, code: string) {
+  const subject = "Someone asked to change the email on your EduSarthi account";
+  const text = `Your code is ${code}. Enter it in Settings, together with the code sent to the new address, to change your sign-in email. It expires in 10 minutes.\n\nIf this was not you, do not share this code with anyone. Nothing changes without it.`;
+  const html = `<p>Your code is <b style="font-size:20px;letter-spacing:2px">${code}</b>.</p><p>Enter it in Settings, together with the code sent to the new address, to change your sign-in email. It expires in 10 minutes.</p><p style="color:#666;font-size:12px">If this was not you, do not share this code with anyone. Nothing changes without it.</p>`;
+  await send(to, subject, text, html);
+}
+
+/// Sent instead of a code when the new address already has an account. The
+/// person who typed it sees the same screen either way; only the inbox's owner
+/// learns that the address is taken, and they already know.
+export async function sendEmailAlreadyUsed(to: string) {
+  const subject = "Someone tried to use this address for another EduSarthi account";
+  const text = "Someone asked to move an EduSarthi account to this address. This address already has its own EduSarthi account, so nothing changed and no code was sent.\n\nIf it was you, sign in with this address instead. If it was not, you can ignore this email.";
+  const html = `<p>Someone asked to move an EduSarthi account to this address. This address already has its own EduSarthi account, so nothing changed and no code was sent.</p><p>If it was you, sign in with this address instead. If it was not, you can ignore this email.</p>`;
+  await send(to, subject, text, html);
+}
+
+/// To the OLD address after a change. `masked` is the new address shortened
+/// (lib/emailChange maskEmail): the old inbox may no longer be the owner's.
+export async function sendEmailChanged(to: string, masked: string) {
+  const subject = "Your EduSarthi sign-in email was changed";
+  const text = `The sign-in email of your EduSarthi account was changed to ${masked}. Every device was signed out.\n\nIf you did not do this, write to support@edusarthi.com straight away from this address.`;
+  const html = `<p>The sign-in email of your EduSarthi account was changed to <b>${masked.replace(/[<>&"]/g, " ")}</b>. Every device was signed out.</p><p>If you did not do this, write to <a href="mailto:support@edusarthi.com">support@edusarthi.com</a> straight away from this address.</p>`;
+  await send(to, subject, text, html);
+}

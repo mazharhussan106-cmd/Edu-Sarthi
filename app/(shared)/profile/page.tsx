@@ -7,8 +7,8 @@
 // wrong for at least one of them.
 //
 // Students can set their name here (email-code sign-in creates accounts with
-// none) and use their data rights. Editing email is deliberately absent:
-// changing it means re-verifying, a flow of its own.
+// none) and use their data rights. Email and phone are deliberately changed in
+// Settings (Email and phone), where the email change's codes and sign-out live.
 
 import Link from "next/link";
 import { redirect } from "next/navigation";

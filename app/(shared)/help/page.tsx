@@ -45,6 +45,10 @@ const FAQ = [
     a: "Turn on Data saver in Settings. New recordings are made at a lower quality and upload faster. You can also upload a short file instead of a long one.",
   },
   {
+    q: "How do I change my email or mobile number?",
+    a: "Settings → Email and phone. For a new email you enter your password (or a code sent to your current address), then a code sent to the new address. Changing it signs you out on every device; sign in again with the new address. You can change your email three times in 30 days.",
+  },
+  {
     q: "I lost my phone or used a shared computer.",
     a: "Settings → Security → Sign out of all devices. Then change your password from the sign-in page with Forgot password.",
   },

@@ -132,6 +132,7 @@ model User {
   assignedSubmissions Submission[]         @relation("AssignedSubmissions")
   notifications       Notification[]
   noticeReads         NoticeRead[]
+  emailChanges        EmailChange[]
 
   createdAt DateTime @default(now())
 }
@@ -335,6 +336,33 @@ model VerificationCode {
   createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
+}
+
+/// One request to change an account's sign-in email (lib/emailChange). The
+/// new address is proven by a code sent to it; an account with no password
+/// also proves the current address with a second code. A consumed row is the
+/// record of a change, kept 30 days to enforce "at most 3 changes in 30 days"
+/// (owner's decision), then swept by the retention cron.
+model EmailChange {
+  id              String    @id @default(cuid())
+  userId          String
+  newEmail        String
+  /// Hashed like every other code. For an address that already has an account
+  /// this is the hash of a code nobody was sent, so the confirm step fails the
+  /// same way a wrong code does and the screen never says the address is taken.
+  codeHash        String
+  /// Only for accounts without a password: the code sent to the current address.
+  currentCodeHash String?
+  expiresAt       DateTime
+  /// Capped at 5 in application code, like VerificationCode.
+  attempts        Int       @default(0)
+  consumedAt      DateTime?
+  createdAt       DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([expiresAt])
 }
 
 /// Single-use password reset token, one-hour expiry.

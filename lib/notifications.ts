@@ -26,6 +26,7 @@ export const NOTIFICATION_KINDS = [
   "fix_undone",
   "institute_name_removed",
   "recording_assigned",
+  "email_changed",
 ] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 

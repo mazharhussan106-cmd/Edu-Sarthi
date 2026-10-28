@@ -1,6 +1,6 @@
 # Next features — plan (notifications, messages, profile, reminders, AI media, language, help bot)
 
-Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phase A (notification inbox) is BUILT on the same branch, tested on a local copy, not merged yet — see "Phase A — what was built".** Next phase by the agreed order: B (change email or phone). Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
+Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phases A (notification inbox) and B (change email or phone) are BUILT on the same branch, tested on a local copy, not merged yet — see "Phase A — what was built" and "Phase B — what was built".** Next phase by the agreed order: C (profile photo). Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
 
 ## The owner's list (28 Oct 2026)
 
@@ -99,6 +99,22 @@ Every phase touches more than 6 files, so each one is its own branch and pull re
 ---
 
 ## Phase B — Change email or phone
+
+### Phase B — what was built (28 Oct 2026)
+
+- **Where:** Settings → **Email and phone** (not for guests). The Profile page still shows the email and phone; its header comment now points to Settings.
+- **Email change, password account:** new address + current password → a 6-digit code to the new address → enter it → the email changes.
+- **Email change, no password (Google or email-code sign-in):** a second code goes to the current address; both codes are needed.
+- **A taken address** gets a "this address already has its own account" email instead of a code. The screen and the API answer are the same as for a free address; the confirm step then fails like a wrong code (the stored hash is of a code nobody was sent).
+- **On success (one transaction):** new email, `emailVerified` = now, `sessionsValidFrom` = now (every device signed out, this one too: the session still carries the old address, so the screen says "sign in again with the new address"), open password-reset links burned. After it: sign-in codes to the old address deleted, an email to the old address with the new one masked (`s•••@domain`), an inbox note (`email_changed`).
+- **Limits:** 3 changes in 30 days (decision N8; the refusal names the date it frees up, and is checked before the 60-second wait), one request per 60 seconds, 5 requests a day (each emails an address someone typed), 5 code attempts per request (counted atomically), codes last 10 minutes, the password check shares the sign-in throttle.
+- **Google (decision N2):** `lib/auth.ts` signIn now lets an already-linked Google account straight through, so after an email change the old Gmail still opens the same account and no empty account is made for the old address. Checked against Auth.js's own code (`@auth/core` looks up the linked account before the email); **not run with real Google keys.** An account that never used Google has nothing linked, so its old Gmail would make a new account.
+- **Phone (decision N3):** save a 10-digit number (spaces and dashes removed) or clear it; labelled "Not verified. It is not used to sign in, and we do not send SMS." A number on another account gets "This number can't be saved…" without naming anyone. A changed number clears `phoneVerified`.
+- **Data:** new table `EmailChange` (additive; `db push` gave no data-loss warning on a database with data). Unconfirmed requests are swept a day after they expire; a confirmed change stays 31 days (the record behind the limit). The data export includes confirmed changes. Privacy page: one sentence on that record and one on changing the phone. Help page: "How do I change my email or mobile number?".
+- **Files:** `lib/emailChange.ts`, `lib/accountSchemas.ts`, `app/api/profile/email/route.ts`, `app/api/profile/phone/route.ts`, `app/(shared)/settings/EmailChangeForm.tsx`, `PhoneForm.tsx`, and edits to the Settings page, `lib/email.ts` (4 emails), `lib/auth.ts`, `lib/validations.ts` (shared `email` and `phoneNumber`), `lib/retention.ts`, `lib/notifications.ts`, `/api/me`, Privacy, Help, Profile.
+- **Tested (local Postgres, dev server, Playwright at 390×844):** 36 checks — wrong password, own address in any case, bad address, code delivery, 60-second wait, wrong code, success, both devices signed out, old address told and masked, new address signs in with the same password, old one does not, inbox note and export, taken address (same answer, warning not code, 5 guesses then refused, nothing changed), no-password account (both codes needed), the 3-in-30 limit with its date, the daily cap, phone save/short/clash/remove, guests refused, the whole Settings flow on a phone ending at sign-in, retention. `tsc` and `next build` pass.
+- **Things to know:** deck invitations still waiting for the old address stay with that address. If an admin changes their email, the repository variable `ADMIN_EMAIL` (used by Actions → Load flashcard decks) must be updated too.
+- **To go live:** merge, then run **Actions → Database setup** once (adds `EmailChange`; nothing existing changes). `SENDGRID_API_KEY` must be set, or no code can be sent.
 
 **Changing the email (the address used to sign in).**
 1. Settings → Account → "Change email". The person types the new address.

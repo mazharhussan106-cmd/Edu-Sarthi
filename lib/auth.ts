@@ -73,6 +73,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ account, profile }) {
       if (account?.provider !== "google") return true;
 
+      // A Google account that is already linked opens the account it is linked
+      // to, whatever email that account uses now: after an email change the old
+      // Gmail still signs in to the same account (owner's decision N2). Without
+      // this, userForProvenEmail below would make a new, empty account for the
+      // old address before Auth.js followed the link.
+      const linked = await prisma.account.findUnique({
+        where: { provider_providerAccountId: { provider: "google", providerAccountId: account.providerAccountId } },
+        select: { user: { select: { suspendedAt: true } } },
+      });
+      if (linked) return !linked.user.suspendedAt;
+
       const email = typeof profile?.email === "string" ? profile.email.trim().toLowerCase() : "";
       // Linking by email is only safe when Google says it checked the inbox.
       if (!email || profile?.email_verified !== true) return false;

@@ -61,14 +61,20 @@ export async function purgeBatch(actorId: string | null): Promise<number> {
 /// Short-lived security rows that nothing else removes: expired sign-in codes,
 /// reset tokens and email links, and failed-login records (only the last 15
 /// minutes are ever read). Kept a day past expiry so a support question about
-/// "my code never worked" can still be answered, then gone.
+/// "my code never worked" can still be answered, then gone. Email-change
+/// requests that were never confirmed go the same way; a confirmed one is the
+/// record behind "3 changes in 30 days", so it stays 31 days.
 export async function sweepExpiredAuthRows(): Promise<number> {
   const old = new Date(Date.now() - 86_400_000);
-  const [a, b, c, d] = await Promise.all([
+  const changeKept = new Date(Date.now() - 31 * 86_400_000);
+  const [a, b, c, d, e] = await Promise.all([
     prisma.verificationCode.deleteMany({ where: { expiresAt: { lt: old } } }),
     prisma.passwordResetToken.deleteMany({ where: { expiresAt: { lt: old } } }),
     prisma.loginAttempt.deleteMany({ where: { createdAt: { lt: old } } }),
     prisma.verificationToken.deleteMany({ where: { expires: { lt: old } } }),
+    prisma.emailChange.deleteMany({
+      where: { OR: [{ consumedAt: null, expiresAt: { lt: old } }, { consumedAt: { lt: changeKept } }] },
+    }),
   ]);
-  return a.count + b.count + c.count + d.count;
+  return a.count + b.count + c.count + d.count + e.count;
 }

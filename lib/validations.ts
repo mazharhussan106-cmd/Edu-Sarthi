@@ -18,7 +18,9 @@ const password = z
   .min(8, "Use at least 8 characters")
   .max(MAX_PASSWORD_BYTES, "Use 72 characters or fewer");
 
-const email = z
+/// Exported for lib/accountSchemas (changing the sign-in email), so a new
+/// address is checked and lower-cased exactly as one typed at sign-up.
+export const email = z
   .string()
   .min(1, "Enter your email")
   .email("Enter a valid email address")
@@ -26,19 +28,17 @@ const email = z
   // different capitalisation and neither login finds the other's row.
   .transform((v) => v.trim().toLowerCase());
 
+/// An Indian mobile number, 10 digits. Collected unverified: SMS stays gated
+/// behind SMS_ENABLED until DLT registration completes.
+export const phoneNumber = z.string().regex(/^[6-9]\d{9}$/, "Enter a 10-digit mobile number");
+
 export const registerSchema = z
   .object({
     name: z.string().min(2, "Enter your name").max(80).trim(),
     email,
     password,
     confirmPassword: z.string(),
-    // Collected unverified. SMS stays gated behind SMS_ENABLED until DLT
-    // registration completes.
-    phone: z
-      .string()
-      .regex(/^[6-9]\d{9}$/, "Enter a 10-digit mobile number")
-      .optional()
-      .or(z.literal("")),
+    phone: phoneNumber.optional().or(z.literal("")),
   })
   // Role is absent on purpose. A client-supplied role means anyone can sign up
   // as a teacher and read every student's submissions.

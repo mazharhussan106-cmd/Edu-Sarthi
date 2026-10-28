@@ -42,7 +42,7 @@ const FAQ = [
   },
   {
     q: "I lost my phone or used a shared computer.",
-    a: "Settings → Security → Sign out of all devices. Then change your password from the sign-in page with Forgot password.",
+    a: "Settings → Security → Change password. That also signs you out on every device. If you sign in with an email code or Google, use Sign out of all devices there instead.",
   },
   {
     q: "How do I delete my account or download my data?",

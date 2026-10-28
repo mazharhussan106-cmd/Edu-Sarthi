@@ -6,6 +6,12 @@
 //
 // On failure it tells the user rather than reverting. Snapping a toggle back
 // under someone's finger is more confusing than a line of text.
+//
+// It shows each person only the settings that do something for them (see
+// SettingsAudience). A teacher has no flashcards and a guest has no email; a
+// switch that changes nothing is worse than no switch, because it looks like
+// it should work. It deliberately does NOT decide who is who: the server
+// component above it does, from the account row.
 
 "use client";
 
@@ -16,7 +22,7 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Switch } from "@/components/ui/Switch";
 import { attrFromTheme, THEMES } from "@/lib/theme";
 import { TEXT_SIZES, type TextSize } from "@/lib/textSize";
-import { NEW_PER_DAY_OPTIONS } from "@/lib/preferences";
+import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, type PlaybackRate } from "@/lib/preferences";
 
 const THEME_OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
@@ -29,18 +35,33 @@ export type PreferenceState = {
   dataSaver: boolean;
   hideHindi: boolean;
   autoSpeak: boolean;
+  playbackRate: PlaybackRate;
+  emailQueueDigest: boolean;
+};
+
+export type SettingsAudience = {
+  /// A student: studies flashcards and receives audits.
+  learner: boolean;
+  /// Not a guest: has an email and can record and upload.
+  member: boolean;
+  /// A teacher or an admin: works the review queue.
+  reviewer: boolean;
 };
 
 export function SettingsForm({
   initialTheme,
   initialPreferences,
+  audience,
 }: {
   initialTheme: Theme;
   initialPreferences: PreferenceState;
+  audience: SettingsAudience;
 }) {
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const [prefs, setPrefs] = useState<PreferenceState>(initialPreferences);
   const [notice, setNotice] = useState<string | null>(null);
+  const { learner, member, reviewer } = audience;
+  const student = learner && member;
 
   async function saveTheme(next: Theme) {
     setTheme(next);
@@ -94,51 +115,71 @@ export function SettingsForm({
       />
 
       <div className="mt-2 divide-y divide-border border-t border-border">
-        <Switch
-          label="Email me when a teacher returns my audit"
-          description="One email per audit, with a link. The scores stay behind sign-in."
-          checked={prefs.emailOnAudit}
-          onCheckedChange={(v) => void savePreference("emailOnAudit", v)}
-        />
-        <Switch
-          label="Daily flashcard reminder email"
-          description="One email around 7 pm India time, only on days when cards are due. The time is fixed for now."
-          checked={prefs.emailReminder}
-          onCheckedChange={(v) => void savePreference("emailReminder", v)}
-        />
-        <Switch
-          label="Start playing when I open an audit"
-          description="Off by default, so opening an audit on a bus stays quiet."
-          checked={prefs.autoplayAudit}
-          onCheckedChange={(v) => void savePreference("autoplayAudit", v)}
-        />
-        <Switch
-          label="Data saver for recordings"
-          description="New recordings are made at lower quality so they upload faster on slow data. Playback is not changed."
-          checked={prefs.dataSaver}
-          onCheckedChange={(v) => {
-            if (v) document.documentElement.setAttribute("data-saver", "on");
-            else document.documentElement.removeAttribute("data-saver");
-            void savePreference("dataSaver", v);
-          }}
-        />
-        <Switch
-          label="Hide Hindi meanings on cards"
-          description="Hides the Hindi boxes so you think in English. The Hindi to English practice question stays."
-          checked={prefs.hideHindi}
-          onCheckedChange={(v) => {
-            // Applied now, like the text size, then saved.
-            if (v) document.documentElement.setAttribute("data-hindi", "off");
-            else document.documentElement.removeAttribute("data-hindi");
-            void savePreference("hideHindi", v);
-          }}
-        />
-        <Switch
-          label="Say each word when its card opens"
-          description="Off by default. Uses the recording, or your phone's Indian English voice."
-          checked={prefs.autoSpeak}
-          onCheckedChange={(v) => void savePreference("autoSpeak", v)}
-        />
+        {student ? (
+          <Switch
+            label="Email me when a teacher returns my audit"
+            description="One email per audit, with a link. The scores stay behind sign-in."
+            checked={prefs.emailOnAudit}
+            onCheckedChange={(v) => void savePreference("emailOnAudit", v)}
+          />
+        ) : null}
+        {student ? (
+          <Switch
+            label="Daily flashcard reminder email"
+            description="One email around 7 pm India time, only on days when cards are due. The time is fixed for now."
+            checked={prefs.emailReminder}
+            onCheckedChange={(v) => void savePreference("emailReminder", v)}
+          />
+        ) : null}
+        {reviewer ? (
+          <Switch
+            label="Daily queue email"
+            description="One email around 7 pm India time, only when recordings are waiting for you, with how many are close to their deadline."
+            checked={prefs.emailQueueDigest}
+            onCheckedChange={(v) => void savePreference("emailQueueDigest", v)}
+          />
+        ) : null}
+        {student ? (
+          <Switch
+            label="Start playing when I open an audit"
+            description="Off by default, so opening an audit on a bus stays quiet."
+            checked={prefs.autoplayAudit}
+            onCheckedChange={(v) => void savePreference("autoplayAudit", v)}
+          />
+        ) : null}
+        {member ? (
+          <Switch
+            label="Data saver for recordings"
+            description="New recordings are made at lower quality so they upload faster on slow data. Playback is not changed."
+            checked={prefs.dataSaver}
+            onCheckedChange={(v) => {
+              if (v) document.documentElement.setAttribute("data-saver", "on");
+              else document.documentElement.removeAttribute("data-saver");
+              void savePreference("dataSaver", v);
+            }}
+          />
+        ) : null}
+        {learner ? (
+          <Switch
+            label="Hide Hindi meanings on cards"
+            description="Hides the Hindi boxes so you think in English. The Hindi to English practice question stays."
+            checked={prefs.hideHindi}
+            onCheckedChange={(v) => {
+              // Applied now, like the text size, then saved.
+              if (v) document.documentElement.setAttribute("data-hindi", "off");
+              else document.documentElement.removeAttribute("data-hindi");
+              void savePreference("hideHindi", v);
+            }}
+          />
+        ) : null}
+        {learner ? (
+          <Switch
+            label="Say each word when its card opens"
+            description="Off by default. Uses the recording, or your phone's Indian English voice."
+            checked={prefs.autoSpeak}
+            onCheckedChange={(v) => void savePreference("autoSpeak", v)}
+          />
+        ) : null}
       </div>
 
       <div className="mt-4 border-t border-border pt-4">
@@ -157,15 +198,36 @@ export function SettingsForm({
         />
       </div>
 
-      <div className="mt-4 border-t border-border pt-4">
-        <SegmentedControl
-          label="New cards per day"
-          description="How many new flashcards you learn each day, on top of the ones due for review. Takes effect on your next card."
-          options={NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: String(n) }))}
-          value={String(prefs.newPerDay)}
-          onValueChange={(v) => void savePreference("newPerDay", Number(v))}
-        />
-      </div>
+      {learner ? (
+        <div className="mt-4 border-t border-border pt-4">
+          <SegmentedControl
+            label="New cards per day"
+            description="How many new flashcards you learn each day, on top of the ones due for review. Takes effect on your next card."
+            options={NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: String(n) }))}
+            value={String(prefs.newPerDay)}
+            onValueChange={(v) => void savePreference("newPerDay", Number(v))}
+          />
+        </div>
+      ) : null}
+
+      {student ? (
+        <div className="mt-4 border-t border-border pt-4">
+          <SegmentedControl
+            label="Audit playback speed"
+            description="The speed your recording starts at when you open an audit. The buttons under the player still change it for one listen."
+            options={PLAYBACK_RATES.map((r) => ({ value: String(r), label: `${r}x` }))}
+            value={String(prefs.playbackRate)}
+            onValueChange={(v) => void savePreference("playbackRate", Number(v))}
+          />
+        </div>
+      ) : null}
+
+      {learner && !member ? (
+        <p className="mt-4 border-t border-border pt-4 text-xs text-ink-muted">
+          You are using a guest account, so email, recording and audit settings are not shown. Sign
+          out, then create a free account or continue with Google to get them.
+        </p>
+      ) : null}
 
       {notice ? (
         <p aria-live="polite" className="mt-4 text-xs text-ink-muted">

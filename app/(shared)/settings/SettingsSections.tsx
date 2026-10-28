@@ -1,0 +1,112 @@
+// Owns what Settings shows and to whom: reads the account once, works out who
+// is looking (student, guest, teacher or admin), and lays out the sections.
+// The Settings page and the header's settings dropdown both render this, so
+// the two can never offer different settings again.
+//
+// It deliberately does NOT save anything; each section's client component
+// does. "variant" only changes the frame: cards on the page, plain stacked
+// sections in the narrow dropdown.
+
+import type { ReactNode } from "react";
+
+import { prisma } from "@/lib/prisma";
+import { prefsOf } from "@/lib/preferences";
+import { Card, CardTitle } from "@/components/ui/Card";
+import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
+import { ChangePassword } from "@/app/(shared)/settings/ChangePassword";
+import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
+import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
+import { ShareApp } from "@/app/(shared)/settings/ShareApp";
+import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
+
+type Variant = "page" | "panel";
+
+function Section({ variant, id, title, children }: { variant: Variant; id: string; title: string; children: ReactNode }) {
+  if (variant === "page") {
+    return (
+      <Card className="mt-6">
+        <CardTitle>{title}</CardTitle>
+        <div className="mt-4">{children}</div>
+      </Card>
+    );
+  }
+  return (
+    <section aria-labelledby={id} className="border-t border-border pt-4 first:border-t-0 first:pt-0">
+      <h2 id={id} className="font-display text-sm font-bold text-ink">{title}</h2>
+      <div className="mt-3">{children}</div>
+    </section>
+  );
+}
+
+export async function SettingsSections({ userId, variant }: { userId: string; variant: Variant }) {
+  // The role comes from the row, not the session token: a token can be older
+  // than a promotion or a demotion.
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { theme: true, preferences: true, role: true, isGuest: true, name: true, creditStyle: true, publicName: true, passwordHash: true },
+  });
+  if (!user) return null;
+
+  // Each key parsed on its own over the defaults, so one retired value does
+  // not reset the rest.
+  const preferences = prefsOf(user.preferences);
+  const audience = {
+    learner: user.role === "STUDENT",
+    member: !user.isGuest,
+    reviewer: user.role === "TEACHER" || user.role === "ADMIN",
+  };
+  // Prefixed per variant: the page and the open dropdown can both be on screen.
+  const id = (name: string) => `settings-${variant}-${name}`;
+
+  const sections = (
+    <>
+      <Section variant={variant} id={id("general")} title="Appearance and notifications">
+        <SettingsForm initialTheme={user.theme} initialPreferences={preferences} audience={audience} />
+      </Section>
+
+      {/* Students only: teachers and admins have no flashcards. */}
+      {audience.learner ? (
+        <Section variant={variant} id={id("card")} title="Flashcard">
+          <CardColorPicker initial={preferences.cardColor} />
+        </Section>
+      ) : null}
+
+      {/* Guests cannot publish, and admins' decks are credited to EduSarthi. */}
+      {audience.member && user.role !== "ADMIN" ? (
+        <Section variant={variant} id={id("credit")} title="How your name shows on public decks">
+          <PublicNameForm
+            accountName={user.name}
+            initialStyle={user.creditStyle}
+            initialPublicName={user.publicName}
+            teacher={user.role === "TEACHER"}
+          />
+        </Section>
+      ) : null}
+
+      <Section variant={variant} id={id("share")} title="Share EduSarthi">
+        <ShareApp />
+      </Section>
+
+      <Section variant={variant} id={id("security")} title="Security">
+        {audience.member ? (
+          <div className="flex flex-col gap-5">
+            {/* Only whether a password exists crosses to the browser, never the hash. */}
+            <ChangePassword hasPassword={Boolean(user.passwordHash)} />
+            <div className="border-t border-border pt-4">
+              <SignOutEverywhere />
+            </div>
+          </div>
+        ) : (
+          // Signing out everywhere would strand a guest: a guest account has
+          // no password or email to sign back in with.
+          <p className="text-sm text-ink-muted">
+            A guest account has no password or email, so there is nothing to change here. Signing
+            out ends this guest account, and it cannot be opened again.
+          </p>
+        )}
+      </Section>
+    </>
+  );
+
+  return variant === "page" ? sections : <div className="flex flex-col gap-4">{sections}</div>;
+}

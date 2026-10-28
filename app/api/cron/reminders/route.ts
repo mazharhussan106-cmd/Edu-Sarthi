@@ -1,6 +1,6 @@
 // Owns the daily emails (vercel.json → once a day): first today's batch of an
 // announcement, if one is sending (lib/announcements, at most 80 a day), then
-// the flashcard reminders.
+// the teachers' queue email (lib/queueDigest), then the flashcard reminders.
 //
 // Same guard as the retention cron: Vercel sends "Authorization: Bearer
 // <CRON_SECRET>", and without it the route refuses — an open endpoint here is
@@ -22,6 +22,7 @@ import { appUrl } from "@/lib/appUrl";
 import { sendAnnouncementBatch } from "@/lib/announcements";
 import { sendStudyReminder } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
+import { sendQueueDigests } from "@/lib/queueDigest";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -49,6 +50,12 @@ export async function GET(req: Request) {
   // Its own failure must not stop the reminders; the next run carries on.
   const announcement = await sendAnnouncementBatch(ANNOUNCEMENT_BUDGET_MS).catch((err) => {
     console.error("Announcement batch failed", err instanceof Error ? err.message : "unknown error");
+    return { sent: 0, failed: 0 };
+  });
+  // Before the students: a few emails, and a recording past its deadline costs
+  // a student more than a late nudge does. Its failure must not stop them.
+  const queue = await sendQueueDigests(`${appUrl(req)}/queue`).catch((err) => {
+    console.error("Queue emails failed", err instanceof Error ? err.message : "unknown error");
     return { sent: 0, failed: 0 };
   });
   const link = `${appUrl(req)}/flashcards`;
@@ -96,5 +103,5 @@ export async function GET(req: Request) {
       }
     }
   }
-  return NextResponse.json({ ok: true, checked, sent, announcement });
+  return NextResponse.json({ ok: true, checked, sent, announcement, queue });
 }

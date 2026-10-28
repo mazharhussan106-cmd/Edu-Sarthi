@@ -86,6 +86,23 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+// Settings → Security. The current password is checked against the hash on
+// the server; here it only has to be present.
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Enter your current password"),
+    password,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
+  .refine((data) => data.password !== data.currentPassword, {
+    message: "Choose a password different from your current one",
+    path: ["password"],
+  });
+
 // --- Teacher review --------------------------------------------------------
 
 export const claimSchema = z.object({

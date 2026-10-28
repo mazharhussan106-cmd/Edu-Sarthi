@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged; see items 4h–4j). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, see "Settings, phase E"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -124,6 +124,24 @@ Still not done, by choice: per-student reminder time (needs an hourly cron), Hin
 ## Share + Explore (10 Oct)
 
 Settings (page and the header gear) now has **Share EduSarthi** (phone share sheet, WhatsApp, copy link; no referral tracking). New student page **/explore** (menu → Study, and a chip on the Flashcard tab): built-in counts (Words / Chunks / Grammar and chunk types), approved library decks grouped by subject (= deck tag) with one-tap **Import and study** (copies the deck, opens its study page) and a Teacher-audit badge. Audit only works on decks made by a verified teacher (existing rule: recording goes to that deck's teacher); copies are private and cannot be sent for audit. No database change.
+
+## Settings, phase E: by role, playback speed, queue email, change password (28 Oct, branch `claude/blissful-euler-9j0h4c`)
+
+The owner asked for a check of Settings and a list of what could be added, then said to plan and build the recommended part. No database change: the two new preferences are keys in the `User.preferences` JSON, and the password change uses the existing `passwordHash` and `sessionsValidFrom` columns.
+
+Done:
+- **One source for both places.** `app/(shared)/settings/SettingsSections.tsx` reads the account and lays out the sections; the Settings page and the header dropdown (`components/layout/SettingsPanel.tsx`) both render it. Before this the dropdown had no "How your name shows on public decks".
+- **Each role sees only what works for it** (`SettingsAudience` in `SettingsForm.tsx`). Student: everything as before. Teacher and admin: theme, text size, data saver, the new queue email, public name (teacher only), security. They no longer see the audit email, flashcard reminder, new cards per day, Hide Hindi, auto-speak, autoplay or card colour. Guest: theme, text size, Hindi, auto-speak, new cards per day, card colour, and a line saying email, recording and audit settings come with a free account. A guest no longer sees email switches (a guest has no email), change password, or Sign out of all devices (a guest who signs out cannot get back in).
+- **Audit playback speed** (students): Settings → 1x / 1.25x / 1.5x, preference `playbackRate`. Both players on `/feedback/[id]` (audited and waiting) start at it, and the buttons under the player still change it for one listen. `Player` also sets the speed and duration on mount when the file loaded before hydration. The feedback page now reads preferences with `prefsOf` from the submission row, not with a second query.
+- **Daily queue email** (teachers and admins, opt-in, preference `emailQueueDigest`): `lib/queueDigest.ts`, called from the existing daily cron (`/api/cron/reminders`, ~7 pm IST) before the student reminders. It counts what that person's queue page shows (shared pool plus recordings on their own deck; admins see all), releases expired claims first, and says how many are urgent. Nobody is emailed when their queue is empty. Email: `sendQueueDigest` in `lib/email.ts`.
+- **Change password** (Settings → Security): `app/api/profile/password` plus `ChangePassword.tsx`. It needs the current password, wrong guesses count against the same 8-per-15-minutes throttle as sign-in, and a successful change ends every session, this device too. An account with no password (email code or Google) is told to sign out and use Forgot password; the route refuses to set a first password, because a stolen session must not be able to lock the owner out.
+- The audit-ready email now names the switch by its real label. The Help answer on a lost phone points to Change password.
+
+Tested on a local Postgres with a production build and Playwright: 52 checks (what each role sees, the dropdown, the saved speed on both audit pages, the wrong and right current password, old password refused, new one accepted, the other device signed out, the no-password account), plus the queue-email counts per teacher and admin (exact) and the throttle (9th wrong try → 429). `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run is needed. The queue email needs `SENDGRID_API_KEY`, `CRON_SECRET` and `NEXT_PUBLIC_APP_URL`, the same as the reminders.
+
+Still open (proposals, not decisions): a per-student reminder time (needs an hourly cron); voice speed and accent for "say the word"; a daily review limit; Hide Hindi does not yet hide the Hindi-to-English question or Hindi in Excel-imported cards; an in-app reduce-motion switch; changing email or phone; turning a guest into a full account; profile photo; a list of signed-in devices; Hindi/English UI language; a "your password was changed" email. Small doc mismatch noticed: `components/ui/Switch.tsx` says the whole row is clickable, but only the switch button is.
 
 ## Flashcard phone layout: lesson (10 Oct)
 

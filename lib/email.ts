@@ -8,6 +8,8 @@
 
 import sgMail from "@sendgrid/mail";
 
+import { SLA_HOURS, URGENT_WITHIN_HOURS } from "@/lib/claims";
+
 const FROM = process.env.EMAIL_FROM ?? "noreply@edusarthi.com";
 const API_KEY = process.env.SENDGRID_API_KEY;
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
@@ -157,8 +159,8 @@ export async function sendFixUndone(to: string, title: string, card: string, rea
 /// quotes it: scores and notes stay behind sign-in.
 export async function sendAuditReady(to: string, url: string) {
   const subject = "Your teacher has returned your audit";
-  const text = `Your teacher has audited your recording.\n\nOpen it here: ${url}\n\nYou get this email because "Email me when an audit arrives" is on in Settings. You can switch it off there.`;
-  const html = `<p>Your teacher has audited your recording.</p><p><a href="${url}">Open your audit</a></p><p style="color:#666;font-size:12px">You get this email because “Email me when an audit arrives” is on in Settings. You can switch it off there.</p>`;
+  const text = `Your teacher has audited your recording.\n\nOpen it here: ${url}\n\nYou get this email because "Email me when a teacher returns my audit" is on in Settings. You can switch it off there.`;
+  const html = `<p>Your teacher has audited your recording.</p><p><a href="${url}">Open your audit</a></p><p style="color:#666;font-size:12px">You get this email because “Email me when a teacher returns my audit” is on in Settings. You can switch it off there.</p>`;
   await send(to, subject, text, html);
 }
 
@@ -168,5 +170,16 @@ export async function sendStudyReminder(to: string, due: number, url: string) {
   const subject = `${due} flashcard${due === 1 ? " is" : "s are"} due for review today`;
   const text = `${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.\n\nStart here: ${url}\n\nYou get this email because the daily reminder is on in Settings. You can switch it off there.`;
   const html = `<p>${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.</p><p><a href="${url}">Start reviewing</a></p><p style="color:#666;font-size:12px">You get this email because the daily reminder is on in Settings. You can switch it off there.</p>`;
+  await send(to, subject, text, html);
+}
+
+/// The evening queue email for teachers and admins. Counts only, never a
+/// student's id or recording: the queue itself stays behind sign-in.
+export async function sendQueueDigest(to: string, waiting: number, urgent: number, url: string) {
+  const subject = `${waiting} recording${waiting === 1 ? " is" : "s are"} waiting for an audit`;
+  const urgentLine = urgent > 0 ? `${urgent} of them ${urgent === 1 ? "has" : "have"} less than ${URGENT_WITHIN_HOURS} hours left before the ${SLA_HOURS}-hour deadline.` : "";
+  const off = "You get this email because the daily queue email is on in Settings. You can switch it off there.";
+  const text = `${subject}.\n${urgentLine ? `${urgentLine}\n` : ""}\nOpen the queue: ${url}\n\n${off}`;
+  const html = `<p>${subject}.</p>${urgentLine ? `<p><b>${urgentLine}</b></p>` : ""}<p><a href="${url}">Open the queue</a></p><p style="color:#666;font-size:12px">${off}</p>`;
   await send(to, subject, text, html);
 }

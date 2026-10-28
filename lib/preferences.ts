@@ -43,6 +43,11 @@ export const PREFERENCE_SCHEMA = z.object({
   dataSaver: z.boolean(),
   hideHindi: z.boolean(),
   autoSpeak: z.boolean(),
+  // The speed an audit starts at. The player's own buttons still change it for
+  // one listen; this is only where it starts.
+  playbackRate: z.union([z.literal(1), z.literal(1.25), z.literal(1.5)]),
+  // Teachers and admins only: one evening email when recordings are waiting.
+  emailQueueDigest: z.boolean(),
 });
 
 export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
@@ -62,7 +67,15 @@ export const DEFAULT_PREFERENCES: Preferences = {
   // Off by default for the same reason as autoplayAudit: a phone that speaks
   // on every card is a surprise on a bus.
   autoSpeak: false,
+  playbackRate: 1,
+  // Opt-in like the student reminder: no one gets a daily email unasked.
+  emailQueueDigest: false,
 };
+
+/// The speeds the audit player offers, in the order shown. The schema above
+/// lists the same three; a speed added here must be added there too.
+export const PLAYBACK_RATES = [1, 1.25, 1.5] as const;
+export type PlaybackRate = (typeof PLAYBACK_RATES)[number];
 
 /// Choices offered in settings. A short list, not a free number: a student who
 /// types 500 has not chosen a plan, they have broken their daily session.

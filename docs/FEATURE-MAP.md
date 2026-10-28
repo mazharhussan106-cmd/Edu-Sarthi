@@ -60,7 +60,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 | History | Practice (recordings and audits) and Study (every card answer, by day); delete study history | Menu → You → History (`/history`) |
 | Settings | Theme, text size, new cards per day, hide Hindi, say the word on open, data saver, audit-ready email, daily reminder email, card colour, how your name shows on public decks, sign out of all devices | Gear (quick panel) or Menu → You → Settings (`/settings`) |
 | Share EduSarthi | Phone share sheet, WhatsApp, copy link | Menu → You → Share EduSarthi (`/settings#share`) |
-| Install app | Add EduSarthi to the phone's home screen (when the browser offers it) | Menu → bottom |
+| Install app | Add EduSarthi to the phone's home screen: Android Chrome opens its install box; iPhone shows the Share → Add to Home Screen steps. Hidden when already installed or when the browser makes no offer | Menu → bottom |
 | Sign out | Sign out on this device | Menu → bottom, or Gear → Sign out |
 
 ### Help and about

@@ -10,6 +10,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { practiceWord } from "@/lib/decks";
+import { notify } from "@/lib/notifications";
 import { submissionSchema } from "@/lib/validations";
 import { ALLOWED_TYPES, objectExists, isOwnKey } from "@/lib/storage";
 
@@ -140,6 +141,17 @@ export async function POST(req: Request) {
     });
   } catch {
     return NextResponse.json({ error: "We could not save your submission. Check My Audits to see if it went through, and send it again if not." }, { status: 409 });
+  }
+
+  // Only a recording routed to one teacher: the general queue is everyone's,
+  // and a note to every teacher for every recording would drown the inbox.
+  // The student is not named; the teacher sees their ID in the queue.
+  if (target?.teacherId) {
+    await notify(target.teacherId, "recording_assigned", {
+      title: "A new recording to audit",
+      body: "A student recorded an answer to a card in your deck. It is waiting in your queue.",
+      link: "/queue",
+    });
   }
 
   return NextResponse.json({ ok: true, id: submission.id }, { status: 201 });

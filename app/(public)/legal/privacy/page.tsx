@@ -216,6 +216,12 @@ export default function PrivacyPage() {
             questions, are kept while your account exists.
           </p>
           <p className="mt-2">
+            Your notifications (the list behind the bell: an audit that is
+            ready, a decision about your deck) are deleted 90 days after they
+            arrive once you have read them, and after 180 days if you never
+            open them.
+          </p>
+          <p className="mt-2">
             When you delete your account, your submissions, audits, flashcard
             progress and decks are deleted with it, and we remove your stored
             recordings, card pictures and any files waiting in the AI card maker. If storage is unavailable at that

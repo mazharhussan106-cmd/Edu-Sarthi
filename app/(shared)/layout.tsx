@@ -17,6 +17,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { PrefSyncServer } from "@/components/layout/PrefSyncServer";
 import { SettingsPanel } from "@/components/layout/SettingsPanel";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { NotificationBellServer } from "@/components/layout/NotificationBellServer";
 import { STUDENT_LINKS, STUDENT_MORE } from "@/lib/studentNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 
@@ -35,6 +36,7 @@ export default async function SharedLayout({
       <StickyHeader
         links={isTeacher ? staffNav(session?.user?.role).links : STUDENT_LINKS}
         theme={theme}
+        bell={<NotificationBellServer />}
         search={isTeacher ? undefined : <HeaderSearch />}
         more={isTeacher ? undefined : STUDENT_MORE}
         settingsPanel={<SettingsPanel />}

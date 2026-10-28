@@ -1,6 +1,6 @@
 # Next features — plan (notifications, messages, profile, reminders, AI media, language, help bot)
 
-Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phase A (notification inbox) is being built on the same branch.** Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
+Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phase A (notification inbox) is BUILT on the same branch, tested on a local copy, not merged yet — see "Phase A — what was built".** Next phase by the agreed order: B (change email or phone). Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
 
 ## The owner's list (28 Oct 2026)
 
@@ -48,6 +48,20 @@ Every phase touches more than 6 files, so each one is its own branch and pull re
 ---
 
 ## Phase A — Notification inbox
+
+### Phase A — what was built (28 Oct 2026)
+
+- **Data (additive):** tables `Notification` and `NoticeRead` (`prisma/schema.prisma`). Tested with `prisma db push` from `main`'s schema on a database that already had data: no data-loss warning, nothing existing changed.
+- **Logic:** `lib/notifications.ts` (kinds allowlist, `notify()` that never throws, unread count, inbox page, read marks, 90/180-day sweep). `lib/notices.ts` now shares its "still showing" rule (`activeNoticeWhere`) so a notice never counts as unread after it has left the dashboard.
+- **Screens:** the bell (`components/layout/NotificationBell.tsx`, server count from `NotificationBellServer.tsx`) in the student, shared, teacher and admin headers; `/notifications` (`app/(shared)/notifications/page.tsx`) with "Notices for everyone" (students only), "For you", 20 a page, "Mark all as read". Read marks come only from the browser (`components/notifications/*`), never while the page renders.
+- **API:** `GET /api/notifications` (unread count), `POST` (`read`, `read-all`, `notices-seen`), scoped to the session's account.
+- **Where notes are written:** audit ready (`lib/notify.ts`), recording sent back (new, `lib/notify.ts`), deck approved / rejected / removed (`lib/deckReview.ts`), deck invite to an existing verified account (`lib/deckMembers.ts`), small fix undone (`lib/smallFix.ts`), institute name removed (`lib/institutes.ts`), recording on a verified teacher's deck card (`app/api/submissions/route.ts`). Emails are unchanged.
+- **Also:** retention cron sweeps the inbox; the data export (`/api/me`) includes notifications; the Help page has a "Where do I see what is new for me?" answer; the Privacy page's "How long we keep it" has one paragraph on the 90/180 days.
+- **How the bell stays right:** layouts do not re-render on navigation, so the bell asks `/api/notifications` when the page changes (at most once in 30 s) and when the tab comes back; the inbox page tells it the new count at once. No timer polling.
+- **Tested (local Postgres, dev server, Playwright at 390×844):** 33 checks through the real routes — counts per role, notices only for students, expired notice left out, `<b>` in a deck title shown as text, tap marks read and opens the audit, bell follows, mark all, another person's id changes nothing, bad body 400, signed out 401, paging (20 + 6), retention (90-day read and 180-day unread removed, 120-day unread kept), export. Fix-undone and institute-name notes tested by calling the lib functions. `tsc` and `next build` pass.
+- **Not tested:** the live database and Supabase; the deck-takedown note (same code path as reject).
+- **To go live:** merge, then run **Actions → Database setup** once (adds the two tables; nothing existing changes). Run it before or right after the merge: the header reads the new tables on every page.
+- **Not built:** push notifications to the phone (Phase A2, decision N7).
 
 **What people see.** A bell in the header with the number of unread items ("9+" past nine). Tapping it opens `/notifications`: newest first, unread items with a dot and bold text, 20 per page. Tapping an item opens its page and marks it read. A "Mark all as read" button. Students, teachers and admins all get it (the page lives in the `(shared)` group).
 

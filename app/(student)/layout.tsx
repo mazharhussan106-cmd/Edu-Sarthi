@@ -15,6 +15,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { PrefSyncServer } from "@/components/layout/PrefSyncServer";
 import { SettingsPanel } from "@/components/layout/SettingsPanel";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { NotificationBellServer } from "@/components/layout/NotificationBellServer";
 import { STUDENT_LINKS, STUDENT_MORE } from "@/lib/studentNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 
@@ -29,7 +30,7 @@ export default async function StudentLayout({
     <div className="flex min-h-screen flex-col">
       {/* No `stats` yet. Row 2 stays unrendered until the progress strip
           exists in Phase 6 — an empty bar is worse than no bar. */}
-      <StickyHeader links={STUDENT_LINKS} theme={theme} homeHref="/dashboard" search={<HeaderSearch />} more={STUDENT_MORE} settingsPanel={<SettingsPanel />} />
+      <StickyHeader links={STUDENT_LINKS} theme={theme} homeHref="/dashboard" bell={<NotificationBellServer />} search={<HeaderSearch />} more={STUDENT_MORE} settingsPanel={<SettingsPanel />} />
       <PrefSyncServer />
       <div className="flex-1">{children}</div>
       {/* Clears the fixed bottom bar on phones so the footer is not hidden. */}

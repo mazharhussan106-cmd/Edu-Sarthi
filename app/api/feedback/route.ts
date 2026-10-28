@@ -15,7 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { claimSchema, feedbackSchema, holdSchema, returnSchema } from "@/lib/validations";
 import { queueScope, releaseExpiredClaims } from "@/lib/claims";
 import { isRevoked } from "@/lib/activeUser";
-import { notifyAuditReady } from "@/lib/notify";
+import { notifyAuditReady, notifySentBack } from "@/lib/notify";
 
 class ClaimLost extends Error {}
 
@@ -132,6 +132,8 @@ export async function POST(req: Request) {
         { status: 409 },
       );
     }
+    // After the write, never inside it: the student hears only about a send-back that happened.
+    await notifySentBack(parsed.data.submissionId);
     return NextResponse.json({ ok: true });
   }
 

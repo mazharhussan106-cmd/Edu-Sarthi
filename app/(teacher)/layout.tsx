@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 
 import { ensureActiveUser } from "@/lib/activeUser";
 import { Footer } from "@/components/layout/Footer";
+import { NotificationBellServer } from "@/components/layout/NotificationBellServer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
 import { auth } from "@/lib/auth";
 import { staffNav } from "@/lib/staffNav";
@@ -21,7 +22,7 @@ export default async function TeacherLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <StickyHeader links={nav.links} theme={theme} homeHref={nav.home} />
+      <StickyHeader links={nav.links} theme={theme} homeHref={nav.home} bell={<NotificationBellServer />} />
       <div className="flex-1">{children}</div>
       <Footer />
     </div>

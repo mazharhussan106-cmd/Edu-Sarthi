@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 
 import { ensureActiveUser } from "@/lib/activeUser";
 import { Footer } from "@/components/layout/Footer";
+import { NotificationBellServer } from "@/components/layout/NotificationBellServer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
 import { ADMIN_LINKS } from "@/lib/staffNav";
 import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
@@ -18,7 +19,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 
   return (
     <div className="flex min-h-screen flex-col">
-      <StickyHeader links={ADMIN_LINKS} theme={theme} homeHref="/admin" />
+      <StickyHeader links={ADMIN_LINKS} theme={theme} homeHref="/admin" bell={<NotificationBellServer />} />
       <div className="flex-1">{children}</div>
       <Footer />
     </div>

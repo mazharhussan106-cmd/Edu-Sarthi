@@ -28,6 +28,7 @@ const COLLAPSE_AFTER_PX = 24;
 export function StickyHeader({
   links,
   stats,
+  bell,
   search,
   more,
   settingsPanel,
@@ -36,6 +37,8 @@ export function StickyHeader({
 }: {
   links: readonly NavLink[];
   stats?: ReactNode;
+  /** The notification bell, rendered on the server so its count is right on first paint. */
+  bell?: ReactNode;
   search?: ReactNode;
   more?: readonly MenuGroup[];
   /** Full settings, rendered on the server; replaces the small theme-only dropdown. */
@@ -118,7 +121,8 @@ export function StickyHeader({
           )}
 
           <div className="flex shrink-0 items-center gap-1">
-            {/* Search, then settings, then the menu, all at the right. */}
+            {/* Bell, search, settings, then the menu, all at the right. */}
+            {bell}
             {search}
             <SettingsMenu initialTheme={theme} panel={settingsPanel} />
             <MobileMenu links={links} more={more} />

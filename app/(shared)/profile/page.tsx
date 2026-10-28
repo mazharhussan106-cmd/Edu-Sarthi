@@ -16,7 +16,6 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { DataRights, NameForm, PhoneForm } from "@/components/student/AccountActions";
 import { displayId } from "@/lib/publicId";
@@ -157,7 +156,7 @@ export default async function ProfilePage() {
                 <li
                   key={b.id}
                   title={b.hint}
-                  className={b.earned ? "rounded-full bg-accent/12 px-3 py-1 text-xs font-medium text-accent" : "rounded-full bg-paper-dim px-3 py-1 text-xs text-ink-muted"}
+                  className={b.earned ? "rounded-full bg-accent/12 px-3 py-1 text-xs font-medium text-accent-dark" : "rounded-full bg-paper-dim px-3 py-1 text-xs text-ink-muted"}
                 >
                   {b.earned ? "✓ " : ""}{b.label}
                 </li>
@@ -229,24 +228,11 @@ export default async function ProfilePage() {
         <Card className="flex items-center justify-between p-4 transition-colors hover:bg-hover">
           <span>
             <span className="block font-display text-base font-bold text-ink">Settings</span>
-            <span className="text-sm text-ink-muted">Theme, text size, notifications, privacy and sign-out</span>
+            <span className="text-sm text-ink-muted">Theme, text size, notifications, password, email and signing out</span>
           </span>
           <span aria-hidden="true" className="text-ink-muted">›</span>
         </Card>
       </Link>
-
-      <Card className="mt-4">
-        <CardTitle>Password</CardTitle>
-        <p className="mt-2 text-sm text-ink-muted">
-          To change your password, sign out and use the reset link on the sign-in
-          page. It arrives by email and works once.
-        </p>
-        <Link href="/forgot-password" className="mt-4 inline-block">
-          <Button variant="outline" size="sm">
-            Send myself a reset link
-          </Button>
-        </Link>
-      </Card>
 
       {!isTeacher ? <DataRights /> : null}
     </main>

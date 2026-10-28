@@ -12,7 +12,7 @@
 
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
@@ -38,6 +38,8 @@ async function call(body: object): Promise<{ error: string | null; mode?: Mode }
 
 function Steps() {
   const { update } = useSession();
+  // Unique per copy: the Settings page and the header's dropdown can both be open.
+  const uid = useId();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -105,12 +107,12 @@ function Steps() {
           Already have an account? Use its email, and we add these cards to it.
         </p>
         <div>
-          <Label htmlFor="upgrade-name">Your name</Label>
-          <Input id="upgrade-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" maxLength={80} required />
+          <Label htmlFor={`${uid}-name`}>Your name</Label>
+          <Input id={`${uid}-name`} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" maxLength={80} required />
         </div>
         <div>
-          <Label htmlFor="upgrade-email">Email</Label>
-          <Input id="upgrade-email" type="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
+          <Label htmlFor={`${uid}-email`}>Email</Label>
+          <Input id={`${uid}-email`} type="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
         </div>
         {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
         <Button type="submit" size="sm" className="self-start" disabled={busy}>{busy ? "Sending…" : "Email me a code"}</Button>
@@ -132,9 +134,9 @@ function Steps() {
         </p>
       )}
       <div>
-        <Label htmlFor="upgrade-code">Code</Label>
+        <Label htmlFor={`${uid}-code`}>Code</Label>
         <Input
-          id="upgrade-code"
+          id={`${uid}-code`}
           inputMode="numeric"
           autoComplete="one-time-code"
           maxLength={6}

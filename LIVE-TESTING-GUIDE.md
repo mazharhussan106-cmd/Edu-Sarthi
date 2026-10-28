@@ -192,6 +192,29 @@ Yahan sab chal gaya to APK me bhi chalega.
 
 **Kuch galat mile to** Claude ko yeh teen cheezein bhejiye: (1) screenshot, (2) kya dabaya tha, (3) phone ka naam. Password ya key kabhi nahi.
 
+### 4b. Settings ke naye kaam (phase E–J) — branch `claude/blissful-euler-9j0h4c` merge hone ke baad
+
+Preview deployments band hain, isliye yeh sab merge ke baad live site par hi dikhega. Vercel me pehle check kariye: **Settings → Cron Jobs** me 7 jobs dikhni chahiye (retention, reminders, aur reminders/7, /9, /13, /17, /21).
+
+**Student account se:**
+- [ ] Settings → Flashcard → **Daily flashcard reminder email** on karke turant **Reminder time** chuniye (jaise 9 am) → page reload karke dono bache rahe
+- [ ] Settings → Flashcard → **Read-aloud accent** British, speed Slow → kisi card ka speaker dabaiye → awaaz badli
+- [ ] **Reduce motion** on → card palatte waqt ghoomta nahi
+- [ ] **Hide Hindi meanings** on → support card aur Excel deck card par Hindi box chhupe; **Hindi to English questions** wala alag switch on karke side 3 ka translate sawaal chhupe
+- [ ] Practice page par "**2 left today**" dikhe; do recording bhejne ke baad teesri ke liye "Today's recordings for audit are sent" card aaye (teacher ne jo recording wapas bheji ho, uski nayi recording phir bhi jaa sake)
+- [ ] Audit kholne par recording **Audit playback speed** wali speed se chale
+- [ ] Settings → Security → **Change password** (purana password chahiye) → sab devices se sign out, naye password se login, aur purane email par "password changed" email
+- [ ] Settings → Security → **Change email** → naye email par code → badalne ke baad naye email se login, purane email par suchna
+- [ ] Profile → mobile number save karna aur khaali karke hatana
+
+**Teacher account se:**
+- [ ] Settings me sirf teacher wale options (student ke flashcard/audit wale nahi); **Daily queue email** on → shaam ~7 baje queue me recordings hon to email aaye
+
+**Guest se (Continue as guest):**
+- [ ] Kuch cards padhiye → Settings → **Keep your progress** → naya email → code → account full ho jaaye, cards bache rahe
+- [ ] Doosra guest → apne **purane student account ka email** → code → "Add my progress" → us email se login karke cards dikhen
+
+
 ---
 
 ## 5. Kya **mat** kariye
@@ -204,7 +227,7 @@ Yahan sab chal gaya to APK me bhi chalega.
 
 ## Claude ke liye zaroori baatein (doosre chat ko yeh padhwaiye)
 
-- **Code branch `claude/ecstatic-mccarthy-z2n9e3` par hai**, `main` par nahi (jab tak Step 1 ka PR merge na ho). Pehle `git fetch origin` aur `git checkout claude/ecstatic-mccarthy-z2n9e3` kariye. `main` dekh kar "code nahi hai" mat kahiye.
+- **Kaun sa kaam kis branch par hai, yeh `docs/PROJECT-MEMORY.md` batata hai** — pehle wahi padhiye. Jo merge ho chuka hai woh `main` par hai; nayi chats `claude/<naam>` branches par kaam karti hain, aur unka kaam merge hone tak `main` par nahi dikhta.
 - Claude ka cloud environment Supabase tak nahi pahunch sakta (network policy, aur Postgres port proxy se nahi jaata). Database setup `.github/workflows/database.yml` ("Database setup", manual run) se hota hai, jo GitHub repository secrets `DATABASE_URL`/`DIRECT_URL` padhta hai.
 - Stack: Next.js 16 (App Router), TypeScript, Tailwind v4, Prisma 6, Auth.js v5 (JWT), Supabase Postgres + Storage, Vercel. Android = TWA wrapper in `android/` (koi Kotlin app code nahi), APK GitHub Actions `.github/workflows/android.yml` se.
 - Kaam shuru karne se pehle **`CLAUDE.md`** padhiye — coding rules wahi hain. Deploy details: `DEPLOY.md`, `README.md`, `android/README.md`. Saare env variables: `.env.example`.

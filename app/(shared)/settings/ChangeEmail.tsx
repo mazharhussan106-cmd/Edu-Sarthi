@@ -11,7 +11,7 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
@@ -37,6 +37,8 @@ async function call(body: object): Promise<{ error: string | null; needsOldCode?
 const codeInput = (v: string) => v.replace(/\D/g, "").slice(0, 6);
 
 export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: string; hasPassword: boolean }) {
+  // Unique per copy: the Settings page and the header's dropdown can both be open.
+  const uid = useId();
   const [open, setOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -116,8 +118,8 @@ export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: strin
     return (
       <form onSubmit={(e) => void start(e)} className="flex flex-col gap-4">
         <div>
-          <Label htmlFor="new-email">New email</Label>
-          <Input id="new-email" type="email" inputMode="email" autoComplete="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
+          <Label htmlFor={`${uid}-new`}>New email</Label>
+          <Input id={`${uid}-new`} type="email" inputMode="email" autoComplete="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
         </div>
         {hasPassword ? (
           <PasswordInput label="Current password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
@@ -139,13 +141,13 @@ export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: strin
         {sent.needsOldCode ? <> and another to <b className="text-ink">{currentEmail}</b></> : null}. Codes work for 10 minutes. Not there? Check spam, or send them again.
       </p>
       <div>
-        <Label htmlFor="new-email-code">Code sent to {sent.to}</Label>
-        <Input id="new-email-code" inputMode="numeric" autoComplete="one-time-code" value={newCode} onChange={(e) => setNewCode(codeInput(e.target.value))} className="max-w-40 font-mono tracking-[0.3em]" required />
+        <Label htmlFor={`${uid}-new-code`}>Code sent to {sent.to}</Label>
+        <Input id={`${uid}-new-code`} inputMode="numeric" autoComplete="one-time-code" value={newCode} onChange={(e) => setNewCode(codeInput(e.target.value))} className="max-w-40 font-mono tracking-[0.3em]" required />
       </div>
       {sent.needsOldCode ? (
         <div>
-          <Label htmlFor="old-email-code">Code sent to {currentEmail}</Label>
-          <Input id="old-email-code" inputMode="numeric" value={oldCode} onChange={(e) => setOldCode(codeInput(e.target.value))} className="max-w-40 font-mono tracking-[0.3em]" required />
+          <Label htmlFor={`${uid}-old-code`}>Code sent to {currentEmail}</Label>
+          <Input id={`${uid}-old-code`} inputMode="numeric" value={oldCode} onChange={(e) => setOldCode(codeInput(e.target.value))} className="max-w-40 font-mono tracking-[0.3em]" required />
         </div>
       ) : null}
       {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}

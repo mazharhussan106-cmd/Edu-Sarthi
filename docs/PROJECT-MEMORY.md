@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to J; phase J has the owner's 28 Oct decisions). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to K; phase J has the owner's 28 Oct decisions). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -308,9 +308,29 @@ Tested on a local Postgres with Playwright:
 
 **Needs before it works live:** merge, so `vercel.json`'s new jobs deploy. Then check Vercel → Settings → Cron Jobs shows seven jobs. No Database setup run. `CRON_SECRET`, `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL` as before.
 
+Still open after phase J: see the end of phase K below.
+
+## Settings, phase K: polish and live-readiness (28 Oct, same branch)
+
+The owner said "next phase" with nothing left undecided, so this phase checks and tidies what E to J built, against CLAUDE.md's own rules. No new features, no database change.
+
+Done:
+- **Accessibility check with axe-core** (WCAG 2 A/AA), at 420 px in all five themes:
+  - Pages: Settings for student, teacher and guest, with Change email and Change password opened; Profile, Practice and Help for students.
+  - The new settings UI had no violations in any theme.
+  - Fixed: the `Badge` component's accent text and the Profile badges (4.16:1, under 4.5:1 in light and sepia). They now use `text-accent-dark`, which is the stronger accent in every theme (darker on light themes, lighter on dark ones). The success badge's tint is lighter (`bg-success/8`). After the fix, nothing is flagged in any theme except below.
+  - Left as is, on purpose: the "EduSarthi" wordmark in the header and footer (3.12:1 in light). It is a logotype, which WCAG exempts.
+- **Duplicate ids fixed.** The Settings page and the header's settings dropdown render the same forms. Fixed ids in `CardColorPicker`, `GuestUpgrade` and `ChangeEmail` came out twice when both were open, so a label could point at the wrong input. They now use `useId`. Tested with both open: every label fills its own input, and there are no duplicate ids.
+- **Broken Profile card removed.** The Profile "Password" card sent signed-in people to `/forgot-password`, which the proxy redirects signed-in people away from, so it did nothing. Password and email changes live in Settings → Security now, and the Settings link on Profile says so. `app/(shared)/profile/page.tsx` is back under 250 lines (240).
+- **`LIVE-TESTING-GUIDE.md`:** a new section 4b, a click-by-click checklist for phases E to J to run on the live site after merging. It includes checking that Vercel → Cron Jobs shows seven jobs. Its "for Claude" note no longer names an old branch; it points to this file.
+
+Tested on a production build and a local Postgres: axe before and after, the label/id check, and a screenshot check of the badges in light and midnight. `tsc` and `next build` pass.
+
 Still open:
-- **Phases E to J** are all on `claude/blissful-euler-9j0h4c` and **not merged**.
-- The audit limit is a constant; if it should change often, make it an admin setting.
+- **Phases E to K** are all on `claude/blissful-euler-9j0h4c` and **not merged**. Nothing here reaches the live site until they are.
+- The audit limit is a constant (`AUDITS_PER_DAY`). If it should change often, it could become an admin setting, which needs a small table.
+- Not checked by axe this time: pages these phases did not touch (dashboard, flashcards, queue, decks). `bg-accent/12 text-accent` is used on small text elsewhere too and may have the same 4.16:1 gap there.
+
 
 ## Flashcard phone layout: lesson (10 Oct)
 

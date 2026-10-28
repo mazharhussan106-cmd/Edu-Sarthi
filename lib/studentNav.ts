@@ -7,7 +7,7 @@
 // code; the menu groups' icons are plain emoji strings for that reason.
 
 import type { NavLink } from "@/components/layout/NavLinks";
-import { CARD_LISTS } from "@/lib/cardLists";
+import { CARD_LISTS, LIST_ROWS } from "@/lib/cardLists";
 
 export const STUDENT_LINKS: readonly NavLink[] = [
   { href: "/dashboard", label: "Dashboard" },
@@ -18,8 +18,17 @@ export const STUDENT_LINKS: readonly NavLink[] = [
 ];
 
 /// `icon` is an emoji shown before the heading (hidden from screen readers),
-/// like the 📚 / 🧭 chips on the Flashcard tab.
-export type MenuGroup = { icon: string; heading: string; items: readonly NavLink[] };
+/// like the 📚 / 🧭 chips on the Flashcard tab. `chipRows`, when set, lays
+/// the open group out as rows of chips (one row per entry) instead of one link
+/// per line; `items` still holds every link, for the count on the heading.
+export type MenuGroup = {
+  icon: string;
+  heading: string;
+  items: readonly NavLink[];
+  chipRows?: readonly (readonly NavLink[])[];
+};
+
+const cardListLink = (l: (typeof CARD_LISTS)[number]): NavLink => ({ href: `/my-cards?list=${l.value}`, label: l.label, icon: l.icon });
 
 /// The menu's first group on phones: the five STUDENT_LINKS above, folded like
 /// the rest. On a computer they are in the header row, so the group is hidden.
@@ -69,8 +78,11 @@ export function studentMore({ member, aiCards }: { member: boolean; aiCards: boo
     {
       icon: "🗂️",
       heading: "My card lists",
-      // Every mark a card can carry, each its own list (lib/cardLists).
-      items: CARD_LISTS.map((l) => ({ href: `/my-cards?list=${l.value}`, label: l.label, icon: l.icon })),
+      // Every mark a card can carry, each its own list (lib/cardLists), in the
+      // My cards page's three rows — remarks, answer, level — without the row
+      // names (owner's choice, 28 Oct).
+      items: CARD_LISTS.map(cardListLink),
+      chipRows: LIST_ROWS.map((row) => CARD_LISTS.filter((l) => l.row === row).map(cardListLink)),
     },
     {
       icon: "🤝",

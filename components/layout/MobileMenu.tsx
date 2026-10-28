@@ -83,7 +83,9 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
             aria-hidden="true"
           />
 
-          <div className="absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col border-l border-border bg-surface">
+          {/* The student sheet is wider on a computer, where there is room, so
+              each row of the card-list chips fits on one line. */}
+          <div className={cn("absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col border-l border-border bg-surface", more && "md:w-[36rem]")}>
             <div className="flex items-center justify-between border-b border-border p-4">
               <span className="font-display text-base font-bold text-ink">
                 Menu

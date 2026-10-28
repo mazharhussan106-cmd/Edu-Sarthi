@@ -7,11 +7,13 @@
 import { Card, CardTitle } from "@/components/ui/Card";
 import { formatEvent, type NoticeRow } from "@/lib/notices";
 
-export function NoticesCard({ notices }: { notices: readonly NoticeRow[] }) {
+/// `title` is changed only by the Notices page, whose own heading already says
+/// "Notices".
+export function NoticesCard({ notices, title = "Notices" }: { notices: readonly NoticeRow[]; title?: string }) {
   if (notices.length === 0) return null;
   return (
     <Card>
-      <CardTitle>Notices</CardTitle>
+      <CardTitle>{title}</CardTitle>
       <ul className="mt-3 divide-y divide-border">
         {notices.map((n) => (
           <li key={n.id} className="py-2.5 first:pt-0 last:pb-0">

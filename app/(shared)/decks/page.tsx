@@ -24,7 +24,10 @@ import { InviteList } from "@/components/decks/InviteList";
 
 export const revalidate = 0;
 
-export default async function DecksPage() {
+export default async function DecksPage({ searchParams }: { searchParams: Promise<{ shared?: string }> }) {
+  // The menu's "Shared with me" link sets this, so the section shows (empty)
+  // instead of the link landing on a page with nothing about sharing.
+  const showShared = (await searchParams).shared === "1";
   const session = await auth();
   const userId = session!.user.id;
   const staff = session!.user.role !== "STUDENT";
@@ -136,9 +139,14 @@ export default async function DecksPage() {
         ))}
       </ul>
 
-      {sharedWithMe.length ? (
-        <section className="mt-6" aria-labelledby="swm-h">
+      {sharedWithMe.length || showShared ? (
+        <section id="shared-with-me" className="mt-6 scroll-mt-20" aria-labelledby="swm-h">
           <h2 id="swm-h" className="font-display text-base font-bold text-ink">Shared with me</h2>
+          {sharedWithMe.length ? null : (
+            <p className="mt-2 text-sm text-ink-muted">
+              Nothing is shared with you yet. When someone invites you to a deck by email, the invitation shows at the top of this page.
+            </p>
+          )}
           <ul className="mt-2 flex flex-col gap-2">
             {sharedWithMe.map(({ role, deck: d }) => (
               <li key={d.id}>
@@ -194,7 +202,7 @@ export default async function DecksPage() {
 
       {/* Beside, not instead of, the plain form below: the AI is a way to fill a
           deck, and some people just want an empty one to type into. */}
-      {decks.length < DECK_LIMITS.decksPerUser && cardMakerEnabled() ? <div className="mt-6"><AiCardsPanel /></div> : null}
+      {decks.length < DECK_LIMITS.decksPerUser && cardMakerEnabled() ? <div id="ai-cards" className="mt-6 scroll-mt-20"><AiCardsPanel /></div> : null}
 
       <Card className="mt-6">
         <h2 className="font-display text-base font-bold text-ink">New deck</h2>

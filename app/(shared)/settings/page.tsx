@@ -69,7 +69,8 @@ export default async function SettingsPage() {
         </Card>
       ) : null}
 
-      <Card className="mt-6">
+      {/* The menu's "Share EduSarthi" link lands here. */}
+      <Card id="share" className="mt-6 scroll-mt-20">
         <CardTitle>Share EduSarthi</CardTitle>
         <div className="mt-4">
           <ShareApp />

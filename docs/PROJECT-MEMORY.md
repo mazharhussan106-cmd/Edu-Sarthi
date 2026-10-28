@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages, see "Student menu fix"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -450,6 +450,35 @@ Done: **Continue with Google** and **Continue as guest** under the login and reg
 Needs before Google works live: create an OAuth client in Google Cloud Console, redirect URI `https://<site>/api/auth/callback/google`, put the ID and secret in Vercel as `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`, redeploy.
 
 Not done, by choice: deleting old guest rows (needs a check of what cascades first), hiding guests from the teacher Students list and admin counts, friendlier guest messages inside Explore's "Import and study".
+
+### Fix: Google sign-in landing in a guest (28 Oct, branch `ccr-ffd9dae0-rbe8i7`)
+
+**Owner's report:** after "Continue with Google" the app did not open properly and every feature looked broken.
+
+**Cause.** When a Google sign-in finds a session already in the browser, Auth.js links the Google account to that session's user, not to the account with the email. Guests are allowed on /login (to upgrade), so a guest who pressed Continue with Google:
+- had the Google account linked to the guest row;
+- stayed a guest, and stayed on the sign-in page, because the proxy lets guests stay on /login;
+- came back as that guest on every later Google sign-in, even on a clean browser. Recordings, decks and audits were refused, because guests cannot use them.
+
+The empty real account for the email was made but never used. This was reproduced locally against a stand-in Google server.
+
+**Fix** (`lib/auth.ts` only, no schema change, no Database setup needed):
+1. The Prisma adapter is wrapped so `getUser` returns null. Auth.js then never sees who is signed in, and a Google sign-in always goes to the account with the Google email. Auth.js uses `getUser` only for this and for passkeys, which the site does not have.
+2. In the Google `signIn` callback, a Google link stuck on a guest row is moved to the email's account. Links the bug already made on the live database repair themselves on that person's next Google sign-in.
+
+**Tested** (local Postgres, dev server, Playwright, stand-in Google):
+- no session → Google lands on /dashboard as the student;
+- guest → Google lands on /dashboard as the full account;
+- a later clean-browser Google sign-in returns the same account;
+- an old guest-linked Google account is repaired;
+- a teacher via Google lands on /queue as TEACHER;
+- password sign-in is unchanged.
+
+`tsc` and `next build` pass. Not tested with real Google keys or on the live site.
+
+**Not done, by choice:** a guest's flashcard progress is not moved when they sign in with Google. It stays on the old guest row, the same as a guest signing in with an email code. To keep it, the guest uses Settings → Keep your progress. Moving it automatically (with the phase J merge rule) is a possible next step, but it needs the owner's go-ahead.
+
+**Also seen in the Vercel logs (26 Oct, already fixed):** Google sign-in was refused 11 times (AccessDenied) because the live database lacked `User.aiCardsUsed`. Database setup run #7 fixed it. Runs #10 and #11 (28 Oct) are in sync as well. There have been no runtime errors in the 24 hours before this fix.
 
 ## AI draft audit (26 Oct 2026, branch `claude/magical-hopper-juy9yr`)
 

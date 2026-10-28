@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged; see items 4h–4j). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; student menu fix and new pages, see "Student menu fix"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -161,6 +161,29 @@ Done: student `/history` (Practice = recordings and audits; Study = every card a
 **Needs before it works live:** merge, then run Actions → Database setup (adds `ReviewLog`; nothing existing is touched). Study history starts that day; earlier answers cannot be recovered.
 
 The DPDP export now includes card progress and study history. Owner decided **no automatic cleanup** of `ReviewLog`. Not done: nothing was rendered in a browser or run on the real database.
+
+## Student menu fix and new pages (28 Oct 2026, branch `claude/practical-ritchie-w4vnex`)
+
+**Bug fixed: the ☰ menu opened empty on every phone** (student, teacher and admin). Cause: the header has `backdrop-blur`, and an element with a backdrop-filter becomes the containing block for its `position: fixed` children, so the "full-screen" sheet was squeezed into the 56px header and showed only "Menu" and ✕. Fix: `components/layout/MobileMenu.tsx` renders the open sheet through a portal into `<body>`. Checked in Chromium at 390×844: sheet 56px before, 844px after.
+
+**Don't undo (MobileMenu):**
+- the portal (above);
+- `prefetch={false}` on the sheet's links. With prefetch on, opening the sheet fetched ~25 pages, and each response re-sets the Auth.js session cookie; a response still in flight after the new Sign out button signed the person straight back in (seen in a test: session still present after sign-out; with prefetch off it is null);
+- links close the sheet on tap (`onClick={close}`): links that change only the query or hash (`/my-cards?list=unknown`, `/settings#share`) do not change the path, so the close-on-path-change effect never fired.
+
+**Menu now** (`lib/studentNav.ts`, now a function `studentMore({ aiCards })` called by the student and shared layouts): Today (Today's review, Waiting for audit, Notices) · Study (Explore, Word sections, Customer-support English, Practice modules) · My cards and decks (Saved cards, Cards I find hard, My decks, Make cards with AI — only with `ANTHROPIC_API_KEY` and not for guests, Shared with me, Library, Institute) · You (Progress, History, Settings, Share EduSarthi, Download or delete my data) · Help · About (+ Library rules) · Install app · Sign out.
+
+**New pages, no schema change** (all read data that already existed):
+- `/today` (`lib/todayReview.ts`): due and new-left per built-in kind (same rules as the Flashcard tab, new-left also capped by cards not yet seen), decks with cards due, recordings to redo / waiting. Two grouped SQL reads instead of a count per kind, because the live pool has one connection.
+- `/my-cards` (`lib/myCards.ts`): Saved (⭐ Important or ❤️ Favourite), Marked Unknown (known = false and answered at least once), Doubt, My notes, Confident — across built-in cards and decks. Deck cards show only for decks the person can still study (own, shared by name, or followed and still listed); a withdrawn deck's cards never show. Each card opens `/flashcards?card=…` or its deck's study page with `?card=…`.
+- `/notices`: all current notices (the dashboard shows five, and nothing when there are none).
+- Anchors for menu links: `#ai-cards` and `#shared-with-me` (with `?shared=1` the section shows even when empty) on My decks, `#share` on Settings, `#your-data` on Profile.
+
+**Feature map:** `docs/FEATURE-MAP.md` lists every built feature and where it shows. Keep it current.
+
+**Tested:** `tsc`, `next build`, local Postgres with all built-in cards loaded, Playwright at 390×844 and 1280×800 — every menu link answers 200, counts on /today and /my-cards match the fixture by hand, withdrawn-deck card hidden, guest has no AI link, teacher redirected from /today and /my-cards, sign-out from the menu ends the session, anchors land under the header. Not tested on a real phone or the live database.
+
+**Undecided:** "Hindi/English menu language" from the owner's list was not built: the UI language question (Hindi / English / Hinglish, which screens, who translates) is still open from 10 Oct. Known gap: "Install app" in the menu listens for the browser's install offer only while the menu is open, but browsers send that offer once at page load, so on Android it likely rarely appears (reasoned from the code, not checked on a phone).
 
 ## Starting a new chat
 

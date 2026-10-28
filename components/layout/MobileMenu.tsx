@@ -5,13 +5,20 @@
 // desktop nav is a horizontal row with an underline; this is a vertical sheet
 // with tap targets. Forcing one component to be both means a pile of
 // conditional classes that neither layout owns.
+//
+// The open sheet is portalled to <body>. The header it sits in has
+// backdrop-blur, and an element with a backdrop-filter becomes the containing
+// block for its `position: fixed` children: rendered in place, the "full
+// screen" sheet was squeezed into the 56px header and showed only its title.
 
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
 import { InstallApp } from "@/components/layout/InstallApp";
@@ -27,6 +34,11 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+  // Links close the sheet on tap as well. Some only change the query or hash
+  // (/my-cards → /my-cards?list=unknown, /settings#share), so the path never
+  // changes and the effect above never fires; and without prefetch the new
+  // page takes a moment, which an open sheet would hide.
+  const close = () => setOpen(false);
 
   // Scroll lock while open, or the page behind scrolls under the sheet on iOS
   // and the user loses their place.
@@ -61,7 +73,8 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
         <Menu className="h-5 w-5" aria-hidden="true" />
       </button>
 
-      {open ? (
+      {/* Only ever rendered after a tap, so `document` always exists here. */}
+      {open ? createPortal(
         <div className="fixed inset-0 z-50">
           <div
             className="absolute inset-0 bg-ink/40"
@@ -97,6 +110,8 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
                   <Link
                     key={link.href}
                     href={link.href}
+                    prefetch={false}
+                    onClick={close}
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       // min-h-12, not py-2: 48px is the smallest tap target
@@ -119,6 +134,12 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
                     <Link
                       key={item.href}
                       href={item.href}
+                      // No prefetch: opening the sheet would fetch some 25 pages
+                      // on a phone's data. And each of those responses re-sets
+                      // the session cookie, so one still in flight after the
+                      // Sign out below signed the person straight back in.
+                      prefetch={false}
+                      onClick={close}
                       aria-current={pathname === item.href ? "page" : undefined}
                       className={cn(
                         "flex min-h-11 items-center rounded-lg px-3 font-body text-sm",
@@ -131,9 +152,22 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
                 </div>
               ))}
               {more ? <InstallApp /> : null}
+              {more ? (
+                <div className="mt-2 border-t border-border pt-2">
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-left text-sm text-ink-muted hover:bg-hover hover:text-ink"
+                  >
+                    <LogOut className="h-4 w-4" aria-hidden="true" />
+                    Sign out
+                  </button>
+                </div>
+              ) : null}
             </nav>
           </div>
-        </div>
+        </div>,
+        document.body,
       ) : null}
     </div>
   );

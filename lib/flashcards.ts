@@ -84,11 +84,25 @@ function wordWhere(deck: Deck) {
   };
 }
 
-export async function deckCounts(userId: string, deck: Deck, newPerDay = NEW_PER_DAY) {
+/// Cards answered today that were not new today: today's reviews, for the
+/// optional daily review limit. Counted per kind, like the new-card limit, so
+/// each tab has its own. A card reviewed twice today counts once, because only
+/// its latest review time is kept. reviews > 1 leaves out a card only tagged
+/// on an earlier day and answered for the first time today: that one is new.
+function reviewedToday(userId: string, kind: CardKind, now: Date) {
+  const today = startOfTodayIst(now);
+  return prisma.cardState.count({
+    where: { userId, reviews: { gt: 1 }, lastReviewedAt: { gte: today }, createdAt: { lt: today }, word: { kind, deckId: null } },
+  });
+}
+
+/// reviewsPerDay 0 means no limit, the default, so nothing changes for anyone
+/// who never sets one.
+export async function deckCounts(userId: string, deck: Deck, newPerDay = NEW_PER_DAY, reviewsPerDay = 0) {
   const { kind } = deck;
   const word = wordWhere(deck);
   const now = new Date();
-  const [due, newToday, known, total, tagged] = await Promise.all([
+  const [dueAll, newToday, known, total, tagged, reviewed] = await Promise.all([
     prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, dueAt: { lte: now }, word } }),
     prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, createdAt: { gte: startOfTodayIst(now) }, word: { kind, deckId: null } } }),
     prisma.cardState.count({ where: { userId, known: true, word } }),
@@ -98,12 +112,19 @@ export async function deckCounts(userId: string, deck: Deck, newPerDay = NEW_PER
       where: { userId, word },
       _count: true,
     }),
+    reviewsPerDay > 0 ? reviewedToday(userId, kind, now) : Promise.resolve(0),
   ]);
   const sum = (k: "important" | "favourite" | "doubt" | "confident") =>
     tagged.filter((t) => t[k]).reduce((n, t) => n + t._count, 0);
+  const reviewsLeft = reviewsPerDay > 0 ? Math.max(0, reviewsPerDay - reviewed) : Infinity;
+  // Matches nextCardId: at the limit with reviews waiting, nothing more today.
+  const reviewLimitHit = reviewsLeft === 0 && dueAll > 0;
   return {
-    due,
-    newLeft: Math.max(0, newPerDay - newToday),
+    // What today's session will actually show; the rest waits for tomorrow.
+    due: Math.min(dueAll, reviewsLeft),
+    dueLater: Math.max(0, dueAll - reviewsLeft),
+    reviewLimitHit,
+    newLeft: reviewLimitHit ? 0 : Math.max(0, newPerDay - newToday),
     known,
     total,
     lists: { important: sum("important"), favourite: sum("favourite"), doubt: sum("doubt"), confident: sum("confident") },
@@ -116,6 +137,7 @@ export async function nextCardId(
   extra: boolean,
   skip: string[] = [],
   newPerDay = NEW_PER_DAY,
+  reviewsPerDay = 0,
 ): Promise<string | null> {
   const now = new Date();
   const notSkipped = skip.length ? { code: { notIn: skip } } : {};
@@ -124,7 +146,13 @@ export async function nextCardId(
     orderBy: { dueAt: "asc" },
     select: { wordId: true },
   });
-  if (due) return due.wordId;
+  if (due) {
+    // At the review limit, with reviews still waiting, today's session ends,
+    // new cards included: they would only add to the pile the limit is there
+    // to keep small. "more" (extra) lifts it, like the new-card limit.
+    if (!extra && reviewsPerDay > 0 && (await reviewedToday(userId, deck.kind, now)) >= reviewsPerDay) return null;
+    return due.wordId;
+  }
 
   if (!extra) {
     const newToday = await prisma.cardState.count({

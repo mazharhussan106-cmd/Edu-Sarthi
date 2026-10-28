@@ -18,9 +18,11 @@ import { LADDER_DAYS } from "@/lib/srs";
 import { cn } from "@/lib/utils";
 import { sameAnswer } from "@/lib/wordCard";
 
-export function Block({ n, title, tone, children }: { n: number; title: string; tone: string; children: ReactNode }) {
+/// `hindiTask` marks a question that gives Hindi to put into English, so the
+/// "Hide the Hindi to English practice questions" setting can hide it by CSS.
+export function Block({ n, title, tone, hindiTask, children }: { n: number; title: string; tone: string; hindiTask?: boolean; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-border bg-surface p-3">
+    <div data-hindi-task={hindiTask ? "" : undefined} className="rounded-xl border border-border bg-surface p-3">
       <p className={cn("font-display text-[0.8em] font-bold", tone)}>
         {n}. {title}
       </p>

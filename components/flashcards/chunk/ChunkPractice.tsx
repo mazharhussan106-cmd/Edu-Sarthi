@@ -105,7 +105,7 @@ export function ChunkPractice({
       ) : null}
 
       {d.hindi_example && d.example ? (
-        <Block n={++n} title="Translate (Hindi → English)" tone="text-tag-saffron">
+        <Block n={++n} title="Translate (Hindi → English)" tone="text-tag-saffron" hindiTask>
           <p className="text-base">{d.hindi_example.dev ?? d.hindi_example.roman}</p>
           {d.hindi_example.dev && d.hindi_example.roman ? <p className="text-xs text-ink-muted">{d.hindi_example.roman}</p> : null}
           <TypeCheck id="chunk-translate" answer={d.example} placeholder="Write it in English, using the chunk" />

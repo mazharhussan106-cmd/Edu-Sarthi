@@ -55,6 +55,11 @@ export const PREFERENCE_SCHEMA = z.object({
   voiceSpeed: z.enum(VOICE_SPEED_VALUES),
   // On top of the phone's own "reduce motion", for anyone who has not found it.
   reduceMotion: z.boolean(),
+  // 0 is no limit. A cap on today's reviews per tab (lib/flashcards).
+  reviewsPerDay: z.number().int().min(0).max(1000),
+  // Hides the Hindi to English practice questions, which "Hide Hindi
+  // meanings" deliberately keeps.
+  hideHindiTask: z.boolean(),
 });
 
 export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
@@ -80,7 +85,12 @@ export const DEFAULT_PREFERENCES: Preferences = {
   voiceAccent: "auto",
   voiceSpeed: "normal",
   reduceMotion: false,
+  reviewsPerDay: 0,
+  hideHindiTask: false,
 };
+
+/// Choices for the daily review limit; 0 is "No limit".
+export const REVIEWS_PER_DAY_OPTIONS = [0, 50, 100, 200] as const;
 
 /// The speeds the audit player offers, in the order shown. The schema above
 /// lists the same three; a speed added here must be added there too.

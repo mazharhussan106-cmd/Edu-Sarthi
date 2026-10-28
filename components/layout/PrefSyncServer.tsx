@@ -15,7 +15,7 @@ export async function PrefSyncServer() {
   return (
     <PrefSync
       prefs={{ textSize: p.textSize, hideHindi: p.hideHindi, dataSaver: p.dataSaver, reduceMotion: p.reduceMotion }}
-      live={{ voiceAccent: p.voiceAccent, voiceSpeed: p.voiceSpeed }}
+      live={{ voiceAccent: p.voiceAccent, voiceSpeed: p.voiceSpeed, hideHindiTask: p.hideHindiTask }}
     />
   );
 }

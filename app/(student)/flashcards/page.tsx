@@ -65,7 +65,7 @@ export default async function FlashcardsPage({
   // Each key is read on its own: a stored value this version no longer offers
   // falls back to its default without throwing away the other settings.
   const prefs = prefsOf(user?.preferences);
-  const { cardColor, newPerDay } = prefs;
+  const { cardColor, newPerDay, reviewsPerDay } = prefs;
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
@@ -84,7 +84,7 @@ export default async function FlashcardsPage({
   // level in `partOfSpeech` as the sheet writes it ("Basic"). Word sections
   // and packs narrow the built-in words through `extra`.
   const deck = { kind: k.kind, category: type ?? channel ?? undefined, level: level ? levelLabel(level) : undefined, extra: sectionExtra };
-  const counts = k.ready ? await deckCounts(userId, deck, newPerDay) : null;
+  const counts = k.ready ? await deckCounts(userId, deck, newPerDay, reviewsPerDay) : null;
 
   let body: React.ReactNode;
   if (!k.ready) {
@@ -119,7 +119,7 @@ export default async function FlashcardsPage({
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
   } else {
-    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip, newPerDay));
+    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip, newPerDay, reviewsPerDay));
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
 
     if (!word) {
@@ -129,6 +129,7 @@ export default async function FlashcardsPage({
           allSeen={!!counts && counts.known >= counts.total}
           noun={k.noun}
           newPerDay={newPerDay}
+          reviewLimit={counts?.reviewLimitHit ? { perDay: reviewsPerDay, waiting: counts.dueLater } : null}
           skipHref={withMore}
           moreHref={`${base}&more=1`}
         />

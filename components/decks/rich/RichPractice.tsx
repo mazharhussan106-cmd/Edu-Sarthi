@@ -57,7 +57,7 @@ export function RichPractice({
         </Block>
       ) : null}
       {f.hindi_to_task ? (
-        <Block n={++n} title="Try It" tone="text-tag-saffron">
+        <Block n={++n} title="Try It" tone="text-tag-saffron" hindiTask>
           <p>{f.hindi_to_task}</p>
           {f.task_answer ? <Reveal><Pre v={f.task_answer} /></Reveal> : null}
         </Block>

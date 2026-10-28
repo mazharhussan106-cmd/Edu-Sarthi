@@ -70,7 +70,7 @@ export function SupportPractice({
       ) : null}
 
       {d.hindi_to_english && d.hindi_to_english_answer ? (
-        <Block n={++n} title={email ? "Write it in English" : "Say it in English"} tone="text-tag-saffron">
+        <Block n={++n} title={email ? "Write it in English" : "Say it in English"} tone="text-tag-saffron" hindiTask>
           <p>{d.hindi_to_english}</p>
           <Reveal label="Tap to see a model answer" answer={d.hindi_to_english_answer} />
         </Block>

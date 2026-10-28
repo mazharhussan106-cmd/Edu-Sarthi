@@ -1,6 +1,6 @@
 // Owns bringing this device's display settings (text size, Hindi, data saver,
 // reduce motion) in line with the signed-in account's saved ones, and stamping
-// the voice settings on <html> for lib/speech, which reads them there.
+// the voice and Hindi-question settings on <html>, where they are read.
 //
 // Those four live in cookies so the server can paint them on the first frame,
 // but a cookie belongs to a device, not an account. On a new phone, or a shared
@@ -16,9 +16,10 @@ import { useEffect } from "react";
 
 export type SyncPrefs = { textSize: "small" | "normal" | "large"; hideHindi: boolean; dataSaver: boolean; reduceMotion: boolean };
 
-/// Settings that nothing paints from, so they need no cookie: read only when a
-/// card speaks (lib/speech), long after this runs.
-export type LivePrefs = { voiceAccent: string; voiceSpeed: string };
+/// Settings that nothing paints from, so they need no cookie: read when a card
+/// speaks (lib/speech), or shown only on a card's practice side, which opens
+/// after a tap (the Hindi to English questions).
+export type LivePrefs = { voiceAccent: string; voiceSpeed: string; hideHindiTask: boolean };
 
 export function PrefSync({ prefs, live }: { prefs: SyncPrefs; live: LivePrefs }) {
   useEffect(() => {
@@ -26,7 +27,8 @@ export function PrefSync({ prefs, live }: { prefs: SyncPrefs; live: LivePrefs })
     const set = (name: string, value: string | null) => (value ? el.setAttribute(name, value) : el.removeAttribute(name));
     set("data-voice", live.voiceAccent === "auto" ? null : live.voiceAccent);
     set("data-voice-speed", live.voiceSpeed === "slow" ? "slow" : null);
-  }, [live.voiceAccent, live.voiceSpeed]);
+    set("data-hindi-task", live.hideHindiTask ? "off" : null);
+  }, [live.voiceAccent, live.voiceSpeed, live.hideHindiTask]);
 
   useEffect(() => {
     const el = document.documentElement;

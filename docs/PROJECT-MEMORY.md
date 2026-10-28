@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, read-aloud voice, guest upgrade and email change, see "Settings, phase E" to "phase H"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings by role, read-aloud voice, guest upgrade, email change and study limits, see "Settings, phase E" to "phase I"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -220,14 +220,49 @@ One check failed only on the test's own mistake (psql prints a boolean as `t`); 
 
 **Needs before it works live:** merge. No Database setup run. Needs `SENDGRID_API_KEY`.
 
+Still open after phase H: see the list at the end of phase I below.
+
+## Settings, phase I: daily review limit, hiding the Hindi to English questions (28 Oct, same branch)
+
+The owner said "start next phase" again without answering the questions left at the end of phase H. So both items are built opt-in, off by default, so that nobody's study changes unless they choose it. Same branch, stacked on E to H. No database change.
+
+Done:
+- **Reviews per day** (Settings → Flashcard; choices: No limit, 50, 100, 200; preference `reviewsPerDay`, 0 = no limit, the default).
+  - It counts per tab, like the new-card limit.
+  - A review is a card answered today that was answered before today (`reviews > 1`, `createdAt` before today). A card only tagged earlier and answered for the first time today does not count.
+  - At the limit, with reviews still due, today's session ends, new cards included. The "Done" card says how many wait, and "Keep reviewing anyway" (`more=1`) lifts both limits.
+  - At the limit with nothing due, new cards still come.
+  - The top bar and the dashboard show what today's session will actually give: due capped, and 0 new once the limit ends the day.
+  - Code: `lib/flashcards.ts` (`reviewedToday`, `deckCounts`, `nextCardId`), `DeckDone` in `components/flashcards/DeckMessages.tsx`.
+- **New cards per day** moved next to it, into `app/(shared)/settings/StudyLimits.tsx` (Flashcard section). It no longer appears in the main settings list.
+- **Hide the Hindi to English practice questions** (preference `hideHindiTask`, off by default). This answers the phase F question by making it a choice, instead of changing what "Hide Hindi meanings" does.
+  - `Block` in `components/flashcards/PracticeParts.tsx` takes `hindiTask`. It is marked on the word card's Translate question, the chunk's Translate question, the support card's Say/Write it in English, and the imported deck's Try It. CSS hides them (`html[data-hindi-task="off"]`), stamped by Settings at once and by `PrefSync`. No cookie, because the practice side opens only after a tap.
+  - Known cosmetic gap: the numbers of the remaining questions keep a gap (1, 2, 3, 5).
+  - The imported deck's Try It could not be seen at run time: none of the test decks fills it.
+- Help explains where both limits are.
+- Vercel cron limit: still unverified. vercel.com is outside this session's network, and the Vercel docs search returned nothing on Hobby limits. Check it on the Vercel dashboard before planning a per-student reminder time.
+
+Tested on a local Postgres with a production build and the real imports, using Playwright. 16 phase I checks:
+- the defaults
+- the limit saving
+- no limit: 5 due and 10 new
+- limit 3 with 2 done: 1 left, then the session ends with "4 more are due"
+- top bar and dashboard at 0
+- Keep reviewing
+- new cards still coming when nothing is due
+- the questions hidden on word and support cards, and shown again
+
+Phase F's 19 checks pass again. Phase G's suite passed except one check that catches a 220 ms animation by timing. A deterministic re-check counting `element.animate` calls gave 1 on load without reduce motion and 0 with it, twice each. `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run.
+
 Still open (proposals, not decisions):
-- **A per-student reminder time.** It needs a cron that runs more often than daily. Vercel's Hobby plan is believed to allow only daily crons (check before building).
-- **A daily review limit.** It needs a decision on what happens to the cards over the limit.
-- **"Hide Hindi" and the Hindi-to-English practice questions:** should the setting also hide them?
+- **A per-student reminder time.** First check the Vercel plan's cron limit.
 - **Merging a guest into an existing account.**
 - **Profile photo.** It needs storage rules, size limits and moderation.
-- **A list of signed-in devices.** It needs a session table.
+- **A list of signed-in devices.** It needs a session table, which means a schema change.
 - **Hindi/English UI language.**
+- **Phases E to I are all on `claude/blissful-euler-9j0h4c` and not merged.** The longer they wait, the bigger the merge.
 
 ## Flashcard phone layout: lesson (10 Oct)
 

@@ -23,13 +23,14 @@ import { Switch } from "@/components/ui/Switch";
 import { useSavePreference } from "@/app/(shared)/settings/useSavePreference";
 import { attrFromTheme, THEMES } from "@/lib/theme";
 import { TEXT_SIZES } from "@/lib/textSize";
-import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, type PlaybackRate, type Preferences } from "@/lib/preferences";
+import { PLAYBACK_RATES, type PlaybackRate, type Preferences } from "@/lib/preferences";
 
 const THEME_OPTIONS = THEMES.map((t) => ({ value: t.value, label: t.label }));
 
-/// Everything this form edits. Profile owns level and goal; the card colour and
-/// the read-aloud voice have their own controls in the Flashcard section.
-export type PreferenceState = Omit<Preferences, "level" | "goal" | "cardColor" | "voiceAccent" | "voiceSpeed">;
+/// Everything this form edits. Profile owns level and goal; the card colour,
+/// the daily limits and the read-aloud voice have their own controls in the
+/// Flashcard section.
+export type PreferenceState = Omit<Preferences, "level" | "goal" | "cardColor" | "voiceAccent" | "voiceSpeed" | "newPerDay" | "reviewsPerDay">;
 
 export type SettingsAudience = {
   /// A student: studies flashcards and receives audits.
@@ -147,13 +148,25 @@ export function SettingsForm({
         {learner ? (
           <Switch
             label="Hide Hindi meanings on cards"
-            description="Hides the Hindi boxes, and “In your language” on imported decks, so you think in English. The Hindi to English practice question stays."
+            description="Hides the Hindi boxes, and “In your language” on imported decks, so you think in English. The Hindi to English practice questions stay unless you hide them below."
             checked={prefs.hideHindi}
             onCheckedChange={(v) => {
               // Applied now, like the text size, then saved.
               if (v) document.documentElement.setAttribute("data-hindi", "off");
               else document.documentElement.removeAttribute("data-hindi");
               void savePreference("hideHindi", v);
+            }}
+          />
+        ) : null}
+        {learner ? (
+          <Switch
+            label="Hide the Hindi to English practice questions"
+            description="On the practice side, the questions that give you Hindi to put into English. Off by default, because translating is good practice."
+            checked={prefs.hideHindiTask}
+            onCheckedChange={(v) => {
+              if (v) document.documentElement.setAttribute("data-hindi-task", "off");
+              else document.documentElement.removeAttribute("data-hindi-task");
+              void savePreference("hideHindiTask", v);
             }}
           />
         ) : null}
@@ -193,18 +206,6 @@ export function SettingsForm({
           }}
         />
       </div>
-
-      {learner ? (
-        <div className="mt-4 border-t border-border pt-4">
-          <SegmentedControl
-            label="New cards per day"
-            description="How many new flashcards you learn each day, on top of the ones due for review. Takes effect on your next card."
-            options={NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: String(n) }))}
-            value={String(prefs.newPerDay)}
-            onValueChange={(v) => void savePreference("newPerDay", Number(v))}
-          />
-        </div>
-      ) : null}
 
       {student ? (
         <div className="mt-4 border-t border-border pt-4">

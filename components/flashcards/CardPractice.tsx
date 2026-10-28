@@ -60,7 +60,7 @@ export function CardPractice({
       ) : null}
 
       {tr.answer ? (
-        <Block n={4} title="Translate (Hindi → English)" tone="text-tag-saffron">
+        <Block n={4} title="Translate (Hindi → English)" tone="text-tag-saffron" hindiTask>
           <p className="text-base">{tr.prompt}</p>
           <TypeCheck id="translate" answer={tr.answer} placeholder="Write it in English" />
         </Block>

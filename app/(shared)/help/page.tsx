@@ -22,7 +22,7 @@ const FAQ = [
   },
   {
     q: "How do flashcards decide what I see?",
-    a: "Cards due for review come first, then new cards in order, up to your daily limit (change it in Settings). Marking a card Known pushes it further out, 1, 3, 7, 15, 30, then 60 days. Unknown brings it back sooner.",
+    a: "Cards due for review come first, then new cards in order, up to your daily limit (change it in Settings → Flashcard, where you can also cap reviews per day). Marking a card Known pushes it further out, 1, 3, 7, 15, 30, then 60 days. Unknown brings it back sooner.",
   },
   {
     q: "What do Important, Favourite, Doubt and Confident do?",

@@ -53,11 +53,14 @@ export function DeckDone({
   allSeen,
   noun,
   newPerDay,
+  reviewLimit,
   skipHref,
   moreHref,
 }: {
   skipCount: number;
   newPerDay: number;
+  /// Set when the session ended at the student's daily review limit.
+  reviewLimit: { perDay: number; waiting: number } | null;
   allSeen: boolean;
   noun: string;
   skipHref: string;
@@ -66,12 +69,14 @@ export function DeckDone({
   return (
     <Card className="mt-4 text-center">
       <p className="font-display text-lg font-bold text-ink">
-        {skipCount ? "No more cards except the ones you skipped" : allSeen ? "You have seen every card" : "Done for today"}
+        {skipCount ? "No more cards except the ones you skipped" : reviewLimit ? "Today’s reviews are done" : allSeen ? "You have seen every card" : "Done for today"}
       </p>
       <p className="mt-1 text-sm text-ink-muted">
         {skipCount
           ? `You skipped ${skipCount} card${skipCount === 1 ? "" : "s"} with ›. Go through them now, or come back later.`
-          : `No reviews are due and today’s ${newPerDay} new ${noun}s are done. Coming back tomorrow is what makes them stick.`}
+          : reviewLimit
+            ? `You reached your limit of ${reviewLimit.perDay} reviews a day (Settings → Flashcard). ${reviewLimit.waiting} more ${reviewLimit.waiting === 1 ? "is" : "are"} due and will wait for tomorrow, or keep going now.`
+            : `No reviews are due and today’s ${newPerDay} new ${noun}s are done. Coming back tomorrow is what makes them stick.`}
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         {skipCount ? (
@@ -80,7 +85,7 @@ export function DeckDone({
           </Link>
         ) : null}
         <Link href={moreHref} className="inline-flex h-10 items-center rounded-lg border border-border-strong px-4 text-sm text-ink hover:bg-hover">
-          Learn more new {noun}s anyway
+          {reviewLimit ? "Keep reviewing anyway" : `Learn more new ${noun}s anyway`}
         </Link>
       </div>
     </Card>

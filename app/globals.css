@@ -272,6 +272,8 @@
   /* "Hide Hindi meanings" in Settings. Hindi boxes carry data-hindi; hiding
      them with CSS keeps the toggle instant and needs no extra data fetch. */
   html[data-hindi="off"] [data-hindi] { display: none; }
+  /* Its own setting: the Hindi to English practice questions. */
+  html[data-hindi-task="off"] [data-hindi-task] { display: none; }
 
   /* "Reduce motion" in Settings, for people who have not found the phone's
      own switch. Near-zero rather than none, so code that waits for an

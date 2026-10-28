@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 6 Oct 2026 (audit fixes). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged; see items 4h–4j). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -84,21 +84,21 @@ An English spoken-communication training platform: students record or upload, te
    1. ~~Actions → **Load flashcard decks**~~ — done 27 Oct (run 4: 21 decks, licence set, no card changed).
    2. Check that `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL` are set in Vercel (invite and fix-undone emails).
    3. The owner's phone test, `docs/PHASE0-LIVE-TEST.md`. Its "Before you start" step 1 is now done; the submit step has the new consent form.
-   4. ~~Phase 5~~ — built, see 4i.
-   5. ~~Phase 6~~ — built, see 4j; a lawyer still has to review.
-4i. **Library v2 Phase 5 built (27 Oct) on `claude/sweet-davinci-d313f6`, NOT merged yet: institutes publish to the library under their name and logo.** Decisions 18–21 in `docs/LIBRARY-V2-PLAN.md`.
+   4. ~~Phase 5~~ — built and merged, see 4i.
+   5. ~~Phase 6~~ — built and merged, see 4j; a lawyer still has to review.
+4i. **Library v2 Phase 5 built and merged (27 Oct, PR #19): institutes publish to the library under their name and logo.** Decisions 18–21 in `docs/LIBRARY-V2-PLAN.md`.
    - **Who and how:** the institute's admin and teachers choose "Publish as <Institute>" in the submit form and tick "I may publish this on behalf of <Institute>". A deck shared inside the institute can be submitted, but only as the institute. Licence: always CC BY-SA.
-   - **Data:** a deck published as an institute is a `PUBLIC` deck with `instituteId` set. New columns `Institute.logoKey`, `pendingLogoKey`, `logoNote` (additive). **After merging, run Actions → Database setup.**
+   - **Data:** a deck published as an institute is a `PUBLIC` deck with `instituteId` set. New columns `Institute.logoKey`, `pendingLogoKey`, `logoNote` (additive), added on the live database by Database setup run #10 (success, 28 Oct: "in sync", no data-loss warning, no card changed).
    - **Logo:** PNG/JPG/WebP up to 1 MB, uploaded on the Institute page (`lib/instituteLogo.ts`, `components/institute/LogoForm.tsx`), approved or refused under Admin → Institutes → Logos to check. Nothing shows until approved.
    - **Credit:** "[logo] by <Institute> (<person>)" through `components/decks/DeckCredit.tsx` (now an async server component, so never import it into a client component).
    - **Don't undo:** `LISTED` (`lib/decks.ts`) also hides decks of a suspended institute; library pages and the copy route now use `LISTED` instead of repeating the check. `drop()` in `lib/institutes.ts` keeps a leaving teacher's institute-published decks public under their own name. Withdraw and takedown clear `instituteId`.
    - The institute's admin can take the institute's name off any deck (Institute page → Published by the institute).
    - Decisions 22–23 (built): leaving a *suspended* institute sends the person's approved institute decks back to review; the owner is emailed when the institute's admin removes the institute's name.
    - `lib/decks.ts` is now 260 lines (was already over 250); split it when it is next changed.
-4j. **Library v2 Phase 6 built (27 Oct) on the same branch, in PR #19, NOT merged yet.** Decisions 24–28.
+4j. **Library v2 Phase 6 built and merged (27 Oct, PR #19).** Decisions 24–28.
    - **Legal:** no lawyer yet. `docs/LEGAL-REVIEW-PACK.md` is the assistant's review and the lawyer's reading list. The Privacy and Terms pages were corrected to match Phases 1–5. **Open and important:** parental consent for under-18s (DPDP Act) and naming the legal operator — both need the owner and a lawyer.
    - **Announcements:** Admin → Announcements emails every account holder with a verified email, at most 80 a day from the daily reminders cron, and posts a dashboard notice for 30 days. Tables `Announcement`, `AnnouncementDelivery`. The approved Terms-update email is pre-filled.
-   - **After merging:** Database setup; check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send yourself a test, then Start (type SEND).
+   - **Done:** Database setup run #10 (success, 28 Oct: "in sync", no data-loss warning, no card changed) added the announcement tables. **Still for the owner:** check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; on Admin → Announcements send yourself a test, then Start (type SEND).
 5. Nothing from the deck library, the Excel import or institutes has been opened against the real Supabase bucket, SendGrid or YouTube yet.
 
 ## Student settings, phase A (10 Oct, branch `claude/laughing-goodall-cxctvz`)

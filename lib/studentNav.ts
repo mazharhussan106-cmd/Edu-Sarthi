@@ -19,7 +19,8 @@ export type MenuGroup = { heading: string; items: readonly NavLink[] };
 
 /// The menu (hamburger) sections, below the primary links. Kept apart from
 /// STUDENT_LINKS so the bottom bar and header row stay at five destinations;
-/// everything else lives one tap away here.
+/// everything else lives here, each group folded under its heading until
+/// tapped (MobileMenu).
 ///
 /// A function, not a constant, because one link depends on the server: the
 /// AI card maker is listed only when its key is set and the person is not a

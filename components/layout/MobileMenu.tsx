@@ -16,7 +16,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LogOut, Menu, X } from "lucide-react";
+import { ChevronDown, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -127,9 +127,24 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
                 );
               })}
               </div>
+              {/* Every group starts closed (owner's choice, 28 Oct): the sheet
+                  shows six headings instead of ~25 links, and a tap opens the
+                  one wanted. Native <details>: open/close, keyboard and screen
+                  reader support come free. The sheet unmounts when it closes,
+                  so it always reopens with every group closed. */}
               {more?.map((g) => (
-                <div key={g.heading} className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
-                  <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-muted">{g.heading}</p>
+                // On a computer the five main links above are hidden (they are in
+                // the header), so the first group needs no divider above it.
+                <details key={g.heading} className="group mt-2 border-t border-border pt-2 md:first-of-type:mt-0 md:first-of-type:border-t-0 md:first-of-type:pt-0">
+                  <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-3 font-body text-sm font-medium text-ink marker:hidden hover:bg-hover [&::-webkit-details-marker]:hidden">
+                    {g.heading}
+                    <span className="flex items-center gap-1.5 text-xs text-ink-muted">
+                      <span aria-hidden="true" className="font-mono">{g.items.length}</span>
+                      <span className="sr-only">{g.items.length} links</span>
+                      <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+                    </span>
+                  </summary>
+                  <div className="mt-1 flex flex-col gap-1 pl-3">
                   {g.items.map((item) => (
                     <Link
                       key={item.href}
@@ -149,7 +164,8 @@ export function MobileMenu({ links, more }: { links: readonly NavLink[]; more?: 
                       {item.label}
                     </Link>
                   ))}
-                </div>
+                  </div>
+                </details>
               ))}
               {more ? <InstallApp /> : null}
               {more ? (

@@ -2,7 +2,7 @@
 
 Written 28 Oct 2026 from the code on branch `claude/practical-ritchie-w4vnex` (each page's header comment, `lib/studentNav.ts`, `lib/staffNav.ts`). It lists what is **built**, not what is planned. If a page is added or moved, update this file in the same change.
 
-How to read "Where": **Bar** = the bottom bar on phones (the header row on a computer). **Menu** = the ☰ button, top right, then the group name. **Gear** = the ⚙ settings button in the header. **Search** = the 🔍 in the header.
+How to read "Where": **Bar** = the bottom bar on phones (the header row on a computer). **Menu** = the ☰ button, top right, then tap the group name to open it (every group starts closed). **Gear** = the ⚙ settings button in the header. **Search** = the 🔍 in the header.
 
 ## Student
 

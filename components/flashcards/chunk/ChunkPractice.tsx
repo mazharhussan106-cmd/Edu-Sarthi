@@ -63,20 +63,19 @@ export function ChunkPractice({
   // ("I'm going to…") is shown through its example sentence instead.
   const said = /…|_{2,}|\(/.test(text) && d.example ? d.example : text;
 
-  let n = 0;
   return (
-    <div className="flex flex-col gap-3">
+    <div className="practice-steps flex flex-col gap-3">
       <h3 className="font-display text-[0.75em] font-extrabold tracking-widest text-tag-navy">PRACTICE ZONE</h3>
 
       {gap ? (
-        <Block n={++n} title="Fill in the Blank" tone="text-tag-green">
+        <Block title="Fill in the Blank" tone="text-tag-green">
           <p>{gap.prompt}</p>
           <TypeCheck id="chunk-gap" answer={gap.answer} placeholder="Type the missing words" />
         </Block>
       ) : null}
 
       {meaning && distractors.length >= 2 ? (
-        <Block n={++n} title="Multiple Choice" tone="text-tag-blue">
+        <Block title="Multiple Choice" tone="text-tag-blue">
           <p className="text-base">{meaning}</p>
           {d.hindi?.dev && d.hindi.roman ? <p className="text-xs text-ink-muted">{d.hindi.roman}</p> : null}
           <Mcq options={pick.options} correct={pick.correct} />
@@ -84,14 +83,14 @@ export function ChunkPractice({
       ) : null}
 
       {reply ? (
-        <Block n={++n} title="What would you reply?" tone="text-tag-navy">
+        <Block title="What would you reply?" tone="text-tag-navy">
           <p>A: “{said}”</p>
           <Mcq options={reply.options} correct={reply.correct} />
         </Block>
       ) : null}
 
       {meaning ? (
-        <Block n={++n} title="Quick Recall (Reverse)" tone="text-tag-navy">
+        <Block title="Quick Recall (Reverse)" tone="text-tag-navy">
           <p>Read the Hindi, then say the English {d.slot ? "frame" : "chunk"} aloud: {meaning}</p>
           <button
             type="button"
@@ -105,7 +104,7 @@ export function ChunkPractice({
       ) : null}
 
       {d.hindi_example && d.example ? (
-        <Block n={++n} title="Translate (Hindi → English)" tone="text-tag-saffron" hindiTask>
+        <Block title="Translate (Hindi → English)" tone="text-tag-saffron" hindiTask>
           <p className="text-base">{d.hindi_example.dev ?? d.hindi_example.roman}</p>
           {d.hindi_example.dev && d.hindi_example.roman ? <p className="text-xs text-ink-muted">{d.hindi_example.roman}</p> : null}
           <TypeCheck id="chunk-translate" answer={d.example} placeholder="Write it in English, using the chunk" />
@@ -113,7 +112,7 @@ export function ChunkPractice({
       ) : null}
 
       <div className="[&>div]:border-saffron/50">
-        <Block n={++n} title="Speaking Task (for audit)" tone="text-tag-saffron">
+        <Block title="Speaking Task (for audit)" tone="text-tag-saffron">
           <p>
             {d.speaking_task ?? (
               <>Make one sentence of your own with <b>“{text}”</b> — about your day, your work or your studies.</>

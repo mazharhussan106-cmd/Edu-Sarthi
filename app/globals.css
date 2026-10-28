@@ -123,7 +123,9 @@
   --color-brand: #0a6e99;
   --color-saffron: #d96a00;
   --color-on-saffron: #1e160c;
-  --color-success: #2f7a3e;
+  /* One step darker than #2f7a3e, which was 4.4:1 for small badge text on
+     this paper; a darker green only helps on a light theme. */
+  --color-success: #2a6f38;
   --color-error: #b03a2e;
   --color-mist: #a08f74;
   --color-surface: #fbf6ea;
@@ -274,6 +276,12 @@
   html[data-hindi="off"] [data-hindi] { display: none; }
   /* Its own setting: the Hindi to English practice questions. */
   html[data-hindi-task="off"] [data-hindi-task] { display: none; }
+
+  /* Practice questions number themselves. A hidden one (display: none) does
+     not count, so hiding a question, or a card without one, leaves no gap. */
+  .practice-steps { counter-reset: practice; }
+  .practice-step { counter-increment: practice; }
+  .practice-step-title::before { content: counter(practice) ". "; }
 
   /* "Reduce motion" in Settings, for people who have not found the phone's
      own switch. Near-zero rather than none, so code that waits for an

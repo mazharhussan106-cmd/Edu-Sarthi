@@ -192,16 +192,22 @@ Yahan sab chal gaya to APK me bhi chalega.
 
 **Kuch galat mile to** Claude ko yeh teen cheezein bhejiye: (1) screenshot, (2) kya dabaya tha, (3) phone ka naam. Password ya key kabhi nahi.
 
-### 4b. Settings ke naye kaam (phase E–J) — branch `claude/blissful-euler-9j0h4c` merge hone ke baad
+### 4b. Settings ke naye kaam (phase E–L) — branch `claude/blissful-euler-9j0h4c` merge hone ke baad
 
-Preview deployments band hain, isliye yeh sab merge ke baad live site par hi dikhega. Vercel me pehle check kariye: **Settings → Cron Jobs** me 7 jobs dikhni chahiye (retention, reminders, aur reminders/7, /9, /13, /17, /21).
+Preview deployments band hain, isliye yeh sab merge ke baad live site par hi dikhega.
+1. Merge ke baad GitHub → **Actions → Database setup** ek baar chalaiye (naya `AppSetting` table; koi data nahi mitta).
+2. Vercel me check kariye: **Settings → Cron Jobs** me 7 jobs dikhni chahiye (retention, reminders, aur reminders/7, /9, /13, /17, /21).
+
+**Admin account se:**
+- [ ] Header me **Settings** → "Recordings per student per day" 3 karke Save → student ke practice page par "3 recordings a day" dikhe
 
 **Student account se:**
 - [ ] Settings → Flashcard → **Daily flashcard reminder email** on karke turant **Reminder time** chuniye (jaise 9 am) → page reload karke dono bache rahe
 - [ ] Settings → Flashcard → **Read-aloud accent** British, speed Slow → kisi card ka speaker dabaiye → awaaz badli
 - [ ] **Reduce motion** on → card palatte waqt ghoomta nahi
 - [ ] **Hide Hindi meanings** on → support card aur Excel deck card par Hindi box chhupe; **Hindi to English questions** wala alag switch on karke side 3 ka translate sawaal chhupe
-- [ ] Practice page par "**2 left today**" dikhe; do recording bhejne ke baad teesri ke liye "Today's recordings for audit are sent" card aaye (teacher ne jo recording wapas bheji ho, uski nayi recording phir bhi jaa sake)
+- [ ] Practice page par "**2 left today**" dikhe (ya jo number admin ne rakha); utni recording bhejne ke baad "Today's recordings for audit are sent" card aaye (teacher ne jo recording wapas bheji ho, uski nayi recording phir bhi jaa sake)
+- [ ] Hindi sawaal chhupane ke baad practice side par numbering 1, 2, 3, 4… bina gap ke ho
 - [ ] Audit kholne par recording **Audit playback speed** wali speed se chale
 - [ ] Settings → Security → **Change password** (purana password chahiye) → sab devices se sign out, naye password se login, aur purane email par "password changed" email
 - [ ] Settings → Security → **Change email** → naye email par code → badalne ke baad naye email se login, purane email par suchna
@@ -209,6 +215,7 @@ Preview deployments band hain, isliye yeh sab merge ke baad live site par hi dik
 
 **Teacher account se:**
 - [ ] Settings me sirf teacher wale options (student ke flashcard/audit wale nahi); **Daily queue email** on → shaam ~7 baje queue me recordings hon to email aaye
+- [ ] **Email me when a new recording arrives** on → student recording bheje → turant email aaye
 
 **Guest se (Continue as guest):**
 - [ ] Kuch cards padhiye → Settings → **Keep your progress** → naya email → code → account full ho jaaye, cards bache rahe

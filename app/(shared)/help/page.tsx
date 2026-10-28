@@ -42,7 +42,7 @@ const FAQ = [
   },
   {
     q: "How many recordings can I send for audit?",
-    a: "Two a day, so teachers can audit everyone's on time. A new recording that a teacher asked for when sending one back does not count. The count starts again at midnight India time. Flashcards have no limit.",
+    a: "A few a day, so teachers can audit everyone's on time; the practice page shows how many you have left today. A new recording that a teacher asked for when sending one back does not count. The count starts again at midnight India time. Flashcards have no limit.",
   },
   {
     q: "I lost my phone or used a shared computer.",

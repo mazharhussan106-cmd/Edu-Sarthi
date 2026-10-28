@@ -10,7 +10,7 @@
 //
 // It deliberately does NOT check who called it; the cron routes do.
 
-import { sendStudyReminder } from "@/lib/email";
+import { sendStudyReminder } from "@/lib/emailNotices";
 import { prisma } from "@/lib/prisma";
 import { prefsOf } from "@/lib/preferences";
 

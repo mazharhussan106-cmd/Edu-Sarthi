@@ -21,7 +21,7 @@ import bcrypt from "bcryptjs";
 
 import { accountCodeMatches, issueAccountCode, spendAccountCodes } from "@/lib/accountCodes";
 import { requireUser } from "@/lib/apiUser";
-import { sendEmailChangeCode, sendEmailChanged } from "@/lib/email";
+import { sendEmailChangeCode, sendEmailChanged } from "@/lib/emailAccount";
 import { clearLoginAttempts, isRateLimited, recordFailedLogin } from "@/lib/loginRateLimit";
 import { prisma } from "@/lib/prisma";
 import { emailChangeConfirmSchema, emailChangeStartSchema } from "@/lib/validations";

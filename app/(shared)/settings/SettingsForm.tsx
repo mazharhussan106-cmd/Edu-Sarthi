@@ -117,6 +117,14 @@ export function SettingsForm({
             onCheckedChange={(v) => void savePreference("emailQueueDigest", v)}
           />
         ) : null}
+        {reviewer ? (
+          <Switch
+            label="Email me when a new recording arrives"
+            description="One email for every new recording in your queue, as it arrives. On a busy day that is many emails; the daily queue email is the quieter choice."
+            checked={prefs.emailOnNewRecording}
+            onCheckedChange={(v) => void savePreference("emailOnNewRecording", v)}
+          />
+        ) : null}
         {student ? (
           <Switch
             label="Start playing when I open an audit"

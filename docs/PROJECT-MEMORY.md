@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to K; phase J has the owner's 28 Oct decisions). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -326,10 +326,46 @@ Done:
 
 Tested on a production build and a local Postgres: axe before and after, the label/id check, and a screenshot check of the badges in light and midnight. `tsc` and `next build` pass.
 
+Still open after phase K: see the end of phase L below.
+
+## Settings, phase L: the four suggestions built (28 Oct, same branch)
+
+The owner asked for the four suggestions left at the end of phase K ("Sujhav banao"). Same branch, stacked on E to K.
+
+**One schema change:** a new table `AppSetting` (`key`, `value` Json, `updatedAt`). It is additive; no existing data is touched or lost. **After merging, run Actions → Database setup once.** Until then the site keeps working: reading the setting falls back to 2, and saving it says to run Database setup (both tested with the table dropped).
+
+Done:
+1. **Audit limit set by an admin.** Admin → Settings (`/admin/settings`, new header link) has "Recordings per student per day", 1 to 10, starting at 2.
+   - Code: `lib/appSettings.ts` (reads and writes the `AppSetting` row, never throws) and `lib/appSettingSchemas.ts` (limits and the Zod schema; Prisma-free, so the browser form can use them). The route is `/api/admin/settings`, and every change goes to AdminLog with from and to.
+   - `lib/auditLimit.ts` now reads the number (`auditAllowance`, `auditLimitReached`), so `AUDITS_PER_DAY` is gone.
+   - The practice pages show the current number. Help no longer names one.
+2. **Instant email to teachers on a new recording.** Settings toggle "Email me when a new recording arrives" (teachers and admins), preference `emailOnNewRecording`, off by default.
+   - `notifyNewRecording` (`lib/notify.ts`) emails the opted-in people who see that recording in their queue: every teacher for the shared queue, only the deck's teacher for a recording on their deck, and every admin.
+   - It runs from `/api/submissions` through `after()`, so the student's Send does not wait for the email.
+3. **Practice numbering without gaps.** `Block` (`components/flashcards/PracticeParts.tsx`) no longer takes `n`; a CSS counter numbers the questions (`.practice-steps`, `globals.css`).
+   - A hidden question (the Hindi switch) or a missing one does not count. This also fixes an older gap on word cards, whose numbers were fixed at 1 to 6.
+4. **Accessibility on the other pages.** axe (WCAG 2 A/AA) ran on 19 page and role combinations in five themes: student dashboard, flashcards, history, My Audits, progress, explore, decks, library, settings, profile and help; teacher queue, students, workload, decks and settings; admin overview, settings and users. Fixed:
+   - The dashboard's "Flashcards" label (`TodayStrip`) is now `text-accent-dark`.
+   - The sepia theme's success colour is one step darker: `#2f7a3e` became `#2a6f38`, which takes "Active" badges from 4.4:1 to 5.1:1 and success on paper-dim from 4.0:1 to 4.6:1.
+   - The flashcard detail lists (`Row` in `CardFront.tsx` and `chunk/parts.tsx`) were invalid `<dl>` markup, because the icon `<span>` sat outside `<dt>`. The icon is now inside `<dt>`, with the same widths.
+   - Measured against a build of the previous commit: every row on word, chunk and support cards is within 0.1 px. Only the label's own box narrowed to its text.
+   - After the fixes, only the logotype wordmark remains, which WCAG exempts.
+5. **Email module split** (it was over 250 lines): `lib/email.ts` keeps `sendEmail`, sign-in and deck emails. `lib/emailAccount.ts` has the account-change emails; `lib/emailNotices.ts` has the audit, reminder, queue and new-recording notices.
+
+Tested on a local Postgres, mostly against the dev server so emails are logged, with local storage so a real upload ran:
+- A real upload, then send: 201 in about 0.2 s. The opted-in teacher and admin got one email each, and others got none.
+- A deck recording went only to its teacher and the admins.
+- Admin limit: 0 stopped by the browser, 11 refused, teacher refused, 3 saved and logged, and the student sees "3 a day, 2 left".
+- Missing-table fallback.
+- Numbering: 1, 2, 3, 4 with Translate hidden.
+- The axe sweep and the row comparison.
+- `tsc` and `next build` pass.
+
+**Needs before it works live:** merge; **Actions → Database setup** (the `AppSetting` table); the emails need `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL`.
+
 Still open:
-- **Phases E to K** are all on `claude/blissful-euler-9j0h4c` and **not merged**. Nothing here reaches the live site until they are.
-- The audit limit is a constant (`AUDITS_PER_DAY`). If it should change often, it could become an admin setting, which needs a small table.
-- Not checked by axe this time: pages these phases did not touch (dashboard, flashcards, queue, decks). `bg-accent/12 text-accent` is used on small text elsewhere too and may have the same 4.16:1 gap there.
+- **Phases E to L** are on `claude/blissful-euler-9j0h4c`, **not merged**.
+- Pages not scanned yet: admin compliance and the About page also use `<dl>` and may need the same check.
 
 
 ## Flashcard phone layout: lesson (10 Oct)

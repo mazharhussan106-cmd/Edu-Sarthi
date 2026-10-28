@@ -11,7 +11,7 @@
 // nobody is emailed when their queue is empty.
 
 import { releaseExpiredClaims, urgentBefore } from "@/lib/claims";
-import { sendQueueDigest } from "@/lib/email";
+import { sendQueueDigest } from "@/lib/emailNotices";
 import { prisma } from "@/lib/prisma";
 
 /// Teachers are few; this cap only stops a mistake from becoming a mail-out.

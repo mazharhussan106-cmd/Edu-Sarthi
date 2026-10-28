@@ -53,6 +53,8 @@ export const PREFERENCE_SCHEMA = z.object({
   playbackRate: z.union([z.literal(1), z.literal(1.25), z.literal(1.5)]),
   // Teachers and admins only: one evening email when recordings are waiting.
   emailQueueDigest: z.boolean(),
+  // Teachers and admins only: one email per new recording in their queue.
+  emailOnNewRecording: z.boolean(),
   // The phone voice that reads cards aloud (lib/speech). "auto" keeps each
   // card's own choice: Indian English, British or American for support cards.
   voiceAccent: z.enum(VOICE_ACCENT_VALUES),
@@ -85,6 +87,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   playbackRate: 1,
   // Opt-in like the student reminder: no one gets a daily email unasked.
   emailQueueDigest: false,
+  // Off: on a busy day this is many emails, so only those who want it ask.
+  emailOnNewRecording: false,
   voiceAccent: "auto",
   voiceSpeed: "normal",
   reduceMotion: false,

@@ -29,11 +29,16 @@ const TINT: Record<Tone, string> = {
 function Row({ icon: Icon, tone, label, value }: { icon: LucideIcon; tone: Tone; label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div className="grid grid-cols-[1.6em_7.6em_minmax(0,1fr)] items-center gap-[0.5em] border-b border-dashed border-border py-[0.28em] last:border-0">
-      <span className={cn("grid h-[1.5em] w-[1.5em] place-items-center rounded-[0.35em]", TINT[tone], TEXT[tone])}>
-        <Icon className="h-[0.9em] w-[0.9em]" aria-hidden="true" />
-      </span>
-      <dt className={cn("text-[0.8em] font-bold", TEXT[tone])}>{label}</dt>
+    // The icon sits inside the <dt>: a <dl> group may hold only <dt> and <dd>,
+    // or screen readers lose the label/value pairing. The widths add up to the
+    // old three columns (1.6em icon + 0.5em gap + 7.6em label), so nothing moves.
+    <div className="grid grid-cols-[9.7em_minmax(0,1fr)] items-center gap-[0.5em] border-b border-dashed border-border py-[0.28em] last:border-0">
+      <dt className="flex min-w-0 items-center gap-[0.6em]">
+        <span className={cn("grid h-[1.5em] w-[1.5em] shrink-0 place-items-center rounded-[0.35em]", TINT[tone], TEXT[tone])}>
+          <Icon className="h-[0.9em] w-[0.9em]" aria-hidden="true" />
+        </span>
+        <span className={cn("text-[0.8em] font-bold", TEXT[tone])}>{label}</span>
+      </dt>
       <dd className="text-[0.8em] text-ink">{value}</dd>
     </div>
   );

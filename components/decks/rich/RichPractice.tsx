@@ -40,36 +40,35 @@ export function RichPractice({
   const cut = raw.indexOf("→");
   const blank = (cut < 0 ? raw : raw.slice(0, cut)).trim();
   const answer = f.fill_answer || (cut < 0 ? "" : raw.slice(cut + 1).trim());
-  let n = 0;
   return (
-    <div className="flex flex-col gap-3">
+    <div className="practice-steps flex flex-col gap-3">
       {f.mcq_question && opts.length ? (
-        <Block n={++n} title="Multiple Choice" tone="text-tag-blue">
+        <Block title="Multiple Choice" tone="text-tag-blue">
           <p className="font-medium">{f.mcq_question}</p>
           <Mcq options={opts} correct={f.mcq_answer} />
           {f.mcq_why ? <p className="mt-2 text-xs text-ink-muted">{f.mcq_why}</p> : null}
         </Block>
       ) : null}
       {blank ? (
-        <Block n={++n} title="Fill in the Blank" tone="text-tag-green">
+        <Block title="Fill in the Blank" tone="text-tag-green">
           <Pre v={blank} />
           {answer ? <TypeCheck id={`${code}-fill`} answer={answer} placeholder="Type the missing part" /> : null}
         </Block>
       ) : null}
       {f.hindi_to_task ? (
-        <Block n={++n} title="Try It" tone="text-tag-saffron" hindiTask>
+        <Block title="Try It" tone="text-tag-saffron" hindiTask>
           <p>{f.hindi_to_task}</p>
           {f.task_answer ? <Reveal><Pre v={f.task_answer} /></Reveal> : null}
         </Block>
       ) : null}
       {f.practice_question ? (
-        <Block n={++n} title="Practice" tone="text-tag-navy">
+        <Block title="Practice" tone="text-tag-navy">
           <Pre v={f.practice_question} />
           {f.practice_answer ? <Reveal><Pre v={f.practice_answer} /></Reveal> : null}
         </Block>
       ) : null}
       {f.own_task ? (
-        <Block n={++n} title="Write Your Own" tone="text-tag-teal">
+        <Block title="Write Your Own" tone="text-tag-teal">
           <p>{f.own_task}</p>
           <OwnSentence id={`${code}-own`} />
         </Block>

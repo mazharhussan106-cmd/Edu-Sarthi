@@ -5,10 +5,11 @@
 // with this user's id was not issued to them — and without that check a
 // student could point a submission at another student's recording.
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 
 import { requireUser } from "@/lib/apiUser";
-import { AUDIT_LIMIT_REACHED, auditsLeftToday } from "@/lib/auditLimit";
+import { notifyNewRecording } from "@/lib/notify";
+import { auditAllowance, auditLimitReached } from "@/lib/auditLimit";
 import { prisma } from "@/lib/prisma";
 import { practiceWord } from "@/lib/decks";
 import { submissionSchema } from "@/lib/validations";
@@ -109,8 +110,9 @@ export async function POST(req: Request) {
 
   // The daily limit, enforced here as well as before the upload. Two sends at
   // the same moment can both pass and make it three; that is rare and harmless.
-  if (!retryOfId && (await auditsLeftToday(userId)) === 0) {
-    return NextResponse.json({ error: AUDIT_LIMIT_REACHED }, { status: 429 });
+  if (!retryOfId) {
+    const { perDay, left } = await auditAllowance(userId);
+    if (left === 0) return NextResponse.json({ error: auditLimitReached(perDay) }, { status: 429 });
   }
 
   // Last, because it is the only check that calls storage. A key that was
@@ -148,6 +150,12 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "We could not save your submission. Check My Audits to see if it went through, and send it again if not." }, { status: 409 });
   }
+
+  // After the response: the student's Send should not wait on mail to every
+  // teacher who asked for it, and a mail failure must not touch the saved
+  // recording. after() keeps the function alive on serverless until it is done.
+  const created = submission.id;
+  after(() => notifyNewRecording(created, req));
 
   return NextResponse.json({ ok: true, id: submission.id }, { status: 201 });
 }

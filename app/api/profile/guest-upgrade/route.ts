@@ -18,7 +18,7 @@ import { Prisma } from "@prisma/client";
 
 import { issueAccountCode, redeemAccountCode } from "@/lib/accountCodes";
 import { requireUser } from "@/lib/apiUser";
-import { sendGuestMergeCode, sendGuestUpgradeCode } from "@/lib/email";
+import { sendGuestMergeCode, sendGuestUpgradeCode } from "@/lib/emailAccount";
 import { mergeGuestInto, mergeTarget } from "@/lib/guestMerge";
 import { clearLoginAttempts, isRateLimited, recordFailedLogin } from "@/lib/loginRateLimit";
 import { prisma } from "@/lib/prisma";

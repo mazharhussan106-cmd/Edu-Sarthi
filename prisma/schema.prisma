@@ -429,6 +429,15 @@ model AdminLog {
   @@index([actorId])
 }
 
+/// Site-wide settings an admin changes without a deploy, one row per key. The
+/// value is checked in code (lib/appSettings) for each key it knows; a missing
+/// row means the default there. Who changed what is in AdminLog.
+model AppSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
 /// An announcement an admin posts to every student: a class, a deadline, a
 /// holiday. `eventAt` is when the thing happens (shown as "upcoming"); the
 /// notice disappears at `expiresAt`, or the event time if none is set.

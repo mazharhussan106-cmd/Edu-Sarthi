@@ -16,7 +16,7 @@ import bcrypt from "bcryptjs";
 
 import { requireUser } from "@/lib/apiUser";
 import { appUrl } from "@/lib/appUrl";
-import { sendPasswordChanged } from "@/lib/email";
+import { sendPasswordChanged } from "@/lib/emailAccount";
 import { clearLoginAttempts, isRateLimited, recordFailedLogin } from "@/lib/loginRateLimit";
 import { prisma } from "@/lib/prisma";
 import { changePasswordSchema } from "@/lib/validations";

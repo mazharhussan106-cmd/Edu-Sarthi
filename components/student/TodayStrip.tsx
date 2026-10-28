@@ -33,7 +33,7 @@ export function TodayStrip({
         href={next.href}
         className="flex flex-col gap-1 rounded-xl bg-accent/12 p-4 transition-colors hover:bg-accent/20"
       >
-        <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+        <span className="text-xs font-semibold uppercase tracking-wider text-accent-dark">
           {next.eyebrow}
         </span>
         <span className="font-display text-lg font-bold text-ink">{next.title}</span>

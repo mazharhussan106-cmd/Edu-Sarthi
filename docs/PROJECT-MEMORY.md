@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages, see "Student menu fix"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -364,7 +364,7 @@ Tested on a local Postgres, mostly against the dev server so emails are logged, 
 **Needs before it works live:** merge; **Actions → Database setup** (the `AppSetting` table); the emails need `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL`.
 
 Still open:
-- **Phases E to L** are on `claude/blissful-euler-9j0h4c`, **not merged**.
+- **Phases E to L merged into `main` (28 Oct, PR #23, merge commit `2f343ae`).** CI green before the merge. **Actions → Database setup** ran straight after (run #11, success), so the `AppSetting` table exists on the live database. Still for the owner: check Vercel → Cron Jobs shows seven jobs, check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL` and `CRON_SECRET` are set, then run `LIVE-TESTING-GUIDE.md` section 4b on the live site.
 - Pages not scanned yet: admin compliance and the About page also use `<dl>` and may need the same check.
 
 
@@ -406,6 +406,8 @@ Done: student `/history` (Practice = recordings and audits; Study = every card a
 The DPDP export now includes card progress and study history. Owner decided **no automatic cleanup** of `ReviewLog`. Not done: nothing was rendered in a browser or run on the real database.
 
 ## Student menu fix and new pages (28 Oct 2026, branch `claude/practical-ritchie-w4vnex`)
+
+**Merged into `main` (28 Oct, PR #22, merge commit `0f9e632`),** after Settings phases E to L. Merging `main` into it first had two conflicts: the Settings page (its cards had moved into the shared `SettingsSections`, so the menu's `#public-name` and `#share` anchors now sit on those sections, on the page variant only, so an open dropdown cannot repeat the id) and this file's status line. No database change, so Database setup is not needed for it.
 
 **Bug fixed: the ☰ menu opened empty on every phone** (student, teacher and admin). Cause: the header has `backdrop-blur`, and an element with a backdrop-filter becomes the containing block for its `position: fixed` children, so the "full-screen" sheet was squeezed into the 56px header and showed only "Menu" and ✕. Fix: `components/layout/MobileMenu.tsx` renders the open sheet through a portal into `<body>`. Checked in Chromium at 390×844: sheet 56px before, 844px after.
 

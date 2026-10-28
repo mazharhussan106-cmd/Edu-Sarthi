@@ -1,6 +1,6 @@
 # Flashcard library v2 — plan
 
-Status: **Phases 1–4 BUILT and MERGED (27 Oct 2026, PR #18). Phases 5 (institutes) and 6 (announcements, legal review pack) BUILT on branch `claude/sweet-davinci-d313f6`, in PR #19, NOT merged yet.** A lawyer has not reviewed anything yet (`docs/LEGAL-REVIEW-PACK.md`). The Phase 0 phone test (`docs/PHASE0-LIVE-TEST.md`) is still to do.
+Status: **All six phases BUILT and MERGED: Phases 1–4 on 27 Oct 2026 (PR #18), Phases 5 (institutes) and 6 (announcements, legal review pack) on 27 Oct 2026 (PR #19). Actions → Database setup ran after each (run #10 for PR #19: success, 28 Oct: "in sync", no data-loss warning, no card changed).** A lawyer has not reviewed anything yet (`docs/LEGAL-REVIEW-PACK.md`). The Phase 0 phone test (`docs/PHASE0-LIVE-TEST.md`) is still to do.
 
 This builds on `docs/flashcard-library-plan.md` (Phases 1–5 are built and in `main`, but **none of it has been tested on the live site**). The owner's answers below are confirmed decisions. Anything marked **PROPOSAL** is the assistant's suggestion and still needs the owner's yes.
 
@@ -265,7 +265,7 @@ Not built: due counts for shared decks in My decks (they show on the study page)
 
 ### Phase 5 — Institutes in the public library, with their logo
 
-**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`. NOT merged yet.** Type check and production build pass. The owner said "yes" to the file list and to decisions 18–21.
+**Status: BUILT, and MERGED into `main` on 27 Oct 2026 (PR #19); Actions → Database setup run #10 (success, 28 Oct: "in sync", no data-loss warning, no card changed).** Type check and production build pass. The owner said "yes" to the file list and to decisions 18–21.
 
 How it is built:
 - **Database (additive, no data loss):** `Institute.logoKey` (the approved logo), `pendingLogoKey` (waiting for the site admin) and `logoNote` (why a logo was refused). A deck published as an institute is a `PUBLIC` deck whose `instituteId` is set; no new deck column.
@@ -308,7 +308,7 @@ Not built: the logo on institute decks shared only inside the institute, and the
 
 ### Phase 6 — Tell people and update the docs
 
-**Status (27 Oct 2026): BUILT on branch `claude/sweet-davinci-d313f6`, in PR #19, NOT merged yet.** Type check and production build pass. Decisions 24–28.
+**Status: BUILT, and MERGED into `main` on 27 Oct 2026 (PR #19); Actions → Database setup run #10 (success, 28 Oct: "in sync", no data-loss warning, no card changed).** Type check and production build pass. Decisions 24–28. Still for the owner: check the Vercel variables and send the announcement (steps 2–4 below).
 
 **Legal pages (assistant's review, not a lawyer's):** `docs/LEGAL-REVIEW-PACK.md` says what a lawyer must read, what changed, what was fixed, and 11 open questions. Fixed now, because the pages no longer matched the code:
 - Privacy: what we collect (decks and sharing, invitees' email addresses, the 18+ answer and name choice, institute details and logo, the small-fix log), what SendGrid sends, who sees what on a public deck, and what stays with others after an account is deleted. Date now 27 October 2026.

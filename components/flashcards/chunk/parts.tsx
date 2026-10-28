@@ -30,11 +30,16 @@ const EDGE: Record<Tone, string> = {
 export function Row({ icon: Icon, tone, label, value }: { icon: LucideIcon; tone: Tone; label: string; value?: ReactNode }) {
   if (!value) return null;
   return (
-    <div className="grid grid-cols-[1.6em_7.4em_minmax(0,1fr)] items-center gap-[0.5em] border-b border-dashed border-border py-[0.28em] last:border-0">
-      <span className={cn("grid h-[1.5em] w-[1.5em] place-items-center rounded-[0.35em]", TINT[tone], TEXT[tone])}>
-        <Icon className="h-[0.9em] w-[0.9em]" aria-hidden="true" />
-      </span>
-      <dt className={cn("text-[0.8em] font-bold", TEXT[tone])}>{label}</dt>
+    // The icon sits inside the <dt>: a <dl> group may hold only <dt> and <dd>,
+    // or screen readers lose the label/value pairing. The widths add up to the
+    // old three columns (1.6em icon + 0.5em gap + 7.4em label), so nothing moves.
+    <div className="grid grid-cols-[9.5em_minmax(0,1fr)] items-center gap-[0.5em] border-b border-dashed border-border py-[0.28em] last:border-0">
+      <dt className="flex min-w-0 items-center gap-[0.6em]">
+        <span className={cn("grid h-[1.5em] w-[1.5em] shrink-0 place-items-center rounded-[0.35em]", TINT[tone], TEXT[tone])}>
+          <Icon className="h-[0.9em] w-[0.9em]" aria-hidden="true" />
+        </span>
+        <span className={cn("text-[0.8em] font-bold", TEXT[tone])}>{label}</span>
+      </dt>
       <dd className="text-[0.8em] text-ink">{value}</dd>
     </div>
   );
@@ -50,7 +55,10 @@ export function Tip({ tone, title, children, className }: { tone: Tone; title: s
   );
 }
 
-export type Item = { tone: Tone; label: string; body?: ReactNode };
+/// `hindi` marks a box the "Hide Hindi meanings" setting hides. A label that
+/// starts with "Hindi" counts too; anything else (a label in Devanagari, the
+/// imported decks' "In Your Language") has to say so.
+export type Item = { tone: Tone; label: string; body?: ReactNode; hindi?: boolean };
 
 /// A bordered group of fields: stacked with dashed rules, or two side by side
 /// for short lists. Empty fields are dropped, a pair left with one field is
@@ -70,7 +78,7 @@ export function Box({ tone, cols = 1, items }: { tone: Tone; cols?: 1 | 2; items
       )}
     >
       {shown.map((i) => (
-        <div key={i.label} data-hindi={i.label.startsWith("Hindi") ? "" : undefined} className="min-w-0 px-[0.6em] py-[0.35em]">
+        <div key={i.label} data-hindi={i.hindi || i.label.startsWith("Hindi") ? "" : undefined} className="min-w-0 px-[0.6em] py-[0.35em]">
           <p className={cn("text-[0.72em] font-bold", TEXT[i.tone])}>{i.label}</p>
           <div className="text-[0.8em] leading-snug text-ink">{i.body}</div>
         </div>

@@ -35,6 +35,7 @@ export function AuditReport({
   feedback,
   previousAverage,
   autoPlay,
+  playbackRate,
 }: {
   exerciseId: string;
   mediaUrl: string | null;
@@ -43,6 +44,7 @@ export function AuditReport({
   feedback: Scores & { summary: string };
   previousAverage: number | null;
   autoPlay: boolean;
+  playbackRate: number;
 }) {
   const overall = averageScore(feedback);
   const delta = previousAverage === null ? null : overall - previousAverage;
@@ -77,6 +79,7 @@ export function AuditReport({
           mediaKind={mediaKind}
           notes={notes}
           autoPlay={autoPlay}
+          playbackRate={playbackRate}
         />
       ) : (
         <Card className="mt-4">

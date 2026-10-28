@@ -1,5 +1,5 @@
 // Owns the student's account controls on the profile page: set a display
-// name, download my data, and delete my account.
+// name, set or remove a mobile number, download my data, and delete my account.
 //
 // Deletion asks for DELETE typed out rather than a confirm() dialog. On a
 // phone a dialog's OK button sits exactly where the thumb already is.
@@ -13,7 +13,7 @@ import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Input, Label } from "@/components/ui/Input";
-import { deleteAccountSchema, nameSchema } from "@/lib/validations";
+import { deleteAccountSchema, nameSchema, phoneSchema } from "@/lib/validations";
 
 async function send(url: string, method: string, body: object) {
   try {
@@ -70,6 +70,57 @@ export function NameForm({ initialName }: { initialName: string | null }) {
           {busy ? "Saving…" : "Save"}
         </Button>
       </div>
+      {msg ? (
+        <p aria-live="polite" className={msg.ok ? "text-xs text-success" : "text-xs text-error"}>
+          {msg.text}
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+export function PhoneForm({ initialPhone }: { initialPhone: string | null }) {
+  const router = useRouter();
+  const [phone, setPhone] = useState(initialPhone ?? "");
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    const parsed = phoneSchema.safeParse({ phone });
+    if (!parsed.success) {
+      setMsg({ ok: false, text: parsed.error.issues[0]?.message ?? "Enter a 10-digit mobile number, or leave it empty." });
+      return;
+    }
+    setBusy(true);
+    const error = await send("/api/profile/phone", "PATCH", parsed.data);
+    setBusy(false);
+    setMsg(error ? { ok: false, text: error } : { ok: true, text: parsed.data.phone ? "Saved." : "Number removed." });
+    if (!error) router.refresh();
+  }
+
+  return (
+    <form onSubmit={save} className="flex flex-col gap-2">
+      <Label htmlFor="mobile-number">Mobile number (optional)</Label>
+      <div className="flex gap-2">
+        <Input
+          id="mobile-number"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel-national"
+          maxLength={10}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+          placeholder="10 digits, e.g. 9876543210"
+          aria-describedby="mobile-number-note"
+        />
+        <Button type="submit" disabled={busy} className="shrink-0">
+          {busy ? "Saving…" : "Save"}
+        </Button>
+      </div>
+      <p id="mobile-number-note" className="text-xs text-ink-muted">
+        Not checked and not used for SMS. Leave it empty and press Save to remove it.
+      </p>
       {msg ? (
         <p aria-live="polite" className={msg.ok ? "text-xs text-success" : "text-xs text-error"}>
           {msg.text}

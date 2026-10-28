@@ -1,8 +1,11 @@
 // Owns per-setting preference saves. One PATCH per changed setting — no Save
 // button, and no unsaved-changes state for the settings page to track.
 //
-// It merges rather than replaces. Two settings changed in quick succession
-// would otherwise race, and the second write would silently drop the first.
+// It merges rather than replaces, and in the database, in one statement. Two
+// settings changed in quick succession (switch the reminder on, then pick its
+// time) arrive as two requests at once; a read here followed by a write of the
+// whole object let the second silently undo the first. Missing keys are not
+// filled in: prefsOf reads every key over its default.
 //
 // It deliberately does NOT handle the theme. That needs a cookie as well as a
 // row, so it has its own route at /api/profile/theme.
@@ -12,9 +15,10 @@ import { cookies } from "next/headers";
 
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
-import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { PREFERENCE_SCHEMA, prefsOf } from "@/lib/preferences";
 import { DATA_SAVER_COOKIE } from "@/lib/dataSaver";
 import { HINDI_COOKIE } from "@/lib/hindiToggle";
+import { MOTION_COOKIE } from "@/lib/motion";
 import { TEXT_SIZE_COOKIE } from "@/lib/textSize";
 
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
@@ -41,24 +45,16 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "That is not a setting we recognise." }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { preferences: true },
-  });
-
-  // Whatever is already stored may predate a preference being added, so it is
-  // parsed loosely and layered over the defaults rather than trusted whole.
-  const existing =
-    user?.preferences && typeof user.preferences === "object"
-      ? (user.preferences as Record<string, unknown>)
-      : {};
-
-  const merged = { ...DEFAULT_PREFERENCES, ...existing, ...parsed.data };
-
-  await prisma.user.update({
-    where: { id: userId },
-    data: { preferences: merged },
-  });
+  // jsonb || jsonb merges keys, the patch winning. A stored value that is not
+  // an object (empty, or JSON null from long ago) is treated as {}.
+  const patch = JSON.stringify(parsed.data);
+  const rows = await prisma.$queryRaw<{ preferences: unknown }[]>`
+    UPDATE "User"
+    SET preferences = (CASE WHEN jsonb_typeof(preferences) = 'object' THEN preferences ELSE '{}'::jsonb END) || ${patch}::jsonb
+    WHERE id = ${userId}
+    RETURNING preferences`;
+  if (rows.length === 0) return NextResponse.json({ error: "Your session has expired. Sign in again." }, { status: 401 });
+  const merged = prefsOf(rows[0].preferences);
 
   // After the row is saved, so a failed write never leaves a cookie claiming a
   // size the account does not have. The server render reads this cookie.
@@ -87,6 +83,17 @@ export async function PATCH(req: Request) {
   if (typeof parsed.data.dataSaver === "boolean") {
     const store = await cookies();
     store.set(DATA_SAVER_COOKIE, parsed.data.dataSaver ? "on" : "off", {
+      maxAge: ONE_YEAR_SECONDS,
+      path: "/",
+      sameSite: "lax",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
+
+  if (typeof parsed.data.reduceMotion === "boolean") {
+    const store = await cookies();
+    store.set(MOTION_COOKIE, parsed.data.reduceMotion ? "reduce" : "normal", {
       maxAge: ONE_YEAR_SECONDS,
       path: "/",
       sameSite: "lax",

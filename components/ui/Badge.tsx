@@ -12,10 +12,14 @@ type Variant = "accent" | "neutral" | "success" | "error";
 // Alpha on a token, not a hardcoded tint. There is no --color-success-soft, and
 // inventing one per theme means five more values to keep in sync; deriving the
 // fill from the theme's own success colour stays correct automatically.
+// accent-dark for the accent text: it is the stronger accent in every theme
+// (darker on light ones, lighter on dark ones), and plain accent on its own
+// tint fell just short of 4.5:1 in light and sepia. Success has no stronger
+// token, so its tint is lighter instead (/8), which clears 4.5:1 there.
 const VARIANTS: Record<Variant, string> = {
-  accent: "bg-accent/12 text-accent",
+  accent: "bg-accent/12 text-accent-dark",
   neutral: "bg-paper-dim text-ink-muted",
-  success: "bg-success/12 text-success",
+  success: "bg-success/8 text-success",
   error: "bg-error/12 text-error",
 };
 

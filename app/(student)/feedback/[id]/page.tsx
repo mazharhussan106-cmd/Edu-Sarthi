@@ -20,7 +20,7 @@ import { Player } from "@/components/media/Player";
 import { AuditReport } from "@/components/student/AuditReport";
 import { SendBackView } from "@/components/student/SendBackView";
 import { averageScore, STATUS_BADGE } from "@/lib/audits";
-import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
+import { prefsOf } from "@/lib/preferences";
 import { noteSchema } from "@/lib/validations";
 import { cardNoun } from "@/lib/chunkCard";
 
@@ -48,6 +48,8 @@ export default async function SubmissionPage({
       retry: { select: { id: true } },
       wordId: true,
       word: { select: { text: true, kind: true } },
+      // For where the audit player starts. Same row, so no second query.
+      student: { select: { preferences: true } },
       exercise: {
         select: { id: true, title: true, prompt: true, expects: true, maxSeconds: true },
       },
@@ -71,6 +73,7 @@ export default async function SubmissionPage({
   // Signed on the server and short-lived. The raw storage key never reaches
   // the browser.
   const mediaUrl = await resolveMediaUrl(submission.mediaUrl);
+  const prefs = prefsOf(submission.student.preferences);
   const badge =
     submission.status === "RETURNED" && submission.retry
       ? { text: "Replaced", variant: "neutral" as const }
@@ -102,6 +105,8 @@ export default async function SubmissionPage({
           studentId={studentId!}
           submission={{ ...submission, feedback: submission.feedback }}
           mediaUrl={mediaUrl}
+          autoPlay={prefs.autoplayAudit}
+          playbackRate={prefs.playbackRate}
         />
       ) : submission.status === "RETURNED" ? (
         <SendBackView
@@ -136,6 +141,7 @@ export default async function SubmissionPage({
                 src={mediaUrl}
                 kind={submission.mediaKind === "VIDEO" ? "VIDEO" : "AUDIO"}
                 showSpeed
+                initialRate={prefs.playbackRate}
                 className="mt-3"
               />
             </Card>
@@ -150,6 +156,8 @@ async function Reviewed({
   studentId,
   submission,
   mediaUrl,
+  autoPlay,
+  playbackRate,
 }: {
   studentId: string;
   submission: {
@@ -168,27 +176,23 @@ async function Reviewed({
     };
   };
   mediaUrl: string | null;
+  autoPlay: boolean;
+  playbackRate: number;
 }) {
-  const [previous, user] = await Promise.all([
-    // The audit just before this one, for the "+0.8 since last time" line.
-    prisma.feedback.findFirst({
-      where: {
-        submission: { studentId, status: "REVIEWED", createdAt: { lt: submission.createdAt } },
-      },
-      orderBy: { submission: { createdAt: "desc" } },
-      select: {
-        pronunciation: true,
-        grammar: true,
-        fluency: true,
-        vocabulary: true,
-        confidence: true,
-      },
-    }),
-    prisma.user.findUnique({ where: { id: studentId }, select: { preferences: true } }),
-  ]);
-
-  const prefs = PREFERENCE_SCHEMA.partial().safeParse(user?.preferences ?? {});
-  const autoPlay = (prefs.success ? prefs.data.autoplayAudit : undefined) ?? DEFAULT_PREFERENCES.autoplayAudit;
+  // The audit just before this one, for the "+0.8 since last time" line.
+  const previous = await prisma.feedback.findFirst({
+    where: {
+      submission: { studentId, status: "REVIEWED", createdAt: { lt: submission.createdAt } },
+    },
+    orderBy: { submission: { createdAt: "desc" } },
+    select: {
+      pronunciation: true,
+      grammar: true,
+      fluency: true,
+      vocabulary: true,
+      confidence: true,
+    },
+  });
 
   // The Json column is validated on read, not trusted: a note written by an
   // older version of the app should drop, not crash the page.
@@ -203,6 +207,7 @@ async function Reviewed({
       feedback={submission.feedback}
       previousAverage={previous ? averageScore(previous) : null}
       autoPlay={autoPlay}
+      playbackRate={playbackRate}
     />
   );
 }

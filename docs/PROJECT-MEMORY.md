@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; student menu fix and new pages, see "Student menu fix"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages, see "Student menu fix"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -24,6 +24,16 @@ An English spoken-communication training platform: students record or upload, te
 - Learners see the Teacher's guide on the back of a teacher's card; only the editor field is staff-only. Recordings on deck cards need at least 15 seconds. Both confirmed by the owner on 27 Oct 2026, so do not "fix" either.
 - Public decks are reviewed by an admin first; institute decks stay inside the institute; imported 56-point cards are read-only in the app (edit the sheet, upload again, same ID updates).
 - Words and chunk data were audited for repeated examples and "label instead of mistake" cells (`docs/CHUNK-PLAN.md`, `content/wordmaster-2000/tools/word_fixes.py`). Do not undo.
+- **Owner's decisions, 28 Oct 2026 (Settings phase J):**
+  - Flashcard reviews have **no daily limit**; only new cards have one.
+  - A student may send **2 recordings a day for a teacher's audit**, "for now" (`AUDITS_PER_DAY` in `lib/auditLimit.ts`). A replacement the teacher asked for does not count.
+  - "Hide Hindi meanings" must **not** hide the Hindi-to-English practice questions. Their separate opt-in switch stays.
+- **Assistant's decisions, delegated by the owner on 28 Oct ("best jo hoga so karo"):**
+  - A guest's progress can merge into an existing **student** account. Rule: the card with more reviews wins, and the account's card wins a tie.
+  - **No profile photo for now.** Teachers deliberately see students only by anonymous ID, a photo would break that, and many users may be minors with DPDP consent still open.
+  - **No signed-in device list for now.** "Sign out of all devices" and the sign-out on a password or email change cover the need. A list needs a session table written on every page load.
+  - **The app's screens stay in English.** It is an English-speaking course, Hindi help already sits where it matters (card meanings, Indian pronunciation), and translating every screen doubles the copy to maintain.
+  - Revisit any of these if users ask.
 
 ## Open work, most important first
 
@@ -124,6 +134,239 @@ Still not done, by choice: per-student reminder time (needs an hourly cron), Hin
 ## Share + Explore (10 Oct)
 
 Settings (page and the header gear) now has **Share EduSarthi** (phone share sheet, WhatsApp, copy link; no referral tracking). New student page **/explore** (menu → Study, and a chip on the Flashcard tab): built-in counts (Words / Chunks / Grammar and chunk types), approved library decks grouped by subject (= deck tag) with one-tap **Import and study** (copies the deck, opens its study page) and a Teacher-audit badge. Audit only works on decks made by a verified teacher (existing rule: recording goes to that deck's teacher); copies are private and cannot be sent for audit. No database change.
+
+## Settings, phase E: by role, playback speed, queue email, change password (28 Oct, branch `claude/blissful-euler-9j0h4c`)
+
+The owner asked for a check of Settings and a list of what could be added, then said to plan and build the recommended part. No database change: the two new preferences are keys in the `User.preferences` JSON, and the password change uses the existing `passwordHash` and `sessionsValidFrom` columns.
+
+Done:
+- **One source for both places.** `app/(shared)/settings/SettingsSections.tsx` reads the account and lays out the sections; the Settings page and the header dropdown (`components/layout/SettingsPanel.tsx`) both render it. Before this the dropdown had no "How your name shows on public decks".
+- **Each role sees only what works for it** (`SettingsAudience` in `SettingsForm.tsx`). Student: everything as before. Teacher and admin: theme, text size, data saver, the new queue email, public name (teacher only), security. They no longer see the audit email, flashcard reminder, new cards per day, Hide Hindi, auto-speak, autoplay or card colour. Guest: theme, text size, Hindi, auto-speak, new cards per day, card colour, and a line saying email, recording and audit settings come with a free account. A guest no longer sees email switches (a guest has no email), change password, or Sign out of all devices (a guest who signs out cannot get back in).
+- **Audit playback speed** (students): Settings → 1x / 1.25x / 1.5x, preference `playbackRate`. Both players on `/feedback/[id]` (audited and waiting) start at it, and the buttons under the player still change it for one listen. `Player` also sets the speed and duration on mount when the file loaded before hydration. The feedback page now reads preferences with `prefsOf` from the submission row, not with a second query.
+- **Daily queue email** (teachers and admins, opt-in, preference `emailQueueDigest`): `lib/queueDigest.ts`, called from the existing daily cron (`/api/cron/reminders`, ~7 pm IST) before the student reminders. It counts what that person's queue page shows (shared pool plus recordings on their own deck; admins see all), releases expired claims first, and says how many are urgent. Nobody is emailed when their queue is empty. Email: `sendQueueDigest` in `lib/email.ts`.
+- **Change password** (Settings → Security): `app/api/profile/password` plus `ChangePassword.tsx`. It needs the current password, wrong guesses count against the same 8-per-15-minutes throttle as sign-in, and a successful change ends every session, this device too. An account with no password (email code or Google) is told to sign out and use Forgot password; the route refuses to set a first password, because a stolen session must not be able to lock the owner out.
+- The audit-ready email now names the switch by its real label. The Help answer on a lost phone points to Change password.
+
+Tested on a local Postgres with a production build and Playwright: 52 checks (what each role sees, the dropdown, the saved speed on both audit pages, the wrong and right current password, old password refused, new one accepted, the other device signed out, the no-password account), plus the queue-email counts per teacher and admin (exact) and the throttle (9th wrong try → 429). `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run is needed. The queue email needs `SENDGRID_API_KEY`, `CRON_SECRET` and `NEXT_PUBLIC_APP_URL`, the same as the reminders.
+
+Still open after phase E: see the list at the end of phase F below.
+
+## Settings, phase F: read-aloud voice, reduce motion, Hide Hindi fix, password email (28 Oct, same branch)
+
+The owner said "start next phase"; this is the next group from the phase E list that needs no database change and no product decision. Same branch as phase E, stacked on it (phase E was not merged yet).
+
+Done:
+- **Read-aloud voice** (students and guests, Settings → Flashcard): accent Automatic / Indian / British / American (`voiceAccent`) and speed Slow / Normal (`voiceSpeed`). All three card screens now speak through one helper, `lib/speech.ts` (`sayText`): the built-in cards (`FlashcardDeck`), deck study (`DeckStudy`) and the library card view (`DeckCardView`, which before used no voice choice and no rate). Automatic keeps the old behaviour (Indian English; British or American for support cards). The support card's Listen (0.9) and Slow (0.6) buttons keep their own speed; the accent applies to them. Normal is the old rate (0.85), Slow is 0.6. A card's own recording plays as recorded. A phone without the chosen accent uses any English voice.
+- **Reduce motion** (everyone): `reduceMotion`. Stops the card-turn animation (`CardSurface`) and cuts CSS animations and transitions to near zero (`globals.css`, `html[data-motion="reduce"]`), on top of the phone's own setting, which was already respected.
+- How these reach the page: they are attributes on `<html>` (`data-voice`, `data-voice-speed`, `data-motion`), set by Settings at once and by `PrefSync` on every signed-in page, and read when a card speaks or turns, the same way the recorder reads `data-saver`. The voice needs no cookie, since nothing paints from it. Reduce motion got a cookie in phase G, so the opening card on a page load does not turn in either.
+- **Hide Hindi bug fixed:** the support card's "हिंदी मतलब · Hindi meaning" box and the imported decks' "In Your Language" box were not hidden, because hiding matched labels starting with "Hindi". `Item` in `components/flashcards/chunk/parts.tsx` now has a `hindi` flag. (In the test data only the Excel deck's 40 cards fill "In Your Language", all in Hindi.) The Hindi-to-English practice question still stays, as the setting says.
+- **"Your password was changed" email** after a change in Settings (`sendPasswordChanged`); sent after the change and never fatal.
+- `useSavePreference` (`app/(shared)/settings/`) is the shared save for `SettingsForm` and `VoiceSettings`.
+
+Tested on a local Postgres with a production build, the real imports (2,227 words, 180 support cards, 21 subject decks) and Playwright with a stand-in voice engine: 19 phase F checks (each screen's accent and speed, support buttons, Hindi hidden and shown again, the turn animation present by default and absent with reduce motion, who sees what, password change with the email failing) and the 52 phase E checks again. `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run. The password email needs `SENDGRID_API_KEY`, like every other email.
+
+Still open after phase F: see the list at the end of phase G below.
+
+## Settings, phase G: guest to full account, phone number, two fixes (28 Oct, same branch)
+
+The owner said "start next phase" again without answering the phase F questions, so this phase takes the open items that need no product decision. Same branch, stacked on E and F. No database change: the upgrade code uses Auth.js's existing `VerificationToken` table.
+
+Done:
+- **Guest to full account, progress kept** (Settings → "Keep your progress", shown first to a guest). The guest gives a name and an email, gets a 6-digit code (`sendGuestUpgradeCode`), and types it. The same `User` row then gets the email, a verified date, the name, and `isGuest = false`, so cards, history and settings stay.
+  - Logic: `lib/accountCodes.ts` (was `lib/guestUpgrade.ts` until phase H), `app/api/profile/guest-upgrade` (actions `send` and `verify`), `app/(shared)/settings/GuestUpgrade.tsx`.
+  - The code is stored under its own identifier (`guest-upgrade:<guest id>:<email>`), so it cannot be used to sign in, and a sign-in code cannot upgrade a guest (tested).
+  - Sends and wrong codes each have their own throttle on the sign-in throttle's table: 8 per 15 minutes per guest.
+  - An email that already has an account is refused: "sign out and sign in with that email; this guest's progress cannot be moved". Merging two sets of progress was left out on purpose.
+  - Afterwards the session is refreshed in place. `lib/auth.ts` now re-reads `isGuest` on `update()`. Note: `update()` must get an argument; with none, next-auth only reads the session.
+  - The guest messages now point here instead of to /register: the member-only API error in `lib/apiUser.ts`, the History practice tab, and the guest notes in Settings. The account has no password afterwards; it signs in with an email code or Forgot password.
+- **Mobile number** on the Profile page (non-guests): change or remove. Rules:
+  - Stored unverified, as at sign-up; the privacy page already says this. `phoneVerified` is cleared on change.
+  - A number on another account is refused (the column is unique).
+  - The 10-digit rule is now one shared `phoneField` in `lib/validations.ts`, used by sign-up too.
+- **Switch rows:** tapping a setting's text now toggles it, as `components/ui/Switch.tsx` always said it did.
+- **Reduce motion cookie:** `lib/motion.ts`. `app/layout.tsx` stamps `data-motion` from it, the preferences route sets it, and `PrefSync` keeps it in line with the account. The opening card on a page load no longer turns in.
+
+Tested on a local Postgres with Playwright:
+- Production build: 25 checks. They cover the switch text, reduce motion on first load (including a new device), the phone rules, and the guest upgrade. The upgrade checks were: refused email, honest send error without a mail key, wrong and right code, the same row converted, a second confirm refused, member routes working afterwards, a full account refused, and the wrong-code throttle.
+- Dev server, which logs emails: the full upgrade in the browser with the real code. The session stopped being a guest without signing in again, and the earlier card progress stayed. The upgrade code also failed as a sign-in code, and no account was made.
+- The 19 phase F checks again.
+- `tsc` and `next build` pass.
+
+`app/(shared)/profile/page.tsx` is now 254 lines. Split it next time it changes, for example by moving the student extras into a component.
+
+**Needs before it works live:** merge. No Database setup run. The upgrade email needs `SENDGRID_API_KEY`.
+
+Still open after phase G: see the list at the end of phase H below.
+
+## Settings, phase H: change email (28 Oct, same branch)
+
+The owner said "start next phase" again; changing the email was the clearest next item from the phase G list. Same branch, stacked on E, F and G. No database change.
+
+Done:
+- **Settings → Security → Change email** (members, every role): `app/(shared)/settings/ChangeEmail.tsx` and `app/api/profile/email` (actions `start` and `confirm`). Being signed in is not enough proof that this is the owner:
+  - An account with a password must type it. Wrong tries count on the sign-in throttle for its current address.
+  - An account without one gets a second code at its current address, worded as a possible warning.
+  - The new address always gets a code.
+  - Both calls check again, because nothing is kept between them. Both codes are checked before either is spent.
+- **On success, in one transaction:** the email moves and is marked verified, every session ends (this device too, so it signs in again), unused reset links are cancelled, and the account's Google link (`Account` rows with provider `google`) is deleted.
+  - Why the unlink: without it the old Google account would keep signing in to this account, and the Google sign-in callback would also create an empty account for the old address. After the change, "Continue with Google" works with the Google account for the new address. The form says so.
+  - The old address is then told (`sendEmailChanged`).
+- Refused with a next step: the same address, an address that already has an account, a guest (guests use Keep your progress), wrong codes (8 per 15 minutes), and too many sends.
+- **Shared code helper:** `lib/accountCodes.ts` replaces `lib/guestUpgrade.ts`. One helper now issues, checks and spends codes for `guest-upgrade`, `email-new` and `email-old`, each under its own identifier. The guest upgrade's code format is unchanged.
+- Help has a "How do I change my email?" answer. The Profile page's header comment points to Settings.
+- **For the owner:** if an admin changes their email, update the repository variable `ADMIN_EMAIL`, which "Load flashcard decks" uses to pick the admin. If it is not set, the oldest admin is used.
+
+Tested on a local Postgres with Playwright against the dev server, so the emails and their codes are logged. 27 checks:
+- Password account: wrong password, taken address, same address, wrong code, then success. After success: signed out here and on another device, email verified, Google link and reset link gone, old address told, old address no longer signs in, new one signs in with the same password.
+- No-password account: two codes. A right new code with a wrong old code changed nothing.
+- Guests: refused by the route, and their upgrade still works on the new helper.
+- The wrong-code throttle.
+
+One check failed only on the test's own mistake (psql prints a boolean as `t`); the database showed the reset link cancelled. `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run. Needs `SENDGRID_API_KEY`.
+
+Still open after phase H: see the list at the end of phase I below.
+
+## Settings, phase I: daily review limit, hiding the Hindi to English questions (28 Oct, same branch)
+
+The owner said "start next phase" again without answering the questions left at the end of phase H. So both items are built opt-in, off by default, so that nobody's study changes unless they choose it. Same branch, stacked on E to H. No database change.
+
+Done:
+- **Reviews per day** (Settings → Flashcard; choices: No limit, 50, 100, 200; preference `reviewsPerDay`, 0 = no limit, the default).
+  - It counts per tab, like the new-card limit.
+  - A review is a card answered today that was answered before today (`reviews > 1`, `createdAt` before today). A card only tagged earlier and answered for the first time today does not count.
+  - At the limit, with reviews still due, today's session ends, new cards included. The "Done" card says how many wait, and "Keep reviewing anyway" (`more=1`) lifts both limits.
+  - At the limit with nothing due, new cards still come.
+  - The top bar and the dashboard show what today's session will actually give: due capped, and 0 new once the limit ends the day.
+  - Code: `lib/flashcards.ts` (`reviewedToday`, `deckCounts`, `nextCardId`), `DeckDone` in `components/flashcards/DeckMessages.tsx`.
+- **New cards per day** moved next to it, into `app/(shared)/settings/StudyLimits.tsx` (Flashcard section). It no longer appears in the main settings list.
+- **Hide the Hindi to English practice questions** (preference `hideHindiTask`, off by default). This answers the phase F question by making it a choice, instead of changing what "Hide Hindi meanings" does.
+  - `Block` in `components/flashcards/PracticeParts.tsx` takes `hindiTask`. It is marked on the word card's Translate question, the chunk's Translate question, the support card's Say/Write it in English, and the imported deck's Try It. CSS hides them (`html[data-hindi-task="off"]`), stamped by Settings at once and by `PrefSync`. No cookie, because the practice side opens only after a tap.
+  - Known cosmetic gap: the numbers of the remaining questions keep a gap (1, 2, 3, 5).
+  - The imported deck's Try It could not be seen at run time: none of the test decks fills it.
+- Help explains where both limits are.
+- Vercel cron limit: still unverified. vercel.com is outside this session's network, and the Vercel docs search returned nothing on Hobby limits. Check it on the Vercel dashboard before planning a per-student reminder time.
+
+Tested on a local Postgres with a production build and the real imports, using Playwright. 16 phase I checks:
+- the defaults
+- the limit saving
+- no limit: 5 due and 10 new
+- limit 3 with 2 done: 1 left, then the session ends with "4 more are due"
+- top bar and dashboard at 0
+- Keep reviewing
+- new cards still coming when nothing is due
+- the questions hidden on word and support cards, and shown again
+
+Phase F's 19 checks pass again. Phase G's suite passed except one check that catches a 220 ms animation by timing. A deterministic re-check counting `element.animate` calls gave 1 on load without reduce motion and 0 with it, twice each. `tsc` and `next build` pass.
+
+**Needs before it works live:** merge. No Database setup run.
+
+Superseded in part by phase J: the owner said flashcard reviews have no limit, so "Reviews per day" was removed. The Hindi-question switch stays.
+
+## Settings, phase J: owner's answers built: audit limit, reminder time, guest merge (28 Oct, same branch)
+
+The owner answered the open questions:
+- The limit of 2 is for **teacher audits**. Flashcard reviews have **no** limit.
+- "Hide Hindi" must not hide the Hindi-to-English questions; **keep** the separate switch.
+- **Check the Vercel plan:** it is the free Hobby plan.
+- For guest merge, photo, device list and UI language: **"do what is best"**.
+Same branch, stacked on E to I. No database change.
+
+Done:
+- **Review limit removed.** `lib/flashcards.ts`, the flashcards page, the dashboard, `DeckDone` and Help are back to their phase H versions. `reviewsPerDay` is gone from the preferences. `StudyLimits.tsx` keeps only "New cards per day", which now says reviews have no limit.
+- **Audit limit: 2 recordings a day per student**, by the India day.
+  - `lib/auditLimit.ts` (`AUDITS_PER_DAY`, `auditsLeftToday`).
+  - Enforced before the upload (`/api/upload-url`, so nobody uploads a file in vain) and again at `/api/submissions`.
+  - A replacement for a sent-back recording does not count. `SubmitPanel` now passes `retryOfId` to upload-url, which checks that the replacement is real.
+  - `components/student/AuditGate.tsx` shows "N left today" above the recorder on the practice page and the library card practice page. At 0, it shows a card instead of the recorder.
+  - Help has the answer.
+- **Reminder time** (Settings → Flashcard → Daily flashcard reminder email → Reminder time): 7 am, 9 am, 1 pm, 5 pm, 7 pm (default) or 9 pm India time. Preference `reminderHour`.
+  - Hobby runs a cron job at most once a day, anywhere inside its hour, and allows 100 jobs per project. So each time has its own daily job in `vercel.json`, at half past the UTC hour, and emails arrive within about half an hour of the chosen time.
+  - The main job `/api/cron/reminders` (7 pm) still sends announcements and the teachers' queue email.
+  - `/api/cron/reminders/[hour]` sends only that hour's reminders and refuses 7 pm, so nobody is emailed twice.
+  - Code: `lib/reminderTimes.ts`, `lib/studyReminders.ts`, `lib/cronAuth.ts`.
+  - The reminder switch moved from the main settings list to the Flashcard section (`ReminderSettings.tsx`).
+- **Guest merge.** A guest who enters the email of an existing **student** account gets a code at that address (`guest-merge` purpose). Confirming moves their cards and study history into that account (`lib/guestMerge.ts`, one transaction), deletes the guest, and asks them to sign in there.
+  - For a card both studied, the one with more reviews wins, and the account's own on a tie.
+  - Teacher, admin and suspended accounts are refused.
+- **Bug fixed that the tests found:** saving two settings at the same moment lost one. This is what happens when you switch the reminder on and then pick its time. `/api/profile/preferences` read the row and wrote the whole object back; it now merges in the database in one statement (`jsonb ||`). Five settings sent at once all saved, cookies included.
+- Decisions on photo, device list and UI language: see "Decisions that must not be undone".
+
+Tested on a local Postgres with Playwright:
+- **Dev server** (emails are logged): 23 phase J checks.
+  - Reminders: the 9 am job emailed only the 9 am student; the 7 pm job only the default-time one; 19, 8 and missing-secret calls refused.
+  - Audit limit: 2 left → card at the limit; upload and submission refused; a real replacement allowed, a made-up one refused.
+  - Merge: teacher refused, code to the account, cards merged by the rule (3 vs 1 → 3, 5 vs 2 → 5, guest-only card moved), history moved, guest gone and its session dead.
+- **Phase H email-change suite:** all pass but its known test bug (psql's `t`).
+- **Production build:** phase F's 19 checks, plus the five-at-once save.
+- `tsc` and `next build` pass.
+
+**Needs before it works live:** merge, so `vercel.json`'s new jobs deploy. Then check Vercel → Settings → Cron Jobs shows seven jobs. No Database setup run. `CRON_SECRET`, `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL` as before.
+
+Still open after phase J: see the end of phase K below.
+
+## Settings, phase K: polish and live-readiness (28 Oct, same branch)
+
+The owner said "next phase" with nothing left undecided, so this phase checks and tidies what E to J built, against CLAUDE.md's own rules. No new features, no database change.
+
+Done:
+- **Accessibility check with axe-core** (WCAG 2 A/AA), at 420 px in all five themes:
+  - Pages: Settings for student, teacher and guest, with Change email and Change password opened; Profile, Practice and Help for students.
+  - The new settings UI had no violations in any theme.
+  - Fixed: the `Badge` component's accent text and the Profile badges (4.16:1, under 4.5:1 in light and sepia). They now use `text-accent-dark`, which is the stronger accent in every theme (darker on light themes, lighter on dark ones). The success badge's tint is lighter (`bg-success/8`). After the fix, nothing is flagged in any theme except below.
+  - Left as is, on purpose: the "EduSarthi" wordmark in the header and footer (3.12:1 in light). It is a logotype, which WCAG exempts.
+- **Duplicate ids fixed.** The Settings page and the header's settings dropdown render the same forms. Fixed ids in `CardColorPicker`, `GuestUpgrade` and `ChangeEmail` came out twice when both were open, so a label could point at the wrong input. They now use `useId`. Tested with both open: every label fills its own input, and there are no duplicate ids.
+- **Broken Profile card removed.** The Profile "Password" card sent signed-in people to `/forgot-password`, which the proxy redirects signed-in people away from, so it did nothing. Password and email changes live in Settings → Security now, and the Settings link on Profile says so. `app/(shared)/profile/page.tsx` is back under 250 lines (240).
+- **`LIVE-TESTING-GUIDE.md`:** a new section 4b, a click-by-click checklist for phases E to J to run on the live site after merging. It includes checking that Vercel → Cron Jobs shows seven jobs. Its "for Claude" note no longer names an old branch; it points to this file.
+
+Tested on a production build and a local Postgres: axe before and after, the label/id check, and a screenshot check of the badges in light and midnight. `tsc` and `next build` pass.
+
+Still open after phase K: see the end of phase L below.
+
+## Settings, phase L: the four suggestions built (28 Oct, same branch)
+
+The owner asked for the four suggestions left at the end of phase K ("Sujhav banao"). Same branch, stacked on E to K.
+
+**One schema change:** a new table `AppSetting` (`key`, `value` Json, `updatedAt`). It is additive; no existing data is touched or lost. **After merging, run Actions → Database setup once.** Until then the site keeps working: reading the setting falls back to 2, and saving it says to run Database setup (both tested with the table dropped).
+
+Done:
+1. **Audit limit set by an admin.** Admin → Settings (`/admin/settings`, new header link) has "Recordings per student per day", 1 to 10, starting at 2.
+   - Code: `lib/appSettings.ts` (reads and writes the `AppSetting` row, never throws) and `lib/appSettingSchemas.ts` (limits and the Zod schema; Prisma-free, so the browser form can use them). The route is `/api/admin/settings`, and every change goes to AdminLog with from and to.
+   - `lib/auditLimit.ts` now reads the number (`auditAllowance`, `auditLimitReached`), so `AUDITS_PER_DAY` is gone.
+   - The practice pages show the current number. Help no longer names one.
+2. **Instant email to teachers on a new recording.** Settings toggle "Email me when a new recording arrives" (teachers and admins), preference `emailOnNewRecording`, off by default.
+   - `notifyNewRecording` (`lib/notify.ts`) emails the opted-in people who see that recording in their queue: every teacher for the shared queue, only the deck's teacher for a recording on their deck, and every admin.
+   - It runs from `/api/submissions` through `after()`, so the student's Send does not wait for the email.
+3. **Practice numbering without gaps.** `Block` (`components/flashcards/PracticeParts.tsx`) no longer takes `n`; a CSS counter numbers the questions (`.practice-steps`, `globals.css`).
+   - A hidden question (the Hindi switch) or a missing one does not count. This also fixes an older gap on word cards, whose numbers were fixed at 1 to 6.
+4. **Accessibility on the other pages.** axe (WCAG 2 A/AA) ran on 19 page and role combinations in five themes: student dashboard, flashcards, history, My Audits, progress, explore, decks, library, settings, profile and help; teacher queue, students, workload, decks and settings; admin overview, settings and users. Fixed:
+   - The dashboard's "Flashcards" label (`TodayStrip`) is now `text-accent-dark`.
+   - The sepia theme's success colour is one step darker: `#2f7a3e` became `#2a6f38`, which takes "Active" badges from 4.4:1 to 5.1:1 and success on paper-dim from 4.0:1 to 4.6:1.
+   - The flashcard detail lists (`Row` in `CardFront.tsx` and `chunk/parts.tsx`) were invalid `<dl>` markup, because the icon `<span>` sat outside `<dt>`. The icon is now inside `<dt>`, with the same widths.
+   - Measured against a build of the previous commit: every row on word, chunk and support cards is within 0.1 px. Only the label's own box narrowed to its text.
+   - After the fixes, only the logotype wordmark remains, which WCAG exempts.
+5. **Email module split** (it was over 250 lines): `lib/email.ts` keeps `sendEmail`, sign-in and deck emails. `lib/emailAccount.ts` has the account-change emails; `lib/emailNotices.ts` has the audit, reminder, queue and new-recording notices.
+
+Tested on a local Postgres, mostly against the dev server so emails are logged, with local storage so a real upload ran:
+- A real upload, then send: 201 in about 0.2 s. The opted-in teacher and admin got one email each, and others got none.
+- A deck recording went only to its teacher and the admins.
+- Admin limit: 0 stopped by the browser, 11 refused, teacher refused, 3 saved and logged, and the student sees "3 a day, 2 left".
+- Missing-table fallback.
+- Numbering: 1, 2, 3, 4 with Translate hidden.
+- The axe sweep and the row comparison.
+- `tsc` and `next build` pass.
+
+**Needs before it works live:** merge; **Actions → Database setup** (the `AppSetting` table); the emails need `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL`.
+
+Still open:
+- **Phases E to L** are on `claude/blissful-euler-9j0h4c`, **not merged**.
+- Pages not scanned yet: admin compliance and the About page also use `<dl>` and may need the same check.
+
 
 ## Flashcard phone layout: lesson (10 Oct)
 

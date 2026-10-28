@@ -35,46 +35,46 @@ export function CardPractice({
   const tr = splitArrow(d.translate);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="practice-steps flex flex-col gap-3">
       <h3 className="font-display text-[0.75em] font-extrabold tracking-widest text-tag-navy">PRACTICE ZONE</h3>
 
       {d.mcq_question && options.length ? (
-        <Block n={1} title="Multiple Choice" tone="text-tag-blue">
+        <Block title="Multiple Choice" tone="text-tag-blue">
           <p>{d.mcq_question}</p>
           <Mcq options={options} correct={correct} />
         </Block>
       ) : null}
 
       {fill.answer ? (
-        <Block n={2} title="Fill in the Blank" tone="text-tag-green">
+        <Block title="Fill in the Blank" tone="text-tag-green">
           <p>{fill.prompt}</p>
           <TypeCheck id="fill" answer={fill.answer} placeholder="Type the missing word" />
         </Block>
       ) : null}
 
       {fix.answer ? (
-        <Block n={3} title="Find & Fix" tone="text-tag-red">
+        <Block title="Find & Fix" tone="text-tag-red">
           <p className="text-error">{fix.prompt}</p>
           <TypeCheck id="fix" answer={fix.answer} placeholder="Write the correct sentence" />
         </Block>
       ) : null}
 
       {tr.answer ? (
-        <Block n={4} title="Translate (Hindi → English)" tone="text-tag-saffron">
+        <Block title="Translate (Hindi → English)" tone="text-tag-saffron" hindiTask>
           <p className="text-base">{tr.prompt}</p>
           <TypeCheck id="translate" answer={tr.answer} placeholder="Write it in English" />
         </Block>
       ) : null}
 
       {d.write_your_own_sentence ? (
-        <Block n={5} title="Use in Your Own Sentence" tone="text-tag-teal">
+        <Block title="Use in Your Own Sentence" tone="text-tag-teal">
           <p>{d.write_your_own_sentence}</p>
           <OwnSentence id="own-sentence" />
         </Block>
       ) : null}
 
       {d.reverse_quick_recall ? (
-        <Block n={6} title="Quick Recall (Reverse)" tone="text-tag-navy">
+        <Block title="Quick Recall (Reverse)" tone="text-tag-navy">
           <p>{d.reverse_quick_recall}</p>
           <button
             type="button"

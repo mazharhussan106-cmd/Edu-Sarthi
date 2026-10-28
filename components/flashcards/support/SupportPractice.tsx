@@ -38,20 +38,19 @@ export function SupportPractice({
   const jumble = (d.reorder_task ?? "").split(" / ").map((w) => w.trim()).filter(Boolean);
   const checks = dotList(d.self_check);
 
-  let n = 0;
   return (
-    <div className="flex flex-col gap-3">
+    <div className="practice-steps flex flex-col gap-3">
       <h3 className="font-display text-[0.75em] font-extrabold tracking-widest text-tag-navy">PRACTICE ZONE</h3>
 
       {d.fill_blank && d.fill_answer ? (
-        <Block n={++n} title="Fill in the blank" tone="text-tag-green">
+        <Block title="Fill in the blank" tone="text-tag-green">
           <p>“{d.fill_blank}”</p>
           <TypeCheck id={`${code}-gap`} answer={d.fill_answer} placeholder="Type the missing word or words" />
         </Block>
       ) : null}
 
       {d.mcq_question && options.length && d.mcq_answer ? (
-        <Block n={++n} title="Which line is best?" tone="text-tag-blue">
+        <Block title="Which line is best?" tone="text-tag-blue">
           <p>{d.mcq_question}</p>
           <Mcq options={options} correct={d.mcq_answer} />
           {d.mcq_why ? (
@@ -64,33 +63,33 @@ export function SupportPractice({
       ) : null}
 
       {jumble.length >= 3 && d.reorder_answer ? (
-        <Block n={++n} title="Put the words in order" tone="text-tag-teal">
+        <Block title="Put the words in order" tone="text-tag-teal">
           <Reorder words={jumble} answer={d.reorder_answer} />
         </Block>
       ) : null}
 
       {d.hindi_to_english && d.hindi_to_english_answer ? (
-        <Block n={++n} title={email ? "Write it in English" : "Say it in English"} tone="text-tag-saffron">
+        <Block title={email ? "Write it in English" : "Say it in English"} tone="text-tag-saffron" hindiTask>
           <p>{d.hindi_to_english}</p>
           <Reveal label="Tap to see a model answer" answer={d.hindi_to_english_answer} />
         </Block>
       ) : null}
 
       {d.whats_next_customer && d.whats_next_reply ? (
-        <Block n={++n} title={`Customer says: “${d.whats_next_customer}”`} tone="text-tag-green">
+        <Block title={`Customer says: “${d.whats_next_customer}”`} tone="text-tag-green">
           <p>What do you {email ? "write" : "say"} back?</p>
           <Reveal label="Tap to see a model reply" answer={d.whats_next_reply} />
         </Block>
       ) : null}
 
       {d.role_play ? (
-        <Block n={++n} title="Role-play with a partner" tone="text-tag-navy">
+        <Block title="Role-play with a partner" tone="text-tag-navy">
           <p>{d.role_play}</p>
         </Block>
       ) : null}
 
       <div className="[&>div]:border-saffron/50">
-        <Block n={++n} title={email ? "Write it for audit" : "Record it for audit"} tone="text-tag-saffron">
+        <Block title={email ? "Write it for audit" : "Record it for audit"} tone="text-tag-saffron">
           <p>{d.record_task ?? (email ? "Write the email in your own words." : "Record yourself saying the line.")}</p>
           {email ? (
             <OwnSentence

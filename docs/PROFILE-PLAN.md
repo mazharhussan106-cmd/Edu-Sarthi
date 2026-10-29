@@ -202,6 +202,14 @@ That is more than 6 files, so the owner must approve it first (CLAUDE.md). **App
     - Every suite (P1–P6) rerun at the end: all pass, except one P5 check that assumed the student had no photo yet (the P6 test had given them one; the sheet correctly showed "Change photo"). `next build` passes.
   - Built screenshots: `docs/profile-built-phone.png` (the profile and the share sheet) and `docs/profile-built-desktop.png`.
 
+### Audit (29 Oct)
+
+`docs/PROFILE-AUDIT.md`: everything in the list is built. It records 13 findings, nothing fixed yet. The most important:
+- **F1:** admins are not told that teachers now read QA notes.
+- **F2:** focus is lost in the photo step.
+- **F3:** the staff data-download row overclaims.
+- **F4:** the photo was never tried against the real Supabase bucket.
+
 ### Not done, on purpose
 
 - **A camera badge on the avatar** (it is in the mockup): not built. A small icon that only looks tappable would mislead; Edit profile does the job.

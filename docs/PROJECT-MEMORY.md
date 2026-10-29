@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign planned, design only, see "Student dashboard redesign"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -39,6 +39,7 @@ An English spoken-communication training platform: students record or upload, te
   - Even short choices (text size, playback speed, new cards per day) open a sheet; none sit inline in the row.
   - Rows are grouped under small headings (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share).
   - The header's ⚙ Settings is a **link to `/settings`** for every signed-in person. There is no settings dropdown any more, so Sign out also has a row in Settings (it stays in the ☰ menu too).
+- **Owner's decisions, 29 Oct 2026 (student dashboard):** the redesign covers the **student** dashboard only (teacher and admin later, if at all); the page opens on **today's work**, with progress and charts lower or on the Progress page; gamification is **medium** — streak, daily goal ring, XP, a level, weekly goal, streak freeze, badges — and **no leaderboard**; the design is agreed first and built later in phases. Details: `docs/DASHBOARD-PLAN.md`.
 
 ## Open work, most important first
 
@@ -411,6 +412,18 @@ Not done, on purpose:
 Still open:
 - Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
 - The two pre-existing axe findings above (logotype contrast, unlabelled navs) on every page.
+
+## Student dashboard redesign (29 Oct, branch `claude/hopeful-heisenberg-04ufep`) — PLANNING, nothing built
+
+The owner asked for a list of what the dashboard should show and how it should look, after checking what other apps do, with questions first; this chat works only on the dashboard. Four questions asked; answers are in "Decisions that must not be undone" (29 Oct, student dashboard).
+
+Delivered, all design and no code change:
+- `docs/DASHBOARD-PLAN.md`: what is wrong with today's dashboard, the new order (8 blocks on a phone instead of 12), each block's data and whether it exists, phone and computer layouts, special states (streak at risk, goal done, new student, guest, freeze used), the streak and XP sheets, the proposed game rules (XP for effort only, daily goal 20/40/60/100, streak at 10 XP a day, weekly goal in days, earned freezes, "Stage" levels), the research with how sure each point is, a three-phase build plan, and seven open questions.
+- `docs/dashboard-mockup.html` and four screenshots (`docs/dashboard-mockup-*.png`), drawn with the app's own tokens, fonts and icons, checked in light and dark at 390 px and 1280 px. The same screens are on a private design canvas, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs).
+
+Found in the current code (to fix when building): the streak counts recordings only (`lib/progress.ts`), so flashcard days never count; "cards due" on the dashboard counts Words only; recordings are shown in four different cards; a guest sees "Recording today 0/1"; the week bars read `CardState.lastReviewedAt`, not `ReviewLog`.
+
+**Next:** the owner answers the seven open questions at the end of `docs/DASHBOARD-PLAN.md`, then approves phase 1 (new layout, no schema change). Phase 3 (streak freeze) needs one additive table and a Database setup run.
 
 ## Flashcard phone layout: lesson (10 Oct)
 

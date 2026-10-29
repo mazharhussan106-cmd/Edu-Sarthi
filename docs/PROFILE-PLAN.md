@@ -1,6 +1,6 @@
 # Profile page plan (v1.0, 29 Oct 2026)
 
-Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **PLANNING**. Research, list and mockup are done. **Next action:** the owner answers the open questions at the end and approves the build phases. Nothing is built yet.
+Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **IN DEVELOPMENT**. Research, list and mockup are done; the owner answered the open questions and approved P1–P6 on 29 Oct (see "Owner's second answers"). **Next action:** build P1.
 
 Mockup: `docs/profile-mockup.html` (open it in a browser; Light/Dark buttons at the top). Screenshots: `docs/profile-mockup-phones.png`, `-phones-dark.png`, `-sheets.png`, `-sheets-dark.png`, `-desktop.png`, `-desktop-dark.png`. The orange tags in the mockup (S1, T2…) are the row IDs in the lists below.
 
@@ -17,6 +17,15 @@ Mockup: `docs/profile-mockup.html` (open it in a browser; Light/Dark buttons at 
 - **Before:** "No profile photo for now" (an assistant decision the owner delegated on 28 Oct, marked "revisit if users ask").
 - **Now:** on 29 Oct the owner chose photo upload, so that decision is SUPERSEDED.
 - **Still open:** who may see a photo (question 2 below).
+
+## Owner's second answers (29 Oct 2026), after the mockup
+
+| Question | Answer | What it changes |
+|---|---|---|
+| What counts as a practice day? | **A recording or a card answer** | One rule everywhere: the dashboard streak and the streak badges follow it too (owner approved the dashboard change by choosing this) |
+| Who sees a photo? | **Only the owner** | No approval queue. Teachers keep seeing STU-IDs. An admin can remove a reported photo. |
+| Teachers see their QA notes? | **Yes** | T4 "Quality checks" moves from Later to Must (phase P4) |
+| Build P1–P6? | **Approved, all** | Built in order, each phase tested and pushed before the next |
 
 ## Research summary
 
@@ -69,7 +78,7 @@ Priority: **Must** (first build), **Should** (same project, after Must), **Later
 | T1 | Identity card | Photo, name, "Teacher · joined…", **Verified teacher** chip (or "Not verified yet"), institute; line "Students do not see your name or photo on their audits" | `User.teacherVerifiedAt`, `InstituteMember` | Must |
 | T2 | Stat tiles | Audits written, this month, students helped (distinct), typical turnaround (median hours from recording to audit, last 30 audits) | `Feedback` + `Submission` | Must |
 | T3 | Reviewing calendar | Days with audits written | `Feedback.createdAt` | Should |
-| T4 | Quality checks | "1 of your audits was marked for a second look in 90 days" + the note | `Feedback.qaFlaggedAt`, `qaNote`. **Today only admins see these.** | Later, owner decides (question 3) |
+| T4 | Quality checks | "1 of your audits was marked for a second look in 90 days" + the note | `Feedback.qaFlaggedAt`, `qaNote`. Until now only admins saw these. | Must (owner, 29 Oct) |
 | T5 | My content | Teaching decks, in the library, learners following | `Deck`, `DeckFollow` | Must |
 | T6 | Shortcuts | Queue (n waiting), My students, Settings | existing pages | Must |
 | T7 | Account and privacy | Email, phone, Download my data. No delete row: teacher accounts are closed by support (`/api/me` DELETE says so) | `User` | Must |
@@ -115,7 +124,24 @@ Priority: **Must** (first build), **Should** (same project, after Must), **Later
 | P5 | Photo upload: `User.avatarKey` (one nullable column, additive, **no data lost**), `lib/avatar.ts`, `/api/profile/avatar`, crop sheet, export/delete/Privacy page; then Actions → Database setup | 8 | **1 migration** |
 | P6 | Share progress card (canvas, Web Share with a file, Download) and the 4 new badges | 4 | none |
 
-That is more than 6 files, so the owner must approve it first (CLAUDE.md). Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
+That is more than 6 files, so the owner must approve it first (CLAUDE.md). **Approved 29 Oct.**
+
+### Build log
+
+- **P1 done (29 Oct).**
+  - New: `lib/practiceDays.ts` (a practice day is a recording or a card answer, counted per India day in SQL), `lib/profileStats.ts`, `components/profile/*` (IdentityCard, EditProfile, StatTiles and rows in ProfileParts, GoalCard and GoalEditor, BadgeGrid, GetStarted, AccountRows, DeleteAccount, StudentProfile, and an interim StaffProfile until P4) and `components/ui/SheetButton.tsx`.
+  - Changed: `lib/progress.ts` (streak from day numbers, plus `longestStreak`), the dashboard streak (now the same rule), and the badge hints ("Practise N days in a row").
+  - Removed: `components/student/AccountActions.tsx` and `ProfileGoals.tsx` (their forms moved into sheets).
+  - The page keeps the phone order in the HTML; on a computer, pairs sit side by side, so the Tab order matches on every screen. Guests get no decks and no recording bar.
+  - Tested on a local Postgres:
+    - edit name and number (bad number error, reset on close, save, remove, restore)
+    - goal sheet saves and survives a reload
+    - badge list and Who sees what sheets
+    - delete account on a throwaway account (button off until DELETE; a tap outside does not close it)
+    - `/profile#your-data`; keyboard open and close with focus return
+    - dashboard streak = 11 under the new rule
+    - axe in five themes for student, teacher and admin, and in light and dark for new student and guest, plus three sheets; only the known logotype contrast is left
+    - `tsc` and `next build` pass Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
 
 ## Open questions for the owner
 

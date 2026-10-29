@@ -17,7 +17,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { ScoreTrend, type TrendPoint } from "@/components/dashboard/ScoreTrend";
-import { DAILY_GOAL, sentToday, streakDays } from "@/lib/progress";
+import { DAILY_GOAL, sentToday, streakOfDays } from "@/lib/progress";
+import { practiceDays } from "@/lib/practiceDays";
 import { TodayStrip } from "@/components/student/TodayStrip";
 import { deckCounts } from "@/lib/flashcards";
 import { nextAction } from "@/lib/dashboardNext";
@@ -99,8 +100,8 @@ export default async function DashboardPage() {
       },
     }),
     prisma.module.count({ where: { isSystem: false } }),
-    // Dates only, for the streak. A year is longer than any streak worth
-    // showing, and bounds the query for a student who has sent thousands.
+    // Dates only, for today's recording goal. A year bounds the query for a
+    // student who has sent thousands.
     prisma.submission.findMany({
       where: { studentId, createdAt: { gte: since } },
       select: { createdAt: true },
@@ -124,14 +125,17 @@ export default async function DashboardPage() {
   const cards = await deckCounts(studentId!, { kind: "WORD" }, newPerDayOf(prefRow?.preferences));
 
   // Independent of everything above, so they run together.
-  const [activity, cardStats, notices] = await Promise.all([
+  const [activity, cardStats, notices, practice] = await Promise.all([
     weeklyActivity(studentId!),
     cardProgress(studentId!),
     activeNotices(),
+    practiceDays(studentId!),
   ]);
 
   const dates = recent.map((r) => r.createdAt);
-  const streak = streakDays(dates);
+  // A recording or a card answer keeps the streak (lib/practiceDays); only a
+  // recording counts towards today's goal.
+  const streak = streakOfDays(new Set(practice.keys()));
   const today = Math.min(sentToday(dates), DAILY_GOAL);
   const next = nextAction({ toRedo, cards, nextExercise });
 

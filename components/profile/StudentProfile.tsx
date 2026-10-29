@@ -12,24 +12,42 @@ import { BadgeCheck, BookOpen, Flame, Globe, History, Layers, Pin, School, Setti
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { AccountRows, type Audience } from "@/components/profile/AccountRows";
+import { ActivityCalendar, type CalendarDay } from "@/components/profile/ActivityCalendar";
 import { BadgeGrid } from "@/components/profile/BadgeGrid";
 import { EditProfile } from "@/components/profile/EditProfile";
 import { GetStarted, stepsFor } from "@/components/profile/GetStarted";
 import { GoalCard } from "@/components/profile/GoalCard";
 import { IdentityCard, initialsOf, joinedLine } from "@/components/profile/IdentityCard";
 import { LinkRow, RowGroup, StatTiles } from "@/components/profile/ProfileParts";
+import { SkillScores } from "@/components/profile/SkillScores";
 import { badgesFor } from "@/lib/badges";
 import { DAILY_GOAL } from "@/lib/progress";
 import { displayId } from "@/lib/publicId";
-import type { StudentProfile as Data } from "@/lib/profileStats";
+import { todayNumber, type StudentProfile as Data } from "@/lib/profileStats";
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+// ReviewLog (card answers by day) started on this date; before it, only
+// recordings can be shown, and the calendar says so.
+const CARD_LOG_START = Date.UTC(2026, 9, 26);
+
+function calendarDays(practice: Data["practice"]): CalendarDay[] {
+  return [...practice.entries()].map(([day, p]) => ({
+    day,
+    // One recording weighs like ten card answers: it takes about as long.
+    score: p.recordings * 10 + p.cards,
+    text: [p.recordings ? plural(p.recordings, "recording") : "", p.cards ? plural(p.cards, "card") : ""].filter(Boolean).join(", "),
+  }));
+}
 
 export function StudentProfile({ data }: { data: Data }) {
   const { user, prefs, decks } = data;
   const id = displayId(user.publicId);
   const guest = user.isGuest;
   const badges = badgesFor({ submissions: data.submissions, audits: data.audits, streak: data.streak, cardsKnown: data.cardsKnown, decks: decks.owned });
+  const today = todayNumber();
+  // The streak reads 400 days so a long run is not cut; the sentence says a year.
+  const yearDays = [...data.practice.keys()].filter((d) => d > today - 365).length;
   const steps = stepsFor({ guest, goalSet: prefs.goal !== "unset", submissions: data.submissions, audits: data.audits, cardsKnown: data.cardsKnown });
 
   const audiences: Audience[] = [
@@ -83,6 +101,23 @@ export function StudentProfile({ data }: { data: Data }) {
         recordingGoal={guest ? 0 : DAILY_GOAL}
         newCards={data.newCardsToday}
         newPerDay={prefs.newPerDay}
+      />
+
+      <SkillScores scores={data.scores} audits={data.audits} />
+
+      <ActivityCalendar
+        title="Practice calendar"
+        days={calendarDays(data.practice)}
+        today={today}
+        levels={[1, 10, 25, 50]}
+        summary={
+          <>
+            <b className="font-mono">{yearDays}</b> practice {yearDays === 1 ? "day" : "days"} in the last 12 months · longest streak{" "}
+            <b className="font-mono">{data.longest}</b> {data.longest === 1 ? "day" : "days"}
+          </>
+        }
+        note={`A day counts when you send a recording or answer a card.${user.createdAt.getTime() < CARD_LOG_START ? " Card answers are counted from 26 Oct 2026." : ""}`}
+        emptyText="No practice days yet. Answer a card or send a recording and today fills in."
       />
 
       <BadgeGrid badges={badges} />

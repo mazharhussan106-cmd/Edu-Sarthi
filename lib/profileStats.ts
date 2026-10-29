@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { practiceDays, type PracticeDay } from "@/lib/practiceDays";
 import { dayNumber, longestStreak, streakOfDays } from "@/lib/progress";
 import { prefsOf, type Preferences } from "@/lib/preferences";
+import { CRITERIA } from "@/lib/studentStats";
 
 const IST = 5.5 * 3_600_000;
 
@@ -20,6 +21,23 @@ function startOfTodayIst(now = new Date()): Date {
   const ist = new Date(now.getTime() + IST);
   ist.setUTCHours(0, 0, 0, 0);
   return new Date(ist.getTime() - IST);
+}
+
+/// One skill on the Speaking scores card: the average of the last few audits,
+/// and how far that is from the first audit (null until there are two).
+export type SkillScore = { key: string; label: string; now: number; change: number | null };
+
+/// Recent audits averaged, so one unusual recording does not swing the card.
+const RECENT_AUDITS = 5;
+
+export function skillScores(audits: readonly Record<string, number>[]): SkillScore[] {
+  if (audits.length === 0) return [];
+  const recent = audits.slice(-RECENT_AUDITS);
+  const round = (n: number) => Math.round(n * 10) / 10;
+  return CRITERIA.map((c) => {
+    const now = round(recent.reduce((sum, a) => sum + a[c.key], 0) / recent.length);
+    return { key: c.key, label: c.label, now, change: audits.length > 1 ? round(now - audits[0][c.key]) : null };
+  });
 }
 
 export type StudentProfile = {
@@ -43,11 +61,12 @@ export type StudentProfile = {
   recordingsToday: number;
   newCardsToday: number;
   decks: { owned: number; shared: number; inLibrary: number; followers: number; following: number };
+  scores: SkillScore[];
 };
 
 export async function studentProfile(userId: string): Promise<StudentProfile | null> {
   const today = startOfTodayIst();
-  const [user, practice, cardsKnown, submissions, audits, recordingsToday, newCardsToday, owned, shared, inLibrary, followers, following] =
+  const [user, practice, cardsKnown, submissions, audits, recordingsToday, newCardsToday, owned, shared, inLibrary, followers, following, feedback] =
     await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
@@ -76,6 +95,11 @@ export async function studentProfile(userId: string): Promise<StudentProfile | n
       prisma.deck.count({ where: { ownerId: userId, visibility: "PUBLIC", status: "APPROVED" } }),
       prisma.deckFollow.count({ where: { deck: { ownerId: userId } } }),
       prisma.deckFollow.count({ where: { userId } }),
+      prisma.feedback.findMany({
+        where: { submission: { studentId: userId } },
+        orderBy: { createdAt: "asc" },
+        select: { pronunciation: true, grammar: true, fluency: true, vocabulary: true, confidence: true },
+      }),
     ]);
   if (!user) return null;
 
@@ -95,6 +119,7 @@ export async function studentProfile(userId: string): Promise<StudentProfile | n
     recordingsToday,
     newCardsToday,
     decks: { owned, shared, inLibrary, followers, following },
+    scores: skillScores(feedback),
   };
 }
 

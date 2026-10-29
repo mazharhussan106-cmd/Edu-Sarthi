@@ -141,7 +141,12 @@ That is more than 6 files, so the owner must approve it first (CLAUDE.md). **App
     - `/profile#your-data`; keyboard open and close with focus return
     - dashboard streak = 11 under the new rule
     - axe in five themes for student, teacher and admin, and in light and dark for new student and guest, plus three sheets; only the known logotype contrast is left
-    - `tsc` and `next build` pass Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
+    - `tsc` and `next build` pass
+- **P2 done (29 Oct).**
+  - New: `components/profile/SkillScores.tsx` (average of the last 5 audits per skill; arrows show the change since the first audit; "Teachers' scores, not an exam band") and `components/profile/ActivityCalendar.tsx`.
+  - The calendar shows 17 weeks on a phone, 26 on a mid-size screen and 53 on a computer. Shade comes from one recording = 10 card answers. The grid is hidden from screen readers; the summary line and "View as list" carry the same facts.
+  - The note "Card answers are counted from 26 Oct 2026" shows only for accounts older than that date.
+  - Tested: the score numbers match the test data, and 27 practice days and longest streak 11 match a hand count. The list sheet has 27 rows. Week counts were checked at 390, 820 and 1280 px with no sideways scroll. Empty states checked for a new student. axe passes in five themes and on the list sheet. `next build` passes. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
 
 ## Open questions for the owner
 

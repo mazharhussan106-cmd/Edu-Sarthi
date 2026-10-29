@@ -1,6 +1,6 @@
 # Student dashboard — redesign plan
 
-Status: **Phases 1–4 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet). After merging, run Actions → Database setup once, straight away (two new tables and one new column).** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
+Status: **Phases 1–4 BUILT and audited (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet). After merging, run Actions → Database setup once, straight away (two new tables and one new column).** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
 
 Mockup: `docs/dashboard-mockup.html` (open in a browser; phone and computer, the special states and the two sheets; a Light / dark button checks the tokens). Screenshots: `docs/dashboard-mockup-phone.png`, `docs/dashboard-mockup-desktop.png`, `docs/dashboard-mockup-states.png`, `docs/dashboard-mockup-sheets.png`. The same screens are on a private design canvas for the owner, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs), each artboard with a Theme tweak; the repo files are the record.
 
@@ -163,7 +163,7 @@ How it is built:
 
 Checks before pushing: `tsc`, `next build`; a local Postgres with the real card imports and test students (normal day, new student, guest, a sent-back recording, decks due, a student with audits); XP and streak numbers checked by hand against the test data; the pure functions run against fixed dates (streak across midnight India time, at-risk after 6 pm, Monday week start); Playwright at 390×844 and 1280×800 for each state; axe (WCAG 2.1 AA) on the dashboard in all five themes; no hard-coded colours.
 
-**History limit:** `ReviewLog` exists only since 26 Oct 2026, so card XP and card days start then; recordings count from the start. Nobody's streak goes down, because recordings still count.
+**History limit:** `ReviewLog` exists only since study history went live (code on 26 Oct 2026, the live table from the Database setup run of 27 Oct), so card XP and card days start then; the screens say "late October 2026"; recordings count from the start. Nobody's streak goes down, because recordings still count.
 
 #### Phase 1 — what was built and how it was checked (29 Oct)
 
@@ -223,7 +223,7 @@ The owner said "start building next phase" again.
 Decisions made while building (the assistant's, within the accepted rules):
 - **Stored, not recomputed** (`lib/freeze.ts`). Each India day is settled once, in order, up to yesterday, when the dashboard or Profile opens, and never redone. Recomputing would let a goal change move past freezes: lowering a goal could revive an old streak, raising it could erase today's.
 - **Freezes start when a student is first seen after this ships**, with 1 held; earlier history is not re-judged. `weeksMet` (for the weekly badges) also counts from then.
-- **A freeze is spent only on a missed day that would break a live streak** (the day before was a streak day or frozen). Two held freezes cover two missed days in a row; a third missed day breaks the streak. Long breaks do not burn freezes.
+- **A freeze is spent only on a missed day that would break a live streak** (the day before was a streak day or frozen). Two held freezes cover a two-day break the student comes back from. When the days being settled show a break longer than the freezes held, the freezes spent on that break are given back (corrected in the audit; see "Audit").
 - **A frozen day keeps the streak but does not add to it** (5 days, a freeze, then today = still 5 until today counts).
 - Sunday ends the week (Monday to Sunday, India time); a week with the goal met on at least the weekly-goal days earns one freeze (at most 2 held) and counts towards the badges "Weekly goal met" and "Four good weeks" (Profile now lists 14 badges).
 - Two tabs settling at once cannot spend two freezes: the ledger update only matches the day it read, inside one transaction with the freeze rows.
@@ -247,6 +247,29 @@ Built:
 Checked on a local Postgres: 7 new number checks (the button with no tag, with another skill's tag, with the right tag; three reminder emails: streak line only for the student with a streak and under 10 XP today), the freeze, Phase 1 and Phase 2 number checks again; 22 browser checks (header stats on /today and Settings, updating to 486 XP after a client-side page change, no header row on the dashboard or on a phone, teacher refused by the API, admin saving a skill focus, the student's "Practise fluency" opening the filtered list and "Show all modules", axe in five themes on the header and the filtered modules page, no browser errors), and the 79 + 50 + 30 earlier browser checks again: all pass. `tsc` and `next build` pass.
 
 Test notes, not bugs: the header's EduSarthi logotype is excluded from axe as before (WCAG exempts logotypes); measuring right after a theme change or with the pointer over a card catches colours mid-fade, so the checks wait for them to settle.
+
+#### Audit of this chat's work (29 Oct, owner: "audit this chat work")
+
+A code review of the whole branch against `main` (bugs first), then a pass against CLAUDE.md's rules and the user-facing copy. Found and fixed:
+1. **Freezes wasted on a long break.** Two freezes were spent on a three-day break that ended the streak anyway. Now the freezes spent on a break that cannot be covered are given back (`settleDays`). A break still running at yesterday keeps its freezes spent, because the student may still come back today.
+2. **A missed Sunday not covered by the freeze its own week earned.** The week is now closed before Sunday is judged.
+3. **Any database error showed a wrong streak.** `settleFreezes` caught every error as "tables missing" and returned no frozen days, so a passing pool timeout shortened the streak. Now only a missing table (P2021/P2022) means "no freezes"; a failed read is thrown like every other query; a failed save still shows the settled result and is retried next visit.
+4. **"Delete my study history" said the streak was not affected.** Untrue since XP and streaks count from that history. The confirm now says XP and streak drop to what recordings earned; Help and the XP sheet say the same.
+5. **"Card XP counts from 26 Oct 2026" was not true of the live site** (its table arrived on 27 Oct). The screens now say "late October 2026".
+6. **The header asked for its numbers where it shows nothing** (on the dashboard, and on phones below the computer breakpoint), each time reading the whole XP history. It now asks only where it shows.
+7. **The data export would fail before Database setup** (it selected the new tables in its main query). The freeze data is now read separately and caught; the rest of the download always works.
+8. **A re-record did not tick "Send a recording"** (the daily allowance excludes replacements, but XP counts them). The task now counts every recording sent today.
+9. **"Set your level and goal" was ticked with only one of them set.** Both are needed now.
+10. **The same thing in two places:** the current-streak read was written out in Profile, `/api/progress` and the reminder (now one `currentStreak` in `lib/freeze.ts`); the five skills were listed twice (`CRITERIA` now comes from `lib/skillFocus.ts`); the tab names were copied (now read from `DECK_KINDS`); the lowest skill was picked twice (now once in `lib/dashboard.ts`, for both the highlight and the button). The helper `newPerDayOf`, orphaned by the new dashboard, is removed.
+11. **The reminder job could run out of time.** The streak line adds a few reads per student; it now stops 15 s before the job's deadline, and the reminders still go out without the line.
+
+Checked again after the fixes, on a fresh local database: every number check (Phase 1 42, Phase 2 13, freezes 20, Phase 4 7, audit 2), every browser suite (79 + 50 + 30 + 24, now including "no header request on a phone or the dashboard"), the export and the dashboard with the freeze tables missing, `tsc`, `next build`; no hard-coded colours in the diff (the reminder email's `#666` is older and emails cannot use the theme tokens), no changed file over 250 lines, a header comment on every new file.
+
+Left as they are, on purpose:
+- Card XP also leaves when a card or deck is deleted (its answers go with it). Keeping XP through deletions needs a stored per-day XP table; worth it only if students notice.
+- Admin → Content needs the new `Module.focus` column, so it fails in the minutes between a deploy and Database setup. Only the admin is affected, and the admin runs Database setup.
+- `studyDates` in `lib/history.ts` was unused before this branch; not this chat's to remove.
+- Before this branch, the reminder job already checked its deadline only between pages of 100 students; unchanged.
 
 ## Ideas noted, not planned
 

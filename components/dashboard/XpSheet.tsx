@@ -68,7 +68,7 @@ export function XpSheet({
         ))}
       </ul>
       <p className="mt-3 text-xs text-ink-muted">
-        XP is for practice, not for marks: audit scores never change it. Deck cards count too. Card XP counts from {XP_SINCE}, when study history began.
+        XP is for practice, not for marks: audit scores never change it. Deck cards count too. Card XP counts from {XP_SINCE}, when study history began, and leaves with it if you delete your study history.
       </p>
 
       <Link href="/settings#daily-goal" className="mt-4 flex min-h-11 items-center gap-2 rounded-lg bg-paper-dim px-3 text-sm text-ink hover:bg-hover">

@@ -92,6 +92,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
     kinds: review.kinds,
     decks: review.decks,
     reviewsToday: xp.days.get(today)?.reviews ?? 0,
+    recordedToday: xp.days.get(today)?.recordings ?? 0,
     audits: allowance,
     recordingHref,
   });
@@ -136,7 +137,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
 
   // Getting started, until three learning days or every step is done.
   const steps: Step[] = [
-    { label: "Set your level and goal", sub: "On your profile, for you alone", href: "/profile", done: prefs.level !== "unset" || prefs.goal !== "unset" },
+    { label: "Set your level and goal", sub: "On your profile, for you alone", href: "/profile", done: prefs.level !== "unset" && prefs.goal !== "unset" },
     { label: "Learn your first 10 cards", sub: "About 5 minutes", href: "/flashcards?kind=words", done: cards.seen >= 10, xp: 20 },
     ...(isGuest
       ? [{ label: "Keep your progress", sub: "Add your email; recordings and audits come with it", href: "/settings", done: false }]
@@ -182,11 +183,16 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
     skills,
     // "Practise fluency" only when a module is tagged for the lowest skill;
     // otherwise the button says what it really opens: every module.
-    practise: (() => {
+    // The lowest is chosen once, here, so the highlighted row and the button
+    // always name the same skill.
+    ...(() => {
       const low = skills.length ? skills.reduce((a, b) => (b.mean < a.mean ? b : a)) : null;
-      return low && focused.some((f) => f.focus === low.key)
-        ? { href: `/modules?focus=${low.key}`, label: `Practise ${low.label.toLowerCase()}` }
-        : { href: "/modules", label: "Practise speaking" };
+      return {
+        lowestSkill: low?.label ?? null,
+        practise: low && focused.some((f) => f.focus === low.key)
+          ? { href: `/modules?focus=${low.key}`, label: `Practise ${low.label.toLowerCase()}` }
+          : { href: "/modules", label: "Practise speaking" },
+      };
     })(),
     trend,
     notices,

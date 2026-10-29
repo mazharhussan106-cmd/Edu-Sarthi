@@ -110,14 +110,6 @@ export type PlaybackRate = (typeof PLAYBACK_RATES)[number];
 /// types 500 has not chosen a plan, they have broken their daily session.
 export const NEW_PER_DAY_OPTIONS = [5, 10, 15, 20, 30] as const;
 
-/// The daily new-card limit from a stored preferences value. Read loosely so a
-/// row written before this setting existed (or a value this version no longer
-/// accepts) falls back to the default instead of failing the page.
-export function newPerDayOf(stored: unknown): number {
-  const parsed = PREFERENCE_SCHEMA.pick({ newPerDay: true }).partial().safeParse(stored ?? {});
-  return (parsed.success && parsed.data.newPerDay) || DEFAULT_PREFERENCES.newPerDay;
-}
-
 /// Every preference, each parsed on its own over the defaults. One stored value
 /// this version no longer accepts (a retired card colour) loses only itself,
 /// instead of failing the whole object and silently resetting the rest.

@@ -42,6 +42,8 @@ export function todayTasks(input: {
   kinds: ReadonlyMap<CardKind, KindToday>;
   decks: readonly DeckToday[];
   reviewsToday: number;
+  /// Every recording sent today, replacements included (they earn XP too).
+  recordedToday: number;
   /// Null for a guest, who cannot send recordings.
   audits: { perDay: number; left: number } | null;
   recordingHref: string;
@@ -90,7 +92,7 @@ export function todayTasks(input: {
   }
 
   if (input.audits) {
-    const sent = input.audits.perDay - input.audits.left;
+    const sent = input.recordedToday;
     rows.push({
       key: "record",
       label: sent > 0 ? "Recording sent today" : "Send a recording for audit",

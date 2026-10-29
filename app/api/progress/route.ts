@@ -12,9 +12,8 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { prefsOf } from "@/lib/preferences";
-import { settleFreezes } from "@/lib/freeze";
-import { istDay, stageOf, streakOf } from "@/lib/streak";
-import { xpDays, xpMap } from "@/lib/xp";
+import { currentStreak } from "@/lib/freeze";
+import { stageOf } from "@/lib/streak";
 
 export const dynamic = "force-dynamic";
 
@@ -23,16 +22,11 @@ export async function GET() {
   if (!gate.ok) return gate.res;
   if (gate.role !== "STUDENT") return NextResponse.json({ error: "Only students have a streak." }, { status: 404 });
 
-  const [row, xp] = await Promise.all([
-    prisma.user.findUnique({ where: { id: gate.id }, select: { preferences: true } }),
-    xpDays(gate.id),
-  ]);
+  const row = await prisma.user.findUnique({ where: { id: gate.id }, select: { preferences: true } });
   const prefs = prefsOf(row?.preferences);
-  const today = istDay(new Date());
-  const byDay = xpMap(xp.days);
-  const { frozen } = await settleFreezes(gate.id, byDay, today, prefs.dailyGoalXp, prefs.weeklyGoalDays);
+  const st = await currentStreak(gate.id, prefs.dailyGoalXp, prefs.weeklyGoalDays);
   return NextResponse.json(
-    { streak: streakOf(byDay, today, frozen), xp: xp.total, stage: stageOf(xp.total).stage },
+    { streak: st.streak, xp: st.total, stage: stageOf(st.total).stage },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

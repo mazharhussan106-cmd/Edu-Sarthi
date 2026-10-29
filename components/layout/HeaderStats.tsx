@@ -5,9 +5,11 @@
 // A client component that asks /api/progress after every page change: the
 // header lives in a layout, which Next does not re-render on client
 // navigation, so numbers read on the server would stay as they were when the
-// student arrived. Hidden on the dashboard itself, which shows the same two
-// pills beside the greeting. Shows nothing while loading or if the request
-// fails, rather than a wrong number.
+// student arrived. It asks only where it shows: not on the dashboard (which
+// has the same two pills beside the greeting) and not below the computer
+// breakpoint (no header row there), since each ask reads the whole XP
+// history. Shows nothing while loading or if the request fails, rather than a
+// wrong number.
 
 "use client";
 
@@ -18,11 +20,24 @@ import { useEffect, useState } from "react";
 
 type Stats = { streak: number; xp: number; stage: number };
 
+// Tailwind's md breakpoint, where the header's second row appears.
+const WIDE = "(min-width: 768px)";
+
 export function HeaderStats() {
   const pathname = usePathname();
   const [stats, setStats] = useState<Stats | null>(null);
+  const [wide, setWide] = useState(false);
 
   useEffect(() => {
+    const mql = window.matchMedia(WIDE);
+    const update = () => setWide(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!wide || pathname === "/dashboard") return;
     let live = true;
     (async () => {
       try {
@@ -39,9 +54,9 @@ export function HeaderStats() {
     return () => {
       live = false;
     };
-  }, [pathname]);
+  }, [pathname, wide]);
 
-  if (!stats || pathname === "/dashboard") return null;
+  if (!stats || !wide || pathname === "/dashboard") return null;
   const pill = "inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-semibold text-ink hover:bg-hover";
   return (
     <>

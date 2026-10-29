@@ -35,9 +35,11 @@ export const WEEKLY_GOALS = [3, 5, 7] as const;
 /// weekly goal earns one, and at most two are held. Earned, never bought.
 export const FREEZE_START = 1;
 export const FREEZE_MAX = 2;
-/// Card answers are logged (ReviewLog) only from this day, so card XP starts
-/// here; the XP sheet says so instead of showing invented earlier numbers.
-export const XP_SINCE = "26 Oct 2026";
+/// Card answers are logged (ReviewLog) only since study history went live, so
+/// card XP starts there; the XP sheet says so instead of showing invented
+/// earlier numbers. Not a single date: the code arrived on 26 Oct 2026 and the
+/// live database got the table when Database setup next ran (27 Oct).
+export const XP_SINCE = "late October 2026";
 /// Evening, India time, after which a streak with nothing done today is
 /// called "at risk" on the dashboard.
 export const AT_RISK_HOUR = 18;

@@ -437,6 +437,10 @@ The owner then accepted every recommendation (chart kept on the dashboard) and s
 
 **Phase 4 built (owner chose "Polish + small ideas"):** streak and XP in the header of every student page on a computer (`HeaderStats`, `/api/progress`), a "keep your streak" line in the daily reminder email, and a skill focus on modules (new nullable column `Module.focus`, set in Admin → Content or the CSV `skill_focus` column) so the dashboard's button can say "Practise fluency" and open `/modules?focus=fluency`. **No module is tagged yet; the admin has to tag them.** Details: `docs/DASHBOARD-PLAN.md` → "Phase 4".
 
+**Audit (owner: "audit this chat work"):** 11 problems found and fixed — freezes wasted on a break they could not cover (now given back), a missed Sunday not covered by that week's freeze, any database error showing a shorter streak, "Delete my study history" wrongly promising the streak is untouched, "XP counts from 26 Oct" untrue for the live site (now "late October 2026"), the header fetching on phones and the dashboard, the export failing before Database setup, a re-record not ticking the recording task, the level-and-goal step, duplicated logic, and the reminder job's time. All checks re-run and passing. Details and what was left on purpose: `docs/DASHBOARD-PLAN.md` → "Audit of this chat's work".
+
+**Don't undo (audit):** a break longer than the freezes held costs no freezes; only a missing table means "no freezes", other errors are not hidden; deleting study history lowers XP and streak, and the screens say so.
+
 **Next:** merge, then **Actions → Database setup** once, straight away (two tables from Phase 3, one column from Phase 4; the dashboard copes without them for those minutes), then tag modules with a skill focus in Admin → Content, then `LIVE-TESTING-GUIDE.md` section 4d on a phone. Not started, on purpose: teacher home page, admin overview.
 
 ## Flashcard phone layout: lesson (10 Oct)

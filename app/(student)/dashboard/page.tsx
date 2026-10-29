@@ -72,7 +72,7 @@ export default async function DashboardPage() {
           {d.notices.length > 0 ? <div className="lg:hidden">{notices}</div> : null}
           {d.gettingStarted ? null : (
             <>
-              <SkillsCard rows={d.skills} audits={d.auditCount} member={member} practise={d.practise} />
+              <SkillsCard rows={d.skills} audits={d.auditCount} member={member} practise={d.practise} lowest={d.lowestSkill} />
               {d.trend.length >= 2 ? (
                 <Card className="p-4 sm:p-5">
                   <CardTitle>Your average, audit by audit</CardTitle>

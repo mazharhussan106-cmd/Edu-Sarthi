@@ -7,8 +7,10 @@
 // answered that day, so tapping Known and Unknown on one card earns nothing
 // extra. The rules themselves live in lib/streak (no database there).
 //
-// ReviewLog exists only since 26 Oct 2026, so card XP starts then; recordings
-// count from the first one.
+// ReviewLog exists only since study history went live (late October 2026), so
+// card XP starts then; recordings count from the first one. Card XP leaves
+// with its rows: "Delete my study history", or a deleted card or deck, takes
+// it away, and the History and XP screens say so.
 
 import { Prisma } from "@prisma/client";
 

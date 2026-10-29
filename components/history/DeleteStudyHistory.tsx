@@ -46,7 +46,7 @@ export function DeleteStudyHistory() {
   }
   return (
     <div role="group" aria-label="Confirm deleting study history" className="flex flex-col gap-2">
-      <p className="text-sm text-ink">This removes the list of every card you answered. It cannot be undone. Your review schedule and streak are not affected.</p>
+      <p className="text-sm text-ink">This removes the list of every card you answered. It cannot be undone. Your review schedule is not affected, but your XP and streak are counted from this list: they drop to what your recordings earned.</p>
       <div className="flex gap-2">
         <Button size="sm" onClick={remove} disabled={step === "busy"}>
           {step === "busy" ? "Deleting…" : "Yes, delete"}

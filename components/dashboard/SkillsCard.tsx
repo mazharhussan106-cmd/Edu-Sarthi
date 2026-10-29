@@ -20,15 +20,17 @@ export function SkillsCard({
   audits,
   member,
   practise,
+  lowest,
 }: {
   rows: readonly SkillRow[];
   audits: number;
   member: boolean;
   /// Where the main button goes: the lowest skill's modules when an admin tagged any, else all modules.
   practise: { href: string; label: string };
+  /// The lowest skill's label, chosen in lib/dashboard with the button.
+  lowest: string | null;
 }) {
   if (!member) return null;
-  const lowest = rows.length > 0 ? rows.reduce((a, b) => (b.mean < a.mean ? b : a)) : null;
 
   return (
     <Card className="p-4 sm:p-5">
@@ -48,12 +50,12 @@ export function SkillsCard({
                 key={r.label}
                 className={cn(
                   "grid min-h-9 grid-cols-[6.5rem_1fr_2rem_2.25rem] items-center gap-2.5 text-sm",
-                  r === lowest && "-mx-2 rounded-lg bg-saffron/12 px-2 font-semibold",
+                  r.label === lowest && "-mx-2 rounded-lg bg-saffron/12 px-2 font-semibold",
                 )}
               >
                 <span className="text-ink">{r.label}</span>
                 <span className="block h-2 overflow-hidden rounded-full bg-paper-dim" aria-hidden="true">
-                  <span className={cn("block h-full rounded-full", r === lowest ? "bg-saffron" : "bg-accent")} style={{ width: `${r.mean * 10}%` }} />
+                  <span className={cn("block h-full rounded-full", r.label === lowest ? "bg-saffron" : "bg-accent")} style={{ width: `${r.mean * 10}%` }} />
                 </span>
                 <span className="font-mono text-ink">{fmt(Math.round(r.mean * 10) / 10)}</span>
                 <span className={cn("text-right font-mono text-xs", r.change > 0 ? "text-success" : "text-ink-muted")}>
@@ -64,7 +66,7 @@ export function SkillsCard({
             ))}
           </ul>
           <p className="mt-2 text-sm text-ink">
-            {lowest!.label} is your lowest. <span className="text-ink-muted">Bars are your average; the last column is the change from your first audit to your latest.</span>
+            {lowest} is your lowest. <span className="text-ink-muted">Bars are your average; the last column is the change from your first audit to your latest.</span>
           </p>
         </>
       )}

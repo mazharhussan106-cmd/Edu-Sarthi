@@ -543,7 +543,7 @@ Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oc
   3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
   4. Test on a phone.
 
-## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — Steps 1 and 2 BUILT and tested, not merged; Steps 3 and 4 planned
+## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — Steps 1, 2 and 3 BUILT and tested, not merged; Step 4 (the owner's) planned
 
 Owner's requirement: EduSarthi is a repository, so there must be **one place** where anyone (signed in or not) can see every public flashcard deck. Plan, built list and tests: `docs/PUBLIC-LIBRARY-PLAN.md`.
 - Today (live) `/library` is behind login, so search engines and visitors see none of the approved decks. The plan opens the existing Library to everyone (no new section) and later adds `robots`, a sitemap, deck metadata, paging and a tag row.
@@ -555,7 +555,8 @@ Owner's requirement: EduSarthi is a repository, so there must be **one place** w
 - **Step 2 (findable) built:** `app/robots.ts`, `app/sitemap.ts`, `lib/siteUrl.ts`, root `metadataBase` and `openGraph`, per-deck and per-card metadata, `noindex` on cards, filtered lists and page 2 of a deck, a "Browse flashcard decks" button on the landing page. Details, tests and what was left out: `docs/PUBLIC-LIBRARY-PLAN.md` → Step 2.
 - **Don't undo (Step 2):** `/d/` is not disallowed in robots.txt (a blocked page's `noindex` is never read); the root `openGraph` has no title or description (shallow merge); metadata never names the creator; `siteUrl()` returns `null` rather than throwing (a throw would fail the build); the sitemap is `force-dynamic`.
 - Owner's domain answer: `edusarthi.com` is not a blocker; Step 2 reads `NEXT_PUBLIC_APP_URL` and falls back to Vercel's production domain. **Check that `NEXT_PUBLIC_APP_URL` is set in Vercel**: it is also what the emails use.
-- Next: the owner decides on Step 4 (text, terms version, email) and says go for Step 3 (paging, tag row). After launch the owner adds the site to Google Search Console and submits `/sitemap.xml`.
+- **Step 3 (browsing) built:** the library list has pages of 24, a count line, a row of topic chips with deck counts (eight shown, the rest under "More topics"), and visitor wording ("Flashcard library", "topics"). New: `lib/libraryTags.ts`, `lib/libraryUrl.ts`, `components/decks/LibraryTags.tsx`. **Don't undo:** the deck id is the last sort key (otherwise a deck can show on two pages or none); the plain list is exactly `/library` (`libraryHref` drops the defaults); page 2 and on are `noindex`. The list now runs four reads instead of two on a one-connection pool: watch it after launch. Details and tests: `docs/PUBLIC-LIBRARY-PLAN.md` → Step 3.
+- Next: the owner decides on Step 4 (text, terms version, email); then merge the branch. After launch the owner adds the site to Google Search Console and submits `/sitemap.xml`.
 
 ## Starting a new chat
 

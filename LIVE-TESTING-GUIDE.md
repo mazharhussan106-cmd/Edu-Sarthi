@@ -310,6 +310,14 @@ Database setup ki zarurat nahi. **Library ko bina login ke kholne wala hissa (St
 - [ ] `/library/<deck>/study` seedha `/login` par jaaye
 - [ ] Koi deck Admin → Decks se reject/take down karke dekhiye: ab wo list me nahi aata aur uska page "not found" dikhata hai
 
+**Library ki list (Step 3, student aur visitor dono ke liye):**
+- [ ] Heading "Flashcard library"; search ke neeche Newest / Most liked / Most copied, phir topics ki row: "All topics" aur 8 topics, har ek ke saath deck ki ginti
+- [ ] Kisi topic par tap → list us topic ke decks tak simit ho, "N decks match" likha aaye aur wo topic neela ho; "All topics" par tap → wapas sab
+- [ ] "More topics (N)" par tap → baaki topics khulein. Wahan se koi topic chuniye to page khulne par ye hissa khula rahe
+- [ ] 24 se zyada decks hon to neeche "← Previous  1 / 2  Next →"; Next dabane par doosre decks aayein, koi deck dobara ya gayab nahi
+- [ ] Phone par pehla deck topics ki row ke turant neeche dikhe (zyada neeche na dhakela jaaye)
+- [ ] Koi deck reject kar ke dekhiye: uska topic count ghat jaaye, aur sirf usi deck wala topic ho to row se gayab ho jaaye
+
 **Google ke liye (Step 2, Step 1b ke saath hi merge hota hai):**
 - [ ] `https://<aapki site>/robots.txt` khule: "Allow: /" aur "Disallow: /dashboard" jaisi lines, aur neeche `Sitemap: https://<aapki site>/sitemap.xml`. Agar Sitemap wali line nahi hai, to Vercel me `NEXT_PUBLIC_APP_URL` set kariye
 - [ ] `/sitemap.xml` khule aur usme har public deck ka `/library/<id>` ho (card ya search wale links nahi)

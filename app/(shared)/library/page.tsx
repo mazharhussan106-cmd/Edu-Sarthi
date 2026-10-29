@@ -1,6 +1,6 @@
-// Owns the public library: decks an admin has approved, with search and a tag
-// filter. Open to everyone, signed in or not (proxy.ts PUBLIC_LIBRARY); a
-// visitor gets a sign-in prompt where an account is needed.
+// Owns the public library: decks an admin has approved, with search, a topic
+// filter, a sort and pages. Open to everyone, signed in or not (proxy.ts
+// PUBLIC_LIBRARY); a visitor gets a sign-in prompt where an account is needed.
 //
 // Only listed decks are queried (lib/decks LISTED) — a deck waiting for review,
 // rejected, pulled after reports, or whose owner or institute is suspended is
@@ -9,6 +9,7 @@
 // (components/decks/DeckCredit).
 // It deliberately does NOT list the viewer's own drafts (that is My decks).
 
+import type { Prisma } from "@prisma/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Search } from "lucide-react";
@@ -17,21 +18,28 @@ import { auth } from "@/lib/auth";
 import { canonical } from "@/lib/siteUrl";
 import { prisma } from "@/lib/prisma";
 import { CREDIT_INSTITUTE_SELECT, CREDIT_SELECT } from "@/lib/libraryTerms";
+import { libraryHref } from "@/lib/libraryUrl";
+import { libraryTags } from "@/lib/libraryTags";
 import { DeckCredit } from "@/components/decks/DeckCredit";
 import { LISTED, aiCardCounts } from "@/lib/decks";
 import { AiBadge } from "@/components/decks/AiBadge";
+import { LibraryTags } from "@/components/decks/LibraryTags";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
 export const revalidate = 0;
 
-// One address in search results: the plain list. A search, a tag or another
-// sort is the same decks again in a different order, so those stay out of the
-// index (but their links are still followed). The tag filter is a page of its
-// own worth indexing only once tags have descriptions; not now.
-export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string; tag?: string; sort?: string }> }): Promise<Metadata> {
+const PER_PAGE = 24;
+
+type View = { q?: string; tag?: string; sort?: string; page?: string };
+
+// One address in search results: the plain first page. A search, a topic,
+// another sort and page 2 or later are the same decks again, so those stay out
+// of the index (but their links are still followed). A topic page would be
+// worth indexing only once topics have descriptions; not now.
+export async function generateMetadata({ searchParams }: { searchParams: Promise<View> }): Promise<Metadata> {
   const sp = await searchParams;
-  const variant = Boolean(sp.q?.trim() || sp.tag?.trim() || (sp.sort && sp.sort !== "new"));
+  const variant = Boolean(sp.q?.trim() || sp.tag?.trim() || (sp.sort && sp.sort !== "new") || Number(sp.page) > 1);
   return {
     title: "Flashcard library — EduSarthi",
     description: "Flashcard decks shared by EduSarthi learners and teachers, checked by an admin before they appear. Anyone can read them.",
@@ -46,24 +54,41 @@ const SORTS = [
   { value: "copied", label: "Most copied" },
 ] as const;
 
-export default async function LibraryPage({ searchParams }: { searchParams: Promise<{ q?: string; tag?: string; sort?: string }> }) {
+export default async function LibraryPage({ searchParams }: { searchParams: Promise<View> }) {
   const [sp, session] = await Promise.all([searchParams, auth()]);
   const signedIn = Boolean(session?.user?.id);
   const q = (sp.q ?? "").trim().slice(0, 60);
   const tag = (sp.tag ?? "").trim().toLowerCase().slice(0, 24);
   const sort = SORTS.some((x) => x.value === sp.sort) ? (sp.sort as string) : "new";
+  const filtered = Boolean(q || tag);
+
+  const where: Prisma.DeckWhereInput = {
+    ...LISTED,
+    ...(tag ? { tags: { has: tag } } : {}),
+    ...(q
+      ? { OR: [{ title: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }, { tags: { has: q.toLowerCase() } }] }
+      : {}),
+  };
+  // Newest is the tiebreak, and the id the last one: without it two decks with
+  // the same time or count could swap places between page 1 and page 2, so one
+  // would show twice and another not at all.
+  const orderBy: Prisma.DeckOrderByWithRelationInput[] =
+    sort === "liked"
+      ? [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }, { id: "asc" }]
+      : sort === "copied"
+        ? [{ copyCount: "desc" }, { reviewedAt: "desc" }, { id: "asc" }]
+        : [{ reviewedAt: "desc" }, { id: "asc" }];
+
+  const [total, topics] = await Promise.all([prisma.deck.count({ where }), libraryTags()]);
+  const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+  // A page number that is not a number, or past the end, shows the nearest real one.
+  const page = Math.min(pages, Math.max(1, Math.floor(Number(sp.page)) || 1));
 
   const decks = await prisma.deck.findMany({
-    where: {
-      ...LISTED,
-      ...(tag ? { tags: { has: tag } } : {}),
-      ...(q
-        ? { OR: [{ title: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }, { tags: { has: q.toLowerCase() } }] }
-        : {}),
-    },
-    // Newest is the tiebreak, so equal counts do not shuffle between loads.
-    orderBy: sort === "liked" ? [{ likes: { _count: "desc" } }, { reviewedAt: "desc" }] : sort === "copied" ? [{ copyCount: "desc" }, { reviewedAt: "desc" }] : [{ reviewedAt: "desc" }],
-    take: 30,
+    where,
+    orderBy,
+    skip: (page - 1) * PER_PAGE,
+    take: PER_PAGE,
     select: { id: true, title: true, description: true, tags: true, licence: true, ...CREDIT_INSTITUTE_SELECT, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, _count: { select: { cards: true, likes: true } } },
   });
 
@@ -72,11 +97,11 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   return (
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-xl font-bold text-ink">Deck library</h1>
+        <h1 className="font-display text-xl font-bold text-ink">Flashcard library</h1>
         {signedIn ? <Link href="/decks" className="text-sm font-medium text-accent hover:underline">My decks</Link> : null}
       </div>
       <p className="mt-1 text-sm text-ink-muted">
-        Decks shared by other learners, checked by an admin before they appear.{" "}
+        Flashcard decks shared by learners and teachers, checked by an admin before they appear.{" "}
         {signedIn ? "Copy one to study it." : <>Anyone can read them. <Link href="/login" className="text-accent underline">Sign in</Link> to copy or follow one.</>}
       </p>
 
@@ -85,13 +110,13 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist" aria-hidden="true" />
         {tag ? <input type="hidden" name="tag" value={tag} /> : null}
         <input type="hidden" name="sort" value={sort} />
-        <input id="lib-search" name="q" type="search" defaultValue={q} placeholder="Search decks or tags" className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent" />
+        <input id="lib-search" name="q" type="search" defaultValue={q} placeholder="Search decks or topics" className="h-9 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent" />
       </form>
       <nav aria-label="Sort decks" className="mt-2 flex gap-1.5">
         {SORTS.map((x) => (
           <Link
             key={x.value}
-            href={`/library?${new URLSearchParams({ ...(q ? { q } : {}), ...(tag ? { tag } : {}), sort: x.value })}`}
+            href={libraryHref({ q, tag, sort: x.value })}
             aria-current={x.value === sort ? "page" : undefined}
             className={x.value === sort ? "rounded-full bg-accent px-3 py-1 text-[13px] font-medium text-on-accent" : "rounded-full border border-border-strong px-3 py-1 text-[13px] text-ink hover:bg-hover"}
           >
@@ -99,17 +124,25 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
           </Link>
         ))}
       </nav>
-      {tag ? (
-        <p className="mt-2 text-sm text-ink-muted">
-          Tag: <Badge variant="accent">{tag}</Badge> <Link href="/library" className="ml-1 text-accent hover:underline">clear</Link>
+      <LibraryTags tags={topics} active={tag} q={q} sort={sort} />
+
+      {total > 0 ? (
+        <p className="mt-3 text-sm text-ink-muted">
+          {total} {total === 1 ? "deck" : "decks"}{filtered ? (total === 1 ? " matches" : " match") : ""}
         </p>
       ) : null}
 
-      <ul className="mt-4 flex flex-col gap-2">
+      <ul className="mt-2 flex flex-col gap-2">
         {decks.length === 0 ? (
           <li>
             <Card className="text-center text-sm text-ink-muted">
-              {q || tag ? "No deck matches that. Try a shorter word." : signedIn ? "No decks are published yet. Make one in My decks and submit it." : "No decks are published yet. Please check again soon."}
+              {filtered ? (
+                <>No deck matches that. Try a shorter word, or <Link href="/library" className="text-accent underline">see every deck</Link>.</>
+              ) : signedIn ? (
+                "No decks are published yet. Make one in My decks and submit it."
+              ) : (
+                "No decks are published yet. Please check again soon."
+              )}
             </Card>
           </li>
         ) : null}
@@ -136,6 +169,14 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
           </li>
         ))}
       </ul>
+
+      {pages > 1 ? (
+        <nav aria-label="Pages" className="mt-4 flex items-center justify-between text-sm">
+          {page > 1 ? <Link href={libraryHref({ q, tag, sort, page: page - 1 })} rel="prev" className="font-medium text-accent hover:underline">← Previous</Link> : <span />}
+          <span className="font-mono text-xs text-ink-muted">{page} / {pages}</span>
+          {page < pages ? <Link href={libraryHref({ q, tag, sort, page: page + 1 })} rel="next" className="font-medium text-accent hover:underline">Next →</Link> : <span />}
+        </nav>
+      ) : null}
     </main>
   );
 }

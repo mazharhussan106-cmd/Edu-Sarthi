@@ -1,6 +1,6 @@
 # Public library hub — plan (29 Oct 2026)
 
-Status: **Steps 1 and 2 built and tested on `claude/bold-hopper-hxfrpd` (29 Oct), not merged. Steps 3 and 4 are planned, not built.** Do not merge Step 1b or Step 2 before Step 4 is ready (see below). Step 1a (commit "Nav: Library replaces Class …") is safe to merge alone. Step 2 is harmless until Step 1b is live, because a crawler cannot reach the library while it is behind login, but keep them together.
+Status: **Steps 1, 2 and 3 built and tested on `claude/bold-hopper-hxfrpd` (29 Oct), not merged. Step 4 (words and notice) is planned, not built, and it is the owner's.** Do not merge Step 1b, 2 or 3 before Step 4 is ready (see below). Step 1a (commit "Nav: Library replaces Class …") is safe to merge alone. Steps 2 and 3 are harmless until Step 1b is live, because a crawler cannot reach the library while it is behind login, but keep them together (Step 3 also changes what signed-in learners see: pages, topic chips, a new heading).
 
 ## What Step 1 did, and how it was tested
 
@@ -95,7 +95,20 @@ Tested on a production build, local Postgres, plain HTTP and Playwright:
 - `tsc --noEmit` and `next build` pass.
 Not tested: Google actually indexing anything, a real phone, the live database, and how the live pool copes with crawler traffic.
 
-**Step 3 — browsing for strangers (3 files).** Today the list stops at 30 decks with no next page, and tags can only be used if you already know them. Add paging, a row of the tags in use (with counts), and wording that fits a visitor. `app/(shared)/library/page.tsx`, `lib/libraryTags.ts`, one small component.
+**Step 3 — browsing for strangers. BUILT (29 Oct), 4 files and no database change.** Before it, the list stopped at 30 decks with no next page, and tags could be used only if you already knew one to type.
+- `app/(shared)/library/page.tsx`: pages of 24 (`?page=N`, Previous / Next with "page / pages", `rel=prev` and `rel=next`); a count line ("34 decks", "30 decks match", "1 deck matches"); the heading is now "Flashcard library" (it said "Deck library") and the intro and the search placeholder say "topics" where they said "tags", for a visitor who does not know what a deck or a tag is; an empty search offers "see every deck". A page number that is not a number, is 0 or negative, or is past the end shows the nearest real page.
+- **Don't undo: the id is the last sort key.** Two decks with the same time or count could otherwise swap places between page 1 and page 2, so one would show twice and another never. Tested with 30 decks that share one `reviewedAt`.
+- `lib/libraryTags.ts`: the topics in use and how many listed decks hold each, most used first, ties by name. It counts only `LISTED` decks (a topic held by a pending, private or suspended owner's deck never shows; tested), and a deck counts once per topic. It reads every listed deck's tags and counts in code, since Prisma cannot group an array column and a raw query would repeat the `LISTED` rules where they could drift. Fine for hundreds of decks; at a few thousand, replace it with one SQL aggregate.
+- `components/decks/LibraryTags.tsx`: "All topics", then eight chips with counts, then the rest under a native "More topics (N)" fold (no JavaScript; open on load when the chosen topic is one of the folded ones). **Eight, not twelve:** twelve chips took five lines on a phone and pushed the first deck off the screen. A chip keeps the search and sort and drops the page. The chosen one is `aria-current`.
+- `lib/libraryUrl.ts`: one `libraryHref()` for every link on the list (sort, topic, pager); it leaves out sort Newest and page 1, so the plain list is always exactly `/library`.
+- Metadata: page 2 and on are `noindex, follow` with the canonical still `/library`, like the other variants.
+- **Cost to watch:** the list page now runs four reads (count, topics, decks, AI-card counts) where it ran two. The live pool has one connection, so they queue. Watch Vercel's runtime logs after launch; if it is slow, cache the topics.
+
+Tested on a production build and a local Postgres with 34 listed decks (24 + 10) and 15 topics:
+- 38 HTTP checks: both pages, no deck twice or missing in the three sorts, the pager links and what they keep, six bad page numbers, topic counts equal the database for four topics, hidden decks' topic never shown, eight chips plus the fold, the fold open for a folded topic, "30 decks match" / "2 decks match" / "1 deck matches" / no match, indexable or `noindex` as above, a rejected deck and a suspended owner changing the counts and coming back;
+- 79 browser checks, signed out and signed in, at 390 and 1280 px: clicking a topic, Next, Previous, a search inside a topic, All topics, the fold with the keyboard (Enter opens and closes it), no sideways scroll, no page errors, the bottom bar still lit, and axe in five themes on the list, topic page 2, an open fold, no result and the signed-in list (clean apart from the logotype);
+- the Step 1 (56), Step 2 (45) and Profile (62) suites again with the extra decks present; `tsc --noEmit` and `next build` pass.
+Not tested: a real phone, the live database and pool, and the list with thousands of decks.
 
 **Step 4 — words and notice (before anything goes live).** The Privacy page says public decks are "visible to every signed-in user" (`app/(public)/legal/privacy/page.tsx`, line ~188), and creators agreed to the terms of `LIBRARY_TERMS_VERSION = "2026-10-27"`. Opening the library to everyone changes that.
 - Update Privacy, Terms and Library rules to say anyone, including search engines, can see published decks.
@@ -133,5 +146,5 @@ Local Postgres and Playwright, signed out and signed in:
 ## Open
 
 - Terms version and re-consent (Step 4): the owner and a lawyer.
-- The owner's "go" for Step 3 (paging and the tag row).
+- Step 4 is what stands between this branch and `main` (see above).
 - After launch, the owner adds the site to Google Search Console and submits the sitemap. Indexing takes days to weeks and is not guaranteed.

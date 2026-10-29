@@ -4,12 +4,12 @@ Playwright checks for the Profile page (student, guest, teacher, admin), one sui
 
 | Suite | What it checks |
 |---|---|
-| `p1-layout` | Identity card, Edit profile (name, number), goal sheet, badges, Who sees what, delete account, `#your-data`, dashboard streak, Get started opening the goal sheet, axe |
-| `p2-scores-calendar` | Speaking scores, practice calendar (count, weeks per width, list sheet, empty states), axe |
+| `p1-layout` | Identity card, Edit profile (name, number), goal sheet, badges, Who sees what, delete account, `#your-data`, the same streak on Profile, dashboard and header, Get started opening the goal sheet, axe |
+| `p2-scores-calendar` | Speaking scores, practice calendar (learning days by the dashboard's XP rule, a freeze day, weeks per width, list sheet, empty states), axe |
 | `p3-goal-date` | Target date: days left, reload, server refusals, today, a passed date, clear, axe |
 | `p4-staff` | Teacher and admin profiles, QA notes with their audit, queue and turnaround equal to Queue and Workload, admin's QA-note warning, axe |
 | `p5-photo` | Photo: wrong file, keyboard crop and focus, stored file is 512 × 512 WebP with no camera data, replace, export, refused keys and oversized files, guests, no leak to teacher or admin pages, remove, account deletion |
-| `p6-share-badges` | 12 badges, Share progress preview, switches and 1080 × 1350 PNG download, axe |
+| `p6-share-badges` | 17 badges, Share progress preview, switches and 1080 × 1350 PNG download, axe |
 
 **Local only.** `seed.cjs` deletes and remakes seven `@test.local` accounts with one known password, and it refuses to run unless `DATABASE_URL` is a localhost database.
 

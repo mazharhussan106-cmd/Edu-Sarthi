@@ -6,7 +6,7 @@
 // a tooltip is not reachable by keyboard or screen reader. It deliberately
 // does NOT decide who earned what; lib/badges does.
 
-import { Award, BookOpen, Check, Flame, Layers, Mic, Share2, Sparkles, Target, TrendingUp, Trophy, type LucideIcon } from "lucide-react";
+import { Award, BookOpen, CalendarCheck, Check, Flame, Layers, Mic, Share2, Sparkles, Target, TrendingUp, Trophy, Zap, type LucideIcon } from "lucide-react";
 
 import { Card, CardTitle } from "@/components/ui/Card";
 import { SheetButton } from "@/components/ui/SheetButton";
@@ -17,11 +17,16 @@ const ICONS: Record<string, LucideIcon> = {
   "first-recording": Mic,
   "first-audit": Check,
   "five-audits": Award,
+  "ten-recordings": Mic,
   "streak-3": Flame,
   "streak-7": Flame,
-  "streak-14": Trophy,
+  "streak-30": Trophy,
   "known-30": Layers,
   "known-100": Layers,
+  "known-500": Layers,
+  "xp-100-day": Zap,
+  "first-week": CalendarCheck,
+  "four-weeks": CalendarCheck,
   "deck-maker": BookOpen,
   "goal-set": Target,
   "score-up": TrendingUp,

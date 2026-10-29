@@ -4,8 +4,9 @@
 //
 // The page is in phone order in the HTML, and a computer only puts pairs next
 // to each other, so the reading and Tab order is the same on every screen.
-// It deliberately does NOT query directly; lib/profileStats gathers the
-// numbers in one round.
+// Streak, XP, badges and skill numbers are the dashboard's (lib/streak and
+// friends), so the two pages always agree. It deliberately does NOT query
+// directly; lib/profileStats gathers the numbers in one round.
 
 import { BadgeCheck, BookOpen, Flame, Globe, History, Layers, Pin, School, Settings, Trophy } from "lucide-react";
 
@@ -22,42 +23,54 @@ import { LinkRow, RowGroup, StatTiles } from "@/components/profile/ProfileParts"
 import { ShareProgress } from "@/components/profile/ShareProgress";
 import { SkillScores } from "@/components/profile/SkillScores";
 import { badgesFor } from "@/lib/badges";
-import { DAILY_GOAL } from "@/lib/progress";
 import { displayId } from "@/lib/publicId";
-import { todayNumber, type StudentProfile as Data } from "@/lib/profileStats";
+import { dayNumberOf, type StudentProfile as Data } from "@/lib/profileStats";
+import { STREAK_MIN_XP, XP_NEW_CARD, XP_RECORDING, XP_REVIEW, addDays } from "@/lib/streak";
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
-// ReviewLog (card answers by day) started on this date; before it, only
-// recordings can be shown, and the calendar says so.
+// ReviewLog (card answers by day) started on this date; before it, card XP
+// cannot be shown, and the calendar says so.
 const CARD_LOG_START = Date.UTC(2026, 9, 26);
 
-function calendarDays(practice: Data["practice"]): CalendarDay[] {
-  return [...practice.entries()].map(([day, p]) => ({
-    day,
-    // One recording weighs like ten card answers: it takes about as long.
-    score: p.recordings * 10 + p.cards,
-    text: [p.recordings ? plural(p.recordings, "recording") : "", p.cards ? plural(p.cards, "card") : ""].filter(Boolean).join(", "),
+/// One square per day with XP, shaded by XP (lib/xp), and the days a streak
+/// freeze covered, so the year view tells the same story as the dashboard.
+function calendarDays(data: Data): CalendarDay[] {
+  const days: CalendarDay[] = [...data.xp.entries()].map(([day, d]) => ({
+    day: dayNumberOf(day),
+    score: d.xp,
+    text: [
+      `${d.xp} XP`,
+      d.recordings ? plural(d.recordings, "recording") : "",
+      d.newCards + d.reviews ? plural(d.newCards + d.reviews, "card") : "",
+    ]
+      .filter(Boolean)
+      .join(" · "),
   }));
+  for (const day of data.frozen) if (!data.xp.has(day)) days.push({ day: dayNumberOf(day), score: 0, text: "Streak freeze used" });
+  return days;
 }
 
 export function StudentProfile({ data }: { data: Data }) {
   const { user, prefs, decks } = data;
   const id = displayId(user.publicId);
   const guest = user.isGuest;
+  // The same inputs the dashboard passes (lib/dashboard), so both agree.
   const badges = badgesFor({
     submissions: data.submissions,
     audits: data.audits,
-    bestStreak: data.longest,
+    streak: data.streak,
+    longestStreak: data.longest,
     cardsKnown: data.cardsKnown,
     decks: decks.owned,
-    sharedDecks: Math.max(decks.shared, decks.inLibrary),
+    bestDayXp: data.bestDayXp,
+    weeksMet: data.weeksMet,
     goalSet: prefs.goal !== "unset",
+    sharedDecks: decks.sharedOrListed,
     bestScoreGain: Math.max(0, ...data.scores.map((s) => s.change ?? 0)),
   });
-  const today = todayNumber();
-  // The streak reads 400 days so a long run is not cut; the sentence says a year.
-  const yearDays = [...data.practice.keys()].filter((d) => d > today - 365).length;
+  const yearAgo = addDays(data.today, -365);
+  const yearDays = [...data.xp.entries()].filter(([day, d]) => day > yearAgo && d.xp >= STREAK_MIN_XP).length;
   const best = [...data.scores].sort((a, b) => (b.change ?? 0) - (a.change ?? 0))[0];
   const share = {
     firstName: user.name?.trim().split(/\s+/)[0] ?? null,
@@ -130,27 +143,28 @@ export function StudentProfile({ data }: { data: Data }) {
         goal={prefs.goal}
         level={prefs.level}
         goalDate={prefs.goalDate}
-        recordings={data.recordingsToday}
-        recordingGoal={guest ? 0 : DAILY_GOAL}
-        newCards={data.newCardsToday}
-        newPerDay={prefs.newPerDay}
+        todayXp={data.todayXp}
+        dailyGoalXp={prefs.dailyGoalXp}
+        weekMet={data.weekMet}
+        weeklyGoalDays={prefs.weeklyGoalDays}
       />
 
       <SkillScores scores={data.scores} audits={data.audits} />
 
       <ActivityCalendar
         title="Practice calendar"
-        days={calendarDays(data.practice)}
-        today={today}
-        levels={[1, 10, 25, 50]}
+        days={calendarDays(data)}
+        today={dayNumberOf(data.today)}
+        // Some XP, a streak day, the daily goal, twice the goal.
+        levels={[1, STREAK_MIN_XP, prefs.dailyGoalXp, prefs.dailyGoalXp * 2]}
         summary={
           <>
-            <b className="font-mono">{yearDays}</b> practice {yearDays === 1 ? "day" : "days"} in the last 12 months · longest streak{" "}
+            <b className="font-mono">{yearDays}</b> learning {yearDays === 1 ? "day" : "days"} in the last 12 months · longest streak{" "}
             <b className="font-mono">{data.longest}</b> {data.longest === 1 ? "day" : "days"}
           </>
         }
-        note={`A day counts when you send a recording or answer a card.${user.createdAt.getTime() < CARD_LOG_START ? " Card answers are counted from 26 Oct 2026." : ""}`}
-        emptyText="No practice days yet. Answer a card or send a recording and today fills in."
+        note={`A learning day is ${STREAK_MIN_XP} XP or more: a recording is ${XP_RECORDING}, a new card ${XP_NEW_CARD}, a review ${XP_REVIEW}. Darker squares are closer to your daily goal.${user.createdAt.getTime() < CARD_LOG_START ? " Card XP counts from 26 Oct 2026." : ""}`}
+        emptyText="No learning days yet. Answer a card or send a recording and today fills in."
       />
 
       <BadgeGrid badges={badges} />

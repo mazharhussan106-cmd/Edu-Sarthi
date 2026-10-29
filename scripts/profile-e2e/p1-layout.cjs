@@ -1,6 +1,7 @@
 // Phase P1 checks: the student Profile's identity card, Edit profile sheet,
 // goal sheet, badge and Who-sees-what sheets, delete account, the #your-data
-// link, the dashboard streak, and axe for every role. Expects a fresh seed.
+// link, the same streak on Profile, the dashboard and the header, and axe for
+// every role. Expects a fresh seed.
 
 const { chromium, BASE, check, login, axe, done } = require("./lib.cjs");
 
@@ -9,7 +10,7 @@ const { chromium, BASE, check, login, axe, done } = require("./lib.cjs");
   const p = await login(b, "student");
   await p.goto(`${BASE}/profile`, { waitUntil: "networkidle" });
   check("identity shows name", await p.getByRole("heading", { level: 1, name: "Rahul Sharma" }).isVisible());
-  check("streak tile = 11 (recording or card rule)", (await p.locator("section[aria-label='Your numbers'] li").first().innerText()).includes("11"));
+  check("streak tile = 11 (10 XP a day, lib/streak)", (await p.locator("section[aria-label='Your numbers'] li").first().innerText()).includes("11"));
 
   const edit = p.getByRole("button", { name: "Edit profile" });
   await edit.focus();
@@ -61,9 +62,9 @@ const { chromium, BASE, check, login, axe, done } = require("./lib.cjs");
   await g.getByRole("button", { name: "Done" }).click();
   await g.waitFor({ state: "hidden" });
 
-  await p.getByRole("button", { name: /see all 12/ }).click();
+  await p.getByRole("button", { name: /see all 17/ }).click();
   const bs = p.getByRole("dialog", { name: "Badges" });
-  check("badge sheet lists 12 with hints", (await bs.locator("li").count()) === 12 && (await bs.getByText("Mark 100 cards known").isVisible()));
+  check("badge sheet lists 17 with hints", (await bs.locator("li").count()) === 17 && (await bs.getByText("Mark 100 cards known").isVisible()));
   await bs.getByRole("button", { name: "Done" }).click();
   await p.getByRole("button", { name: /Who sees what/ }).click();
   const ws = p.getByRole("dialog", { name: "Who sees what" });
@@ -85,7 +86,13 @@ const { chromium, BASE, check, login, axe, done } = require("./lib.cjs");
   await p.waitForTimeout(800);
   check("#your-data scrolls to account group", await p.evaluate(() => { const r = document.getElementById("your-data").getBoundingClientRect(); return r.top >= 0 && r.top < 300; }));
   await p.goto(`${BASE}/dashboard`, { waitUntil: "networkidle" });
-  check("dashboard streak = 11", await p.getByText("11", { exact: true }).first().isVisible());
+  const dash = p.getByRole("button", { name: /streak, see the month/ });
+  check("dashboard streak = Profile streak", await dash.waitFor({ timeout: 10000 }).then(async () => (await dash.innerText()).trim().startsWith("11"), () => false));
+  // The header shows the streak on a computer, from /api/progress.
+  await p.setViewportSize({ width: 1280, height: 900 });
+  await p.goto(`${BASE}/profile`, { waitUntil: "networkidle" });
+  const pill = p.locator("header a[href='/dashboard']", { hasText: "streak" });
+  check("header streak = Profile streak", await pill.waitFor({ timeout: 10000 }).then(async () => (await pill.innerText()).trim().startsWith("11"), () => false));
   await p.context().close();
 
   const d = await login(b, "del");

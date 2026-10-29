@@ -291,6 +291,16 @@
   @media (max-width: 639.98px) and (prefers-reduced-motion: no-preference) {
     dialog.sheet[open] { animation: sheet-up 200ms ease-out; }
   }
+  /* The dashboard's goal-done tick (components/dashboard/GoalTick) pops once.
+     Only when motion is welcome; the Reduce motion rule below also cuts it. */
+  @keyframes goal-pop {
+    0% { transform: scale(0.4); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .goal-pop { animation: goal-pop 450ms ease-out; }
+  }
   /* The page behind an open sheet stays put; only the sheet scrolls. */
   html:has(dialog.sheet[open]) { overflow: hidden; }
 

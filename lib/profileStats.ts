@@ -1,44 +1,39 @@
-// Owns the numbers on the student's Profile page: who they are, their streaks,
-// cards known, audits, decks and today's plan, gathered in one round of
-// parallel queries.
+// Owns the numbers on the student's Profile: who they are, their XP per day,
+// streak (with freezes), today's and this week's goal, cards known, audits,
+// decks and speaking scores, gathered in one round of parallel queries.
 //
-// Every query is scoped to the one user. Cards count only built-in ones
-// (deckId null), the same rule as the daily session and lib/studentStats, so
-// a student's own decks never inflate "cards known".
+// The streak, XP, badges and skill numbers follow the dashboard's rules
+// exactly (lib/streak, lib/xp, lib/freeze, lib/dashboard), so the two pages
+// can never disagree. Every query is scoped to the one user. Cards count only
+// built-in ones (deckId null), like the daily session.
 //
 // It deliberately does NOT draw anything or decide wording; components/profile
 // does. Teacher and admin numbers live in lib/staffProfileStats.
 
 import { avatarUrl } from "@/lib/avatar";
+import { settleFreezes } from "@/lib/freeze";
 import { prisma } from "@/lib/prisma";
-import { practiceDays, type PracticeDay } from "@/lib/practiceDays";
-import { dayNumber, longestStreak, streakOfDays } from "@/lib/progress";
 import { prefsOf, type Preferences } from "@/lib/preferences";
+import { bestDay, istDay, longestStreak, streakOf, weekOf } from "@/lib/streak";
 import { CRITERIA } from "@/lib/studentStats";
+import { xpDays, xpMap, type DayXp } from "@/lib/xp";
 
-const IST = 5.5 * 3_600_000;
+const SCORES = { pronunciation: true, grammar: true, fluency: true, vocabulary: true, confidence: true } as const;
 
-function startOfTodayIst(now = new Date()): Date {
-  const ist = new Date(now.getTime() + IST);
-  ist.setUTCHours(0, 0, 0, 0);
-  return new Date(ist.getTime() - IST);
-}
-
-/// One skill on the Speaking scores card: the average of the last few audits,
-/// and how far that is from the first audit (null until there are two).
+/// One skill on the Speaking scores card, the same numbers as the dashboard's
+/// "Your skills": the average over the newest 50 audits, and the change from
+/// the first audit to the latest (null until there are two).
 export type SkillScore = { key: string; label: string; now: number; change: number | null };
 
-/// Recent audits averaged, so one unusual recording does not swing the card.
-const RECENT_AUDITS = 5;
-
-export function skillScores(audits: readonly Record<string, number>[]): SkillScore[] {
-  if (audits.length === 0) return [];
-  const recent = audits.slice(-RECENT_AUDITS);
+export function skillScores(newestFirst: readonly Record<string, number>[], first: Record<string, number> | null): SkillScore[] {
+  if (newestFirst.length === 0) return [];
   const round = (n: number) => Math.round(n * 10) / 10;
-  return CRITERIA.map((c) => {
-    const now = round(recent.reduce((sum, a) => sum + a[c.key], 0) / recent.length);
-    return { key: c.key, label: c.label, now, change: audits.length > 1 ? round(now - audits[0][c.key]) : null };
-  });
+  return CRITERIA.map((c) => ({
+    key: c.key,
+    label: c.label,
+    now: round(newestFirst.reduce((sum, a) => sum + a[c.key], 0) / newestFirst.length),
+    change: newestFirst.length > 1 && first ? newestFirst[0][c.key] - first[c.key] : null,
+  }));
 }
 
 export type StudentProfile = {
@@ -54,79 +49,92 @@ export type StudentProfile = {
   photoUrl: string | null;
   prefs: Preferences;
   institute: { name: string; role: string } | null;
-  practice: Map<number, PracticeDay>;
+  /// XP per India day ("YYYY-MM-DD"), with what earned it.
+  xp: Map<string, DayXp>;
+  frozen: Set<string>;
+  today: string;
+  todayXp: number;
+  /// Days this India week that met the daily goal.
+  weekMet: number;
   streak: number;
   longest: number;
+  bestDayXp: number;
+  weeksMet: number;
   cardsKnown: number;
   submissions: number;
   audits: number;
-  recordingsToday: number;
-  newCardsToday: number;
-  decks: { owned: number; shared: number; inLibrary: number; followers: number; following: number };
+  decks: { owned: number; shared: number; inLibrary: number; sharedOrListed: number; followers: number; following: number };
   scores: SkillScore[];
 };
 
 export async function studentProfile(userId: string): Promise<StudentProfile | null> {
-  const today = startOfTodayIst();
-  const [user, practice, cardsKnown, submissions, audits, recordingsToday, newCardsToday, owned, shared, inLibrary, followers, following, feedback] =
-    await Promise.all([
-      prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          name: true,
-          email: true,
-          phone: true,
-          publicId: true,
-          isGuest: true,
-          emailVerified: true,
-          createdAt: true,
-          avatarKey: true,
-          preferences: true,
-          instituteMembership: { select: { role: true, institute: { select: { name: true } } } },
-        },
-      }),
-      practiceDays(userId),
-      prisma.cardState.count({ where: { userId, known: true, word: { deckId: null } } }),
-      prisma.submission.count({ where: { studentId: userId } }),
-      prisma.submission.count({ where: { studentId: userId, status: "REVIEWED" } }),
-      prisma.submission.count({ where: { studentId: userId, createdAt: { gte: today } } }),
-      // Same rule as the daily limit in lib/flashcards: a new word card is one
-      // first answered today.
-      prisma.cardState.count({ where: { userId, reviews: { gt: 0 }, createdAt: { gte: today }, word: { kind: "WORD", deckId: null } } }),
-      prisma.deck.count({ where: { ownerId: userId, draftOfId: null } }),
-      prisma.deck.count({ where: { ownerId: userId, draftOfId: null, shareToken: { not: null } } }),
-      prisma.deck.count({ where: { ownerId: userId, visibility: "PUBLIC", status: "APPROVED" } }),
-      prisma.deckFollow.count({ where: { deck: { ownerId: userId } } }),
-      prisma.deckFollow.count({ where: { userId } }),
-      prisma.feedback.findMany({
-        where: { submission: { studentId: userId } },
-        orderBy: { createdAt: "asc" },
-        select: { pronunciation: true, grammar: true, fluency: true, vocabulary: true, confidence: true },
-      }),
-    ]);
+  const reviewed = { studentId: userId, status: "REVIEWED" as const, feedback: { isNot: null } };
+  const [user, xp, cardsKnown, submissions, audits, owned, shared, inLibrary, sharedOrListed, followers, following, recent, first] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        name: true,
+        email: true,
+        phone: true,
+        publicId: true,
+        isGuest: true,
+        emailVerified: true,
+        createdAt: true,
+        avatarKey: true,
+        preferences: true,
+        instituteMembership: { select: { role: true, institute: { select: { name: true } } } },
+      },
+    }),
+    xpDays(userId),
+    prisma.cardState.count({ where: { userId, known: true, word: { deckId: null } } }),
+    prisma.submission.count({ where: { studentId: userId } }),
+    prisma.submission.count({ where: reviewed }),
+    prisma.deck.count({ where: { ownerId: userId, draftOfId: null } }),
+    prisma.deck.count({ where: { ownerId: userId, draftOfId: null, shareToken: { not: null } } }),
+    prisma.deck.count({ where: { ownerId: userId, visibility: "PUBLIC", status: "APPROVED" } }),
+    // The "Shared a deck" badge, counted exactly as the dashboard counts it.
+    prisma.deck.count({ where: { ownerId: userId, OR: [{ shareToken: { not: null } }, { visibility: "PUBLIC", status: "APPROVED" }] } }),
+    prisma.deckFollow.count({ where: { deck: { ownerId: userId } } }),
+    prisma.deckFollow.count({ where: { userId } }),
+    // The same audits as the dashboard's skills: newest 50, and the first.
+    prisma.submission.findMany({ where: reviewed, orderBy: { createdAt: "desc" }, take: 50, select: { feedback: { select: SCORES } } }),
+    prisma.submission.findFirst({ where: reviewed, orderBy: { createdAt: "asc" }, select: { feedback: { select: SCORES } } }),
+  ]);
   if (!user) return null;
 
-  const days = new Set(practice.keys());
-  const { avatarKey, ...rest } = user;
+  const prefs = prefsOf(user.preferences);
+  const today = istDay(new Date());
+  const byDay = xpMap(xp.days);
+  // Settles any days not yet settled, the same call the dashboard makes.
+  const freezes = await settleFreezes(userId, byDay, today, prefs.dailyGoalXp, prefs.weeklyGoalDays);
+  const { avatarKey, preferences: _prefs, instituteMembership: m, ...rest } = user;
   return {
     user: rest,
     photoUrl: await avatarUrl(avatarKey),
-    prefs: prefsOf(user.preferences),
-    institute: user.instituteMembership
-      ? { name: user.instituteMembership.institute.name, role: user.instituteMembership.role.toLowerCase() }
-      : null,
-    practice,
-    streak: streakOfDays(days),
-    longest: longestStreak(days),
+    prefs,
+    institute: m ? { name: m.institute.name, role: m.role.toLowerCase() } : null,
+    xp: xp.days,
+    frozen: freezes.frozen,
+    today,
+    todayXp: byDay.get(today) ?? 0,
+    weekMet: weekOf(byDay, today, prefs.dailyGoalXp, freezes.frozen).met,
+    streak: streakOf(byDay, today, freezes.frozen),
+    longest: longestStreak(byDay, freezes.frozen),
+    bestDayXp: bestDay(byDay),
+    weeksMet: freezes.weeksMet,
     cardsKnown,
     submissions,
     audits,
-    recordingsToday,
-    newCardsToday,
-    decks: { owned, shared, inLibrary, followers, following },
-    scores: skillScores(feedback),
+    decks: { owned, shared, inLibrary, sharedOrListed, followers, following },
+    scores: skillScores(
+      recent.map((s) => s.feedback!),
+      first?.feedback ?? null,
+    ),
   };
 }
 
+/// An India day ("YYYY-MM-DD") as a day number, the calendar's unit.
+export const dayNumberOf = (day: string) => Date.parse(`${day}T00:00:00Z`) / 86_400_000;
+
 /// Today's India day number, for components that mark "today".
-export const todayNumber = () => dayNumber(new Date());
+export const todayNumber = () => dayNumberOf(istDay(new Date()));

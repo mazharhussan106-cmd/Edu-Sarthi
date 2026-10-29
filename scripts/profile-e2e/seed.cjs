@@ -5,7 +5,9 @@
 //
 // It deletes these accounts and everything they own, then makes them again,
 // with dates counted back from now. So the numbers the tests expect (27
-// practice days, an 11-day streak, 15 audits) are true on any day it runs.
+// learning days, an 11-day streak, 14 audits, 12 of 17 badges) are true on
+// any day it runs. The XP and streak rules are the dashboard's (lib/streak):
+// a recording is 10 XP, a new card 2, a review 1, and a streak day is 10 XP.
 //
 // LOCAL DATABASE ONLY. It refuses to run unless DATABASE_URL points at
 // localhost: the accounts share one known password.
@@ -67,14 +69,25 @@ async function main() {
   await p.feedback.create({ data: { submissionId: o.id, teacherId: teacher.id, pronunciation: 6, grammar: 6, fluency: 6, vocabulary: 6, confidence: 6, summary: "Fine.", createdAt: new Date(ago(3).getTime() + 5 * 3_600_000) } });
   await p.submission.create({ data: { studentId: other.id, exerciseId: ex.id, status: "PENDING", mediaUrl: "/sample.mp3", mediaKind: "AUDIO", createdAt: ago(0) } });
 
-  // Built-in words for card states; card-only practice days fill gaps.
+  // Built-in words for card states. Card-only days of 10+ reviews fill the
+  // gaps (days 7 to 9 make the 11-day streak); days 26 and 29 add a few cards
+  // to a recording; today's 2 cards are new (+2 each), every other day's are
+  // reviews (+1), since the card states are made today.
   for (let i = 1; i <= 40; i++) {
     const code = `E2E${String(i).padStart(4, "0")}`;
     await p.word.upsert({ where: { code }, update: {}, create: { kind: "WORD", code, serial: 90000 + i, text: `e2eword${i}`, details: {} } });
   }
   const words = await p.word.findMany({ where: { code: { startsWith: "E2E" } }, orderBy: { serial: "asc" } });
   for (let i = 0; i < 34; i++) await p.cardState.create({ data: { userId: student.id, wordId: words[i].id, known: i < 31, stage: 2, dueAt: new Date(now + 3 * DAY), reviews: 2, lastReviewedAt: ago(1) } });
-  for (const d of [0, 7, 8, 9, 25, 26, 27, 28, 29, 30]) for (let k = 0; k < (d % 4) + 2; k++) await p.reviewLog.create({ data: { userId: student.id, wordId: words[k].id, known: true, stage: 1, createdAt: ago(d, 9 + k) } });
+  for (const [d, n] of [[0, 2], [7, 10], [8, 11], [9, 12], [25, 10], [26, 3], [27, 11], [28, 10], [29, 2], [30, 12]]) {
+    for (let k = 0; k < n; k++) await p.reviewLog.create({ data: { userId: student.id, wordId: words[k].id, known: true, stage: 1, createdAt: new Date(ago(d, 8).getTime() + k * 60_000) } });
+  }
+  // Freezes already settled through yesterday: one week met, one freeze held,
+  // and one spent on day 31, so the calendar shows a frozen day without the
+  // current streak changing.
+  const istDay = (d) => d.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  await p.streakLedger.create({ data: { userId: student.id, held: 1, weeksMet: 1, checkedThrough: istDay(ago(1)) } });
+  await p.streakFreeze.create({ data: { userId: student.id, day: istDay(ago(31)) } });
 
   await p.deck.create({ data: { ownerId: student.id, title: "My phrasal verbs", shareToken: `e2e-${now}` } });
   const pub = await p.deck.create({ data: { ownerId: student.id, title: "Interview answers", visibility: "PUBLIC", status: "APPROVED" } });

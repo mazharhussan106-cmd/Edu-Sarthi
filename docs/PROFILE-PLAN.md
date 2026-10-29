@@ -1,6 +1,6 @@
 # Profile page plan (v1.0, 29 Oct 2026)
 
-Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **BUILT, NOT YET MERGED**. P1–P6 are done and pushed on this branch (see "Build log"); PR #28 is open. **Next action (owner):** merge PR #28. Then run Actions → Database setup at once (it adds `User.avatarKey`; the Profile page fails without it), and send the privacy-change email from Admin → Announcements (the Privacy page promises it). Finally, try the Profile on a phone, as student, teacher and admin.
+Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **BUILT, NOT YET MERGED**. P1–P6 are done and pushed on this branch (see "Build log"); PR #28 is open, and `main` (with the dashboard redesign) is merged into it (see "Merge with the dashboard redesign"). **Next action (owner):** merge PR #28. Then run Actions → Database setup at once (it adds `User.avatarKey`, and the dashboard's streak-freeze tables if that has not run yet; the Profile page fails without `avatarKey`), and send the privacy-change email from Admin → Announcements (the Privacy page promises it). Finally, try the Profile on a phone, as student, teacher and admin.
 
 Mockup: `docs/profile-mockup.html` (open it in a browser; Light/Dark buttons at the top). Screenshots: `docs/profile-mockup-phones.png`, `-phones-dark.png`, `-sheets.png`, `-sheets-dark.png`, `-desktop.png`, `-desktop-dark.png`. The orange tags in the mockup (S1, T2…) are the row IDs in the lists below.
 
@@ -22,7 +22,7 @@ Mockup: `docs/profile-mockup.html` (open it in a browser; Light/Dark buttons at 
 
 | Question | Answer | What it changes |
 |---|---|---|
-| What counts as a practice day? | **A recording or a card answer** | One rule everywhere: the dashboard streak and the streak badges follow it too (owner approved the dashboard change by choosing this) |
+| What counts as a practice day? | ~~**A recording or a card answer**~~ **SUPERSEDED** (see "Merge with the dashboard redesign") | One rule everywhere. It is now the dashboard's: a streak day is 10 XP or more, with streak freezes |
 | Who sees a photo? | **Only the owner** | No approval queue. Teachers keep seeing STU-IDs. An admin can remove a reported photo. |
 | Teachers see their QA notes? | **Yes** | T4 "Quality checks" moves from Later to Must (phase P4) |
 | Build P1–P6? | **Approved, all** | Built in order, each phase tested and pushed before the next |
@@ -213,18 +213,39 @@ That is more than 6 files, so the owner must approve it first (CLAUDE.md). **App
 
 - **A camera badge on the avatar** (it is in the mockup): not built. A small icon that only looks tappable would mislead; Edit profile does the job.
 - **Teacher bio:** still Later. No page shows teachers to students yet.
-- **The streak and the photo appear only on Profile, not in the header.** That was outside this chat's scope (Profile only).
+- **The photo appears only on Profile, not in the header.** That was outside this chat's scope (Profile only). The streak is in the header now, from the dashboard PR.
 
 ### Outside Profile, changed because the owner's rule needed it
 
-- The dashboard streak now counts a recording or a card answer (owner's practice-day rule, 29 Oct).
+- ~~The dashboard streak now counts a recording or a card answer (owner's practice-day rule, 29 Oct).~~ Superseded by the merge below: the dashboard's rule stands, and Profile follows it.
 - `app/api/profile/preferences` checks the goal date.
 - `app/api/me` exports the photo link and deletes the photo file.
 - The Privacy page has the photo line and the new date. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
 
+## Merge with the dashboard redesign (29 Oct 2026)
+
+`main` brought in the dashboard redesign (PR #27, `docs/DASHBOARD-PLAN.md`) while PR #28 was open. Both changed the streak and the badges, so GitHub showed a merge conflict. It was resolved by merging `main` into this branch (a merge commit, no history rewritten).
+
+**Conflict, recorded.**
+- **Before (this plan, 29 Oct):** a practice day is a recording or a card answer (`lib/practiceDays.ts`), with one rule everywhere.
+- **Now (dashboard plan, accepted by the owner the same day):** a streak day is **10 XP or more** (a recording 10, a new card 2, a review 1), with **streak freezes** (`lib/streak.ts`, `lib/xp.ts`, `lib/freeze.ts`).
+- **Treated as current:** the dashboard's rule. Both answers asked for one rule everywhere, and the dashboard's is the one now on `main` with freezes stored per student. If the owner wants a different rule, it changes in `lib/streak.ts` and both pages follow.
+
+What changed on Profile:
+- `lib/practiceDays.ts` is removed. `lib/profileStats.ts` reads XP per day (`xpDays`), settles freezes (`settleFreezes`) and takes the streak, longest streak, week and best day from `lib/streak`, exactly as `lib/dashboard.ts` does.
+- **Practice calendar:** each square is the day's XP (darker as it nears the daily goal); a frozen day says "Streak freeze used" in its title and in the list. The summary counts **learning days** (10 XP or more). The note explains the XP values.
+- **My goal** shows today's XP against the daily goal and this week's days against the weekly goal (Settings → Flashcards), instead of this plan's own targets.
+- **Speaking scores** use the dashboard's numbers: the average over the newest 50 audits, and the change from the first audit to the latest.
+- **Badges:** one list for both pages (`lib/badges.ts`), 17 in all: the dashboard plan's 14 plus Goal set, Score up and Shared a deck from this plan. This plan's "14-day streak" badge is dropped (the dashboard has 3, 7 and 30). `lib/dashboard.ts` now passes the three extra numbers, so both pages show the same badges.
+- `app/api/me` exports both the photo link and the streak freezes.
+
+Tested after the merge: the browser suites in `scripts/profile-e2e/` were updated to the dashboard's rules (the seed now has card days of 10+ reviews, a settled ledger and one freeze day) and all six pass. New checks: the Profile streak equals the dashboard's and the header's (11), 27 learning days, a 28-row list with the freeze day, 12 of 17 badges, fluency 5.7 and up 3.0. `tsc --noEmit` and `next build` pass. Screenshot: `docs/profile-built-after-dashboard-merge.png`.
+
+Left open: a frozen day's square looks the same as an empty one (only its title and the list say "Streak freeze used"). A distinct look would need the calendar to take a third state; not built, to keep the merge small.
+
 ## Open questions for the owner
 
-1. **Streak:** what counts as a practice day? Today the dashboard streak counts recordings only. The mockup counts a recording **or** a card answer. One definition everywhere is the recommendation, so the dashboard would change too (that is outside Profile, so only with approval).
+1. ~~**Streak:**~~ Answered, then superseded: Profile uses the dashboard's 10-XP rule with freezes (see "Merge with the dashboard redesign"). Original question: what counts as a practice day? Today the dashboard streak counts recordings only. The mockup counts a recording **or** a card answer. One definition everywhere is the recommendation, so the dashboard would change too (that is outside Profile, so only with approval).
 2. **Photos:** who sees them? Recommended: only the owner (plus an admin removing a reported photo). That keeps the anonymous-ID rule and needs no approval queue. If teachers should see student photos, or students should see teacher photos, that needs a moderation queue like institute logos.
 3. **Teacher quality checks (T4):** should teachers see QA notes on their own audits? Today only admins see them.
 4. **Approval** of phases P1–P6 above.

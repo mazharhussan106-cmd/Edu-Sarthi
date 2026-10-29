@@ -125,7 +125,10 @@ export function StickyHeader({
             // pops with no animation, and re-mounting re-runs the server
             // queries behind `stats` on every expand.
             className={cn(
-              "hidden overflow-hidden transition-all duration-200 md:block",
+              // Shown only when it holds something: the student stats leave
+              // it empty on the dashboard and until they load, and an empty
+              // bar is worse than no bar.
+              "hidden overflow-hidden transition-all duration-200 md:has-[a]:block",
               rowTwoOpen ? "max-h-16 opacity-100" : "max-h-0 opacity-0",
             )}
             // Hidden from screen readers when collapsed; the transition leaves

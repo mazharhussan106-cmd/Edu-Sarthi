@@ -13,6 +13,7 @@ import { StickyHeader } from "@/components/layout/StickyHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { PrefSyncServer } from "@/components/layout/PrefSyncServer";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { HeaderStats } from "@/components/layout/HeaderStats";
 import { STUDENT_LINKS, studentMore } from "@/lib/studentNav";
 
 export default async function StudentLayout({
@@ -23,9 +24,8 @@ export default async function StudentLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* No `stats` yet. Row 2 stays unrendered until the progress strip
-          exists in Phase 6 — an empty bar is worse than no bar. */}
-      <StickyHeader links={STUDENT_LINKS} homeHref="/dashboard" search={<HeaderSearch />} more={studentMore({ member: !session?.user?.isGuest, aiCards: cardMakerEnabled() })} />
+      {/* Streak and XP on every page (docs/DASHBOARD-PLAN.md, Phase 4). */}
+      <StickyHeader links={STUDENT_LINKS} homeHref="/dashboard" stats={<HeaderStats />} search={<HeaderSearch />} more={studentMore({ member: !session?.user?.isGuest, aiCards: cardMakerEnabled() })} />
       <PrefSyncServer />
       <div className="flex-1">{children}</div>
       {/* Clears the fixed bottom bar on phones so the footer is not hidden. */}

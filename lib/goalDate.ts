@@ -1,7 +1,7 @@
 // Owns the goal's target date: the day a student is practising for (an exam or
 // an interview), kept as "YYYY-MM-DD" in the preferences, or "" for none.
 //
-// Days are India days, numbered like lib/progress, so "78 days left" turns
+// Days are India days (day numbers from "YYYY-MM-DD", as in lib/streak), so "78 days left" turns
 // over at midnight in India, not at 5:30 am. Reading accepts any real date,
 // past ones too, so a passed exam can say "the day has passed" instead of
 // vanishing; only a save must be today or within three years.

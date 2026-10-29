@@ -1,4 +1,4 @@
-// Phase P6 checks: the 12 badges and their hints, and the Share progress
+// Phase P6 checks: the 17 badges (the dashboard's list) and their hints, and the Share progress
 // sheet (preview drawn, switches redraw it, photo off by default and drawn
 // without error, a 1080 × 1350 PNG download, a new student's switches) with
 // axe. Expects a fresh seed.
@@ -21,10 +21,10 @@ const { chromium, BASE, FIXTURES, check, login, axe, done } = require("./lib.cjs
   await p.keyboard.press("Escape");
   await p.reload({ waitUntil: "networkidle" });
 
-  check("badges: 10 of 12", await p.getByText("10 of 12").isVisible());
-  await p.getByRole("button", { name: /see all 12/ }).click();
+  check("badges: 12 of 17", await p.getByText("12 of 17").isVisible());
+  await p.getByRole("button", { name: /see all 17/ }).click();
   const bs = p.getByRole("dialog", { name: "Badges" });
-  check("new badges listed", (await bs.getByText("Goal set").isVisible()) && (await bs.getByText("Score up").isVisible()) && (await bs.getByText("Shared a deck").isVisible()) && (await bs.getByText("Practise 14 days in a row").isVisible()));
+  check("new badges listed", (await bs.getByText("Goal set").isVisible()) && (await bs.getByText("Score up").isVisible()) && (await bs.getByText("Shared a deck").isVisible()) && (await bs.getByText("Learn 30 days in a row").isVisible()) && (await bs.getByText("Earn 100 XP in one day").isVisible()));
   await bs.getByRole("button", { name: "Done" }).click();
 
   await p.getByRole("button", { name: "Share progress" }).click();

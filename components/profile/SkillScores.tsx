@@ -1,5 +1,6 @@
 // Owns the Speaking scores card on the student Profile: one bar per rubric
-// skill, out of 10, with how far it has moved since the first audit.
+// skill, out of 10, with how far it has moved from the first audit to the
+// latest. The numbers are the dashboard's "Your skills" (lib/profileStats).
 //
 // It says plainly that these are teachers' scores and not an exam band.
 // Showing an IELTS or CEFR "estimate" next to them would claim more than a
@@ -54,7 +55,7 @@ export function SkillScores({ scores, audits }: { scores: SkillScore[]; audits: 
           </ul>
           <p className="mt-3 text-xs text-ink-muted">
             {audits > 1
-              ? `Average of your last ${Math.min(audits, 5)} audits; the arrow is the change since your first.`
+              ? `Bars are your average over ${audits > 50 ? "your newest 50" : "your"} audits; the arrow is the change from your first audit to your latest.`
               : "From your first audit. Arrows show from your second."}{" "}
             Teachers&apos; scores, not an exam band.
           </p>

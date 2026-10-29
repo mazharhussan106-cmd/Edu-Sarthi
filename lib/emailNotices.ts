@@ -7,6 +7,7 @@
 
 import { SLA_HOURS, URGENT_WITHIN_HOURS } from "@/lib/claims";
 import { sendEmail } from "@/lib/email";
+import { STREAK_MIN_XP } from "@/lib/streak";
 
 /// Tells a student their recording has been audited. Links to the audit, never
 /// quotes it: scores and notes stay behind sign-in.
@@ -18,11 +19,14 @@ export async function sendAuditReady(to: string, url: string) {
 }
 
 /// The once-a-day study nudge. Only sent when cards are actually due, so it is
-/// never a "come back" email with nothing behind it.
-export async function sendStudyReminder(to: string, due: number, url: string) {
+/// never a "come back" email with nothing behind it. `streak` is the streak to
+/// keep today (0 when there is none, or today already counts): one plain line,
+/// no alarm, because a reminder that scolds gets switched off.
+export async function sendStudyReminder(to: string, due: number, url: string, streak = 0) {
   const subject = `${due} flashcard${due === 1 ? " is" : "s are"} due for review today`;
-  const text = `${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.\n\nStart here: ${url}\n\nYou get this email because the daily reminder is on in Settings. You can switch it off there.`;
-  const html = `<p>${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.</p><p><a href="${url}">Start reviewing</a></p><p style="color:#666;font-size:12px">You get this email because the daily reminder is on in Settings. You can switch it off there.</p>`;
+  const keep = streak > 0 ? `Your ${streak}-day streak needs ${STREAK_MIN_XP} XP today, about ${STREAK_MIN_XP} reviews.` : "";
+  const text = `${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.${keep ? ` ${keep}` : ""}\n\nStart here: ${url}\n\nYou get this email because the daily reminder is on in Settings. You can switch it off there.`;
+  const html = `<p>${due} flashcard${due === 1 ? " is" : "s are"} waiting for review.</p>${keep ? `<p>${keep}</p>` : ""}<p><a href="${url}">Start reviewing</a></p><p style="color:#666;font-size:12px">You get this email because the daily reminder is on in Settings. You can switch it off there.</p>`;
   await sendEmail(to, subject, text, html);
 }
 

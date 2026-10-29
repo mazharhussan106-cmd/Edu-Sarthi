@@ -1,11 +1,12 @@
 // Owns the My goal card on the student Profile: what they are practising for,
-// their own pick of level, and today's plan (one recording and the day's new
-// cards) as two small bars.
+// their own pick of level, the target date, and today's XP and this week's
+// days against the student's own daily and weekly goals.
 //
-// The plan's numbers are the same rules the app already enforces: one
-// recording is the daily goal (lib/progress) and new cards stop at the
-// student's own limit (Settings → Flashcards). It deliberately invents no
-// target of its own.
+// The goals are the dashboard's (lib/streak, chosen in Settings → Flashcards),
+// so the card and the dashboard's ring always show the same numbers. It
+// deliberately invents no target of its own.
+
+import Link from "next/link";
 
 import { Card, CardTitle } from "@/components/ui/Card";
 import { GoalEditor } from "@/components/profile/GoalEditor";
@@ -40,18 +41,18 @@ export function GoalCard({
   goal,
   level,
   goalDate,
-  recordings,
-  recordingGoal,
-  newCards,
-  newPerDay,
+  todayXp,
+  dailyGoalXp,
+  weekMet,
+  weeklyGoalDays,
 }: {
   goal: string;
   level: string;
   goalDate: string;
-  recordings: number;
-  recordingGoal: number;
-  newCards: number;
-  newPerDay: number;
+  todayXp: number;
+  dailyGoalXp: number;
+  weekMet: number;
+  weeklyGoalDays: number;
 }) {
   const left = goalDate ? daysUntil(goalDate) : null;
   return (
@@ -81,12 +82,12 @@ export function GoalCard({
         </dd>
       </dl>
       <div className="mt-4 flex flex-col gap-2">
-        <h3 className="text-xs font-semibold text-ink">Today</h3>
-        {/* 0 for a guest, who cannot send recordings. */}
-        {recordingGoal > 0 ? (
-          <PlanBar label={`${Math.min(recordings, recordingGoal)} of ${recordingGoal} recording`} done={recordings} of={recordingGoal} />
-        ) : null}
-        <PlanBar label={`${Math.min(newCards, newPerDay)} of ${newPerDay} new cards`} done={newCards} of={newPerDay} />
+        <h3 className="text-xs font-semibold text-ink">Your daily and weekly goal</h3>
+        <PlanBar label={`${Math.min(todayXp, dailyGoalXp)} of ${dailyGoalXp} XP today`} done={todayXp} of={dailyGoalXp} />
+        <PlanBar label={`${Math.min(weekMet, weeklyGoalDays)} of ${weeklyGoalDays} days this week`} done={weekMet} of={weeklyGoalDays} />
+        <Link href="/settings#daily-goal" className="self-start text-xs font-medium text-accent-dark hover:underline">
+          Change these goals in Settings ›
+        </Link>
       </div>
     </Card>
   );

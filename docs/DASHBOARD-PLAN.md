@@ -1,6 +1,6 @@
 # Student dashboard — redesign plan
 
-Status: **PLANNING (design only, nothing built).** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
+Status: **PLAN APPROVED — Phase 1 being built.** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
 
 Mockup: `docs/dashboard-mockup.html` (open in a browser; phone and computer, the special states and the two sheets; a Light / dark button checks the tokens). Screenshots: `docs/dashboard-mockup-phone.png`, `docs/dashboard-mockup-desktop.png`, `docs/dashboard-mockup-states.png`, `docs/dashboard-mockup-sheets.png`. The same screens are on a private design canvas for the owner, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs), each artboard with a Theme tweak; the repo files are the record.
 
@@ -12,6 +12,7 @@ Mockup: `docs/dashboard-mockup.html` (open in a browser; phone and computer, the
 | What comes first? | **Today's work.** Progress and charts go lower or to the Progress page. |
 | How much game? | **Medium:** streak, daily goal ring, badges, XP, level, weekly goal, streak freeze. **No leaderboard.** |
 | What to deliver now? | **List + design.** Build later, in phases, after approval. |
+| The seven open questions (second round, same day) | **All recommendations accepted**, except: **the score trend chart stays on the dashboard** too. Then: "make the complete plan, then start Phase 1". |
 
 ## What the dashboard has today (and what is wrong with it)
 
@@ -33,7 +34,7 @@ The Progress page (`/progress`) already has the score trend, rubric change, the 
 
 ## The new dashboard: what to show, in order
 
-Eight blocks on a phone instead of twelve, each smaller. Blocks with nothing to say are not drawn (no empty boxes).
+Nine blocks on a phone instead of twelve, each smaller. Blocks with nothing to say are not drawn (no empty boxes).
 
 | # | Block | What it shows | Data | Exists? |
 |---|---|---|---|---|
@@ -45,16 +46,17 @@ Eight blocks on a phone instead of twelve, each smaller. Blocks with nothing to 
 | 6 | **Notices** | Only when there are any; at most three, "See all". A notice dated today also appears in Today's tasks. | `activeNotices` | yes |
 | 7 | **Your skills** | The five rubric scores as bars (latest audit), each with its change since the first audit (↑ +1, ↓ −1). The lowest is highlighted with "Work on fluency next" and a button. Before two audits: one line saying what will appear. "Full progress →". | feedback rows | yes |
 | 8 | **Flashcards** | Known / learning / doubts, one bar per kind (Words, Chunk, Grammar, Support), "Revisit first: <topic> (6)" → My card lists. | `cardProgress` (extend per kind) | mostly |
-| 9 | **Level and badges** | "Stage 5 · 1,240 XP", a bar to the next stage ("260 XP to Stage 6"), the next badge with its progress ("7-day streak: 2 days to go"), the last three badges earned → Profile. | XP, `badgesFor` | XP new; badges yes |
+| 9 | **Score trend** | The existing chart (average of the five scores, audit by audit; owner's decision to keep it here). Hidden until there are two audits. | feedback rows | yes |
+| 10 | **Stage and badges** | "Stage 5 · 1,240 XP", a bar to the next stage ("260 XP to Stage 6"), the next badge with its progress ("7-day streak: 2 days to go"), the last three badges earned → Profile. | XP, `badgesFor` | XP new; badges yes |
 
-(Block 1 is the page heading, so the blocks a student scrolls through are 2–9.)
+(Block 1 is the page heading, so the blocks a student scrolls through are 2–10.)
 
-**Moved off the dashboard to Progress / History** (already there): the score trend chart, the rubric first-to-latest table, the seven-day bars, the recent-activity list, the "audits received" count.
+**Moved off the dashboard to Progress / History** (already there): the rubric first-to-latest table, the seven-day bars, the recent-activity list, the "audits received" count.
 
 ### Phone and computer
 
 - **Phone (390 px):** one column in the order above. At 390×844 the Today card and Do this next are fully on the first screen and Today's tasks starts below them, so a student sees what to do without scrolling.
-- **Computer (≥1024 px):** two columns. Left (wide): Do this next, Today's tasks, With your teacher, Your skills, Flashcards. Right (320 px): Today card, Level and badges, Notices.
+- **Computer (≥1024 px):** two columns. Left (wide): Do this next, Today's tasks, With your teacher, Your skills, Score trend, Flashcards. Right (320 px): Today card, Level and badges, Notices.
 
 ### Special states (each is in the mockup)
 
@@ -71,7 +73,7 @@ Eight blocks on a phone instead of twelve, each smaller. Blocks with nothing to 
 - **Streak sheet:** this month as a calendar (learning days filled, ❄ freeze days), current and longest streak, freezes held (0–2), and the rules in three lines.
 - **XP sheet:** XP today / this week / total, the stage bar, and the honest list of how XP is earned (below). No hidden rules.
 
-## The game rules (proposal, numbers to tune after real use)
+## The game rules (accepted 29 Oct; numbers to tune after real use)
 
 All XP is computed from rows that already exist (`ReviewLog`, `Submission`), the way badges are today (`lib/badges.ts`, nothing stored). Only the streak freeze needs stored state.
 
@@ -113,27 +115,68 @@ Facts are marked with how sure we are. Full source list at the end.
 8. **Strict streaks cause anxiety; forgiving ones are safer.** Babbel gives two freezes a week, used automatically; Duolingo lets learners hold up to two. Writers on streak design warn about anxiety and shame when one missed day wipes a long run. A consumer study (reported second-hand by The Decision Lab) found people try less to keep a streak they know they can repair. UNVERIFIED (the original paper was not read). So: earned freezes yes, repair no.
 9. **Weekly view.** Duolingo's "perfect streak week" and Babbel's weekly view; Busuu's study plan sets how many days a week. CONFIRMED that these products do it; no study on whether it beats a daily-only view.
 
-## Build plan (later, each phase needs approval — every phase touches more than 6 files)
+## Decisions (29 Oct 2026, owner accepted every recommendation)
 
-| Phase | What | Schema change? |
-|---|---|---|
-| **1. New layout with today's data** | Blocks 2 (streak + week dots, no XP yet), 3, 4, 5, 6, 7, 8 in the new order; streak counts cards and recordings; all card kinds and decks in counts; recordings left today; guest and new-student states; charts moved off. | No |
-| **2. XP, daily goal, stage, weekly goal** | `lib/xp.ts` (one grouped SQL over `ReviewLog` + `Submission` by India day), the ring, chips, XP sheet, stage bar, two new Settings rows (daily goal, weekly goal) in `User.preferences`. | No |
-| **3. Streak freeze, badges, celebrations** | Freeze storage (one small additive table, e.g. `StreakFreeze { userId, day }`, plus a held count), streak sheet with the month calendar, new badges, ring-complete and milestone moments, Help page section. | **Yes, additive** — Database setup once; no existing data touched. |
+1. The XP level is called **Stage** ("Level" stays for the English level and the module level).
+2. A streak day needs **10 XP** (India day).
+3. Daily goal choices **20 / 40 / 60 / 100 XP**, default **40**.
+4. Weekly goal default **5 days**; a freeze is earned per weekly goal met, at most **2** held, a new account starts with **1**.
+5. **Deck cards earn XP** (own, shared, followed decks).
+6. **Guests get streak and XP.**
+7. **The score trend chart stays on the dashboard** (owner's change to the recommendation), as block 9.
 
-Files expected (phases 1–2): `app/(student)/dashboard/page.tsx` (rewritten and split: it is near 250 lines now), new `components/dashboard/TodayCard.tsx`, `TodayTasks.tsx`, `TeacherCard.tsx`, `SkillsCard.tsx`, `LevelCard.tsx`, `lib/streak.ts` (replaces the recording-only `streakDays`), `lib/xp.ts`, `lib/dashboardNext.ts`, `lib/badges.ts`, `lib/preferences.ts`, two Settings rows, Help, `docs/FEATURE-MAP.md`. The old `TodayStrip`, `TodayWork`, `LatestAudit`, `InFlightCard`, `RecentHistory` and `WhatToWorkOn` are retired or folded in; `ScoreTrend`, `CriteriaChange` and `WeeklyActivity` stay for the Progress page.
+## Complete build plan
 
-**History limit to know:** `ReviewLog` exists only since 26 Oct 2026 (study history). Card XP and card-based streak days can only be counted from that date; recordings count from the start. The XP sheet should say "XP counts from 26 Oct 2026" rather than invent earlier numbers.
+Every phase touches more than six files; the owner approved the plan and Phase 1 on 29 Oct ("complete plan bana k do, fir phase 1 start kar do"). Phases 2 and 3 start when the owner says so.
 
-## Open questions for the owner
+### Phase 1 — the new dashboard on today's data (no schema change, no new setting)
 
-1. **Name of the XP level:** "Stage" (recommended, because "Level" already means the English level on Profile and the module level on "Next up · Level 2") or "Level"?
-2. **Streak minimum:** 10 XP a day (recommended), any single card, or the full daily goal?
-3. **Daily goal choices:** 20 / 40 / 60 / 100 XP with 40 as the default — OK?
-4. **Weekly goal and freezes:** default 5 days a week; a freeze earned per weekly goal met, at most 2, new accounts start with 1 — OK?
-5. **Deck cards earn XP too** (own, shared, followed decks) — recommended yes.
-6. **Guests get streak and XP** — recommended yes (gives them a reason to keep their progress).
-7. **The score trend chart leaves the dashboard** (it stays on Progress) — OK?
+What the student sees:
+- Greeting with a one-line summary, and two pills: 🔥 streak and ⭐ XP · Stage (plain pills; they become buttons in Phase 2).
+- **Today card:** the daily goal ring (default 40 XP until Phase 2 adds the setting), streak and its status, the week as seven day dots (goal met, learned but goal not met, missed, today, still to come), "Week goal: N of 5 days". Variants: **streak at risk** (after 6 pm India time, under 10 XP today, streak ≥ 1) and **goal done**.
+- **Do this next** over every card kind and deck: re-record → cards due (the kind with most due, else a deck) → new words → first exercise never tried → practise again. A brand-new student is sent to their first 10 words.
+- **Today's tasks** (each row links; done rows ticked): Re-record "…" (only when one is sent back), Review due cards (every built-in kind, with the split), each deck with cards due (up to 2, then "+N more" → `/today`), Learn new words (Words tab, today's limit), Send a recording for audit (what is left of today's allowance) — for a guest, "Keep your progress" → Settings instead.
+- **With your teacher:** up to three recordings still with a teacher, then the latest audit: average, change from the audit before, five small bars, the summary trimmed, "Read it in full". Hidden for guests and for students who have never sent one.
+- **Notices** (up to three, "See all").
+- **Your skills:** each rubric score's average over all audits as a bar, the change from first to latest audit, the lowest highlighted with "Practise speaking" and "Full progress". Before the first audit: one line.
+- **Score trend** (existing chart, kept by the owner).
+- **Flashcards:** known / learning / doubts, known out of all cards for Words, Chunk, Grammar and Support, and "Revisit first: <topic>" → My card lists.
+- **Stage and badges:** stage, bar to the next stage, the next badge with how far to go, up to three earned badges → Profile.
+- **New student** (fewer than 3 learning days and not every step done): a "Getting started" checklist — set your level and goal (Profile), learn your first 10 cards, send your first recording, get your first audit back — replaces Skills, Score trend, Flashcards and Stage. Guests get the first two steps and "Keep your progress".
+- Computer: two columns (left: next, tasks, teacher, skills, trend, flashcards; right: Today card, stage and badges, notices).
+
+How it is built:
+| File | Change |
+|---|---|
+| `lib/xp.ts` (new) | The XP rules as constants and one function that reads XP per India day: cards from `ReviewLog` (first answer of each card per day; +2 if the card's `CardState` was created that day, else +1) and recordings from `Submission` (+10 each). Two grouped SQL reads, bounded to 400 days for the day series plus an all-time total. |
+| `lib/streak.ts` (new, no database) | Streak (days ≥ 10 XP, counted back from today or yesterday), the week's dots, learning days, stage from total XP (`Stage n` from 50·n·(n−1) XP), streak-at-risk check. Replaces `lib/progress.ts`. |
+| `lib/dashboard.ts` (new) | Reads everything the page needs in parallel and returns plain data, so the page only lays it out. |
+| `lib/dashboardTasks.ts` (new, no database) | Today's task rows and the summary line. |
+| `lib/dashboardNext.ts` | "Do this next" over every kind and deck, plus the new-student step. |
+| `lib/studentStats.ts` | Card progress also returns known / total per kind. |
+| `lib/badges.ts` | Streak badges count learning days (any study, not only recordings); new badges: 30-day streak, 10 recordings, 500 cards known, first 100-XP day; each badge carries how far along it is, for "next badge". |
+| `app/(shared)/profile/page.tsx` | Badge numbers from the same streak and XP, so Profile and Dashboard agree. |
+| `components/dashboard/*` | New: `TodayCard`, `NextCard`, `TodayTasks`, `TeacherCard`, `SkillsCard`, `KindsCard`, `StageCard`, `GettingStarted`, `StatPills`. Kept: `ScoreTrend`, `NoticesCard`, and for the Progress page `CardProgress`, `CriteriaChange`, `WeeklyActivity`. Removed: `TodayStrip`, `TodayWork`, `InFlightCard`, `LatestAudit`, `WhatToWorkOn`, `RecentHistory` (the History page has recent activity). |
+| `app/(student)/dashboard/page.tsx` | Rewritten as layout only. |
+| `app/(public)/help` | "How do XP, streaks and stages work?" |
+| Docs | `docs/FEATURE-MAP.md`, this file, `docs/PROJECT-MEMORY.md`. |
+
+Checks before pushing: `tsc`, `next build`; a local Postgres with the real card imports and test students (normal day, new student, guest, a sent-back recording, decks due, a student with audits); XP and streak numbers checked by hand against the test data; the pure functions run against fixed dates (streak across midnight India time, at-risk after 6 pm, Monday week start); Playwright at 390×844 and 1280×800 for each state; axe (WCAG 2.1 AA) on the dashboard in all five themes; no hard-coded colours.
+
+**History limit:** `ReviewLog` exists only since 26 Oct 2026, so card XP and card days start then; recordings count from the start. Nobody's streak goes down, because recordings still count.
+
+### Phase 2 — settings, sheets and moments (no schema change)
+
+- Settings → Flashcards: **Daily goal** (Easy 20, Regular 40, Serious 60, Intense 100 XP) and **Weekly goal** (3, 5 or 7 days) rows with sheets, preferences `dailyGoalXp` and `weeklyGoalDays`.
+- The two pills become buttons: **Streak sheet** (this month as a calendar, current and longest streak, the rules) and **XP sheet** (today, this week, total, stage bar, the full XP table, "XP counts from 26 Oct 2026", link to the daily goal).
+- Goal-done moment: a short tick animation on the ring, none with Reduce motion.
+- Help and `LIVE-TESTING-GUIDE.md` steps.
+
+### Phase 3 — streak freeze and weekly badges
+
+- Freezes: start with 1, earn 1 per weekly goal met, hold at most 2, used by itself on a missed day; the Today card says when one saved the streak; ❄ on the week dots and the month calendar.
+- Storage: one additive table (`StreakFreeze { userId, day }`) so a used freeze never changes when goals or history change later. Database setup once; no existing data touched. (A fully computed freeze needs no table but would change past days when a student changes their goal; decide when building.)
+- Badges: first weekly goal, four weekly goals.
 
 ## Ideas noted, not planned
 

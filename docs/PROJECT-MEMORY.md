@@ -524,6 +524,32 @@ The empty real account for the email was made but never used. This was reproduce
 
 **Not done, by choice:** a guest's flashcard progress is not moved when they sign in with Google. It stays on the old guest row, the same as a guest signing in with an email code. To keep it, the guest uses Settings → Keep your progress. Moving it automatically (with the phase J merge rule) is a possible next step, but it needs the owner's go-ahead.
 
+**Follow-up (29 Oct): the Android app never opened the live site.** The owner reported the same problem again from the **Android app (APK)**, seeing a "page without design" after Google.
+
+What was checked:
+- The fix (PR #24) is live on Vercel, and there were no runtime errors in the previous 24 hours.
+- On the latest `main` (PR #25 included), a production build passed locally. A Google user opened all 19 student pages with no browser errors. Guest → Google also worked.
+
+What was found:
+- **Every APK ever built opens `edusarthi.com`.** The workflow passed `-PtwaHost=${{ vars.TWA_HOST || 'edusarthi.com' }}`, and the run #7 log (9 Oct) shows `edusarthi.com`.
+- **`edusarthi.com` is not connected to Vercel.** Its nameservers are Hostinger's (`ns1/ns2.dns-parking.com`), and its A record is `145.79.212.94`. Vercel reports it as misconfigured for this project. The project's only domain is `edu-sarthi-nine.vercel.app`.
+- So the app shows whatever Hostinger serves, not the live app. What that is could not be checked from the session, because its network blocks the domain.
+- `LIVE-TESTING-GUIDE.md` Step 5 (connect the domain to Vercel) was never done. Its Step 9 note already says to point the APK at the Vercel URL until it is.
+
+What changed:
+- `android/gradle.properties` now has `twaHost=edu-sarthi-nine.vercel.app`.
+- The workflow passes `-PtwaHost` only when the repository variable `TWA_HOST` is set, so `gradle.properties` decides by default.
+- `android/README.md` is updated to match.
+- The push builds a new debug APK on the branch.
+
+**Owner decision still open:** keep the Vercel address in the app, or connect `edusarthi.com` to Vercel. Connecting it means:
+- adding the domain in Vercel and changing the DNS at Hostinger;
+- updating `NEXT_PUBLIC_APP_URL`;
+- adding the Google OAuth redirect URI `https://edusarthi.com/api/auth/callback/google`;
+- setting `twaHost` back to `edusarthi.com`.
+
+Also open: `ANDROID_CERT_SHA256` is not set in Vercel, so the app keeps a URL bar.
+
 **Also seen in the Vercel logs (26 Oct, already fixed):** Google sign-in was refused 11 times (AccessDenied) because the live database lacked `User.aiCardsUsed`. Database setup run #7 fixed it. Runs #10 and #11 (28 Oct) are in sync as well. There have been no runtime errors in the 24 hours before this fix.
 
 ## AI draft audit (26 Oct 2026, branch `claude/magical-hopper-juy9yr`)

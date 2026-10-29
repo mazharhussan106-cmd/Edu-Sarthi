@@ -5,7 +5,7 @@ app full screen in Chrome's engine. There is no separate app code. Every
 screen, fix and feature ships through the website, with no Play Store update.
 
 - Package name: `com.edusarthi.app`
-- Opens: `https://<twaHost>/dashboard?source=twa` (`twaHost` is in `gradle.properties`, default `edusarthi.com`)
+- Opens: `https://<twaHost>/dashboard?source=twa` (`twaHost` is in `gradle.properties`, now `edu-sarthi-nine.vercel.app` until `edusarthi.com` is connected to Vercel; the repository variable `TWA_HOST` overrides it in GitHub Actions)
 - Recording, uploads, sign-in and the offline page all come from the website
 
 ## How the app and the website trust each other

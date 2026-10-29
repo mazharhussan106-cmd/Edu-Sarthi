@@ -195,3 +195,22 @@ A real 404 would need one of:
 Both cost more than they buy: nothing leaks, the person sees the right page, and these pages are signed-in only, so search engines never see them. **Decision: keep as is. Don't "fix" it with either of the above.**
 
 With this, everything in this plan is either built or decided. Left for the owner: confirm the band words and the five meaning lines; merge.
+
+## Audit before the pull request (29 Oct 2026)
+
+The owner asked for an audit, then a PR. Read every changed line against CLAUDE.md and for bugs.
+
+Found and fixed:
+- **An unchanged score read as a gain.** When the overall equalled the last audit's, the top card said "▲ +0.0 since your last audit" in green. It now says "Same as your last audit" (muted). The change is rounded to the one decimal shown before comparing.
+
+Checked, no change needed:
+- Queries all scoped by `studentId` in the WHERE clause; the raw SQL uses `Prisma.sql` parameters. Notes are Zod-parsed on read.
+- Only `AuditSeek.tsx` is a client component; no hard-coded colours (tokens and alpha on tokens only); header comments on every new file; every file under 250 lines (`page.tsx` 237, `AuditReport.tsx` 217).
+- The summary is at least 40 characters (`feedbackSchema`), so the opening line is never empty.
+- Teacher page, `NoteList`, `Player`, My Audits list, database: untouched.
+
+Known and accepted (not worth more code):
+- The opening line splits at the first ". ", so a summary that starts with an abbreviation ("Mr. Sharma …") shows a short first line; "Read all they said" still opens the full text.
+- "Try again" on a deck card whose deck was later withdrawn opens a not-found page (the deck's practice page refuses it). Before this branch it opened the bare exercise, which lost the card anyway.
+
+Re-tested: the audit page suite with a new equal-score audit (72 passed), the contrast sweep (50/50 clean), `tsc` and `next build`.

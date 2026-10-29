@@ -76,7 +76,9 @@ export function AuditReport({
   playbackRate: number;
 }) {
   const overall = overallOf(feedback);
-  const delta = previous ? overall - overallOf(previous) : null;
+  // Rounded to the one decimal shown, so an unchanged score reads "same"
+  // rather than a green "▲ +0.0" that claims a gain.
+  const delta = previous ? Math.round((overall - overallOf(previous)) * 10) / 10 : null;
   const opening = openingLine(feedback.summary);
   const playable = Boolean(mediaUrl) && mediaKind !== "IMAGE";
   // With three notes or fewer the top card already holds them all; a second
@@ -98,10 +100,12 @@ export function AuditReport({
                   <span className="ml-2 font-sans text-base font-medium text-ink">· {bandFor(overall)}</span>
                 </p>
               </div>
-              {delta !== null ? (
-                <p className={delta >= 0 ? "text-sm font-medium text-success" : "text-sm font-medium text-error"}>
-                  <span aria-hidden="true">{delta >= 0 ? "▲ +" : "▼ −"}</span>
-                  <span className="sr-only">{delta >= 0 ? "Up " : "Down "}</span>
+              {delta === 0 ? (
+                <p className="text-sm text-ink-muted">Same as your last audit</p>
+              ) : delta !== null ? (
+                <p className={delta > 0 ? "text-sm font-medium text-success" : "text-sm font-medium text-error"}>
+                  <span aria-hidden="true">{delta > 0 ? "▲ +" : "▼ −"}</span>
+                  <span className="sr-only">{delta > 0 ? "Up " : "Down "}</span>
                   {Math.abs(delta).toFixed(1)} since your last audit
                 </p>
               ) : (

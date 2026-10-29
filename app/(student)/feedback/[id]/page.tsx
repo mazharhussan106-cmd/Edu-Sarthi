@@ -20,7 +20,9 @@ import { Player } from "@/components/media/Player";
 import { AuditReport } from "@/components/student/AuditReport";
 import { SendBackView } from "@/components/student/SendBackView";
 import { STATUS_BADGE } from "@/lib/audits";
-import { overallOf, retryHref, SKILLS, type SkillScores } from "@/lib/auditReport";
+import { bestStatus, overallOf, retryHref, SKILLS, type SkillScores } from "@/lib/auditReport";
+import { auditAllowance } from "@/lib/auditLimit";
+import { Prisma } from "@prisma/client";
 import { prefsOf } from "@/lib/preferences";
 import { noteSchema } from "@/lib/validations";
 import { cardNoun } from "@/lib/chunkCard";
@@ -180,7 +182,7 @@ async function Reviewed({
   // and the progress strip; the count gives "Audit N". Both scoped by
   // studentId in the WHERE clause.
   const upTo = { studentId, status: "REVIEWED" as const, createdAt: { lte: submission.createdAt } };
-  const [recent, number] = await Promise.all([
+  const [recent, number, bestRows, allowance] = await Promise.all([
     prisma.feedback.findMany({
       where: { submission: upTo },
       orderBy: { submission: { createdAt: "desc" } },
@@ -188,6 +190,21 @@ async function Reviewed({
       select: { submissionId: true, pronunciation: true, grammar: true, fluency: true, vocabulary: true, confidence: true },
     }),
     prisma.submission.count({ where: upTo }),
+    // Best five-score sum among earlier audits. A sum over columns is not
+    // something Prisma's aggregate can express, and reading every audit to
+    // add them up in code grows with the student's history. Scoped by
+    // studentId; the id check keeps an audit sent in the same instant from
+    // counting as "earlier" than itself.
+    prisma.$queryRaw<{ best: number | null }[]>(Prisma.sql`
+      SELECT MAX(f.pronunciation + f.grammar + f.fluency + f.vocabulary + f.confidence)::int AS best
+      FROM "Feedback" f
+      JOIN "Submission" s ON s.id = f."submissionId"
+      WHERE s."studentId" = ${studentId}
+        AND s.status = 'REVIEWED'
+        AND s.id <> ${submission.id}
+        AND s."createdAt" <= ${submission.createdAt}
+    `),
+    auditAllowance(studentId),
   ]);
   const scoresOf = (f: SkillScores): SkillScores =>
     Object.fromEntries(SKILLS.map((k) => [k.key, f[k.key]])) as SkillScores;
@@ -211,6 +228,8 @@ async function Reviewed({
       feedback={submission.feedback}
       previous={previous}
       history={{ number, scores }}
+      best={bestStatus(submission.feedback, bestRows[0]?.best ?? null)}
+      allowance={allowance}
       autoPlay={autoPlay}
       playbackRate={playbackRate}
     />

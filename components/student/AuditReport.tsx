@@ -19,6 +19,7 @@ import { AuditPlayer, AuditSeekProvider, SeekNotes } from "@/components/student/
 import { AuditSkills } from "@/components/student/AuditSkills";
 import { AuditProgress } from "@/components/student/AuditProgress";
 import {
+  allowanceLine,
   bandFor,
   focusAndStrength,
   openingLine,
@@ -30,14 +31,19 @@ import {
 } from "@/lib/auditReport";
 import type { NoteInput } from "@/lib/validations";
 
-function TryAgain({ href }: { href: string }) {
+function TryAgain({ href, allowance }: { href: string; allowance: { perDay: number; left: number } }) {
   return (
-    <Link
-      href={href}
-      className="flex h-12 items-center justify-center rounded-lg bg-accent text-sm font-medium text-on-accent hover:bg-accent-dark"
-    >
-      Try this again
-    </Link>
+    <div>
+      <Link
+        href={href}
+        className="flex h-12 items-center justify-center rounded-lg bg-accent text-sm font-medium text-on-accent hover:bg-accent-dark"
+      >
+        Try this again
+      </Link>
+      {/* Said here, before the tap: a student at the limit should not find
+          out from the practice page's gate after choosing to try again. */}
+      <p className="mt-2 text-center text-xs text-ink-muted">{allowanceLine(allowance)}</p>
+    </div>
   );
 }
 
@@ -50,6 +56,8 @@ export function AuditReport({
   feedback,
   previous,
   history,
+  best,
+  allowance,
   autoPlay,
   playbackRate,
 }: {
@@ -62,6 +70,8 @@ export function AuditReport({
   previous: SkillScores | null;
   /// Overall scores, oldest first, ending with this audit; and its number.
   history: { number: number; scores: readonly number[] };
+  best: "best" | "equal" | null;
+  allowance: { perDay: number; left: number };
   autoPlay: boolean;
   playbackRate: number;
 }) {
@@ -98,6 +108,12 @@ export function AuditReport({
                 <p className="text-sm text-ink-muted">Your first audit</p>
               )}
             </div>
+            {best ? (
+              <p className="mt-2 text-sm font-medium text-success">
+                <span aria-hidden="true">★ </span>
+                {best === "best" ? "Your best score so far" : "Equals your best score so far"}
+              </p>
+            ) : null}
             <blockquote className="mt-4 border-l-2 border-accent pl-3 text-sm text-ink">
               {opening.line}
             </blockquote>
@@ -129,7 +145,7 @@ export function AuditReport({
             </Card>
           ) : null}
 
-          <TryAgain href={retryHref} />
+          <TryAgain href={retryHref} allowance={allowance} />
         </div>
 
         {/* Right column on a computer; between "Try again" and the skills on a phone. */}
@@ -189,7 +205,7 @@ export function AuditReport({
             <p className="mt-2 whitespace-pre-line text-sm text-ink-muted">{prompt}</p>
           </details>
 
-          <TryAgain href={retryHref} />
+          <TryAgain href={retryHref} allowance={allowance} />
         </div>
       </div>
     </AuditSeekProvider>

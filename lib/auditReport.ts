@@ -102,6 +102,26 @@ export function focusAndStrength(
   };
 }
 
+/// Compared on the five-score sum, not the average, so float rounding can
+/// never turn a tie into a "best". `bestBefore` is the highest sum among this
+/// student's earlier audits, null when this is the first: a first audit is
+/// trivially the best and saying so would be empty praise.
+export function bestStatus(s: SkillScores, bestBefore: number | null): "best" | "equal" | null {
+  if (bestBefore === null) return null;
+  const sum = SKILLS.reduce((t, k) => t + s[k.key], 0);
+  if (sum > bestBefore) return "best";
+  return sum === bestBefore ? "equal" : null;
+}
+
+/// The line under "Try again", from the same allowance the practice page's
+/// gate reads, so both screens always agree on the number.
+export function allowanceLine({ perDay, left }: { perDay: number; left: number }): string {
+  if (left === 0) {
+    return `Today's ${perDay} recording${perDay === 1 ? "" : "s"} for audit ${perDay === 1 ? "is" : "are"} sent. Practise aloud today; send the next one tomorrow (the count restarts at midnight India time).`;
+  }
+  return `${left} of ${perDay} recording${perDay === 1 ? "" : "s"} for audit left today.`;
+}
+
 /// Where "Try again" goes. A flashcard recording returns to its card: a
 /// built-in card through the exercise's ?word=, a deck card through its deck's
 /// practice page. Without this the student lands on the bare exercise and the

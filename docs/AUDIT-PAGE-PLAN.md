@@ -156,4 +156,15 @@ Still open:
 - Light-theme contrast of `Badge` success/error (site-wide; outside this page).
 - The not-found page for another student's audit returns HTTP 200, because the
   group's `loading.tsx` streams first. No data shows. Pre-existing.
-- Nice-to-have, not built: "N audits left today" beside Try again; "best score so far".
+
+## Phase 2: the two nice-to-haves (29 Oct 2026)
+
+The owner said "start building next phase"; the plan's only items left were the two nice-to-haves. No database change.
+
+- **Audits left today** under both "Try this again": "1 of 2 recordings for audit left today.", or at the limit "Today's 2 recordings for audit are sent. Practise aloud today; send the next one tomorrow…". It reads `auditAllowance` (`lib/auditLimit.ts`), the same count the practice page's `AuditGate` shows, so the two never disagree. The button still works at the limit: practising is allowed, and the practice page shows the limit card.
+- **Best score so far**: "★ Your best score so far" in the overall card when this audit's five-score sum is higher than every earlier audit's; "★ Equals your best score so far" on a tie. Never on a first audit (that would be empty praise). Compared on the integer sum, so rounding cannot fake a best. One raw SQL query (`MAX` of the sum, scoped by `studentId`, excluding this audit), because Prisma's aggregate cannot sum columns.
+- Rules in `lib/auditReport.ts` (`bestStatus`, `allowanceLine`).
+
+Tested (same local setup, production build): best/equal/none across 7 audits in date order, a first audit with no star, the line under both buttons, a student at the limit, plus the 60 earlier checks again — 69 passed. `tsc` and `next build` pass.
+
+Nothing from the plan is left to build. Still open: the owner's confirmation of the band words and meaning lines, and the two pre-existing items above (Badge contrast in light, not-found status 200).

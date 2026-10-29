@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, not merged yet, see "Profile page"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, see "Profile page"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -483,7 +483,7 @@ The DPDP export now includes card progress and study history. Owner decided **no
 
 ## Profile page (29 Oct 2026, branch `claude/busy-johnson-epz1lg`)
 
-Status: **BUILT on the branch, not merged** (P1–P6, 29 Oct). Full plan, research with sources, the list per role (S1–S11, T1–T7, A1–A6), build log, tests and the master prompt for a new chat: `docs/PROFILE-PLAN.md`. Mockup: `docs/profile-mockup.html`; built screenshots: `docs/profile-built-*.png`.
+Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oct). Full plan, research with sources, the list per role (S1–S11, T1–T7, A1–A6), build log, tests and the master prompt for a new chat: `docs/PROFILE-PLAN.md`. Mockup: `docs/profile-mockup.html`; built screenshots: `docs/profile-built-*.png`.
 - Owner's answers (29 Oct): all roles; **photo upload** (supersedes the 28 Oct "no photo" decision); add speaking scores, a practice calendar, a goal with a target date and a shareable progress card; plan and mockup first, then build after approval.
 - Owner's second answers (29 Oct):
   - **A practice day is a recording or a card answer**, everywhere: the dashboard streak follows it, via `lib/practiceDays.ts`.

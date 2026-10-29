@@ -1,6 +1,6 @@
 # Profile page plan (v1.0, 29 Oct 2026)
 
-Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **BUILT, NOT YET MERGED**. P1–P6 are done and pushed on this branch (see "Build log"). **Next action (owner):** open a PR and merge it. Then run Actions → Database setup at once (it adds `User.avatarKey`; the Profile page fails without it), and send the privacy-change email from Admin → Announcements (the Privacy page promises it). Finally, try the Profile on a phone, as student, teacher and admin.
+Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **BUILT, NOT YET MERGED**. P1–P6 are done and pushed on this branch (see "Build log"); PR #28 is open. **Next action (owner):** merge PR #28. Then run Actions → Database setup at once (it adds `User.avatarKey`; the Profile page fails without it), and send the privacy-change email from Admin → Announcements (the Privacy page promises it). Finally, try the Profile on a phone, as student, teacher and admin.
 
 Mockup: `docs/profile-mockup.html` (open it in a browser; Light/Dark buttons at the top). Screenshots: `docs/profile-mockup-phones.png`, `-phones-dark.png`, `-sheets.png`, `-sheets-dark.png`, `-desktop.png`, `-desktop-dark.png`. The orange tags in the mockup (S1, T2…) are the row IDs in the lists below.
 

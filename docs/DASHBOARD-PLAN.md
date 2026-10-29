@@ -1,6 +1,6 @@
 # Student dashboard — redesign plan
 
-Status: **Phases 1 and 2 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet); Phase 3 not started.** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
+Status: **Phases 1, 2 and 3 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet). After merging, run Actions → Database setup once (two new tables).** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
 
 Mockup: `docs/dashboard-mockup.html` (open in a browser; phone and computer, the special states and the two sheets; a Light / dark button checks the tokens). Screenshots: `docs/dashboard-mockup-phone.png`, `docs/dashboard-mockup-desktop.png`, `docs/dashboard-mockup-states.png`, `docs/dashboard-mockup-sheets.png`. The same screens are on a private design canvas for the owner, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs), each artboard with a Theme tweak; the repo files are the record.
 
@@ -213,6 +213,27 @@ To go live: merge. No Database setup run is needed.
 - Freezes: start with 1, earn 1 per weekly goal met, hold at most 2, used by itself on a missed day; the Today card says when one saved the streak; ❄ on the week dots and the month calendar.
 - Storage: one additive table (`StreakFreeze { userId, day }`) so a used freeze never changes when goals or history change later. Database setup once; no existing data touched. (A fully computed freeze needs no table but would change past days when a student changes their goal; decide when building.)
 - Badges: first weekly goal, four weekly goals.
+
+#### Phase 3 — what was built and how it was checked (29 Oct)
+
+The owner said "start building next phase" again.
+
+**Schema change, additive only — no existing data is touched or lost:** two new tables, `StreakFreeze` (`userId`, `day` "YYYY-MM-DD", unique per user and day) and `StreakLedger` (`userId` as key, `held`, `weeksMet`, `checkedThrough`), both deleted with the user (cascade). **Run Actions → Database setup once after merging.** Until then the dashboard and Profile work as in Phase 2 with no freezes (`settleFreezes` catches the missing table and logs once); only the data export (`/api/me`) needs the tables.
+
+Decisions made while building (the assistant's, within the accepted rules):
+- **Stored, not recomputed** (`lib/freeze.ts`). Each India day is settled once, in order, up to yesterday, when the dashboard or Profile opens, and never redone. Recomputing would let a goal change move past freezes: lowering a goal could revive an old streak, raising it could erase today's.
+- **Freezes start when a student is first seen after this ships**, with 1 held; earlier history is not re-judged. `weeksMet` (for the weekly badges) also counts from then.
+- **A freeze is spent only on a missed day that would break a live streak** (the day before was a streak day or frozen). Two held freezes cover two missed days in a row; a third missed day breaks the streak. Long breaks do not burn freezes.
+- **A frozen day keeps the streak but does not add to it** (5 days, a freeze, then today = still 5 until today counts).
+- Sunday ends the week (Monday to Sunday, India time); a week with the goal met on at least the weekly-goal days earns one freeze (at most 2 held) and counts towards the badges "Weekly goal met" and "Four good weeks" (Profile now lists 14 badges).
+- Two tabs settling at once cannot spend two freezes: the ledger update only matches the day it read, inside one transaction with the freeze rows.
+- A guest's ledger is not moved by "Keep your progress" merging into another account (only cards and history move, as before); the account keeps its own.
+
+What shows: ❄ on frozen days in the week dots and the month calendar, "❄ N freezes" on the Today card, "A freeze saved your streak yesterday.", the streak sheet's "N of 2 streak freezes ready" and the freeze rule; Help explains it; the data export includes the ledger and frozen days.
+
+Checked on a local Postgres: 17 checks of the freeze rules on fixed dates and against the database (covering a miss, no cover after the last freeze, two misses with two freezes, nothing spent with no streak, earning on Sunday, the cap of 2, the frozen day not adding to the count, the week dots and calendar, a student who missed yesterday keeping a 5-day streak, a second visit spending nothing, a new ledger starting at 1 without judging the past, two visits at once spending one freeze, and the page still working with the table renamed away); the 42 Phase 1 and 13 Phase 2 number checks again; 30 browser checks (the frozen state on phone and computer, the streak sheet, axe in five themes on the dashboard and the sheet, Profile's new badges, the export) and the 79 + 50 earlier browser checks again: all pass. `tsc` and `next build` pass.
+
+Not checked: the live database (needs the merge and Database setup), a real phone, and a day boundary passing while the page is open (the next visit settles it).
 
 ## Ideas noted, not planned
 

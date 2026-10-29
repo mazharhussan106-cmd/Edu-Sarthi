@@ -117,6 +117,8 @@ model User {
   adminActions        AdminLog[]
   cardStates          CardState[]
   reviewLogs          ReviewLog[]
+  streakFreezes       StreakFreeze[]
+  streakLedger        StreakLedger?
   decks               Deck[]               @relation("DeckOwner")
   reviewedDecks       Deck[]               @relation("DeckReviewer")
   words               Word[]               @relation("WordOwner")
@@ -558,6 +560,39 @@ model CardState {
   @@unique([userId, wordId])
   @@index([userId, dueAt])
   @@index([wordId])
+}
+
+/// A day a streak freeze covered (dashboard Phase 3, docs/DASHBOARD-PLAN.md):
+/// the student earned less than 10 XP that India day and a held freeze kept
+/// the streak. Stored, never recomputed, so changing a goal later cannot
+/// change a past day.
+model StreakFreeze {
+  id     String @id @default(cuid())
+  userId String
+  /// India day, "YYYY-MM-DD".
+  day    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, day])
+}
+
+/// Where a student's freezes stand: how many are held (0 to 2), how many weeks
+/// met the weekly goal, and the last India day already settled. Days are
+/// settled once, in order, when the dashboard or profile is opened, so a
+/// settled day never changes.
+model StreakLedger {
+  userId         String @id
+  held           Int    @default(1)
+  weeksMet       Int    @default(0)
+  /// The last India day settled, "YYYY-MM-DD".
+  checkedThrough String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
 }
 
 /// Who may see a deck. PRIVATE is the default so nothing is shared by accident.

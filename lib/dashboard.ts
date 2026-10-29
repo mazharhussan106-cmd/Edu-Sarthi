@@ -16,7 +16,8 @@ import { todayReview } from "@/lib/todayReview";
 import { activeNotices } from "@/lib/notices";
 import { cardProgress, knownByKind, CRITERIA, type CriterionKey } from "@/lib/studentStats";
 import { xpDays, xpMap } from "@/lib/xp";
-import { bestDay, istDay, learningDays, longestStreak, monthOf, stageOf, streakAtRisk, streakOf, weekOf, weekXp } from "@/lib/streak";
+import { settleFreezes } from "@/lib/freeze";
+import { addDays, bestDay, istDay, learningDays, longestStreak, monthOf, stageOf, streakAtRisk, streakOf, weekOf, weekXp } from "@/lib/streak";
 import { badgesFor, nextBadge } from "@/lib/badges";
 import { nextAction } from "@/lib/dashboardNext";
 import { summaryLine, todayTasks } from "@/lib/dashboardTasks";
@@ -70,11 +71,13 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
   const today = istDay(now);
   const byDay = xpMap(xp.days);
   const todayXp = byDay.get(today) ?? 0;
-  const streak = streakOf(byDay, today);
-  const days = learningDays(byDay);
   const goal = prefs.dailyGoalXp;
-  const week = weekOf(byDay, today, goal);
-  const longest = longestStreak(byDay);
+  // Settled before the streak is counted: a freeze can keep it alive.
+  const freezes = await settleFreezes(userId, byDay, today, goal, prefs.weeklyGoalDays);
+  const streak = streakOf(byDay, today, freezes.frozen);
+  const days = learningDays(byDay);
+  const week = weekOf(byDay, today, goal, freezes.frozen);
+  const longest = longestStreak(byDay, freezes.frozen);
   const recordings = [...xp.days.values()].reduce((n, d) => n + d.recordings, 0);
 
   // Work for today.
@@ -123,6 +126,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
     cardsKnown: cards.known,
     decks: decksOwned,
     bestDayXp: bestDay(byDay),
+    weeksMet: freezes.weeksMet,
   });
 
   // Getting started, until three learning days or every step is done.
@@ -150,6 +154,8 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
       week: week.dots,
       weekMet: week.met,
       weeklyGoal: prefs.weeklyGoalDays,
+      freezes: freezes.held,
+      savedYesterday: freezes.frozen.has(addDays(today, -1)),
     },
     totalXp: xp.total,
     // For the streak and XP sheets the dashboard's pills open.
@@ -157,7 +163,8 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
       longest,
       bestDay: bestDay(byDay),
       weekXp: weekXp(byDay, today),
-      month: monthOf(byDay, today, goal),
+      month: monthOf(byDay, today, goal, freezes.frozen),
+      freezes: freezes.held,
     },
     stage: stageOf(xp.total),
     next,

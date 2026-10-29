@@ -23,6 +23,7 @@ import { badgesFor } from "@/lib/badges";
 import { prefsOf } from "@/lib/preferences";
 import { xpDays, xpMap } from "@/lib/xp";
 import { bestDay, istDay, longestStreak, streakOf } from "@/lib/streak";
+import { settleFreezes } from "@/lib/freeze";
 import { ProfileGoals } from "@/components/student/ProfileGoals";
 
 export const revalidate = 0;
@@ -76,15 +77,18 @@ export default async function ProfilePage() {
         prisma.deck.count({ where: { ownerId: userId, shareToken: { not: null } } }),
       ]);
   const prefs = prefsOf(user.preferences);
-  const badges = extras
+  // The same freezes as the dashboard, so both count the same streak.
+  const fz = extras ? await settleFreezes(userId, extras[0], istDay(new Date()), prefs.dailyGoalXp, prefs.weeklyGoalDays) : null;
+  const badges = extras && fz
     ? badgesFor({
         submissions: submissionCount,
         audits: auditsReceived,
-        streak: streakOf(extras[0], istDay(new Date())),
-        longestStreak: longestStreak(extras[0]),
+        streak: streakOf(extras[0], istDay(new Date()), fz.frozen),
+        longestStreak: longestStreak(extras[0], fz.frozen),
         cardsKnown: extras[1],
         decks: extras[2],
         bestDayXp: bestDay(extras[0]),
+        weeksMet: fz.weeksMet,
       })
     : [];
 

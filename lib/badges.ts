@@ -22,6 +22,8 @@ export type BadgeStats = {
   cardsKnown: number;
   decks: number;
   bestDayXp: number;
+  /// Weeks that met the weekly goal, counted as they are settled (lib/freeze).
+  weeksMet: number;
 };
 
 export type Badge = {
@@ -49,6 +51,8 @@ const RULES: readonly Rule[] = [
   { id: "known-100", label: "100 cards known", hint: "Mark 100 cards known", need: 100, unit: "card", have: (s) => s.cardsKnown },
   { id: "known-500", label: "500 cards known", hint: "Mark 500 cards known", need: 500, unit: "card", have: (s) => s.cardsKnown },
   { id: "xp-100-day", label: "100-XP day", hint: "Earn 100 XP in one day", need: 100, unit: "XP", have: (s) => s.bestDayXp },
+  { id: "first-week", label: "Weekly goal met", hint: "Meet your weekly goal once", need: 1, unit: "week", have: (s) => s.weeksMet },
+  { id: "four-weeks", label: "Four good weeks", hint: "Meet your weekly goal four times", need: 4, unit: "week", have: (s) => s.weeksMet },
   { id: "deck-maker", label: "Deck maker", hint: "Make your own deck", need: 1, unit: "deck", have: (s) => s.decks },
 ];
 

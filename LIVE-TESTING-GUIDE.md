@@ -238,7 +238,7 @@ Har setting ab ek jaisi row hai: upar naam, neeche chhoti line (2 line tak). On/
 - [ ] Phone par koi row ka naam kata hua (…) ya neeche wali line 2 se zyada line ki na ho
 - [ ] Admin menu me **Site settings** (sab ke liye audit limit) aur ⚙ Settings (apni settings) alag-alag hon
 
-### 4d. Naya Dashboard (phase 1 aur 2, 29 Oct) — merge ke baad phone par check kariye
+### 4d. Naya Dashboard (phase 1, 2 aur 3, 29 Oct) — merge aur Actions → Database setup ke baad phone par check kariye
 
 Student account se login kariye (jisme kuch cards aur recordings hon), phir ek bilkul naya account aur ek guest bhi try kariye.
 - [ ] Dashboard khulte hi upar: naam, ek line ("N things left today · X XP to your goal"), aur 🔥 streak aur ⭐ XP · Stage wale do pill
@@ -253,7 +253,10 @@ Student account se login kariye (jisme kuch cards aur recordings hon), phir ek b
 - [ ] Guest: recording ki jagah **Keep your progress** row; streak aur XP dikhen
 - [ ] Teacher ne recording wapas bheji ho to sabse upar laal **Re-record** row aur "Action needed"
 - [ ] Computer par do column: baayen kaam, daayen Today card, Stage aur Notices
-- [ ] Profile → Badges me 12 badges; streak wale "Learn N days in a row" kehte hon
+- [ ] Profile → Badges me 14 badges; streak wale "Learn N days in a row" kehte hon
+- [ ] Today card par "❄ 1 freeze" dikhe (naya account 1 freeze se shuru hota hai); streak sheet me "1 of 2 streak freezes ready"
+- [ ] Streak chalte hue ek din kuch na padhiye; agle din Dashboard par "A freeze saved your streak yesterday.", us din ke gole par ❄, aur streak wahi rahe
+- [ ] Ek hafta weekly goal pura kariye; agle Monday freeze ek badhe (2 se zyada nahi) aur Profile me "Weekly goal met" badge mile
 
 ---
 

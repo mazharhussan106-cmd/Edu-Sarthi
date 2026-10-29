@@ -31,6 +31,10 @@ export const DAILY_GOALS = [
   { xp: 100, name: "Intense", time: "about 25 minutes" },
 ] as const;
 export const WEEKLY_GOALS = [3, 5, 7] as const;
+/// Streak freezes (lib/freeze): a new account starts with one, meeting the
+/// weekly goal earns one, and at most two are held. Earned, never bought.
+export const FREEZE_START = 1;
+export const FREEZE_MAX = 2;
 /// Card answers are logged (ReviewLog) only from this day, so card XP starts
 /// here; the XP sheet says so instead of showing invented earlier numbers.
 export const XP_SINCE = "26 Oct 2026";
@@ -39,6 +43,8 @@ export const XP_SINCE = "26 Oct 2026";
 export const AT_RISK_HOUR = 18;
 
 export type XpByDay = ReadonlyMap<string, number>;
+
+const NO_DAYS: ReadonlySet<string> = new Set();
 
 const IST = "Asia/Kolkata";
 
@@ -54,11 +60,15 @@ export function addDays(day: string, n: number): string {
 /// Consecutive days of at least STREAK_MIN_XP, counted back from today. A day
 /// still in progress does not break it: with too little today, the count
 /// starts at yesterday, so a streak survives until midnight.
-export function streakOf(xp: XpByDay, today: string): number {
+///
+/// A frozen day (a streak freeze covered it, lib/freeze) keeps the run going
+/// but adds nothing to it: a freeze protects a streak, it does not grow one.
+export function streakOf(xp: XpByDay, today: string, frozen: ReadonlySet<string> = NO_DAYS): number {
   let day = (xp.get(today) ?? 0) >= STREAK_MIN_XP ? today : addDays(today, -1);
   let count = 0;
-  while ((xp.get(day) ?? 0) >= STREAK_MIN_XP) {
-    count += 1;
+  for (;;) {
+    if ((xp.get(day) ?? 0) >= STREAK_MIN_XP) count += 1;
+    else if (!frozen.has(day)) break;
     day = addDays(day, -1);
   }
   return count;
@@ -66,13 +76,15 @@ export function streakOf(xp: XpByDay, today: string): number {
 
 /// The longest run in the history we have. Streak badges use it, so a badge
 /// once earned does not vanish when the current streak breaks.
-export function longestStreak(xp: XpByDay): number {
-  const days = [...xp.entries()].filter(([, n]) => n >= STREAK_MIN_XP).map(([d]) => d).sort();
+export function longestStreak(xp: XpByDay, frozen: ReadonlySet<string> = NO_DAYS): number {
+  const learned = [...xp.entries()].filter(([, n]) => n >= STREAK_MIN_XP).map(([d]) => d);
+  const days = [...new Set([...learned, ...frozen])].sort();
   let best = 0;
   let run = 0;
   let prev = "";
   for (const d of days) {
-    run = prev && addDays(prev, 1) === d ? run + 1 : 1;
+    const add = (xp.get(d) ?? 0) >= STREAK_MIN_XP ? 1 : 0;
+    run = prev && addDays(prev, 1) === d ? run + add : add;
     best = Math.max(best, run);
     prev = d;
   }
@@ -89,7 +101,7 @@ export function bestDay(xp: XpByDay): number {
   return Math.max(0, ...xp.values());
 }
 
-export type DotState = "met" | "learned" | "missed" | "open" | "future";
+export type DotState = "met" | "learned" | "frozen" | "missed" | "open" | "future";
 export type WeekDot = { day: string; label: string; name: string; state: DotState; today: boolean };
 
 const WEEKDAYS = [
@@ -100,7 +112,7 @@ const WEEKDAYS = [
 /// Monday to Sunday of the India week holding `today`. "met" is the daily goal
 /// reached, "learned" a streak day short of the goal, "open" today not yet a
 /// streak day, "missed" a past day with less than STREAK_MIN_XP.
-export function weekOf(xp: XpByDay, today: string, goal: number): { dots: WeekDot[]; met: number } {
+export function weekOf(xp: XpByDay, today: string, goal: number, frozen: ReadonlySet<string> = NO_DAYS): { dots: WeekDot[]; met: number } {
   const offset = (new Date(`${today}T00:00:00Z`).getUTCDay() + 6) % 7;
   const monday = addDays(today, -offset);
   let met = 0;
@@ -111,6 +123,7 @@ export function weekOf(xp: XpByDay, today: string, goal: number): { dots: WeekDo
       day > today ? "future"
       : n >= goal ? "met"
       : n >= STREAK_MIN_XP ? "learned"
+      : frozen.has(day) ? "frozen"
       : day === today ? "open"
       : "missed";
     if (state === "met") met += 1;
@@ -127,12 +140,12 @@ export function weekXp(xp: XpByDay, today: string): number {
   return n;
 }
 
-export type MonthDay = { day: string; date: number; state: "met" | "learned" | "none" | "future"; today: boolean };
+export type MonthDay = { day: string; date: number; state: "met" | "learned" | "frozen" | "none" | "future"; today: boolean };
 
 /// The India month holding `today`, for the streak sheet's calendar. A past
 /// day with too little XP is plain "none" rather than "missed": a month view
 /// full of misses before the student even joined would only scold.
-export function monthOf(xp: XpByDay, today: string, goal: number): { title: string; lead: number; days: MonthDay[] } {
+export function monthOf(xp: XpByDay, today: string, goal: number, frozen: ReadonlySet<string> = NO_DAYS): { title: string; lead: number; days: MonthDay[] } {
   const first = `${today.slice(0, 8)}01`;
   const start = new Date(`${first}T00:00:00Z`);
   const lead = (start.getUTCDay() + 6) % 7;
@@ -142,7 +155,7 @@ export function monthOf(xp: XpByDay, today: string, goal: number): { title: stri
     days.push({
       day: d,
       date: Number(d.slice(8)),
-      state: d > today ? "future" : n >= goal ? "met" : n >= STREAK_MIN_XP ? "learned" : "none",
+      state: d > today ? "future" : n >= goal ? "met" : n >= STREAK_MIN_XP ? "learned" : frozen.has(d) ? "frozen" : "none",
       today: d === today,
     });
   }

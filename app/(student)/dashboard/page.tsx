@@ -57,7 +57,7 @@ export default async function DashboardPage() {
           streak={d.today.streak}
           xp={d.totalXp}
           stage={d.stage.stage}
-          streakSheet={<StreakSheet streak={d.today.streak} longest={d.sheets.longest} goal={d.today.goal} weekMet={d.today.weekMet} weeklyGoal={d.today.weeklyGoal} month={d.sheets.month} />}
+          streakSheet={<StreakSheet streak={d.today.streak} longest={d.sheets.longest} goal={d.today.goal} weekMet={d.today.weekMet} weeklyGoal={d.today.weeklyGoal} month={d.sheets.month} freezes={d.sheets.freezes} />}
           xpSheet={<XpSheet total={d.totalXp} today={d.today.xp} week={d.sheets.weekXp} best={d.sheets.bestDay} goal={d.today.goal} stage={d.stage} />}
         />
       </header>

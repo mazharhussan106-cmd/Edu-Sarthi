@@ -7,7 +7,7 @@
 // stays calm, because a dashboard that is always alarmed is soon ignored.
 
 import Link from "next/link";
-import { Check, Flame } from "lucide-react";
+import { Check, Flame, Snowflake } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
@@ -24,6 +24,9 @@ export type TodayNumbers = {
   week: readonly WeekDot[];
   weekMet: number;
   weeklyGoal: number;
+  /// Streak freezes held (0 to 2), and whether one covered yesterday.
+  freezes: number;
+  savedYesterday: boolean;
 };
 
 const C = 2 * Math.PI * 42;
@@ -31,6 +34,7 @@ const C = 2 * Math.PI * 42;
 const DOT: Record<WeekDot["state"], string> = {
   met: "bg-success text-on-accent",
   learned: "bg-success/15 text-success",
+  frozen: "bg-accent/15 text-accent-dark",
   missed: "border-2 border-dashed border-border-strong",
   open: "border-2 border-accent text-accent-dark",
   future: "bg-paper-dim",
@@ -39,6 +43,7 @@ const DOT: Record<WeekDot["state"], string> = {
 const SAY: Record<WeekDot["state"], string> = {
   met: "daily goal met",
   learned: "learned, goal not met",
+  frozen: "covered by a streak freeze",
   missed: "missed",
   open: "not yet",
   future: "still to come",
@@ -90,6 +95,11 @@ export function TodayCard({ t }: { t: TodayNumbers }) {
           </p>
           <p className={cn("mt-0.5 text-sm", safe && !done && !t.atRisk && t.streak > 0 ? "font-semibold text-success" : "text-ink")}>{line}</p>
           {!done && safe ? <p className="mt-0.5 text-xs text-ink-muted">{t.goal - t.xp} more XP fills today&apos;s goal.</p> : null}
+          {t.savedYesterday && t.streak > 0 ? (
+            <p className="mt-1 flex items-center gap-1 text-xs text-accent-dark">
+              <Snowflake aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />A freeze saved your streak yesterday.
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -104,7 +114,7 @@ export function TodayCard({ t }: { t: TodayNumbers }) {
                 d.today && d.state !== "open" && "ring-2 ring-accent ring-offset-2 ring-offset-surface",
               )}
             >
-              {d.state === "met" ? <Check className="h-4 w-4" strokeWidth={3} /> : d.state === "learned" ? <span className="h-2 w-2 rounded-full bg-success" /> : d.state === "open" ? d.label.slice(0, 1) : null}
+              {d.state === "met" ? <Check className="h-4 w-4" strokeWidth={3} /> : d.state === "learned" ? <span className="h-2 w-2 rounded-full bg-success" /> : d.state === "frozen" ? <Snowflake className="h-4 w-4" /> : d.state === "open" ? d.label.slice(0, 1) : null}
             </span>
             <span aria-hidden="true">{d.today ? "Today" : d.label}</span>
             <span className="sr-only">{d.name}{d.today ? " (today)" : ""}: {SAY[d.state]}</span>
@@ -112,7 +122,11 @@ export function TodayCard({ t }: { t: TodayNumbers }) {
         ))}
       </ul>
       <p className="mt-3 flex flex-wrap justify-between gap-x-3 text-xs text-ink-muted">
-        <span>Week goal: <b className="text-ink">{t.weekMet} of {t.weeklyGoal} days</b></span>
+        <span>
+          Week goal: <b className="text-ink">{t.weekMet} of {t.weeklyGoal} days</b>
+          {" · "}
+          <Snowflake aria-hidden="true" className="inline h-3.5 w-3.5 align-[-2px] text-accent-dark" /> {t.freezes} freeze{t.freezes === 1 ? "" : "s"}
+        </span>
         <Link href="/settings#daily-goal" className="font-medium text-accent-dark hover:underline">Goal: {t.goal} XP a day</Link>
       </p>
     </Card>

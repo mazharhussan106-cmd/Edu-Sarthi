@@ -77,6 +77,9 @@ export async function GET() {
         take: 50_000,
         select: { createdAt: true, known: true, recall: true, stage: true, word: { select: { code: true, text: true } } },
       },
+      // The dashboard's streak freezes: days covered and freezes held.
+      streakFreezes: { orderBy: { day: "asc" }, select: { day: true, createdAt: true } },
+      streakLedger: { select: { held: true, weeksMet: true, checkedThrough: true } },
       submissions: {
         orderBy: { createdAt: "asc" },
         select: {

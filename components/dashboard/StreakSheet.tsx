@@ -9,15 +9,16 @@
 // joined.
 
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Snowflake } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { STREAK_MIN_XP, type MonthDay } from "@/lib/streak";
+import { FREEZE_MAX, STREAK_MIN_XP, type MonthDay } from "@/lib/streak";
 
 const CELL: Record<MonthDay["state"], string> = {
   met: "bg-success font-semibold text-on-accent",
   // Ink, not green, on the light green: green text on it was 4.12:1 (axe).
   learned: "bg-success/15 font-semibold text-ink",
+  frozen: "bg-accent/15 font-semibold text-ink",
   none: "text-ink",
   future: "text-ink-muted",
 };
@@ -25,6 +26,7 @@ const CELL: Record<MonthDay["state"], string> = {
 const SAY: Record<MonthDay["state"], string> = {
   met: "daily goal met",
   learned: "streak day",
+  frozen: "covered by a streak freeze",
   none: "no streak day",
   future: "still to come",
 };
@@ -36,6 +38,7 @@ export function StreakSheet({
   weekMet,
   weeklyGoal,
   month,
+  freezes,
 }: {
   streak: number;
   longest: number;
@@ -43,11 +46,16 @@ export function StreakSheet({
   weekMet: number;
   weeklyGoal: number;
   month: { title: string; lead: number; days: readonly MonthDay[] };
+  freezes: number;
 }) {
   return (
     <div>
       <p className="text-sm text-ink-muted">
         Longest: <b className="text-ink">{longest} day{longest === 1 ? "" : "s"}</b> · This week: <b className="text-ink">{weekMet} of {weeklyGoal} days</b> at your goal
+      </p>
+      <p className="mt-1 flex items-center gap-1.5 text-sm text-ink">
+        <Snowflake aria-hidden="true" className="h-4 w-4 text-accent-dark" />
+        <b>{freezes} of {FREEZE_MAX}</b> streak freezes ready
       </p>
 
       <p className="mt-4 text-sm font-semibold text-ink">{month.title}</p>
@@ -76,6 +84,10 @@ export function StreakSheet({
         <li className="flex gap-2.5">
           <span aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-success/15" />
           <span>Light green is a streak day; dark green is a day you filled the ring ({goal} XP).</span>
+        </li>
+        <li className="flex gap-2.5">
+          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent/15 text-accent-dark"><Snowflake className="h-3 w-3" /></span>
+          <span>A freeze covers a day you miss, by itself, so the streak lives on. Meet your weekly goal to earn one; you can hold {FREEZE_MAX}.</span>
         </li>
       </ul>
       {streak === 0 ? <p className="mt-3 text-sm text-ink-muted">Earn {STREAK_MIN_XP} XP today to start a new streak.</p> : null}

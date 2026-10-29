@@ -13,11 +13,14 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { logAdmin, readBody, requireAdmin } from "@/lib/admin";
 import { parseCsv } from "@/lib/csv";
+import { SKILL_FOCUS_VALUES } from "@/lib/skillFocus";
 
 const moduleFields = z.object({
   title: z.string().trim().min(3, "Module title is too short").max(120),
   description: z.string().trim().min(10, "Write a line describing the module").max(600),
   level: z.coerce.number().int().min(1, "Level starts at 1").max(10, "Level is 1 to 10"),
+  // Optional: an empty choice or an empty CSV cell means no focus.
+  focus: z.preprocess((v) => (v === "" || v === undefined ? null : v), z.enum(SKILL_FOCUS_VALUES, "Skill focus must be pronunciation, grammar, fluency, vocabulary or confidence").nullable()),
 });
 
 const exerciseFields = z
@@ -119,7 +122,8 @@ async function importCsv(adminId: string, csv: string, commit: boolean) {
   rows.forEach((r, i) => {
     // +2: row 1 is the header, and people count rows from 1.
     const line = i + 2;
-    const m = moduleFields.safeParse({ title: col(r, "module_title"), description: col(r, "module_description"), level: col(r, "level") });
+    // skill_focus is an optional column; a sheet without it imports as before.
+    const m = moduleFields.safeParse({ title: col(r, "module_title"), description: col(r, "module_description"), level: col(r, "level"), focus: col(r, "skill_focus").toLowerCase() });
     const e = exerciseFields.safeParse({
       title: col(r, "title"),
       prompt: col(r, "prompt"),

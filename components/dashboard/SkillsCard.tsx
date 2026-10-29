@@ -15,7 +15,18 @@ export type SkillRow = { label: string; mean: number; change: number };
 
 const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
 
-export function SkillsCard({ rows, audits, member }: { rows: readonly SkillRow[]; audits: number; member: boolean }) {
+export function SkillsCard({
+  rows,
+  audits,
+  member,
+  practise,
+}: {
+  rows: readonly SkillRow[];
+  audits: number;
+  member: boolean;
+  /// Where the main button goes: the lowest skill's modules when an admin tagged any, else all modules.
+  practise: { href: string; label: string };
+}) {
   if (!member) return null;
   const lowest = rows.length > 0 ? rows.reduce((a, b) => (b.mean < a.mean ? b : a)) : null;
 
@@ -58,8 +69,8 @@ export function SkillsCard({ rows, audits, member }: { rows: readonly SkillRow[]
         </>
       )}
       <div className="mt-3 flex flex-wrap gap-2">
-        <Link href="/modules" className="inline-flex min-h-10 items-center rounded-lg bg-accent px-4 text-sm font-semibold text-on-accent">
-          Practise speaking
+        <Link href={practise.href} className="inline-flex min-h-10 items-center rounded-lg bg-accent px-4 text-sm font-semibold text-on-accent">
+          {practise.label}
         </Link>
         {rows.length > 0 ? (
           <Link href="/progress" className="inline-flex min-h-10 items-center rounded-lg border border-border-strong px-4 text-sm font-semibold text-accent-dark hover:bg-hover">

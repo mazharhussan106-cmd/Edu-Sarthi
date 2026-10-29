@@ -12,6 +12,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { adminPost } from "@/components/admin/adminPost";
+import { SKILL_FOCUS } from "@/lib/skillFocus";
 
 const field =
   "w-full rounded-md border border-border-strong bg-surface px-2.5 py-1.5 text-sm text-ink placeholder:text-ink-muted focus:border-accent";
@@ -32,11 +33,11 @@ function useSave(onDone: () => void) {
   return { busy, error, save };
 }
 
-type ModuleValue = { id?: string; title: string; description: string; level: number };
+type ModuleValue = { id?: string; title: string; description: string; level: number; focus: string | null };
 
 export function ModuleForm({ initial, label }: { initial?: ModuleValue; label: string }) {
   const [open, setOpen] = useState(false);
-  const [v, setV] = useState<ModuleValue>(initial ?? { title: "", description: "", level: 1 });
+  const [v, setV] = useState<ModuleValue>(initial ?? { title: "", description: "", level: 1, focus: null });
   const { busy, error, save } = useSave(() => setOpen(false));
 
   if (!open) {
@@ -50,6 +51,10 @@ export function ModuleForm({ initial, label }: { initial?: ModuleValue; label: s
     <div className="mt-2 grid w-full gap-2 rounded-lg border border-border bg-paper p-3 md:grid-cols-[1fr_90px]">
       <input aria-label="Module title" className={field} placeholder="Module title" value={v.title} onChange={(e) => setV({ ...v, title: e.target.value })} />
       <input aria-label="Level" className={field} type="number" min={1} max={10} value={v.level} onChange={(e) => setV({ ...v, level: Number(e.target.value) })} />
+      <select aria-label="Skill it practises most" className={`${field} md:col-span-2`} value={v.focus ?? ""} onChange={(e) => setV({ ...v, focus: e.target.value || null })}>
+        <option value="">Skill focus: none</option>
+        {SKILL_FOCUS.map((s) => <option key={s.value} value={s.value}>Skill focus: {s.label}</option>)}
+      </select>
       <textarea aria-label="Description" className={`${field} md:col-span-2`} rows={2} placeholder="What this module practises" value={v.description} onChange={(e) => setV({ ...v, description: e.target.value })} />
       <div className="flex items-center gap-2 md:col-span-2">
         <Button size="sm" disabled={busy} onClick={() => void save(initial?.id ? { action: "module.update", id: initial.id, data: v } : { action: "module.create", data: v })}>

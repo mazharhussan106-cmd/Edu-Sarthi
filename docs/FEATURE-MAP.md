@@ -49,7 +49,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 
 | Feature | What it does | Where |
 |---|---|---|
-| Practice modules | Speaking exercises by level; record or upload audio, video or a photo | Menu → Learn and practise → Practice modules (`/modules`); Bar → Class leads there too |
+| Practice modules | Speaking exercises by level, or by the skill they practise (`?focus=fluency`, from the dashboard); record or upload audio, video or a photo | Menu → Learn and practise → Practice modules (`/modules`); Bar → Class leads there too |
 | Audited (My audits) | Every recording with its status: All / In review / Action needed / Completed | Bar → Audited (`/feedback`) |
 | One audit | Rubric scores, timestamped notes, or the reason it was sent back and tips to re-record | Audited → tap a row (`/feedback/<id>`) |
 | Class | Says honestly that live classes are not built yet; leads to the speaking exercises | Bar → Class (`/class`) |

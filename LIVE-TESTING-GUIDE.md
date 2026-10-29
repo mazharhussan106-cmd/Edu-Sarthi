@@ -256,6 +256,9 @@ Student account se login kariye (jisme kuch cards aur recordings hon), phir ek b
 - [ ] Profile → Badges me 14 badges; streak wale "Learn N days in a row" kehte hon
 - [ ] Today card par "❄ 1 freeze" dikhe (naya account 1 freeze se shuru hota hai); streak sheet me "1 of 2 streak freezes ready"
 - [ ] Streak chalte hue ek din kuch na padhiye; agle din Dashboard par "A freeze saved your streak yesterday.", us din ke gole par ❄, aur streak wahi rahe
+- [ ] Computer par kisi bhi student page (jaise Today's review) ke header me 🔥 streak aur XP dikhen; ek card karke doosre page par jaaiye → XP badh jaaye; Dashboard par header me ye na dikhen (wahan upar pills hain)
+- [ ] Admin → Content → kisi module me "Skill focus: Fluency" chuniye → jis student ki fluency sabse kam hai uske Dashboard par "Practise fluency" button → sirf wahi modules + "Show all modules"
+- [ ] Daily reminder email (cards due ho, streak ho, aaj 10 XP se kam) me "Your N-day streak needs 10 XP today" line
 - [ ] Ek hafta weekly goal pura kariye; agle Monday freeze ek badhe (2 se zyada nahi) aur Profile me "Weekly goal met" badge mile
 
 ---

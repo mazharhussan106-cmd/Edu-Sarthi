@@ -287,6 +287,9 @@ model Module {
   /// speaking practice). They are hidden from Learn and from "next up".
   isSystem    Boolean    @default(false)
   level       Int
+  /// The rubric skill this module practises most (lib/skillFocus), or none.
+  /// Lets "Practise fluency" on the dashboard open the right modules.
+  focus       String?
   title       String
   description String
   exercises   Exercise[]

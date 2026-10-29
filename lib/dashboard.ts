@@ -38,7 +38,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
   const reviewed = { studentId: userId, status: "REVIEWED" as SubmissionStatus, feedback: { isNot: null } };
   const auditSelect = { id: true, createdAt: true, exercise: { select: { title: true } }, word: { select: { text: true } }, feedback: { select: { ...SCORES, summary: true } } } as const;
 
-  const [xp, review, allowance, inFlight, recent, first, auditCount, nextExercise, notices, cards, kinds, decksOwned] = await Promise.all([
+  const [xp, review, allowance, inFlight, recent, first, auditCount, nextExercise, notices, cards, kinds, decksOwned, focused] = await Promise.all([
     xpDays(userId),
     todayReview(userId, prefs.newPerDay),
     isGuest ? null : auditAllowance(userId),
@@ -65,6 +65,10 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
     cardProgress(userId),
     knownByKind(userId),
     prisma.deck.count({ where: { ownerId: userId } }),
+    // Which skills have at least one module tagged for them (lib/skillFocus).
+    // Caught: until Database setup adds Module.focus, the button simply opens
+    // every module.
+    prisma.module.groupBy({ by: ["focus"], where: { isSystem: false, focus: { not: null } } }).catch(() => []),
   ]);
 
   // Day and streak numbers.
@@ -107,6 +111,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
   const firstScores = first?.feedback ?? null;
   const skills = latest
     ? CRITERIA.map((c) => ({
+        key: c.key,
         label: c.label,
         mean: audits.reduce((n, s) => n + s.feedback![c.key], 0) / audits.length,
         change: latest.feedback![c.key] - (firstScores ? firstScores[c.key] : latest.feedback![c.key]),
@@ -175,6 +180,14 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
       : null,
     auditCount,
     skills,
+    // "Practise fluency" only when a module is tagged for the lowest skill;
+    // otherwise the button says what it really opens: every module.
+    practise: (() => {
+      const low = skills.length ? skills.reduce((a, b) => (b.mean < a.mean ? b : a)) : null;
+      return low && focused.some((f) => f.focus === low.key)
+        ? { href: `/modules?focus=${low.key}`, label: `Practise ${low.label.toLowerCase()}` }
+        : { href: "/modules", label: "Practise speaking" };
+    })(),
     trend,
     notices,
     cards,

@@ -15,7 +15,8 @@
 // returns "no freezes" and the dashboard works as before.
 
 import { prisma } from "@/lib/prisma";
-import { FREEZE_MAX, FREEZE_START, STREAK_MIN_XP, addDays, type XpByDay } from "@/lib/streak";
+import { FREEZE_MAX, FREEZE_START, STREAK_MIN_XP, addDays, istDay, streakOf, type XpByDay } from "@/lib/streak";
+import { xpDays, xpMap } from "@/lib/xp";
 
 export type FreezeState = { held: number; weeksMet: number; frozen: Set<string> };
 
@@ -101,4 +102,13 @@ export async function settleFreezes(userId: string, xp: XpByDay, today: string, 
     console.error("streak freezes unavailable (has Database setup run?)", err);
     return { held: 0, weeksMet: 0, frozen: new Set() };
   }
+}
+
+/// The streak and today's XP for one student, freezes settled: what the daily
+/// reminder email needs to say "keep your streak" only when there is one.
+export async function streakNow(userId: string, goal: number, weeklyGoal: number, now = new Date()): Promise<{ streak: number; todayXp: number }> {
+  const today = istDay(now);
+  const byDay = xpMap((await xpDays(userId)).days);
+  const { frozen } = await settleFreezes(userId, byDay, today, goal, weeklyGoal);
+  return { streak: streakOf(byDay, today, frozen), todayXp: byDay.get(today) ?? 0 };
 }

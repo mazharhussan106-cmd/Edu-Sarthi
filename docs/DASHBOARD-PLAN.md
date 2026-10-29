@@ -1,6 +1,6 @@
 # Student dashboard — redesign plan
 
-Status: **Phases 1, 2 and 3 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet). After merging, run Actions → Database setup once (two new tables).** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
+Status: **Phases 1–4 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet). After merging, run Actions → Database setup once, straight away (two new tables and one new column).** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
 
 Mockup: `docs/dashboard-mockup.html` (open in a browser; phone and computer, the special states and the two sheets; a Light / dark button checks the tokens). Screenshots: `docs/dashboard-mockup-phone.png`, `docs/dashboard-mockup-desktop.png`, `docs/dashboard-mockup-states.png`, `docs/dashboard-mockup-sheets.png`. The same screens are on a private design canvas for the owner, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs), each artboard with a Theme tweak; the repo files are the record.
 
@@ -235,14 +235,26 @@ Checked on a local Postgres: 17 checks of the freeze rules on fixed dates and ag
 
 Not checked: the live database (needs the merge and Database setup), a real phone, and a day boundary passing while the page is open (the next visit settles it).
 
+#### Phase 4 — polish: header stats, reminder line, practise the weakest skill (29 Oct)
+
+The owner chose this from the ideas list ("Polish + small ideas"). **Schema change, additive only:** one nullable column `Module.focus` (the rubric skill a module practises most, `lib/skillFocus.ts`). Nothing existing is touched; Database setup adds it (the same run as Phase 3's tables). Every existing module read uses an explicit `select`, and the dashboard's one query on `focus` is caught, so nothing breaks in the minutes before Database setup runs; only Admin → Content needs the column.
+
+Built:
+- **Streak and XP in the header on every student page** (`components/layout/HeaderStats.tsx`, row 2 of the header on a computer; phones have no room and keep the dashboard pills). It asks the new `/api/progress` (students only; teachers and admins get 404) after every page change, because the header lives in a layout that Next does not re-render on client navigation. Hidden on the dashboard, which has the same pills. Row 2 of the header now shows only when it holds a link (`md:has-[a]:block`), so it never shows as an empty bar while loading or on the dashboard. Each number links to the dashboard.
+- **Daily reminder email:** when the student has a streak and has not yet earned 10 XP today, one extra plain line: "Your 6-day streak needs 10 XP today, about 10 reviews." No line when today already counts or there is no streak. The email is still sent only when cards are due (`lib/studyReminders.ts`, `streakNow` in `lib/freeze.ts`).
+- **Practise the weakest skill:** Admin → Content → a module's Edit form has "Skill focus" (none or one of the five rubric skills), and the CSV import takes an optional `skill_focus` column for new modules. When a module is tagged with the student's lowest skill, the dashboard's button says "Practise fluency" and opens `/modules?focus=fluency`, which shows only those modules with a "Show all modules" link. With no tagged module for that skill, the button stays "Practise speaking" and opens every module. **Nothing is tagged yet: an admin has to tag modules for this to show.**
+
+Checked on a local Postgres: 7 new number checks (the button with no tag, with another skill's tag, with the right tag; three reminder emails: streak line only for the student with a streak and under 10 XP today), the freeze, Phase 1 and Phase 2 number checks again; 22 browser checks (header stats on /today and Settings, updating to 486 XP after a client-side page change, no header row on the dashboard or on a phone, teacher refused by the API, admin saving a skill focus, the student's "Practise fluency" opening the filtered list and "Show all modules", axe in five themes on the header and the filtered modules page, no browser errors), and the 79 + 50 + 30 earlier browser checks again: all pass. `tsc` and `next build` pass.
+
+Test notes, not bugs: the header's EduSarthi logotype is excluded from axe as before (WCAG exempts logotypes); measuring right after a theme change or with the pointer over a card catches colours mid-fade, so the checks wait for them to settle.
+
 ## Ideas noted, not planned
 
-- The header already has an empty `stats` slot (`StickyHeader`, row 2 on a computer; the student layout says "No `stats` yet"). The 🔥 and XP chips could live there so they show on every page, not only the dashboard.
-- A "streak at risk" line in the existing daily reminder email.
+- (Built in Phase 4: header stats, the reminder line.)
 
 ## Not in this round
 
-Teacher home page (Queue stays the teacher's home), admin overview, a skill tag on modules (needed before "Work on fluency" can open fluency exercises directly), read-tracking of audits (needed before "read your audit" can earn XP), push notifications, leaderboards.
+Teacher home page (Queue stays the teacher's home), admin overview, read-tracking of audits (needed before "read your audit" can earn XP), push notifications, leaderboards.
 
 ## Sources
 

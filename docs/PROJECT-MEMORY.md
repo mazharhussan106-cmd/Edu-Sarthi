@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign planned and Phases 1–3 built, not merged yet; Phase 3 needs Database setup after merging, see "Student dashboard redesign"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign planned and Phases 1–4 built, not merged yet; Phases 3–4 need Database setup right after merging, see "Student dashboard redesign"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -413,7 +413,7 @@ Still open:
 - Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
 - The two pre-existing axe findings above (logotype contrast, unlabelled navs) on every page.
 
-## Student dashboard redesign (29 Oct, branch `claude/hopeful-heisenberg-04ufep`) — Phases 1, 2 and 3 BUILT, not merged
+## Student dashboard redesign (29 Oct, branch `claude/hopeful-heisenberg-04ufep`) — Phases 1–4 BUILT, not merged
 
 The owner asked for a list of what the dashboard should show and how it should look, after checking what other apps do, with questions first; this chat works only on the dashboard. Four questions asked; answers are in "Decisions that must not be undone" (29 Oct, student dashboard).
 
@@ -435,7 +435,9 @@ The owner then accepted every recommendation (chart kept on the dashboard) and s
 
 **Don't undo (Phase 3):** freezes are stored, never recomputed from history; a freeze is spent only to save a live streak; a frozen day does not add to the count.
 
-**Next:** merge, then **Actions → Database setup** once (the two tables; the dashboard works without them meanwhile, with no freezes), then `LIVE-TESTING-GUIDE.md` section 4d on a phone. All three planned phases are done.
+**Phase 4 built (owner chose "Polish + small ideas"):** streak and XP in the header of every student page on a computer (`HeaderStats`, `/api/progress`), a "keep your streak" line in the daily reminder email, and a skill focus on modules (new nullable column `Module.focus`, set in Admin → Content or the CSV `skill_focus` column) so the dashboard's button can say "Practise fluency" and open `/modules?focus=fluency`. **No module is tagged yet; the admin has to tag them.** Details: `docs/DASHBOARD-PLAN.md` → "Phase 4".
+
+**Next:** merge, then **Actions → Database setup** once, straight away (two tables from Phase 3, one column from Phase 4; the dashboard copes without them for those minutes), then tag modules with a skill focus in Admin → Content, then `LIVE-TESTING-GUIDE.md` section 4d on a phone. Not started, on purpose: teacher home page, admin overview.
 
 ## Flashcard phone layout: lesson (10 Oct)
 

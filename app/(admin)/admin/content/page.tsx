@@ -26,6 +26,7 @@ export default async function ContentPage() {
       title: true,
       description: true,
       level: true,
+      focus: true,
       exercises: {
         orderBy: { title: "asc" },
         select: {
@@ -74,7 +75,7 @@ export default async function ContentPage() {
                 <p className="mt-1 text-sm text-ink-muted">{m.description}</p>
               </div>
               <div className="flex flex-wrap items-start gap-1">
-                <ModuleForm label="Edit" initial={{ id: m.id, title: m.title, description: m.description, level: m.level }} />
+                <ModuleForm label="Edit" initial={{ id: m.id, title: m.title, description: m.description, level: m.level, focus: m.focus }} />
                 <ActionButton
                   url="/api/admin/content"
                   body={{ action: "module.delete", id: m.id }}

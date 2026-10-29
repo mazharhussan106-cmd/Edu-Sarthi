@@ -11,6 +11,8 @@
 // It deliberately does NOT check who called it; the cron routes do.
 
 import { sendStudyReminder } from "@/lib/emailNotices";
+import { streakNow } from "@/lib/freeze";
+import { STREAK_MIN_XP } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { prefsOf } from "@/lib/preferences";
 
@@ -56,7 +58,12 @@ export async function sendStudyReminders(hour: number, link: string, deadline: n
       const n = dueBy.get(s.id) ?? 0;
       if (n === 0 || !s.email) continue;
       try {
-        await sendStudyReminder(s.email, n, link);
+        // A streak line only for a streak worth keeping and not yet kept today.
+        // Read per student, after the due check, so only those emailed pay for it.
+        const prefs = prefsOf(s.preferences);
+        const st = await streakNow(s.id, prefs.dailyGoalXp, prefs.weeklyGoalDays, now).catch(() => null);
+        const keep = st && st.streak > 0 && st.todayXp < STREAK_MIN_XP ? st.streak : 0;
+        await sendStudyReminder(s.email, n, link, keep);
         sent++;
       } catch (err) {
         // One bad address must not stop everyone after them.

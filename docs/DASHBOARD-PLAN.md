@@ -1,6 +1,6 @@
 # Student dashboard — redesign plan
 
-Status: **Phase 1 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet); Phases 2 and 3 not started.** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
+Status: **Phases 1 and 2 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet); Phase 3 not started.** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
 
 Mockup: `docs/dashboard-mockup.html` (open in a browser; phone and computer, the special states and the two sheets; a Light / dark button checks the tokens). Screenshots: `docs/dashboard-mockup-phone.png`, `docs/dashboard-mockup-desktop.png`, `docs/dashboard-mockup-states.png`, `docs/dashboard-mockup-sheets.png`. The same screens are on a private design canvas for the owner, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs), each artboard with a Theme tweak; the repo files are the record.
 
@@ -190,6 +190,23 @@ To go live: merge. No Database setup run is needed (no schema change).
 - The two pills become buttons: **Streak sheet** (this month as a calendar, current and longest streak, the rules) and **XP sheet** (today, this week, total, stage bar, the full XP table, "XP counts from 26 Oct 2026", link to the daily goal).
 - Goal-done moment: a short tick animation on the ring, none with Reduce motion.
 - Help and `LIVE-TESTING-GUIDE.md` steps.
+
+#### Phase 2 — what was built and how it was checked (29 Oct)
+
+The owner said "start building next phase". Built as planned, no schema change:
+- **Settings → Flashcards → Daily goal** (Easy 20, Regular 40, Serious 60, Intense 100 XP) and **Weekly goal** (3 days, 5 days, every day), preferences `dailyGoalXp` and `weeklyGoalDays` in `User.preferences` (`lib/preferences.ts`; choices listed once in `lib/streak.ts`). Old accounts read the defaults; a value outside the list falls back to the default. The rows open from `/settings#daily-goal` and `#weekly-goal` (`PrefChoiceRow` takes an `anchor`).
+- The dashboard reads both: the ring, the summary line, the week dots, "Week goal: N of M days" and the calendar all use the student's goal. "Goal: N XP a day" on the Today card links to the Daily goal sheet.
+- The pills are buttons now (`StatPills`, client). **Streak sheet** (`StreakSheet`): longest streak, this week against the goal, this month as a calendar (light green = streak day, dark green = goal met, today ringed; past days with too little XP are plain, never marked as missed), the rule, a link to the goals. **XP sheet** (`XpSheet`): stage bar, XP today / this week / best day, every XP rule from the same constants the counting uses, "Card XP counts from 26 Oct 2026", a link to the Daily goal sheet. Both use the Settings `Sheet`; their content is rendered on the server and handed in.
+- **Goal moment** (`GoalTick`): when the ring is full, the tick pops once per day per device (remembered in localStorage; the copy hidden by its breakpoint does not claim the day). No animation with the phone's reduce-motion setting or Settings → Reduce motion (`globals.css`, `goal-pop`).
+- Help's XP answer and `LIVE-TESTING-GUIDE.md` section 4d (a phone checklist for the whole dashboard) are updated.
+
+Checked on a local Postgres (same test students as Phase 1):
+- 13 new number checks (month grid and its first weekday, February, week XP from Monday, defaults and bad stored values, a student switched to 20 XP and 3 days, the sheet numbers), plus the 42 Phase 1 checks again: all pass.
+- 50 browser checks: the streak sheet opened by keyboard (focus moves in, Escape closes, focus returns to the pill), the XP sheet by tap and Done; axe in five themes on both sheets at both widths and on the Daily goal sheet; the XP sheet's goal link opening Settings with the Daily goal sheet open; choosing 20 XP and 3 days saved (PATCH 200, stored in the account) and the dashboard following them; the tick popping once and not on reload; no animation under either reduce-motion setting; no browser errors. Then the 79 Phase 1 browser checks again: all pass. Settings for a student and a guest: both goal rows, axe clean in five themes.
+- Found and fixed: the calendar's light-green days had green text at 4.12:1; they now use ink.
+- `tsc` and `next build` pass.
+
+To go live: merge. No Database setup run is needed.
 
 ### Phase 3 — streak freeze and weekly badges
 

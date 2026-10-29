@@ -1,6 +1,7 @@
 // Owns a Settings row for a preference with a few fixed choices (text size,
-// audit playback speed, new cards per day): the row shows the current choice,
-// and its sheet lists them all, with the longer explanation under the list.
+// audit playback speed, new cards per day, the daily and weekly goals): the
+// row shows the current choice, and its sheet lists them all, with the longer
+// explanation under the list.
 //
 // A choice applies on tap, like a toggle; the sheet stays open so a person can
 // try the next one, and Done closes it. It deliberately does NOT know which
@@ -15,7 +16,7 @@ import { SheetRow } from "@/components/ui/SheetRow";
 import { useSavePreference } from "@/app/(shared)/settings/useSavePreference";
 import type { Preferences } from "@/lib/preferences";
 
-type ChoicePref = "textSize" | "playbackRate" | "newPerDay";
+type ChoicePref = "textSize" | "playbackRate" | "newPerDay" | "dailyGoalXp" | "weeklyGoalDays";
 
 export function PrefChoiceRow({
   pref,
@@ -26,6 +27,7 @@ export function PrefChoiceRow({
   initial,
   numeric = false,
   attr,
+  anchor,
 }: {
   pref: ChoicePref;
   title: string;
@@ -39,13 +41,15 @@ export function PrefChoiceRow({
   numeric?: boolean;
   /** Set on <html> to the choice, and removed for the default one. */
   attr?: { name: string; unsetFor: string };
+  /** Lets a link such as /settings#daily-goal open this row's sheet. */
+  anchor?: string;
 }) {
   const [value, setValue] = useState(initial);
   const { save, notice } = useSavePreference();
   const current = options.find((o) => o.value === value);
 
   return (
-    <SheetRow title={title} subline={subline} value={current?.short} done>
+    <SheetRow title={title} subline={subline} value={current?.short} anchor={anchor} done>
       <RadioList
         label={title}
         hideLabel

@@ -6,13 +6,17 @@
 // is about to break, green when today's goal is done. Every other day it
 // stays calm, because a dashboard that is always alarmed is soon ignored.
 
+import Link from "next/link";
 import { Check, Flame } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { STREAK_MIN_XP, type WeekDot } from "@/lib/streak";
+import { GoalTick } from "@/components/dashboard/GoalTick";
 
 export type TodayNumbers = {
+  /// The India day, so the goal moment can be shown once per day.
+  day: string;
   xp: number;
   goal: number;
   streak: number;
@@ -75,7 +79,7 @@ export function TodayCard({ t }: { t: TodayNumbers }) {
             ) : null}
           </svg>
           <span aria-hidden="true" className="absolute inset-0 flex flex-col items-center justify-center leading-tight">
-            {done ? <Check className="h-8 w-8 text-success" strokeWidth={3} /> : <b className="font-mono text-lg font-bold text-ink">{t.xp}</b>}
+            {done ? <GoalTick day={t.day} /> : <b className="font-mono text-lg font-bold text-ink">{t.xp}</b>}
             <span className="text-[11px] text-ink-muted">{done ? `${t.xp} XP` : `of ${t.goal} XP`}</span>
           </span>
         </div>
@@ -109,7 +113,7 @@ export function TodayCard({ t }: { t: TodayNumbers }) {
       </ul>
       <p className="mt-3 flex flex-wrap justify-between gap-x-3 text-xs text-ink-muted">
         <span>Week goal: <b className="text-ink">{t.weekMet} of {t.weeklyGoal} days</b></span>
-        <span>Goal: {t.goal} XP a day</span>
+        <Link href="/settings#daily-goal" className="font-medium text-accent-dark hover:underline">Goal: {t.goal} XP a day</Link>
       </p>
     </Card>
   );

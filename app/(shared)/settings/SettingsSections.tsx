@@ -16,6 +16,7 @@ import type { ReactNode } from "react";
 
 import { prisma } from "@/lib/prisma";
 import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, prefsOf } from "@/lib/preferences";
+import { DAILY_GOALS, STREAK_MIN_XP, WEEKLY_GOALS } from "@/lib/streak";
 import { TEXT_SIZES } from "@/lib/textSize";
 import { SheetRow } from "@/components/ui/SheetRow";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
@@ -36,6 +37,8 @@ const TEXT_NAMES = { small: "Smaller", normal: "Normal", large: "Larger" } as co
 const TEXT_OPTIONS = TEXT_SIZES.map((t) => ({ value: t.value, label: `${TEXT_NAMES[t.value]} (${t.label})`, short: t.label }));
 const SPEED_OPTIONS = PLAYBACK_RATES.map((r) => ({ value: String(r), label: r === 1 ? "1x, normal speed" : `${r}x`, short: `${r}x` }));
 const NEW_OPTIONS = NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: `${n} new cards`, short: String(n) }));
+const DAILY_OPTIONS = DAILY_GOALS.map((g) => ({ value: String(g.xp), label: `${g.name} · ${g.xp} XP, ${g.time}`, short: `${g.xp} XP` }));
+const WEEKLY_OPTIONS = WEEKLY_GOALS.map((d) => ({ value: String(d), label: d === 7 ? "Every day" : `${d} days a week`, short: `${d} days` }));
 
 function Group({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
@@ -102,6 +105,26 @@ export async function SettingsSections({ userId }: { userId: string }) {
       {/* Students only: teachers and admins have no flashcards. */}
       {learner ? (
         <Group id="settings-flashcards" title="Flashcards">
+          <PrefChoiceRow
+            pref="dailyGoalXp"
+            title="Daily goal"
+            subline="The XP that fills the ring on your Dashboard."
+            explain={`A new card is 2 XP, a review 1 XP and a recording 10 XP. Your streak needs ${STREAK_MIN_XP} XP a day, whatever goal you choose.`}
+            options={DAILY_OPTIONS}
+            initial={String(p.dailyGoalXp)}
+            numeric
+            anchor="daily-goal"
+          />
+          <PrefChoiceRow
+            pref="weeklyGoalDays"
+            title="Weekly goal"
+            subline="Days a week you aim to fill the ring."
+            explain="The week runs Monday to Sunday, India time. Rest days are part of the plan."
+            options={WEEKLY_OPTIONS}
+            initial={String(p.weeklyGoalDays)}
+            numeric
+            anchor="weekly-goal"
+          />
           <PrefChoiceRow
             pref="newPerDay"
             title="New cards per day"

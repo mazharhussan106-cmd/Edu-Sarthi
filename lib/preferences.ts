@@ -14,6 +14,7 @@ import { CARD_COLOR_VALUES, type CardColor } from "@/lib/cardColors";
 import { TEXT_SIZE_VALUES } from "@/lib/textSize";
 import { VOICE_ACCENT_VALUES, VOICE_SPEED_VALUES } from "@/lib/speech";
 import { isReminderHour, MAIN_REMINDER_HOUR } from "@/lib/reminderTimes";
+import { DAILY_GOAL_XP, WEEKLY_GOAL_DAYS } from "@/lib/streak";
 
 /// Self-described on the profile, never tested. "unset" is a real value so a
 /// student who skips it is not silently labelled Beginner.
@@ -64,6 +65,9 @@ export const PREFERENCE_SCHEMA = z.object({
   // Hides the Hindi to English practice questions, which "Hide Hindi
   // meanings" deliberately keeps.
   hideHindiTask: z.boolean(),
+  // The dashboard's ring and week (lib/streak lists the same choices).
+  dailyGoalXp: z.union([z.literal(20), z.literal(40), z.literal(60), z.literal(100)]),
+  weeklyGoalDays: z.union([z.literal(3), z.literal(5), z.literal(7)]),
 });
 
 export type Preferences = z.infer<typeof PREFERENCE_SCHEMA>;
@@ -93,6 +97,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   voiceSpeed: "normal",
   reduceMotion: false,
   hideHindiTask: false,
+  dailyGoalXp: DAILY_GOAL_XP,
+  weeklyGoalDays: WEEKLY_GOAL_DAYS,
 };
 
 /// The speeds the audit player offers, in the order shown. The schema above

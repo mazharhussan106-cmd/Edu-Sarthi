@@ -18,10 +18,22 @@ export const XP_RECORDING = 10;
 /// About ten reviews, five new cards or one recording: small enough to keep on
 /// a busy day, so the streak measures showing up, not effort.
 export const STREAK_MIN_XP = 10;
-/// Defaults until Phase 2 lets the student choose (20 / 40 / 60 / 100 XP and
-/// 3 / 5 / 7 days).
+/// The daily goal (the ring) and the weekly goal (days a week the ring is
+/// filled) are the student's choice in Settings → Flashcards; these are the
+/// defaults and the only values offered. A short list, not a free number: a
+/// goal of 500 is not a plan, it is a ring that never fills.
 export const DAILY_GOAL_XP = 40;
 export const WEEKLY_GOAL_DAYS = 5;
+export const DAILY_GOALS = [
+  { xp: 20, name: "Easy", time: "about 5 minutes" },
+  { xp: 40, name: "Regular", time: "about 10 minutes" },
+  { xp: 60, name: "Serious", time: "about 15 minutes" },
+  { xp: 100, name: "Intense", time: "about 25 minutes" },
+] as const;
+export const WEEKLY_GOALS = [3, 5, 7] as const;
+/// Card answers are logged (ReviewLog) only from this day, so card XP starts
+/// here; the XP sheet says so instead of showing invented earlier numbers.
+export const XP_SINCE = "26 Oct 2026";
 /// Evening, India time, after which a streak with nothing done today is
 /// called "at risk" on the dashboard.
 export const AT_RISK_HOUR = 18;
@@ -105,6 +117,37 @@ export function weekOf(xp: XpByDay, today: string, goal: number): { dots: WeekDo
     return { day, label, name, state, today: day === today };
   });
   return { dots, met };
+}
+
+/// XP from Monday to today, India week.
+export function weekXp(xp: XpByDay, today: string): number {
+  const offset = (new Date(`${today}T00:00:00Z`).getUTCDay() + 6) % 7;
+  let n = 0;
+  for (let i = 0; i <= offset; i++) n += xp.get(addDays(today, -i)) ?? 0;
+  return n;
+}
+
+export type MonthDay = { day: string; date: number; state: "met" | "learned" | "none" | "future"; today: boolean };
+
+/// The India month holding `today`, for the streak sheet's calendar. A past
+/// day with too little XP is plain "none" rather than "missed": a month view
+/// full of misses before the student even joined would only scold.
+export function monthOf(xp: XpByDay, today: string, goal: number): { title: string; lead: number; days: MonthDay[] } {
+  const first = `${today.slice(0, 8)}01`;
+  const start = new Date(`${first}T00:00:00Z`);
+  const lead = (start.getUTCDay() + 6) % 7;
+  const days: MonthDay[] = [];
+  for (let d = first; d.slice(0, 7) === first.slice(0, 7); d = addDays(d, 1)) {
+    const n = xp.get(d) ?? 0;
+    days.push({
+      day: d,
+      date: Number(d.slice(8)),
+      state: d > today ? "future" : n >= goal ? "met" : n >= STREAK_MIN_XP ? "learned" : "none",
+      today: d === today,
+    });
+  }
+  const title = start.toLocaleDateString("en-IN", { month: "long", year: "numeric", timeZone: "UTC" });
+  return { title, lead, days };
 }
 
 /// Stage n starts at 50·n·(n−1) XP: 100 for Stage 2, 1,000 for Stage 5, 4,500

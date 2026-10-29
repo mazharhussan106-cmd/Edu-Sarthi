@@ -26,6 +26,8 @@ import { SkillsCard } from "@/components/dashboard/SkillsCard";
 import { KindsCard } from "@/components/dashboard/KindsCard";
 import { StageCard } from "@/components/dashboard/StageCard";
 import { GettingStarted } from "@/components/dashboard/GettingStarted";
+import { StreakSheet } from "@/components/dashboard/StreakSheet";
+import { XpSheet } from "@/components/dashboard/XpSheet";
 
 // Anything reflecting user state must not be cached, or one student's view is
 // served to everyone until it expires.
@@ -51,7 +53,13 @@ export default async function DashboardPage() {
           </h1>
           <p className="mt-0.5 text-sm text-ink-muted">{d.summary}</p>
         </div>
-        <StatPills streak={d.today.streak} xp={d.totalXp} stage={d.stage.stage} />
+        <StatPills
+          streak={d.today.streak}
+          xp={d.totalXp}
+          stage={d.stage.stage}
+          streakSheet={<StreakSheet streak={d.today.streak} longest={d.sheets.longest} goal={d.today.goal} weekMet={d.today.weekMet} weeklyGoal={d.today.weeklyGoal} month={d.sheets.month} />}
+          xpSheet={<XpSheet total={d.totalXp} today={d.today.xp} week={d.sheets.weekXp} best={d.sheets.bestDay} goal={d.today.goal} stage={d.stage} />}
+        />
       </header>
 
       <div className="mt-5 lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:gap-5">

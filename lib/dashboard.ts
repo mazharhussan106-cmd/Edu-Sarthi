@@ -16,7 +16,7 @@ import { todayReview } from "@/lib/todayReview";
 import { activeNotices } from "@/lib/notices";
 import { cardProgress, knownByKind, CRITERIA, type CriterionKey } from "@/lib/studentStats";
 import { xpDays, xpMap } from "@/lib/xp";
-import { DAILY_GOAL_XP, WEEKLY_GOAL_DAYS, bestDay, istDay, learningDays, longestStreak, stageOf, streakAtRisk, streakOf, weekOf } from "@/lib/streak";
+import { bestDay, istDay, learningDays, longestStreak, monthOf, stageOf, streakAtRisk, streakOf, weekOf, weekXp } from "@/lib/streak";
 import { badgesFor, nextBadge } from "@/lib/badges";
 import { nextAction } from "@/lib/dashboardNext";
 import { summaryLine, todayTasks } from "@/lib/dashboardTasks";
@@ -72,7 +72,9 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
   const todayXp = byDay.get(today) ?? 0;
   const streak = streakOf(byDay, today);
   const days = learningDays(byDay);
-  const week = weekOf(byDay, today, DAILY_GOAL_XP);
+  const goal = prefs.dailyGoalXp;
+  const week = weekOf(byDay, today, goal);
+  const longest = longestStreak(byDay);
   const recordings = [...xp.days.values()].reduce((n, d) => n + d.recordings, 0);
 
   // Work for today.
@@ -117,7 +119,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
     submissions: recordings,
     audits: auditCount,
     streak,
-    longestStreak: longestStreak(byDay),
+    longestStreak: longest,
     cardsKnown: cards.known,
     decks: decksOwned,
     bestDayXp: bestDay(byDay),
@@ -138,17 +140,25 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
   return {
     firstName: me?.name?.trim().split(" ")[0] ?? null,
     isGuest,
-    summary: summaryLine(tasks, todayXp, DAILY_GOAL_XP),
+    summary: summaryLine(tasks, todayXp, goal),
     today: {
+      day: today,
       xp: todayXp,
-      goal: DAILY_GOAL_XP,
+      goal,
       streak,
       atRisk: streakAtRisk(now, todayXp, streak),
       week: week.dots,
       weekMet: week.met,
-      weeklyGoal: WEEKLY_GOAL_DAYS,
+      weeklyGoal: prefs.weeklyGoalDays,
     },
     totalXp: xp.total,
+    // For the streak and XP sheets the dashboard's pills open.
+    sheets: {
+      longest,
+      bestDay: bestDay(byDay),
+      weekXp: weekXp(byDay, today),
+      month: monthOf(byDay, today, goal),
+    },
     stage: stageOf(xp.total),
     next,
     tasks,

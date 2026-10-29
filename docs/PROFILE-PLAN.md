@@ -165,7 +165,28 @@ That is more than 6 files, so the owner must approve it first (CLAUDE.md). **App
     - Own actions this week, own decks reviewed in 30 days, decks and logos waiting.
     - Last 5 admin-log actions, activity calendar, shortcuts.
   - Neither profile shows a student's name. Teacher and admin accounts are still closed by support, and the page says how.
-  - Tested: tiles against the test data; queue count equal to the Queue page; turnaround equal to Workload (30 days); no student name or email on the teacher profile; axe in five themes for both; `next build` passes. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
+  - Tested: tiles against the test data; queue count equal to the Queue page; turnaround equal to Workload (30 days); no student name or email on the teacher profile; axe in five themes for both; `next build` passes.
+- **P5 done (29 Oct). The one schema change: `User.avatarKey String?`** (nullable, additive; no data can be lost).
+  - New:
+    - `lib/avatarFile.ts`: file rules, shared by the browser and the API.
+    - `lib/avatar.ts`: signed upload, save, remove, read URL.
+    - `app/api/profile/avatar`: POST `upload` and `save`, DELETE; members only.
+    - `components/profile/PhotoEditor.tsx`: pick, crop and upload, inside the Edit profile sheet.
+  - **How the photo is made:**
+    - The browser crops it (drag, arrow keys or the zoom slider) and draws it again at 512 × 512 as WebP (JPEG where WebP cannot be written). That removes the camera data (GPS, phone model) and keeps the upload small.
+    - The server accepts only that small file, and only under a key it issued to this person, once the file exists.
+    - Replacing a photo deletes the old file after the row points at the new one.
+  - **Who sees it:** only the owner, on their own Profile (owner, 29 Oct). Nobody else gets a URL, so there is no approval queue and no admin tool to remove one: nobody can see a photo to report it. Guests get no photo.
+  - **Data rights:** Download my data includes a 30-minute link to the photo; Delete my account deletes the file. The Privacy page has a new line, and its date is now 29 October 2026.
+  - **Before this reaches users:**
+    1. Merge, then run **Actions → Database setup** at once, so the live database has the new column. The Profile page reads it, so the page fails until then.
+    2. Per the Privacy page's own promise ("we will … email account holders before the change takes effect"), send the change email from Admin → Announcements before, or as, the photo goes live.
+  - Tested with the local file store:
+    - A wrong file type is refused in the browser. The crop step works by keyboard. The stored file is WEBP 512 × 512 with no EXIF, made from a test JPEG with GPS and a camera model.
+    - Replacing a photo deletes the old file. The export has a link. Someone else's key is refused (400). A guest has no photo section and the API refuses them (403).
+    - Removing a photo restores the initials and deletes the file. Deleting an account deletes its photo.
+    - The photo's key appears on no teacher page (queue, students, student page and history) and no admin page (overview, users, dispatch).
+    - axe passes on the crop step. P1–P4 suites rerun: all pass. `next build` passes. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
 
 ## Open questions for the owner
 

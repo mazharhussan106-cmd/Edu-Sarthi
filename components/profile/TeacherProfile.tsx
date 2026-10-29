@@ -56,7 +56,7 @@ function QualityChecks({ notes }: { notes: QaNote[] }) {
 export function TeacherProfile({ data }: { data: Data }) {
   const { user, decks } = data;
   const audiences: Audience[] = [
-    { who: "Students", what: "Not your name, email or number. Audits do not say who wrote them." },
+    { who: "Students", what: "Not your name, photo, email or number. Audits do not say who wrote them." },
     { who: "Learners in the library", what: "On decks you publish: the name you chose in Settings → How your name shows on public decks, and Verified teacher if you are." },
     ...(user.institute ? [{ who: `${user.institute.name}'s admin`, what: "Your name and email, to manage the institute's members." }] : []),
     { who: "EduSarthi admins", what: "Your account, the audits you wrote and their quality notes, to check quality and help you." },
@@ -67,6 +67,7 @@ export function TeacherProfile({ data }: { data: Data }) {
       <IdentityCard
         name={user.name}
         initials={initialsOf(user.name, user.email)}
+        photoUrl={user.photoUrl}
         roleLine={`Teacher · ${joinedLine(user.createdAt)}`}
         chips={
           <>
@@ -74,7 +75,15 @@ export function TeacherProfile({ data }: { data: Data }) {
             {user.institute ? <Badge>{user.institute.name}</Badge> : null}
           </>
         }
-        actions={<EditProfile label={user.name ? "Edit profile" : "Add your name"} name={user.name} phone={user.phone} showPhone />}
+        actions={
+          <EditProfile
+            label={user.name ? "Edit profile" : "Add name and photo"}
+            name={user.name}
+            phone={user.phone}
+            showPhone
+            photo={{ url: user.photoUrl, initials: initialsOf(user.name, user.email), note: "Only you see it, on this page." }}
+          />
+        }
         note={
           user.teacherVerifiedAt
             ? "Students do not see your name on their audits."

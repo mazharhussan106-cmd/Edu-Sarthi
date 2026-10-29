@@ -99,6 +99,10 @@ model User {
   /// The name they typed, used only when creditStyle is DISPLAY_NAME. An admin
   /// can clear it (Admin → Users) if it is not acceptable.
   publicName        String?
+  /// Storage key of their profile photo (lib/avatar), or null for initials.
+  /// Shown only on their own Profile (owner's decision, 29 Oct 2026), so
+  /// teachers still see students only by publicId. Nullable and additive.
+  avatarKey         String?
 
   // Student side
   submissions Submission[] @relation("StudentSubmissions")

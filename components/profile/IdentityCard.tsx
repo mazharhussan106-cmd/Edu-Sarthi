@@ -1,5 +1,5 @@
-// Owns the card at the top of every Profile: the picture (initials until a
-// photo exists), the name, the role and join month, small chips (STU ID,
+// Owns the card at the top of every Profile: the photo (initials when there
+// is none), the name, the role and join month, small chips (STU ID,
 // institute, verified teacher), the action buttons and one privacy line.
 //
 // It deliberately takes chips, actions and the note as ready-made pieces, so
@@ -19,6 +19,7 @@ export function initialsOf(name: string | null, email: string | null): string {
 export function IdentityCard({
   name,
   initials,
+  photoUrl,
   roleLine,
   chips,
   actions,
@@ -27,6 +28,8 @@ export function IdentityCard({
   /** null shows "No name yet", so a student signed in by code sees what is missing. */
   name: string | null;
   initials: string;
+  /** A signed URL for the owner's own photo; never passed for anyone else. */
+  photoUrl?: string | null;
   roleLine: string;
   chips?: ReactNode;
   actions?: ReactNode;
@@ -35,9 +38,14 @@ export function IdentityCard({
   return (
     <Card className="p-4 sm:p-5">
       <div className="flex items-center gap-4">
-        <span aria-hidden="true" className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-accent/12 font-display text-2xl font-bold text-accent-dark">
-          {initials}
-        </span>
+        {photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photoUrl} alt="Your profile photo" className="h-[72px] w-[72px] shrink-0 rounded-full object-cover" />
+        ) : (
+          <span aria-hidden="true" className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-accent/12 font-display text-2xl font-bold text-accent-dark">
+            {initials}
+          </span>
+        )}
         <div className="min-w-0 flex-1">
           <h1 className={name ? "truncate font-display text-xl font-bold text-ink" : "font-display text-xl font-bold text-ink-muted"}>
             {name ?? "No name yet"}

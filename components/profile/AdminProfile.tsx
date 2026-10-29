@@ -32,7 +32,7 @@ function ago(d: Date, now = Date.now()): string {
 export function AdminProfile({ data }: { data: Data }) {
   const { user } = data;
   const audiences: Audience[] = [
-    { who: "Students and teachers", what: "Not your name, email or number. Notices and announcements come from EduSarthi." },
+    { who: "Students and teachers", what: "Not your name, photo, email or number. Notices and announcements come from EduSarthi." },
     { who: "Other admins", what: "Your account, and what you did in the admin pages, in the admin log." },
   ];
 
@@ -41,9 +41,18 @@ export function AdminProfile({ data }: { data: Data }) {
       <IdentityCard
         name={user.name}
         initials={initialsOf(user.name, user.email)}
+        photoUrl={user.photoUrl}
         roleLine={`Administrator · ${joinedLine(user.createdAt)}`}
         chips={<Badge variant="accent">Administrator</Badge>}
-        actions={<EditProfile label={user.name ? "Edit profile" : "Add your name"} name={user.name} phone={user.phone} showPhone />}
+        actions={
+          <EditProfile
+            label={user.name ? "Edit profile" : "Add name and photo"}
+            name={user.name}
+            phone={user.phone}
+            showPhone
+            photo={{ url: user.photoUrl, initials: initialsOf(user.name, user.email), note: "Only you see it, on this page." }}
+          />
+        }
       />
 
       <StatTiles

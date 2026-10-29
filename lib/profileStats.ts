@@ -9,6 +9,7 @@
 // It deliberately does NOT draw anything or decide wording; components/profile
 // does. Teacher and admin numbers live in lib/staffProfileStats.
 
+import { avatarUrl } from "@/lib/avatar";
 import { prisma } from "@/lib/prisma";
 import { practiceDays, type PracticeDay } from "@/lib/practiceDays";
 import { dayNumber, longestStreak, streakOfDays } from "@/lib/progress";
@@ -50,6 +51,7 @@ export type StudentProfile = {
     emailVerified: Date | null;
     createdAt: Date;
   };
+  photoUrl: string | null;
   prefs: Preferences;
   institute: { name: string; role: string } | null;
   practice: Map<number, PracticeDay>;
@@ -78,6 +80,7 @@ export async function studentProfile(userId: string): Promise<StudentProfile | n
           isGuest: true,
           emailVerified: true,
           createdAt: true,
+          avatarKey: true,
           preferences: true,
           instituteMembership: { select: { role: true, institute: { select: { name: true } } } },
         },
@@ -104,8 +107,10 @@ export async function studentProfile(userId: string): Promise<StudentProfile | n
   if (!user) return null;
 
   const days = new Set(practice.keys());
+  const { avatarKey, ...rest } = user;
   return {
-    user,
+    user: rest,
+    photoUrl: await avatarUrl(avatarKey),
     prefs: prefsOf(user.preferences),
     institute: user.instituteMembership
       ? { name: user.instituteMembership.institute.name, role: user.instituteMembership.role.toLowerCase() }

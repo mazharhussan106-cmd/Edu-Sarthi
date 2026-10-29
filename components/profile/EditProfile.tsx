@@ -1,7 +1,8 @@
-// Owns the Edit profile sheet: the display name, and the mobile number for
-// accounts that are not guests. One Save sends only what changed, each to its
-// own route (app/api/profile/name and /phone), so a name fix never touches the
-// number.
+// Owns the Edit profile sheet: the photo (members; components/profile/
+// PhotoEditor saves it on its own), the display name, and the mobile number
+// for accounts that are not guests. One Save sends only what changed, each to
+// its own route (app/api/profile/name and /phone), so a name fix never touches
+// the number. While a photo is being cropped, the form steps aside.
 //
 // It is a form sheet: a stray tap outside must not throw away typing, and
 // closing it by any route puts the fields back to what is saved.
@@ -14,6 +15,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { Sheet } from "@/components/ui/Sheet";
+import { PhotoEditor } from "@/components/profile/PhotoEditor";
 import { nameSchema, phoneSchema } from "@/lib/validations";
 
 async function send(url: string, body: object): Promise<string | null> {
@@ -32,9 +34,25 @@ async function send(url: string, body: object): Promise<string | null> {
   }
 }
 
-export function EditProfile({ label, name, phone, showPhone }: { label: string; name: string | null; phone: string | null; showPhone: boolean }) {
+type Photo = { url: string | null; initials: string; note: string };
+
+export function EditProfile({
+  label,
+  name,
+  phone,
+  showPhone,
+  photo,
+}: {
+  label: string;
+  name: string | null;
+  phone: string | null;
+  showPhone: boolean;
+  /** Members only; a guest gets no photo. */
+  photo?: Photo;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [cropping, setCropping] = useState(false);
   const [n, setN] = useState(name ?? "");
   const [ph, setPh] = useState(phone ?? "");
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +60,7 @@ export function EditProfile({ label, name, phone, showPhone }: { label: string; 
 
   function close() {
     setOpen(false);
+    setCropping(false);
     setN(name ?? "");
     setPh(phone ?? "");
     setError(null);
@@ -80,8 +99,13 @@ export function EditProfile({ label, name, phone, showPhone }: { label: string; 
       <Button variant="outline" size="md" aria-haspopup="dialog" onClick={() => setOpen(true)}>
         {label}
       </Button>
-      <Sheet open={open} onClose={close} title="Edit profile" form>
-        <form onSubmit={save} className="flex flex-col gap-4">
+      <Sheet open={open} onClose={close} title={cropping ? "Move and zoom" : "Edit profile"} form>
+        {photo && open ? (
+          <div className={cropping ? undefined : "mb-5 border-b border-border pb-5"}>
+            <PhotoEditor photoUrl={photo.url} initials={photo.initials} note={photo.note} onCropping={setCropping} />
+          </div>
+        ) : null}
+        <form onSubmit={save} className={cropping ? "hidden" : "flex flex-col gap-4"}>
           <div>
             <Label htmlFor="profile-name">Your name</Label>
             <Input id="profile-name" value={n} onChange={(e) => setN(e.target.value)} autoComplete="name" placeholder="e.g. Rahul Sharma" />

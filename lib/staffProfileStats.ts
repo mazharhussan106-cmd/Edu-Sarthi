@@ -7,6 +7,7 @@
 
 import { Prisma, type Role } from "@prisma/client";
 
+import { avatarUrl } from "@/lib/avatar";
 import { queueScope } from "@/lib/claims";
 import { prisma } from "@/lib/prisma";
 
@@ -21,6 +22,7 @@ export type StaffUser = {
   emailVerified: Date | null;
   teacherVerifiedAt: Date | null;
   institute: { name: string; role: string } | null;
+  photoUrl: string | null;
 };
 
 async function staffUser(userId: string): Promise<StaffUser | null> {
@@ -33,12 +35,13 @@ async function staffUser(userId: string): Promise<StaffUser | null> {
       createdAt: true,
       emailVerified: true,
       teacherVerifiedAt: true,
+      avatarKey: true,
       instituteMembership: { select: { role: true, institute: { select: { name: true } } } },
     },
   });
   if (!u) return null;
-  const { instituteMembership: m, ...rest } = u;
-  return { ...rest, institute: m ? { name: m.institute.name, role: m.role.toLowerCase() } : null };
+  const { instituteMembership: m, avatarKey, ...rest } = u;
+  return { ...rest, institute: m ? { name: m.institute.name, role: m.role.toLowerCase() } : null, photoUrl: await avatarUrl(avatarKey) };
 }
 
 /// Rows per India day for one table's createdAt, keyed by day number. The

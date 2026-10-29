@@ -51,7 +51,8 @@ export function StudentProfile({ data }: { data: Data }) {
   const steps = stepsFor({ guest, goalSet: prefs.goal !== "unset", submissions: data.submissions, audits: data.audits, cardsKnown: data.cardsKnown });
 
   const audiences: Audience[] = [
-    { who: "Teachers", what: `Your recordings and your ID ${id}, so they can audit you. Never your name, email, number, level or goal.` },
+    { who: "Teachers", what: `Your recordings and your ID ${id}, so they can audit you. Never your name, photo, email, number, level or goal.` },
+    ...(guest ? [] : [{ who: "Your photo", what: "Only you, on this page. Nobody else is given a link to it." }]),
     ...(data.institute ? [{ who: `${data.institute.name}'s admin`, what: "Your name and email, to manage the institute's members." }] : []),
     { who: "EduSarthi admins", what: "Your account and what you do here, when they help you, check a report or keep the site safe." },
     { who: "The library and share links", what: "Decks you publish or share by a link show only the name you chose in Settings → How your name shows on public decks, or no name." },
@@ -71,6 +72,7 @@ export function StudentProfile({ data }: { data: Data }) {
       <IdentityCard
         name={user.name}
         initials={initialsOf(user.name, user.email)}
+        photoUrl={data.photoUrl}
         roleLine={`${guest ? "Guest" : "Student"} · ${joinedLine(user.createdAt)}`}
         chips={
           <>
@@ -78,8 +80,16 @@ export function StudentProfile({ data }: { data: Data }) {
             {data.institute ? <Badge>{data.institute.name}</Badge> : null}
           </>
         }
-        actions={<EditProfile label={user.name ? "Edit profile" : "Add your name"} name={user.name} phone={user.phone} showPhone={!guest} />}
-        note={<>Only you see your name here. Teachers see you as <span className="font-mono text-ink">{id}</span>.</>}
+        actions={
+          <EditProfile
+            label={user.name ? "Edit profile" : guest ? "Add your name" : "Add name and photo"}
+            name={user.name}
+            phone={user.phone}
+            showPhone={!guest}
+            photo={guest ? undefined : { url: data.photoUrl, initials: initialsOf(user.name, user.email), note: `Only you see it. Teachers see you as ${id}.` }}
+          />
+        }
+        note={<>Only you see your name{guest ? "" : " and photo"} here. Teachers see you as <span className="font-mono text-ink">{id}</span>.</>}
       />
 
       <StatTiles

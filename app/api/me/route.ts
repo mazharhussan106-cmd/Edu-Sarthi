@@ -14,6 +14,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { mediaKeys } from "@/lib/decks";
 import { removeObjects } from "@/lib/storage";
+import { avatarUrl } from "@/lib/avatar";
 import { deleteAccountSchema } from "@/lib/validations";
 import { logAdmin } from "@/lib/admin";
 
@@ -51,6 +52,7 @@ export async function GET() {
       adultConfirmedAt: true,
       creditStyle: true,
       publicName: true,
+      avatarKey: true,
       decks: { where: { termsAcceptedAt: { not: null } }, select: { title: true, licence: true, termsVersion: true, termsAcceptedAt: true } },
       enrollments: { select: { moduleId: true, createdAt: true } },
       // Card progress and the answer-by-answer study history are personal data
@@ -109,8 +111,13 @@ export async function GET() {
   // only) and when. The export's contents are not logged.
   await logAdmin(null, "Student exported own data", "user", data?.publicId ?? null);
 
+  // The photo itself, as a link that works for about half an hour: a file is
+  // the data, a storage key is only our filing reference.
+  const { avatarKey, ...account } = data ?? { avatarKey: null };
+  const profilePhoto = avatarKey ? { link: await avatarUrl(avatarKey), linkExpires: "about 30 minutes after this export" } : null;
+
   const stamp = new Date().toISOString().slice(0, 10);
-  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data }, null, 2), {
+  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data ? { ...account, profilePhoto } : null }, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Content-Disposition": `attachment; filename="edusarthi-my-data-${stamp}.json"`,
@@ -154,7 +161,7 @@ export async function DELETE(req: Request) {
   const cardMedia = await prisma.word.findMany({ where: { ownerId: userId }, select: { imageUrl: true, audioUrl: true } });
   // Files added for the AI card maker that are still waiting to be used.
   const sourceFiles = await prisma.aiSource.findMany({ where: { userId }, select: { key: true } });
-  const me = await prisma.user.findUnique({ where: { id: userId }, select: { publicId: true } });
+  const me = await prisma.user.findUnique({ where: { id: userId }, select: { publicId: true, avatarKey: true } });
 
   // Rows first, files second. If storage fails the account is still gone and
   // the orphaned files are unreachable (no row points at them); the other
@@ -170,7 +177,12 @@ export async function DELETE(req: Request) {
       { status: 500 },
     );
   }
-  const failed = await removeObjects([...keys.map((k) => k.mediaUrl), ...mediaKeys(cardMedia), ...sourceFiles.map((s) => s.key)]);
+  const failed = await removeObjects([
+    ...keys.map((k) => k.mediaUrl),
+    ...mediaKeys(cardMedia),
+    ...sourceFiles.map((s) => s.key),
+    ...(me?.avatarKey ? [me.avatarKey] : []),
+  ]);
   try {
     // Kept as the record that an erasure request was carried out. Only the
     // student ID is stored — the email is exactly what was asked to be erased.

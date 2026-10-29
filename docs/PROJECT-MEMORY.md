@@ -543,6 +543,16 @@ Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oc
   3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
   4. Test on a phone.
 
+## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — PLANNED, nothing built
+
+Owner's requirement: EduSarthi is a repository, so there must be **one place** where anyone (signed in or not) can see every public flashcard deck. Plan: `docs/PUBLIC-LIBRARY-PLAN.md`.
+- Today `/library` is behind login, so search engines and visitors see none of the approved decks. The plan opens the existing Library to everyone (no new section) and adds `robots`, a sitemap, deck metadata, paging and a tag row.
+- Follow, copy, like, report, study and recording stay account-only.
+- **Must not be merged before its Step 4:** the Privacy page says public decks are visible to "every signed-in user", and creators agreed to `LIBRARY_TERMS_VERSION` 2026-10-27. The text, the version and an announcement email come first (owner and lawyer).
+- Do not open `/library` by a path prefix in `proxy.ts`: it would also open the study and practice pages.
+- Owner's domain answer: `edusarthi.com` is not a blocker; the plan reads `NEXT_PUBLIC_APP_URL`.
+- Next: the owner's "go" for Step 1.
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

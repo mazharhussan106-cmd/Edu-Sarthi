@@ -40,6 +40,9 @@ export default async function LibraryCardPage({ params }: { params: Promise<{ id
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-4 pt-3 sm:px-6 sm:pt-6">
+      {/* The card draws its own face; the page still needs one heading, and a
+          visitor from outside lands here first. */}
+      <h1 className="sr-only">{face.front} — {deck.title}</h1>
       <div className="flex items-center justify-between gap-3">
         <Link href={`/library/${id}`} className="min-w-0 truncate text-sm font-medium text-accent hover:underline">← {deck.title}</Link>
         <span className="shrink-0 font-mono text-xs text-ink-muted">{at + 1} / {deck.cards.length}</span>

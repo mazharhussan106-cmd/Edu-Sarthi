@@ -1,5 +1,6 @@
 // Owns the public library: decks an admin has approved, with search and a tag
-// filter. Open to every signed-in role.
+// filter. Open to everyone, signed in or not (proxy.ts PUBLIC_LIBRARY); a
+// visitor gets a sign-in prompt where an account is needed.
 //
 // Only listed decks are queried (lib/decks LISTED) — a deck waiting for review,
 // rejected, pulled after reports, or whose owner or institute is suspended is
@@ -11,6 +12,7 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
 
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CREDIT_INSTITUTE_SELECT, CREDIT_SELECT } from "@/lib/libraryTerms";
 import { DeckCredit } from "@/components/decks/DeckCredit";
@@ -28,7 +30,8 @@ const SORTS = [
 ] as const;
 
 export default async function LibraryPage({ searchParams }: { searchParams: Promise<{ q?: string; tag?: string; sort?: string }> }) {
-  const sp = await searchParams;
+  const [sp, session] = await Promise.all([searchParams, auth()]);
+  const signedIn = Boolean(session?.user?.id);
   const q = (sp.q ?? "").trim().slice(0, 60);
   const tag = (sp.tag ?? "").trim().toLowerCase().slice(0, 24);
   const sort = SORTS.some((x) => x.value === sp.sort) ? (sp.sort as string) : "new";
@@ -53,9 +56,12 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-display text-xl font-bold text-ink">Deck library</h1>
-        <Link href="/decks" className="text-sm font-medium text-accent hover:underline">My decks</Link>
+        {signedIn ? <Link href="/decks" className="text-sm font-medium text-accent hover:underline">My decks</Link> : null}
       </div>
-      <p className="mt-1 text-sm text-ink-muted">Decks shared by other learners, checked by an admin before they appear. Copy one to study it.</p>
+      <p className="mt-1 text-sm text-ink-muted">
+        Decks shared by other learners, checked by an admin before they appear.{" "}
+        {signedIn ? "Copy one to study it." : <>Anyone can read them. <Link href="/login" className="text-accent underline">Sign in</Link> to copy or follow one.</>}
+      </p>
 
       <form action="/library" className="relative mt-3">
         <label htmlFor="lib-search" className="sr-only">Search the library</label>
@@ -86,7 +92,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
         {decks.length === 0 ? (
           <li>
             <Card className="text-center text-sm text-ink-muted">
-              {q || tag ? "No deck matches that. Try a shorter word." : "No decks are published yet. Make one in My decks and submit it."}
+              {q || tag ? "No deck matches that. Try a shorter word." : signedIn ? "No decks are published yet. Make one in My decks and submit it." : "No decks are published yet. Please check again soon."}
             </Card>
           </li>
         ) : null}

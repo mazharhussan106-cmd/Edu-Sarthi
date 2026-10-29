@@ -290,6 +290,26 @@ Pehle yeh do kaam, isi order me:
 
 Agar photo upload ya share me photo na aaye: Claude ko batayein, `docs/PROFILE-AUDIT.md` me F4 yahi hai.
 
+---
+
+### 4f. Library ab Class ki jagah bar me (29 Oct) — branch `claude/bold-hopper-hxfrpd`
+
+Database setup ki zarurat nahi. **Library ko bina login ke kholne wala hissa (Step 1b) tab tak merge mat kariye jab tak Privacy/Terms ka text badal na jaaye aur creators ko email na chala jaaye** — dekhiye `docs/PUBLIC-LIBRARY-PLAN.md`, Step 4.
+
+**Student account se (phone par):**
+- [ ] Neeche ki bar: Dashboard, Flashcard, Audited, **Library**, Profile. "Class" nahi hai
+- [ ] Library par tap → Library ka page khule aur uska icon neela (lit) ho; kisi deck me jaane par bhi neela rahe
+- [ ] ☰ menu: pehla group "Main pages" me bhi Library dikhe (Class nahi); baaki saare groups waise hi, "Shared and library decks" me Library ka apna row bhi
+- [ ] Neeche page ke footer me pehla link **Library**
+- [ ] Computer par header ki row me Library (Class ki jagah)
+- [ ] Profile → Get started → "Send your first recording" abhi bhi Class page kholta hai (page hataya nahi gaya)
+
+**Bina login ke (private window me, sirf Step 1b merge hone ke baad):**
+- [ ] `/library` khule; header me Library aur Sign in; neeche student wali bar nahi
+- [ ] Deck khule, saare cards padh sakein; "Sign in to study or copy this deck", ♡ aur "Sign in to report this deck" sab `/login` par le jaayein
+- [ ] `/library/<deck>/study` seedha `/login` par jaaye
+- [ ] Koi deck Admin → Decks se reject/take down karke dekhiye: ab wo list me nahi aata aur uska page "not found" dikhata hai
+
 ## 5. Kya **mat** kariye
 
 - Keys, passwords, database URL kisi chat me paste mat kariye. Sirf Vercel aur Claude environment settings me daaliye. Galti se paste ho jaaye to Supabase me key **rotate** (nayi) kar lijiye.

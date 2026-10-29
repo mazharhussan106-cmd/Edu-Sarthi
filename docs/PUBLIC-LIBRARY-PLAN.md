@@ -1,6 +1,24 @@
 # Public library hub — plan (29 Oct 2026)
 
-Status: **Step 1 (1a and 1b) approved by the owner on 29 Oct and being built on `claude/bold-hopper-hxfrpd`. Steps 2 to 4 are planned, not built.** Do not merge Step 1b before Step 4 is ready (see below).
+Status: **Step 1 (1a and 1b) built and tested on `claude/bold-hopper-hxfrpd` (29 Oct), not merged. Steps 2 to 4 are planned, not built.** Do not merge Step 1b before Step 4 is ready (see below). Step 1a (commit "Nav: Library replaces Class …") is safe to merge alone.
+
+## What Step 1 did, and how it was tested
+
+Built exactly as listed under Step 1a and 1b below, plus two small things the tests found:
+- the new "Sign in" link in the library's intro is underlined (a link inside a sentence must not differ by colour alone);
+- the card page has a visually hidden `<h1>` (it had none; a visitor from outside now lands on it).
+
+Tested on a production build, a local Postgres and Playwright (56 checks in a throwaway script, plus the Profile suites p1 and p4, 62 checks, as a regression run):
+- phone bar and computer header: Dashboard, Flashcard, Audited, Library, Profile; Library lit on the list and on a deck; footer link row starts with Library;
+- the menu has the same nine groups; "Main pages" shows Library, not Class; "Shared and library decks" still has its Library row; the Settings gear still links to `/settings`;
+- `/class` still opens (200); teacher header has no Library and no Class;
+- a visitor: `/library`, a deck and a card answer 200 with the public header and no student bar; only listed decks show (a pending, a private and a link-shared deck do not); search works; the deck page has one sign-in button plus a like and a report link; `/library/<id>/study`, `/practice/…`, `/explore`, `/decks` and `/dashboard` still go to /login; `/d/<token>` is still `noindex`;
+- a signed-in person who is not the owner still gets the real Follow, copy, like and report controls; the owner sees no Report on their own deck;
+- a rejected deck leaves the list and shows the not-found page with `noindex` and no cards (status 200, by design: `app/(shared)/loading.tsx` streams first, as Next 16 documents); approving it again brings it back;
+- axe (WCAG 2.1 AA and best practice) on the library list, a hand-made deck, an imported deck and a card, signed out, in all five themes: clean, apart from the logotype's contrast that every page has;
+- `tsc --noEmit` and `next build` pass.
+
+Not tested: a real phone, the live database, an unverified signed-in account (the code path is unchanged), and whether Vercel's Hobby limits notice crawler traffic (Step 2).
 
 ## Owner's instruction for Step 1 (29 Oct 2026)
 
@@ -38,7 +56,7 @@ Who sees what (**PROPOSAL**, not yet approved):
 
 - **Everyone:** the library list, search, tags, a deck page with all its cards, each card, the creator's credit and licence.
 - **Needs an account:** follow, copy, like, report, study, record for a teacher. Each shows "Sign in to …" instead of failing.
-- Only listed decks (`LISTED` in `lib/decks.ts`) ever show: approved by an admin, owner and institute not suspended. A deck that is withdrawn or taken down disappears at once, and from the sitemap.
+- Only listed decks (`LISTED` in `lib/decks.ts`) ever show: approved by an admin, owner and institute not suspended. A deck that is withdrawn or taken down disappears at once from the list and shows the not-found page (with `noindex`, HTTP status 200, see above), and leaves the sitemap in Step 2.
 - Creators' names show **as each creator chose** (full name, first name, display name or none). Only people 18 or older can publish, which limits the risk. The email in Step 4 tells them it now means the whole internet and points to Settings → "How your name shows on public decks".
 
 ## Build steps (one at a time, none needs a database change)
@@ -82,7 +100,7 @@ Local Postgres and Playwright, signed out and signed in:
 - `/library`, a deck and a card answer 200 with no redirect;
 - `/library/<id>/study` and `/practice/…` still go to /login;
 - like, follow, copy and report show a sign-in link;
-- a taken-down deck is a 404 and leaves the sitemap;
+- a taken-down deck shows the not-found page with `noindex` and leaves the sitemap;
 - `/d/<token>` still has `noindex`;
 - robots and sitemap output;
 - axe on the signed-out pages in all five themes;

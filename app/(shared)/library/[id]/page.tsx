@@ -1,5 +1,7 @@
 // Owns one library deck: its cards, "Copy to my decks", like, and the report
-// button.
+// button. Open to a visitor who is not signed in (proxy.ts PUBLIC_LIBRARY): they
+// read the whole deck, and every action that needs an account shows a sign-in
+// link instead.
 //
 // Only a listed deck resolves (lib/decks LISTED); any other id is a 404,
 // whatever state it is really in. Studying happens by following (./study, the original with
@@ -54,6 +56,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
   // card data is still never loaded just to draw the list.
   const aiIds = new Set((await prisma.word.findMany({ where: { deckId: id, ...AI_CARD_FILTER }, select: { id: true } })).map((c) => c.id));
   const aiCount = aiIds.size;
+  const signedIn = Boolean(session?.user?.id);
   const own = deck.ownerId === session?.user?.id;
   const liked = session?.user?.id ? (await prisma.deckLike.count({ where: { deckId: id, userId: session.user.id } })) > 0 : false;
   const following = session?.user?.id ? await isFollowing(session.user.id, id) : false;
@@ -74,12 +77,25 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
         {deck.tags.map((t) => <Link key={t} href={`/library?tag=${encodeURIComponent(t)}`}><Badge>{t}</Badge></Link>)}
       </div>
       <div className="mt-4 flex flex-wrap items-start gap-3">
-        {own ? null : <FollowButton deckId={id} following={following} />}
-        <CopyDeckButton deckId={id} signedIn label="Make my own copy" variant={own ? undefined : "outline"} />
-        <LikeButton deckId={id} likes={deck._count.likes} liked={liked} disabled={own} />
-        {own ? null : <ReportButton deckId={id} />}
+        {signedIn ? (
+          <>
+            {own ? null : <FollowButton deckId={id} following={following} />}
+            <CopyDeckButton deckId={id} signedIn label="Make my own copy" variant={own ? undefined : "outline"} />
+          </>
+        ) : (
+          // One call to action, not Follow and Copy each asking to sign in.
+          <Link href="/login" className="inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark">
+            Sign in to study or copy this deck
+          </Link>
+        )}
+        <LikeButton deckId={id} likes={deck._count.likes} liked={liked} disabled={own} signedIn={signedIn} />
+        {own ? null : <ReportButton deckId={id} signedIn={signedIn} />}
       </div>
-      <p className="mt-2 text-xs text-ink-muted">Following keeps you on the author’s latest version, with your own progress. A copy is yours to change, and never updates.</p>
+      <p className="mt-2 text-xs text-ink-muted">
+        {signedIn
+          ? "Following keeps you on the author’s latest version, with your own progress. A copy is yours to change, and never updates."
+          : "With an account you can follow this deck and study it with your own progress, or make a copy to change."}
+      </p>
 
       {imported ? (
         <div className="mt-5 flex flex-col gap-5">

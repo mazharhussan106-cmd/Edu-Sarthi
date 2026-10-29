@@ -542,7 +542,11 @@ What changed:
 - `android/README.md` is updated to match.
 - The push builds a new debug APK on the branch.
 
-**Owner decision still open:** keep the Vercel address in the app, or connect `edusarthi.com` to Vercel. Connecting it means:
+PR #26 was merged on 29 Oct, after the owner tested the new APK on a phone.
+
+**Owner's decision (29 Oct): the site runs on the Vercel address `edu-sarthi-nine.vercel.app` until the owner adds the domain.** Do not point the app, links or settings at `edusarthi.com` before that. `NEXT_PUBLIC_APP_URL` in Vercel must also be the Vercel address. Every email link (sign-in link, password reset, reminders, audit ready) is built from it. Its value is secret and could not be read from the session, so the owner checks it.
+
+When the owner connects `edusarthi.com` later, the steps are:
 - adding the domain in Vercel and changing the DNS at Hostinger;
 - updating `NEXT_PUBLIC_APP_URL`;
 - adding the Google OAuth redirect URI `https://edusarthi.com/api/auth/callback/google`;

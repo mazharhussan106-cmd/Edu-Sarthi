@@ -44,7 +44,10 @@ An English spoken-communication training platform: students record or upload, te
 
 - **Owner's decisions, 29 Oct 2026 (flashcard filter bar, `docs/FLASHCARD-NAV-LAYERS.md`):**
   - The filters above the card are **two layers only**: study area (English · My decks; Tech later) → card kind (Words · Chunk · Grammar · Support). **No third layer**: no tap-to-open Filter sheet, and the chips for chunk types, Support channel and level, and word sections were removed from the bar (owner, 29 Oct: "Layer 3 v dikh raha hai use hata k banao"). The card itself does not change.
-  - Users will group decks in **playlists**: one deck in many playlists (a later database change, not built).
+  - ~~Users will group decks in **playlists** inside My decks~~ **SUPERSEDED the same day:** every student can make **their own layer-1 tabs** ("folders") with a **＋** at the end of layer 1. Only **decks** go in them (own, followed, shared with them), and **one deck can sit in many tabs** (playlist-style).
+  - **Copy / Import asks where the deck should show:** right after "Copy to my decks" or "Import and study", the student is asked which of their layer-1 tabs the deck should appear in (it is always in My decks too). Only then, not on Follow or on making a new deck (owner, 29 Oct).
+  - Students may also **hide and reorder English and My decks**, not only their own tabs.
+  - Plan, files and the database change: `docs/FLASHCARD-NAV-LAYERS.md`, "Own tabs". **Waiting for the owner's approval; not built.**
   - **Tech** holds everything tech-related; built after the Library chat merges.
   - Explore, Library and Institute are no longer chips on the Flashcard tab (they stay in the ☰ menu). This supersedes the 10 Oct placement "after the card kinds, before the lists".
 

@@ -17,10 +17,14 @@ access rules.
 | 3 | Under English: Words · Chunk · Grammar (the owner's "sentence" meant Grammar), plus Support, which already existed | ACTIVE, built |
 | 4 | A third layer that opens on tap (a Filter sheet) | **SUPERSEDED:** "Layer 3 plan se hata do, build nahi karna hai, layer 2 tak hi sahi hai" |
 | 4b | The existing third row (chunk types, Support channel and level, word sections) stays | **SUPERSEDED:** "Layer 3 v dikh raha hai use hata k banao". Removed. |
-| 5 | Users group decks in **playlists**: one deck can be in many playlists | ACTIVE; a later database change, not in this chat |
+| 5 | Users group decks in **playlists**: one deck can be in many playlists | **SUPERSEDED by 9–10:** the playlists are the student's own layer-1 tabs, not chips inside My decks |
 | 6 | Tech holds everything tech-related | ACTIVE; which decks count is still open |
 | 7 | The card does not change | ACTIVE |
 | 8 | Where the count, lists, skipped and deck links go: Claude to recommend | Done, see below |
+| 9 | **＋ in layer 1:** every student creates and arranges their own layer-1 tabs | ACTIVE; plan below, waiting for approval |
+| 10 | Only **decks** go in a tab, and **one deck can be in many tabs** | ACTIVE |
+| 11 | On **Copy / Import**, ask which tab(s) the deck should show in (only then; not on Follow, not on a new deck) | ACTIVE |
+| 12 | Students can also hide and reorder **English** and **My decks** | ACTIVE |
 
 ## What is built
 
@@ -76,15 +80,61 @@ teacher (no tabs on My decks), no page errors. axe in all five themes on five
 pages: only "page has no h1" on `/flashcards`, which was already there before
 this branch. `tsc` and `next build` pass.
 
+## Own tabs (decisions 9–12) — plan, waiting for the owner's approval
+
+**Database (one change, additive, no data lost):**
+- `StudyFolder`: id, userId, name (1–30 characters), createdAt. Deleted with
+  the account.
+- `StudyFolderDeck`: folderId + deckId (together the key), addedAt. Deleting a
+  tab removes only its links, never a deck, its cards or anyone's progress.
+  Deleting a deck removes it from every tab.
+- The order of all tabs and which of English / My decks are hidden live in
+  `User.preferences` (`studyAreas`), no column needed.
+- Run **Actions → Database setup** right after merging. Until it has run, the
+  tabs fall back to English · My decks instead of breaking the Flashcard tab.
+
+**Rules:** students only (teachers and admins have no Flashcard tab); not for
+guests, whose data can be merged into another account (same as New deck); at
+most 20 tabs and 100 decks per tab; a deck can be added only if the student can
+open it (own, followed, shared with them), checked on the server; at least one
+tab stays visible; a hidden tab still shows while you are on its page (the
+bottom bar's Flashcard button opens English even if it is hidden).
+
+**Screens:**
+- Layer 1: English · My decks · the student's tabs · **＋**. The row scrolls
+  with a fade when it is long. ＋ opens an "Arrange tabs" sheet: a name field
+  to make a new tab, and every tab with move up / move down, rename, delete
+  (own tabs) and show / hide.
+- A tab's page `/folders/<id>`: layer 1 on top, then its decks as rows like My
+  decks (title, cards, due today, Study → the deck's own study page, Remove from
+  this tab), and "＋ Add decks" (a sheet listing the student's own, followed and
+  shared decks with tick boxes).
+- After Copy / Import succeeds: a sheet "Show this deck in which tabs?" with a
+  tick box per tab, a field for a new tab, Save and Skip; then it opens the new
+  deck as today.
+- "Download my data" (`/api/me`) includes the tabs.
+
+**Files (about 16):** `prisma/schema.prisma`; `lib/studyFolders.ts` (queries,
+every one scoped by the student); `lib/studyFolderSchemas.ts` (Zod, shared by
+the sheets and the API); `lib/preferences.ts`; `app/api/folders/route.ts`;
+`app/api/folders/[id]/decks/route.ts`; `components/flashcards/AreaTabs.tsx`;
+`components/flashcards/ArrangeTabs.tsx`; `app/(student)/folders/[id]/page.tsx`;
+`components/folders/AddDecksSheet.tsx`; `components/decks/FolderPrompt.tsx`;
+`components/decks/CopyDeckButton.tsx`; `app/api/me/route.ts`; the two pages
+that show layer 1; docs.
+
+**Overlap with other chats:** `CopyDeckButton` is used on the library, institute
+and shared-link pages, which the Library chat is changing; only the button file
+changes here, not those pages. Another branch (`adoring-gates`) also adds
+models to `schema.prisma`; merging both keeps both sets.
+
 ## Still to do
 
 - **Tech** (this chat, after the Library chat is merged): tech subjects from
   deck tags as layer 2, the matching decks as content. Open: only EduSarthi's
   own tech decks, or students' and teachers' tech-tagged decks too? Which tech
   decks are in the live database was not checked from here.
-- **Playlists** (another chat): a playlist table and a "deck in playlist" link
-  table (many to many). Additive, no data lost. Then My decks' layer 2 becomes
-  All · each playlist · + New playlist.
+- **Own tabs** (above): waiting for approval.
 - Not asked for, noted only: `/flashcards` has no `<h1>` (axe best practice).
 
 ## Sources used for the recommendation

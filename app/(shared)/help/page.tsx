@@ -34,11 +34,11 @@ const FAQ = [
   },
   {
     q: "The text is too small on the card.",
-    a: "Settings → Text size → A+. Cards also scale their text to fit the screen, and you can pinch to zoom on the first two sides.",
+    a: "Settings → Appearance → Text size → Larger (A+). Cards also scale their text to fit the screen, and you can pinch to zoom on the first two sides.",
   },
   {
     q: "Uploads are slow on my data connection.",
-    a: "Turn on Data saver in Settings. New recordings are made at a lower quality and upload faster. You can also upload a short file instead of a long one.",
+    a: "Turn on Data saver in Settings, under Recordings. New recordings are made at a lower quality and upload faster. You can also upload a short file instead of a long one.",
   },
   {
     q: "How many recordings can I send for audit?",
@@ -46,11 +46,11 @@ const FAQ = [
   },
   {
     q: "I lost my phone or used a shared computer.",
-    a: "Settings → Security → Change password. That also signs you out on every device. If you sign in with an email code or Google, use Sign out of all devices there instead.",
+    a: "Settings → Account & security → Change password. That also signs you out on every device. If you sign in with an email code or Google, use Sign out of all devices there instead.",
   },
   {
     q: "How do I change my email?",
-    a: "Settings → Security → Change email. We send a code to the new address, and ask for your password (or send a second code to your current address if you have no password). Then you sign in again with the new address.",
+    a: "Settings → Account & security → Change email. We send a code to the new address, and ask for your password (or send a second code to your current address if you have no password). Then you sign in again with the new address.",
   },
   {
     q: "How do I delete my account or download my data?",

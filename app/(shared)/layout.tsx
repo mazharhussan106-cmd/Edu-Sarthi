@@ -6,8 +6,6 @@
 // It deliberately does NOT guard the route. Middleware already established that
 // somebody is signed in and verified before this rendered.
 
-import { cookies } from "next/headers";
-
 import { ensureActiveUser } from "@/lib/activeUser";
 import { cardMakerEnabled } from "@/lib/aiEnabled";
 import { auth } from "@/lib/auth";
@@ -16,17 +14,14 @@ import { StickyHeader } from "@/components/layout/StickyHeader";
 import { staffNav } from "@/lib/staffNav";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { PrefSyncServer } from "@/components/layout/PrefSyncServer";
-import { SettingsPanel } from "@/components/layout/SettingsPanel";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
 import { STUDENT_LINKS, studentMore } from "@/lib/studentNav";
-import { THEME_COOKIE, themeFromCookie } from "@/lib/theme";
 
 export default async function SharedLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   await ensureActiveUser();
-  const [cookieStore, session] = await Promise.all([cookies(), auth()]);
-  const theme = themeFromCookie(cookieStore.get(THEME_COOKIE)?.value);
+  const session = await auth();
 
   const isTeacher =
     session?.user?.role === "TEACHER" || session?.user?.role === "ADMIN";
@@ -35,10 +30,8 @@ export default async function SharedLayout({
     <div className="flex min-h-screen flex-col">
       <StickyHeader
         links={isTeacher ? staffNav(session?.user?.role).links : STUDENT_LINKS}
-        theme={theme}
         search={isTeacher ? undefined : <HeaderSearch />}
         more={isTeacher ? undefined : studentMore({ member: !session?.user?.isGuest, aiCards: cardMakerEnabled() })}
-        settingsPanel={<SettingsPanel />}
         homeHref={isTeacher ? staffNav(session?.user?.role).home : "/dashboard"}
       />
       <PrefSyncServer />

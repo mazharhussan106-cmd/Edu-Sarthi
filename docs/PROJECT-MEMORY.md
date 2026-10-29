@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -34,6 +34,11 @@ An English spoken-communication training platform: students record or upload, te
   - **No signed-in device list for now.** "Sign out of all devices" and the sign-out on a password or email change cover the need. A list needs a session table written on every page load.
   - **The app's screens stay in English.** It is an English-speaking course, Hindi help already sits where it matters (card meanings, Indian pronunciation), and translating every screen doubles the copy to maintain.
   - Revisit any of these if users ask.
+- **Owner's decisions, 29 Oct 2026 (Settings phase M, the simple Settings page):**
+  - Every setting is a row of the same size: the name on **one line**, a short line under it of **at most two lines**. An on/off setting is a toggle; anything longer (choices, forms) is a row with `›` that opens a **sheet**, rising from the bottom on a phone and a centred box on a computer. A new setting follows the same rule.
+  - Even short choices (text size, playback speed, new cards per day) open a sheet; none sit inline in the row.
+  - Rows are grouped under small headings (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share).
+  - The header's ⚙ Settings is a **link to `/settings`** for every signed-in person. There is no settings dropdown any more, so Sign out also has a row in Settings (it stays in the ☰ menu too).
 
 ## Open work, most important first
 
@@ -335,7 +340,7 @@ The owner asked for the four suggestions left at the end of phase K ("Sujhav ban
 **One schema change:** a new table `AppSetting` (`key`, `value` Json, `updatedAt`). It is additive; no existing data is touched or lost. **After merging, run Actions → Database setup once.** Until then the site keeps working: reading the setting falls back to 2, and saving it says to run Database setup (both tested with the table dropped).
 
 Done:
-1. **Audit limit set by an admin.** Admin → Settings (`/admin/settings`, new header link) has "Recordings per student per day", 1 to 10, starting at 2.
+1. **Audit limit set by an admin.** Admin → Site settings (`/admin/settings`, new header link) has "Recordings per student per day", 1 to 10, starting at 2.
    - Code: `lib/appSettings.ts` (reads and writes the `AppSetting` row, never throws) and `lib/appSettingSchemas.ts` (limits and the Zod schema; Prisma-free, so the browser form can use them). The route is `/api/admin/settings`, and every change goes to AdminLog with from and to.
    - `lib/auditLimit.ts` now reads the number (`auditAllowance`, `auditLimitReached`), so `AUDITS_PER_DAY` is gone.
    - The practice pages show the current number. Help no longer names one.
@@ -364,9 +369,48 @@ Tested on a local Postgres, mostly against the dev server so emails are logged, 
 **Needs before it works live:** merge; **Actions → Database setup** (the `AppSetting` table); the emails need `SENDGRID_API_KEY` and `NEXT_PUBLIC_APP_URL`.
 
 Still open:
-- **Phases E to L** are on `claude/blissful-euler-9j0h4c`, **not merged**.
+- **Phases E to L merged into `main` (28 Oct, PR #23, merge commit `2f343ae`).** CI green before the merge. **Actions → Database setup** ran straight after (run #11, success), so the `AppSetting` table exists on the live database. Still for the owner: check Vercel → Cron Jobs shows seven jobs, check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL` and `CRON_SECRET` are set, then run `LIVE-TESTING-GUIDE.md` section 4b on the live site.
 - Pages not scanned yet: admin compliance and the About page also use `<dl>` and may need the same check.
 
+
+## Settings, phase M: the simple Settings page (29 Oct, branch `claude/blissful-euler-9j0h4c`)
+
+The owner said Settings looked messy and asked for it simpler: long settings in a pop-up, every setting the size of a toggle row, one main line with a sub-line of at most two lines. Questions asked first; all four answered with the recommended option, then the plan (about 20 files, no database change) was approved. Decisions are in "Decisions that must not be undone".
+
+Built:
+- `components/ui/Sheet.tsx`: the pop-up, on the native `<dialog>` with `showModal()` (focus moves in and stays, Escape closes, page behind is inert, top layer so no ancestor can clip it). ✕, an optional Done button, and a tap on the dimmed backdrop close it. Slides up on a phone unless motion is reduced (`globals.css`), and the page behind does not scroll while it is open.
+- `components/ui/SheetRow.tsx`: the row with name, sub-line (`line-clamp-2`), current value and `›`. `anchor` opens its sheet from `/settings#share` or `#public-name` (on load and on a hash change).
+- `components/ui/RadioList.tsx`: a choice list for sheets, native radios. `components/ui/Switch.tsx`: name kept to one line, description to two.
+- `app/(shared)/settings/`: `SettingsSections.tsx` now lays out the groups (server). New rows `ThemeRow`, `PrefChoiceRow` (text size, playback speed, new cards per day), `PrefSwitch` (every on/off preference and its `<html>` attribute), `SignOutRow`. `CardColorPicker`, `VoiceSettings` (accent and speed in one sheet), `ReminderSettings` (on/off and time in one sheet) became rows. Removed: `SettingsForm.tsx`, `StudyLimits.tsx`, `components/layout/SettingsPanel.tsx`.
+- Short texts rewritten so no sub-line passes two lines on a 390px phone; the longer explanations moved into the sheets.
+- Header: `SettingsMenu` is a link; `StickyHeader` and the four layouts no longer take a theme or a settings panel.
+- Admin's site-wide page is renamed **Site settings** (nav and heading), so the admin header does not have two different links both called "Settings".
+- Help page, email footers ("Audit returned", "Each new recording", now under Settings → Email) and `LIVE-TESTING-GUIDE.md` (new section 4c) follow the new names.
+
+Tested on a local Postgres with student, guest, teacher and admin, at 390×844 and 1280×800:
+- Every row: name on one line and not cut, sub-line two lines at most. No sideways scroll.
+- Keyboard: Enter on a row opens its sheet with focus inside; Escape closes it and focus returns to the row. Backdrop tap and Done close it.
+- Every setting saved and survived a reload: text size, new cards per day, card colour, voice (British, Slow), reminder on at 9 pm, Hide Hindi, Reduce motion, Data saver, audit email off; teacher and admin queue and new-recording emails.
+- `/settings#share` and `#public-name` open their sheets. The gear opens `/settings` from student, teacher and admin pages. Sign out works; a guest sees the warning first.
+- axe (WCAG 2.1 AA and best practice), five themes, both widths, page plus the Theme, Voice and Reminder sheets, and the guest sheet: nothing from Settings. Left, and on every page already: the logotype's contrast and the header's two unlabelled `<nav>` landmarks (`landmark-unique`).
+- `tsc --noEmit` and `next build` pass.
+
+Audit before the PR (owner asked "audit kar lo", 29 Oct), found and fixed:
+- **Typed passwords outlived the sheet.** Change password and Change email promise to forget a half-typed password when the form closes, but closing the sheet by ✕, Escape or a tap outside did not clear it. `Sheet` now gives its content `useSheetClose` and `useOnSheetClosed`; both forms clear on every close, and their Cancel closes the sheet.
+- **One tap too many.** Both forms used to show a paragraph and a button inside the sheet first; the sheet now opens straight on the form, with the paragraph above it.
+- **A stray tap could throw away a code.** Sheets with a form (Keep your progress, Change email, Change password) no longer close on a tap outside; ✕, Cancel and Escape still close them. Choice sheets still close on a tap outside.
+- **The theme did not follow the account to a new device**, though the Theme row read the account: a new phone showed light while Settings said "Dark". `PrefSync` now brings the theme in line like text size and the rest (sets the attribute, then the cookie through `/api/profile/theme`).
+- `/settings#share`: closing the sheet drops the hash, so a reload does not reopen it; a hash change on the open page also opens the sheet.
+- The ⚙ link is marked current (`aria-current`, accent colour) on the Settings page. Choice rows show the focus ring only for the keyboard, not after a tap. `docs/FEATURE-MAP.md` no longer calls the gear a "quick panel".
+- Tested again: the 63 Settings checks, the guest/teacher/admin checks, 16 checks for the fixes above (including a real password change from the sheet and signing in with the new one), 5 for the theme on a new device, axe in every theme (only the two older findings), `tsc` and `next build`.
+
+Not done, on purpose:
+- A Next `<Link>` to `/settings#share` while already on `/settings` scrolls to the row but does not open its sheet (no hashchange event). One more tap.
+- Teachers and admins sign out from Settings → Sign out; their ☰ menu (phone only) has no Sign out row, as before this phase. The old gear dropdown was their quick sign-out.
+
+Still open:
+- Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
+- The two pre-existing axe findings above (logotype contrast, unlabelled navs) on every page.
 
 ## Flashcard phone layout: lesson (10 Oct)
 
@@ -406,6 +450,8 @@ Done: student `/history` (Practice = recordings and audits; Study = every card a
 The DPDP export now includes card progress and study history. Owner decided **no automatic cleanup** of `ReviewLog`. Not done: nothing was rendered in a browser or run on the real database.
 
 ## Student menu fix and new pages (28 Oct 2026, branch `claude/practical-ritchie-w4vnex`)
+
+**Merged into `main` (28 Oct, PR #22, merge commit `0f9e632`),** after Settings phases E to L. Merging `main` into it first had two conflicts: the Settings page (its cards had moved into the shared `SettingsSections`, so the menu's `#public-name` and `#share` anchors now sit on those sections, on the page variant only, so an open dropdown cannot repeat the id) and this file's status line. No database change, so Database setup is not needed for it.
 
 **Bug fixed: the ☰ menu opened empty on every phone** (student, teacher and admin). Cause: the header has `backdrop-blur`, and an element with a backdrop-filter becomes the containing block for its `position: fixed` children, so the "full-screen" sheet was squeezed into the 56px header and showed only "Menu" and ✕. Fix: `components/layout/MobileMenu.tsx` renders the open sheet through a portal into `<body>`. Checked in Chromium at 390×844: sheet 56px before, 844px after.
 

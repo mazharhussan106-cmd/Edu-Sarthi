@@ -1,10 +1,12 @@
-// Owns "Change email" under Settings → Security: the new address (and the
-// current password, when the account has one), then the code from the new
-// address (and from the current one, when it has no password), then a
-// sign-out so the next sign-in uses the new address (app/api/profile/email).
+// Owns "Change email", in its sheet under Settings → Account & security: the
+// new address (and the current password, when the account has one), then the
+// code from the new address (and from the current one, when it has no
+// password), then a sign-out so the next sign-in uses the new address
+// (app/api/profile/email). The sheet opens straight on the first step.
 //
 // The password is kept in this form's memory between the two steps, because
-// the server checks it on both; it is cleared when the form closes. The Google
+// the server checks it on both; it is cleared whenever the sheet closes, by
+// Cancel, ✕, Escape or a tap outside. The Google
 // note is shown to everyone: this form does not know whether the account uses
 // Google, and the server unlinks it either way.
 
@@ -16,6 +18,7 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { useOnSheetClosed, useSheetClose } from "@/components/ui/Sheet";
 import { emailChangeConfirmSchema, emailChangeStartSchema } from "@/lib/validations";
 
 async function call(body: object): Promise<{ error: string | null; needsOldCode?: boolean }> {
@@ -37,9 +40,8 @@ async function call(body: object): Promise<{ error: string | null; needsOldCode?
 const codeInput = (v: string) => v.replace(/\D/g, "").slice(0, 6);
 
 export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: string; hasPassword: boolean }) {
-  // Unique per copy: the Settings page and the header's dropdown can both be open.
+  // Unique ids for the form fields, so a label always finds its own input.
   const uid = useId();
-  const [open, setOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sent, setSent] = useState<{ to: string; needsOldCode: boolean } | null>(null);
@@ -49,14 +51,21 @@ export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: strin
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  function close() {
-    setOpen(false);
+  const closeSheet = useSheetClose();
+
+  function clear() {
     setSent(null);
     setError(null);
     setNewEmail("");
     setPassword("");
     setNewCode("");
     setOldCode("");
+  }
+  useOnSheetClosed(clear);
+
+  function close() {
+    clear();
+    closeSheet?.();
   }
 
   async function start(e?: React.FormEvent) {
@@ -96,18 +105,6 @@ export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: strin
 
   if (done) return <p role="status" className="text-sm text-success">Email changed. Signing you out so you can sign in with the new address…</p>;
 
-  if (!open) {
-    return (
-      <div>
-        <p className="text-sm text-ink-muted">
-          Your email is <b className="text-ink">{currentEmail}</b>. To change it we send a code to the new address
-          {hasPassword ? " and ask for your password" : ", and one to this address"}. Changing it signs you out on every device.
-        </p>
-        <Button variant="outline" size="sm" className="mt-4" onClick={() => setOpen(true)}>Change email</Button>
-      </div>
-    );
-  }
-
   const googleNote = (
     <p className="text-xs text-ink-muted">
       If you use Continue with Google, use the Google account for the new address from now on. Reset links already sent to the old address stop working.
@@ -117,6 +114,10 @@ export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: strin
   if (!sent) {
     return (
       <form onSubmit={(e) => void start(e)} className="flex flex-col gap-4">
+        <p className="text-sm text-ink-muted">
+          Your email is <b className="text-ink">{currentEmail}</b>. We send a code to the new address
+          {hasPassword ? " and ask for your password" : ", and one to this address"}. Changing it signs you out on every device.
+        </p>
         <div>
           <Label htmlFor={`${uid}-new`}>New email</Label>
           <Input id={`${uid}-new`} type="email" inputMode="email" autoComplete="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />

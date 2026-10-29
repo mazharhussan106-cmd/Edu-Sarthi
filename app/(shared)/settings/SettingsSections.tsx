@@ -1,51 +1,54 @@
 // Owns what Settings shows and to whom: reads the account once, works out who
-// is looking (student, guest, teacher or admin), and lays out the sections.
-// The Settings page and the header's settings dropdown both render this, so
-// the two can never offer different settings again.
+// is looking (student, guest, teacher or admin), and lays the settings out as
+// groups of same-sized rows, the way phone settings look.
 //
-// It deliberately does NOT save anything; each section's client component
-// does. "variant" only changes the frame: cards on the page, plain stacked
-// sections in the narrow dropdown.
+// Every row is one line of name and at most two lines under it. An on/off
+// setting is a toggle; anything with choices or a form is a row with a
+// chevron whose sheet holds the rest (components/ui/SheetRow). That rule is
+// what keeps the page calm, so a new setting follows it too.
+//
+// It deliberately does NOT save anything; each row's client component does.
+// It shows each person only the rows that do something for them: a teacher
+// has no flashcards and a guest has no email, and a switch that changes
+// nothing looks like it should work.
 
 import type { ReactNode } from "react";
 
 import { prisma } from "@/lib/prisma";
-import { prefsOf } from "@/lib/preferences";
-import { Card, CardTitle } from "@/components/ui/Card";
+import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, prefsOf } from "@/lib/preferences";
+import { TEXT_SIZES } from "@/lib/textSize";
+import { SheetRow } from "@/components/ui/SheetRow";
 import { CardColorPicker } from "@/app/(shared)/settings/CardColorPicker";
 import { ChangeEmail } from "@/app/(shared)/settings/ChangeEmail";
-import { GuestUpgrade } from "@/app/(shared)/settings/GuestUpgrade";
 import { ChangePassword } from "@/app/(shared)/settings/ChangePassword";
+import { GuestUpgrade } from "@/app/(shared)/settings/GuestUpgrade";
+import { PrefChoiceRow } from "@/app/(shared)/settings/PrefChoiceRow";
+import { PrefSwitch } from "@/app/(shared)/settings/PrefSwitch";
 import { PublicNameForm } from "@/app/(shared)/settings/PublicNameForm";
 import { ReminderSettings } from "@/app/(shared)/settings/ReminderSettings";
-import { SettingsForm } from "@/app/(shared)/settings/SettingsForm";
 import { ShareApp } from "@/app/(shared)/settings/ShareApp";
 import { SignOutEverywhere } from "@/app/(shared)/settings/SignOutEverywhere";
-import { StudyLimits } from "@/app/(shared)/settings/StudyLimits";
+import { SignOutRow } from "@/app/(shared)/settings/SignOutRow";
+import { ThemeRow } from "@/app/(shared)/settings/ThemeRow";
 import { VoiceSettings } from "@/app/(shared)/settings/VoiceSettings";
 
-type Variant = "page" | "panel";
+const TEXT_NAMES = { small: "Smaller", normal: "Normal", large: "Larger" } as const;
+const TEXT_OPTIONS = TEXT_SIZES.map((t) => ({ value: t.value, label: `${TEXT_NAMES[t.value]} (${t.label})`, short: t.label }));
+const SPEED_OPTIONS = PLAYBACK_RATES.map((r) => ({ value: String(r), label: r === 1 ? "1x, normal speed" : `${r}x`, short: `${r}x` }));
+const NEW_OPTIONS = NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: `${n} new cards`, short: String(n) }));
 
-// "anchor" is set on the page only: menu links such as /settings#share land on
-// it, and the dropdown can be open on the same page, so it must not repeat it.
-function Section({ variant, id, anchor, title, children }: { variant: Variant; id: string; anchor?: string; title: string; children: ReactNode }) {
-  if (variant === "page") {
-    return (
-      <Card id={anchor} className="mt-6 scroll-mt-20">
-        <CardTitle>{title}</CardTitle>
-        <div className="mt-4">{children}</div>
-      </Card>
-    );
-  }
+function Group({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <section aria-labelledby={id} className="border-t border-border pt-4 first:border-t-0 first:pt-0">
-      <h2 id={id} className="font-display text-sm font-bold text-ink">{title}</h2>
-      <div className="mt-3">{children}</div>
+    <section aria-labelledby={id} className="mt-6">
+      <h2 id={id} className="px-1 font-display text-xs font-bold uppercase tracking-wider text-ink-muted">
+        {title}
+      </h2>
+      <div className="mt-2 divide-y divide-border rounded-xl border border-border bg-surface px-4">{children}</div>
     </section>
   );
 }
 
-export async function SettingsSections({ userId, variant }: { userId: string; variant: Variant }) {
+export async function SettingsSections({ userId }: { userId: string }) {
   // The role comes from the row, not the session token: a token can be older
   // than a promotion or a demotion.
   const user = await prisma.user.findUnique({
@@ -56,81 +59,148 @@ export async function SettingsSections({ userId, variant }: { userId: string; va
 
   // Each key parsed on its own over the defaults, so one retired value does
   // not reset the rest.
-  const preferences = prefsOf(user.preferences);
-  const audience = {
-    learner: user.role === "STUDENT",
-    member: !user.isGuest,
-    reviewer: user.role === "TEACHER" || user.role === "ADMIN",
-  };
-  // Prefixed per variant: the page and the open dropdown can both be on screen.
-  const id = (name: string) => `settings-${variant}-${name}`;
+  const p = prefsOf(user.preferences);
+  const learner = user.role === "STUDENT";
+  const member = !user.isGuest;
+  const reviewer = user.role === "TEACHER" || user.role === "ADMIN";
+  const student = learner && member;
+  // Only whether a password exists crosses to the browser, never the hash.
+  const hasPassword = Boolean(user.passwordHash);
 
-  const sections = (
+  return (
     <>
       {/* First for a guest: the one step that keeps their progress. */}
-      {!audience.member ? (
-        <Section variant={variant} id={id("upgrade")} title="Keep your progress">
-          <GuestUpgrade />
-        </Section>
+      {!member ? (
+        <Group id="settings-progress" title="Your progress">
+          <SheetRow title="Keep your progress" subline="Add your email so your cards are kept, and get the email settings." form>
+            <GuestUpgrade />
+          </SheetRow>
+        </Group>
       ) : null}
 
-      <Section variant={variant} id={id("general")} title="Appearance and notifications">
-        <SettingsForm initialTheme={user.theme} initialPreferences={preferences} audience={audience} />
-      </Section>
+      <Group id="settings-appearance" title="Appearance">
+        <ThemeRow initial={user.theme} />
+        <PrefChoiceRow
+          pref="textSize"
+          title="Text size"
+          subline="Bigger or smaller text on cards and pages."
+          explain="Cards get a larger minimum text size too."
+          options={TEXT_OPTIONS}
+          initial={p.textSize}
+          attr={{ name: "data-text", unsetFor: "normal" }}
+        />
+        {learner ? <CardColorPicker initial={p.cardColor} /> : null}
+        <PrefSwitch
+          pref="reduceMotion"
+          label="Reduce motion"
+          description="Cards change sides without turning, and other movement stops."
+          initial={p.reduceMotion}
+          attr={{ name: "data-motion", value: "reduce" }}
+        />
+      </Group>
 
       {/* Students only: teachers and admins have no flashcards. */}
-      {audience.learner ? (
-        <Section variant={variant} id={id("card")} title="Flashcard">
-          <div className="flex flex-col gap-4">
-            <CardColorPicker initial={preferences.cardColor} />
-            <StudyLimits initialNew={preferences.newPerDay} />
-            {/* A guest has no email to send a reminder to. */}
-            {audience.member ? <ReminderSettings initialOn={preferences.emailReminder} initialHour={preferences.reminderHour} /> : null}
-            <VoiceSettings initialAccent={preferences.voiceAccent} initialSpeed={preferences.voiceSpeed} />
-          </div>
-        </Section>
-      ) : null}
-
-      {/* Guests cannot publish, and admins' decks are credited to EduSarthi. */}
-      {audience.member && user.role !== "ADMIN" ? (
-        <Section variant={variant} id={id("credit")} anchor="public-name" title="How your name shows on public decks">
-          <PublicNameForm
-            accountName={user.name}
-            initialStyle={user.creditStyle}
-            initialPublicName={user.publicName}
-            teacher={user.role === "TEACHER"}
+      {learner ? (
+        <Group id="settings-flashcards" title="Flashcards">
+          <PrefChoiceRow
+            pref="newPerDay"
+            title="New cards per day"
+            subline="New cards each day. Reviews have no limit."
+            explain="On top of the cards due for review. Takes effect on your next card."
+            options={NEW_OPTIONS}
+            initial={String(p.newPerDay)}
+            numeric
           />
-        </Section>
+          <VoiceSettings initialAccent={p.voiceAccent} initialSpeed={p.voiceSpeed} />
+          <PrefSwitch pref="autoSpeak" label="Say each word aloud" description="Plays the word when its card opens." initial={p.autoSpeak} />
+          <PrefSwitch
+            pref="hideHindi"
+            label="Hide Hindi meanings"
+            description="Hides the Hindi boxes on cards, so you think in English."
+            initial={p.hideHindi}
+            attr={{ name: "data-hindi", value: "off" }}
+          />
+          <PrefSwitch
+            pref="hideHindiTask"
+            label="Hide Hindi→English questions"
+            description="Hides the practice questions that ask you to translate Hindi."
+            initial={p.hideHindiTask}
+            attr={{ name: "data-hindi-task", value: "off" }}
+          />
+        </Group>
       ) : null}
 
-      <Section variant={variant} id={id("share")} anchor="share" title="Share EduSarthi">
-        <ShareApp />
-      </Section>
+      {/* A guest cannot record or upload. */}
+      {member ? (
+        <Group id="settings-recordings" title={student ? "Recordings & audits" : "Recordings"}>
+          {student ? (
+            <PrefSwitch pref="autoplayAudit" label="Play audits on open" description="Starts your recording when you open an audit. Off keeps it quiet." initial={p.autoplayAudit} />
+          ) : null}
+          {student ? (
+            <PrefChoiceRow
+              pref="playbackRate"
+              title="Audit playback speed"
+              subline="The speed your recording starts at in an audit."
+              explain="The buttons under the player still change it for one listen."
+              options={SPEED_OPTIONS}
+              initial={String(p.playbackRate)}
+              numeric
+            />
+          ) : null}
+          <PrefSwitch
+            pref="dataSaver"
+            label="Data saver"
+            description="Records at lower quality, so uploads are faster on slow data."
+            initial={p.dataSaver}
+            attr={{ name: "data-saver", value: "on" }}
+          />
+        </Group>
+      ) : null}
 
-      <Section variant={variant} id={id("security")} title="Security">
-        {audience.member ? (
-          <div className="flex flex-col gap-5">
-            {user.email ? <ChangeEmail currentEmail={user.email} hasPassword={Boolean(user.passwordHash)} /> : null}
-            {/* Only whether a password exists crosses to the browser, never the hash. */}
-            <div className={user.email ? "border-t border-border pt-4" : undefined}>
-              <ChangePassword hasPassword={Boolean(user.passwordHash)} />
-            </div>
-            <div className="border-t border-border pt-4">
-              <SignOutEverywhere />
-            </div>
-          </div>
-        ) : (
-          // Signing out everywhere would strand a guest: a guest account has
-          // no password or email to sign back in with.
-          <p className="text-sm text-ink-muted">
-            A guest account has no password or email, so there is nothing to change here. Signing
-            out ends this guest account, and it cannot be opened again. Add your email under Keep
-            your progress first if you want to come back to it.
-          </p>
-        )}
-      </Section>
+      {member && (student || reviewer) ? (
+        <Group id="settings-email" title="Email">
+          {student ? <PrefSwitch pref="emailOnAudit" label="Audit returned" description="One email when a teacher returns your audit, with a link." initial={p.emailOnAudit} /> : null}
+          {student ? <ReminderSettings initialOn={p.emailReminder} initialHour={p.reminderHour} /> : null}
+          {reviewer ? <PrefSwitch pref="emailQueueDigest" label="Daily queue email" description="Around 7 pm India time, only when recordings are waiting." initial={p.emailQueueDigest} /> : null}
+          {reviewer ? <PrefSwitch pref="emailOnNewRecording" label="Each new recording" description="One email per new recording. On a busy day that is many." initial={p.emailOnNewRecording} /> : null}
+        </Group>
+      ) : null}
+
+      <Group id="settings-account" title="Account & security">
+        {member && user.email ? (
+          <SheetRow title="Change email" subline={user.email} form>
+            <ChangeEmail currentEmail={user.email} hasPassword={hasPassword} />
+          </SheetRow>
+        ) : null}
+        {member ? (
+          <SheetRow
+            title={hasPassword ? "Change password" : "Password"}
+            subline={hasPassword ? "Also signs you out on every device." : "You sign in without one. See how to add one."}
+            form={hasPassword}
+          >
+            <ChangePassword hasPassword={hasPassword} />
+          </SheetRow>
+        ) : null}
+        {/* Guests cannot publish, and admins' decks are credited to EduSarthi. */}
+        {member && user.role !== "ADMIN" ? (
+          <SheetRow title="Name on public decks" subline="How you are credited on decks you publish." anchor="public-name">
+            <PublicNameForm accountName={user.name} initialStyle={user.creditStyle} initialPublicName={user.publicName} teacher={user.role === "TEACHER"} />
+          </SheetRow>
+        ) : null}
+        {/* Signing out everywhere would strand a guest, who has nothing to sign back in with. */}
+        {member ? (
+          <SheetRow title="Sign out of all devices" subline="For a lost phone or a shared computer.">
+            <SignOutEverywhere />
+          </SheetRow>
+        ) : null}
+        <SignOutRow guest={!member} />
+      </Group>
+
+      <Group id="settings-share" title="Share">
+        <SheetRow title="Share EduSarthi" subline="Send the app link to a friend." anchor="share">
+          <ShareApp />
+        </SheetRow>
+      </Group>
     </>
   );
-
-  return variant === "page" ? sections : <div className="flex flex-col gap-4">{sections}</div>;
 }

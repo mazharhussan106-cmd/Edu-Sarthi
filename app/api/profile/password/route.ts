@@ -1,4 +1,4 @@
-// Owns changing the password from Settings → Security, for an account that
+// Owns changing the password from Settings → Account & security, for an account that
 // already has one.
 //
 // It asks for the current password even though the person is signed in. A

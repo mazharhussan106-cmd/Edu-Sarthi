@@ -1,4 +1,4 @@
-// Owns the "Recordings per student per day" control on Admin → Settings.
+// Owns the "Recordings per student per day" control on Admin → Site settings.
 //
 // A number box with Save, not save-on-change: this changes every student's
 // allowance at once, so it waits for a deliberate press. It deliberately

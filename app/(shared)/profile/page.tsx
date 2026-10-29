@@ -8,7 +8,7 @@
 //
 // Students can set their name here (email-code sign-in creates accounts with
 // none) and use their data rights. Changing the email is not here: it needs
-// re-verifying, and lives in Settings → Security (app/api/profile/email).
+// re-verifying, and lives in Settings → Account & security (app/api/profile/email).
 
 import Link from "next/link";
 import { redirect } from "next/navigation";

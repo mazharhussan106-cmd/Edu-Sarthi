@@ -1,5 +1,7 @@
-// Owns "Change password" under Settings → Security: current password, new
-// password twice, then a sign-out so the next sign-in uses the new one.
+// Owns "Change password", in its sheet under Settings → Account & security:
+// current password, new password twice, then a sign-out so the next sign-in
+// uses the new one. The sheet opens straight on the form; the row already
+// asked "Change password?".
 //
 // It signs this device out as well as the others. The server ends every
 // session from the moment the password changes, so staying on this page would
@@ -16,16 +18,27 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { useOnSheetClosed, useSheetClose } from "@/components/ui/Sheet";
 import { changePasswordSchema } from "@/lib/validations";
 
 export function ChangePassword({ hasPassword }: { hasPassword: boolean }) {
-  const [open, setOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const closeSheet = useSheetClose();
+
+  function clear() {
+    setError(null);
+    setCurrentPassword("");
+    setPassword("");
+    setConfirmPassword("");
+  }
+  // Cleared, not kept, however the sheet closes: a half-typed password should
+  // not sit in memory on a shared computer, or greet the next person to open it.
+  useOnSheetClosed(clear);
 
   if (!hasPassword) {
     return (
@@ -76,19 +89,9 @@ export function ChangePassword({ hasPassword }: { hasPassword: boolean }) {
     return <p role="status" className="text-sm text-success">Password changed. Signing you out so you can sign in with the new one…</p>;
   }
 
-  if (!open) {
-    return (
-      <div>
-        <p className="text-sm text-ink-muted">You need your current password. Changing it signs you out on every device, this one too.</p>
-        <Button variant="outline" size="sm" className="mt-4" onClick={() => setOpen(true)}>
-          Change password
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={(e) => void submit(e)} className="flex flex-col gap-4">
+      <p className="text-sm text-ink-muted">You need your current password. Changing it signs you out on every device, this one too.</p>
       <PasswordInput
         label="Current password"
         autoComplete="current-password"
@@ -119,13 +122,8 @@ export function ChangePassword({ hasPassword }: { hasPassword: boolean }) {
       <div className="flex flex-wrap gap-2">
         <Button type="submit" size="sm" disabled={busy}>{busy ? "Changing…" : "Change password"}</Button>
         <Button type="button" variant="ghost" size="sm" disabled={busy} onClick={() => {
-          // Cleared, not kept: a half-typed password should not sit in memory
-          // on a shared computer after the form is closed.
-          setOpen(false);
-          setError(null);
-          setCurrentPassword("");
-          setPassword("");
-          setConfirmPassword("");
+          clear();
+          closeSheet?.();
         }}>
           Cancel
         </Button>

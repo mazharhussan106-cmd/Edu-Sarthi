@@ -25,7 +25,8 @@ export const ADMIN_LINKS: readonly NavLink[] = [
   { href: "/admin/import", label: "Import" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/compliance", label: "Compliance" },
-  { href: "/admin/settings", label: "Settings" },
+  // "Site settings", not "Settings": the header gear is the person's own Settings.
+  { href: "/admin/settings", label: "Site settings" },
   { href: "/queue", label: "Queue" },
   { href: "/decks", label: "My decks" },
 ];

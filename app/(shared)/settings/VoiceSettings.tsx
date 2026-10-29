@@ -1,5 +1,6 @@
-// Owns the "Read-aloud voice" settings: which English accent the phone's voice
-// uses for cards, and how fast it speaks.
+// Owns the "Read-aloud voice" row in Settings → Flashcards and its sheet:
+// which English accent the phone's voice uses for cards, and how fast it
+// speaks. Both live in one sheet because they describe one voice.
 //
 // A choice is stamped on <html> straight away, where lib/speech reads it, so
 // the next tap on a card's speaker uses it without a reload. It deliberately
@@ -11,7 +12,8 @@
 
 import { useState } from "react";
 
-import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { RadioList } from "@/components/ui/RadioList";
+import { SheetRow } from "@/components/ui/SheetRow";
 import { useSavePreference } from "@/app/(shared)/settings/useSavePreference";
 import { VOICE_ACCENTS, VOICE_SPEEDS, type VoiceAccent, type VoiceSpeed } from "@/lib/speech";
 
@@ -20,34 +22,43 @@ export function VoiceSettings({ initialAccent, initialSpeed }: { initialAccent: 
   const [speed, setSpeed] = useState(initialSpeed);
   const { save, notice } = useSavePreference();
   const html = () => document.documentElement;
+  const label = (list: readonly { value: string; label: string }[], v: string) => list.find((o) => o.value === v)?.label ?? "";
 
   return (
-    <div className="border-t border-border pt-2">
-      <SegmentedControl
-        label="Read-aloud accent"
-        description="The voice that says a card when you press its speaker. Automatic uses Indian English, and British or American for customer-support cards. If your phone has no voice for the accent you pick, it uses another English voice."
-        options={VOICE_ACCENTS}
-        value={accent}
-        onValueChange={(v) => {
-          setAccent(v);
-          if (v === "auto") html().removeAttribute("data-voice");
-          else html().setAttribute("data-voice", v);
-          void save("voiceAccent", v);
-        }}
-      />
-      <SegmentedControl
-        label="Read-aloud speed"
-        description="For the phone's voice. A card with its own recording plays as recorded, and the support cards' Listen and Slow buttons keep their own speed."
-        options={VOICE_SPEEDS}
-        value={speed}
-        onValueChange={(v) => {
-          setSpeed(v);
-          if (v === "slow") html().setAttribute("data-voice-speed", "slow");
-          else html().removeAttribute("data-voice-speed");
-          void save("voiceSpeed", v);
-        }}
-      />
-      {notice ? <p aria-live="polite" className="mt-2 text-xs text-ink-muted">{notice}</p> : null}
-    </div>
+    <SheetRow
+      title="Read-aloud voice"
+      subline="The voice a card's speaker button uses."
+      // The speed is named only when it is not the usual one, so the value stays short.
+      value={speed === "slow" ? `${label(VOICE_ACCENTS, accent)} · Slow` : label(VOICE_ACCENTS, accent)}
+      done
+    >
+      <div className="flex flex-col gap-5">
+        <RadioList
+          label="Accent"
+          description="Automatic uses Indian English, and British or American for customer-support cards. If your phone has no voice for the accent you pick, it uses another English voice."
+          options={VOICE_ACCENTS}
+          value={accent}
+          onValueChange={(v) => {
+            setAccent(v);
+            if (v === "auto") html().removeAttribute("data-voice");
+            else html().setAttribute("data-voice", v);
+            void save("voiceAccent", v);
+          }}
+        />
+        <RadioList
+          label="Speed"
+          description="For the phone's voice. A card with its own recording plays as recorded, and the support cards' Listen and Slow buttons keep their own speed."
+          options={VOICE_SPEEDS}
+          value={speed}
+          onValueChange={(v) => {
+            setSpeed(v);
+            if (v === "slow") html().setAttribute("data-voice-speed", "slow");
+            else html().removeAttribute("data-voice-speed");
+            void save("voiceSpeed", v);
+          }}
+        />
+      </div>
+      {notice ? <p aria-live="polite" className="mt-2 text-xs text-error">{notice}</p> : null}
+    </SheetRow>
   );
 }

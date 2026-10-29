@@ -151,7 +151,21 @@ That is more than 6 files, so the owner must approve it first (CLAUDE.md). **App
   - New preference key `goalDate` ("YYYY-MM-DD" or "", JSON, no migration) and `lib/goalDate.ts` (India days; real-date check; a save must be today or within three years, while reading also accepts a passed date so the card can say "This day has passed").
   - The goal sheet has a date field with Clear; the card shows the date and "N days left" / "Tomorrow" / "Today. All the best!".
   - `app/api/profile/preferences` refuses a bad date with a reason.
-  - Tested: 78 days left, saved across a reload; past date and 31 Feb refused by the server; today wording; clear; axe on the sheet; `next build` passes. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
+  - Tested: 78 days left, saved across a reload; past date and 31 Feb refused by the server; today wording; clear; axe on the sheet; `next build` passes.
+- **P4 done (29 Oct).**
+  - New: `lib/staffProfileStats.ts`, `components/profile/TeacherProfile.tsx` and `AdminProfile.tsx`; `StaffProfile.tsx` (interim) removed.
+  - **Teacher:**
+    - Verified teacher chip, or a line saying an admin verifies teachers.
+    - Audits written, this month, students helped, turnaround over 30 days (the same median as Workload, so the pages agree).
+    - Reviewing calendar.
+    - **Quality checks**: QA notes from the last 90 days, shown to the teacher who wrote the audit (owner, 29 Oct; until now admin-only).
+    - Decks and followers.
+    - Queue with "N waiting" (the same `queueScope` rule as the Queue page), My students, Workload, Settings.
+  - **Admin:**
+    - Own actions this week, own decks reviewed in 30 days, decks and logos waiting.
+    - Last 5 admin-log actions, activity calendar, shortcuts.
+  - Neither profile shows a student's name. Teacher and admin accounts are still closed by support, and the page says how.
+  - Tested: tiles against the test data; queue count equal to the Queue page; turnaround equal to Workload (30 days); no student name or email on the teacher profile; axe in five themes for both; `next build` passes. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
 
 ## Open questions for the owner
 

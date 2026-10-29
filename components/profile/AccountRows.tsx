@@ -9,6 +9,7 @@
 // which re-verifies it) or the name and number (the Edit profile sheet).
 
 import { Download, Eye, Mail, Smartphone, Trash2 } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { SheetRow } from "@/components/ui/SheetRow";
 import { DeleteAccount } from "@/components/profile/DeleteAccount";
@@ -25,6 +26,7 @@ export function AccountRows({
   audiences,
   canDelete,
   closedBySupport,
+  children,
 }: {
   email: string | null;
   emailVerified: Date | null;
@@ -33,6 +35,8 @@ export function AccountRows({
   canDelete: boolean;
   /** Teachers and admins: their accounts are closed by support, so say how. */
   closedBySupport?: boolean;
+  /** Extra rows for a role, placed after the email and number. */
+  children?: ReactNode;
 }) {
   return (
     <RowGroup id="your-data" title="Account and privacy">
@@ -40,6 +44,7 @@ export function AccountRows({
         <InfoRow icon={Mail} title={email} subline={emailVerified ? `Verified on ${dateIn(emailVerified)}. Change it in Settings.` : "Not verified yet"} />
       ) : null}
       {phone ? <InfoRow icon={Smartphone} title={phone} subline="Stored, not verified, never used for SMS" /> : null}
+      {children}
       <IconSlot icon={Eye}>
         <SheetRow title="Who sees what" subline="What teachers, admins and others can see" done>
           <ul className="divide-y divide-border">

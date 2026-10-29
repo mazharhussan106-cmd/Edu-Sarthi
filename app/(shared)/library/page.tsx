@@ -9,10 +9,12 @@
 // (components/decks/DeckCredit).
 // It deliberately does NOT list the viewer's own drafts (that is My decks).
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
 import { auth } from "@/lib/auth";
+import { canonical } from "@/lib/siteUrl";
 import { prisma } from "@/lib/prisma";
 import { CREDIT_INSTITUTE_SELECT, CREDIT_SELECT } from "@/lib/libraryTerms";
 import { DeckCredit } from "@/components/decks/DeckCredit";
@@ -22,6 +24,21 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
 export const revalidate = 0;
+
+// One address in search results: the plain list. A search, a tag or another
+// sort is the same decks again in a different order, so those stay out of the
+// index (but their links are still followed). The tag filter is a page of its
+// own worth indexing only once tags have descriptions; not now.
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string; tag?: string; sort?: string }> }): Promise<Metadata> {
+  const sp = await searchParams;
+  const variant = Boolean(sp.q?.trim() || sp.tag?.trim() || (sp.sort && sp.sort !== "new"));
+  return {
+    title: "Flashcard library — EduSarthi",
+    description: "Flashcard decks shared by EduSarthi learners and teachers, checked by an admin before they appear. Anyone can read them.",
+    ...canonical("/library"),
+    ...(variant ? { robots: { index: false, follow: true } } : {}),
+  };
+}
 
 const SORTS = [
   { value: "new", label: "Newest" },

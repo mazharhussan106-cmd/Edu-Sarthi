@@ -7,8 +7,10 @@
 // It deliberately offers no Known / Unknown here (a copy is the learner's own,
 // with their own schedule); "Copy to my decks" is on the deck page.
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -19,21 +21,43 @@ import { DeckCardView } from "@/components/decks/DeckCardView";
 
 export const revalidate = 0;
 
-export default async function LibraryCardPage({ params }: { params: Promise<{ id: string; cardId: string }> }) {
-  const [{ id, cardId }, session] = await Promise.all([params, auth()]);
+// One read serves the page and its metadata (the live pool has one connection).
+// Null for anything that is not a card of a listed deck.
+const load = cache(async (id: string, cardId: string) => {
   const deck = await prisma.deck.findFirst({
     where: { id, ...LISTED },
     select: { title: true, cards: { orderBy: { serial: "asc" }, select: { id: true } } },
   });
-  if (!deck) notFound();
+  if (!deck) return null;
   const at = deck.cards.findIndex((c) => c.id === cardId);
-  if (at < 0) notFound();
+  if (at < 0) return null;
+  const row = await prisma.word.findFirst({ where: { id: cardId, deckId: id }, select: CARD_SELECT });
+  return row ? { deck, at, row } : null;
+});
 
-  const [row, user] = await Promise.all([
-    prisma.word.findFirst({ where: { id: cardId, deckId: id }, select: CARD_SELECT }),
-    session?.user?.id ? prisma.user.findUnique({ where: { id: session.user.id }, select: { preferences: true } }) : null,
-  ]);
-  if (!row) notFound();
+// A visitor reaches a card from its deck, not from a search: hundreds of thin
+// pages would only bury the deck pages, so it is `noindex` (its links are still
+// followed). It still gets its own title and description, because a visitor can
+// share its link and the preview should name the card, not the whole site.
+export async function generateMetadata({ params }: { params: Promise<{ id: string; cardId: string }> }): Promise<Metadata> {
+  const { id, cardId } = await params;
+  const found = await load(id, cardId);
+  const robots = { index: false, follow: true };
+  if (!found) return { robots };
+  return {
+    title: `${found.row.text} — ${found.deck.title} — EduSarthi`,
+    description: `A flashcard from “${found.deck.title}” in the EduSarthi library.`,
+    robots,
+  };
+}
+
+export default async function LibraryCardPage({ params }: { params: Promise<{ id: string; cardId: string }> }) {
+  const [{ id, cardId }, session] = await Promise.all([params, auth()]);
+  const found = await load(id, cardId);
+  if (!found) notFound();
+  const { deck, at, row } = found;
+
+  const user = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { preferences: true } }) : null;
   const prefs = PREFERENCE_SCHEMA.pick({ cardColor: true }).safeParse(user?.preferences ?? {});
   const face = await faceCard(row);
   const href = (i: number) => (deck.cards[i] ? `/library/${id}/card/${deck.cards[i].id}` : null);

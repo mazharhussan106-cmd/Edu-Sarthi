@@ -12,11 +12,14 @@
 // listed from that alone and each card opens on its own page; a hand-made deck
 // loads full cards a page at a time.
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { canonical } from "@/lib/siteUrl";
 import { AI_CARD_FILTER, CARD_SELECT, LISTED, faceCard } from "@/lib/decks";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -34,12 +37,39 @@ export const revalidate = 0;
 
 const PAGE = 25;
 
+// One read serves the page and its metadata: the live pool has a single
+// connection, so asking twice per request would queue.
+const getDeck = cache(async (id: string) =>
+  prisma.deck.findFirst({
+    where: { id, ...LISTED },
+    select: { title: true, description: true, tags: true, ownerId: true, licence: true, ...SOURCE_SELECT, ...CREDIT_INSTITUTE_SELECT, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, members: { where: { role: "EDIT", acceptedAt: { not: null }, termsAcceptedAt: { not: null } }, select: { user: { select: CREDIT_SELECT } } }, _count: { select: { likes: true, cards: true } } },
+  }),
+);
+
+// What a search result and a shared link show. It names the deck and what is
+// in it, never the creator: the page credits them as they chose, but a title
+// or description is copied into places they never agreed to. Pages 2 and on of
+// a long deck are listed only through the first page.
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ page?: string }> }): Promise<Metadata> {
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
+  const deck = await getDeck(id);
+  if (!deck) return { robots: { index: false } };
+  const about = deck.description?.trim();
+  const description = about
+    ? about.length > 155 ? `${about.slice(0, 154)}…` : about
+    : `${deck._count.cards} flashcards in the EduSarthi library${deck.tags.length ? `: ${deck.tags.join(", ")}` : ""}.`;
+  const title = `${deck.title} — EduSarthi`;
+  return {
+    title,
+    description,
+    ...canonical(`/library/${id}`),
+    ...(Number(sp.page) > 1 ? { robots: { index: false, follow: true } } : {}),
+  };
+}
+
 export default async function LibraryDeckPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ page?: string }> }) {
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
-  const deck = await prisma.deck.findFirst({
-    where: { id, ...LISTED },
-    select: { title: true, description: true, tags: true, ownerId: true, licence: true, ...SOURCE_SELECT, ...CREDIT_INSTITUTE_SELECT, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, members: { where: { role: "EDIT", acceptedAt: { not: null }, termsAcceptedAt: { not: null } }, select: { user: { select: CREDIT_SELECT } } }, _count: { select: { likes: true } } },
-  });
+  const deck = await getDeck(id);
   if (!deck) notFound();
 
   const index = await prisma.word.findMany({ where: { deckId: id }, orderBy: { serial: "asc" }, select: { id: true, text: true, category: true } });

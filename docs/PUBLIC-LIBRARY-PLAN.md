@@ -1,6 +1,6 @@
 # Public library hub — plan (29 Oct 2026)
 
-Status: **Step 1 (1a and 1b) built and tested on `claude/bold-hopper-hxfrpd` (29 Oct), not merged. Steps 2 to 4 are planned, not built.** Do not merge Step 1b before Step 4 is ready (see below). Step 1a (commit "Nav: Library replaces Class …") is safe to merge alone.
+Status: **Steps 1 and 2 built and tested on `claude/bold-hopper-hxfrpd` (29 Oct), not merged. Steps 3 and 4 are planned, not built.** Do not merge Step 1b or Step 2 before Step 4 is ready (see below). Step 1a (commit "Nav: Library replaces Class …") is safe to merge alone. Step 2 is harmless until Step 1b is live, because a crawler cannot reach the library while it is behind login, but keep them together.
 
 ## What Step 1 did, and how it was tested
 
@@ -75,7 +75,25 @@ Who sees what (**PROPOSAL**, not yet approved):
 5. `components/decks/LikeButton.tsx` and 6. `components/decks/ReportButton.tsx`: a `signedIn` prop that shows a sign-in link, as `FollowButton` does.
 7. `app/(shared)/library/[id]/page.tsx` and `app/(shared)/library/page.tsx`: pass `signedIn` to the buttons; hide "My decks" when signed out.
 
-**Step 2 — make it findable (6 files).** `app/robots.ts`, `app/sitemap.ts` (home, about, library, every listed deck with its last change), `metadataBase` and share defaults in `app/layout.tsx`, `generateMetadata` on the deck page, card pages `noindex, follow` (hundreds of thin pages), and a "Browse the library" button on the landing page. Read `node_modules/next/dist/docs/` for the metadata and sitemap conventions first (CLAUDE.md: this is not the Next.js you know).
+**Step 2 — make it findable. BUILT (29 Oct), 8 files and no database change** (the plan said 6; a shared address helper and the library list's own metadata were added).
+- `lib/siteUrl.ts` (new): the site's address for search engines: `NEXT_PUBLIC_APP_URL`, else Vercel's `VERCEL_PROJECT_PRODUCTION_URL`, else localhost outside production, else `null`. It does not throw like `lib/appUrl` does (that one guards email links): a throw would fail `next build` and block every deploy over a missing variable. With `null` there is no canonical tag, no `metadataBase`, no sitemap line in robots.txt and an empty sitemap, and everything else works (tested with a production build and the variable empty).
+- `app/robots.ts` (new): allows `/`, disallows `/api/`, the signed-in areas and `/library/*/study` and `/library/*/practice/`. **It does not disallow `/d/`**: those pages say `noindex` themselves, and a crawler that may not fetch a page never sees its `noindex`.
+- `app/sitemap.ts` (new): home, library, about, support, legal and every listed deck (`LISTED`, with `updatedAt`). `force-dynamic`, so a taken-down deck leaves at once and `next build` needs no database; it throws if the database is down, so a crawler retries instead of believing a short list. No card pages and no filtered lists. One file holds up to 45,000 decks; split it with `generateSitemaps` past that.
+- `app/layout.tsx`: `metadataBase`, `openGraph` with only `siteName`, `type` and `locale`, and `twitter: summary`. **Do not add a title or description to the root `openGraph`:** Next merges metadata shallowly, so every page that sets none would inherit the home page's. Pages need no `openGraph` of their own: Next builds `og:title` and `og:description` from the page's `title` and `description` (checked on About and on decks).
+- `app/(shared)/library/page.tsx`: its own title and description, canonical `/library`; a search, a tag or a sort other than Newest is `noindex, follow` (same decks again).
+- `app/(shared)/library/[id]/page.tsx`: `generateMetadata` with the title "<deck> — EduSarthi", the deck's own description (cut at 155) or "N flashcards in the EduSarthi library: tags.", and a canonical. **It never names the creator**: titles and descriptions are copied into places the creator never agreed to. Page 2 and on of a long deck are `noindex, follow`. The page and the metadata share one read (`React.cache`), because the live pool has one connection.
+- `app/(shared)/library/[id]/card/[cardId]/page.tsx`: `noindex, follow` (hundreds of thin pages), but with its own title "<card> — <deck> — EduSarthi" and a description that names the deck, so a shared card link previews as that card (one shared read here too).
+- `app/page.tsx`: a "Browse flashcard decks" button in the hero.
+- **Not done, on purpose:** no share image (previews show a title and description only; an image needs a design), no structured data, no Google Search Console setup (the owner does that after launch: add the site, then submit `/sitemap.xml`).
+- Next 16 conventions were read first in `node_modules/next/dist/docs/` (robots, sitemap, generate-metadata).
+
+Tested on a production build, local Postgres, plain HTTP and Playwright:
+- 45 checks on robots.txt, sitemap.xml (one entry per listed deck, none for a pending, private or link-shared deck, none for a card, a rejected deck leaves at once and returns when approved) and the head tags of the list (plain, search, tag, both sorts), a deck (own and no description, long description, page 2), an imported deck, a card, an unknown card and deck, About, home and the share-link page;
+- the same suite with no site address (build and server both started with it empty): 34 checks pass (the sitemap-entry checks do not apply), no 500;
+- `siteUrl()` and `canonical()` across six environment combinations;
+- the 56 Step 1 browser checks again, and the landing page at 360, 390 and 1280 px (no sideways scroll, three hero buttons, axe clean except the logotype every page has);
+- `tsc --noEmit` and `next build` pass.
+Not tested: Google actually indexing anything, a real phone, the live database, and how the live pool copes with crawler traffic.
 
 **Step 3 — browsing for strangers (3 files).** Today the list stops at 30 decks with no next page, and tags can only be used if you already know them. Add paging, a row of the tags in use (with counts), and wording that fits a visitor. `app/(shared)/library/page.tsx`, `lib/libraryTags.ts`, one small component.
 
@@ -115,4 +133,5 @@ Local Postgres and Playwright, signed out and signed in:
 ## Open
 
 - Terms version and re-consent (Step 4): the owner and a lawyer.
-- The owner's "go" for Step 1.
+- The owner's "go" for Step 3 (paging and the tag row).
+- After launch, the owner adds the site to Google Search Console and submits the sitemap. Indexing takes days to weeks and is not guaranteed.

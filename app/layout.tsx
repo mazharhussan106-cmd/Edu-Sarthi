@@ -12,6 +12,7 @@ import { Inter, JetBrains_Mono, Sora } from "next/font/google";
 
 import { ServiceWorker } from "@/components/layout/ServiceWorker";
 import { CAPTURE_INSTALL_JS } from "@/lib/installPrompt";
+import { siteUrl } from "@/lib/siteUrl";
 import { attrFromCookie, THEME_COOKIE } from "@/lib/theme";
 import { DATA_SAVER_COOKIE, saverAttrFromCookie } from "@/lib/dataSaver";
 import { HINDI_COOKIE, hindiAttrFromCookie } from "@/lib/hindiToggle";
@@ -37,10 +38,18 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+// openGraph carries only what is true of every page. A page that sets its own
+// openGraph REPLACES this one (Next merges shallowly), and a title or
+// description here would be inherited by every page that sets none, so the
+// About page would be shared under the home page's title.
 export const metadata: Metadata = {
+  // Absent when production has no known address; see lib/siteUrl.
+  ...(siteUrl() ? { metadataBase: new URL(siteUrl() as string) } : {}),
   title: "EduSarthi — Spoken English, audited by a teacher",
   description:
     "Record your spoken English, get a rubric-scored audit with timestamped notes from a real teacher.",
+  openGraph: { siteName: "EduSarthi", type: "website", locale: "en_IN" },
+  twitter: { card: "summary" },
   appleWebApp: { capable: true, title: "EduSarthi", statusBarStyle: "default" },
   icons: { icon: "/icons/icon-192.png", apple: "/apple-touch-icon.png" },
 };

@@ -543,7 +543,7 @@ Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oc
   3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
   4. Test on a phone.
 
-## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — Step 1 BUILT and tested, not merged; Steps 2 to 4 planned
+## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — Steps 1 and 2 BUILT and tested, not merged; Steps 3 and 4 planned
 
 Owner's requirement: EduSarthi is a repository, so there must be **one place** where anyone (signed in or not) can see every public flashcard deck. Plan, built list and tests: `docs/PUBLIC-LIBRARY-PLAN.md`.
 - Today (live) `/library` is behind login, so search engines and visitors see none of the approved decks. The plan opens the existing Library to everyone (no new section) and later adds `robots`, a sitemap, deck metadata, paging and a tag row.
@@ -552,8 +552,10 @@ Owner's requirement: EduSarthi is a repository, so there must be **one place** w
 - **Do not merge Step 1b before Step 4:** the Privacy page says public decks are visible to "every signed-in user", and creators agreed to `LIBRARY_TERMS_VERSION` 2026-10-27. The text, the version and an announcement email come first (owner and lawyer). Step 1a alone is safe.
 - **Don't undo:** `proxy.ts` lists the public library pages with an exact pattern (`PUBLIC_LIBRARY`), never the prefix `/library`, which would also open the study and practice pages. It applies only to a visitor with no session, so a signed-in but unverified person is still held at /verify.
 - A taken-down deck shows the not-found page with `noindex` but HTTP status 200: `app/(shared)/loading.tsx` streams first, which Next 16 documents (see the audit page note). Not changed on purpose.
-- Owner's domain answer: `edusarthi.com` is not a blocker; Step 2 reads `NEXT_PUBLIC_APP_URL`.
-- Next: the owner decides on Step 4 (text, terms version, email) and says go for Step 2.
+- **Step 2 (findable) built:** `app/robots.ts`, `app/sitemap.ts`, `lib/siteUrl.ts`, root `metadataBase` and `openGraph`, per-deck and per-card metadata, `noindex` on cards, filtered lists and page 2 of a deck, a "Browse flashcard decks" button on the landing page. Details, tests and what was left out: `docs/PUBLIC-LIBRARY-PLAN.md` → Step 2.
+- **Don't undo (Step 2):** `/d/` is not disallowed in robots.txt (a blocked page's `noindex` is never read); the root `openGraph` has no title or description (shallow merge); metadata never names the creator; `siteUrl()` returns `null` rather than throwing (a throw would fail the build); the sitemap is `force-dynamic`.
+- Owner's domain answer: `edusarthi.com` is not a blocker; Step 2 reads `NEXT_PUBLIC_APP_URL` and falls back to Vercel's production domain. **Check that `NEXT_PUBLIC_APP_URL` is set in Vercel**: it is also what the emails use.
+- Next: the owner decides on Step 4 (text, terms version, email) and says go for Step 3 (paging, tag row). After launch the owner adds the site to Google Search Console and submits `/sitemap.xml`.
 
 ## Starting a new chat
 

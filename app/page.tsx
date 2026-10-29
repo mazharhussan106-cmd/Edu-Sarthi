@@ -105,6 +105,9 @@ export default function LandingPage() {
               <Link href="/about">
                 <Button variant="outline">How it works</Button>
               </Link>
+              <Link href="/library">
+                <Button variant="outline">Browse flashcard decks</Button>
+              </Link>
             </div>
           </div>
         </section>

@@ -310,6 +310,12 @@ Database setup ki zarurat nahi. **Library ko bina login ke kholne wala hissa (St
 - [ ] `/library/<deck>/study` seedha `/login` par jaaye
 - [ ] Koi deck Admin → Decks se reject/take down karke dekhiye: ab wo list me nahi aata aur uska page "not found" dikhata hai
 
+**Google ke liye (Step 2, Step 1b ke saath hi merge hota hai):**
+- [ ] `https://<aapki site>/robots.txt` khule: "Allow: /" aur "Disallow: /dashboard" jaisi lines, aur neeche `Sitemap: https://<aapki site>/sitemap.xml`. Agar Sitemap wali line nahi hai, to Vercel me `NEXT_PUBLIC_APP_URL` set kariye
+- [ ] `/sitemap.xml` khule aur usme har public deck ka `/library/<id>` ho (card ya search wale links nahi)
+- [ ] Kisi deck ka link WhatsApp par bhejiye: preview me deck ka naam dikhe, banane wale ka naam nahi
+- [ ] Phir Google Search Console me site jodiye aur `sitemap.xml` submit kariye. Google ko decks index karne me kuch din se kuch hafte lag sakte hain, aur ye pakka nahi hota
+
 ## 5. Kya **mat** kariye
 
 - Keys, passwords, database URL kisi chat me paste mat kariye. Sirf Vercel aur Claude environment settings me daaliye. Galti se paste ho jaaye to Supabase me key **rotate** (nayi) kar lijiye.

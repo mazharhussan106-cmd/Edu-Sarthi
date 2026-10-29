@@ -1,0 +1,557 @@
+<!doctype html>
+<!--
+  Student dashboard mockup (design only, sample data). Plan and rules:
+  docs/DASHBOARD-PLAN.md. Colours are the app's own tokens from
+  app/globals.css (light, with dark to check contrast), fonts are the app's
+  (Sora, Inter, JetBrains Mono), icons are lucide shapes like BottomNav.
+  Nothing here is wired to data; it is a picture to agree on before building.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student dashboard mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1b1f24;--ink-muted:#5f6773;--paper:#faf8f5;--paper-dim:#f0ece5;--accent:#0077b3;--accent-dark:#005f8f;--on-accent:#ffffff;--brand:#0096d6;--saffron:#ff8206;--saffron-text:#b35500;--success:#1a7f45;--error:#c73a3a;--surface:#ffffff;--border:rgba(27,31,36,.1);--border-strong:rgba(27,31,36,.2);--teal:#0f7f74;--navy:#1f3a68;--nav-bg:rgba(250,248,245,.95);--shadow:rgba(27,31,36,.08);--dim:rgba(27,31,36,.45)}
+[data-theme=dark]{--ink:#edeff2;--ink-muted:#98a0aa;--paper:#14171b;--paper-dim:#262c34;--accent:#3db4ee;--accent-dark:#6cc6f2;--on-accent:#0b1520;--brand:#3db4ee;--saffron:#ff9a3d;--saffron-text:#ffa559;--success:#4cc98a;--error:#ff6b6b;--surface:#1e232a;--border:rgba(237,239,242,.12);--border-strong:rgba(237,239,242,.24);--teal:#3fd0c0;--navy:#a9c3ee;--nav-bg:rgba(20,23,27,.95);--shadow:rgba(0,0,0,.4);--dim:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper-dim);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif}
+h1,h2,h3,p,ul{margin:0}ul{padding:0;list-style:none}
+a{color:var(--accent-dark)}
+.doc{max-width:1400px;margin:0 auto;padding:32px 24px 64px}
+.doc>header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:baseline;justify-content:space-between}
+.doc h1{font:700 26px Sora,sans-serif}
+.doc>h2{font:700 20px Sora,sans-serif;margin:40px 0 6px}
+.note{color:var(--ink-muted);font-size:14px;max-width:760px}
+.toggle{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);font:600 14px Inter,sans-serif;cursor:pointer}
+.shelf{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;margin-top:16px}
+.cap{font-size:13px;font-weight:600;color:var(--ink-muted);margin:0 0 8px 4px}
+/* device frames: no fake status bar, just the screen */
+.frame{width:390px;border:1px solid var(--border-strong);border-radius:28px;overflow:hidden;background:var(--paper);box-shadow:0 18px 40px var(--shadow);position:relative}
+.wide{width:1280px;border:1px solid var(--border-strong);border-radius:14px;overflow:hidden;background:var(--paper);box-shadow:0 18px 40px var(--shadow)}
+/* app chrome */
+.hdr{height:56px;display:flex;align-items:center;gap:4px;padding:0 8px 0 16px;border-bottom:1px solid var(--border);background:var(--nav-bg)}
+.logo{font:700 18px Sora,sans-serif;color:var(--brand);margin-right:auto}
+.ib{width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:10px;background:none;color:var(--ink)}
+.navlinks{display:flex;gap:4px;margin-right:auto;margin-left:24px}
+.navlinks a{padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--ink-muted);font-weight:500;font-size:14px}
+.navlinks a[aria-current]{color:var(--accent-dark);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.bnav{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--border);background:var(--nav-bg)}
+.bnav a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 10px;font-size:11px;color:var(--ink-muted);text-decoration:none}
+.bnav a[aria-current]{color:var(--accent-dark);font-weight:600}
+.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.i.s{width:16px;height:16px}
+/* page body */
+.pg{padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
+.hello{font:700 24px Sora,sans-serif}
+.sub{color:var(--ink-muted);font-size:14px;margin-top:2px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font:600 14px Inter,sans-serif;cursor:pointer}
+.chip .k{color:var(--ink-muted);font-weight:500}
+.fl{color:var(--saffron)}.st{color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px}
+.ct{font:600 15px Sora,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ct small{font:500 13px Inter,sans-serif;color:var(--ink-muted)}
+.ct a{font:600 13px Inter,sans-serif;text-decoration:none}
+.muted{color:var(--ink-muted)}
+.mono{font-family:"JetBrains Mono",monospace}
+/* today card */
+.today{display:grid;grid-template-columns:92px 1fr;gap:16px;align-items:center}
+.ring{position:relative;width:92px;height:92px}
+.ring svg{width:92px;height:92px;display:block}
+.ring b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 18px "JetBrains Mono",monospace;line-height:1.1}
+.ring b span{font:500 11px Inter,sans-serif;color:var(--ink-muted)}
+.streak{display:flex;align-items:center;gap:6px;font-weight:600}
+.ok{color:var(--success)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:14px}
+.day{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--ink-muted)}
+.dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--paper-dim);color:var(--ink-muted)}
+.dot .i{width:16px;height:16px}
+.dot.met{background:var(--success);color:var(--on-accent)}
+.dot.frz{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent-dark)}
+.dot.now{background:transparent;border:2px solid var(--accent);color:var(--accent-dark)}
+.dot.miss{background:transparent;border:2px dashed var(--border-strong)}
+.weekline{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-muted);margin-top:10px}
+.weekline b{color:var(--ink)}
+/* do this next */
+.next{background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-dark)}
+.next h3{font:700 18px Sora,sans-serif}
+.next p{font-size:14px;color:var(--ink-muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:10px;background:var(--accent);color:var(--on-accent);font:600 15px Inter,sans-serif;border:0;text-decoration:none;width:fit-content;margin-top:10px}
+.btn.ol{background:transparent;color:var(--accent-dark);border:1px solid var(--border-strong)}
+.btn.sm{min-height:40px;font-size:14px;padding:0 14px}
+/* rows */
+.rows li{display:flex;align-items:center;gap:12px;min-height:54px;border-top:1px solid var(--border);padding:6px 0}
+.rows li:first-child{border-top:0}
+a.r{display:flex;align-items:center;gap:12px;flex:1;min-width:0;color:var(--ink);text-decoration:none;min-height:44px}
+.rt{flex:1;min-width:0}
+.rt p{font-weight:500;font-size:15px}
+.rt span{display:block;font-size:13px;color:var(--ink-muted)}
+.n{font:700 16px "JetBrains Mono",monospace}
+.tick{width:24px;height:24px;border-radius:50%;border:2px solid var(--border-strong);display:grid;place-items:center;flex:none;color:var(--on-accent)}
+.tick .i{width:14px;height:14px;stroke-width:3}
+.tick.done{background:var(--success);border-color:var(--success)}
+.tick.red{border-color:var(--error)}
+li.done .rt p{color:var(--ink-muted);text-decoration:line-through}
+.chev{color:var(--ink-muted)}
+.badge{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--paper-dim);color:var(--ink-muted);white-space:nowrap}
+.badge.err{background:color-mix(in srgb,var(--error) 12%,transparent);color:var(--error)}
+.badge.acc{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent-dark)}
+.badge.sf{background:color-mix(in srgb,var(--saffron) 16%,transparent);color:var(--saffron-text)}
+/* latest audit */
+.audit{border-top:1px solid var(--border);margin-top:6px;padding-top:12px}
+.score{display:flex;align-items:baseline;gap:8px}
+.score b{font:700 30px "JetBrains Mono",monospace}
+.minis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.mini{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-muted)}
+.mini i{display:block;height:40px;border-radius:6px;background:var(--paper-dim);position:relative;overflow:hidden}
+.mini i em{position:absolute;left:0;right:0;bottom:0;background:var(--accent);border-radius:6px}
+.mini b{font:700 13px "JetBrains Mono",monospace;color:var(--ink)}
+/* bars */
+.bar{height:8px;border-radius:99px;background:var(--paper-dim);overflow:hidden}
+.bar span{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.skills li{display:grid;grid-template-columns:96px 1fr 22px 34px;gap:10px;align-items:center;min-height:36px;font-size:14px}
+.skills li.low{background:color-mix(in srgb,var(--saffron) 12%,transparent);border-radius:10px;margin:0 -8px;padding:0 8px}
+.skills li.low .bar span{background:var(--saffron)}
+.chg{font:600 12px "JetBrains Mono",monospace;text-align:right}
+.chg.up{color:var(--success)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.three p{font-size:12px;color:var(--ink-muted)}
+.three b{display:block;font:700 22px "JetBrains Mono",monospace;color:var(--ink)}
+.kinds li{display:grid;grid-template-columns:70px 1fr 82px;gap:10px;align-items:center;font-size:13px;min-height:28px}
+.kinds li span:last-child{text-align:right;font-family:"JetBrains Mono",monospace;color:var(--ink-muted);font-size:12px}
+.callout{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--paper-dim);font-size:14px;color:var(--ink);text-decoration:none}
+.stage{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.stage b{font:700 20px Sora,sans-serif}
+.badges{display:flex;gap:10px;margin-top:12px}
+.bdg{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;text-align:center;color:var(--ink-muted)}
+.bdg i{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--saffron) 16%,transparent);color:var(--saffron-text)}
+.notice{display:flex;gap:12px}
+.notice .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent-dark);flex:none}
+.when{font-size:13px;font-weight:600;color:var(--accent-dark)}
+/* states */
+.risk{background:color-mix(in srgb,var(--saffron) 12%,var(--surface));border-color:color-mix(in srgb,var(--saffron) 45%,transparent)}
+.risk .rtitle{font:700 17px Sora,sans-serif;color:var(--ink)}
+.done-card{background:color-mix(in srgb,var(--success) 10%,var(--surface));border-color:color-mix(in srgb,var(--success) 40%,transparent)}
+.steps li{display:flex;gap:12px;align-items:center;min-height:54px;border-top:1px solid var(--border)}
+.steps li:first-child{border-top:0}
+.xp{font:600 12px "JetBrains Mono",monospace;color:var(--accent-dark);white-space:nowrap}
+/* desktop */
+.dwrap{max-width:1152px;margin:0 auto;padding:28px 24px 40px}
+.dtop{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;margin-top:20px;align-items:start}
+.col{display:flex;flex-direction:column;gap:16px}
+/* sheet */
+.scrim{position:absolute;inset:0;background:var(--dim)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;padding:10px 18px 22px;max-height:92%;overflow:hidden}
+.grab{width:40px;height:4px;border-radius:9px;background:var(--border-strong);margin:0 auto 10px}
+.sh{display:flex;align-items:center;justify-content:space-between}
+.sh h3{font:700 18px Sora,sans-serif}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px;text-align:center;font-size:12px}
+.cal span{height:34px;display:grid;place-items:center;border-radius:8px;color:var(--ink-muted)}
+.cal .h{height:20px;font-weight:600}
+.cal .m{background:var(--success);color:var(--on-accent);font-weight:600}
+.cal .f{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent-dark)}
+.cal .t{border:2px solid var(--accent);color:var(--accent-dark);font-weight:700}
+.rules{margin-top:14px;font-size:14px;display:flex;flex-direction:column;gap:8px}
+.rules li{display:flex;gap:10px}
+.xptable li{display:flex;justify-content:space-between;gap:12px;min-height:40px;align-items:center;border-top:1px solid var(--border);font-size:14px}
+.xptable li:first-child{border-top:0}
+.xptable b{font:700 14px "JetBrains Mono",monospace;color:var(--accent-dark)}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat3 div{background:var(--paper-dim);border-radius:10px;padding:10px}
+.stat3 b{display:block;font:700 18px "JetBrains Mono",monospace}
+.stat3 span{font-size:12px;color:var(--ink-muted)}
+</style>
+</head>
+<body>
+<div class="doc">
+<header>
+  <div>
+    <h1>Student dashboard — mockup</h1>
+    <p class="note">Design only, sample data. The order, rules and research are in <code>docs/DASHBOARD-PLAN.md</code>. Colours, fonts and icons are the app's own, so every theme works.</p>
+  </div>
+  <button class="toggle" type="button" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'':'dark'">Light / dark</button>
+</header>
+
+<!-- ============ PHONE: A NORMAL DAY ============ -->
+<h2>1 · Phone — a normal day</h2>
+<p class="note">Top to bottom: greeting and chips, Today card (goal ring, streak, week), Do this next, Today's tasks — all on the first screen. Then teacher, notices, skills, flashcards, stage and badges.</p>
+<div class="shelf">
+<div>
+<p class="cap">390 px · whole page, scrolled</p>
+<div class="frame" id="phone-main">
+  <div class="hdr">
+    <span class="logo">EduSarthi</span>
+    <button class="ib" aria-label="Search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+    <button class="ib" aria-label="Settings"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="ib" aria-label="Menu"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  </div>
+  <div class="pg">
+    <section>
+      <h1 class="hello">Hello, Riya</h1>
+      <p class="sub">3 things left today · 12 XP to your goal</p>
+      <div class="chips">
+        <button class="chip" type="button"><svg class="i s fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>12 <span class="k">days</span></button>
+        <button class="chip" type="button"><svg class="i s st" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>1,240 <span class="k">XP · Stage 5</span></button>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Today">
+      <div class="today">
+        <div class="ring" role="img" aria-label="28 of 40 XP today">
+          <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--paper-dim)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="184.7 263.9" transform="rotate(-90 50 50)"/></svg>
+          <b>28<span>of 40 XP</span></b>
+        </div>
+        <div>
+          <p class="streak"><svg class="i s fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>12-day streak</p>
+          <p class="ok" style="font-size:14px;font-weight:600;margin-top:2px">Safe for today ✓</p>
+          <p class="muted" style="font-size:13px;margin-top:2px">12 more XP fills today's goal.</p>
+        </div>
+      </div>
+      <ul class="week" aria-label="This week">
+        <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Mon</li>
+        <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Tue</li>
+        <li class="day"><span class="dot frz"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h20M12 2v20m8-6-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg></span>Wed</li>
+        <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Thu</li>
+        <li class="day"><span class="dot now">Fri</span>Today</li>
+        <li class="day"><span class="dot"></span>Sat</li>
+        <li class="day"><span class="dot"></span>Sun</li>
+      </ul>
+      <p class="weekline"><span>Week goal: <b>3 of 5 days</b></span><span>1 freeze ready</span></p>
+    </section>
+
+    <a class="next" href="#" style="text-decoration:none;color:var(--ink)">
+      <span class="eyebrow">Do this next · Flashcards</span>
+      <h3>Review 18 cards</h3>
+      <p>Words 9 · Chunk 5 · Grammar 4. About 6 minutes. Reviewing on time is what makes them stick.</p>
+      <span class="btn">Start review</span>
+    </a>
+
+    <section class="card">
+      <h2 class="ct">Today's tasks <small>1 of 4 done</small></h2>
+      <ul class="rows" style="margin-top:6px">
+        <li class="done"><span class="tick done"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="rt"><p>Learn new cards</p><span>10 of 10 done</span></div></li>
+        <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Review due cards</p><span>Words 9 · Chunk 5 · Grammar 4</span></div><span class="n">18</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+        <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Deck: Docker basics</p><span>Cards due</span></div><span class="n">6</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+        <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Send a recording for audit</p><span>2 left today · a teacher scores it</span></div><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2 class="ct">With your teacher <a href="#">See all</a></h2>
+      <ul class="rows" style="margin-top:6px">
+        <li><div class="rt"><p>Describe your city</p><span>Sent 28 Oct</span></div><span class="badge acc">Being reviewed</span></li>
+        <li><div class="rt"><p>Card: “I'm looking forward to it”</p><span>Sent today</span></div><span class="badge">Waiting</span></li>
+      </ul>
+      <div class="audit">
+        <p class="muted" style="font-size:13px">Latest audit · Ordering at a café · 26 Oct</p>
+        <div class="score"><b>7.2</b><span class="muted">/ 10</span><span class="ok" style="font-size:13px;font-weight:600">↑ 0.6 since the one before</span></div>
+        <div class="minis" aria-label="Scores: pronunciation 7, grammar 8, fluency 6, vocabulary 7, confidence 8">
+          <div class="mini"><i><em style="height:70%"></em></i><b>7</b>Pron.</div>
+          <div class="mini"><i><em style="height:80%"></em></i><b>8</b>Gram.</div>
+          <div class="mini"><i><em style="height:60%"></em></i><b>6</b>Flu.</div>
+          <div class="mini"><i><em style="height:70%"></em></i><b>7</b>Voc.</div>
+          <div class="mini"><i><em style="height:80%"></em></i><b>8</b>Conf.</div>
+        </div>
+        <p class="muted" style="font-size:14px;margin-top:10px">“Clear and polite. Slow down before the price question and link your words…”</p>
+        <a class="btn ol sm" href="#">Read it in full</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="ct">Notices <a href="#">See all</a></h2>
+      <div class="notice" style="margin-top:10px">
+        <span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+        <div><p style="font-weight:600">Group speaking practice</p><p class="when">Sat 1 Nov · 6:00 pm</p><p class="muted" style="font-size:14px">Bring one question about your weekend.</p></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="ct">Your skills <small>from 6 audits</small></h2>
+      <ul class="skills" style="margin-top:10px">
+        <li><span>Pronunciation</span><span class="bar"><span style="width:70%"></span></span><span class="mono">7</span><span class="chg up">+1</span></li>
+        <li><span>Grammar</span><span class="bar"><span style="width:80%"></span></span><span class="mono">8</span><span class="chg up">+2</span></li>
+        <li class="low"><span><b>Fluency</b></span><span class="bar"><span style="width:55%"></span></span><span class="mono">5.5</span><span class="chg">0</span></li>
+        <li><span>Vocabulary</span><span class="bar"><span style="width:70%"></span></span><span class="mono">7</span><span class="chg up">+1</span></li>
+        <li><span>Confidence</span><span class="bar"><span style="width:65%"></span></span><span class="mono">6.5</span><span class="chg up">+2</span></li>
+      </ul>
+      <p style="font-size:14px;margin-top:10px">Fluency is your lowest. <span class="muted">Change is since your first audit.</span></p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm" href="#">Practise speaking</a><a class="btn ol sm" href="#">Full progress</a></div>
+    </section>
+
+    <section class="card">
+      <h2 class="ct">Flashcards <a href="#">My card lists</a></h2>
+      <div class="three"><p><b>342</b>known</p><p><b>58</b>learning</p><p><b>7</b>doubts</p></div>
+      <ul class="kinds" style="margin-top:12px">
+        <li><span>Words</span><span class="bar"><span style="width:13%"></span></span><span>280 / 2,227</span></li>
+        <li><span>Chunk</span><span class="bar"><span style="width:4%;background:var(--teal)"></span></span><span>40 / 1,183</span></li>
+        <li><span>Grammar</span><span class="bar"><span style="width:8%;background:var(--navy)"></span></span><span>18 / 247</span></li>
+        <li><span>Support</span><span class="bar"><span style="width:3%;background:var(--saffron)"></span></span><span>4 / 180</span></li>
+      </ul>
+      <a class="callout" href="#"><svg class="i s" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span style="flex:1">Revisit first: <b>Phrasal verbs</b> · 6 cards</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+    </section>
+
+    <section class="card">
+      <h2 class="ct">Stage and badges <a href="#">All badges</a></h2>
+      <div class="stage"><b>Stage 5</b><span class="mono muted" style="font-size:13px">1,240 / 1,500 XP</span></div>
+      <div class="bar" style="margin-top:8px"><span style="width:52%"></span></div>
+      <p class="muted" style="font-size:13px;margin-top:6px">260 XP to Stage 6 — about a week at your goal.</p>
+      <a class="callout" href="#"><svg class="i s fl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg><span style="flex:1">Next badge: <b>30-day streak</b> · 18 days to go</span></a>
+      <div class="badges">
+        <div class="bdg"><i><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></i>7-day streak</div>
+        <div class="bdg"><i><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></i>Five audits</div>
+        <div class="bdg"><i><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></i>100 cards known</div>
+      </div>
+    </section>
+  </div>
+  <nav class="bnav" aria-label="Main">
+    <a href="#" aria-current="page"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .71-1.53l7-6a2 2 0 0 1 2.58 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Dashboard</a>
+    <a href="#"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>Flashcard</a>
+    <a href="#"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>Audited</a>
+    <a href="#"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.75-.43L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>Class</a>
+    <a href="#"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>Profile</a>
+  </nav>
+</div>
+</div>
+</div>
+
+<!-- ============ COMPUTER ============ -->
+<h2>2 · Computer — two columns</h2>
+<p class="note">Left: what to do and what came back. Right: the day, the week, stage and notices. The chips sit beside the greeting.</p>
+<div class="shelf">
+<div class="wide" id="desktop">
+  <div class="hdr" style="padding:0 16px 0 24px">
+    <span class="logo" style="margin-right:0">EduSarthi</span>
+    <nav class="navlinks" aria-label="Main"><a href="#" aria-current="page">Dashboard</a><a href="#">Flashcard</a><a href="#">Audited</a><a href="#">Class</a><a href="#">Profile</a></nav>
+    <button class="ib" aria-label="Search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+    <button class="ib" aria-label="Settings"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="ib" aria-label="Menu"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  </div>
+  <div class="dwrap">
+    <div class="dtop">
+      <div><h1 class="hello">Hello, Riya</h1><p class="sub">3 things left today · 12 XP to your goal</p></div>
+      <div class="chips" style="margin:0">
+        <button class="chip" type="button"><svg class="i s fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>12 <span class="k">days</span></button>
+        <button class="chip" type="button"><svg class="i s st" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>1,240 <span class="k">XP · Stage 5</span></button>
+      </div>
+    </div>
+    <div class="dgrid">
+      <div class="col">
+        <a class="next" href="#" style="text-decoration:none;color:var(--ink);flex-direction:row;align-items:center;gap:20px">
+          <div style="flex:1"><span class="eyebrow">Do this next · Flashcards</span><h3 style="margin-top:4px">Review 18 cards</h3><p>Words 9 · Chunk 5 · Grammar 4. About 6 minutes.</p></div>
+          <span class="btn" style="margin:0">Start review</span>
+        </a>
+        <section class="card">
+          <h2 class="ct">Today's tasks <small>1 of 4 done</small></h2>
+          <ul class="rows" style="margin-top:6px">
+            <li class="done"><span class="tick done"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="rt"><p>Learn new cards</p><span>10 of 10 done</span></div></li>
+            <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Review due cards</p><span>Words 9 · Chunk 5 · Grammar 4</span></div><span class="n">18</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+            <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Deck: Docker basics</p><span>Cards due</span></div><span class="n">6</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+            <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Send a recording for audit</p><span>2 left today · a teacher scores it</span></div><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          </ul>
+        </section>
+        <section class="card">
+          <h2 class="ct">With your teacher <a href="#">See all</a></h2>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:6px">
+            <ul class="rows">
+              <li><div class="rt"><p>Describe your city</p><span>Sent 28 Oct</span></div><span class="badge acc">Being reviewed</span></li>
+              <li><div class="rt"><p>Card: “I'm looking forward to it”</p><span>Sent today</span></div><span class="badge">Waiting</span></li>
+            </ul>
+            <div>
+              <p class="muted" style="font-size:13px">Latest audit · Ordering at a café · 26 Oct</p>
+              <div class="score"><b>7.2</b><span class="muted">/ 10</span><span class="ok" style="font-size:13px;font-weight:600">↑ 0.6 since the one before</span></div>
+              <div class="minis"><div class="mini"><i><em style="height:70%"></em></i><b>7</b>Pron.</div><div class="mini"><i><em style="height:80%"></em></i><b>8</b>Gram.</div><div class="mini"><i><em style="height:60%"></em></i><b>6</b>Flu.</div><div class="mini"><i><em style="height:70%"></em></i><b>7</b>Voc.</div><div class="mini"><i><em style="height:80%"></em></i><b>8</b>Conf.</div></div>
+              <a class="btn ol sm" href="#">Read it in full</a>
+            </div>
+          </div>
+        </section>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <section class="card">
+            <h2 class="ct">Your skills <small>from 6 audits</small></h2>
+            <ul class="skills" style="margin-top:10px">
+              <li><span>Pronunciation</span><span class="bar"><span style="width:70%"></span></span><span class="mono">7</span><span class="chg up">+1</span></li>
+              <li><span>Grammar</span><span class="bar"><span style="width:80%"></span></span><span class="mono">8</span><span class="chg up">+2</span></li>
+              <li class="low"><span><b>Fluency</b></span><span class="bar"><span style="width:55%"></span></span><span class="mono">5.5</span><span class="chg">0</span></li>
+              <li><span>Vocabulary</span><span class="bar"><span style="width:70%"></span></span><span class="mono">7</span><span class="chg up">+1</span></li>
+              <li><span>Confidence</span><span class="bar"><span style="width:65%"></span></span><span class="mono">6.5</span><span class="chg up">+2</span></li>
+            </ul>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm" href="#">Practise speaking</a><a class="btn ol sm" href="#">Full progress</a></div>
+          </section>
+          <section class="card">
+            <h2 class="ct">Flashcards <a href="#">My card lists</a></h2>
+            <div class="three"><p><b>342</b>known</p><p><b>58</b>learning</p><p><b>7</b>doubts</p></div>
+            <ul class="kinds" style="margin-top:12px">
+              <li><span>Words</span><span class="bar"><span style="width:13%"></span></span><span>280 / 2,227</span></li>
+              <li><span>Chunk</span><span class="bar"><span style="width:4%;background:var(--teal)"></span></span><span>40 / 1,183</span></li>
+              <li><span>Grammar</span><span class="bar"><span style="width:8%;background:var(--navy)"></span></span><span>18 / 247</span></li>
+              <li><span>Support</span><span class="bar"><span style="width:3%;background:var(--saffron)"></span></span><span>4 / 180</span></li>
+            </ul>
+            <a class="callout" href="#"><span style="flex:1">Revisit first: <b>Phrasal verbs</b> · 6 cards</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+          </section>
+        </div>
+      </div>
+      <div class="col">
+        <section class="card" aria-label="Today">
+          <div class="today">
+            <div class="ring" role="img" aria-label="28 of 40 XP today"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--paper-dim)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="184.7 263.9" transform="rotate(-90 50 50)"/></svg><b>28<span>of 40 XP</span></b></div>
+            <div><p class="streak"><svg class="i s fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>12-day streak</p><p class="ok" style="font-size:14px;font-weight:600">Safe for today ✓</p><p class="muted" style="font-size:13px">12 more XP fills today's goal.</p></div>
+          </div>
+          <ul class="week" aria-label="This week">
+            <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Mon</li>
+            <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Tue</li>
+            <li class="day"><span class="dot frz"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h20M12 2v20m8-6-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg></span>Wed</li>
+            <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Thu</li>
+            <li class="day"><span class="dot now">Fri</span>Today</li>
+            <li class="day"><span class="dot"></span>Sat</li>
+            <li class="day"><span class="dot"></span>Sun</li>
+          </ul>
+          <p class="weekline"><span>Week goal: <b>3 of 5 days</b></span><span>1 freeze ready</span></p>
+        </section>
+        <section class="card">
+          <h2 class="ct">Stage and badges <a href="#">All badges</a></h2>
+          <div class="stage"><b>Stage 5</b><span class="mono muted" style="font-size:13px">1,240 / 1,500 XP</span></div>
+          <div class="bar" style="margin-top:8px"><span style="width:52%"></span></div>
+          <p class="muted" style="font-size:13px;margin-top:6px">260 XP to Stage 6.</p>
+          <a class="callout" href="#"><span style="flex:1">Next badge: <b>30-day streak</b> · 18 days to go</span></a>
+        </section>
+        <section class="card">
+          <h2 class="ct">Notices <a href="#">See all</a></h2>
+          <div class="notice" style="margin-top:10px"><span class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div><p style="font-weight:600">Group speaking practice</p><p class="when">Sat 1 Nov · 6:00 pm</p><p class="muted" style="font-size:14px">Bring one question about your weekend.</p></div></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ SPECIAL STATES ============ -->
+<h2>3 · Special states (top of the phone page)</h2>
+<p class="note">Only the blocks that change are drawn. Everything below them stays as in the normal day.</p>
+<div class="shelf" id="states">
+
+<div><p class="cap">Streak at risk · 7:40 pm, 4 XP today</p>
+<div class="frame"><div class="pg">
+  <section class="card risk">
+    <div class="today">
+      <div class="ring" role="img" aria-label="4 of 40 XP today"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--paper-dim)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--saffron)" stroke-width="10" stroke-linecap="round" stroke-dasharray="26.4 263.9" transform="rotate(-90 50 50)"/></svg><b>4<span>of 40 XP</span></b></div>
+      <div><p class="rtitle">Keep your 12-day streak</p><p style="font-size:14px;margin-top:4px">Earn <b>6 more XP</b> before midnight. Six reviews take about 2 minutes.</p></div>
+    </div>
+  </section>
+  <a class="next" href="#" style="text-decoration:none;color:var(--ink)"><span class="eyebrow">Quickest way</span><h3>Review 6 cards</h3><p>Enough to keep the streak. More is a bonus.</p><span class="btn">Start</span></a>
+</div></div></div>
+
+<div><p class="cap">Goal done</p>
+<div class="frame"><div class="pg">
+  <section class="card done-card">
+    <div class="today">
+      <div class="ring" role="img" aria-label="Goal done, 46 of 40 XP"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--success)" stroke-width="10"/></svg><b style="color:var(--success)"><svg class="i" style="width:34px;height:34px;stroke-width:3" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>46 XP</span></b></div>
+      <div><p class="rtitle" style="font:700 17px Sora,sans-serif">Today's goal done</p><p style="font-size:14px;margin-top:4px">13-day streak. Anything more today is a bonus.</p><p class="muted" style="font-size:13px;margin-top:4px">Week goal: 4 of 5 days</p></div>
+    </div>
+  </section>
+  <section class="card"><h2 class="ct">Today's tasks <small>4 of 4 done</small></h2>
+  <ul class="rows" style="margin-top:6px">
+    <li class="done"><span class="tick done"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="rt"><p>Review due cards</p></div></li>
+    <li class="done"><span class="tick done"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="rt"><p>Learn new cards</p></div></li>
+    <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Optional: one more recording</p><span>1 left today</span></div><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+  </ul></section>
+</div></div></div>
+
+<div><p class="cap">New student · day 1</p>
+<div class="frame"><div class="pg">
+  <section><h1 class="hello">Welcome, Aman</h1><p class="sub">Four steps to get going. Each takes a few minutes.</p></section>
+  <section class="card"><h2 class="ct">Getting started <small>1 of 4</small></h2>
+  <ul class="steps" style="margin-top:6px">
+    <li class="done"><span class="tick done"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="rt"><p style="color:var(--ink-muted);text-decoration:line-through">Choose your daily goal</p></div></li>
+    <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Learn your first 10 words</p><span>About 4 minutes</span></div><span class="xp">+20 XP</span></a></li>
+    <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Send your first recording</p><span>Say a short self-introduction</span></div><span class="xp">+10 XP</span></a></li>
+    <li><span class="tick" style="opacity:.5"></span><div class="rt"><p class="muted">Get your first audit back</p><span>Teachers aim to reply within 24 hours</span></div></li>
+  </ul></section>
+  <section class="card" style="padding:12px 16px"><p style="font-size:14px"><svg class="i s fl" style="vertical-align:-3px" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Earn 10 XP today to start your streak. You have <b>1 streak freeze</b> to begin with.</p></section>
+</div></div></div>
+
+<div><p class="cap">Guest</p>
+<div class="frame"><div class="pg">
+  <section class="card"><h2 class="ct">Today's tasks <small>0 of 3 done</small></h2>
+  <ul class="rows" style="margin-top:6px">
+    <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Review due cards</p><span>Words 7</span></div><span class="n">7</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+    <li><a class="r" href="#"><span class="tick"></span><div class="rt"><p>Learn new cards</p><span>10 left today</span></div><span class="n">10</span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+    <li><a class="r" href="#"><span class="tick" style="border-color:var(--accent)"></span><div class="rt"><p>Keep your progress</p><span>Add your email so your 5-day streak and 180 XP are not lost. Recordings and audits come with it.</span></div><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+  </ul></section>
+</div></div></div>
+
+<div><p class="cap">A freeze was used yesterday</p>
+<div class="frame"><div class="pg">
+  <section class="card">
+    <p class="streak"><svg class="i s" style="color:var(--accent)" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h20M12 2v20m8-6-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg>A streak freeze saved your 12 days</p>
+    <p class="muted" style="font-size:14px;margin-top:4px">You missed yesterday, so a freeze was used by itself. 0 freezes left: meet this week's goal to earn one.</p>
+    <ul class="week" aria-label="This week">
+      <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Mon</li>
+      <li class="day"><span class="dot met"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Tue</li>
+      <li class="day"><span class="dot frz"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h20M12 2v20m8-6-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg></span>Wed</li>
+      <li class="day"><span class="dot now">Thu</span>Today</li>
+      <li class="day"><span class="dot"></span>Fri</li>
+      <li class="day"><span class="dot"></span>Sat</li>
+      <li class="day"><span class="dot"></span>Sun</li>
+    </ul>
+  </section>
+</div></div></div>
+</div>
+
+<!-- ============ SHEETS ============ -->
+<h2>4 · Sheets (tap a chip)</h2>
+<p class="note">The same bottom sheet as Settings. The XP sheet lists every rule, so nothing about points is hidden.</p>
+<div class="shelf" id="sheets">
+
+<div><p class="cap">Streak sheet</p>
+<div class="frame" style="height:780px">
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-label="Streak">
+    <div class="grab"></div>
+    <div class="sh"><h3>12-day streak</h3><button class="ib" aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <p class="muted" style="font-size:14px">Longest: 21 days · Freezes: 1 of 2</p>
+    <p style="font-weight:600;margin-top:12px">October</p>
+    <div class="cal" aria-label="October: learning days marked">
+      <span class="h">M</span><span class="h">T</span><span class="h">W</span><span class="h">T</span><span class="h">F</span><span class="h">S</span><span class="h">S</span>
+      <span></span><span></span><span></span><span>1</span><span>2</span><span>3</span><span>4</span>
+      <span>5</span><span>6</span><span>7</span><span>8</span><span class="m">9</span><span class="m">10</span><span>11</span>
+      <span>12</span><span class="m">13</span><span class="m">14</span><span class="m">15</span><span>16</span><span class="m">17</span><span class="m">18</span>
+      <span class="m">19</span><span class="m">20</span><span class="m">21</span><span class="f">22</span><span class="m">23</span><span class="m">24</span><span class="m">25</span>
+      <span class="m">26</span><span class="m">27</span><span class="f">28</span><span class="m">29</span><span class="t">30</span><span>31</span><span></span>
+    </div>
+    <ul class="rules">
+      <li><span class="tick done" style="width:20px;height:20px"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>A day counts when you earn 10 XP (India time).</li>
+      <li><span class="dot frz" style="width:20px;height:20px"><svg class="i" style="width:12px;height:12px" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h20M12 2v20m8-6-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg></span>Meet your weekly goal to earn a freeze. You can hold 2.</li>
+      <li><span class="dot frz" style="width:20px;height:20px"><svg class="i" style="width:12px;height:12px" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h20M12 2v20m8-6-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg></span>A freeze is used by itself on a day you miss.</li>
+    </ul>
+    <button class="btn" type="button" style="width:100%;margin-top:16px">Done</button>
+  </div>
+</div></div>
+
+<div><p class="cap">XP sheet</p>
+<div class="frame" style="height:780px">
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-label="XP">
+    <div class="grab"></div>
+    <div class="sh"><h3>Stage 5 · 1,240 XP</h3><button class="ib" aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="bar" style="margin-top:6px"><span style="width:52%"></span></div>
+    <p class="muted" style="font-size:13px;margin-top:6px">260 XP to Stage 6</p>
+    <div class="stat3"><div><b>28</b><span>today</span></div><div><b>214</b><span>this week</span></div><div><b>40</b><span>daily goal</span></div></div>
+    <p style="font-weight:600">How you earn XP</p>
+    <ul class="xptable" style="margin-top:4px">
+      <li><span>Learn a new card</span><b>+2</b></li>
+      <li><span>Review a card (once per card a day)</span><b>+1</b></li>
+      <li><span>Send a recording for audit</span><b>+10</b></li>
+      <li><span>Re-record one your teacher sent back</span><b>+10</b></li>
+    </ul>
+    <p class="muted" style="font-size:13px;margin-top:10px">XP is for practice, not for marks: audit scores never change it. Deck cards count too. XP counts from 26 Oct 2026.</p>
+    <a class="callout" href="#" style="margin-top:12px"><span style="flex:1">Daily goal: <b>Regular · 40 XP</b></span><svg class="i s chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  </div>
+</div></div>
+</div>
+</div>
+</body>
+</html>

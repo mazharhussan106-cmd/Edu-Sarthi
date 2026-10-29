@@ -25,6 +25,10 @@ const FAQ = [
     a: "Cards due for review come first, then new cards in order, up to your daily limit (change it in Settings). Marking a card Known pushes it further out, 1, 3, 7, 15, 30, then 60 days. Unknown brings it back sooner.",
   },
   {
+    q: "How do XP, streaks and stages work?",
+    a: "You earn XP for practice, never for marks: 2 XP for a new card, 1 XP for reviewing a card (once per card a day, deck cards too) and 10 XP for each recording you send. A day counts for your streak when you earn 10 XP, India time. The ring on the Dashboard is your daily goal (40 XP unless you change it), and the weekly goal is how many days a week you fill it; set both in Settings → Flashcards. Tap the streak or XP on the Dashboard to see your month and every XP rule. A streak freeze covers a day you miss, by itself: you start with one, earn one each week you meet your weekly goal, and can hold two. XP adds up to stages: Stage 2 at 100 XP, Stage 5 at 1,000. Card XP counts from late October 2026, when study history began. Deleting your study history (History page) also removes the XP and streak days your card answers earned; recordings keep theirs.",
+  },
+  {
     q: "What do Important, Favourite, Doubt and Confident do?",
     a: "They are your own tags on a card. Tap one on the card bar, then open it from the lists above the card to study just those. Tags do not change when a card is due.",
   },

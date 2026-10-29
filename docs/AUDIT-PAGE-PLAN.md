@@ -167,7 +167,7 @@ The owner said "start building next phase"; the plan's only items left were the 
 
 Tested (same local setup, production build): best/equal/none across 7 audits in date order, a first audit with no star, the line under both buttons, a student at the limit, plus the 60 earlier checks again — 69 passed. `tsc` and `next build` pass.
 
-Nothing from the plan is left to build. Still open: the owner's confirmation of the band words and meaning lines, and the pre-existing not-found status 200 (Badge contrast: fixed in phase 3).
+Nothing from the plan is left to build. Still open: the owner's confirmation of the band words and meaning lines, and the not-found status 200 (Badge contrast: fixed in phase 3; status: decided in phase 4).
 
 ## Phase 3: badge contrast (29 Oct 2026)
 
@@ -183,3 +183,15 @@ Effect is site-wide and only darker: every success/error text, badge, bar and bu
 Tested: axe colour-contrast on 10 pages (audit x2, My Audits, dashboard, progress, history; teacher queue and students; admin overview and users) in all five themes, 50 of 50 runs clean apart from the exempt wordmark; the audit page suite again with the badge exemption removed, 69 passed. `next build` passes.
 
 Still open: the wordmark (logotype, exempt); the not-found page returns HTTP 200 (pre-existing).
+
+## Phase 4: not-found status 200 — decided, not built (29 Oct 2026)
+
+Another student's audit shows the not-found page with no data, but the HTTP status is 200. Next 16's own docs (`node_modules/next/dist/docs/01-app/02-guides/streaming.md`, "The HTTP contract"; `03-api-reference/04-functions/not-found.md`) say this is by design: `app/(student)/loading.tsx` starts streaming, the 200 is sent with the first chunk and cannot change, and Next adds a `noindex` tag so the soft 404 stays out of search.
+
+A real 404 would need one of:
+- the ownership check in `proxy.ts`, which CLAUDE.md forbids (the proxy imports `lib/auth.config` only, never Prisma);
+- or no `loading.tsx` for the student pages, which drops the loading state on every student page on slow phones (CLAUDE.md rule 14).
+
+Both cost more than they buy: nothing leaks, the person sees the right page, and these pages are signed-in only, so search engines never see them. **Decision: keep as is. Don't "fix" it with either of the above.**
+
+With this, everything in this plan is either built or decided. Left for the owner: confirm the band words and the five meaning lines; merge.

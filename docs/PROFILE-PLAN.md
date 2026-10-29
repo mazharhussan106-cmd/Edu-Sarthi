@@ -1,6 +1,6 @@
 # Profile page plan (v1.0, 29 Oct 2026)
 
-Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **IN DEVELOPMENT**. Research, list and mockup are done; the owner answered the open questions and approved P1–P6 on 29 Oct (see "Owner's second answers"). **Next action:** build P1.
+Branch `claude/busy-johnson-epz1lg`. Scope: the Profile page only (`/profile`) for student, teacher and admin. Status: **BUILT, NOT YET MERGED**. P1–P6 are done and pushed on this branch (see "Build log"). **Next action (owner):** open a PR and merge it. Then run Actions → Database setup at once (it adds `User.avatarKey`; the Profile page fails without it), and send the privacy-change email from Admin → Announcements (the Privacy page promises it). Finally, try the Profile on a phone, as student, teacher and admin.
 
 Mockup: `docs/profile-mockup.html` (open it in a browser; Light/Dark buttons at the top). Screenshots: `docs/profile-mockup-phones.png`, `-phones-dark.png`, `-sheets.png`, `-sheets-dark.png`, `-desktop.png`, `-desktop-dark.png`. The orange tags in the mockup (S1, T2…) are the row IDs in the lists below.
 
@@ -186,7 +186,34 @@ That is more than 6 files, so the owner must approve it first (CLAUDE.md). **App
     - Replacing a photo deletes the old file. The export has a link. Someone else's key is refused (400). A guest has no photo section and the API refuses them (403).
     - Removing a photo restores the initials and deletes the file. Deleting an account deletes its photo.
     - The photo's key appears on no teacher page (queue, students, student page and history) and no admin page (overview, users, dispatch).
-    - axe passes on the crop step. P1–P4 suites rerun: all pass. `next build` passes. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
+    - axe passes on the crop step. P1–P4 suites rerun: all pass. `next build` passes.
+- **P6 done (29 Oct).**
+  - **Badges:** four new ones (Goal set, 14-day streak, Score up, Shared a deck), so 12 in all. Streak badges now read the **longest** streak, a personal record, so a badge once earned does not disappear when a streak breaks. Still computed, nothing stored.
+  - **Share progress:** `components/profile/ShareProgress.tsx` with `lib/shareCard.ts`.
+    - A 1080 × 1350 PNG drawn in the browser and never uploaded.
+    - A switch for each item: first name, photo (off by default), streak, cards known, badges, best skill change. Items with nothing to show have no switch.
+    - Share uses the phone's own menu where the browser can share files; otherwise Download.
+    - Never shows the STU ID or the email.
+    - Its colours are fixed brand values (a picture cannot follow the theme), named once in `lib/shareCard.ts`, like `app/manifest.ts` does.
+  - Tested:
+    - 10 of 12 badges for the test student, with the new hints listed.
+    - The preview draws and redraws when a switch changes; the photo is drawn with no taint error.
+    - Download gives `my-edusarthi-progress.png` at 1080 × 1350. A new student gets no name, photo or skill switches. axe passes on the sheet.
+    - Every suite (P1–P6) rerun at the end: all pass, except one P5 check that assumed the student had no photo yet (the P6 test had given them one; the sheet correctly showed "Change photo"). `next build` passes.
+  - Built screenshots: `docs/profile-built-phone.png` (the profile and the share sheet) and `docs/profile-built-desktop.png`.
+
+### Not done, on purpose
+
+- **A camera badge on the avatar** (it is in the mockup): not built. A small icon that only looks tappable would mislead; Edit profile does the job.
+- **Teacher bio:** still Later. No page shows teachers to students yet.
+- **The streak and the photo appear only on Profile, not in the header.** That was outside this chat's scope (Profile only).
+
+### Outside Profile, changed because the owner's rule needed it
+
+- The dashboard streak now counts a recording or a card answer (owner's practice-day rule, 29 Oct).
+- `app/api/profile/preferences` checks the goal date.
+- `app/api/me` exports the photo link and deletes the photo file.
+- The Privacy page has the photo line and the new date. Testing in every phase: `tsc --noEmit`, `next build`, and Playwright at 390×844 and 1280×800 for student, new student, guest, teacher and admin. Also axe in all five themes, keyboard-only use of every sheet, and checks that no number leaks across users (every query is scoped by `userId`).
 
 ## Open questions for the owner
 

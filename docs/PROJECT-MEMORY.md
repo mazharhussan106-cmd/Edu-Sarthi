@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: Profile page planned for all roles, see "Profile page"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, not merged yet, see "Profile page"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -483,10 +483,24 @@ The DPDP export now includes card progress and study history. Owner decided **no
 
 ## Profile page (29 Oct 2026, branch `claude/busy-johnson-epz1lg`)
 
-Status: **PLANNING**, nothing built yet. Full plan, research with sources, the list per role (S1–S11, T1–T7, A1–A6), build phases P1–P6 and the master prompt for a new chat: `docs/PROFILE-PLAN.md`. Mockup: `docs/profile-mockup.html` and `docs/profile-mockup-*.png` (phone, sheets, computer; light and dark).
+Status: **BUILT on the branch, not merged** (P1–P6, 29 Oct). Full plan, research with sources, the list per role (S1–S11, T1–T7, A1–A6), build log, tests and the master prompt for a new chat: `docs/PROFILE-PLAN.md`. Mockup: `docs/profile-mockup.html`; built screenshots: `docs/profile-built-*.png`.
 - Owner's answers (29 Oct): all roles; **photo upload** (supersedes the 28 Oct "no photo" decision); add speaking scores, a practice calendar, a goal with a target date and a shareable progress card; plan and mockup first, then build after approval.
-- Only one schema change is planned: `User.avatarKey` (nullable, additive, phase P5). The goal date is a preference key (JSON, no migration).
-- **Next action:** the owner answers four questions in the plan (what counts as a practice day, who sees photos, teacher QA notes, approval of P1–P6), then P1 is built.
+- Owner's second answers (29 Oct):
+  - **A practice day is a recording or a card answer**, everywhere: the dashboard streak follows it, via `lib/practiceDays.ts`.
+  - **Only the owner sees their photo**: teachers keep seeing STU IDs, and there is no approval queue.
+  - **Teachers see the QA notes on their own audits.**
+  - P1–P6 approved.
+- **Do not undo:**
+  - The streak rule above, in one place (`lib/practiceDays.ts`).
+  - Photos are drawn again in the browser at 512 × 512 (no camera data) and are shown only on the owner's Profile.
+  - Streak badges read the longest streak.
+  - The share picture is made in the browser and never uploaded; it never shows the STU ID or the email.
+- The one schema change: `User.avatarKey` (nullable, additive). The goal date is the preference key `goalDate` (JSON).
+- **Next action (owner):**
+  1. Merge.
+  2. Run **Actions → Database setup** straight after (the Profile page reads `avatarKey`).
+  3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
+  4. Test on a phone.
 
 ## Starting a new chat
 

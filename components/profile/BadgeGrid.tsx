@@ -6,7 +6,7 @@
 // a tooltip is not reachable by keyboard or screen reader. It deliberately
 // does NOT decide who earned what; lib/badges does.
 
-import { Award, BookOpen, Check, Flame, Layers, Mic, Sparkles, Trophy, type LucideIcon } from "lucide-react";
+import { Award, BookOpen, Check, Flame, Layers, Mic, Share2, Sparkles, Target, TrendingUp, Trophy, type LucideIcon } from "lucide-react";
 
 import { Card, CardTitle } from "@/components/ui/Card";
 import { SheetButton } from "@/components/ui/SheetButton";
@@ -23,6 +23,9 @@ const ICONS: Record<string, LucideIcon> = {
   "known-30": Layers,
   "known-100": Layers,
   "deck-maker": BookOpen,
+  "goal-set": Target,
+  "score-up": TrendingUp,
+  "deck-sharer": Share2,
 };
 
 function Medal({ badge, small = false }: { badge: Badge; small?: boolean }) {

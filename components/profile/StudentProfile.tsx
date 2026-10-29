@@ -19,6 +19,7 @@ import { GetStarted, stepsFor } from "@/components/profile/GetStarted";
 import { GoalCard } from "@/components/profile/GoalCard";
 import { IdentityCard, initialsOf, joinedLine } from "@/components/profile/IdentityCard";
 import { LinkRow, RowGroup, StatTiles } from "@/components/profile/ProfileParts";
+import { ShareProgress } from "@/components/profile/ShareProgress";
 import { SkillScores } from "@/components/profile/SkillScores";
 import { badgesFor } from "@/lib/badges";
 import { DAILY_GOAL } from "@/lib/progress";
@@ -44,10 +45,28 @@ export function StudentProfile({ data }: { data: Data }) {
   const { user, prefs, decks } = data;
   const id = displayId(user.publicId);
   const guest = user.isGuest;
-  const badges = badgesFor({ submissions: data.submissions, audits: data.audits, streak: data.streak, cardsKnown: data.cardsKnown, decks: decks.owned });
+  const badges = badgesFor({
+    submissions: data.submissions,
+    audits: data.audits,
+    bestStreak: data.longest,
+    cardsKnown: data.cardsKnown,
+    decks: decks.owned,
+    sharedDecks: Math.max(decks.shared, decks.inLibrary),
+    goalSet: prefs.goal !== "unset",
+    bestScoreGain: Math.max(0, ...data.scores.map((s) => s.change ?? 0)),
+  });
   const today = todayNumber();
   // The streak reads 400 days so a long run is not cut; the sentence says a year.
   const yearDays = [...data.practice.keys()].filter((d) => d > today - 365).length;
+  const best = [...data.scores].sort((a, b) => (b.change ?? 0) - (a.change ?? 0))[0];
+  const share = {
+    firstName: user.name?.trim().split(/\s+/)[0] ?? null,
+    photoUrl: data.photoUrl,
+    streak: data.streak,
+    cardsKnown: data.cardsKnown,
+    badges: { earned: badges.filter((b) => b.earned).length, total: badges.length },
+    skill: best?.change && best.change > 0 ? { label: best.label, change: best.change } : null,
+  };
   const steps = stepsFor({ guest, goalSet: prefs.goal !== "unset", submissions: data.submissions, audits: data.audits, cardsKnown: data.cardsKnown });
 
   const audiences: Audience[] = [
@@ -81,15 +100,18 @@ export function StudentProfile({ data }: { data: Data }) {
           </>
         }
         actions={
-          <EditProfile
-            label={user.name ? "Edit profile" : guest ? "Add your name" : "Add name and photo"}
-            name={user.name}
-            phone={user.phone}
-            showPhone={!guest}
-            photo={guest ? undefined : { url: data.photoUrl, initials: initialsOf(user.name, user.email), note: `Only you see it. Teachers see you as ${id}.` }}
-          />
+          <>
+            <EditProfile
+              label={user.name ? "Edit profile" : guest ? "Add your name" : "Add name and photo"}
+              name={user.name}
+              phone={user.phone}
+              showPhone={!guest}
+              photo={guest ? undefined : { url: data.photoUrl, initials: initialsOf(user.name, user.email), note: `Only you see it. Teachers see you as ${id}.` }}
+            />
+            <ShareProgress data={share} />
+          </>
         }
-        note={<>Only you see your name{guest ? "" : " and photo"} here. Teachers see you as <span className="font-mono text-ink">{id}</span>.</>}
+        note={<>Only you see your name{guest ? "" : " and photo"} here. Teachers see you as <span className="whitespace-nowrap font-mono text-ink">{id}</span>.</>}
       />
 
       <StatTiles

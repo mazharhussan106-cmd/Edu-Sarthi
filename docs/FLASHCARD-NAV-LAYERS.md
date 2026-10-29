@@ -1,84 +1,119 @@
-# Flashcard tab navigation in layers — proposal
+# Flashcard tab navigation in layers — plan
 
-Status: **PROPOSAL, not approved, nothing built.** Written 29 Oct 2026 on branch
-`claude/modest-darwin-zfo3g1`. Scope: only the navigation above the card
-(`components/flashcards/DeckTopBar.tsx`). The card itself does not change
-(owner's instruction in this chat).
+Status: **PLAN, waiting for the owner's approval. Nothing is built yet.**
+Branch `claude/modest-darwin-zfo3g1`, 29 Oct 2026.
+
+Scope of this chat: **only the filter bar above the card** (today
+`components/flashcards/DeckTopBar.tsx`). The card itself does not change.
+The Library is being built in another chat, so this chat does not touch
+`/library`, `/explore`, `/institute` or deck access rules.
+
+## Owner's decisions (29 Oct)
+
+| # | Decision | Status |
+|---|---|---|
+| 1 | Filters in three layers: main section → inside the section → a filter of that | ACTIVE |
+| 2 | Top layer sections: English, Tech, My decks (Library later, from its own chat) | ACTIVE |
+| 3 | Under English: Words · Chunk · Grammar (the owner's "sentence" meant Grammar), plus Support, which already exists | ACTIVE |
+| 4 | The third layer opens on tap; it is not always on screen | ACTIVE |
+| 5 | Users group decks in **playlists**: one deck can be in many playlists | ACTIVE; built later, not in this chat (database change) |
+| 6 | Tech holds everything tech-related | ACTIVE; which decks count is still open (below) |
+| 7 | The card does not change | ACTIVE |
 
 ## What exists today
 
-One sideways-scrolling row (`DeckTopBar`), in this order: card kinds (Words · Chunk ·
-Grammar · Support) · Words-only section chips · deck links (My decks · Explore ·
-Library · Institute) · "⏭ N skipped" · remark lists (⭐ ❤️ ❓ 💯 with counts) ·
-today's count (due · new · known). A second row only on Chunk (types) and
-Support (channel + level). During "Study this list", `ListSessionBar` replaces it.
-On a phone the row is roughly three screens wide (an estimate from the chip
-widths, not measured), so the lists and the count sit off-screen.
+One sideways-scrolling row: card kinds · Words-only section chips · deck links
+(My decks, Explore, Library, Institute) · "⏭ N skipped" · remark lists
+(⭐ ❤️ ❓ 💯) · today's count. A second row only on Chunk (types) and Support
+(channel + level). During "Study this list", `ListSessionBar` replaces it (keep
+that; see PROJECT-MEMORY "Don't undo").
 
-## Owner's idea (29 Oct)
+## Target layout (phone)
 
-Filters in layers: a top layer of main sections, a second layer inside the
-section, and a third layer that filters the second.
+```
+English   Tech   My decks                 ← layer 1: tabs, underline
+━━━━━━━
+(Words) [Chunk] (Grammar) (Support) │ ⚙ 2 ← layer 2 chips; Filter button pinned right
+Frames ✕            12 due · 10 new · 0/1183 known   ← status line
+FRONT SIDE · RECOGNITION          1 / 3   ← card, unchanged
+```
 
-Owner's answers in this chat:
-- Top layer: English (now), Computer / Tech, My decks, Library / Institute, and
-  users should be able to make their own, like a file, folder or playlist.
-- Second layer under English: Words · Chunk · Grammar ("sentence" meant Grammar).
-- Third layer: opens on tap, not always shown.
-- Where the lists, count, skipped and deck links go: Claude to recommend.
+Filter button → `components/ui/Sheet` (bottom sheet on a phone, centred box
+from sm up). Per tab:
 
-## Recommendation
+- **Words:** Level (A1 · A2 · B1+) and a link "All sections →" to the existing
+  sections page (30 sections is too many for a sheet). An active section shows
+  "🔍 Search here".
+- **Chunk:** Type (All · Frames · Prepositions · Collocations · Utterances · Polywords).
+- **Grammar:** Topic (new filter; the cards' `details.group`, about 20 groups).
+- **Support:** Channel (Voice · Chat · Email) and Level (Basic · Intermediate · Advanced).
+- **Every tab:** My lists ⭐ ❤️ ❓ 💯 with counts (open the list, as today).
 
-1. **Layer 1, fixed tabs (underline):** English · Tech · My decks · Library.
-   Four fixed items fit a phone without scrolling. User-made folders and
-   playlists go in layer 2 of My decks, not layer 1: their number has no limit,
-   and layer 1 would become a scrolling row again.
-2. **Layer 2, chips:**
-   - English: Words · Chunk · Grammar · Support.
-   - Tech: one chip per subject (Excel, Python, SQL, Linux, …). Scrolls, with a
-     fade on the edge that still has chips.
-   - My decks: All · the user's folders · + New folder.
-   - Library: Explore · Library · Institute · Following.
-3. **Layer 3, a Filter button** at the end of the layer-2 row, with a badge
-   showing how many filters are on. It opens a bottom sheet:
-   - Chunk: Type. Support: Channel and Level. Words: the section families with
-     a link to the existing sections page (30 sections is too many for a sheet).
-     Grammar: nothing today; its 20-odd topic groups could be added later.
-     Decks: chapters (cards already carry the chapter in `Word.category`).
-   - Every tab: My lists (⭐ ❤️ ❓ 💯), moved here from the top row.
-   - Clear all and Apply fixed at the bottom of the sheet.
-4. **Status line** right above the card, small text: the filters that are on,
-   each removable with ✕, then today's count. "⏭ N skipped · show again" shows
-   here only when there are skipped cards.
-5. Deck links leave the row: My decks and Library become layer-1 sections,
-   Explore and Institute go into Library's layer 2. All stay in the ☰ menu.
-6. Chips at least 32px tall (today's second-row chips are about 20px, under the
-   24px of WCAG 2.5.8 unless the spacing exception applies). Links keep
-   `aria-current`; no `role="tablist"`, because each choice loads a new URL.
+Status line: each active filter with ✕ (a link without that filter), the
+skipped chip only when there are skipped cards, then today's count.
 
-Cost: three rows take more height than today's one or two, so the card gets
-somewhat shorter on a phone.
+Deck links leave the row: My decks becomes a layer-1 tab; Explore, Library and
+Institute stay in the ☰ menu until the Library chat decides their place.
 
-## Phases
+## Rules the build must follow
 
-- **Phase 1, no database change:** layers 1 to 3, the status line, moving the
-  lists and links. Touches more than 6 files, so a file plan needs approval first.
-- **Phase 2, database change:** user folders or playlists. Additive (a new
-  table, plus a link from Deck); no existing data lost.
+- Server components; only the sheet's open/close is client code.
+- Filters stay in the URL (`kind`, `type`, `ch`, `lv`, `sec`, `pack`, new
+  `topic`), so back, refresh and sharing keep working. No database change.
+- Colours only through tokens. Chips at least 32px tall (today's second-row
+  chips are about 20px). Links keep `aria-current`; each nav has an
+  `aria-label`; the Filter button says how many filters are on.
+- Layer-2 chips scroll sideways with a fade on the edge that still has chips;
+  the Filter button never scrolls away (a 360px phone has about 336px of room).
+- Cost: three rows instead of one or two. The card gets an estimated 40–65px
+  shorter on a phone.
 
-## Open questions (owner to decide)
+## Phase 1 — English (this chat). 13 files, so this plan needs approval
 
-- Folder or playlist: can one deck sit in one folder only, or in many playlists?
-- Tech vs Library: is Tech only EduSarthi's own tech decks, with everyone
-  else's decks under Library?
+| Step | File | What |
+|---|---|---|
+| 1 | `lib/filterNav.ts` (new) | The layers as data: sections, kinds, each kind's filter groups, link builders, the list of active filters. Pure, no database |
+| 2 | `lib/flashcards.ts` | `grammarTopics()`: the distinct Grammar groups, one small SQL query, only on the Grammar tab |
+| 3 | `components/ui/SheetLink.tsx` (new, client) | A link that closes the sheet it sits in |
+| 4 | `components/flashcards/nav/AreaTabs.tsx` (new) | Layer 1 |
+| 5 | `components/flashcards/nav/KindChips.tsx` (new) | Layer 2 and the pinned Filter button |
+| 6 | `components/flashcards/nav/FilterSheet.tsx` (new) | Layer 3, the sheet's groups |
+| 7 | `components/flashcards/nav/StatusLine.tsx` (new) | Active filters, skipped, today's count |
+| 8 | `components/flashcards/DeckTopBar.tsx` | Rewritten to put the four together; keeps `DECK_KINDS` and `DECK_LISTS` |
+| 9 | `app/(student)/flashcards/page.tsx` | Read `topic`, filter Grammar by it, pass the new props |
+| 10 | `app/(shared)/decks/page.tsx` | Layer 1 on top of My decks, so the tabs stay in place |
+| 11 | `app/(shared)/help/page.tsx` | The help answer that says the lists are "above the card" |
+| 12 | `docs/FEATURE-MAP.md` | Where the lists and filters now are |
+| 13 | `docs/PROJECT-MEMORY.md` and this file | What was built and what is open |
+
+Testing before the push: local Postgres + dev server + Playwright at 360, 390
+and 448px wide and on a computer; every filter of every tab gives the right
+cards; back and refresh; a guest account; "Study this list" still replaces the
+bar; axe in every theme; `tsc` and `next build`.
+
+## Phase 2 — Tech (this chat, after the Library chat is merged)
+
+Layer 2 = tech subjects (Excel, Python, SQL, Linux, Docker, Cloud, …) taken from
+deck tags; the content is the list of matching decks; layer 3 = chapters
+(`Word.category` on deck cards). Waits for the Library chat so the two chats do
+not edit the same deck files, and so Tech shows decks by the Library's rules.
+
+## Phase 3 — Playlists (another chat)
+
+A new table for playlists and a link table for "deck in playlist" (many to
+many). Additive: no existing data is lost. Then My decks' layer 2 becomes
+All · each playlist · + New playlist.
+
+## Open questions
+
+- Which decks count as Tech: only EduSarthi's own decks, or also students' and
+  teachers' decks with a tech tag? Needed before Phase 2.
+- The exact list of tech subjects (the 21 FDE decks plus Excel, Python, SQL).
 - Which tech decks are in the live database (not checked from here).
-- Approve Phase 1 and its file plan.
 
-## Sources used
+## Sources used for the recommendation
 
-Android Developers, Tabs (primary vs secondary tabs); Apple HIG, Segmented
-controls (about five segments on iPhone); Material Design 2, Tabs (fixed vs
-scrollable); Baymard Institute, horizontal tabs on mobile (hidden tabs get
-missed); eBay Playbook, Filter chip (do not navigate with filter chips); SAP
-Fiori, Filter feedback bar; DevExpress and Bright HR filtering guides (bottom
-sheet for many filters); W3C, WCAG 2.2 SC 2.5.8.
+Android Developers, Tabs (primary and secondary tabs); Apple HIG, Segmented
+controls; Material Design 2, Tabs (fixed vs scrollable); Baymard Institute,
+horizontal tabs on mobile; eBay Playbook, Filter chip; SAP Fiori, Filter
+feedback bar; DevExpress and Bright HR filtering guides; W3C, WCAG 2.2 SC 2.5.8.

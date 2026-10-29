@@ -29,8 +29,11 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      # The site comes from android/gradle.properties unless the repository
+      # variable TWA_HOST is set. A second default here once overrode that file,
+      # so every APK opened edusarthi.com while the live site was elsewhere.
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace -PtwaHost=${{ vars.TWA_HOST || 'edusarthi.com' }}
+        run: ./gradlew assembleDebug --no-daemon --stacktrace ${{ vars.TWA_HOST && format('-PtwaHost={0}', vars.TWA_HOST) || '' }}
 
       - name: Print the debug signing fingerprint
         # Needed only to test verified links on a debug build: add this value

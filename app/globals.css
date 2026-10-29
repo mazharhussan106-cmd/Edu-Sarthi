@@ -283,6 +283,17 @@
   .practice-step { counter-increment: practice; }
   .practice-step-title::before { content: counter(practice) ". "; }
 
+  /* Settings sheets (components/ui/Sheet) rise from the bottom on a phone.
+     Only when motion is welcome: the Reduce motion rule below also cuts it. */
+  @keyframes sheet-up {
+    from { transform: translateY(100%); }
+  }
+  @media (max-width: 639.98px) and (prefers-reduced-motion: no-preference) {
+    dialog.sheet[open] { animation: sheet-up 200ms ease-out; }
+  }
+  /* The page behind an open sheet stays put; only the sheet scrolls. */
+  html:has(dialog.sheet[open]) { overflow: hidden; }
+
   /* "Reduce motion" in Settings, for people who have not found the phone's
      own switch. Near-zero rather than none, so code that waits for an
      animation or transition to end still hears that it ended. */

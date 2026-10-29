@@ -38,7 +38,7 @@ async function call(body: object): Promise<{ error: string | null; mode?: Mode }
 
 function Steps() {
   const { update } = useSession();
-  // Unique per copy: the Settings page and the header's dropdown can both be open.
+  // Unique ids for the form fields, so a label always finds its own input.
   const uid = useId();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

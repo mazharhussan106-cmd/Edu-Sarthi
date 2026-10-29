@@ -37,7 +37,7 @@ async function call(body: object): Promise<{ error: string | null; needsOldCode?
 const codeInput = (v: string) => v.replace(/\D/g, "").slice(0, 6);
 
 export function ChangeEmail({ currentEmail, hasPassword }: { currentEmail: string; hasPassword: boolean }) {
-  // Unique per copy: the Settings page and the header's dropdown can both be open.
+  // Unique ids for the form fields, so a label always finds its own input.
   const uid = useId();
   const [open, setOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");

@@ -1,6 +1,6 @@
 // Owns the daily limit on recordings a student sends for a teacher's audit:
 // what counts against it, and the words that explain it. How many a day is an
-// admin setting (lib/appSettings, Admin → Settings; 2 to start, the owner's
+// admin setting (lib/appSettings, Admin → Site settings; 2 to start, the owner's
 // choice on 28 Oct).
 //
 // A replacement for a recording the teacher sent back does not count, because

@@ -12,8 +12,8 @@ import { sendEmail } from "@/lib/email";
 /// quotes it: scores and notes stay behind sign-in.
 export async function sendAuditReady(to: string, url: string) {
   const subject = "Your teacher has returned your audit";
-  const text = `Your teacher has audited your recording.\n\nOpen it here: ${url}\n\nYou get this email because "Email me when a teacher returns my audit" is on in Settings. You can switch it off there.`;
-  const html = `<p>Your teacher has audited your recording.</p><p><a href="${url}">Open your audit</a></p><p style="color:#666;font-size:12px">You get this email because “Email me when a teacher returns my audit” is on in Settings. You can switch it off there.</p>`;
+  const text = `Your teacher has audited your recording.\n\nOpen it here: ${url}\n\nYou get this email because "Audit returned" is on in Settings, under Email. You can switch it off there.`;
+  const html = `<p>Your teacher has audited your recording.</p><p><a href="${url}">Open your audit</a></p><p style="color:#666;font-size:12px">You get this email because “Audit returned” is on in Settings, under Email. You can switch it off there.</p>`;
   await sendEmail(to, subject, text, html);
 }
 
@@ -41,7 +41,7 @@ export async function sendQueueDigest(to: string, waiting: number, urgent: numbe
 /// that something arrived and how long it has: no student, no recording.
 export async function sendNewRecording(to: string, url: string) {
   const subject = "A new recording is waiting for an audit";
-  const off = "You get this email because \u201cEmail me when a new recording arrives\u201d is on in Settings. You can switch it off there.";
+  const off = "You get this email because \u201cEach new recording\u201d is on in Settings, under Email. You can switch it off there.";
   const text = `A student has sent a new recording. It is in your queue, and the ${SLA_HOURS}-hour deadline has started.\n\nOpen the queue: ${url}\n\n${off}`;
   const html = `<p>A student has sent a new recording. It is in your queue, and the ${SLA_HOURS}-hour deadline has started.</p><p><a href="${url}">Open the queue</a></p><p style="color:#666;font-size:12px">${off}</p>`;
   await sendEmail(to, subject, text, html);

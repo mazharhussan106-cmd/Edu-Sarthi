@@ -123,7 +123,7 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-// Settings → Security. The current password is checked against the hash on
+// Settings → Account & security. The current password is checked against the hash on
 // the server; here it only has to be present.
 export const changePasswordSchema = z
   .object({

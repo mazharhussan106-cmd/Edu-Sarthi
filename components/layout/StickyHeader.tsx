@@ -14,7 +14,6 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { Theme } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
 import { MobileMenu } from "@/components/layout/MobileMenu";
@@ -30,17 +29,12 @@ export function StickyHeader({
   stats,
   search,
   more,
-  settingsPanel,
-  theme,
   homeHref,
 }: {
   links: readonly NavLink[];
   stats?: ReactNode;
   search?: ReactNode;
   more?: readonly MenuGroup[];
-  /** Full settings, rendered on the server; replaces the small theme-only dropdown. */
-  settingsPanel?: ReactNode;
-  theme: Theme;
   homeHref: string;
 }) {
   const [scrolled, setScrolled] = useState(false);
@@ -120,7 +114,7 @@ export function StickyHeader({
           <div className="flex shrink-0 items-center gap-1">
             {/* Search, then settings, then the menu, all at the right. */}
             {search}
-            <SettingsMenu initialTheme={theme} panel={settingsPanel} />
+            <SettingsMenu />
             <MobileMenu links={links} more={more} />
           </div>
         </div>

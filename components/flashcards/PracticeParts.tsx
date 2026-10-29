@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { sameAnswer } from "@/lib/wordCard";
 
 /// `hindiTask` marks a question that gives Hindi to put into English, so the
-/// "Hide the Hindi to English practice questions" setting can hide it by CSS.
+/// "Hide Hindi→English questions" setting can hide it by CSS.
 ///
 /// The number comes from a CSS counter (globals.css, .practice-steps), not a
 /// prop: a hidden question, or one this card has no data for, is skipped by

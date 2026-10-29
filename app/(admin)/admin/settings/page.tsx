@@ -1,4 +1,4 @@
-// Owns Admin → Settings: the site-wide numbers an admin changes without a
+// Owns Admin → Site settings: the site-wide numbers an admin changes without a
 // deploy (lib/appSettings). Today: how many recordings each student may send
 // for audit a day.
 //
@@ -19,7 +19,7 @@ export default async function AdminSettingsPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-      <h1 className="font-display text-2xl font-bold text-ink">Settings</h1>
+      <h1 className="font-display text-2xl font-bold text-ink">Site settings</h1>
       <p className="mt-1 text-sm text-ink-muted">Numbers that apply to everyone. Every change is in the admin log.</p>
 
       <Card className="mt-6">

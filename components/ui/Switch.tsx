@@ -1,6 +1,8 @@
 // Owns one settings row: label, description, and the toggle itself. The whole
 // row is the control, so the description is clickable too — a 14px toggle is a
-// poor tap target on a phone.
+// poor tap target on a phone. The label keeps to one line and the description
+// to two, so every Settings row is the same size (see SheetRow); a setting
+// that needs more words belongs in a sheet.
 //
 // It deliberately does NOT persist anything. Saving is the caller's job, which
 // keeps this usable for both auto-save settings and unsaved form state.
@@ -45,11 +47,11 @@ export function Switch({
           if (!disabled) onCheckedChange(!checked);
         }}
       >
-        <p id={labelId} className="font-body text-sm font-medium text-ink">
+        <p id={labelId} className="truncate font-body text-sm font-medium text-ink">
           {label}
         </p>
         {description ? (
-          <p id={descriptionId} className="mt-0.5 text-xs text-ink-muted">
+          <p id={descriptionId} className="mt-0.5 line-clamp-2 text-xs text-ink-muted">
             {description}
           </p>
         ) : null}

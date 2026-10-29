@@ -199,27 +199,41 @@ Preview deployments band hain, isliye yeh sab merge ke baad live site par hi dik
 2. Vercel me check kariye: **Settings → Cron Jobs** me 7 jobs dikhni chahiye (retention, reminders, aur reminders/7, /9, /13, /17, /21).
 
 **Admin account se:**
-- [ ] Header me **Settings** → "Recordings per student per day" 3 karke Save → student ke practice page par "3 recordings a day" dikhe
+- [ ] Admin menu me **Site settings** → "Recordings per student per day" 3 karke Save → student ke practice page par "3 recordings a day" dikhe
 
 **Student account se:**
-- [ ] Settings → Flashcard → **Daily flashcard reminder email** on karke turant **Reminder time** chuniye (jaise 9 am) → page reload karke dono bache rahe
-- [ ] Settings → Flashcard → **Read-aloud accent** British, speed Slow → kisi card ka speaker dabaiye → awaaz badli
+- [ ] Settings → Email → **Daily flashcard reminder** → sheet me on karke time chuniye (jaise 9 am) → row par "9 am" dikhe, page reload karke bhi
+- [ ] Settings → Flashcards → **Read-aloud voice** → British aur Slow → kisi card ka speaker dabaiye → awaaz badli
 - [ ] **Reduce motion** on → card palatte waqt ghoomta nahi
-- [ ] **Hide Hindi meanings** on → support card aur Excel deck card par Hindi box chhupe; **Hindi to English questions** wala alag switch on karke side 3 ka translate sawaal chhupe
+- [ ] **Hide Hindi meanings** on → support card aur Excel deck card par Hindi box chhupe; **Hide Hindi→English questions** wala alag switch on karke side 3 ka translate sawaal chhupe
 - [ ] Practice page par "**2 left today**" dikhe (ya jo number admin ne rakha); utni recording bhejne ke baad "Today's recordings for audit are sent" card aaye (teacher ne jo recording wapas bheji ho, uski nayi recording phir bhi jaa sake)
 - [ ] Hindi sawaal chhupane ke baad practice side par numbering 1, 2, 3, 4… bina gap ke ho
 - [ ] Audit kholne par recording **Audit playback speed** wali speed se chale
-- [ ] Settings → Security → **Change password** (purana password chahiye) → sab devices se sign out, naye password se login, aur purane email par "password changed" email
-- [ ] Settings → Security → **Change email** → naye email par code → badalne ke baad naye email se login, purane email par suchna
+- [ ] Settings → Account & security → **Change password** (purana password chahiye) → sab devices se sign out, naye password se login, aur purane email par "password changed" email
+- [ ] Settings → Account & security → **Change email** → naye email par code → badalne ke baad naye email se login, purane email par suchna
 - [ ] Profile → mobile number save karna aur khaali karke hatana
 
 **Teacher account se:**
 - [ ] Settings me sirf teacher wale options (student ke flashcard/audit wale nahi); **Daily queue email** on → shaam ~7 baje queue me recordings hon to email aaye
-- [ ] **Email me when a new recording arrives** on → student recording bheje → turant email aaye
+- [ ] Settings → Email → **Each new recording** on → student recording bheje → turant email aaye
 
 **Guest se (Continue as guest):**
 - [ ] Kuch cards padhiye → Settings → **Keep your progress** → naya email → code → account full ho jaaye, cards bache rahe
 - [ ] Doosra guest → apne **purane student account ka email** → code → "Add my progress" → us email se login karke cards dikhen
+
+### 4c. Naya simple Settings page (29 Oct) — phone par check kariye
+
+Har setting ab ek jaisi row hai: upar naam, neeche chhoti line (2 line tak). On/off wali row me switch; baaki row me `›`, jo neeche se sheet kholti hai (computer par beech me box).
+- [ ] Header ka ⚙ **Settings** seedha Settings page khole (dropdown nahi) — student, teacher, admin teeno me
+- [ ] Groups dikhen: Appearance, Flashcards (sirf student), Recordings, Email, Account & security, Share; guest ke liye sabse upar **Keep your progress**
+- [ ] **Theme** row → sheet → Dark chuniye → peeche wala page turant dark ho; **Done** se band; row par "Dark" likha ho
+- [ ] **Text size** → Larger (A+) → text bada ho; row par "A+"
+- [ ] Sheet band karne ke teeno tareeke: ✕, **Done**, aur sheet ke bahar (dhundhle hisse par) tap
+- [ ] Koi bhi switch on/off karke page reload → wahi bacha rahe
+- [ ] Menu → **Share EduSarthi** se Settings khule to Share wali sheet apne aap khul jaaye
+- [ ] **Sign out** row → sheet → Sign out → login page; guest me pehle chetavni dikhe
+- [ ] Phone par koi row ka naam kata hua (…) ya neeche wali line 2 se zyada line ki na ho
+- [ ] Admin menu me **Site settings** (sab ke liye audit limit) aur ⚙ Settings (apni settings) alag-alag hon
 
 
 ---

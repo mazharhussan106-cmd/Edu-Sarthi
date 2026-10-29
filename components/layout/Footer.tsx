@@ -5,7 +5,10 @@
 
 import Link from "next/link";
 
+// Library is first because the footer is the one nav a signed-out visitor
+// always has, and the public decks live there.
 const LINKS = [
+  { href: "/library", label: "Library" },
   { href: "/about", label: "About" },
   { href: "/support", label: "Support" },
   { href: "/legal/privacy", label: "Privacy" },

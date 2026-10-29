@@ -1,6 +1,17 @@
 # Public library hub — plan (29 Oct 2026)
 
-Status: **PLANNED. Nothing is built.** Branch for the plan: `claude/bold-hopper-hxfrpd`. Needs the owner's "go" for Step 1 (it touches more than 6 files, so CLAUDE.md asks for approval first).
+Status: **Step 1 (1a and 1b) approved by the owner on 29 Oct and being built on `claude/bold-hopper-hxfrpd`. Steps 2 to 4 are planned, not built.** Do not merge Step 1b before Step 4 is ready (see below).
+
+## Owner's instruction for Step 1 (29 Oct 2026)
+
+"Remove the Class section and add Library in its place — in the footer and in the website header. Change nothing in the menu or Settings. Make the plan, then start."
+
+How it is read:
+- **Footer** = the phone's bottom bar (it shows Dashboard, Flashcard, Audited, Class, Profile). The site footer's link row gets Library too, so a signed-out visitor, who has no bottom bar, can find it.
+- **Header** = the computer's header row, which reads the same list as the bottom bar (`STUDENT_LINKS` in `lib/studentNav.ts`), and the signed-out header.
+- Class leaves these bars only. `/class` stays as a page: Get started on Profile and the skill scores link to it, and speaking practice is still reached from the menu (Learn and practise → Practice modules) and the dashboard.
+- **Menu and Settings are not edited** (`studentMore`, `MobileMenu`, the settings pages). The menu's first group, "Main pages", is a copy of the same five links by design (`MobileMenu` receives `links`), so it shows Library where it showed Class. Nothing else in the menu moves; its own "Library" row under "Shared and library decks" stays.
+- Teacher and admin headers are not touched.
 
 ## Requirement (owner, 29 Oct 2026)
 
@@ -32,13 +43,19 @@ Who sees what (**PROPOSAL**, not yet approved):
 
 ## Build steps (one at a time, none needs a database change)
 
-**Step 1 — open the doors (7 files).**
-1. `proxy.ts`: make exactly `/library`, `/library/<id>` and `/library/<id>/card/<id>` public, with a pattern, **not** the prefix `/library`. A prefix would also open `/library/<id>/study` and `/library/<id>/practice/<id>`, which assume a signed-in student.
-2. `components/layout/PublicHeader.tsx` (new): the header now inside `app/(public)/layout.tsx`, plus a "Library" link, so both layouts share it.
-3. `app/(public)/layout.tsx`: use it.
-4. `app/(shared)/layout.tsx`: no session → public header and footer, no student navigation, no `ensureActiveUser()`.
+**Step 1a — Library replaces Class in the navigation (own commit, safe to merge alone).**
+1. `lib/studentNav.ts`: `{ href: "/class", label: "Class" }` becomes `{ href: "/library", label: "Library" }`, in the same fourth place.
+2. `components/layout/BottomNav.tsx`: Library icon for `/library`; the rule that kept Class lit on `/modules` and `/practice` goes (nothing is lit there now, and the bar is hidden inside a practice).
+3. `components/layout/Footer.tsx`: Library first in the link row.
+4. `docs/FEATURE-MAP.md`: the Class row says it is no longer in the bars.
+
+**Step 1b — open the doors (own commit; hold it back until Step 4 is ready).**
+1. `proxy.ts`: make exactly `/library`, `/library/<id>` and `/library/<id>/card/<id>` public **for a signed-out visitor**, with a pattern, **not** the prefix `/library`. A prefix would also open `/library/<id>/study` and `/library/<id>/practice/<id>`, which assume a signed-in student. A signed-in but unverified person is still held at /verify, as before.
+2. `components/layout/PublicHeader.tsx` (new): the header now inside `app/(public)/layout.tsx`, plus a "Library" link, so both layouts share it. The landing page has its own header; it gets the link too.
+3. `app/(public)/layout.tsx` and `app/page.tsx`: use it / add the link.
+4. `app/(shared)/layout.tsx`: no session → public header and footer, no student navigation. (`ensureActiveUser()` already returns quietly with no session.)
 5. `components/decks/LikeButton.tsx` and 6. `components/decks/ReportButton.tsx`: a `signedIn` prop that shows a sign-in link, as `FollowButton` does.
-7. `app/(shared)/library/[id]/page.tsx`: pass `signedIn` to the buttons.
+7. `app/(shared)/library/[id]/page.tsx` and `app/(shared)/library/page.tsx`: pass `signedIn` to the buttons; hide "My decks" when signed out.
 
 **Step 2 — make it findable (6 files).** `app/robots.ts`, `app/sitemap.ts` (home, about, library, every listed deck with its last change), `metadataBase` and share defaults in `app/layout.tsx`, `generateMetadata` on the deck page, card pages `noindex, follow` (hundreds of thin pages), and a "Browse the library" button on the landing page. Read `node_modules/next/dist/docs/` for the metadata and sitemap conventions first (CLAUDE.md: this is not the Next.js you know).
 

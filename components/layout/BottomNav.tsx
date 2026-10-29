@@ -1,5 +1,5 @@
 // Owns the student app's bottom navigation bar on phones: Dashboard,
-// Flashcard, Audited, Class, Profile. Hidden from md upward, where the header carries the links.
+// Flashcard, Audited, Library, Profile. Hidden from md upward, where the header carries the links.
 //
 // It deliberately hides itself on focused screens — recording, reading one
 // audit, re-recording — so a thumb reaching for Stop never lands on "Home".
@@ -8,7 +8,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardCheck, House, Layers, UserRound, Video } from "lucide-react";
+import { ClipboardCheck, House, Layers, Library, UserRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { STUDENT_LINKS } from "@/lib/studentNav";
@@ -17,7 +17,7 @@ const ICONS = {
   "/dashboard": House,
   "/flashcards": Layers,
   "/feedback": ClipboardCheck,
-  "/class": Video,
+  "/library": Library,
   "/profile": UserRound,
 } as const;
 
@@ -40,9 +40,7 @@ export function BottomNav() {
           const active =
             pathname === link.href || pathname.startsWith(`${link.href}/`) ||
             // Settings is reached from Profile, so Profile stays lit there.
-            (link.href === "/profile" && pathname.startsWith("/settings")) ||
-            // Speaking modules are reached from Class, so Class stays lit there.
-            (link.href === "/class" && (pathname.startsWith("/modules") || pathname.startsWith("/practice")));
+            (link.href === "/profile" && pathname.startsWith("/settings"));
           return (
             <li key={link.href}>
               <Link

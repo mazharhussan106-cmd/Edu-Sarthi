@@ -13,7 +13,10 @@ export const STUDENT_LINKS: readonly NavLink[] = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/flashcards", label: "Flashcard" },
   { href: "/feedback", label: "Audited" },
-  { href: "/class", label: "Class" },
+  // The page people go to for every public deck, signed in or not. It took the
+  // place of Class (owner, 29 Oct 2026); /class still exists as a page, reached
+  // from Get started and the skill scores, but is no longer a bar destination.
+  { href: "/library", label: "Library" },
   { href: "/profile", label: "Profile" },
 ];
 

@@ -29,8 +29,12 @@
   --color-brand: #0096d6;
   --color-saffron: #ff8206;
   --color-on-saffron: #1b1f24;
-  --color-success: #1a7f45;
-  --color-error: #c73a3a;
+  /* Darker than #1a7f45 / #c73a3a, which were about 4.3:1 as small text on
+     their own Badge tint (and success 4.3:1 even plain on paper-dim). These
+     clear 4.5:1 on paper, surface and paper-dim, tinted or not. The tag
+     colours below keep the old values: they are card labels, not states. */
+  --color-success: #156f3c;
+  --color-error: #b02f2f;
   --color-mist: #9aa1ab;
   --color-surface: #ffffff;
   --color-surface-raised: #ffffff;
@@ -126,7 +130,8 @@
   /* One step darker than #2f7a3e, which was 4.4:1 for small badge text on
      this paper; a darker green only helps on a light theme. */
   --color-success: #2a6f38;
-  --color-error: #b03a2e;
+  /* Darker than #b03a2e, which was about 4.3:1 on Badge's error tint here. */
+  --color-error: #a5352a;
   --color-mist: #a08f74;
   --color-surface: #fbf6ea;
   --color-surface-raised: #fffbf2;

@@ -21,6 +21,7 @@ export function ActionButton({
   variant = "outline",
   confirmWord,
   askReason = false,
+  reasonHint,
 }: {
   url: string;
   body: Record<string, unknown>;
@@ -31,6 +32,9 @@ export function ActionButton({
   /// Adds a required reason field; sent as `reason`. Every change to someone
   /// else's account carries one into the admin log.
   askReason?: boolean;
+  /// One line under the reason field, for when someone other than admins
+  /// will read the reason (a QA note is shown to the teacher).
+  reasonHint?: string;
 }) {
   const router = useRouter();
   const id = useId();
@@ -90,11 +94,17 @@ export function ActionButton({
           {askReason ? (
             <input
               aria-label="Reason"
+              aria-describedby={reasonHint ? `${id}-hint` : undefined}
               placeholder="Reason (kept in the admin log)"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="h-8 w-56 rounded-md border border-border-strong bg-surface px-2 text-xs text-ink placeholder:text-ink-muted"
             />
+          ) : null}
+          {askReason && reasonHint ? (
+            <span id={`${id}-hint`} className="w-56 text-right text-[11px] text-ink-muted">
+              {reasonHint}
+            </span>
           ) : null}
           {confirmWord ? (
             <>

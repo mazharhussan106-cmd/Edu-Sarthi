@@ -16,6 +16,7 @@ import { cookies } from "next/headers";
 import { requireUser } from "@/lib/apiUser";
 import { prisma } from "@/lib/prisma";
 import { PREFERENCE_SCHEMA, prefsOf } from "@/lib/preferences";
+import { goalDateProblem } from "@/lib/goalDate";
 import { DATA_SAVER_COOKIE } from "@/lib/dataSaver";
 import { HINDI_COOKIE } from "@/lib/hindiToggle";
 import { MOTION_COOKIE } from "@/lib/motion";
@@ -44,6 +45,9 @@ export async function PATCH(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "That is not a setting we recognise." }, { status: 400 });
   }
+  // Reading accepts a passed date (the profile says so); saving one does not.
+  const dateProblem = parsed.data.goalDate === undefined ? null : goalDateProblem(parsed.data.goalDate);
+  if (dateProblem) return NextResponse.json({ error: dateProblem }, { status: 400 });
 
   // jsonb || jsonb merges keys, the patch winning. A stored value that is not
   // an object (empty, or JSON null from long ago) is treated as {}.

@@ -6,22 +6,22 @@
 // the daily session; student-made decks would otherwise inflate "known".
 // Every query is scoped to the one user.
 
-import type { CardKind } from "@prisma/client";
+import { Prisma, type CardKind } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { channelLabel } from "@/lib/supportCard";
+import { SKILL_FOCUS, type SkillFocus } from "@/lib/skillFocus";
+import { DECK_KINDS } from "@/components/flashcards/DeckTopBar";
 
 const KIND_NAME: Record<CardKind, string> = { WORD: "Words", CHUNK: "Chunks", GRAMMAR: "Grammar", SUPPORT: "Support" };
 
-export const CRITERIA = [
-  { key: "pronunciation", label: "Pronunciation" },
-  { key: "grammar", label: "Grammar" },
-  { key: "fluency", label: "Fluency" },
-  { key: "vocabulary", label: "Vocabulary" },
-  { key: "confidence", label: "Confidence" },
-] as const;
 
-export type CriterionKey = (typeof CRITERIA)[number]["key"];
+// The rubric's five skills come from lib/skillFocus (no database there, so
+// the admin form can read them too); one list, so a renamed skill changes
+// everywhere at once.
+export const CRITERIA = SKILL_FOCUS.map((s) => ({ key: s.value, label: s.label }));
+
+export type CriterionKey = SkillFocus;
 
 const DAY = 86_400_000;
 // India's calendar day, because that is the day the student lives in. UTC would
@@ -97,6 +97,31 @@ export async function cardProgress(userId: string): Promise<CardProgressData> {
     .sort((a, b) => b.count - a.count)
     .slice(0, 3);
   return { seen, known, unknown: Math.max(0, seen - known), doubt, weakTopics };
+}
+
+export type KindKnown = { kind: CardKind; label: string; known: number; total: number };
+
+/// Known out of all built-in cards, per kind, for the dashboard's flashcard
+/// card. Grouped in SQL: a count per kind would be four round trips on the
+/// one-connection live pool.
+export async function knownByKind(userId: string): Promise<KindKnown[]> {
+  const [totals, known] = await Promise.all([
+    prisma.word.groupBy({ by: ["kind"], where: { deckId: null }, _count: true }),
+    prisma.$queryRaw<{ kind: CardKind; n: number }[]>(Prisma.sql`
+      SELECT w."kind"::text AS kind, COUNT(*)::int AS n
+      FROM "CardState" cs JOIN "Word" w ON w."id" = cs."wordId"
+      WHERE cs."userId" = ${userId} AND cs."known" = true AND w."deckId" IS NULL
+      GROUP BY w."kind"`),
+  ]);
+  // The Flashcard tab's own names and order, for rows beside links to those tabs.
+  return DECK_KINDS.map(({ kind, label }) => ({ kind, label }))
+    .map(({ kind, label }) => ({
+      kind: kind as CardKind,
+      label,
+      known: known.find((k) => k.kind === kind)?.n ?? 0,
+      total: totals.find((t) => t.kind === kind)?._count ?? 0,
+    }))
+    .filter((k) => k.total > 0);
 }
 
 export type CriterionChange = { label: string; first: number; latest: number };

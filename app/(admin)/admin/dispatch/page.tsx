@@ -198,7 +198,14 @@ export default async function DispatchPage({
                           r.feedback?.qaFlaggedAt ? (
                             <ActionButton url="/api/admin/dispatch" body={{ action: "unqa", submissionId: r.id }} label="Clear QA flag" />
                           ) : (
-                            <ActionButton url="/api/admin/dispatch" body={{ action: "qa", submissionId: r.id }} label="Flag for QA" askReason />
+                            <ActionButton
+                              url="/api/admin/dispatch"
+                              body={{ action: "qa", submissionId: r.id }}
+                              label="Flag for QA"
+                              askReason
+                              // Teachers see QA notes on their Profile (owner, 29 Oct 2026).
+                              reasonHint="The teacher who wrote this audit sees this note on their Profile."
+                            />
                           )
                         ) : null}
                       </div>

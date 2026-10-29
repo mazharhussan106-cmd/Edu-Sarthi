@@ -15,12 +15,13 @@ type Variant = "accent" | "neutral" | "success" | "error";
 // accent-dark for the accent text: it is the stronger accent in every theme
 // (darker on light ones, lighter on dark ones), and plain accent on its own
 // tint fell just short of 4.5:1 in light and sepia. Success has no stronger
-// token, so its tint is lighter instead (/8), which clears 4.5:1 there.
+// token, so its tint is lighter instead (/8), which clears 4.5:1 there. Error
+// is the same case: on /12 it was 4.29:1 in light (axe, dashboard, 29 Oct).
 const VARIANTS: Record<Variant, string> = {
   accent: "bg-accent/12 text-accent-dark",
   neutral: "bg-paper-dim text-ink-muted",
   success: "bg-success/8 text-success",
-  error: "bg-error/12 text-error",
+  error: "bg-error/8 text-error",
 };
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

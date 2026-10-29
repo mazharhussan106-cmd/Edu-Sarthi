@@ -43,7 +43,7 @@ export function CsvImport() {
   return (
     <div>
       <p className="text-sm text-ink-muted">
-        Columns: <code className="font-mono text-xs">module_title, level, module_description, title, prompt, expects, min_seconds, max_seconds</code>.
+        Columns: <code className="font-mono text-xs">module_title, level, module_description, title, prompt, expects, min_seconds, max_seconds</code>. Optional: <code className="font-mono text-xs">skill_focus</code> (pronunciation, grammar, fluency, vocabulary or confidence) for a new module.
         Modules are matched by title and created if new. <code className="font-mono text-xs">expects</code> is AUDIO, VIDEO or IMAGE.
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-2">

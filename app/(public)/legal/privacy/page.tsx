@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 const CONTACT = "privacy@edusarthi.com";
-const UPDATED = "27 October 2026";
+const UPDATED = "29 October 2026";
 
 export default function PrivacyPage() {
   return (
@@ -36,6 +36,14 @@ export default function PrivacyPage() {
               <span className="text-ink">Your mobile number, if you give it.</span>{" "}
               Optional. We store it but do not verify it and do not currently
               send SMS.
+            </li>
+            <li>
+              <span className="text-ink">Your profile photo, if you add one.</span>{" "}
+              Optional, and not for guest accounts. Your browser crops it and
+              makes a small copy without the camera&apos;s hidden data, such as
+              where it was taken, before it is sent. Only you see it, on your
+              own Profile: teachers, other learners and the library never do.
+              Remove it any time; it is also deleted with your account.
             </li>
             <li>
               <span className="text-ink">Your password, hashed.</span> We store a

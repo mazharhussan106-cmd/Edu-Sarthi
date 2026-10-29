@@ -7,7 +7,9 @@
 // if it was too early, which is more useful than a padlock.
 //
 // Search and the level filter live in the URL (?q=, ?level=), so they work
-// with no client JavaScript and survive the back button.
+// with no client JavaScript and survive the back button. ?focus=fluency (from
+// "Practise fluency" on the dashboard) narrows to modules an admin tagged
+// with that skill.
 
 import Link from "next/link";
 import { Search } from "lucide-react";
@@ -17,6 +19,7 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
+import { focusLabel, parseFocus } from "@/lib/skillFocus";
 
 export const revalidate = 0;
 
@@ -28,11 +31,12 @@ const COMING = [
 export default async function LearnPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; level?: string }>;
+  searchParams: Promise<{ q?: string; level?: string; focus?: string }>;
 }) {
   const params = await searchParams;
   const q = (params.q ?? "").trim().slice(0, 80);
   const level = Number(params.level) || null;
+  const focus = parseFocus(params.focus);
 
   const session = await auth();
   const studentId = session?.user?.id;
@@ -42,6 +46,7 @@ export default async function LearnPage({
       where: {
         isSystem: false,
         ...(level ? { level } : {}),
+        ...(focus ? { focus } : {}),
         ...(q
           ? {
               OR: [
@@ -78,6 +83,7 @@ export default async function LearnPage({
     const nl = next.level === undefined ? level : next.level;
     if (nq) sp.set("q", nq);
     if (nl) sp.set("level", String(nl));
+    if (focus) sp.set("focus", focus);
     const str = sp.toString();
     return str ? `/modules?${str}` : "/modules";
   };
@@ -103,6 +109,7 @@ export default async function LearnPage({
           className="h-11 w-full rounded-lg border border-border-strong bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-accent"
         />
         {level ? <input type="hidden" name="level" value={level} /> : null}
+        {focus ? <input type="hidden" name="focus" value={focus} /> : null}
       </form>
 
       <nav aria-label="Filter by level" className="mt-3 flex gap-2 overflow-x-auto pb-1">
@@ -123,13 +130,22 @@ export default async function LearnPage({
         ))}
       </nav>
 
+      {focus ? (
+        <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg bg-accent/12 px-3 py-2.5 text-sm text-ink">
+          <span>Showing modules that practise <b>{focusLabel(focus).toLowerCase()}</b>.</span>
+          <Link href={q || level ? `/modules?${new URLSearchParams({ ...(q ? { q } : {}), ...(level ? { level: String(level) } : {}) })}` : "/modules"} className="font-semibold text-accent-dark hover:underline">
+            Show all modules
+          </Link>
+        </p>
+      ) : null}
+
       <h2 className="mt-6 font-display text-lg font-bold text-ink">Speaking practice</h2>
       {modules.length === 0 ? (
         <Card className="mt-3">
           <p className="text-sm text-ink-muted">
-            {q || level ? "Nothing matches that search." : "No modules yet. Check back shortly."}
+            {q || level || focus ? "Nothing matches that search." : "No modules yet. Check back shortly."}
           </p>
-          {q || level ? (
+          {q || level || focus ? (
             <Link href="/modules" className="mt-3 inline-block text-sm font-medium text-accent hover:underline">
               Clear search and filter
             </Link>

@@ -15,6 +15,7 @@ import { staffNav } from "@/lib/staffNav";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { PrefSyncServer } from "@/components/layout/PrefSyncServer";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
+import { HeaderStats } from "@/components/layout/HeaderStats";
 import { STUDENT_LINKS, studentMore } from "@/lib/studentNav";
 
 export default async function SharedLayout({
@@ -31,6 +32,7 @@ export default async function SharedLayout({
       <StickyHeader
         links={isTeacher ? staffNav(session?.user?.role).links : STUDENT_LINKS}
         search={isTeacher ? undefined : <HeaderSearch />}
+        stats={isTeacher ? undefined : <HeaderStats />}
         more={isTeacher ? undefined : studentMore({ member: !session?.user?.isGuest, aiCards: cardMakerEnabled() })}
         homeHref={isTeacher ? staffNav(session?.user?.role).home : "/dashboard"}
       />

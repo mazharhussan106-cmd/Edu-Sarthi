@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"; 29 Oct: student audit page redesign, see its section). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -30,7 +30,7 @@ An English spoken-communication training platform: students record or upload, te
   - "Hide Hindi meanings" must **not** hide the Hindi-to-English practice questions. Their separate opt-in switch stays.
 - **Assistant's decisions, delegated by the owner on 28 Oct ("best jo hoga so karo"):**
   - A guest's progress can merge into an existing **student** account. Rule: the card with more reviews wins, and the account's card wins a tie.
-  - **No profile photo for now.** Teachers deliberately see students only by anonymous ID, a photo would break that, and many users may be minors with DPDP consent still open.
+  - ~~**No profile photo for now.**~~ **SUPERSEDED 29 Oct 2026 by the owner: photo upload is allowed** (see "Profile page" below and `docs/PROFILE-PLAN.md`). The reasons still shape it: teachers see students only by anonymous ID, and many users may be minors with DPDP consent still open, so who may see a photo is an open question there.
   - **No signed-in device list for now.** "Sign out of all devices" and the sign-out on a password or email change cover the need. A list needs a session table written on every page load.
   - **The app's screens stay in English.** It is an English-speaking course, Hindi help already sits where it matters (card meanings, Indian pronunciation), and translating every screen doubles the copy to maintain.
   - Revisit any of these if users ask.
@@ -39,6 +39,7 @@ An English spoken-communication training platform: students record or upload, te
   - Even short choices (text size, playback speed, new cards per day) open a sheet; none sit inline in the row.
   - Rows are grouped under small headings (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share).
   - The header's ⚙ Settings is a **link to `/settings`** for every signed-in person. There is no settings dropdown any more, so Sign out also has a row in Settings (it stays in the ☰ menu too).
+- **Owner's decisions, 29 Oct 2026 (student dashboard):** the redesign covers the **student** dashboard only (teacher and admin later, if at all); the page opens on **today's work**, with progress and charts lower or on the Progress page; gamification is **medium** — streak, daily goal ring, XP, a level, weekly goal, streak freeze, badges — and **no leaderboard**; the design is agreed first and built later in phases. Second round the same day: every recommendation accepted (the XP level is called **Stage**; a streak day needs **10 XP**; daily goal 20/40/60/100 XP, default 40; weekly goal default 5 days; freezes earned, at most 2, new accounts start with 1; deck cards earn XP; guests get streak and XP), except that **the score trend chart stays on the dashboard**. XP is for effort only, never for audit scores. Details: `docs/DASHBOARD-PLAN.md`.
 
 ## Open work, most important first
 
@@ -412,6 +413,42 @@ Still open:
 - Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
 - The two pre-existing axe findings above (logotype contrast, unlabelled navs) on every page.
 
+## Student dashboard redesign (29 Oct, branch `claude/hopeful-heisenberg-04ufep`) — Phases 1–4 BUILT, not merged
+
+The owner asked for a list of what the dashboard should show and how it should look, after checking what other apps do, with questions first; this chat works only on the dashboard. Four questions asked; answers are in "Decisions that must not be undone" (29 Oct, student dashboard).
+
+Delivered, all design and no code change:
+- `docs/DASHBOARD-PLAN.md`: what is wrong with today's dashboard, the new order (8 blocks on a phone instead of 12), each block's data and whether it exists, phone and computer layouts, special states (streak at risk, goal done, new student, guest, freeze used), the streak and XP sheets, the proposed game rules (XP for effort only, daily goal 20/40/60/100, streak at 10 XP a day, weekly goal in days, earned freezes, "Stage" levels), the research with how sure each point is, a three-phase build plan, and seven open questions.
+- `docs/dashboard-mockup.html` and four screenshots (`docs/dashboard-mockup-*.png`), drawn with the app's own tokens, fonts and icons, checked in light and dark at 390 px and 1280 px. The same screens are on a private design canvas, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs).
+
+Found in the current code (to fix when building): the streak counts recordings only (`lib/progress.ts`), so flashcard days never count; "cards due" on the dashboard counts Words only; recordings are shown in four different cards; a guest sees "Recording today 0/1"; the week bars read `CardState.lastReviewedAt`, not `ReviewLog`.
+
+The owner then accepted every recommendation (chart kept on the dashboard) and said to write the complete plan and start Phase 1.
+
+**Phase 1 built (same day, no schema change):** the new dashboard on today's data — XP computed from `ReviewLog` and `Submission` (`lib/xp.ts`), rules and date logic in `lib/streak.ts`, all reads in `lib/dashboard.ts`, tasks and next step in `lib/dashboardTasks.ts` / `lib/dashboardNext.ts`, nine new components in `components/dashboard/`, the page rewritten as layout only, Profile badges on the same streak (12 badges, streak ones from the longest streak), Help answer on XP and streaks. Six old dashboard components and `lib/progress.ts` removed. The error badge tint is lighter site-wide (contrast). Tested: 42 hand-checked number checks, 79 browser checks (two widths, five themes, axe), `tsc`, `next build`; the evening state by a separate render. Details and what was not checked: `docs/DASHBOARD-PLAN.md` → "Phase 1 — what was built".
+
+**Don't undo:** XP is never given for audit scores; a card earns XP once per India day; the streak counts any study worth 10 XP (not only recordings); streak badges use the longest streak.
+
+**Phase 2 built (same day, owner: "start building next phase", no schema change):** Settings → Flashcards → Daily goal (20/40/60/100 XP) and Weekly goal (3/5/7 days), preferences `dailyGoalXp` and `weeklyGoalDays`; the dashboard follows them; the 🔥 and ⭐ pills open a Streak sheet (month calendar, longest streak) and an XP sheet (every rule, today / week / best day); the ring's tick pops once a day when the goal is met (none with reduce motion). Tested: 13 new and 42 old number checks, 50 new and 79 old browser checks, axe on the sheets and Settings, `tsc`, `next build`. Details: `docs/DASHBOARD-PLAN.md` → "Phase 2 — what was built".
+
+**Phase 3 built (same day):** streak freezes and weekly-goal badges. **Schema: two new additive tables, `StreakFreeze` and `StreakLedger`; nothing existing is touched.** Freezes start at 1, are earned by meeting the weekly goal (max 2), cover a missed day of a live streak by themselves, and are settled once per day and stored (`lib/freeze.ts`), so goal changes never rewrite the past. ❄ on the week dots, calendar and Today card; badges "Weekly goal met" and "Four good weeks". Tested: 17 freeze checks, all earlier checks again, 30 new browser checks. Details and decisions: `docs/DASHBOARD-PLAN.md` → "Phase 3 — what was built".
+
+**Don't undo (Phase 3):** freezes are stored, never recomputed from history; a freeze is spent only to save a live streak; a frozen day does not add to the count.
+
+**Phase 4 built (owner chose "Polish + small ideas"):** streak and XP in the header of every student page on a computer (`HeaderStats`, `/api/progress`), a "keep your streak" line in the daily reminder email, and a skill focus on modules (new nullable column `Module.focus`, set in Admin → Content or the CSV `skill_focus` column) so the dashboard's button can say "Practise fluency" and open `/modules?focus=fluency`. **No module is tagged yet; the admin has to tag them.** Details: `docs/DASHBOARD-PLAN.md` → "Phase 4".
+
+**Audit (owner: "audit this chat work"):** 11 problems found and fixed — freezes wasted on a break they could not cover (now given back), a missed Sunday not covered by that week's freeze, any database error showing a shorter streak, "Delete my study history" wrongly promising the streak is untouched, "XP counts from 26 Oct" untrue for the live site (now "late October 2026"), the header fetching on phones and the dashboard, the export failing before Database setup, a re-record not ticking the recording task, the level-and-goal step, duplicated logic, and the reminder job's time. All checks re-run and passing. Details and what was left on purpose: `docs/DASHBOARD-PLAN.md` → "Audit of this chat's work".
+
+**Don't undo (audit):** a break longer than the freezes held costs no freezes; only a missing table means "no freezes", other errors are not hidden; deleting study history lowers XP and streak, and the screens say so.
+
+**Next:** merge, then **Actions → Database setup** once, straight away (two tables from Phase 3, one column from Phase 4; the dashboard copes without them for those minutes), then tag modules with a skill focus in Admin → Content, then `LIVE-TESTING-GUIDE.md` section 4d on a phone. Not started, on purpose: teacher home page, admin overview.
+
+## Student audit page redesign (29 Oct 2026, branch `claude/epic-galileo-nvgutk`)
+
+Only `/feedback/[id]` (a finished audit) changed. Plan, research on 8 products, owner's answers and test results: `docs/AUDIT-PAGE-PLAN.md`. Order now: overall score + band word + change, teacher's opening line, "Fix these first" (top 3 notes: major first, then by time), Try again, player + all notes (sticky right column on a computer), skills (band, meaning, change), focus next / strongest, last-5 progress, full teacher words, what was asked, Try again. Rules live in `lib/auditReport.ts`. No database change.
+
+**Don't undo:** no CEFR/IELTS level or exam estimate (rubric not validated); no AI label (owner, 26 Oct); "Try again" on a card recording returns to that card (`retryHref`), it used to drop the card. **Phase 2 (same day):** "N of M recordings for audit left today" under Try again (same count as the practice gate) and "★ Your best score so far" / "Equals your best" (five-score sum vs earlier audits, never on a first audit). **Phase 3 (same day, owner's choice):** light theme `--color-success` #156f3c and `--color-error` #b02f2f, sepia `--color-error` #a5352a, so Badge text clears 4.5:1 on its tint; **don't undo** (the old values were ~4.3:1). Site-wide, darker only; tag colours unchanged. **Phase 4:** a not-found audit (someone else's) returns HTTP 200 because the student `loading.tsx` streams first; Next documents this and adds `noindex`. **Don't "fix"** it by moving the check into `proxy.ts` (no Prisma there) or by removing the loading state. **Needs:** merge; the owner to confirm the band words and the skill meaning lines (built as proposed, because the owner said "start building").
+
 ## Flashcard phone layout: lesson (10 Oct)
 
 The card must sit in a box of **definite height** (`h-[calc(100dvh-7.25rem-…)]` on the page, `absolute inset-0` inside the flex-1 wrapper). A `min-h` or auto height lets the box grow to its content, so `useFitFont` always sees "it fits", never shrinks the text and never scrolls. Verified with a local Postgres + Playwright at 448×900: card fills the screen, Known bar ends 6px above the bottom nav, side 2 scrolls inside the card. Side 2's smallest font is 12px.
@@ -480,6 +517,31 @@ The DPDP export now includes card progress and study history. Owner decided **no
 **Tested:** `tsc`, `next build`, local Postgres with all built-in cards loaded, Playwright at 390×844 and 1280×800 — every menu link answers 200, counts on /today and /my-cards match the fixture by hand, withdrawn-deck card hidden, guest has no AI link, teacher redirected from /today and /my-cards, sign-out from the menu ends the session, anchors land under the header. Not tested on a real phone or the live database.
 
 **Undecided:** "Hindi/English menu language" from the owner's list was not built: the UI language question (Hindi / English / Hinglish, which screens, who translates) is still open from 10 Oct. **Install app fixed (same day):** the menu row listened for Chrome's `beforeinstallprompt` only while the sheet was open, but the browser makes that offer once per page load, so on Android the row almost never appeared. Now an inline script in the root layout's `<head>` (`CAPTURE_INSTALL_JS`, `lib/installPrompt.ts`) keeps the offer on `window` from the start, and `components/layout/InstallApp.tsx` reads it whenever the menu opens. **Don't undo:** it is a plain `<script>`, not `next/script` `beforeInteractive` — that one runs only after the app's code downloads (tested: an offer at DOMContentLoaded was missed with it, caught with the plain script). It calls `preventDefault`, as the row always did, so **Chrome's own small install bar no longer pops up by itself**; installing is Menu → Install app, or Chrome's ⋮ menu. Owner may prefer Chrome's bar to keep showing: then drop `preventDefault` (whether the menu button still works then is not verified). If the install box fails to open, the row says to use the browser's ⋮ menu. **Later the same day the owner chose "Install the app" always visible at the top of the menu**: with no browser offer (iPhone, other browsers, offer already used) a tap shows the install steps instead; hidden only once installed. Tested with a simulated offer (Playwright): offer at load and at DOMContentLoaded, kept across in-app navigation, prompt once then the row hides, failure note, `appinstalled` hides the row, no row without an offer, iPhone shows the Share steps. Not tested on a real Android phone (headless Chrome never makes the offer).
+
+## Profile page (29 Oct 2026, branch `claude/busy-johnson-epz1lg`)
+
+Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oct). Full plan, research with sources, the list per role (S1–S11, T1–T7, A1–A6), build log, tests and the master prompt for a new chat: `docs/PROFILE-PLAN.md`. Mockup: `docs/profile-mockup.html`; built screenshots: `docs/profile-built-*.png`.
+- Owner's answers (29 Oct): all roles; **photo upload** (supersedes the 28 Oct "no photo" decision); add speaking scores, a practice calendar, a goal with a target date and a shareable progress card; plan and mockup first, then build after approval.
+- Owner's second answers (29 Oct):
+  - ~~**A practice day is a recording or a card answer**, everywhere (`lib/practiceDays.ts`).~~ **SUPERSEDED when `main` brought in the dashboard redesign (PR #27):** the owner had accepted the dashboard's rule in that chat on the same day: a streak day needs **10 XP**, with **streak freezes** (`lib/streak.ts`, `lib/xp.ts`, `lib/freeze.ts`). Both answers asked for one rule everywhere, so Profile now uses the dashboard's rule and `lib/practiceDays.ts` is gone. Profile and dashboard show the same streak, longest streak, badges and skill numbers.
+  - **Only the owner sees their photo**: teachers keep seeing STU IDs, and there is no approval queue.
+  - **Teachers see the QA notes on their own audits**, all notes from the last 90 days (owner, 29 Oct, audit F1). The admin's "Flag for QA" form says so.
+  - P1–P6 approved.
+- **Do not undo:**
+  - One streak rule for every page: the dashboard's (`lib/streak.ts`, with freezes from `lib/freeze.ts`).
+  - One badge list (`lib/badges.ts`): the dashboard plan's badges plus Profile's Goal set, Score up and Shared a deck. Both pages pass the same numbers.
+  - Photos are drawn again in the browser at 512 × 512 (no camera data) and are shown only on the owner's Profile.
+  - Streak badges read the longest streak.
+  - The share picture is made in the browser and never uploaded; it never shows the STU ID or the email.
+- The one schema change: `User.avatarKey` (nullable, additive). The goal date is the preference key `goalDate` (JSON).
+- Audit: `docs/PROFILE-AUDIT.md`. 10 of 13 findings are fixed; F4, F5 and F10 need the live site.
+- Browser tests: `scripts/profile-e2e/` (README inside). The phone checklist is `LIVE-TESTING-GUIDE.md` 4e.
+- `main` (dashboard redesign) was merged into the branch on 29 Oct to clear PR #28's conflict; what changed is in `docs/PROFILE-PLAN.md` → "Merge with the dashboard redesign".
+- **Next action (owner):**
+  1. Merge.
+  2. Run **Actions → Database setup** straight after (the Profile page reads `avatarKey`; the same run adds the dashboard's freeze tables if it has not run since PR #27).
+  3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
+  4. Test on a phone.
 
 ## Starting a new chat
 

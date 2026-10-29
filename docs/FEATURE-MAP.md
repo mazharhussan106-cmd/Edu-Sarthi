@@ -10,7 +10,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 
 | Feature | What it does | Where |
 |---|---|---|
-| Dashboard | One "do this next" card, streak and today's goal, cards due / new / to re-record, notices, recordings with a teacher, latest audit, score trend, what to work on, card progress, this week, recent activity | Bar → Dashboard (`/dashboard`) |
+| Dashboard | Today first: streak and XP pills (tap for the Streak sheet with this month's calendar, or the XP sheet with every XP rule), the Today card (daily goal ring, 40 XP unless changed in Settings, streak and whether it is safe, the week as seven dots, ❄ on a day a streak freeze covered, and the freezes held), one "do this next", Today's tasks (re-record, cards due across every kind, decks due, new words, a recording for audit, or "Keep your progress" for a guest), then With your teacher (recordings waiting and the latest audit), notices, Your skills, the score trend, Flashcards (known per kind), Stage and badges. A new student gets a Getting started checklist instead of the progress cards. Rules: Help → "How do XP, streaks and stages work?" and `docs/DASHBOARD-PLAN.md` | Bar → Dashboard (`/dashboard`) |
 | Today's review | Due and new cards left for Words, Chunk, Grammar and Support; decks with cards due; recordings to redo and waiting for audit | Menu → Today's tasks → Today's review (`/today`) |
 | Waiting for audit | Recordings sent but not audited yet (Pending + In review) | Menu → Today's tasks → Waiting for audit (`/feedback?f=review`) |
 | Notices | Classes, deadlines and announcement lines an admin posted; upcoming events first | Menu → Today's tasks → Notices (`/notices`); first five also on the Dashboard |
@@ -49,20 +49,20 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 
 | Feature | What it does | Where |
 |---|---|---|
-| Practice modules | Speaking exercises by level; record or upload audio, video or a photo | Menu → Learn and practise → Practice modules (`/modules`); Bar → Class leads there too |
+| Practice modules | Speaking exercises by level, or by the skill they practise (`?focus=fluency`, from the dashboard); record or upload audio, video or a photo | Menu → Learn and practise → Practice modules (`/modules`); Bar → Class leads there too |
 | Audited (My audits) | Every recording with its status: All / In review / Action needed / Completed | Bar → Audited (`/feedback`) |
-| One audit | Rubric scores, timestamped notes, or the reason it was sent back and tips to re-record | Audited → tap a row (`/feedback/<id>`) |
+| One audit | Overall score with band word and change since last; the teacher's opening line; "Fix these first" (top 3 notes, each plays its moment); Try again (back to the same card for card recordings) with recordings for audit left today; best score so far; player and all notes (right column on a computer); each skill with band, meaning and change; focus next / strongest; last-5 progress; the teacher's full words; what was asked. Or, before the audit, the reason it was sent back and tips to re-record | Audited → tap a row (`/feedback/<id>`) |
 | Class | Says honestly that live classes are not built yet; leads to the speaking exercises | Bar → Class (`/class`) |
 
 ### You
 
 | Feature | What it does | Where |
 |---|---|---|
-| Profile | Name, level, goal, badges, practice totals, password | Bar → Profile (`/profile`) |
+| Profile | Name, level, goal, badges (14, computed: recordings, audits, learning-day streaks, cards known, a 100-XP day, weekly goals met, deck maker), practice totals | Bar → Profile (`/profile`) |
 | Download or delete my data | DPDP export, delete account | Menu → My account and progress → Download or delete my data (`/profile#your-data`) |
 | Progress and reports | Score trend, rubric first-to-latest, the week, flashcards, every audit | Menu → My account and progress → Progress and reports (`/progress`) |
 | History | Practice (recordings and audits) and Study (every card answer, by day); delete study history | Menu → My account and progress → History (`/history`) |
-| Settings | One list of same-sized rows in groups (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share); a row with › opens a sheet. Theme, text size, card colour, reduce motion, new cards per day, read-aloud voice, say the word on open, hide Hindi, hide Hindi→English questions, play audits on open, playback speed, data saver, audit-returned email, daily reminder, change email or password, name on public decks, sign out of all devices, sign out, share | Gear ⚙ (opens the page) or Menu → My account and progress → Settings (`/settings`) |
+| Settings | One list of same-sized rows in groups (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share); a row with › opens a sheet. Theme, text size, card colour, reduce motion, daily goal, weekly goal, new cards per day, read-aloud voice, say the word on open, hide Hindi, hide Hindi→English questions, play audits on open, playback speed, data saver, audit-returned email, daily reminder, change email or password, name on public decks, sign out of all devices, sign out, share | Gear ⚙ (opens the page) or Menu → My account and progress → Settings (`/settings`) |
 | Share EduSarthi | Phone share sheet, WhatsApp, copy link | Menu → My account and progress → Share EduSarthi (`/settings#share`) |
 | Install the app | Add EduSarthi to the home screen: where the browser offers it (Android Chrome) the install box opens; otherwise the steps show (iPhone: Share → Add to Home Screen; others: browser menu ⋮). Hidden only once the app is installed | Menu → top, always |
 | Sign out | Sign out on this device | Menu → bottom, or Gear → Sign out |

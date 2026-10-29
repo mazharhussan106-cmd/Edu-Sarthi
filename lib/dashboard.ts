@@ -38,7 +38,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
   const reviewed = { studentId: userId, status: "REVIEWED" as SubmissionStatus, feedback: { isNot: null } };
   const auditSelect = { id: true, createdAt: true, exercise: { select: { title: true } }, word: { select: { text: true } }, feedback: { select: { ...SCORES, summary: true } } } as const;
 
-  const [xp, review, allowance, inFlight, recent, first, auditCount, nextExercise, notices, cards, kinds, decksOwned, focused] = await Promise.all([
+  const [xp, review, allowance, inFlight, recent, first, auditCount, nextExercise, notices, cards, kinds, decksOwned, focused, decksShared] = await Promise.all([
     xpDays(userId),
     todayReview(userId, prefs.newPerDay),
     isGuest ? null : auditAllowance(userId),
@@ -69,6 +69,8 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
     // Caught: until Database setup adds Module.focus, the button simply opens
     // every module.
     prisma.module.groupBy({ by: ["focus"], where: { isSystem: false, focus: { not: null } } }).catch(() => []),
+    // For the "Shared a deck" badge, counted as Profile counts it.
+    prisma.deck.count({ where: { ownerId: userId, OR: [{ shareToken: { not: null } }, { visibility: "PUBLIC", status: "APPROVED" }] } }),
   ]);
 
   // Day and streak numbers.
@@ -133,6 +135,9 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
     decks: decksOwned,
     bestDayXp: bestDay(byDay),
     weeksMet: freezes.weeksMet,
+    goalSet: prefs.goal !== "unset",
+    sharedDecks: decksShared,
+    bestScoreGain: Math.max(0, ...skills.map((k) => k.change)),
   });
 
   // Getting started, until three learning days or every step is done.

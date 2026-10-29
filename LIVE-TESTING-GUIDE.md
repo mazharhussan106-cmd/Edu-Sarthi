@@ -263,6 +263,33 @@ Student account se login kariye (jisme kuch cards aur recordings hon), phir ek b
 
 ---
 
+### 4e. Naya Profile page (29 Oct) — branch `claude/busy-johnson-epz1lg` merge hone ke baad
+
+Pehle yeh do kaam, isi order me:
+1. Merge ke turant baad GitHub → **Actions → Database setup** chalaiye (naya column `User.avatarKey`; koi data nahi mitta). Iske bina live par Profile page khulega hi nahi. Agar Dashboard (4d) ke baad Database setup abhi tak nahi chala, to yahi ek run dono ke tables bana dega.
+2. Admin → **Announcements** se privacy badlaav ka email bhejiye. Privacy page par photo wali nayi line hai, aur page ka vaada hai ki badlaav se pehle email jaayega.
+
+**Student account se (phone par):**
+- [ ] Profile khule: upar naam, STU ID, **Edit profile** aur **Share progress**; neeche streak tiles, My goal, Speaking scores, Practice calendar, Badges (17), My content, Shortcuts, Account and privacy
+- [ ] Edit profile → **Add a photo** → gallery se photo → ungli se khiskaiye, zoom → **Use photo** → photo dikhe; page reload karke bhi
+- [ ] Photo dobara badaliye → nayi dikhe; **Remove photo** → initials wapas
+- [ ] **Share progress** → Photo switch on → preview me photo aaye (yeh live storage ka asli test hai) → **Share** se WhatsApp par bhejiye; **Download** se PNG save ho
+- [ ] My goal → Edit → Target date chuniye → card par "N days left"
+- [ ] Practice calendar → **View as list** → aaj ka din sabse upar
+- [ ] Dashboard ka streak, header ka streak (computer par) aur Profile ka "Day streak" ek hi number ho (din tab ginta hai jab 10 XP ho: recording 10, naya card 2, review 1)
+- [ ] Practice calendar ke neeche "N learning days" ho, aur Badges me "N of 17" Dashboard ke badges se mile
+- [ ] Account and privacy → **Who sees what** → padh ke dekhiye sab sahi lage
+
+**Teacher account se:**
+- [ ] Profile par audits written, this month, students helped, turnaround; Queue row par "N waiting" = Queue page ka number
+- [ ] Kisi audit par admin QA flag lagaye to teacher ke Profile → **Quality checks** me note aur exercise ka naam dikhe
+
+**Admin account se:**
+- [ ] Profile par apne actions (7 din), recent actions shabdon me
+- [ ] Dispatch → done → **Flag for QA** → reason ke neeche likha ho "The teacher who wrote this audit sees this note on their Profile."
+
+Agar photo upload ya share me photo na aaye: Claude ko batayein, `docs/PROFILE-AUDIT.md` me F4 yahi hai.
+
 ## 5. Kya **mat** kariye
 
 - Keys, passwords, database URL kisi chat me paste mat kariye. Sirf Vercel aur Claude environment settings me daaliye. Galti se paste ho jaaye to Supabase me key **rotate** (nayi) kar lijiye.

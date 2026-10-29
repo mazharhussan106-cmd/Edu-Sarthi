@@ -180,6 +180,32 @@ export async function objectExists(key: string): Promise<boolean> {
   }
 }
 
+/// Size and type of a stored file, for checks after an upload: a signed URL
+/// lets the browser send anything, so what arrived is checked, not what was
+/// promised. Returns null when the file is missing, and "unknown" when the
+/// store cannot say (an older storage API), so the caller can decide.
+export async function objectInfo(key: string): Promise<{ size: number; contentType: string } | "unknown" | null> {
+  if (LOCAL_STORAGE) {
+    const full = localPath(key);
+    if (!full) return null;
+    try {
+      const { size } = await stat(full);
+      const ext = key.split(".").pop()?.toLowerCase();
+      return { size, contentType: ext === "webp" ? "image/webp" : ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "application/octet-stream" };
+    } catch {
+      return null;
+    }
+  }
+
+  try {
+    const { data, error } = await client().storage.from(BUCKET).info(key);
+    if (!error && data) return { size: data.size ?? 0, contentType: data.contentType ?? "" };
+    return (await objectExists(key)) ? "unknown" : null;
+  } catch {
+    return (await objectExists(key)) ? "unknown" : null;
+  }
+}
+
 /// Deletes stored files and returns the keys that could NOT be deleted.
 ///
 /// Best effort — one failed delete must not stop an account erasure — but the

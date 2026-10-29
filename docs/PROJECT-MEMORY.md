@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign planned and Phases 1–4 built, not merged yet; Phases 3–4 need Database setup right after merging, see "Student dashboard redesign"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -30,7 +30,7 @@ An English spoken-communication training platform: students record or upload, te
   - "Hide Hindi meanings" must **not** hide the Hindi-to-English practice questions. Their separate opt-in switch stays.
 - **Assistant's decisions, delegated by the owner on 28 Oct ("best jo hoga so karo"):**
   - A guest's progress can merge into an existing **student** account. Rule: the card with more reviews wins, and the account's card wins a tie.
-  - **No profile photo for now.** Teachers deliberately see students only by anonymous ID, a photo would break that, and many users may be minors with DPDP consent still open.
+  - ~~**No profile photo for now.**~~ **SUPERSEDED 29 Oct 2026 by the owner: photo upload is allowed** (see "Profile page" below and `docs/PROFILE-PLAN.md`). The reasons still shape it: teachers see students only by anonymous ID, and many users may be minors with DPDP consent still open, so who may see a photo is an open question there.
   - **No signed-in device list for now.** "Sign out of all devices" and the sign-out on a password or email change cover the need. A list needs a session table written on every page load.
   - **The app's screens stay in English.** It is an English-speaking course, Hindi help already sits where it matters (card meanings, Indian pronunciation), and translating every screen doubles the copy to maintain.
   - Revisit any of these if users ask.
@@ -511,6 +511,31 @@ The DPDP export now includes card progress and study history. Owner decided **no
 **Tested:** `tsc`, `next build`, local Postgres with all built-in cards loaded, Playwright at 390×844 and 1280×800 — every menu link answers 200, counts on /today and /my-cards match the fixture by hand, withdrawn-deck card hidden, guest has no AI link, teacher redirected from /today and /my-cards, sign-out from the menu ends the session, anchors land under the header. Not tested on a real phone or the live database.
 
 **Undecided:** "Hindi/English menu language" from the owner's list was not built: the UI language question (Hindi / English / Hinglish, which screens, who translates) is still open from 10 Oct. **Install app fixed (same day):** the menu row listened for Chrome's `beforeinstallprompt` only while the sheet was open, but the browser makes that offer once per page load, so on Android the row almost never appeared. Now an inline script in the root layout's `<head>` (`CAPTURE_INSTALL_JS`, `lib/installPrompt.ts`) keeps the offer on `window` from the start, and `components/layout/InstallApp.tsx` reads it whenever the menu opens. **Don't undo:** it is a plain `<script>`, not `next/script` `beforeInteractive` — that one runs only after the app's code downloads (tested: an offer at DOMContentLoaded was missed with it, caught with the plain script). It calls `preventDefault`, as the row always did, so **Chrome's own small install bar no longer pops up by itself**; installing is Menu → Install app, or Chrome's ⋮ menu. Owner may prefer Chrome's bar to keep showing: then drop `preventDefault` (whether the menu button still works then is not verified). If the install box fails to open, the row says to use the browser's ⋮ menu. **Later the same day the owner chose "Install the app" always visible at the top of the menu**: with no browser offer (iPhone, other browsers, offer already used) a tap shows the install steps instead; hidden only once installed. Tested with a simulated offer (Playwright): offer at load and at DOMContentLoaded, kept across in-app navigation, prompt once then the row hides, failure note, `appinstalled` hides the row, no row without an offer, iPhone shows the Share steps. Not tested on a real Android phone (headless Chrome never makes the offer).
+
+## Profile page (29 Oct 2026, branch `claude/busy-johnson-epz1lg`)
+
+Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oct). Full plan, research with sources, the list per role (S1–S11, T1–T7, A1–A6), build log, tests and the master prompt for a new chat: `docs/PROFILE-PLAN.md`. Mockup: `docs/profile-mockup.html`; built screenshots: `docs/profile-built-*.png`.
+- Owner's answers (29 Oct): all roles; **photo upload** (supersedes the 28 Oct "no photo" decision); add speaking scores, a practice calendar, a goal with a target date and a shareable progress card; plan and mockup first, then build after approval.
+- Owner's second answers (29 Oct):
+  - ~~**A practice day is a recording or a card answer**, everywhere (`lib/practiceDays.ts`).~~ **SUPERSEDED when `main` brought in the dashboard redesign (PR #27):** the owner had accepted the dashboard's rule in that chat on the same day: a streak day needs **10 XP**, with **streak freezes** (`lib/streak.ts`, `lib/xp.ts`, `lib/freeze.ts`). Both answers asked for one rule everywhere, so Profile now uses the dashboard's rule and `lib/practiceDays.ts` is gone. Profile and dashboard show the same streak, longest streak, badges and skill numbers.
+  - **Only the owner sees their photo**: teachers keep seeing STU IDs, and there is no approval queue.
+  - **Teachers see the QA notes on their own audits**, all notes from the last 90 days (owner, 29 Oct, audit F1). The admin's "Flag for QA" form says so.
+  - P1–P6 approved.
+- **Do not undo:**
+  - One streak rule for every page: the dashboard's (`lib/streak.ts`, with freezes from `lib/freeze.ts`).
+  - One badge list (`lib/badges.ts`): the dashboard plan's badges plus Profile's Goal set, Score up and Shared a deck. Both pages pass the same numbers.
+  - Photos are drawn again in the browser at 512 × 512 (no camera data) and are shown only on the owner's Profile.
+  - Streak badges read the longest streak.
+  - The share picture is made in the browser and never uploaded; it never shows the STU ID or the email.
+- The one schema change: `User.avatarKey` (nullable, additive). The goal date is the preference key `goalDate` (JSON).
+- Audit: `docs/PROFILE-AUDIT.md`. 10 of 13 findings are fixed; F4, F5 and F10 need the live site.
+- Browser tests: `scripts/profile-e2e/` (README inside). The phone checklist is `LIVE-TESTING-GUIDE.md` 4e.
+- `main` (dashboard redesign) was merged into the branch on 29 Oct to clear PR #28's conflict; what changed is in `docs/PROFILE-PLAN.md` → "Merge with the dashboard redesign".
+- **Next action (owner):**
+  1. Merge.
+  2. Run **Actions → Database setup** straight after (the Profile page reads `avatarKey`; the same run adds the dashboard's freeze tables if it has not run since PR #27).
+  3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
+  4. Test on a phone.
 
 ## Starting a new chat
 

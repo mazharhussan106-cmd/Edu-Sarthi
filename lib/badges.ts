@@ -11,6 +11,10 @@
 // Streak badges count learning days (any study worth 10 XP, lib/streak), not
 // only recordings, and are earned from the longest streak, so one missed day
 // does not take a badge away.
+//
+// The list is the dashboard plan's (docs/DASHBOARD-PLAN.md) plus three from
+// the Profile plan (docs/PROFILE-PLAN.md, P6): Goal set, Score up and Shared
+// a deck. Both pages read this one list, so they always agree.
 
 export type BadgeStats = {
   submissions: number;
@@ -24,6 +28,13 @@ export type BadgeStats = {
   bestDayXp: number;
   /// Weeks that met the weekly goal, counted as they are settled (lib/freeze).
   weeksMet: number;
+  /// A goal chosen on the Profile (preferences.goal not "unset").
+  goalSet: boolean;
+  /// Decks with a share link or in the library.
+  sharedDecks: number;
+  /// The biggest rise in any skill from the first audit to the latest; 0 with
+  /// fewer than two audits.
+  bestScoreGain: number;
 };
 
 export type Badge = {
@@ -54,6 +65,9 @@ const RULES: readonly Rule[] = [
   { id: "first-week", label: "Weekly goal met", hint: "Meet your weekly goal once", need: 1, unit: "week", have: (s) => s.weeksMet },
   { id: "four-weeks", label: "Four good weeks", hint: "Meet your weekly goal four times", need: 4, unit: "week", have: (s) => s.weeksMet },
   { id: "deck-maker", label: "Deck maker", hint: "Make your own deck", need: 1, unit: "deck", have: (s) => s.decks },
+  { id: "goal-set", label: "Goal set", hint: "Choose what you are practising for on your Profile", need: 1, unit: "goal", have: (s) => (s.goalSet ? 1 : 0) },
+  { id: "score-up", label: "Score up", hint: "Raise any skill by a point since your first audit", need: 1, unit: "point", have: (s) => Math.max(0, Math.floor(s.bestScoreGain)) },
+  { id: "deck-sharer", label: "Shared a deck", hint: "Share a deck by link or in the library", need: 1, unit: "deck", have: (s) => s.sharedDecks },
 ];
 
 export function badgesFor(s: BadgeStats): Badge[] {

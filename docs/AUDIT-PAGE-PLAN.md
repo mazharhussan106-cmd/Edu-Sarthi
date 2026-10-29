@@ -167,4 +167,19 @@ The owner said "start building next phase"; the plan's only items left were the 
 
 Tested (same local setup, production build): best/equal/none across 7 audits in date order, a first audit with no star, the line under both buttons, a student at the limit, plus the 60 earlier checks again — 69 passed. `tsc` and `next build` pass.
 
-Nothing from the plan is left to build. Still open: the owner's confirmation of the band words and meaning lines, and the two pre-existing items above (Badge contrast in light, not-found status 200).
+Nothing from the plan is left to build. Still open: the owner's confirmation of the band words and meaning lines, and the pre-existing not-found status 200 (Badge contrast: fixed in phase 3).
+
+## Phase 3: badge contrast (29 Oct 2026)
+
+Owner chose "Badge contrast fix" as the next phase. Cause: in light, `--color-success` (#1a7f45) and `--color-error` (#c73a3a) were about 4.3:1 as 12px text on Badge's own tint, short of 4.5:1 (success was 4.3:1 even plain on paper-dim). Lowering the tint instead would have needed about 4% to pass, which leaves the pill barely visible, so the colours were darkened, as phase L did for sepia success.
+
+Changed (`app/globals.css` only; Badge itself is unchanged):
+- Light: success #1a7f45 → #156f3c, error #c73a3a → #b02f2f. Worst case on paper, surface and paper-dim, tinted: 4.74 and 4.52.
+- Sepia: error #b03a2e → #a5352a (was 4.31 on its tint by our calculation; now 4.75).
+- Not changed: `--color-tag-green` / `--color-tag-red` (card labels, not states), dark, midnight and high contrast (already above 4.5).
+
+Effect is site-wide and only darker: every success/error text, badge, bar and button in light (and sepia error). White on these is 6.2–6.7:1.
+
+Tested: axe colour-contrast on 10 pages (audit x2, My Audits, dashboard, progress, history; teacher queue and students; admin overview and users) in all five themes, 50 of 50 runs clean apart from the exempt wordmark; the audit page suite again with the badge exemption removed, 69 passed. `next build` passes.
+
+Still open: the wordmark (logotype, exempt); the not-found page returns HTTP 200 (pre-existing).

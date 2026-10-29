@@ -97,6 +97,7 @@ export function StudentProfile({ data }: { data: Data }) {
       <GoalCard
         goal={prefs.goal}
         level={prefs.level}
+        goalDate={prefs.goalDate}
         recordings={data.recordingsToday}
         recordingGoal={guest ? 0 : DAILY_GOAL}
         newCards={data.newCardsToday}

@@ -13,6 +13,7 @@ import { z } from "zod";
 import { CARD_COLOR_VALUES, type CardColor } from "@/lib/cardColors";
 import { TEXT_SIZE_VALUES } from "@/lib/textSize";
 import { VOICE_ACCENT_VALUES, VOICE_SPEED_VALUES } from "@/lib/speech";
+import { GOAL_DATE_SCHEMA } from "@/lib/goalDate";
 import { isReminderHour, MAIN_REMINDER_HOUR } from "@/lib/reminderTimes";
 
 /// Self-described on the profile, never tested. "unset" is a real value so a
@@ -45,6 +46,9 @@ export const PREFERENCE_SCHEMA = z.object({
   reminderHour: z.number().int().refine(isReminderHour, "Choose one of the reminder times."),
   level: z.enum(LEVELS.map((l) => l.value) as [string, ...string[]]),
   goal: z.enum(GOALS.map((g) => g.value) as [string, ...string[]]),
+  // The day the goal is for (lib/goalDate), "" for none. Only counted down on
+  // the profile; nothing else reads it.
+  goalDate: GOAL_DATE_SCHEMA,
   dataSaver: z.boolean(),
   hideHindi: z.boolean(),
   autoSpeak: z.boolean(),
@@ -79,6 +83,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   reminderHour: MAIN_REMINDER_HOUR,
   level: "unset",
   goal: "unset",
+  goalDate: "",
   dataSaver: false,
   hideHindi: false,
   // Off by default for the same reason as autoplayAudit: a phone that speaks

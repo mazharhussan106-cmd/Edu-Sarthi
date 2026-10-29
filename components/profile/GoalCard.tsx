@@ -9,6 +9,7 @@
 
 import { Card, CardTitle } from "@/components/ui/Card";
 import { GoalEditor } from "@/components/profile/GoalEditor";
+import { daysUntil, goalDateLabel } from "@/lib/goalDate";
 import { GOALS, LEVELS } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 
@@ -28,9 +29,17 @@ function PlanBar({ label, done, of }: { label: string; done: number; of: number 
   );
 }
 
+function countdown(days: number): string {
+  if (days > 1) return `${days} days left`;
+  if (days === 1) return "Tomorrow";
+  if (days === 0) return "Today. All the best!";
+  return "This day has passed. Set your next one.";
+}
+
 export function GoalCard({
   goal,
   level,
+  goalDate,
   recordings,
   recordingGoal,
   newCards,
@@ -38,16 +47,18 @@ export function GoalCard({
 }: {
   goal: string;
   level: string;
+  goalDate: string;
   recordings: number;
   recordingGoal: number;
   newCards: number;
   newPerDay: number;
 }) {
+  const left = goalDate ? daysUntil(goalDate) : null;
   return (
     <Card id="my-goal" className="scroll-mt-20 p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3">
         <CardTitle>My goal</CardTitle>
-        <GoalEditor goal={goal} level={level} />
+        <GoalEditor goal={goal} level={level} goalDate={goalDate} />
       </div>
       <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
         <dt className="text-ink-muted">Practising for</dt>
@@ -56,6 +67,17 @@ export function GoalCard({
         <dd className="font-medium text-ink">
           {labelOf(LEVELS, level)}
           {level !== "unset" ? <span className="font-normal text-ink-muted"> (my own pick)</span> : null}
+        </dd>
+        <dt className="text-ink-muted">Target date</dt>
+        <dd className="font-medium text-ink">
+          {left === null ? (
+            "Not set"
+          ) : (
+            <>
+              {goalDateLabel(goalDate)}
+              <span className={cn("block text-xs font-normal", left < 0 ? "text-ink-muted" : "text-accent-dark")}>{countdown(left)}</span>
+            </>
+          )}
         </dd>
       </dl>
       <div className="mt-4 flex flex-col gap-2">

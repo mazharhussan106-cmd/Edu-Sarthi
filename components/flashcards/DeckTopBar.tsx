@@ -1,17 +1,32 @@
-// Owns the top of the Flashcard tab: one scrolling row with the card kinds
-// (Words, Chunk, Grammar, Support), the "skipped" chip, the student's remark
-// lists and today's counts; on the Chunk tab, a second row with the chunk
-// types (Frames, Prepositions, …), and on the Support tab a second row with
-// the channels (Voice, Chat, Email) and levels.
+// Owns the filters above a card on the Flashcard tab, in layers:
+//   row 1  the study area, English · My decks (AreaTabs), with today's count
+//          at the right end
+//   row 2  the card kind: Words · Chunk · Grammar · Support
+//   row 3  the open kind's own filters, as before (word sections on Words,
+//          chunk types on Chunk, channel and level on Support; none on
+//          Grammar), then "⏭ N skipped" while there are skipped cards, then
+//          the remark lists ⭐ ❤️ ❓ 💯
 //
-// Search moved to the header (HeaderSearch). Kept to as few short rows as possible so the card gets most of a phone
-// screen. A server component: it only links, it never fetches.
+// Each row is short and scrolls sideways on its own, so a narrow phone hides
+// the end of one row instead of everything after the card kinds. Three rows,
+// not four: the count shares the tabs' row so the card loses as little height
+// as possible. Links to other pages (Explore, Library, Institute) live in the
+// ☰ menu, not here: a row of filters should filter, not take the student
+// somewhere else.
+//
+// Search is in the header (HeaderSearch). A server component: it only links,
+// it never fetches.
 
 import Link from "next/link";
 
+import { AreaTabs } from "@/components/flashcards/AreaTabs";
+import { DeckCount, DeckLists, type Counts, type ListKey } from "@/components/flashcards/DeckLists";
+import { FADE_ROW } from "@/components/flashcards/fadeRow";
 import { CHUNK_TYPES } from "@/lib/chunkCard";
 import { SUPPORT_CHANNELS, SUPPORT_LEVELS } from "@/lib/supportCard";
 import { cn } from "@/lib/utils";
+
+export { DECK_LISTS, type ListKey } from "@/components/flashcards/DeckLists";
 
 export const DECK_KINDS = [
   { value: "words", label: "Words", kind: "WORD", ready: true, noun: "word" },
@@ -21,20 +36,14 @@ export const DECK_KINDS = [
 ] as const;
 export type DeckKind = (typeof DECK_KINDS)[number];
 
-export const DECK_LISTS = [
-  { value: "important", label: "⭐ Important" },
-  { value: "favourite", label: "❤️ Favourite" },
-  { value: "doubt", label: "❓ Doubt" },
-  { value: "confident", label: "💯 Confident" },
-] as const;
-export type ListKey = (typeof DECK_LISTS)[number]["value"];
-
-type Counts = { due: number; newLeft: number; known: number; total: number; lists: Record<ListKey, number> };
-
 const chip = "shrink-0 rounded-full border px-3 py-1 text-[13px] font-medium";
-const subChip = "shrink-0 rounded-full px-2.5 py-0.5 text-xs";
+// py-1 makes these 24px tall, the WCAG 2.2 minimum for a tap target; they
+// were 20px before.
+const subChip = "shrink-0 rounded-full px-2.5 py-1 text-xs";
 const subOn = "bg-tag-navy font-medium text-surface";
 const subOff = "bg-paper-dim text-ink-muted hover:text-ink";
+const group = "flex shrink-0 gap-1";
+const divider = <span aria-hidden="true" className="mx-0.5 h-4 w-px shrink-0 bg-border-strong" />;
 
 /// The Support tab's link for a channel and level. Tapping the chip that is
 /// already on turns that filter off, so "all levels" needs no extra chip.
@@ -67,133 +76,108 @@ export function DeckTopBar({
   skipHref: string;
   counts: Counts | null;
 }) {
+  const hasFilters = k.value === "words" || k.value === "chunks" || k.value === "support";
   return (
     <>
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-        <nav aria-label="Card kind" className="flex shrink-0 gap-1.5">
-          {DECK_KINDS.map((x) => (
-            <Link
-              key={x.value}
-              href={`/flashcards?kind=${x.value}`}
-              aria-current={x.value === k.value ? "page" : undefined}
-              className={cn(chip, x.value === k.value ? "border-accent bg-accent text-on-accent" : "border-border-strong text-ink hover:bg-hover")}
-            >
-              {x.label}
-              {!x.ready ? <span className="ml-1 text-[10px] opacity-70">soon</span> : null}
-            </Link>
-          ))}
-        </nav>
-        {k.value === "words" ? (
-          <>
-            <Link
-              href="/flashcards/sections"
-              className={cn(chip, section ? "border-accent bg-accent/12 text-accent" : "border-border-strong text-ink hover:bg-hover")}
-            >
-              {section ? `📂 ${section.label}` : "📂 Sections"}
-            </Link>
-            {section ? (
-              <Link href={`/search?sec=${section.key}`} aria-label={`Search in ${section.label}`} className={cn(chip, "border-border-strong text-ink hover:bg-hover")}>
-                🔍 Search here
-              </Link>
-            ) : null}
-            {section ? (
-              <Link href="/flashcards?kind=words" aria-label="Study all words again" className={cn(chip, "border-border-strong text-ink-muted hover:bg-hover")}>
-                ✕ All words
-              </Link>
-            ) : null}
-          </>
-        ) : null}
-        {/* After the card kinds and before the lists, where the owner placed
-            it. On a narrow phone the row scrolls sideways to reach it. */}
-        {/* Deck library: the student's own decks, the public library and the
-            institute. Placed after the card kinds, before the lists. */}
-        {[
-          { href: "/decks", label: "📚 My decks" },
-          { href: "/explore", label: "🧭 Explore" },
-          { href: "/library", label: "🌐 Library" },
-          { href: "/institute", label: "🏫 Institute" },
-        ].map((l) => (
-          <Link key={l.href} href={l.href} className="shrink-0 rounded-full border border-border-strong px-3 py-1 text-[13px] font-medium text-ink hover:bg-hover">
-            {l.label}
+      <AreaTabs current="english" aside={counts ? <DeckCount counts={counts} /> : null} />
+
+      <nav aria-label="Card kind" className={cn("mt-1 flex gap-1.5 overflow-x-auto", FADE_ROW)}>
+        {DECK_KINDS.map((x) => (
+          <Link
+            key={x.value}
+            href={`/flashcards?kind=${x.value}`}
+            aria-current={x.value === k.value ? "page" : undefined}
+            className={cn(chip, x.value === k.value ? "border-accent bg-accent text-on-accent" : "border-border-strong text-ink hover:bg-hover")}
+          >
+            {x.label}
+            {!x.ready ? <span className="ml-1 text-[10px] opacity-70">soon</span> : null}
           </Link>
         ))}
-        {skipCount ? (
-          <Link href={skipHref} className="shrink-0 rounded-full border border-saffron px-2 py-1 text-xs font-medium text-ink hover:bg-hover">
-            ⏭ {skipCount} skipped · show again
-          </Link>
-        ) : null}
-        {counts ? (
-          <>
-            <span aria-hidden="true" className="mx-0.5 h-5 w-px shrink-0 bg-border-strong" />
-            <nav aria-label="My lists" className="flex shrink-0 gap-1">
-              {DECK_LISTS.map((l) => (
+      </nav>
+
+      {hasFilters || skipCount || counts ? (
+        <div className={cn("flex items-center gap-1 overflow-x-auto", FADE_ROW)}>
+          {k.value === "words" ? (
+            <div className={group}>
+              <Link href="/flashcards/sections" className={cn(subChip, section ? subOn : subOff)}>
+                {section ? `📂 ${section.label}` : "📂 Sections"}
+              </Link>
+              {section ? (
+                <Link href={`/search?sec=${section.key}`} aria-label={`Search in ${section.label}`} className={cn(subChip, subOff)}>
+                  🔍 Search here
+                </Link>
+              ) : null}
+              {section ? (
+                <Link href="/flashcards?kind=words" aria-label="Study all words again" className={cn(subChip, subOff)}>
+                  ✕ All words
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
+
+          {k.value === "chunks" ? (
+            <nav aria-label="Chunk type" className={group}>
+              {[{ value: null, label: "All" }, ...CHUNK_TYPES].map((t) => (
                 <Link
-                  key={l.value}
-                  href={list === l.value ? base : `${base}&list=${l.value}`}
-                  aria-current={list === l.value ? "page" : undefined}
-                  aria-label={`${l.label} list, ${counts.lists[l.value]} ${k.noun}s`}
-                  className={cn(
-                    "shrink-0 rounded-full px-2 py-1 text-xs",
-                    list === l.value ? "bg-accent/12 font-medium text-accent" : "bg-paper-dim text-ink-muted hover:text-ink",
-                  )}
+                  key={t.value ?? "all"}
+                  href={t.value ? `/flashcards?kind=chunks&type=${t.value}` : "/flashcards?kind=chunks"}
+                  aria-current={type === t.value ? "page" : undefined}
+                  className={cn(subChip, type === t.value ? subOn : subOff)}
                 >
-                  {l.label.split(" ")[0]} <span className="font-mono">{counts.lists[l.value]}</span>
+                  {t.label}
                 </Link>
               ))}
             </nav>
-            <p className="ml-1 shrink-0 text-xs text-ink-muted">
-              <b className="font-mono text-ink">{counts.due}</b> due · <b className="font-mono text-ink">{counts.newLeft}</b> new ·{" "}
-              <b className="font-mono text-ink">{counts.known}</b>/{counts.total} known
-            </p>
-          </>
-        ) : null}
-      </div>
+          ) : null}
 
-      {k.value === "chunks" ? (
-        <nav aria-label="Chunk type" className="mt-1 flex gap-1 overflow-x-auto pb-1 [scrollbar-width:none]">
-          {[{ value: null, label: "All" }, ...CHUNK_TYPES].map((t) => (
-            <Link
-              key={t.value ?? "all"}
-              href={t.value ? `/flashcards?kind=chunks&type=${t.value}` : "/flashcards?kind=chunks"}
-              aria-current={type === t.value ? "page" : undefined}
-              className={cn(
-                subChip,
-                type === t.value ? subOn : subOff,
-              )}
-            >
-              {t.label}
-            </Link>
-          ))}
-        </nav>
-      ) : null}
+          {k.value === "support" ? (
+            <>
+              <nav aria-label="Support channel" className={group}>
+                {SUPPORT_CHANNELS.map((c) => (
+                  <Link
+                    key={c.value}
+                    href={supportHref(channel === c.value ? null : c.value, level)}
+                    aria-current={channel === c.value ? "page" : undefined}
+                    className={cn(subChip, channel === c.value ? subOn : subOff)}
+                  >
+                    {c.label}
+                  </Link>
+                ))}
+              </nav>
+              {divider}
+              <nav aria-label="Support level" className={group}>
+                {SUPPORT_LEVELS.map((l) => (
+                  <Link
+                    key={l.value}
+                    href={supportHref(channel, level === l.value ? null : l.value)}
+                    aria-current={level === l.value ? "page" : undefined}
+                    className={cn(subChip, level === l.value ? subOn : subOff)}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </nav>
+            </>
+          ) : null}
 
-      {k.value === "support" ? (
-        <div className="mt-1 flex items-center gap-1 overflow-x-auto pb-1 [scrollbar-width:none]">
-          <nav aria-label="Support channel" className="flex shrink-0 gap-1">
-            {SUPPORT_CHANNELS.map((c) => (
-              <Link
-                key={c.value}
-                href={supportHref(channel === c.value ? null : c.value, level)}
-                aria-current={channel === c.value ? "page" : undefined}
-                className={cn(subChip, channel === c.value ? subOn : subOff)}
-              >
-                {c.label}
+          {skipCount ? (
+            <>
+              {hasFilters ? divider : null}
+              {/* 3px, not py-1: with its 1px border this is the same 24px as
+                  the chips beside it, so the row (and the card) does not
+                  jump when the first card is skipped. */}
+              <Link href={skipHref} className="shrink-0 rounded-full border border-saffron px-2 py-[3px] text-xs font-medium text-ink hover:bg-hover">
+                ⏭ {skipCount} skipped · show again
               </Link>
-            ))}
-          </nav>
-          <span aria-hidden="true" className="mx-0.5 h-4 w-px shrink-0 bg-border-strong" />
-          <nav aria-label="Support level" className="flex shrink-0 gap-1">
-            {SUPPORT_LEVELS.map((l) => (
-              <Link
-                key={l.value}
-                href={supportHref(channel, level === l.value ? null : l.value)}
-                aria-current={level === l.value ? "page" : undefined}
-                className={cn(subChip, level === l.value ? subOn : subOff)}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </nav>
+            </>
+          ) : null}
+
+          {counts ? (
+            <>
+              {hasFilters || skipCount ? divider : null}
+              <DeckLists counts={counts} noun={k.noun} list={list} base={base} />
+            </>
+          ) : null}
         </div>
       ) : null}
     </>

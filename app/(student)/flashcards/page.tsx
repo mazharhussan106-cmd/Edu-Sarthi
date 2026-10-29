@@ -168,7 +168,6 @@ export default async function FlashcardsPage({
             nextHref={inList ? listNextHref(inList) : withMore}
             skip={skip}
             cardColor={cardColor}
-            tallTop={k.kind === "CHUNK" || k.kind === "SUPPORT"}
             support={word.kind === "SUPPORT"}
             autoSpeak={prefs.autoSpeak}
             chunk={

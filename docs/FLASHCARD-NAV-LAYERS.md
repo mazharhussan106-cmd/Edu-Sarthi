@@ -1,119 +1,99 @@
-# Flashcard tab navigation in layers — plan
+# Flashcard tab filters in layers — plan and build record
 
-Status: **PLAN, waiting for the owner's approval. Nothing is built yet.**
-Branch `claude/modest-darwin-zfo3g1`, 29 Oct 2026.
+Status: **Phase 1 BUILT and tested locally, not merged.** Branch
+`claude/modest-darwin-zfo3g1`, 29 Oct 2026.
 
-Scope of this chat: **only the filter bar above the card** (today
-`components/flashcards/DeckTopBar.tsx`). The card itself does not change.
-The Library is being built in another chat, so this chat does not touch
-`/library`, `/explore`, `/institute` or deck access rules.
+Scope of this chat: **only the filters above the card** (`DeckTopBar` and its
+parts). The card itself does not change. The Library is being built in another
+chat, so this chat does not touch `/library`, `/explore`, `/institute` or deck
+access rules.
 
 ## Owner's decisions (29 Oct)
 
 | # | Decision | Status |
 |---|---|---|
-| 1 | Filters in three layers: main section → inside the section → a filter of that | ACTIVE |
-| 2 | Top layer sections: English, Tech, My decks (Library later, from its own chat) | ACTIVE |
-| 3 | Under English: Words · Chunk · Grammar (the owner's "sentence" meant Grammar), plus Support, which already exists | ACTIVE |
-| 4 | The third layer opens on tap; it is not always on screen | ACTIVE |
-| 5 | Users group decks in **playlists**: one deck can be in many playlists | ACTIVE; built later, not in this chat (database change) |
-| 6 | Tech holds everything tech-related | ACTIVE; which decks count is still open (below) |
+| 1 | Filters in layers: main section → inside the section → that kind's own filters | ACTIVE |
+| 2 | Top layer: English, Tech, My decks (Library later, from its own chat) | ACTIVE; Tech not built yet |
+| 3 | Under English: Words · Chunk · Grammar (the owner's "sentence" meant Grammar), plus Support, which already existed | ACTIVE, built |
+| 4 | Third layer opens on tap (a Filter sheet) | **SUPERSEDED the same day:** "Layer 3 plan se hata do, build nahi karna hai, layer 2 tak hi sahi hai". No sheet. |
+| 5 | Users group decks in **playlists**: one deck can be in many playlists | ACTIVE; a later database change, not in this chat |
+| 6 | Tech holds everything tech-related | ACTIVE; which decks count is still open |
 | 7 | The card does not change | ACTIVE |
+| 8 | Where the count, lists, skipped and deck links go: Claude to recommend | Done, see below |
 
-## What exists today
+Interpretation recorded so the next chat does not undo it: removing "layer 3"
+was read as **do not build the sheet**. The filters that already existed (word
+sections, chunk types, Support channel and level) were kept where they were,
+in the row right above the card. Removing them would be a one-file change in
+`DeckTopBar.tsx` if the owner wants it.
 
-One sideways-scrolling row: card kinds · Words-only section chips · deck links
-(My decks, Explore, Library, Institute) · "⏭ N skipped" · remark lists
-(⭐ ❤️ ❓ 💯) · today's count. A second row only on Chunk (types) and Support
-(channel + level). During "Study this list", `ListSessionBar` replaces it (keep
-that; see PROJECT-MEMORY "Don't undo").
-
-## Target layout (phone)
+## What was built
 
 ```
-English   Tech   My decks                 ← layer 1: tabs, underline
+English   My decks          0 due · 10 new · 0/1183 known   ← row 1
 ━━━━━━━
-(Words) [Chunk] (Grammar) (Support) │ ⚙ 2 ← layer 2 chips; Filter button pinned right
-Frames ✕            12 due · 10 new · 0/1183 known   ← status line
-FRONT SIDE · RECOGNITION          1 / 3   ← card, unchanged
+(Words) [Chunk] (Grammar) (Support)                         ← row 2
+[All] Frames  Prepositions  Collocations … │ ⭐ 0 ❤️ 0 ❓ 0 💯 0   ← row 3
+FRONT SIDE · RECOGNITION                              1 / 3 ← card, unchanged
 ```
 
-Filter button → `components/ui/Sheet` (bottom sheet on a phone, centred box
-from sm up). Per tab:
+- Row 1, `components/flashcards/AreaTabs.tsx`: underline tabs, links with
+  `aria-current`. Only areas that work today are listed (an empty Tech tab
+  would promise what is not there). Today's count sits at the row's right end
+  (`DeckCount`, `components/flashcards/DeckLists.tsx`); on a 360px phone it
+  wraps "0/1183 known" onto a second line inside the same height.
+- Row 2: the four card kinds, as before.
+- Row 3: the kind's own filters as before, then "⏭ N skipped" while there are
+  skipped cards, then the remark lists (`DeckLists`). Small chips now 24px tall.
+- Explore, Library and Institute are no longer in the bar; they are in the ☰
+  menu. My decks shows row 1 to students, and its "← Word cards" link is gone.
+- `components/flashcards/fadeRow.ts`: every scrolling row fades at its right
+  edge and leaves room for the keyboard focus ring (it used to be cut off).
+- `FlashcardDeck`: one computer-width card height for every tab,
+  `calc(100dvh-19rem)`; the `tallTop` prop is gone.
 
-- **Words:** Level (A1 · A2 · B1+) and a link "All sections →" to the existing
-  sections page (30 sections is too many for a sheet). An active section shows
-  "🔍 Search here".
-- **Chunk:** Type (All · Frames · Prepositions · Collocations · Utterances · Polywords).
-- **Grammar:** Topic (new filter; the cards' `details.group`, about 20 groups).
-- **Support:** Channel (Voice · Chat · Email) and Level (Basic · Intermediate · Advanced).
-- **Every tab:** My lists ⭐ ❤️ ❓ 💯 with counts (open the list, as today).
+### Changed from the plan while building, and why
 
-Status line: each active filter with ✕ (a link without that filter), the
-skipped chip only when there are skipped cards, then today's count.
+- The plan had a separate status line for the count and lists. Measured, four
+  rows cost 80–108px of card height on a phone. The count moved beside the
+  tabs and the lists to the end of row 3, which brought it to 44–72px.
+- The computer-width card height had to change (Known / Unknown ended 44–76px
+  below an 800px window). Only the box's height changed, not the card.
 
-Deck links leave the row: My decks becomes a layer-1 tab; Explore, Library and
-Institute stay in the ☰ menu until the Library chat decides their place.
+### Measured (local Postgres, Playwright)
 
-## Rules the build must follow
-
-- Server components; only the sheet's open/close is client code.
-- Filters stay in the URL (`kind`, `type`, `ch`, `lv`, `sec`, `pack`, new
-  `topic`), so back, refresh and sharing keep working. No database change.
-- Colours only through tokens. Chips at least 32px tall (today's second-row
-  chips are about 20px). Links keep `aria-current`; each nav has an
-  `aria-label`; the Filter button says how many filters are on.
-- Layer-2 chips scroll sideways with a fade on the edge that still has chips;
-  the Filter button never scrolls away (a 360px phone has about 336px of room).
-- Cost: three rows instead of one or two. The card gets an estimated 40–65px
-  shorter on a phone.
-
-## Phase 1 — English (this chat). 13 files, so this plan needs approval
-
-| Step | File | What |
+| Width | Before | After |
 |---|---|---|
-| 1 | `lib/filterNav.ts` (new) | The layers as data: sections, kinds, each kind's filter groups, link builders, the list of active filters. Pure, no database |
-| 2 | `lib/flashcards.ts` | `grammarTopics()`: the distinct Grammar groups, one small SQL query, only on the Grammar tab |
-| 3 | `components/ui/SheetLink.tsx` (new, client) | A link that closes the sheet it sits in |
-| 4 | `components/flashcards/nav/AreaTabs.tsx` (new) | Layer 1 |
-| 5 | `components/flashcards/nav/KindChips.tsx` (new) | Layer 2 and the pinned Filter button |
-| 6 | `components/flashcards/nav/FilterSheet.tsx` (new) | Layer 3, the sheet's groups |
-| 7 | `components/flashcards/nav/StatusLine.tsx` (new) | Active filters, skipped, today's count |
-| 8 | `components/flashcards/DeckTopBar.tsx` | Rewritten to put the four together; keeps `DECK_KINDS` and `DECK_LISTS` |
-| 9 | `app/(student)/flashcards/page.tsx` | Read `topic`, filter Grammar by it, pass the new props |
-| 10 | `app/(shared)/decks/page.tsx` | Layer 1 on top of My decks, so the tabs stay in place |
-| 11 | `app/(shared)/help/page.tsx` | The help answer that says the lists are "above the card" |
-| 12 | `docs/FEATURE-MAP.md` | Where the lists and filters now are |
-| 13 | `docs/PROJECT-MEMORY.md` and this file | What was built and what is open |
+| 390px phone, card height | 571px (Words, Grammar), 543px (Chunk, Support) | 499px on every tab |
+| 360px phone, card height | — | 498px on every tab; all four kinds fit; no sideways page scroll |
+| 1280 × 800, bottom of Known | 800–804px | 796px |
 
-Testing before the push: local Postgres + dev server + Playwright at 360, 390
-and 448px wide and on a computer; every filter of every tab gives the right
-cards; back and refresh; a guest account; "Study this list" still replaces the
-bar; axe in every theme; `tsc` and `next build`.
+### Tested
 
-## Phase 2 — Tech (this chat, after the Library chat is merged)
+76 browser checks at 360 and 390px: every tab and filter link, Frames and
+Support filters serve matching cards, tapping an active Support chip turns it
+off, word sections, skip and "show again", remark list open and back, My decks
+and back, focus ring room, Study this list replacing the bar, guest, teacher
+(no tabs on My decks), no page errors. axe in all five themes on four pages:
+only "page has no h1" on `/flashcards`, which was already there before this
+branch. `tsc` and `next build` pass.
 
-Layer 2 = tech subjects (Excel, Python, SQL, Linux, Docker, Cloud, …) taken from
-deck tags; the content is the list of matching decks; layer 3 = chapters
-(`Word.category` on deck cards). Waits for the Library chat so the two chats do
-not edit the same deck files, and so Tech shows decks by the Library's rules.
+## Still to do
 
-## Phase 3 — Playlists (another chat)
-
-A new table for playlists and a link table for "deck in playlist" (many to
-many). Additive: no existing data is lost. Then My decks' layer 2 becomes
-All · each playlist · + New playlist.
-
-## Open questions
-
-- Which decks count as Tech: only EduSarthi's own decks, or also students' and
-  teachers' decks with a tech tag? Needed before Phase 2.
-- The exact list of tech subjects (the 21 FDE decks plus Excel, Python, SQL).
-- Which tech decks are in the live database (not checked from here).
+- **Tech** (this chat, after the Library chat is merged): tech subjects from
+  deck tags as row 2, the matching decks as content, chapters
+  (`Word.category` on deck cards) as filters. Open: only EduSarthi's own tech
+  decks, or students' and teachers' tech-tagged decks too? Which tech decks
+  are in the live database was not checked from here.
+- **Playlists** (another chat): a playlist table and a "deck in playlist" link
+  table (many to many). Additive, no data lost. Then My decks' row 2 becomes
+  All · each playlist · + New playlist.
+- Not asked for, noted only: `/flashcards` has no `<h1>` (axe best practice).
 
 ## Sources used for the recommendation
 
 Android Developers, Tabs (primary and secondary tabs); Apple HIG, Segmented
 controls; Material Design 2, Tabs (fixed vs scrollable); Baymard Institute,
-horizontal tabs on mobile; eBay Playbook, Filter chip; SAP Fiori, Filter
-feedback bar; DevExpress and Bright HR filtering guides; W3C, WCAG 2.2 SC 2.5.8.
+horizontal tabs on mobile; eBay Playbook, Filter chip (do not navigate with
+filter chips); SAP Fiori, Filter feedback bar; DevExpress and Bright HR
+filtering guides; W3C, WCAG 2.2 SC 2.5.8 (24px targets).

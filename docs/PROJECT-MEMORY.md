@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"; 29 Oct: student audit page redesign, see its section). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 29 Oct 2026 (flashcard filter bar in layers, built and not merged, see "Flashcard filter bar in layers"; before that 28 Oct: library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"; 29 Oct: student audit page redesign, see its section). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -10,6 +10,7 @@ An English spoken-communication training platform: students record or upload, te
 
 | Branch / chat | What it built | State |
 |---|---|---|
+| `modest-darwin` — "Flashcard filter bar" | The filters above the card in layers: English · My decks tabs, card kinds, the old filters, count beside the tabs (`docs/FLASHCARD-NAV-LAYERS.md`) | Built and tested locally, **not merged** |
 | `festive-thompson` — "GitHub push" | WordMaster 2000: 2,227 words with 56 fields each, Excel files and tools in `content/wordmaster-2000/` | In `main` |
 | `ecstatic-mccarthy` — "App image plan overview" | **Chunk (1,183) and Grammar (247) cards on the same 3-side card** (`docs/CHUNK-PLAN.md`), word and chunk data audits, and — from its own status line — the flashcard-maker test decks (Physics 8, 1857 Revolt 9, Photosynthesis 5 cards: built, checked, awaiting a push decision). Its PR #1 is in `main` (git history there shows the word-card redesign, themes, card colours, the "Database setup" button and the live-testing guide; some of that may come from earlier chats) | The Chunk/Grammar commits were **not** in `main` until they were merged into `happy-galileo` on 6 Oct |
 | `trusting-noether` — "Live phone testing setup" | Bulk-loading words so the database setup finishes in time (PR #2); its chat title is live phone testing. Last question it asked the owner: **Vercel or Hostinger for hosting? (unanswered)** | In `main` (PR #2) |
@@ -40,6 +41,12 @@ An English spoken-communication training platform: students record or upload, te
   - Rows are grouped under small headings (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share).
   - The header's ⚙ Settings is a **link to `/settings`** for every signed-in person. There is no settings dropdown any more, so Sign out also has a row in Settings (it stays in the ☰ menu too).
 - **Owner's decisions, 29 Oct 2026 (student dashboard):** the redesign covers the **student** dashboard only (teacher and admin later, if at all); the page opens on **today's work**, with progress and charts lower or on the Progress page; gamification is **medium** — streak, daily goal ring, XP, a level, weekly goal, streak freeze, badges — and **no leaderboard**; the design is agreed first and built later in phases. Second round the same day: every recommendation accepted (the XP level is called **Stage**; a streak day needs **10 XP**; daily goal 20/40/60/100 XP, default 40; weekly goal default 5 days; freezes earned, at most 2, new accounts start with 1; deck cards earn XP; guests get streak and XP), except that **the score trend chart stays on the dashboard**. XP is for effort only, never for audit scores. Details: `docs/DASHBOARD-PLAN.md`.
+
+- **Owner's decisions, 29 Oct 2026 (flashcard filter bar, `docs/FLASHCARD-NAV-LAYERS.md`):**
+  - The filters above the card go in **layers**: study area (English · My decks; Tech later) → card kind (Words · Chunk · Grammar · Support) → that kind's own filters. **No tap-to-open "Filter" sheet** (the owner took it out of the plan: "layer 2 tak hi sahi hai"). The card itself does not change.
+  - Users will group decks in **playlists**: one deck in many playlists (a later database change, not built).
+  - **Tech** holds everything tech-related; built after the Library chat merges.
+  - Explore, Library and Institute are no longer chips on the Flashcard tab (they stay in the ☰ menu). This supersedes the 10 Oct placement "after the card kinds, before the lists".
 
 ## Open work, most important first
 
@@ -139,7 +146,7 @@ Still not done, by choice: per-student reminder time (needs an hourly cron), Hin
 
 ## Share + Explore (10 Oct)
 
-Settings (page and the header gear) now has **Share EduSarthi** (phone share sheet, WhatsApp, copy link; no referral tracking). New student page **/explore** (menu → Study, and a chip on the Flashcard tab): built-in counts (Words / Chunks / Grammar and chunk types), approved library decks grouped by subject (= deck tag) with one-tap **Import and study** (copies the deck, opens its study page) and a Teacher-audit badge. Audit only works on decks made by a verified teacher (existing rule: recording goes to that deck's teacher); copies are private and cannot be sent for audit. No database change.
+Settings (page and the header gear) now has **Share EduSarthi** (phone share sheet, WhatsApp, copy link; no referral tracking). New student page **/explore** (menu → Study; ~~and a chip on the Flashcard tab~~ — the chip was removed 29 Oct, see "Flashcard filter bar in layers"): built-in counts (Words / Chunks / Grammar and chunk types), approved library decks grouped by subject (= deck tag) with one-tap **Import and study** (copies the deck, opens its study page) and a Teacher-audit badge. Audit only works on decks made by a verified teacher (existing rule: recording goes to that deck's teacher); copies are private and cannot be sent for audit. No database change.
 
 ## Settings, phase E: by role, playback speed, queue email, change password (28 Oct, branch `claude/blissful-euler-9j0h4c`)
 
@@ -542,6 +549,19 @@ Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oc
   2. Run **Actions → Database setup** straight after (the Profile page reads `avatarKey`; the same run adds the dashboard's freeze tables if it has not run since PR #27).
   3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
   4. Test on a phone.
+
+## Flashcard filter bar in layers (29 Oct 2026, branch `claude/modest-darwin-zfo3g1`) — BUILT, not merged
+
+The plan, the owner's answers and what is left: `docs/FLASHCARD-NAV-LAYERS.md`.
+
+- **Row 1** `components/flashcards/AreaTabs.tsx`: English (`/flashcards`) · My decks (`/decks`), underline tabs, links with `aria-current`. Today's count sits at the right end of this row (`DeckCount` in `components/flashcards/DeckLists.tsx`), so it is always on screen and costs no row. My decks shows the same tabs to students (not to teachers or admins); its old "← Word cards" link is gone.
+- **Row 2**: Words · Chunk · Grammar · Support, as before.
+- **Row 3**: the kind's own filters exactly as before (📂 Sections and a section's chips on Words, chunk types on Chunk, channel and level on Support, nothing on Grammar), then "⏭ N skipped" when there are skipped cards, then ⭐ ❤️ ❓ 💯 (`DeckLists`). The small chips are now 24px tall (were 20px).
+- Every scrolling row uses `components/flashcards/fadeRow.ts`: a right-edge fade (a mask, so no colour token is needed) and 4px of room so the keyboard focus ring is not cut off (it was cut off before).
+- `FlashcardDeck`'s computer-width card height is now one value, `calc(100dvh-19rem)`, for every tab (the `tallTop` prop is gone), so Known / Unknown still ends inside an 800px-tall window.
+- **Measured (local, Playwright):** card height on a 390px phone went from 571px (Words, Grammar) / 543px (Chunk, Support) to 499px on every tab. A first try with a separate count row cost 80–108px and was dropped.
+- **Tested:** 76 browser checks at 360 and 390px (every link and filter, skipped, lists, Study this list, guest, teacher, focus ring, no sideways page scroll, no page errors), axe in all five themes, `tsc`, `next build`. The one axe finding, "page has no h1" on `/flashcards`, was there before this branch.
+- **Next action (owner):** look at it on a phone after merging. Not built: Tech (after the Library chat), playlists (database change), and the Filter sheet (removed by the owner).
 
 ## Starting a new chat
 

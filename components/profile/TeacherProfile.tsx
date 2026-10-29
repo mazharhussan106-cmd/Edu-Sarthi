@@ -42,8 +42,12 @@ function QualityChecks({ notes }: { notes: QaNote[] }) {
         <ul className="mt-3 flex flex-col gap-2">
           {notes.map((n, i) => (
             <li key={i} className="rounded-lg bg-paper-dim px-3 py-2 text-xs">
-              <span className="font-medium text-ink">{dateIn(n.date)}</span>
-              <span className="text-ink-muted"> · {n.note || "No note was left."}</span>
+              <p className="font-medium text-ink">
+                “{n.exercise}”, sent {dateIn(n.recorded)}
+              </p>
+              <p className="mt-0.5 text-ink-muted">
+                Marked {dateIn(n.date)}: {n.note || "No note was left."}
+              </p>
             </li>
           ))}
         </ul>

@@ -154,7 +154,7 @@ export async function studyDays(studentId: string, days = 30): Promise<StudyDay[
   return [...byDay.values()];
 }
 
-/// Dates of the student's answers, for streakDays(). Same cap and order as
+/// Dates of the student's answers. Same cap and order as
 /// studyDays.
 export async function studyDates(studentId: string, days = 60): Promise<Date[]> {
   const rows = await prisma.reviewLog.findMany({

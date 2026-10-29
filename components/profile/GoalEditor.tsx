@@ -10,7 +10,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
@@ -28,6 +28,16 @@ export function GoalEditor({ goal, level, goalDate }: { goal: string; level: str
   const [typed, setTyped] = useState(goalDate);
   const [note, setNote] = useState<string | null>(null);
   const [changed, setChanged] = useState(false);
+
+  // "Set your goal" in Get started links to #my-goal, which opens this sheet.
+  useEffect(() => {
+    const onHash = () => {
+      if (window.location.hash === "#my-goal") setOpen(true);
+    };
+    onHash();
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   async function save(key: Key, value: string) {
     const before = state[key];
@@ -77,6 +87,10 @@ export function GoalEditor({ goal, level, goalDate }: { goal: string; level: str
   function close() {
     setOpen(false);
     setNote(null);
+    // So a reload does not open the sheet again; router state is kept.
+    if (window.location.hash === "#my-goal") {
+      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+    }
     setTyped(state.goalDate);
     if (changed) router.refresh();
     setChanged(false);

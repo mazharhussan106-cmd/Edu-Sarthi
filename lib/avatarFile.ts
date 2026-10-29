@@ -16,10 +16,14 @@ export const AVATAR_PX = 512;
 export const PICK_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const PICK_MAX_BYTES = 15 * 1024 * 1024;
 
+/// A 512 × 512 WebP or JPEG is far below this; the server checks the stored
+/// file against it too, not only the size the browser reports.
+export const AVATAR_MAX_BYTES = 600 * 1024;
+
 /// What may be uploaded: the browser's own re-drawn 512 × 512 file.
 export const avatarFileSchema = z.object({
   contentType: z.enum(["image/webp", "image/jpeg"], "Only the cropped photo can be uploaded. Choose the photo again."),
-  sizeBytes: z.number().int().positive("That photo came out empty. Choose it again.").max(600 * 1024, "That photo is too large after cropping. Choose a different one."),
+  sizeBytes: z.number().int().positive("That photo came out empty. Choose it again.").max(AVATAR_MAX_BYTES, "That photo is too large after cropping. Choose a different one."),
 });
 
 export function pickProblem(file: { type: string; size: number }): string | null {

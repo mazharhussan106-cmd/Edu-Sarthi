@@ -488,7 +488,7 @@ Status: **BUILT on the branch, not merged** (P1–P6, 29 Oct). Full plan, resear
 - Owner's second answers (29 Oct):
   - **A practice day is a recording or a card answer**, everywhere: the dashboard streak follows it, via `lib/practiceDays.ts`.
   - **Only the owner sees their photo**: teachers keep seeing STU IDs, and there is no approval queue.
-  - **Teachers see the QA notes on their own audits.**
+  - **Teachers see the QA notes on their own audits**, all notes from the last 90 days (owner, 29 Oct, audit F1). The admin's "Flag for QA" form says so.
   - P1–P6 approved.
 - **Do not undo:**
   - The streak rule above, in one place (`lib/practiceDays.ts`).
@@ -496,6 +496,8 @@ Status: **BUILT on the branch, not merged** (P1–P6, 29 Oct). Full plan, resear
   - Streak badges read the longest streak.
   - The share picture is made in the browser and never uploaded; it never shows the STU ID or the email.
 - The one schema change: `User.avatarKey` (nullable, additive). The goal date is the preference key `goalDate` (JSON).
+- Audit: `docs/PROFILE-AUDIT.md`. 10 of 13 findings are fixed; F4, F5 and F10 need the live site.
+- Browser tests: `scripts/profile-e2e/` (README inside). The phone checklist is `LIVE-TESTING-GUIDE.md` 4d.
 - **Next action (owner):**
   1. Merge.
   2. Run **Actions → Database setup** straight after (the Profile page reads `avatarKey`).

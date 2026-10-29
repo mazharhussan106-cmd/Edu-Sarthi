@@ -64,7 +64,7 @@ function startOfMonthIst(now = new Date()): Date {
 // pages show the same number for the same 30 days.
 const median = (xs: number[]) => (xs.length ? [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)] : null);
 
-export type QaNote = { date: Date; note: string | null };
+export type QaNote = { date: Date; note: string | null; exercise: string; recorded: Date };
 
 export async function teacherProfile(userId: string, role: Role) {
   const qaSince = new Date(Date.now() - 90 * DAY);
@@ -75,7 +75,7 @@ export async function teacherProfile(userId: string, role: Role) {
     prisma.submission.findMany({ where: { feedback: { teacherId: userId } }, distinct: ["studentId"], select: { studentId: true } }),
     // Audits in the last 30 days, from sent to audited: Workload's 30-day view.
     prisma.feedback.findMany({ where: { teacherId: userId, createdAt: { gte: new Date(Date.now() - 30 * DAY) } }, select: { createdAt: true, submission: { select: { createdAt: true } } } }),
-    prisma.feedback.findMany({ where: { teacherId: userId, qaFlaggedAt: { gte: qaSince } }, orderBy: { qaFlaggedAt: "desc" }, take: 10, select: { qaFlaggedAt: true, qaNote: true } }),
+    prisma.feedback.findMany({ where: { teacherId: userId, qaFlaggedAt: { gte: qaSince } }, orderBy: { qaFlaggedAt: "desc" }, take: 10, select: { qaFlaggedAt: true, qaNote: true, submission: { select: { createdAt: true, exercise: { select: { title: true } } } } } }),
     perDay("Feedback", "teacherId", userId),
     prisma.submission.count({ where: { status: "PENDING", ...queueScope(userId, role) } }),
     prisma.deck.count({ where: { ownerId: userId, draftOfId: null } }),
@@ -90,7 +90,7 @@ export async function teacherProfile(userId: string, role: Role) {
     thisMonth,
     studentsHelped: students.length,
     turnaroundHours: median(hours),
-    qa: qa.map((f): QaNote => ({ date: f.qaFlaggedAt!, note: f.qaNote })),
+    qa: qa.map((f): QaNote => ({ date: f.qaFlaggedAt!, note: f.qaNote, exercise: f.submission.exercise.title, recorded: f.submission.createdAt })),
     days,
     waiting,
     decks: { owned: decks, inLibrary, followers },

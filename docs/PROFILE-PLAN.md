@@ -204,11 +204,10 @@ That is more than 6 files, so the owner must approve it first (CLAUDE.md). **App
 
 ### Audit (29 Oct)
 
-`docs/PROFILE-AUDIT.md`: everything in the list is built. It records 13 findings, nothing fixed yet. The most important:
-- **F1:** admins are not told that teachers now read QA notes.
-- **F2:** focus is lost in the photo step.
-- **F3:** the staff data-download row overclaims.
-- **F4:** the photo was never tried against the real Supabase bucket.
+`docs/PROFILE-AUDIT.md`: everything in the list is built. It recorded 13 findings, and 10 are fixed the same day.
+- **Owner's decision on F1 (29 Oct):** teachers see all QA notes from the last 90 days; the admin's flag form now warns that the teacher reads the note.
+- **Left for the live site:** F4 (photo and share picture against the real Supabase bucket), F5 (Database setup and the privacy email) and F10 (measure the query time).
+- **Browser tests:** now in the repo, `scripts/profile-e2e/`. Rerun them after any Profile change.
 
 ### Not done, on purpose
 

@@ -12,9 +12,9 @@
 
 import type { z } from "zod";
 
-import type { avatarFileSchema } from "@/lib/avatarFile";
+import { AVATAR_MAX_BYTES, type avatarFileSchema } from "@/lib/avatarFile";
 import { prisma } from "@/lib/prisma";
-import { createUploadTarget, isOwnKey, objectExists, removeObjects, resolveMediaUrl, type UploadTarget } from "@/lib/storage";
+import { createUploadTarget, isOwnKey, objectInfo, removeObjects, resolveMediaUrl, type UploadTarget } from "@/lib/storage";
 
 type Result = { ok: true } | { error: string };
 
@@ -31,7 +31,15 @@ export async function avatarUploadTarget(userId: string, f: z.infer<typeof avata
 /// never an account whose photo is missing.
 export async function setAvatar(userId: string, key: string): Promise<Result> {
   // Only a key this person was issued, and only once the file is really there.
-  if (!isOwnKey(userId, key) || !(await objectExists(key))) return { error: "The photo did not upload. Check your connection and try again." };
+  if (!isOwnKey(userId, key)) return { error: "The photo did not upload. Check your connection and try again." };
+  const info = await objectInfo(key);
+  if (!info) return { error: "The photo did not upload. Check your connection and try again." };
+  // What arrived, not what the browser promised. "unknown" (a store that
+  // cannot say) is let through rather than breaking every photo save.
+  if (info !== "unknown" && (info.size === 0 || info.size > AVATAR_MAX_BYTES || !["image/webp", "image/jpeg"].includes(info.contentType))) {
+    await removeObjects([key]);
+    return { error: "That file is not a cropped photo. Choose your photo again." };
+  }
   const before = await prisma.user.findUnique({ where: { id: userId }, select: { avatarKey: true } });
   await prisma.user.update({ where: { id: userId }, data: { avatarKey: key } });
   if (before?.avatarKey && before.avatarKey !== key) await removeObjects([before.avatarKey]);

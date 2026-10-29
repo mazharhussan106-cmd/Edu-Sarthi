@@ -46,10 +46,6 @@ export function longestStreak(days: ReadonlySet<number>): number {
   return best;
 }
 
-export function streakDays(dates: readonly Date[], now = new Date()): number {
-  return streakOfDays(new Set(dates.map(dayNumber)), now);
-}
-
 export function sentToday(dates: readonly Date[], now = new Date()): number {
   const today = dayNumber(now);
   return dates.filter((d) => dayNumber(d) === today).length;

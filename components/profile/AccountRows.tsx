@@ -57,7 +57,15 @@ export function AccountRows({
           </ul>
         </SheetRow>
       </IconSlot>
-      <LinkRow href="/api/me" plain icon={Download} title="Download my data" subline="Everything stored about this account, as a file" />
+      <LinkRow
+        href="/api/me"
+        plain
+        icon={Download}
+        title="Download my data"
+        // The export is built around a learner's data; for staff it holds the
+        // account, not the audits they wrote, and the row must not claim more.
+        subline={closedBySupport ? "Your account details and settings, as a file" : "Everything stored about this account, as a file"}
+      />
       {canDelete ? (
         <IconSlot icon={Trash2} danger>
           <SheetRow title="Delete my account" subline="Removes it for good. Asks you to type DELETE" form>

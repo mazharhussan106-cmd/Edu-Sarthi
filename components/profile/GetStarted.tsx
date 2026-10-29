@@ -56,7 +56,13 @@ export function GetStarted({ steps }: { steps: Step[] }) {
               {s.label}
               <span className="sr-only">{s.done ? ", done" : ", not done yet"}</span>
             </span>
-            {s.done ? null : (
+            {s.done ? null : s.href.startsWith("#") ? (
+              // A plain link: only it fires the hashchange that opens the goal
+              // sheet; a Next <Link> to a hash on this page would only scroll.
+              <a href={s.href} className="shrink-0 font-medium text-accent-dark hover:underline">
+                {s.cta} ›
+              </a>
+            ) : (
               <Link href={s.href} className="shrink-0 font-medium text-accent-dark hover:underline">
                 {s.cta} ›
               </Link>

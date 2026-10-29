@@ -25,6 +25,10 @@ const FAQ = [
     a: "Cards due for review come first, then new cards in order, up to your daily limit (change it in Settings). Marking a card Known pushes it further out, 1, 3, 7, 15, 30, then 60 days. Unknown brings it back sooner.",
   },
   {
+    q: "How do XP, streaks and stages work?",
+    a: "You earn XP for practice, never for marks: 2 XP for a new card, 1 XP for reviewing a card (once per card a day, deck cards too) and 10 XP for each recording you send. A day counts for your streak when you earn 10 XP, India time, and the ring on the Dashboard fills at 40 XP. XP adds up to stages: Stage 2 at 100 XP, Stage 5 at 1,000. Card XP counts from 26 Oct 2026, when study history began.",
+  },
+  {
     q: "What do Important, Favourite, Doubt and Confident do?",
     a: "They are your own tags on a card. Tap one on the card bar, then open it from the lists above the card to study just those. Tags do not change when a card is due.",
   },

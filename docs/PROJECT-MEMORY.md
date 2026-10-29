@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign planned, design only, see "Student dashboard redesign"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign planned and its Phase 1 built, not merged yet, see "Student dashboard redesign"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -39,7 +39,7 @@ An English spoken-communication training platform: students record or upload, te
   - Even short choices (text size, playback speed, new cards per day) open a sheet; none sit inline in the row.
   - Rows are grouped under small headings (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share).
   - The header's ⚙ Settings is a **link to `/settings`** for every signed-in person. There is no settings dropdown any more, so Sign out also has a row in Settings (it stays in the ☰ menu too).
-- **Owner's decisions, 29 Oct 2026 (student dashboard):** the redesign covers the **student** dashboard only (teacher and admin later, if at all); the page opens on **today's work**, with progress and charts lower or on the Progress page; gamification is **medium** — streak, daily goal ring, XP, a level, weekly goal, streak freeze, badges — and **no leaderboard**; the design is agreed first and built later in phases. Details: `docs/DASHBOARD-PLAN.md`.
+- **Owner's decisions, 29 Oct 2026 (student dashboard):** the redesign covers the **student** dashboard only (teacher and admin later, if at all); the page opens on **today's work**, with progress and charts lower or on the Progress page; gamification is **medium** — streak, daily goal ring, XP, a level, weekly goal, streak freeze, badges — and **no leaderboard**; the design is agreed first and built later in phases. Second round the same day: every recommendation accepted (the XP level is called **Stage**; a streak day needs **10 XP**; daily goal 20/40/60/100 XP, default 40; weekly goal default 5 days; freezes earned, at most 2, new accounts start with 1; deck cards earn XP; guests get streak and XP), except that **the score trend chart stays on the dashboard**. XP is for effort only, never for audit scores. Details: `docs/DASHBOARD-PLAN.md`.
 
 ## Open work, most important first
 
@@ -413,7 +413,7 @@ Still open:
 - Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
 - The two pre-existing axe findings above (logotype contrast, unlabelled navs) on every page.
 
-## Student dashboard redesign (29 Oct, branch `claude/hopeful-heisenberg-04ufep`) — PLANNING, nothing built
+## Student dashboard redesign (29 Oct, branch `claude/hopeful-heisenberg-04ufep`) — Phase 1 BUILT, not merged
 
 The owner asked for a list of what the dashboard should show and how it should look, after checking what other apps do, with questions first; this chat works only on the dashboard. Four questions asked; answers are in "Decisions that must not be undone" (29 Oct, student dashboard).
 
@@ -423,7 +423,13 @@ Delivered, all design and no code change:
 
 Found in the current code (to fix when building): the streak counts recordings only (`lib/progress.ts`), so flashcard days never count; "cards due" on the dashboard counts Words only; recordings are shown in four different cards; a guest sees "Recording today 0/1"; the week bars read `CardState.lastReviewedAt`, not `ReviewLog`.
 
-**Next:** the owner answers the seven open questions at the end of `docs/DASHBOARD-PLAN.md`, then approves phase 1 (new layout, no schema change). Phase 3 (streak freeze) needs one additive table and a Database setup run.
+The owner then accepted every recommendation (chart kept on the dashboard) and said to write the complete plan and start Phase 1.
+
+**Phase 1 built (same day, no schema change):** the new dashboard on today's data — XP computed from `ReviewLog` and `Submission` (`lib/xp.ts`), rules and date logic in `lib/streak.ts`, all reads in `lib/dashboard.ts`, tasks and next step in `lib/dashboardTasks.ts` / `lib/dashboardNext.ts`, nine new components in `components/dashboard/`, the page rewritten as layout only, Profile badges on the same streak (12 badges, streak ones from the longest streak), Help answer on XP and streaks. Six old dashboard components and `lib/progress.ts` removed. The error badge tint is lighter site-wide (contrast). Tested: 42 hand-checked number checks, 79 browser checks (two widths, five themes, axe), `tsc`, `next build`; the evening state by a separate render. Details and what was not checked: `docs/DASHBOARD-PLAN.md` → "Phase 1 — what was built".
+
+**Don't undo:** XP is never given for audit scores; a card earns XP once per India day; the streak counts any study worth 10 XP (not only recordings); streak badges use the longest streak.
+
+**Next:** merge (no Database setup needed), check the dashboard on a phone, then Phase 2 (daily and weekly goal settings, streak and XP sheets) when the owner says so. Phase 3 (streak freeze) may need one additive table and a Database setup run.
 
 ## Flashcard phone layout: lesson (10 Oct)
 

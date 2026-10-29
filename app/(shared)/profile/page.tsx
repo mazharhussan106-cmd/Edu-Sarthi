@@ -21,7 +21,8 @@ import { DataRights, NameForm, PhoneForm } from "@/components/student/AccountAct
 import { displayId } from "@/lib/publicId";
 import { badgesFor } from "@/lib/badges";
 import { prefsOf } from "@/lib/preferences";
-import { streakDays } from "@/lib/progress";
+import { xpDays, xpMap } from "@/lib/xp";
+import { bestDay, istDay, longestStreak, streakOf } from "@/lib/streak";
 import { ProfileGoals } from "@/components/student/ProfileGoals";
 
 export const revalidate = 0;
@@ -68,10 +69,8 @@ export default async function ProfilePage() {
   const extras = isTeacher
     ? null
     : await Promise.all([
-        prisma.submission.findMany({
-          where: { studentId: userId, createdAt: { gte: new Date(Date.now() - 400 * 86_400_000) } },
-          select: { createdAt: true },
-        }),
+        // The same XP days as the dashboard, so both pages agree on streaks.
+        xpDays(userId).then((x) => xpMap(x.days)),
         prisma.cardState.count({ where: { userId, known: true, word: { deckId: null } } }),
         prisma.deck.count({ where: { ownerId: userId } }),
         prisma.deck.count({ where: { ownerId: userId, shareToken: { not: null } } }),
@@ -81,9 +80,11 @@ export default async function ProfilePage() {
     ? badgesFor({
         submissions: submissionCount,
         audits: auditsReceived,
-        streak: streakDays(extras[0].map((r) => r.createdAt)),
+        streak: streakOf(extras[0], istDay(new Date())),
+        longestStreak: longestStreak(extras[0]),
         cardsKnown: extras[1],
         decks: extras[2],
+        bestDayXp: bestDay(extras[0]),
       })
     : [];
 

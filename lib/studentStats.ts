@@ -6,12 +6,14 @@
 // the daily session; student-made decks would otherwise inflate "known".
 // Every query is scoped to the one user.
 
-import type { CardKind } from "@prisma/client";
+import { Prisma, type CardKind } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { channelLabel } from "@/lib/supportCard";
 
 const KIND_NAME: Record<CardKind, string> = { WORD: "Words", CHUNK: "Chunks", GRAMMAR: "Grammar", SUPPORT: "Support" };
+// The Flashcard tab's own names, for rows that sit beside links to those tabs.
+const TAB_NAME: Record<CardKind, string> = { WORD: "Words", CHUNK: "Chunk", GRAMMAR: "Grammar", SUPPORT: "Support" };
 
 export const CRITERIA = [
   { key: "pronunciation", label: "Pronunciation" },
@@ -97,6 +99,30 @@ export async function cardProgress(userId: string): Promise<CardProgressData> {
     .sort((a, b) => b.count - a.count)
     .slice(0, 3);
   return { seen, known, unknown: Math.max(0, seen - known), doubt, weakTopics };
+}
+
+export type KindKnown = { kind: CardKind; label: string; known: number; total: number };
+
+/// Known out of all built-in cards, per kind, for the dashboard's flashcard
+/// card. Grouped in SQL: a count per kind would be four round trips on the
+/// one-connection live pool.
+export async function knownByKind(userId: string): Promise<KindKnown[]> {
+  const [totals, known] = await Promise.all([
+    prisma.word.groupBy({ by: ["kind"], where: { deckId: null }, _count: true }),
+    prisma.$queryRaw<{ kind: CardKind; n: number }[]>(Prisma.sql`
+      SELECT w."kind"::text AS kind, COUNT(*)::int AS n
+      FROM "CardState" cs JOIN "Word" w ON w."id" = cs."wordId"
+      WHERE cs."userId" = ${userId} AND cs."known" = true AND w."deckId" IS NULL
+      GROUP BY w."kind"`),
+  ]);
+  return (Object.keys(TAB_NAME) as CardKind[])
+    .map((kind) => ({
+      kind,
+      label: TAB_NAME[kind],
+      known: known.find((k) => k.kind === kind)?.n ?? 0,
+      total: totals.find((t) => t.kind === kind)?._count ?? 0,
+    }))
+    .filter((k) => k.total > 0);
 }
 
 export type CriterionChange = { label: string; first: number; latest: number };

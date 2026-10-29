@@ -10,7 +10,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 
 | Feature | What it does | Where |
 |---|---|---|
-| Dashboard | One "do this next" card, streak and today's goal, cards due / new / to re-record, notices, recordings with a teacher, latest audit, score trend, what to work on, card progress, this week, recent activity | Bar → Dashboard (`/dashboard`) |
+| Dashboard | Today first: streak and XP pills, the Today card (daily goal ring of 40 XP, streak and whether it is safe, the week as seven dots), one "do this next", Today's tasks (re-record, cards due across every kind, decks due, new words, a recording for audit, or "Keep your progress" for a guest), then With your teacher (recordings waiting and the latest audit), notices, Your skills, the score trend, Flashcards (known per kind), Stage and badges. A new student gets a Getting started checklist instead of the progress cards. Rules: Help → "How do XP, streaks and stages work?" and `docs/DASHBOARD-PLAN.md` | Bar → Dashboard (`/dashboard`) |
 | Today's review | Due and new cards left for Words, Chunk, Grammar and Support; decks with cards due; recordings to redo and waiting for audit | Menu → Today's tasks → Today's review (`/today`) |
 | Waiting for audit | Recordings sent but not audited yet (Pending + In review) | Menu → Today's tasks → Waiting for audit (`/feedback?f=review`) |
 | Notices | Classes, deadlines and announcement lines an admin posted; upcoming events first | Menu → Today's tasks → Notices (`/notices`); first five also on the Dashboard |
@@ -58,7 +58,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 
 | Feature | What it does | Where |
 |---|---|---|
-| Profile | Name, level, goal, badges, practice totals, password | Bar → Profile (`/profile`) |
+| Profile | Name, level, goal, badges (12, computed: recordings, audits, learning-day streaks, cards known, a 100-XP day, deck maker), practice totals | Bar → Profile (`/profile`) |
 | Download or delete my data | DPDP export, delete account | Menu → My account and progress → Download or delete my data (`/profile#your-data`) |
 | Progress and reports | Score trend, rubric first-to-latest, the week, flashcards, every audit | Menu → My account and progress → Progress and reports (`/progress`) |
 | History | Practice (recordings and audits) and Study (every card answer, by day); delete study history | Menu → My account and progress → History (`/history`) |

@@ -1,6 +1,6 @@
 # Student dashboard — redesign plan
 
-Status: **PLAN APPROVED — Phase 1 being built.** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
+Status: **Phase 1 BUILT (29 Oct 2026, branch `claude/hopeful-heisenberg-04ufep`, not merged yet); Phases 2 and 3 not started.** Written 29 Oct 2026 on branch `claude/hopeful-heisenberg-04ufep`. This chat works only on the dashboard.
 
 Mockup: `docs/dashboard-mockup.html` (open in a browser; phone and computer, the special states and the two sheets; a Light / dark button checks the tokens). Screenshots: `docs/dashboard-mockup-phone.png`, `docs/dashboard-mockup-desktop.png`, `docs/dashboard-mockup-states.png`, `docs/dashboard-mockup-sheets.png`. The same screens are on a private design canvas for the owner, "EduSarthi student dashboard" (https://claude.ai/artifact/BMBLa2RjthqFGsgwCZokCs), each artboard with a Theme tweak; the repo files are the record.
 
@@ -164,6 +164,25 @@ How it is built:
 Checks before pushing: `tsc`, `next build`; a local Postgres with the real card imports and test students (normal day, new student, guest, a sent-back recording, decks due, a student with audits); XP and streak numbers checked by hand against the test data; the pure functions run against fixed dates (streak across midnight India time, at-risk after 6 pm, Monday week start); Playwright at 390×844 and 1280×800 for each state; axe (WCAG 2.1 AA) on the dashboard in all five themes; no hard-coded colours.
 
 **History limit:** `ReviewLog` exists only since 26 Oct 2026, so card XP and card days start then; recordings count from the start. Nobody's streak goes down, because recordings still count.
+
+#### Phase 1 — what was built and how it was checked (29 Oct)
+
+Built as planned, with these differences:
+- The score trend is its own card ("Your average, audit by audit", from the second audit), right after Your skills.
+- The Notices card has no "See all" link on the dashboard; Menu → Today's tasks → Notices already lists them all.
+- `components/ui/Badge.tsx`: the error badge's tint is lighter (`bg-error/8`), because axe measured "Sent back" at 4.29:1 in the light theme. This also changes the "Sent back" badges on the Audited page, for the better.
+- Lib files: `lib/streak.ts` holds the rules and date logic (no database, so a client component can read the rules in Phase 2); `lib/xp.ts` reads XP; `lib/dashboard.ts` reads everything for the page; `lib/dashboardTasks.ts` and `lib/dashboardNext.ts` decide rows and the next step. `lib/progress.ts` is gone (its recording-only streak was the bug).
+- Profile shows 12 badges (was 8); the streak badges now say "Learn N days in a row" and are earned from the longest streak, so a missed day does not take one away.
+
+Checked on a local Postgres with the real card imports and six test students (normal day, a sent-back recording, brand new, guest, goal done, evening):
+- 42 checks of the numbers, worked out by hand first: streak across midnight India time, Monday week start, stages at 0 / 100 / 1,240 / 4,500 XP, the evening rule at 5:50 and 6:10 pm, and for each student the XP, streak, task rows, summary line, next step, latest audit, skill averages, per-kind counts, badges and next badge.
+- A production build, then Playwright at 390×844 and 1280×800 for five students: every page 200, no sideways scroll, no browser errors, and axe (WCAG 2.1 AA) clean on the page in all five themes at both widths: 79 checks. The first run found three problems, all fixed: 1 px of sideways scroll from the teacher card's grid, the muted text on the "do this next" tint (4.46:1), and the error badge (4.29:1).
+- The evening ("streak at risk") state could not be shown on a running server: a test-only fake clock broke sign-in. The rule is covered by the date checks above, and the Today card's four states (at risk, safe, goal done, no streak) were rendered on their own and checked by eye and with axe in all five themes.
+- `tsc` and `next build` pass.
+
+Not checked: the live database, a real phone, and how long the XP query takes for a student with a very long history (it reads every `ReviewLog` row of that student on each visit; fine for months of study, worth a look if a student passes about 100,000 answers).
+
+To go live: merge. No Database setup run is needed (no schema change).
 
 ### Phase 2 — settings, sheets and moments (no schema change)
 

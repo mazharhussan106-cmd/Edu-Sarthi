@@ -105,12 +105,22 @@ export async function GET() {
     },
   });
 
+  // The dashboard's streak freezes, read on their own and caught: in the
+  // minutes between a deploy and Database setup the tables may not exist, and
+  // the rest of the download must not fail for them.
+  const streak = await Promise.all([
+    prisma.streakLedger.findUnique({ where: { userId }, select: { held: true, weeksMet: true, checkedThrough: true } }),
+    prisma.streakFreeze.findMany({ where: { userId }, orderBy: { day: "asc" }, select: { day: true, createdAt: true } }),
+  ])
+    .then(([ledger, frozenDays]) => ({ ledger, frozenDays }))
+    .catch(() => null);
+
   // The compliance record of a data-access request: who (by student ID
   // only) and when. The export's contents are not logged.
   await logAdmin(null, "Student exported own data", "user", data?.publicId ?? null);
 
   const stamp = new Date().toISOString().slice(0, 10);
-  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data }, null, 2), {
+  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data, streakFreezes: streak }, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Content-Disposition": `attachment; filename="edusarthi-my-data-${stamp}.json"`,

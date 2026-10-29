@@ -238,6 +238,28 @@ Har setting ab ek jaisi row hai: upar naam, neeche chhoti line (2 line tak). On/
 - [ ] Phone par koi row ka naam kata hua (…) ya neeche wali line 2 se zyada line ki na ho
 - [ ] Admin menu me **Site settings** (sab ke liye audit limit) aur ⚙ Settings (apni settings) alag-alag hon
 
+### 4d. Naya Dashboard (phase 1, 2 aur 3, 29 Oct) — merge aur Actions → Database setup ke baad phone par check kariye
+
+Student account se login kariye (jisme kuch cards aur recordings hon), phir ek bilkul naya account aur ek guest bhi try kariye.
+- [ ] Dashboard khulte hi upar: naam, ek line ("N things left today · X XP to your goal"), aur 🔥 streak aur ⭐ XP · Stage wale do pill
+- [ ] Pehli screen par hi **Today card** (ring, streak, hafte ke 7 gol) aur **Do this next** dikhen; bina scroll kiye
+- [ ] 10 cards review kariye, Dashboard par wapas aaiye → ring aage badhe, "Safe for today ✓" dikhe, aaj ka gola bhar jaaye
+- [ ] **Today's tasks** me jo kaam ho gaya uspar ✓ aur line cut; har row tap karne par sahi page khule
+- [ ] 🔥 pill tap → sheet me is mahine ka calendar, longest streak, aur rule; **Done**, ✕ aur bahar tap — teeno se band ho
+- [ ] ⭐ pill tap → XP sheet me aaj / is hafte / best day, XP ke rules, aur "Daily goal" row → Settings ki Daily goal sheet seedha khule
+- [ ] Settings → Flashcards → **Daily goal** → 20 XP chuniye → Dashboard ka ring "of 20 XP" dikhaye; **Weekly goal** → 3 days → "Week goal: … of 3 days"
+- [ ] Daily goal pura hone par ring hara ho aur tick ek baar "pop" ho; reload karne par dobara pop na ho (Settings → Reduce motion on ho to bilkul animation na ho)
+- [ ] Naya account: "Welcome", aur **Getting started** list (level aur goal, pehle 10 cards, pehli recording, pehla audit)
+- [ ] Guest: recording ki jagah **Keep your progress** row; streak aur XP dikhen
+- [ ] Teacher ne recording wapas bheji ho to sabse upar laal **Re-record** row aur "Action needed"
+- [ ] Computer par do column: baayen kaam, daayen Today card, Stage aur Notices
+- [ ] Profile → Badges me 14 badges; streak wale "Learn N days in a row" kehte hon
+- [ ] Today card par "❄ 1 freeze" dikhe (naya account 1 freeze se shuru hota hai); streak sheet me "1 of 2 streak freezes ready"
+- [ ] Streak chalte hue ek din kuch na padhiye; agle din Dashboard par "A freeze saved your streak yesterday.", us din ke gole par ❄, aur streak wahi rahe
+- [ ] Computer par kisi bhi student page (jaise Today's review) ke header me 🔥 streak aur XP dikhen; ek card karke doosre page par jaaiye → XP badh jaaye; Dashboard par header me ye na dikhen (wahan upar pills hain)
+- [ ] Admin → Content → kisi module me "Skill focus: Fluency" chuniye → jis student ki fluency sabse kam hai uske Dashboard par "Practise fluency" button → sirf wahi modules + "Show all modules"
+- [ ] Daily reminder email (cards due ho, streak ho, aaj 10 XP se kam) me "Your N-day streak needs 10 XP today" line
+- [ ] Ek hafta weekly goal pura kariye; agle Monday freeze ek badhe (2 se zyada nahi) aur Profile me "Weekly goal met" badge mile
 
 ---
 

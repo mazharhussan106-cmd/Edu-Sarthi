@@ -21,7 +21,8 @@ import { DataRights, NameForm, PhoneForm } from "@/components/student/AccountAct
 import { displayId } from "@/lib/publicId";
 import { badgesFor } from "@/lib/badges";
 import { prefsOf } from "@/lib/preferences";
-import { streakDays } from "@/lib/progress";
+import { bestDay, longestStreak } from "@/lib/streak";
+import { currentStreak } from "@/lib/freeze";
 import { ProfileGoals } from "@/components/student/ProfileGoals";
 
 export const revalidate = 0;
@@ -68,22 +69,23 @@ export default async function ProfilePage() {
   const extras = isTeacher
     ? null
     : await Promise.all([
-        prisma.submission.findMany({
-          where: { studentId: userId, createdAt: { gte: new Date(Date.now() - 400 * 86_400_000) } },
-          select: { createdAt: true },
-        }),
         prisma.cardState.count({ where: { userId, known: true, word: { deckId: null } } }),
         prisma.deck.count({ where: { ownerId: userId } }),
         prisma.deck.count({ where: { ownerId: userId, shareToken: { not: null } } }),
       ]);
   const prefs = prefsOf(user.preferences);
-  const badges = extras
+  // The same XP and freezes as the dashboard, so both count the same streak.
+  const st = extras ? await currentStreak(userId, prefs.dailyGoalXp, prefs.weeklyGoalDays) : null;
+  const badges = extras && st
     ? badgesFor({
         submissions: submissionCount,
         audits: auditsReceived,
-        streak: streakDays(extras[0].map((r) => r.createdAt)),
-        cardsKnown: extras[1],
-        decks: extras[2],
+        streak: st.streak,
+        longestStreak: longestStreak(st.byDay, st.frozen),
+        cardsKnown: extras[0],
+        decks: extras[1],
+        bestDayXp: bestDay(st.byDay),
+        weeksMet: st.weeksMet,
       })
     : [];
 
@@ -169,7 +171,7 @@ export default async function ProfilePage() {
             <Card className="flex items-center justify-between p-4 transition-colors hover:bg-hover">
               <span>
                 <span className="block font-display text-base font-bold text-ink">My decks</span>
-                <span className="text-sm text-ink-muted">{extras[2]} deck{extras[2] === 1 ? "" : "s"} · {extras[3]} with a share link</span>
+                <span className="text-sm text-ink-muted">{extras[1]} deck{extras[1] === 1 ? "" : "s"} · {extras[2]} with a share link</span>
               </span>
               <span aria-hidden="true" className="text-ink-muted">›</span>
             </Card>

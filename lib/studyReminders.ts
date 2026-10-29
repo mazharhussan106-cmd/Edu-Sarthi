@@ -11,10 +11,14 @@
 // It deliberately does NOT check who called it; the cron routes do.
 
 import { sendStudyReminder } from "@/lib/emailNotices";
+import { currentStreak } from "@/lib/freeze";
+import { STREAK_MIN_XP } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { prefsOf } from "@/lib/preferences";
 
 const PAGE = 100;
+/// The streak line stops this long before the deadline, leaving time to send.
+const STREAK_LINE_MARGIN_MS = 15_000;
 
 export async function sendStudyReminders(hour: number, link: string, deadline: number): Promise<{ checked: number; sent: number }> {
   const now = new Date();
@@ -56,7 +60,16 @@ export async function sendStudyReminders(hour: number, link: string, deadline: n
       const n = dueBy.get(s.id) ?? 0;
       if (n === 0 || !s.email) continue;
       try {
-        await sendStudyReminder(s.email, n, link);
+        // A streak line only for a streak worth keeping and not yet kept today.
+        // Read per student, after the due check, so only those emailed pay for
+        // it, and only while there is time: the line is a nicety, and the
+        // reminder itself must not be cut off by the job's time limit.
+        const prefs = prefsOf(s.preferences);
+        const st = Date.now() < deadline - STREAK_LINE_MARGIN_MS
+          ? await currentStreak(s.id, prefs.dailyGoalXp, prefs.weeklyGoalDays, now).catch(() => null)
+          : null;
+        const keep = st && st.streak > 0 && st.todayXp < STREAK_MIN_XP ? st.streak : 0;
+        await sendStudyReminder(s.email, n, link, keep);
         sent++;
       } catch (err) {
         // One bad address must not stop everyone after them.

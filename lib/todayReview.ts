@@ -18,7 +18,7 @@ import { prisma } from "@/lib/prisma";
 import { istDayStart } from "@/lib/aiLimits";
 import { studyDecks } from "@/lib/myCards";
 
-export type KindToday = { due: number; newLeft: number };
+export type KindToday = { due: number; newLeft: number; newToday: number };
 export type DeckToday = { id: string; title: string; href: string; due: number };
 
 export async function todayReview(userId: string, newPerDay: number) {
@@ -47,7 +47,12 @@ export async function todayReview(userId: string, newPerDay: number) {
     // Capped by what is left to learn, so a finished kind never claims
     // "10 new" that the tab would not actually serve.
     const unseen = Math.max(0, t._count - (row?.seen ?? 0));
-    kinds.set(t.kind, { due: row?.due ?? 0, newLeft: Math.min(unseen, Math.max(0, newPerDay - (row?.newToday ?? 0))) });
+    kinds.set(t.kind, {
+      due: row?.due ?? 0,
+      newLeft: Math.min(unseen, Math.max(0, newPerDay - (row?.newToday ?? 0))),
+      // The dashboard ticks "learn new words" off once today's limit is used.
+      newToday: row?.newToday ?? 0,
+    });
   }
 
   // Only decks the student can still open; a lost deck's due cards would be a

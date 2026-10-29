@@ -543,7 +543,7 @@ Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oc
   3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
   4. Test on a phone.
 
-## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — Steps 1, 2 and 3 BUILT and tested, not merged; Step 4 (the owner's) planned
+## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — Steps 1 to 4 BUILT and tested, not merged; what is left is the owner's
 
 Owner's requirement: EduSarthi is a repository, so there must be **one place** where anyone (signed in or not) can see every public flashcard deck. Plan, built list and tests: `docs/PUBLIC-LIBRARY-PLAN.md`.
 - Today (live) `/library` is behind login, so search engines and visitors see none of the approved decks. The plan opens the existing Library to everyone (no new section) and later adds `robots`, a sitemap, deck metadata, paging and a tag row.
@@ -556,7 +556,9 @@ Owner's requirement: EduSarthi is a repository, so there must be **one place** w
 - **Don't undo (Step 2):** `/d/` is not disallowed in robots.txt (a blocked page's `noindex` is never read); the root `openGraph` has no title or description (shallow merge); metadata never names the creator; `siteUrl()` returns `null` rather than throwing (a throw would fail the build); the sitemap is `force-dynamic`.
 - Owner's domain answer: `edusarthi.com` is not a blocker; Step 2 reads `NEXT_PUBLIC_APP_URL` and falls back to Vercel's production domain. **Check that `NEXT_PUBLIC_APP_URL` is set in Vercel**: it is also what the emails use.
 - **Step 3 (browsing) built:** the library list has pages of 24, a count line, a row of topic chips with deck counts (eight shown, the rest under "More topics"), and visitor wording ("Flashcard library", "topics"). New: `lib/libraryTags.ts`, `lib/libraryUrl.ts`, `components/decks/LibraryTags.tsx`. **Don't undo:** the deck id is the last sort key (otherwise a deck can show on two pages or none); the plain list is exactly `/library` (`libraryHref` drops the defaults); page 2 and on are `noindex`. The list now runs four reads instead of two on a one-connection pool: watch it after launch. Details and tests: `docs/PUBLIC-LIBRARY-PLAN.md` → Step 3.
-- Next: the owner decides on Step 4 (text, terms version, email); then merge the branch. After launch the owner adds the site to Google Search Console and submits `/sitemap.xml`.
+- **Step 4 (words and notice) built:** Privacy, Terms and Library rules now say anyone can read a published deck, with or without an account, and search engines may list it; Help, Profile → Who sees what, the owner's deck panel and the approval email say the same. The submit form has a **fourth required tick** (`openWeb`), enforced by the server, and `LIBRARY_TERMS_VERSION` is `2026-10-29` (a deck keeps the version it was submitted under). Admin → Announcements offers a second prepared draft, "the deck library will be open to everyone", after the Terms update one. Details, tests and the owner's steps: `docs/PUBLIC-LIBRARY-PLAN.md` → Step 4; for the lawyer, `docs/LEGAL-REVIEW-PACK.md` section 4b.
+- **Don't undo (Step 4):** the new tick is required on every submission and the server refuses without it; the announcement promises "no earlier than 7 days after we finish sending", so do not merge sooner; nothing forces creators who submitted under `2026-10-27` to accept again (option A, notice and withdraw): that is the owner's and a lawyer's call, with options B and C written up in the review pack but not built.
+- **Next (the owner):** ask a lawyer about re-consent (A, or have B or C built); check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send the announcement (Admin → Announcements: test, then Start, type SEND); wait 7 days after the last email; merge the branch once; then `LIVE-TESTING-GUIDE.md` 4f and Google Search Console (add the site, submit `/sitemap.xml`).
 
 ## Starting a new chat
 

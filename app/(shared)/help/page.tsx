@@ -34,7 +34,7 @@ const FAQ = [
   },
   {
     q: "Can I make my own flashcards?",
-    a: "Yes. Open Menu → My decks to make a deck, and Library to copy a public one. Public decks are checked by an admin before anyone else can see them.",
+    a: "Yes. Open Menu → My decks to make a deck, and Library to copy a public one. Public decks are checked by an admin before anyone else can see them, and then anyone can read them, with or without an account.",
   },
   {
     q: "The text is too small on the card.",

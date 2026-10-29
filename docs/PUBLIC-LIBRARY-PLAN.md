@@ -1,6 +1,6 @@
 # Public library hub — plan (29 Oct 2026)
 
-Status: **Steps 1, 2 and 3 built and tested on `claude/bold-hopper-hxfrpd` (29 Oct), not merged. Step 4 (words and notice) is planned, not built, and it is the owner's.** Do not merge Step 1b, 2 or 3 before Step 4 is ready (see below). Step 1a (commit "Nav: Library replaces Class …") is safe to merge alone. Steps 2 and 3 are harmless until Step 1b is live, because a crawler cannot reach the library while it is behind login, but keep them together (Step 3 also changes what signed-in learners see: pages, topic chips, a new heading).
+Status: **Steps 1 to 4 built and tested on `claude/bold-hopper-hxfrpd` (29 Oct), not merged. What is left is the owner's: the lawyer's answer on re-consent, sending the announcement, and a 7-day wait (see Step 4).** Do not merge before that. Step 1a (commit "Nav: Library replaces Class …") is safe to merge alone. Steps 2 and 3 are harmless until Step 1b is live, because a crawler cannot reach the library while it is behind login, but keep them together (Step 3 also changes what signed-in learners see: pages, topic chips, a new heading).
 
 ## What Step 1 did, and how it was tested
 
@@ -110,10 +110,31 @@ Tested on a production build and a local Postgres with 34 listed decks (24 + 10)
 - the Step 1 (56), Step 2 (45) and Profile (62) suites again with the extra decks present; `tsc --noEmit` and `next build` pass.
 Not tested: a real phone, the live database and pool, and the list with thousands of decks.
 
-**Step 4 — words and notice (before anything goes live).** The Privacy page says public decks are "visible to every signed-in user" (`app/(public)/legal/privacy/page.tsx`, line ~188), and creators agreed to the terms of `LIBRARY_TERMS_VERSION = "2026-10-27"`. Opening the library to everyone changes that.
-- Update Privacy, Terms and Library rules to say anyone, including search engines, can see published decks.
-- Bump `LIBRARY_TERMS_VERSION`; decide whether existing decks need the creator to accept again. **Owner and lawyer** (`docs/LEGAL-REVIEW-PACK.md`).
-- The owner sends the announcement (Admin → Announcements) and waits a few days.
+**Step 4 — words and notice (before anything goes live). BUILT (29 Oct), 16 code and wording files and no database change, except the part that is the owner's and a lawyer's.** The Privacy page said public decks were "visible to every signed-in user", and creators had agreed to `LIBRARY_TERMS_VERSION = "2026-10-27"`. Opening the library to everyone changes that.
+
+*Built:*
+- **Words.** Privacy (public decks are visible to everyone, with or without an account; search engines may list them and may keep their own copy for a while; link-shared decks are not listed; the creator's name shows to everyone who opens the deck), Terms ("Decks you publish": anyone can read an approved deck, only accounts can follow, copy, like or report, a search engine's copy cannot be deleted by us), Library rules (a new section "Who can read a published deck", and the personal-details rule says the internet can read it). The three pages say "Last updated 29 October 2026". Also corrected where the app said the old thing: the Help answer, Profile → Who sees what (student and teacher), the owner's deck panel once approved ("Anyone signed in can find…"), and the deck-approved email.
+- **A fourth required tick on the submit form** (`openWeb`, `lib/deckSchemas.ts`, `components/decks/PublishConsent.tsx`): "Once it is approved, anyone can read this deck, with or without an account, and search engines may list it", with how to undo it. The server refuses a submission without it (400, "Tick that you understand anyone can read a published deck…"). The editor's tick (`EditorTerms`, `InviteList`) says it too.
+- **`LIBRARY_TERMS_VERSION` is `2026-10-29`.** It is stamped when a deck is submitted (and copied to the live deck when a new version is approved), so a deck submitted earlier keeps `2026-10-27`: the record of who agreed to what.
+- **The announcement.** Admin → Announcements offers a second prepared draft, "EduSarthi: the deck library will be open to everyone" (email text and the dashboard notice), after the Terms update draft (`libraryOpenDraft` and `nextDraft` in `lib/announcements.ts`). After you save the first, the form shows the second. It says the change starts **no earlier than 7 days after the last email is sent**: that is a promise, so keep it. The email goes to every account holder, because the tool has no narrower audience; its first lines let a reader who never published stop.
+
+*Not built, and not the assistant's call (`docs/LEGAL-REVIEW-PACK.md` section 4b, issues 12 to 15):*
+- **Do creators who submitted under 2026-10-27 have to accept again?** What is built is option A: notice, seven days, and two instant choices (withdraw a deck, change the name shown). Option B holds each old deck back from visitors until its creator accepts; option C shows visitors "an EduSarthi learner" instead of the chosen name until then. B and C each need a small "accept the new terms" step and a version check where decks are listed; they are not built, and nothing in the code forces re-acceptance.
+- Whether a lawyer wants the name choice restated on the submit form, next to the name, and not only in the new tick.
+
+Tested on a production build and, for photos, a dev server, with a local Postgres:
+- 29 checks in a browser and over HTTP: the new wording on the three legal pages (and the old sentence gone), Help, student and teacher Profile → Who sees what; the server refusing a submission with the tick missing or false, and the deck staying private; the form showing the tick unticked beside the paid-use tick, refusing without it with a message that says what to tick, then accepting with all four and stamping the deck `PENDING_REVIEW` with terms `2026-10-29`; the owner's deck panel after approval; Admin → Announcements offering the Terms draft, then (after saving) the library one, then a blank form, nothing sent;
+- the new draft against the announcement form's own schema (lengths, links, the 7 days) and the order logic in six cases;
+- the approval email, read from the dev server's log after an admin approved a deck;
+- the Step 1 (56), Step 2 (45), Step 3 (38 and 79) suites and Profile p1, p4, p5, p6 (101) again, all passing; `tsc --noEmit` and `next build` pass. (p5 and p6 store photos on disk, which the app allows only outside production, so they need `npm run dev`.)
+Not tested: the email to real recipients (no SendGrid key here), a real phone, the live database.
+
+*What the owner does, in this order:*
+1. Decide (with a lawyer) whether option A is enough for decks submitted before 29 Oct; say so and the assistant builds B or C if not.
+2. Check that `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL` and `CRON_SECRET` are set in Vercel.
+3. **Send the announcement before merging.** Admin → Announcements: email yourself a test, then Start (type SEND). The daily job sends at most 80 a day, so with many accounts it takes several days; Admin → Announcements shows how many are left. Its links (`/legal/terms`, `/legal/privacy`, `/legal/library-rules`) work today and will show the new wording once the branch is merged.
+4. **Wait 7 days after the last email, then merge the branch once.** The legal pages with the new wording and the open library then arrive together, as the email promised. (Step 1a alone, Library in place of Class in the bars, is safe to merge earlier, but that is a separate commit on this branch, so ask the assistant to split it out.)
+5. After merging: submit a test deck once to see the new form, follow `LIVE-TESTING-GUIDE.md` 4f, then add the site to Google Search Console and submit `/sitemap.xml`.
 
 **Order matters:** only pushes to `main` deploy, so Steps 1 to 3 can be built and tested on the branch, and merged only after Step 4's text is ready and the email is out. Do not merge Step 1 alone.
 
@@ -145,6 +166,6 @@ Local Postgres and Playwright, signed out and signed in:
 
 ## Open
 
-- Terms version and re-consent (Step 4): the owner and a lawyer.
-- Step 4 is what stands between this branch and `main` (see above).
+- Re-consent for decks submitted before 29 Oct (option A built; B or C if a lawyer asks): the owner and a lawyer.
+- Send the announcement, wait 7 days after the last email, then merge (Step 4, "What the owner does").
 - After launch, the owner adds the site to Google Search Console and submits the sitemap. Indexing takes days to weeks and is not guaranteed.

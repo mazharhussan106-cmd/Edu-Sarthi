@@ -25,7 +25,7 @@ export default function LibraryRulesPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="font-display text-3xl font-bold text-ink">Library rules</h1>
-      <p className="mt-2 text-xs text-ink-muted">Last updated 27 October 2026</p>
+      <p className="mt-2 text-xs text-ink-muted">Last updated 29 October 2026</p>
 
       <div className="mt-8 flex flex-col gap-8 text-sm text-ink-muted">
         <section>
@@ -43,6 +43,21 @@ export default function LibraryRulesPage() {
             If it is not approved, you see the reason on the deck and can fix it and submit again. Small fixes to a published
             deck go live at once and are checked afterwards; bigger changes go in a new version, which is checked before it
             replaces the published one.
+          </p>
+        </section>
+
+        <section>
+          <h2 className={h2}>Who can read a published deck</h2>
+          <p className="mt-2">
+            Anyone. Once an admin approves a deck, it is open to read for everyone, with or without an account, and search
+            engines such as Google may list it. Only people with an account can follow, copy, like or report it, or study it
+            with their own progress. The name shown on it is the one you chose in Settings.
+          </p>
+          <p className="mt-2">
+            A deck you share by link is different: it is not in the library, search engines are asked to skip it, and only
+            people who have the link can open it. If you withdraw a published deck, it leaves the library and our sitemap at
+            once. A search engine may keep its own copy for a while, and copies made under the licence stay with the people
+            who made them.
           </p>
         </section>
 

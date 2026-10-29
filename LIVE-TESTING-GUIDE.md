@@ -310,6 +310,17 @@ Database setup ki zarurat nahi. **Library ko bina login ke kholne wala hissa (St
 - [ ] `/library/<deck>/study` seedha `/login` par jaaye
 - [ ] Koi deck Admin → Decks se reject/take down karke dekhiye: ab wo list me nahi aata aur uska page "not found" dikhata hai
 
+**Naya consent aur text (Step 4) — merge se pehle ka order:**
+1. Vakil se poochhiye: jin creators ne 29 Oct se pehle deck submit kiya, kya unse dobara "haan" lena zaroori hai? (`docs/LEGAL-REVIEW-PACK.md` section 4b, point 12)
+2. Vercel me `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` set hain, ye check kariye
+3. Admin → Announcements: "EduSarthi: the deck library will be open to everyone" draft save kariye, **apne aap ko test email bhejiye**, padhiye, phir Start (SEND likhiye). Roz 80 email jaate hain, to kuch din lag sakte hain
+4. **Aakhri email ke 7 din baad** hi branch merge kariye (email me yehi vaada hai)
+
+Merge ke baad (student account se):
+- [ ] My decks → koi deck → "Submit for the public library" → form me naya tick: "Once it is approved, anyone can read this deck, with or without an account…" (bina tick ke error aaye jo bataye kya tick karna hai)
+- [ ] `/legal/privacy`, `/legal/terms`, `/legal/library-rules` par 29 October 2026 aur naya text; Privacy me ab "signed-in" wali line nahi
+- [ ] Admin se koi deck approve kariye → creator ko jo email jaaye usme likha ho "Anyone can now read it, with or without an account…"
+
 **Library ki list (Step 3, student aur visitor dono ke liye):**
 - [ ] Heading "Flashcard library"; search ke neeche Newest / Most liked / Most copied, phir topics ki row: "All topics" aur 8 topics, har ek ke saath deck ki ginti
 - [ ] Kisi topic par tap → list us topic ke decks tak simit ho, "N decks match" likha aaye aur wo topic neela ho; "All topics" par tap → wapas sab

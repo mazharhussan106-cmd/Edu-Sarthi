@@ -1,6 +1,7 @@
 // Owns the admin Announcements page: the one that is sending (with progress and
 // Stop), drafts (test, start, delete), finished ones, and the form for a new
-// draft — pre-filled with the owner-approved Terms update when there is none.
+// draft — pre-filled with the next prepared wording not yet written (the
+// owner-approved Terms update, then opening the library to everyone).
 //
 // An announcement emails every account holder with a verified address, at most
 // 80 a day from the daily job, and starting it posts the dashboard notice. It
@@ -9,7 +10,7 @@
 import { prisma } from "@/lib/prisma";
 import { ensureActiveUser } from "@/lib/activeUser";
 import { appUrl } from "@/lib/appUrl";
-import { ANNOUNCEMENT_DAILY_LIMIT, announcementStats, termsUpdateDraft } from "@/lib/announcements";
+import { ANNOUNCEMENT_DAILY_LIMIT, announcementStats, nextDraft } from "@/lib/announcements";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { ActionButton } from "@/components/admin/ActionButton";
@@ -35,7 +36,9 @@ export default async function AnnouncementsPage() {
   } catch {
     site = "";
   }
-  const draft = termsUpdateDraft(site || "(set NEXT_PUBLIC_APP_URL in Vercel)");
+  // The next prepared wording not written yet (the Terms update, then opening
+  // the library to everyone), or a blank form once both exist.
+  const draft = nextDraft(site || "(set NEXT_PUBLIC_APP_URL in Vercel)", rows.map((r) => r.subject)) ?? { subject: "", body: "", notice: "" };
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
@@ -85,7 +88,7 @@ export default async function AnnouncementsPage() {
       <Card className="mt-6">
         <CardTitle>New draft</CardTitle>
         <p className="mt-1 text-xs text-ink-muted">Nothing is sent until you press Start on the draft and type SEND. Email yourself a test first.</p>
-        <div className="mt-4"><AnnouncementForm initial={rows.length ? { subject: "", body: "", notice: "" } : draft} /></div>
+        <div className="mt-4"><AnnouncementForm key={draft.subject} initial={draft} /></div>
       </Card>
     </main>
   );

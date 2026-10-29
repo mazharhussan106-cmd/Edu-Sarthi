@@ -87,7 +87,7 @@ export function StudentProfile({ data }: { data: Data }) {
     ...(guest ? [] : [{ who: "Your photo", what: "Only you, on this page. Nobody else is given a link to it." }]),
     ...(data.institute ? [{ who: `${data.institute.name}'s admin`, what: "Your name and email, to manage the institute's members." }] : []),
     { who: "EduSarthi admins", what: "Your account and what you do here, when they help you, check a report or keep the site safe." },
-    { who: "The library and share links", what: "Decks you publish or share by a link show only the name you chose in Settings → How your name shows on public decks, or no name." },
+    { who: "The library and share links", what: "Decks you publish or share by a link show only the name you chose in Settings → How your name shows on public decks, or no name. Library decks can be read by anyone, with or without an account, and search engines may list them." },
   ];
 
   return (

@@ -53,7 +53,7 @@ function Row({ inv, adultConfirmed }: { inv: Invitation; adultConfirmed: boolean
           <label className="flex items-start gap-2 text-sm text-ink">
             <input type="checkbox" className={tick} checked={terms} onChange={(e) => setTerms(e.target.checked)} />
             <span>
-              What I add is published under the deck’s licence, and EduSarthi may use it in paid features. I follow the{" "}
+              What I add is published under the deck’s licence, can be read by anyone with or without an account, and EduSarthi may use it in paid features. I follow the{" "}
               <Link href="/legal/library-rules" target="_blank" className="text-accent underline">library rules</Link>.
             </span>
           </label>

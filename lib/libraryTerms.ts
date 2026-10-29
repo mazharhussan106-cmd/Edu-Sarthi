@@ -12,7 +12,15 @@ import type { CreditStyle, Role } from "@prisma/client";
 
 /// Bump when the wording of the library rules or the "Decks you publish" part
 /// of the Terms changes in a way creators must agree to again.
-export const LIBRARY_TERMS_VERSION = "2026-10-27";
+///
+/// 2026-10-27: licence, credit and paid use.
+/// 2026-10-29: a published deck is open to anyone, signed in or not, and search
+/// engines may list it (the fourth tick, `openWeb`). It is stamped when a deck is
+/// submitted, so a deck submitted earlier keeps the version it was agreed under:
+/// the record of who agreed to what. Whether creators who agreed to the earlier
+/// one must agree again is the owner's and a lawyer's call (docs/PUBLIC-LIBRARY-PLAN.md,
+/// Step 4); nothing here forces it.
+export const LIBRARY_TERMS_VERSION = "2026-10-29";
 
 /// Students' and teachers' decks are CC BY-SA 4.0 (owner's decision). Decks
 /// made by EduSarthi's own admins stay EduSarthi's: they are the material for
@@ -42,7 +50,7 @@ export function licenceInfo(licence: string | null): { label: string; href: stri
 export const LIBRARY_RULES: { title: string; detail: string }[] = [
   { title: "Your own work, or shared with permission", detail: "No pages copied from textbooks, guidebooks or paid courses, and no one else's deck presented as yours. If you built on another library deck, say so in the description." },
   { title: "Correct", detail: "Answers, meanings and examples are right. A deck that teaches mistakes is rejected." },
-  { title: "No personal details", detail: "No phone numbers, home addresses, email addresses, ID numbers, or photos of people who did not agree to it — yours included." },
+  { title: "No personal details", detail: "No phone numbers, home addresses, email addresses, ID numbers, or photos of people who did not agree to it — yours included. A published deck can be read by anyone on the internet." },
   { title: "Respectful", detail: "Nothing hateful, sexual, violent or harassing, and nothing aimed at a real person." },
   { title: "Not an advert", detail: "No ads, selling, referral codes, or links that lead somewhere to buy." },
   { title: "AI cards checked by you", detail: "Cards the AI helped make are welcome once you have read and corrected them. They keep the AI-assisted label." },

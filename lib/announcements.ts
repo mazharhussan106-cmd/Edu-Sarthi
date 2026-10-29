@@ -52,6 +52,40 @@ export function termsUpdateDraft(site: string) {
   };
 }
 
+/// The notice for opening the library to everyone (docs/PUBLIC-LIBRARY-PLAN.md,
+/// Step 4). The Privacy page promises an email before a change takes effect, and
+/// this is that email. It goes to every account holder, because the tool has no
+/// narrower audience; the first line after the greeting lets a reader who never
+/// published a deck stop reading. The seven days are a promise the sender must
+/// keep: merge the change no earlier than that after the last email goes out.
+export function libraryOpenDraft(site: string) {
+  return {
+    subject: "EduSarthi: the deck library will be open to everyone",
+    body: [
+      "Hello,",
+      "Soon, anyone will be able to read the EduSarthi deck library, with or without an account, and search engines such as Google may list its decks. Today only signed-in people can see it.",
+      "What this means for you:",
+      [
+        "- If you have not published a deck to the library, nothing changes for you.",
+        "- If you have published a deck, it will be readable by anyone, and search engines may list it. It shows your name only the way you chose in Settings → How your name shows on public decks, or no name.",
+        "- You can change how your name shows, or withdraw a deck, at any time. A withdrawn deck leaves the library and our sitemap at once. A search engine may keep its own copy for a while, and copies people already made under CC BY-SA stay with them.",
+        "- Only people with an account can follow, copy, like or report a deck.",
+      ].join("\n"),
+      "We will switch this on no earlier than 7 days after we finish sending this email.",
+      [`Terms: ${site}/legal/terms`, `Privacy: ${site}/legal/privacy`, `Library rules: ${site}/legal/library-rules`].join("\n"),
+      "You are getting this email because you have an EduSarthi account.",
+    ].join("\n\n"),
+    notice: "The deck library will soon be readable by anyone, signed in or not, and search engines may list it. If you have published a deck, you can change how your name shows, or withdraw it. Details are in the Terms and Privacy pages.",
+  };
+}
+
+/// The first prepared draft whose subject has not been written yet, so the new
+/// draft form offers the next announcement the owner still has to make, in
+/// order, and a blank form once all of them have been written.
+export function nextDraft(site: string, writtenSubjects: string[]) {
+  return [termsUpdateDraft(site), libraryOpenDraft(site)].find((d) => !writtenSubjects.includes(d.subject)) ?? null;
+}
+
 export async function createAnnouncement(adminId: string, f: { subject: string; body: string; notice: string }): Promise<Result> {
   const a = await prisma.announcement.create({ data: { ...f, createdById: adminId }, select: { id: true } });
   await logAdmin(adminId, "Wrote announcement draft", "announcement", a.id, { subject: f.subject });

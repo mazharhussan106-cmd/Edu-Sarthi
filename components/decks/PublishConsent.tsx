@@ -1,8 +1,9 @@
 // Owns the form a creator fills in before a deck goes to review: the one-time
 // "I am 18 or older", whether it goes out as themselves or under their
 // institute's name and logo, how their name shows on public decks, and the
-// ticks (own work, licence, EduSarthi's paid use, and permission to publish
-// for the institute). Validated with the same schema the server enforces.
+// ticks (own work, licence, that anyone can read it, EduSarthi's paid use, and
+// permission to publish for the institute). Validated with the same schema the
+// server enforces.
 //
 // It deliberately does NOT decide anything: the server re-checks every tick
 // and the age answer (lib/deckReview), and an admin still reviews the deck.
@@ -44,6 +45,7 @@ export function PublishConsent({ deckId, defaults, institute = null, onCancel, o
   const [publicName, setPublicName] = useState(defaults.publicName ?? "");
   const [ownWork, setOwnWork] = useState(false);
   const [licence, setLicence] = useState(false);
+  const [openWeb, setOpenWeb] = useState(false);
   const [paidUse, setPaidUse] = useState(false);
   const [asInstitute, setAsInstitute] = useState(Boolean(institute?.locked));
   const [behalf, setBehalf] = useState(false);
@@ -53,7 +55,7 @@ export function PublishConsent({ deckId, defaults, institute = null, onCancel, o
   async function submit() {
     setError(null);
     if (!adult) return setError("Publishing to the public library is open from age 18. You can still keep this deck private or share it by link.");
-    const check = publishConsentSchema.safeParse({ adult, ownWork, licence, paidUse, name: { creditStyle: style, publicName }, asInstitute, behalf: asInstitute && behalf });
+    const check = publishConsentSchema.safeParse({ adult, ownWork, licence, openWeb, paidUse, name: { creditStyle: style, publicName }, asInstitute, behalf: asInstitute && behalf });
     if (!check.success) return setError(check.error.issues[0]?.message ?? "Check the form and try again.");
     setBusy(true);
     const res = await callApi("/api/decks", { action: "publish", id: deckId, consent: check.data });
@@ -146,6 +148,13 @@ export function PublishConsent({ deckId, defaults, institute = null, onCancel, o
               <a href={LICENCES.CC_BY_SA.href} target="_blank" rel="noopener noreferrer" className="text-accent underline">{LICENCES.CC_BY_SA.label}</a>.
             </span>
           )}
+        </label>
+        <label className="flex items-start gap-2 text-sm text-ink">
+          <input type="checkbox" className={tick} checked={openWeb} onChange={(e) => setOpenWeb(e.target.checked)} />
+          <span>
+            Once it is approved, anyone can read this deck, with or without an account, and search engines may list it.
+            <span className="block text-xs text-ink-muted">You can withdraw it at any time. It then leaves the library at once; a search engine may keep its own copy for a while.</span>
+          </span>
         </label>
         <label className="flex items-start gap-2 text-sm text-ink">
           <input type="checkbox" className={tick} checked={paidUse} onChange={(e) => setPaidUse(e.target.checked)} />

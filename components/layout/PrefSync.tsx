@@ -1,8 +1,8 @@
-// Owns bringing this device's display settings (text size, Hindi, data saver,
-// reduce motion) in line with the signed-in account's saved ones, and stamping
-// the voice and Hindi-question settings on <html>, where they are read.
+// Owns bringing this device's display settings (theme, text size, Hindi, data
+// saver, reduce motion) in line with the signed-in account's saved ones, and
+// stamping the voice and Hindi-question settings on <html>, where they are read.
 //
-// Those four live in cookies so the server can paint them on the first frame,
+// Those five live in cookies so the server can paint them on the first frame,
 // but a cookie belongs to a device, not an account. On a new phone, or a shared
 // computer last used by someone else, the cookie disagrees with the account;
 // this fixes it once and the next page load is correct.
@@ -13,6 +13,7 @@
 "use client";
 
 import { useEffect } from "react";
+import type { Theme } from "@prisma/client";
 
 export type SyncPrefs = { textSize: "small" | "normal" | "large"; hideHindi: boolean; dataSaver: boolean; reduceMotion: boolean };
 
@@ -21,7 +22,25 @@ export type SyncPrefs = { textSize: "small" | "normal" | "large"; hideHindi: boo
 /// after a tap (the Hindi to English questions).
 export type LivePrefs = { voiceAccent: string; voiceSpeed: string; hideHindiTask: boolean };
 
-export function PrefSync({ prefs, live }: { prefs: SyncPrefs; live: LivePrefs }) {
+export function PrefSync({ prefs, live, theme }: { prefs: SyncPrefs; live: LivePrefs; theme: { value: Theme; attr: string } | null }) {
+  // The theme has its own cookie and its own route (it is a column on the
+  // account, not a preference), so it is checked on its own. Without this a
+  // new phone showed the light theme while Settings said "Dark".
+  const themeValue = theme?.value;
+  const themeAttr = theme?.attr;
+  useEffect(() => {
+    if (!themeValue || !themeAttr) return;
+    const el = document.documentElement;
+    if ((el.getAttribute("data-theme") ?? "light") === themeAttr) return;
+    if (themeAttr === "light") el.removeAttribute("data-theme");
+    else el.setAttribute("data-theme", themeAttr);
+    void fetch("/api/profile/theme", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ theme: themeValue }),
+    }).catch(() => {});
+  }, [themeValue, themeAttr]);
+
   useEffect(() => {
     const el = document.documentElement;
     const set = (name: string, value: string | null) => (value ? el.setAttribute(name, value) : el.removeAttribute(name));

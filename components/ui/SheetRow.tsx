@@ -23,6 +23,7 @@ export function SheetRow({
   value,
   anchor,
   done = false,
+  form = false,
   children,
 }: {
   title: string;
@@ -31,6 +32,8 @@ export function SheetRow({
   value?: string;
   anchor?: string;
   done?: boolean;
+  /** Passed to Sheet: only ✕, Cancel or Escape close it. */
+  form?: boolean;
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -47,6 +50,16 @@ export function SheetRow({
     return () => window.removeEventListener("hashchange", onHash);
   }, [anchor]);
 
+  function close() {
+    setOpen(false);
+    // Drops "#share" from the address once its sheet is closed, so a reload or
+    // a shared link of this page does not open the sheet again. history.state
+    // is passed on untouched: the router keeps its own data in it.
+    if (anchor && window.location.hash === `#${anchor}`) {
+      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+    }
+  }
+
   return (
     <div id={anchor} className="scroll-mt-20">
       <button
@@ -62,7 +75,7 @@ export function SheetRow({
         {value ? <span className="max-w-[40%] shrink-0 truncate text-sm text-ink-muted">{value}</span> : null}
         <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden="true" />
       </button>
-      <Sheet open={open} onClose={() => setOpen(false)} title={title} done={done}>
+      <Sheet open={open} onClose={close} title={title} done={done} form={form}>
         {children}
       </Sheet>
     </div>

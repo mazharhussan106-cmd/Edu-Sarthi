@@ -395,9 +395,18 @@ Tested on a local Postgres with student, guest, teacher and admin, at 390×844 a
 - axe (WCAG 2.1 AA and best practice), five themes, both widths, page plus the Theme, Voice and Reminder sheets, and the guest sheet: nothing from Settings. Left, and on every page already: the logotype's contrast and the header's two unlabelled `<nav>` landmarks (`landmark-unique`).
 - `tsc --noEmit` and `next build` pass.
 
+Audit before the PR (owner asked "audit kar lo", 29 Oct), found and fixed:
+- **Typed passwords outlived the sheet.** Change password and Change email promise to forget a half-typed password when the form closes, but closing the sheet by ✕, Escape or a tap outside did not clear it. `Sheet` now gives its content `useSheetClose` and `useOnSheetClosed`; both forms clear on every close, and their Cancel closes the sheet.
+- **One tap too many.** Both forms used to show a paragraph and a button inside the sheet first; the sheet now opens straight on the form, with the paragraph above it.
+- **A stray tap could throw away a code.** Sheets with a form (Keep your progress, Change email, Change password) no longer close on a tap outside; ✕, Cancel and Escape still close them. Choice sheets still close on a tap outside.
+- **The theme did not follow the account to a new device**, though the Theme row read the account: a new phone showed light while Settings said "Dark". `PrefSync` now brings the theme in line like text size and the rest (sets the attribute, then the cookie through `/api/profile/theme`).
+- `/settings#share`: closing the sheet drops the hash, so a reload does not reopen it; a hash change on the open page also opens the sheet.
+- The ⚙ link is marked current (`aria-current`, accent colour) on the Settings page. Choice rows show the focus ring only for the keyboard, not after a tap. `docs/FEATURE-MAP.md` no longer calls the gear a "quick panel".
+- Tested again: the 63 Settings checks, the guest/teacher/admin checks, 16 checks for the fixes above (including a real password change from the sheet and signing in with the new one), 5 for the theme on a new device, axe in every theme (only the two older findings), `tsc` and `next build`.
+
 Not done, on purpose:
-- Change password and Change email still open with a short explanation and a button inside their sheet before the form shows (one extra tap). Kept, because the explanation says what will happen (signed out everywhere).
 - A Next `<Link>` to `/settings#share` while already on `/settings` scrolls to the row but does not open its sheet (no hashchange event). One more tap.
+- Teachers and admins sign out from Settings → Sign out; their ☰ menu (phone only) has no Sign out row, as before this phase. The old gear dropdown was their quick sign-out.
 
 Still open:
 - Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.

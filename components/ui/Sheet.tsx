@@ -7,20 +7,44 @@
 // close. It also sits in the top layer, so no ancestor's backdrop-blur or
 // overflow can clip it (what once squeezed the phone menu into the header).
 //
+// Content inside can close the sheet (useSheetClose, for a form's Cancel) and
+// hear it close however it closed (useOnSheetClosed, so a half-typed password
+// is cleared on ✕, Escape or a tap outside, not only on Cancel).
+//
 // It deliberately does NOT own whether it is open; the row that opens it does.
 
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useId, useMemo, useRef, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/Button";
+
+type SheetApi = { close: () => void; subscribe: (fn: () => void) => () => void };
+
+const SheetContext = createContext<SheetApi | null>(null);
+
+/** Closes the sheet this is inside; null outside a sheet. */
+export function useSheetClose(): (() => void) | null {
+  return useContext(SheetContext)?.close ?? null;
+}
+
+/** Runs fn every time the sheet this is inside closes, by any route. */
+export function useOnSheetClosed(fn: () => void) {
+  const sheet = useContext(SheetContext);
+  const latest = useRef(fn);
+  useEffect(() => {
+    latest.current = fn;
+  });
+  useEffect(() => sheet?.subscribe(() => latest.current()), [sheet]);
+}
 
 export function Sheet({
   open,
   onClose,
   title,
   done = false,
+  form = false,
   children,
 }: {
   open: boolean;
@@ -28,10 +52,30 @@ export function Sheet({
   title: string;
   /** A Done button at the bottom: for choices, where nothing else ends the sheet. */
   done?: boolean;
+  /** A form with codes or a password: a stray tap outside must not throw it away. */
+  form?: boolean;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+  const listeners = useRef(new Set<() => void>());
+  // Stable, so content that subscribes does so once, not on every render.
+  const api = useMemo<SheetApi>(
+    () => ({
+      close: () => onCloseRef.current(),
+      subscribe: (fn) => {
+        listeners.current.add(fn);
+        return () => {
+          listeners.current.delete(fn);
+        };
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
     const dialog = ref.current;
@@ -44,12 +88,17 @@ export function Sheet({
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      // "close" fires for Escape and for close() alike, so the row hears both.
-      onClose={onClose}
+      // "close" fires once for every way out (Escape, ✕, Done, a tap outside:
+      // the last three go through close()), so listeners hear each close once.
+      onClose={() => {
+        listeners.current.forEach((fn) => fn());
+        onClose();
+      }}
       // The dialog has no padding, so a click whose target is the dialog
-      // itself landed on the dimmed backdrop, not on anything inside.
+      // itself landed on the dimmed backdrop, not on anything inside. A form
+      // closes only by ✕, Cancel or Escape, which nobody presses by accident.
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (!form && e.target === e.currentTarget) onClose();
       }}
       className="sheet mx-0 mb-0 mt-auto max-h-[85dvh] w-full max-w-full overflow-y-auto overscroll-contain rounded-t-2xl border border-border bg-surface-raised p-0 text-ink shadow-lg shadow-shadow backdrop:bg-ink/40 sm:m-auto sm:w-[32rem] sm:max-w-[calc(100%-2rem)] sm:rounded-2xl"
     >
@@ -69,7 +118,9 @@ export function Sheet({
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
-        <div className="mt-3">{children}</div>
+        <div className="mt-3">
+          <SheetContext.Provider value={api}>{children}</SheetContext.Provider>
+        </div>
         {done ? (
           <Button className="mt-5 w-full" onClick={onClose}>
             Done

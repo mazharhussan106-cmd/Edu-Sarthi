@@ -232,6 +232,9 @@ Har setting ab ek jaisi row hai: upar naam, neeche chhoti line (2 line tak). On/
 - [ ] Koi bhi switch on/off karke page reload → wahi bacha rahe
 - [ ] Menu → **Share EduSarthi** se Settings khule to Share wali sheet apne aap khul jaaye
 - [ ] **Sign out** row → sheet → Sign out → login page; guest me pehle chetavni dikhe
+- [ ] **Change password** sheet seedha form khole; kuch type karke ✕ dabaiye, phir kholiye → saare fields khaali hon
+- [ ] Change email / Change password sheet ke bahar tap karne se band na ho (✕ ya Cancel se ho)
+- [ ] Doosre phone ya browser me login kariye → wahi theme dikhe jo account me chuna tha
 - [ ] Phone par koi row ka naam kata hua (…) ya neeche wali line 2 se zyada line ki na ho
 - [ ] Admin menu me **Site settings** (sab ke liye audit limit) aur ⚙ Settings (apni settings) alag-alag hon
 

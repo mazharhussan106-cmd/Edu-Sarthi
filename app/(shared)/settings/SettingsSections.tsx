@@ -72,7 +72,7 @@ export async function SettingsSections({ userId }: { userId: string }) {
       {/* First for a guest: the one step that keeps their progress. */}
       {!member ? (
         <Group id="settings-progress" title="Your progress">
-          <SheetRow title="Keep your progress" subline="Add your email so your cards are kept, and get the email settings.">
+          <SheetRow title="Keep your progress" subline="Add your email so your cards are kept, and get the email settings." form>
             <GuestUpgrade />
           </SheetRow>
         </Group>
@@ -168,7 +168,7 @@ export async function SettingsSections({ userId }: { userId: string }) {
 
       <Group id="settings-account" title="Account & security">
         {member && user.email ? (
-          <SheetRow title="Change email" subline={user.email}>
+          <SheetRow title="Change email" subline={user.email} form>
             <ChangeEmail currentEmail={user.email} hasPassword={hasPassword} />
           </SheetRow>
         ) : null}
@@ -176,6 +176,7 @@ export async function SettingsSections({ userId }: { userId: string }) {
           <SheetRow
             title={hasPassword ? "Change password" : "Password"}
             subline={hasPassword ? "Also signs you out on every device." : "You sign in without one. See how to add one."}
+            form={hasPassword}
           >
             <ChangePassword hasPassword={hasPassword} />
           </SheetRow>

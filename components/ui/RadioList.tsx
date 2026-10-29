@@ -42,8 +42,9 @@ export function RadioList<T extends string>({
               key={o.value}
               className={cn(
                 "flex cursor-pointer items-center gap-3 px-3 py-2.5 text-sm hover:bg-hover",
-                // The real input is visually hidden, so the ring goes on the row.
-                "focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-accent",
+                // The real input is visually hidden, so the ring goes on the
+                // row; :focus-visible, so it shows for the keyboard, not a tap.
+                "has-[input:focus-visible]:outline-2 has-[input:focus-visible]:-outline-offset-2 has-[input:focus-visible]:outline-accent",
                 selected ? "font-medium text-ink" : "text-ink-light",
               )}
             >

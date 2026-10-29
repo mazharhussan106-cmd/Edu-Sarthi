@@ -51,7 +51,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 |---|---|---|
 | Practice modules | Speaking exercises by level; record or upload audio, video or a photo | Menu → Learn and practise → Practice modules (`/modules`); Bar → Class leads there too |
 | Audited (My audits) | Every recording with its status: All / In review / Action needed / Completed | Bar → Audited (`/feedback`) |
-| One audit | Rubric scores, timestamped notes, or the reason it was sent back and tips to re-record | Audited → tap a row (`/feedback/<id>`) |
+| One audit | Overall score with band word and change since last; the teacher's opening line; "Fix these first" (top 3 notes, each plays its moment); Try again (back to the same card for card recordings); player and all notes (right column on a computer); each skill with band, meaning and change; focus next / strongest; last-5 progress; the teacher's full words; what was asked. Or, before the audit, the reason it was sent back and tips to re-record | Audited → tap a row (`/feedback/<id>`) |
 | Class | Says honestly that live classes are not built yet; leads to the speaking exercises | Bar → Class (`/class`) |
 
 ### You

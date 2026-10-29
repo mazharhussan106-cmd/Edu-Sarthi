@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student audit page redesign, see its section). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -411,6 +411,12 @@ Not done, on purpose:
 Still open:
 - Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
 - The two pre-existing axe findings above (logotype contrast, unlabelled navs) on every page.
+
+## Student audit page redesign (29 Oct 2026, branch `claude/epic-galileo-nvgutk`)
+
+Only `/feedback/[id]` (a finished audit) changed. Plan, research on 8 products, owner's answers and test results: `docs/AUDIT-PAGE-PLAN.md`. Order now: overall score + band word + change, teacher's opening line, "Fix these first" (top 3 notes: major first, then by time), Try again, player + all notes (sticky right column on a computer), skills (band, meaning, change), focus next / strongest, last-5 progress, full teacher words, what was asked, Try again. Rules live in `lib/auditReport.ts`. No database change.
+
+**Don't undo:** no CEFR/IELTS level or exam estimate (rubric not validated); no AI label (owner, 26 Oct); "Try again" on a card recording returns to that card (`retryHref`), it used to drop the card. **Needs:** merge; the owner to confirm the band words and the skill meaning lines (built as proposed, because the owner said "start building").
 
 ## Flashcard phone layout: lesson (10 Oct)
 

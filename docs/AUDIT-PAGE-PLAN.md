@@ -1,6 +1,6 @@
 # Student audit page — improvement plan
 
-Status: **PLANNING — waiting for the owner's approval. No code written yet.**
+Status: **BUILT and tested locally (29 Oct 2026). Not merged, not tested on the live site.** See "Build result" at the end.
 Branch: `claude/epic-galileo-nvgutk`. Started 29 Oct 2026.
 
 Scope (owner, 29 Oct): this chat improves **only** the student's finished-audit
@@ -123,3 +123,37 @@ Tests: local Postgres + Playwright at 390×844 and 1280×800 — first audit, 1/
   Vocabulary — how well your words fit what you mean ·
   Confidence — how steadily and clearly you deliver.
 - Build Must + Should now and leave Nice-to-have for later?
+
+## Build result (29 Oct 2026)
+
+The owner said "start building" without answering the open questions above, so
+the proposals were built as written: layout 3, the four bands, the five meaning
+lines, Must + Should. Change any of them in `lib/auditReport.ts` (one place).
+
+Built (no database change, no Database setup run needed):
+- `lib/auditReport.ts` — skills and meanings, `bandFor`, `topFixes`, `openingLine`, `skillRows`, `focusAndStrength`, `retryHref`.
+- `components/student/AuditSeek.tsx` — client: shared seek, sticky player, note lists. A time pressed above the player scrolls it into view first.
+- `components/student/AuditSkills.tsx`, `components/student/AuditProgress.tsx` — server.
+- `components/student/AuditReport.tsx` — rewritten; `app/(student)/feedback/[id]/page.tsx` — one query for this audit and the four before it (replaces the old "previous audit" query) plus a count for "Audit N"; the page is `lg:max-w-6xl` only for a finished audit.
+- `components/review/AuditPlayback.tsx` deleted (only this page used it). `NoteList` and `Player` unchanged.
+- Dropped from the plan: a page-specific `loading.tsx`. `app/(student)/loading.tsx` already covers every student page.
+
+Tested on a local Postgres with a production build and Playwright (60 checks):
+first audit, 2 / 4 / 7 notes, photo with no notes, deleted recording, video,
+long summary, equal scores, built-in card retry link (opens the card), keyboard,
+a time in the top card plays at that moment with the player in view, the
+computer layout (player column on the right, still on screen at the end of the
+report), no sideways scroll at 390 and 1280, another student gets "not found"
+with no data. axe (WCAG 2.1 AA): clean in dark, sepia, midnight and high
+contrast. In light, only pre-existing shared items remain: the wordmark, and
+`Badge`'s success ("Completed") and error ("major") tints at about 4.3:1.
+Those badges are used site-wide, so they were left for a separate fix.
+`tsc` and `next build` pass. The deck-card retry link was checked by the rule
+only, not opened in a browser.
+
+Still open:
+- Owner to confirm or change the band words/cut-offs and the meaning lines.
+- Light-theme contrast of `Badge` success/error (site-wide; outside this page).
+- The not-found page for another student's audit returns HTTP 200, because the
+  group's `loading.tsx` streams first. No data shows. Pre-existing.
+- Nice-to-have, not built: "N audits left today" beside Try again; "best score so far".

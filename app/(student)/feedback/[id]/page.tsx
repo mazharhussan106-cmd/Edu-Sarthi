@@ -19,7 +19,8 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { Player } from "@/components/media/Player";
 import { AuditReport } from "@/components/student/AuditReport";
 import { SendBackView } from "@/components/student/SendBackView";
-import { averageScore, STATUS_BADGE } from "@/lib/audits";
+import { STATUS_BADGE } from "@/lib/audits";
+import { overallOf, retryHref, SKILLS, type SkillScores } from "@/lib/auditReport";
 import { prefsOf } from "@/lib/preferences";
 import { noteSchema } from "@/lib/validations";
 import { cardNoun } from "@/lib/chunkCard";
@@ -47,7 +48,7 @@ export default async function SubmissionPage({
       returnNote: true,
       retry: { select: { id: true } },
       wordId: true,
-      word: { select: { text: true, kind: true } },
+      word: { select: { id: true, code: true, deckId: true, text: true, kind: true } },
       // For where the audit player starts. Same row, so no second query.
       student: { select: { preferences: true } },
       exercise: {
@@ -80,7 +81,10 @@ export default async function SubmissionPage({
       : STATUS_BADGE[submission.status];
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
+    // Wider only for a finished audit: it has a second column on a computer.
+    <main
+      className={`mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10 ${submission.status === "REVIEWED" ? "lg:max-w-6xl" : ""}`}
+    >
       <Link href="/feedback" className="text-xs text-ink-muted hover:text-accent">
         ← My Audits
       </Link>
@@ -164,35 +168,34 @@ async function Reviewed({
     id: string;
     createdAt: Date;
     mediaKind: "AUDIO" | "VIDEO" | "IMAGE";
-    exercise: { id: string };
-    feedback: {
-      pronunciation: number;
-      grammar: number;
-      fluency: number;
-      vocabulary: number;
-      confidence: number;
-      summary: string;
-      notes: unknown;
-    };
+    exercise: { id: string; prompt: string };
+    word: { id: string; code: string; deckId: string | null } | null;
+    feedback: SkillScores & { summary: string; notes: unknown };
   };
   mediaUrl: string | null;
   autoPlay: boolean;
   playbackRate: number;
 }) {
-  // The audit just before this one, for the "+0.8 since last time" line.
-  const previous = await prisma.feedback.findFirst({
-    where: {
-      submission: { studentId, status: "REVIEWED", createdAt: { lt: submission.createdAt } },
-    },
-    orderBy: { submission: { createdAt: "desc" } },
-    select: {
-      pronunciation: true,
-      grammar: true,
-      fluency: true,
-      vocabulary: true,
-      confidence: true,
-    },
-  });
+  // This audit and the four before it, newest first, for the skill changes
+  // and the progress strip; the count gives "Audit N". Both scoped by
+  // studentId in the WHERE clause.
+  const upTo = { studentId, status: "REVIEWED" as const, createdAt: { lte: submission.createdAt } };
+  const [recent, number] = await Promise.all([
+    prisma.feedback.findMany({
+      where: { submission: upTo },
+      orderBy: { submission: { createdAt: "desc" } },
+      take: 5,
+      select: { submissionId: true, pronunciation: true, grammar: true, fluency: true, vocabulary: true, confidence: true },
+    }),
+    prisma.submission.count({ where: upTo }),
+  ]);
+  const scoresOf = (f: SkillScores): SkillScores =>
+    Object.fromEntries(SKILLS.map((k) => [k.key, f[k.key]])) as SkillScores;
+  // Positional, not "the second row": two attempts sent in the same instant
+  // must still compare this audit with the one before it.
+  const at = recent.findIndex((f) => f.submissionId === submission.id);
+  const previous = at >= 0 && recent[at + 1] ? scoresOf(recent[at + 1]) : null;
+  const scores = recent.slice(Math.max(at, 0)).map(overallOf).reverse();
 
   // The Json column is validated on read, not trusted: a note written by an
   // older version of the app should drop, not crash the page.
@@ -200,12 +203,14 @@ async function Reviewed({
 
   return (
     <AuditReport
-      exerciseId={submission.exercise.id}
+      retryHref={retryHref(submission.exercise.id, submission.word)}
+      prompt={submission.exercise.prompt}
       mediaUrl={mediaUrl}
       mediaKind={submission.mediaKind}
       notes={parsed.success ? parsed.data : []}
       feedback={submission.feedback}
-      previousAverage={previous ? averageScore(previous) : null}
+      previous={previous}
+      history={{ number, scores }}
       autoPlay={autoPlay}
       playbackRate={playbackRate}
     />

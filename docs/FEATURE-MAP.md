@@ -20,10 +20,10 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 | Feature | What it does | Where |
 |---|---|---|
 | Daily cards | 2,227 words, 1,183 chunks, 247 grammar cards, 180 customer-support cards on the one EduSarthi card (three sides, Known / Unknown / Remark, Day 1·3·7·15·30·60 review) | Bar → Flashcard (`/flashcards`), tabs Words / Chunk / Grammar / Support |
-| Chunk types | Frames, prepositions and the other chunk groups | Flashcard → Chunk tab, the row of small chips right above the card |
-| Customer-support English | Voice / Chat / Email × Basic / Intermediate / Advanced | Flashcard → Support tab; Menu → Learn and practise → Customer-support English |
-| Word sections | Words by level, topic, word type, importance and goal (Daily English, Interviews, IELTS and exams, Work English), in packs of 50 | Flashcard → Words → 📂 Sections; Menu → Learn and practise → Word sections (`/flashcards/sections`) |
-| Remark lists on one tab | ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident for the open tab | Flashcard → the end of the row right above the card |
+| Chunk types | Frames, prepositions and the other chunk groups | Explore → a chunk type (`/explore`); the Chunk chip then reads "Chunk · Frames", tap it for all chunks |
+| Customer-support English | Voice / Chat / Email × Basic / Intermediate / Advanced (the channel and level chips were removed 29 Oct; the tab shows all of them) | Flashcard → Support tab; Menu → Learn and practise → Customer-support English |
+| Word sections | Words by level, topic, word type, importance and goal (Daily English, Interviews, IELTS and exams, Work English), in packs of 50 | Menu → Learn and practise → Word sections (`/flashcards/sections`); while studying one, the Words chip names it |
+| Remark lists on one tab | ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident for the open tab | Flashcard → the end of the card-kind row (scroll it sideways on a narrow phone) |
 | My card lists | Ten lists across every kind of card and every deck you can open — Remarks: ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident, 📝 My notes; Answer: ✅ Known, 🔁 Unknown; Level (of Known cards): 🔴 Hard, 🟡 Medium, 🟢 Easy. Each card shows all its marks; tap it to open the card and change them | Menu → 🗂️ My card lists → any list (`/my-cards?list=…`) |
 | Study this list | Go through every card of one list (e.g. only 🔴 Hard) one at a time on the usual EduSarthi card: Known / Unknown / Remark, › to move on, ‹ to go back, End to stop; a page says when the list is done | My cards → ▶ Study this list (`/my-cards/study?list=…`) |
 | Search | Find a card by word or code; recent searches; search inside a section | Search (`/search`) |

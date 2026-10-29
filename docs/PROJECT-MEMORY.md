@@ -10,7 +10,7 @@ An English spoken-communication training platform: students record or upload, te
 
 | Branch / chat | What it built | State |
 |---|---|---|
-| `modest-darwin` — "Flashcard filter bar" | The filters above the card in layers: English · My decks tabs, card kinds, the old filters, count beside the tabs (`docs/FLASHCARD-NAV-LAYERS.md`) | Built and tested locally, **not merged** |
+| `modest-darwin` — "Flashcard filter bar" | The filters above the card in two layers: English · My decks tabs with today's count, then the card kinds with skipped and the remark lists (`docs/FLASHCARD-NAV-LAYERS.md`) | Built and tested locally, **not merged** |
 | `festive-thompson` — "GitHub push" | WordMaster 2000: 2,227 words with 56 fields each, Excel files and tools in `content/wordmaster-2000/` | In `main` |
 | `ecstatic-mccarthy` — "App image plan overview" | **Chunk (1,183) and Grammar (247) cards on the same 3-side card** (`docs/CHUNK-PLAN.md`), word and chunk data audits, and — from its own status line — the flashcard-maker test decks (Physics 8, 1857 Revolt 9, Photosynthesis 5 cards: built, checked, awaiting a push decision). Its PR #1 is in `main` (git history there shows the word-card redesign, themes, card colours, the "Database setup" button and the live-testing guide; some of that may come from earlier chats) | The Chunk/Grammar commits were **not** in `main` until they were merged into `happy-galileo` on 6 Oct |
 | `trusting-noether` — "Live phone testing setup" | Bulk-loading words so the database setup finishes in time (PR #2); its chat title is live phone testing. Last question it asked the owner: **Vercel or Hostinger for hosting? (unanswered)** | In `main` (PR #2) |
@@ -43,7 +43,7 @@ An English spoken-communication training platform: students record or upload, te
 - **Owner's decisions, 29 Oct 2026 (student dashboard):** the redesign covers the **student** dashboard only (teacher and admin later, if at all); the page opens on **today's work**, with progress and charts lower or on the Progress page; gamification is **medium** — streak, daily goal ring, XP, a level, weekly goal, streak freeze, badges — and **no leaderboard**; the design is agreed first and built later in phases. Second round the same day: every recommendation accepted (the XP level is called **Stage**; a streak day needs **10 XP**; daily goal 20/40/60/100 XP, default 40; weekly goal default 5 days; freezes earned, at most 2, new accounts start with 1; deck cards earn XP; guests get streak and XP), except that **the score trend chart stays on the dashboard**. XP is for effort only, never for audit scores. Details: `docs/DASHBOARD-PLAN.md`.
 
 - **Owner's decisions, 29 Oct 2026 (flashcard filter bar, `docs/FLASHCARD-NAV-LAYERS.md`):**
-  - The filters above the card go in **layers**: study area (English · My decks; Tech later) → card kind (Words · Chunk · Grammar · Support) → that kind's own filters. **No tap-to-open "Filter" sheet** (the owner took it out of the plan: "layer 2 tak hi sahi hai"). The card itself does not change.
+  - The filters above the card are **two layers only**: study area (English · My decks; Tech later) → card kind (Words · Chunk · Grammar · Support). **No third layer**: no tap-to-open Filter sheet, and the chips for chunk types, Support channel and level, and word sections were removed from the bar (owner, 29 Oct: "Layer 3 v dikh raha hai use hata k banao"). The card itself does not change.
   - Users will group decks in **playlists**: one deck in many playlists (a later database change, not built).
   - **Tech** holds everything tech-related; built after the Library chat merges.
   - Explore, Library and Institute are no longer chips on the Flashcard tab (they stay in the ☰ menu). This supersedes the 10 Oct placement "after the card kinds, before the lists".
@@ -555,13 +555,13 @@ Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oc
 The plan, the owner's answers and what is left: `docs/FLASHCARD-NAV-LAYERS.md`.
 
 - **Row 1** `components/flashcards/AreaTabs.tsx`: English (`/flashcards`) · My decks (`/decks`), underline tabs, links with `aria-current`. Today's count sits at the right end of this row (`DeckCount` in `components/flashcards/DeckLists.tsx`), so it is always on screen and costs no row. My decks shows the same tabs to students (not to teachers or admins); its old "← Word cards" link is gone.
-- **Row 2**: Words · Chunk · Grammar · Support, as before.
-- **Row 3**: the kind's own filters exactly as before (📂 Sections and a section's chips on Words, chunk types on Chunk, channel and level on Support, nothing on Grammar), then "⏭ N skipped" when there are skipped cards, then ⭐ ❤️ ❓ 💯 (`DeckLists`). The small chips are now 24px tall (were 20px).
+- **Row 2** `components/flashcards/DeckTopBar.tsx`: Words · Chunk · Grammar · Support, then "⏭ N skipped" while there are skipped cards, then ⭐ ❤️ ❓ 💯 (`DeckLists`). On a 360px phone the lists are past the right edge (a fade shows the row goes on); they are also in the ☰ menu.
+- **No third row.** Removed from the bar: chunk types, Support channel and level, 📂 Sections / 🔍 Search here / ✕ All words. The URL filters still work, because Explore links to one chunk type and a word section opens its own session; so **the open kind's chip names the filter** ("Chunk · Frames", "Support · Chat · Basic", "Words · A1 · Starter") and tapping it shows the whole kind. **Don't undo:** without that, a filter would be on with nothing on screen saying so. Nothing in the app now links to the Support channel or level.
 - Every scrolling row uses `components/flashcards/fadeRow.ts`: a right-edge fade (a mask, so no colour token is needed) and 4px of room so the keyboard focus ring is not cut off (it was cut off before).
-- `FlashcardDeck`'s computer-width card height is now one value, `calc(100dvh-19rem)`, for every tab (the `tallTop` prop is gone), so Known / Unknown still ends inside an 800px-tall window.
-- **Measured (local, Playwright):** card height on a 390px phone went from 571px (Words, Grammar) / 543px (Chunk, Support) to 499px on every tab. A first try with a separate count row cost 80–108px and was dropped.
-- **Tested:** 76 browser checks at 360 and 390px (every link and filter, skipped, lists, Study this list, guest, teacher, focus ring, no sideways page scroll, no page errors), axe in all five themes, `tsc`, `next build`. The one axe finding, "page has no h1" on `/flashcards`, was there before this branch.
-- **Next action (owner):** look at it on a phone after merging. Not built: Tech (after the Library chat), playlists (database change), and the Filter sheet (removed by the owner).
+- `FlashcardDeck`'s computer-width card height is now one value, `calc(100dvh-17rem)`, for every tab (the `tallTop` prop is gone), so Known / Unknown still ends inside an 800px-tall window (measured 796px at 1280 × 800).
+- **Measured (local, Playwright):** card height on a 390px phone went from 571px (Words, Grammar) / 543px (Chunk, Support) to 531px on every tab.
+- **Tested:** 84 browser checks at 360 and 390px (two rows only, every kind link, the named filter chip and clearing it, skipped and show again, lists, Study this list, guest, teacher, focus ring, no sideways page scroll, no page errors), axe in all five themes, `tsc`, `next build`. The one axe finding, "page has no h1" on `/flashcards`, was there before this branch.
+- **Next action (owner):** look at it on a phone after merging. Not built: Tech (after the Library chat) and playlists (database change).
 
 ## Starting a new chat
 

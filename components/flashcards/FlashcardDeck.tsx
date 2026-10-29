@@ -181,11 +181,11 @@ export function FlashcardDeck({
           and the Known / Unknown bar, so the bar sits right above the bottom
           navigation with no gap on any screen size. From md up the card keeps
           a height tied to the window instead, because there is no bottom bar
-          to pin against. 19rem is what sits above and below the card there:
-          the header's two rows, the three filter rows (the same on every tab,
+          to pin against. 17rem is what sits above and below the card there:
+          the header's two rows, the two filter rows (the same on every tab,
           DeckTopBar) and the Known / Unknown bar, so that bar ends inside an
           800px-tall window. */}
-      <div className="relative min-h-[18rem] flex-1 md:h-[calc(100dvh-19rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none">
+      <div className="relative min-h-[18rem] flex-1 md:h-[calc(100dvh-17rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none">
         {/* Absolutely filled, so the card always gets exactly this box's
             height however the flex columns above resolve. The card fits its
             text to this height and scrolls inside it when it cannot. */}

@@ -1,6 +1,6 @@
 # Spaced repetition v2 — plan (30 Oct 2026, branch `claude/kind-euler-q35ydg`)
 
-Status: **Approved 30 Oct. Steps 1, 2 and 3 BUILT** (tested on a throwaway local Postgres and in a browser). Step 4 not started.
+Status: **Approved 30 Oct. All four steps BUILT** (tested on a throwaway local Postgres and in a browser). Not merged. Next: the owner tries it locally, merges, deploys, then runs the restage script (Step 1, Deploy order).
 Today's rules (v1) are listed in `docs/srs-review-plan-rules.xlsx` (R01–R28).
 
 ## The owner's decisions (30 Oct)
@@ -58,7 +58,8 @@ Each card stores a step number (`CardState.stage`) that points into the ladder. 
 - After Unknown, the card's code goes into an `again` list in the page link, the same way skips work.
 - After 3 more cards it is shown once with a "Practice — not saved" label. Its buttons just move on and save nothing.
 
-**Step 4 — words and docs**
+**Step 4 — words and docs — BUILT**
+- Done: `docs/srs-review-plan-rules.xlsx` is v2.0 (R01–R32, column B marks NEW / CHANGED, simulator on the v2 ladder with Unknown = two steps down; recalculated, 0 formula errors, its run matches the v2 rules). `docs/PROJECT-MEMORY.md` has the v2 section. The store listing only says "spaced repetition", so it needed no change.
 - Review Plan box: the ladder is read from `LADDER_DAYS`, so it shows the 7 new steps on its own.
 - Update the Excel sheet to v2, `docs/PROJECT-MEMORY.md`, and the store listing line if it is affected.
 

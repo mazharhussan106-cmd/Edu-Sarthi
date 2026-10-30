@@ -562,11 +562,16 @@ Owner's requirement: EduSarthi is a repository, so there must be **one place** w
 - **Tests for all of this are in `scripts/library-e2e/`** (README inside): six browser/HTTP suites run by one `run.cjs` (268 checks: navigation and the open library, robots and sitemap, the list's pages and topics, 21 hostile addresses, the new consent) plus `unit.ts` for the pure functions. Run them after any change to the library, `proxy.ts`, `lib/siteUrl.ts` or `lib/libraryUrl.ts`. Local database only.
 - **Next (the owner):** ask a lawyer about re-consent (A, or have B or C built); check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send the announcement (Admin → Announcements: test, then Start, type SEND); wait 7 days after the last email; merge the branch once; then `LIVE-TESTING-GUIDE.md` 4f and Google Search Console (add the site, submit `/sitemap.xml`).
 
-## Spaced-repetition rules sheet (30 Oct 2026, branch `claude/kind-euler-q35ydg`) — waiting on the owner
+## Spaced repetition v2 (30 Oct 2026, branch `claude/kind-euler-q35ydg`) — BUILT and tested, not merged
 
-- **What:** `docs/srs-review-plan-rules.xlsx` lists every rule behind the "Spaced Repetition · Your Review Plan" box (card side 3) and the daily card order, as the code has them today (R01–R28, each with its code file), plus a Simulator sheet comparing today's ladder with a proposed one. No code was changed.
-- **Today's rules, in one line:** ladder 1 · 3 · 7 · 15 · 30 · 60 days (`lib/srs.ts`); Unknown → step 1, due in a day; Known + Hard +0, Medium +1, Easy +2 steps; a new card counts as step 1, so its first Known + Medium is due in 3 days; due = exact mark time + gap; due cards first, then new up to the daily limit (built-in cards only, IST day).
-- **Undecided:** the owner said rules will change and will send the sheet back filled in (columns G–I, rows N01–N05). Before building: list the code changes, and if the ladder's step count changes, ask what happens to cards whose stored `CardState.stage` no longer exists (nothing is lost, but their next date may jump).
+Plan, decisions and test notes: `docs/SRS-V2-PLAN.md`. All rules, marked NEW / CHANGED, with a simulator: `docs/srs-review-plan-rules.xlsx` (v2.0).
+
+- **Rules now:** ladder 3 · 7 · 15 · 30 · 60 · 120 · 180 days; no answer brings a card back in under 3 days; Unknown → two steps down (min 3 days); new card's first Known Hard 3 / Medium 7 / Easy 15; due from midnight IST; ±1 day spread at 15, ±2 from 30; late credit on Medium/Easy (gap ≥ days remembered); Unknown cards come round once more 3 cards later as "Practice · not saved" (`?again=`, `lib/cardAgain.ts`); Settings → Reviews per day (No limit default, 50–200, per kind, built-in cards only; `?more=1` lifts both limits).
+- **Files:** `lib/srs.ts`, `lib/cardAgain.ts`, `lib/flashcards.ts`, `lib/todayReview.ts`, `lib/preferences.ts`, `app/api/flashcards/route.ts`, the three study pages, `FlashcardDeck.tsx`, `DeckStudy.tsx`, `DeckMessages.tsx`, `PracticeNotice.tsx`, Settings, Help copy.
+- **Tests:** `npx tsx scripts/srs-unit.ts` (22 checks, no database). Browser run on a local production build is described in the plan doc.
+- **Deploy (must do):** right after deploying, run `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run, check counts), then with `--apply`. It moves stored steps onto the v2 ladder from each card's real gap; safe to run twice; touches `CardState.stage` only. Before it runs, a card stored on old "60 days" would be read as the 120-day step.
+- **Don't undo:** the 3-day floor (owner's rule); practice answers must never POST; due dates are IST midnights (Today page counts and reminders rely on `dueAt <= now`); `nextReview` imports nothing that touches the database (client components import `lib/srs`).
+- **Not done / open:** own-deck and library-deck sessions not clicked through in a browser (same code path); `FlashcardDeck.tsx` is 256 lines, just over the ~250 rule; `npm run lint` fails for everyone because the repo has no `eslint.config.*` (existed before this work).
 
 ## Starting a new chat
 

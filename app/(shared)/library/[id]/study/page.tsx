@@ -7,6 +7,10 @@
 // edit, withdrawn or taken down shows a plain notice instead of cards. It
 // deliberately does NOT save answers; DeckStudy posts them to /api/flashcards,
 // which applies the same rule (lib/decks canStudyWord).
+//
+// A student sees the study tabs on top, with the tab they came from current
+// (`?from=`, carried on every next and previous card; My decks if none), so
+// studying a deck from a tab does not lose the tabs row.
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -22,13 +26,15 @@ import { Card } from "@/components/ui/Card";
 import { AiBadge } from "@/components/decks/AiBadge";
 import { DeckStudy } from "@/components/decks/DeckStudy";
 import { ListSessionBar } from "@/components/flashcards/ListSessionBar";
+import { AreaTabs } from "@/components/flashcards/AreaTabs";
+import { parseFrom } from "@/lib/studyTabSchemas";
 import { listNextHref, parseListSession } from "@/lib/listSession";
 
 export const revalidate = 0;
 
 const button = "inline-flex h-10 items-center rounded-lg border border-border-strong px-4 text-sm text-ink hover:bg-hover";
 
-export default async function FollowedStudyPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ card?: string; skip?: string; again?: string; inlist?: string; sid?: string; left?: string }> }) {
+export default async function FollowedStudyPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ card?: string; skip?: string; again?: string; inlist?: string; sid?: string; left?: string; from?: string }> }) {
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const userId = session!.user.id;
 
@@ -47,6 +53,11 @@ export default async function FollowedStudyPage({ params, searchParams }: { para
   }
 
   const skip = parseSkip(sp.skip);
+  // The study tabs on top, for a student, with the tab they came from current
+  // (My decks if none). Not during "Study this list": its strip says where they are.
+  const from = parseFrom(sp.from);
+  const fromQ = from ? `&from=${from}` : "";
+  const tabs = session!.user.role === "STUDENT";
   const [counts, picked] = await Promise.all([
     deckStudyCounts(userId, id, true),
     sp.card ? prisma.word.findFirst({ where: { code: sp.card, deckId: id }, select: { id: true } }) : null,
@@ -79,7 +90,7 @@ export default async function FollowedStudyPage({ params, searchParams }: { para
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-4 pt-3 sm:px-6 sm:pt-6">
-      {inList ? <div className="mb-2"><ListSessionBar s={inList} /></div> : null}
+      {inList ? <div className="mb-2"><ListSessionBar s={inList} /></div> : tabs ? <div className="mb-2"><AreaTabs current={from ?? "decks"} /></div> : null}
       <div className="flex items-center justify-between gap-3">
         <Link href={`/library/${id}`} className="min-w-0 truncate text-sm font-medium text-accent hover:underline">← {deck.title}</Link>
         {inList ? null : (
@@ -106,11 +117,12 @@ export default async function FollowedStudyPage({ params, searchParams }: { para
               stage: state && state.reviews > 0 ? state.stage : null,
               dueAt: state && state.reviews > 0 ? state.dueAt.toISOString() : null,
             }}
-            nextHref={inList ? listNextHref(inList) : `/library/${id}/study?deck=1`}
+            nextHref={inList ? listNextHref(inList) : `/library/${id}/study?deck=1${fromQ}`}
             skip={skip}
             again={pick.again}
             practice={pick.practice}
             cardColor={cardColor}
+            tabsAbove={tabs && !inList}
           />
         ) : (
           <Card className="text-center">
@@ -119,7 +131,7 @@ export default async function FollowedStudyPage({ params, searchParams }: { para
               {skip.length ? `You skipped ${skip.length} with ›. Go through them now, or come back later.` : "No cards are due. Coming back later is what makes them stick."}
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
-              {skip.length ? <Link href={`/library/${id}/study`} className="inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark">Show skipped cards again</Link> : null}
+              {skip.length ? <Link href={`/library/${id}/study${from ? `?from=${from}` : ""}`} className="inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-dark">Show skipped cards again</Link> : null}
               <Link href={`/library/${id}`} className={button}>Back to the deck</Link>
             </div>
           </Card>

@@ -62,7 +62,6 @@ export function FlashcardDeck({
   chunk,
   support = false,
   autoSpeak = false,
-  tallTop = false,
 }: {
   word: DeckWord;
   state: DeckState;
@@ -78,8 +77,6 @@ export function FlashcardDeck({
   chunk?: ChunkExtras;
   /** A customer-support card: its own sides, and a Slow button. */
   support?: boolean;
-  /** The Chunk tab has one more row of chips above the card. */
-  tallTop?: boolean;
   /** Say the word when each card opens (a setting, off by default). */
   autoSpeak?: boolean;
 }) {
@@ -179,14 +176,11 @@ export function FlashcardDeck({
           and the Known / Unknown bar, so the bar sits right above the bottom
           navigation with no gap on any screen size. From md up the card keeps
           a height tied to the window instead, because there is no bottom bar
-          to pin against. */}
-      <div
-        className={
-          tallTop
-            ? "relative min-h-[18rem] flex-1 md:h-[calc(100dvh-16rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
-            : "relative min-h-[18rem] flex-1 md:h-[calc(100dvh-14rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none"
-        }
-      >
+          to pin against. 17rem is what sits above and below the card there:
+          the header's two rows, the two filter rows (the same on every tab,
+          DeckTopBar) and the Known / Unknown bar, so that bar ends inside an
+          800px-tall window. */}
+      <div className="relative min-h-[18rem] flex-1 md:h-[calc(100dvh-17rem)] md:max-h-[52rem] md:min-h-[26rem] md:flex-none">
         {/* Absolutely filled, so the card always gets exactly this box's
             height however the flex columns above resolve. The card fits its
             text to this height and scrolls inside it when it cannot. */}

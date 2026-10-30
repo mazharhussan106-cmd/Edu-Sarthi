@@ -20,21 +20,24 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 | Feature | What it does | Where |
 |---|---|---|
 | Daily cards | 2,227 words, 1,183 chunks, 247 grammar cards, 180 customer-support cards on the one EduSarthi card (three sides, Known / Unknown / Remark, Day 1·3·7·15·30·60 review) | Bar → Flashcard (`/flashcards`), tabs Words / Chunk / Grammar / Support |
-| Chunk types | Frames, prepositions and the other chunk groups | Flashcard → Chunk tab, second row |
-| Customer-support English | Voice / Chat / Email × Basic / Intermediate / Advanced | Flashcard → Support tab; Menu → Learn and practise → Customer-support English |
-| Word sections | Words by level, topic, word type, importance and goal (Daily English, Interviews, IELTS and exams, Work English), in packs of 50 | Flashcard → Words → 📂 Sections; Menu → Learn and practise → Word sections (`/flashcards/sections`) |
-| Remark lists on one tab | ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident for the open tab | Flashcard → chips in the top row |
+| Chunk types | Frames, prepositions and the other chunk groups | Explore → a chunk type (`/explore`); the Chunk chip then reads "Chunk · Frames", tap it for all chunks |
+| Customer-support English | Voice / Chat / Email × Basic / Intermediate / Advanced (the channel and level chips were removed 29 Oct; the tab shows all of them) | Flashcard → Support tab; Menu → Learn and practise → Customer-support English |
+| Word sections | Words by level, topic, word type, importance and goal (Daily English, Interviews, IELTS and exams, Work English), in packs of 50 | Menu → Learn and practise → Word sections (`/flashcards/sections`); while studying one, the Words chip names it |
+| Remark lists on one tab | ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident for the open tab | Flashcard → the end of the card-kind row (scroll it sideways on a narrow phone) |
 | My card lists | Ten lists across every kind of card and every deck you can open — Remarks: ⭐ Important, ❤️ Favourite, ❓ Doubt, 💯 Confident, 📝 My notes; Answer: ✅ Known, 🔁 Unknown; Level (of Known cards): 🔴 Hard, 🟡 Medium, 🟢 Easy. Each card shows all its marks; tap it to open the card and change them | Menu → 🗂️ My card lists → any list (`/my-cards?list=…`) |
 | Study this list | Go through every card of one list (e.g. only 🔴 Hard) one at a time on the usual EduSarthi card: Known / Unknown / Remark, › to move on, ‹ to go back, End to stop; a page says when the list is done | My cards → ▶ Study this list (`/my-cards/study?list=…`) |
 | Search | Find a card by word or code; recent searches; search inside a section | Search (`/search`) |
-| Explore | Every kind of card, and approved library decks by subject, one tap to follow | Menu → Learn and practise → Explore flashcards (`/explore`); Flashcard → 🧭 Explore |
+| Explore | Every kind of card, and approved library decks by subject, one tap to follow | Menu → Learn and practise → Explore flashcards (`/explore`) |
 | Record yourself | Say (or, for support emails, write and photograph) the card for a teacher's audit | On a card |
 
 ### Decks and library
 
 | Feature | What it does | Where |
 |---|---|---|
-| My decks | Your own decks, with cards due; open one to study or edit it | Menu → Create flashcards → My decks (`/decks`); Flashcard → 📚 My decks |
+| My decks | Your own decks, with cards due; open one to study or edit it | Menu → Create flashcards → My decks (`/decks`); Flashcard → My decks tab (top row, beside English) |
+| Tech decks | Every tech deck you can see (yours, shared, followed, the library's and your institute's), by subject: Programming, Data, Infrastructure, Cloud & networking, AI | Flashcard or My decks → Tech tab (`/tech`) |
+| Your own study tabs | Tabs you make and fill with decks (one deck can be in many), and English / Tech / My decks moved or hidden; the tabs also show on a deck's study page | Flashcard, Tech or My decks → ＋ at the end of the top row; a tab opens at `/tabs/<id>` with ＋ Add decks; Help explains both |
+| Which tabs a copied deck shows in | Asked right after Copy to my decks / Make my own copy; Skip is fine, the deck is in My decks anyway | Library, institute or shared-link deck → copy |
 | New deck | Name, description and tags for a new deck (up to 20 decks); not for guests | Menu → Create flashcards → New deck (`/decks#new-deck`) |
 | Make cards with AI | Say what the cards are for, answer a few questions, check the cards, add them. 100 AI cards per account in total. Shown only when the AI key is set; not for guests | Menu → Create flashcards → Make cards with AI (`/decks#ai-cards`) |
 | Inside one deck | Add, edit or delete cards (front, back, example, notes, picture, recording), chapters, Study, share link on/off, People (invite to view or edit), submit to the library or withdraw, small fix and new version once published, delete the deck | My decks → open the deck (`/decks/<id>`) |

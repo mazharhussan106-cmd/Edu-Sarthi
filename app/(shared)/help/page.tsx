@@ -37,6 +37,14 @@ const FAQ = [
     a: "Yes. Open Menu → My decks to make a deck, and Library to copy a public one. Public decks are checked by an admin before anyone else can see them, and then anyone can read them, with or without an account.",
   },
   {
+    q: "What are the tabs above the cards, and how do I make my own?",
+    a: "The top row is your study tabs: English (the built-in Words, Chunk, Grammar and Support cards), Tech and My decks. Tap ＋ at the end of the row to make your own tab, for example Exam prep, then use ＋ Add decks on it to choose from your own, followed and shared decks. One deck can sit in several tabs and stays in My decks too. The same ＋ moves tabs up or down, hides the ones you do not use (English, Tech and My decks too) and renames or deletes your own; deleting a tab never deletes its decks. When you copy a deck, you are asked which of your tabs it should show in; Skip is fine.",
+  },
+  {
+    q: "What is the Tech tab?",
+    a: "Every computer and technology deck you can open, by subject: Programming, Data, Infrastructure, Cloud & networking and AI. Your own, followed and shared ones come first with Study; the rest of the library comes below with Open, where you can follow or copy them. A deck shows here when its tags or title name a tech subject, for example python, sql, docker or llm. Nobody's private deck shows here except your own.",
+  },
+  {
     q: "The text is too small on the card.",
     a: "Settings → Appearance → Text size → Larger (A+). Cards also scale their text to fit the screen, and you can pinch to zoom on the first two sides.",
   },

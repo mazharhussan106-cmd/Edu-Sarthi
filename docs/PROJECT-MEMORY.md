@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 30 Oct 2026 (flashcard filters in layers, the student's own study tabs and the Tech tab, built, not merged, needs Database setup, see "Flashcard filter bar in layers"; before that 28 Oct: library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple and merged in PR #25, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"; 29 Oct: student audit page redesign, see its section; 29 Oct: Library replaced Class in the header, bottom bar and footer, and the library opened to visitors on branch `claude/bold-hopper-hxfrpd`, not merged, see "Public library hub"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 30 Oct 2026 (one pull request from `claude/pensive-einstein-fnupe5` now holds every finished unmerged branch — spaced repetition v2, flashcard filters/own tabs/Tech, and three small doc and privacy branches — and needs **Database setup run from that branch before merging**, see "Combined pull request of the unmerged branches"; flashcard filters in layers, the student's own study tabs and the Tech tab, built, not merged, needs Database setup, see "Flashcard filter bar in layers"; before that 28 Oct: library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple and merged in PR #25, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"; 29 Oct: student audit page redesign, see its section; 29 Oct: Library replaced Class in the header, bottom bar and footer, and the library opened to visitors on branch `claude/bold-hopper-hxfrpd`, not merged, see "Public library hub"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -600,6 +600,32 @@ Plan, decisions and test notes: `docs/SRS-V2-PLAN.md`. All rules, marked NEW / C
 - **Don't undo:** the 3-day floor (owner's rule); practice answers must never POST; due dates are IST midnights (Today page counts and reminders rely on `dueAt <= now`); `nextReview` imports nothing that touches the database (client components import `lib/srs`).
 - **Audits (30 Oct):** first audit A1–A9 and second audit B1–B8 all fixed and retested; lists in the plan doc. `FlashcardDeck.tsx` is back to 232 lines.
 - **Not done / open:** `npm run lint` fails for everyone because the repo has no `eslint.config.*` (existed before this work). Suggestion only, not asked for: `lib/xp.ts` could count new-card XP by `firstReviewedAt` too.
+
+## Combined pull request of the unmerged branches (30 Oct 2026, branch `claude/pensive-einstein-fnupe5`)
+
+The owner asked for one pull request with all the work not yet in `main`. All 30 earlier pull requests were already merged; seven branches still had commits `main` did not. This branch merges five of them:
+
+| Branch | What it adds | Merge |
+|---|---|---|
+| `claude/kind-euler-q35ydg` | Spaced repetition v2 (see its section above) | clean |
+| `claude/modest-darwin-zfo3g1` | Flashcard filters in two rows, own study tabs, Tech tab | 3 files conflicted with v2 (`DeckStudy.tsx`, both deck study pages); both sides kept: v2's `again` / `practice` and the tabs' `from` / `tabsAbove` |
+| `ccr-ffd9dae0-rbe8i7` | Docs: 29 Oct login outage, run on the Vercel address for now | clean |
+| `claude/blissful-euler-9j0h4c` | Docs: Settings phase M merged in PR #25 | header line only |
+| `claude/trusting-noether-n3dhu1` | Privacy page: what Google sign-in and a guest account collect, Google in the services list | kept the newer SendGrid line from `main` |
+
+Checked after merging: `prisma validate`, `tsc --noEmit`, `next build` (the CI steps, same placeholder values), `scripts/srs-unit.ts` 26 checks. The browser suites need a local database and were not run on the combined branch; each branch ran its own before.
+
+**Order (must do), because a push to `main` deploys at once and this has schema changes:**
+1. Actions → Database setup → Run workflow → **Use workflow from: `claude/pensive-einstein-fnupe5`**. It adds `CardState.firstReviewedAt` (nullable), the `StudyTabKind` enum and the tables `StudyTab`, `StudyTabDeck`. Nothing is dropped; the live code ignores them. Running it from `main` would not add them, and running it from `main` between steps 1 and 2 would try to remove them again.
+2. Merge the pull request.
+3. From a computer with `.env`: `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run), then the same with `--apply`. It moves stored card steps onto the new ladder; it rewrites `CardState.stage` only.
+4. On a phone: Known / Unknown on a word card and a deck card, the tabs row, ＋ a tab, `/tech`.
+
+**Left out on purpose (owner to decide):**
+- `claude/adoring-gates-7h67av` (28 Oct): notification inbox, change email/phone, profile photo with admin approval, help chatbot. 19 files conflict with `main`, `prisma/schema.prisma` among them. Profile photo and email change were since built differently in `main` (PR #28, Settings phase H), so merging means choosing between two versions. Inbox and help chatbot are new.
+- `claude/adoring-darwin-ay4wox` (10 Oct): separate sign-in pages for student, teacher and admin. Built on the sign-in code before Google and guest sign-in; conflicts in `lib/auth.ts`, `proxy.ts` and the login form. Never merged.
+
+**Still open in the merged work:** the third audit of spaced repetition v2 (C1–C10 in `docs/SRS-V2-PLAN.md`) is not fixed; C1 (Unknown on the last card shows the practice card on the side it was left on) is the one a student will notice.
 
 ## Starting a new chat
 

@@ -106,3 +106,16 @@ Code review of `main...claude/kind-euler-q35ydg`. Ranked; "real" means it can ha
 | A10 | `FlashcardDeck.tsx` is 256 lines (rule: ~250). | Known, noted in PROJECT-MEMORY | Not in this fix; split only if the owner asks. |
 
 Files the fixes would touch: `lib/srs.ts`, `lib/flashcards.ts`, `lib/todayReview.ts`, `lib/preferences.ts`, `lib/cardAgain.ts`, `scripts/srs-v2-restage.ts`, `scripts/srs-unit.ts`, the three study pages — 10 files, so the owner approves first (CLAUDE.md).
+
+## Second audit (30 Oct) — only this chat's work (`398f702..d14a92d`), after the A1–A9 fixes. Not fixed yet
+
+| # | Finding | How real | Fix idea |
+|---|---|---|---|
+| B1 | Opening a card again with ‹ (or `?card=`) on its first day and answering it makes `reviews = 2`, so it moves from "new today" to "review today": the student gets one extra new card past the limit and loses one review slot. Same in Today/Dashboard counts. | Real: ‹ then Known is normal use. Was noted as a known edge of A1; the audit shows its cost. | Store the first-answer time (`CardState.firstReviewedAt`, one new nullable column, filled from `createdAt` for answered cards; no data lost) and count by it. Needs a schema change, so the owner decides. |
+| B2 | The daily reminder email counts every due card and ignores Reviews per day. | Real with a limit set: the email can say 250 due when the app shows 0. | Cap it the same way, ideally one shared "reviews left today" helper. |
+| B3 | The practice line says "You marked this Unknown a few cards ago", but at the end of a session the card comes back at once, and an old or edited link can show it for a card never marked Unknown. | Copy not always true (CLAUDE.md rule 15). | Wording that is always true, e.g. "Once more: a card you marked Unknown." |
+| B4 | `nextCardId` still counts today's new cards again after `deckCounts` did. | Extra round trip when no due card is served. | Pass `newLeft` in like `reviewsLeft`. |
+| B5 | The end-of-session fallback looks up waiting practice codes one at a time (up to 10). | Only with stale codes. | One `findMany` for all codes. |
+| B6 | Deck pages fetch a practice card twice (code → id, then id → card). | One extra query per practice look on decks. | Return the row from `find`. |
+| B7 | `FlashcardDeck.tsx` 256 lines (= A10). | Rule 11. | Shared `useAgainNav` hook for FlashcardDeck and DeckStudy. |
+| B8 | Two `istDayStart` (lib/srs and lib/aiLimits). | Tidy-up. | `lib/aiLimits` re-exports lib/srs's. |

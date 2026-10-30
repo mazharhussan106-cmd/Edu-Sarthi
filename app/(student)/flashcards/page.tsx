@@ -14,12 +14,14 @@
 //   /flashcards?list=important          → a remark list
 //   /flashcards?more=1                  → keep going past today's new-card and review limits
 //   /flashcards?skip=A.B                → cards passed over with › this session
+//   /flashcards?again=A~2               → Unknown cards due a practice look (lib/cardAgain)
 //   /flashcards?card=VRB-006&inlist=hard&sid=…&left=3 → that card inside a
 //                                          "Study this list" session (lib/listSession)
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
+import { parseAgain, pickWithAgain } from "@/lib/cardAgain";
 import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/chunkCard";
 import { packWhere, sectionDef, sectionWhere } from "@/lib/wordSections";
 import { channelLabel, isSupportChannel, isSupportLevel, levelLabel, supportDetailsOf, supportGloss } from "@/lib/supportCard";
@@ -46,7 +48,7 @@ function metaFor(kind: string, w: { category: string | null; partOfSpeech: strin
 export default async function FlashcardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; ch?: string; lv?: string; inlist?: string; sid?: string; left?: string }>;
+  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; again?: string; ch?: string; lv?: string; inlist?: string; sid?: string; left?: string }>;
 }) {
   const sp = await searchParams;
   const session = await auth();
@@ -128,7 +130,16 @@ export default async function FlashcardsPage({
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
   } else {
-    const id = byCode?.id ?? (await nextCardId(userId, deck, liftLimits, skip, newPerDay, reviewsPerDay));
+    // Not inside a "Study this list" session: that has its own order.
+    const again = inList ? null : parseAgain(sp.again);
+    const picked = byCode
+      ? { id: byCode.id, practice: false, again: again ?? [] }
+      : await pickWithAgain(
+          again ?? [],
+          () => nextCardId(userId, deck, liftLimits, skip, newPerDay, reviewsPerDay),
+          async (code) => (await prisma.word.findFirst({ where: { code, kind: k.kind, deckId: null }, select: { id: true } }))?.id ?? null,
+        );
+    const id = picked.id;
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
 
     if (!word) {
@@ -170,6 +181,8 @@ export default async function FlashcardsPage({
             recordHref={exercise ? `/practice/${exercise.id}?word=${word.code}` : null}
             nextHref={inList ? listNextHref(inList) : withMore}
             skip={skip}
+            again={inList ? null : picked.again}
+            practice={picked.practice}
             cardColor={cardColor}
             tallTop={k.kind === "CHUNK" || k.kind === "SUPPORT"}
             support={word.kind === "SUPPORT"}

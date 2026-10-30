@@ -1,4 +1,5 @@
-// Owns the checks for the spaced-repetition rules in lib/srs.ts: every rule in
+// Owns the checks for the spaced-repetition rules in lib/srs.ts and the
+// practice-after-Unknown list in lib/cardAgain.ts: every rule in
 // docs/SRS-V2-PLAN.md, run against fixed dates so the result never depends on
 // when it runs. No database.
 //
@@ -7,6 +8,7 @@
 import assert from "node:assert/strict";
 
 import { LADDER_DAYS, describeDue, istDayStart, nextReview } from "../lib/srs";
+import { AGAIN_AFTER, afterCard, againQuery, parseAgain, pickWithAgain, type Again } from "../lib/cardAgain";
 
 const DAY = 86_400_000;
 // Monday 3 Nov 2026, 21:00 India time: late evening, the case where exact
@@ -141,4 +143,58 @@ check("describeDue counts India-time days", () => {
   assert.equal(describeDue(new Date(MON_9PM.getTime() + 2 * 3_600_000), MON_9PM), "later today");
 });
 
-console.log(`\n${passed} checks passed`);
+// ---- practice after Unknown (D5) ----
+
+check("again: Unknown comes round after 3 other cards, once", () => {
+  let again: Again = [];
+  again = afterCard(again, "A", true); // Unknown on A
+  assert.deepEqual(again, [{ code: "A", wait: AGAIN_AFTER }]);
+  again = afterCard(again, "B", false);
+  again = afterCard(again, "C", true); // Unknown on C too
+  again = afterCard(again, "D", false);
+  // A has waited 3 cards (B, C, D); C only 1 so far (D).
+  assert.deepEqual(again, [{ code: "A", wait: 0 }, { code: "C", wait: 2 }]);
+  // A's practice look: whatever is pressed, it is not queued a second time.
+  again = afterCard(again, "A", false);
+  assert.deepEqual(again, [{ code: "C", wait: 1 }]);
+  again = afterCard(again, "E", false);
+  assert.deepEqual(again, [{ code: "C", wait: 0 }]);
+});
+
+check("again: survives the URL round trip, drops junk and repeats", () => {
+  const q = againQuery([{ code: "VRB-001", wait: 2 }, { code: "PY-01-001", wait: 0 }]);
+  assert.equal(q, "&again=VRB-001~2.PY-01-001~0");
+  assert.deepEqual(parseAgain(q.slice("&again=".length)), [{ code: "VRB-001", wait: 2 }, { code: "PY-01-001", wait: 0 }]);
+  assert.deepEqual(parseAgain("A1~9.<x>~1.A1~0.B2~x"), [{ code: "A1", wait: AGAIN_AFTER }]);
+  assert.equal(againQuery([]), "");
+});
+
+check("again: capped at 10 cards", () => {
+  let again: Again = [];
+  for (let i = 0; i < 15; i++) again = afterCard(again, `C${i}`, true);
+  assert.equal(again.length, 10);
+});
+
+async function picks() {
+  const ids: Record<string, string> = { A: "id-a", C: "id-c" };
+  const find = async (code: string) => ids[code] ?? null;
+  const some = async () => "id-next";
+  const none = async () => null;
+
+  let r = await pickWithAgain([{ code: "A", wait: 0 }], some, find);
+  assert.deepEqual([r.id, r.practice], ["id-a", true]);
+  r = await pickWithAgain([{ code: "A", wait: 2 }], some, find);
+  assert.deepEqual([r.id, r.practice], ["id-next", false]);
+  // Nothing else left: the waiting one comes now rather than never.
+  r = await pickWithAgain([{ code: "A", wait: 2 }], none, find);
+  assert.deepEqual([r.id, r.practice], ["id-a", true]);
+  // A card that is gone is dropped, and the session carries on.
+  r = await pickWithAgain([{ code: "GONE", wait: 0 }, { code: "C", wait: 1 }], some, find);
+  assert.deepEqual([r.id, r.practice, r.again], ["id-next", false, [{ code: "C", wait: 1 }]]);
+  r = await pickWithAgain([], none, find);
+  assert.deepEqual([r.id, r.practice], [null, false]);
+  passed++;
+  console.log("ok  again: which card a session page shows");
+}
+
+picks().then(() => console.log(`\n${passed} checks passed`));

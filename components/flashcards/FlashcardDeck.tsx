@@ -1,6 +1,8 @@
 // Owns one flashcard on screen: which side is showing, the card's remarks and
 // level, saving them, and moving between cards —
-//   Known / Unknown → saved, then the next card the review plan picks
+//   Known / Unknown → saved, then the next card the review plan picks; after
+//                     Unknown the card comes round once more a few cards later
+//                     as practice (lib/cardAgain), and that look is not saved
 //   › or swipe ←    → the next card without answering (skipped this session)
 //   ‹ or swipe →    → the card seen before this one
 //
@@ -24,6 +26,8 @@ import { CardSurface } from "@/components/flashcards/CardSurface";
 import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi";
 import type { CardColor } from "@/lib/cardColors";
 import { skipQuery, withSkipped } from "@/lib/cardSkip";
+import { afterCard, againQuery, type Again } from "@/lib/cardAgain";
+import { PracticeNotice } from "@/components/flashcards/PracticeNotice";
 import { sayable } from "@/lib/chunkCard";
 import { sayText } from "@/lib/speech";
 import { describeDue } from "@/lib/srs";
@@ -55,6 +59,8 @@ export function FlashcardDeck({
   recordHref,
   nextHref,
   skip,
+  again = null,
+  practice = false,
   cardColor,
   chunk,
   support = false,
@@ -66,6 +72,10 @@ export function FlashcardDeck({
   recordHref: string | null;
   nextHref: string;
   skip: string[];
+  /** Cards waiting for their practice look; null where it is off (a list session). */
+  again?: Again | null;
+  /** This is that practice look: answers move on and save nothing. */
+  practice?: boolean;
   cardColor: CardColor;
   /** Present for chunk and grammar cards; words leave it out. */
   chunk?: ChunkExtras;
@@ -119,7 +129,14 @@ export function FlashcardDeck({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word.code, autoSpeak]);
 
+  /// The again list for the card after this one.
+  const againAfter = (unknown: boolean) => (again ? againQuery(afterCard(again, word.code, unknown)) : "");
+
   async function mark(known: boolean) {
+    if (practice) {
+      router.push(`${nextHref}${skipQuery(skip)}${againAfter(false)}`);
+      return;
+    }
     setBusy(true);
     setMessage(null);
     const r = await post({ action: "mark", wordId: word.id, known, recall: known ? level : null });
@@ -128,7 +145,7 @@ export function FlashcardDeck({
       setBusy(false);
       return;
     }
-    router.push(`${nextHref}${skipQuery(skip)}`);
+    router.push(`${nextHref}${skipQuery(skip)}${againAfter(!known)}`);
     router.refresh();
     // Cleared even on success: if the plan picks this same card again the
     // component is reused, and it must not stay locked.
@@ -136,7 +153,8 @@ export function FlashcardDeck({
   }
 
   function next() {
-    router.push(`${nextHref}${skipQuery(withSkipped(skip, word.code))}`);
+    // A practice card passed over is not skipped for the session: it is just done.
+    router.push(`${nextHref}${skipQuery(practice ? skip : withSkipped(skip, word.code))}${againAfter(false)}`);
   }
 
   function prev() {
@@ -144,7 +162,7 @@ export function FlashcardDeck({
     const at = h.lastIndexOf(word.code);
     if (at <= 0) return setMessage("This is the first card you opened here.");
     writeHistory(h.slice(0, at));
-    router.push(`${nextHref}&card=${h[at - 1]}${skipQuery(skip)}`);
+    router.push(`${nextHref}&card=${h[at - 1]}${skipQuery(skip)}${again ? againQuery(again) : ""}`);
   }
 
   async function remark(k: keyof Remarks, v: boolean) {
@@ -180,6 +198,7 @@ export function FlashcardDeck({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2 md:flex-none">
+      {practice ? <PracticeNotice /> : null}
       {/* On a phone the card takes whatever height is left between the chips
           and the Known / Unknown bar, so the bar sits right above the bottom
           navigation with no gap on any screen size. From md up the card keeps

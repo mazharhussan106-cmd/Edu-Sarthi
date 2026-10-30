@@ -1,6 +1,6 @@
 # Spaced repetition v2 — plan (30 Oct 2026, branch `claude/kind-euler-q35ydg`)
 
-Status: **Approved 30 Oct. Steps 1 and 2 BUILT** (tested on a throwaway local Postgres). Steps 3–4 not started.
+Status: **Approved 30 Oct. Steps 1, 2 and 3 BUILT** (tested on a throwaway local Postgres and in a browser). Step 4 not started.
 Today's rules (v1) are listed in `docs/srs-review-plan-rules.xlsx` (R01–R28).
 
 ## The owner's decisions (30 Oct)
@@ -51,7 +51,10 @@ Each card stores a step number (`CardState.stage`) that points into the ladder. 
 - Reviews done today are counted from `ReviewLog` by India day.
 - When the limit is reached, the "Done for today" card says so and offers "Review more anyway", just as new cards do today.
 
-**Step 3 — same-session practice (new `lib/cardAgain.ts`, `FlashcardDeck.tsx`, `DeckStudy.tsx`, the three study pages)**
+**Step 3 — same-session practice (new `lib/cardAgain.ts`, `FlashcardDeck.tsx`, `DeckStudy.tsx`, the three study pages) — BUILT**
+- Done: after Unknown the card's code goes into `?again=CODE~3`; each card left (answered or ›) counts one down; at 0 the session page shows it once with a "Practice · not saved" line above the card (`components/flashcards/PracticeNotice.tsx`). On that look Known, Unknown and › only move on: nothing is posted, the date Unknown set stays, and it is not queued again. If nothing else is left, a waiting practice card comes at once rather than never. Off inside "Study this list" sessions. Works on the Flashcards tab, own decks and library decks (`pickWithAgain` in each page).
+- Tested: `scripts/srs-unit.ts` (22 checks, 4 for the again list). Browser, production build, local Postgres, phone width: Unknown on card 1 → URL `again=TST-001~3`; three Known → card 1 again with the practice line; Known → next new card, `again` gone, card 1 still `reviews = 1`; Known on a new card → due in 7 IST days; side 3 shows Day 3 … Day 180; Settings → Reviews per day → 50 saved; with 50 reviews done and 10 due the Done card says "10 more cards are due; they will wait for tomorrow", top bar 0 due, Keep going serves a due card; no page errors. **Not clicked through in a browser:** own-deck and library-deck sessions (same code path, typechecked).
+- Seen, not changed: a long word on the front ("ABANDON" at 390 px) breaks over two lines; that is the existing fit-to-screen text, same with or without the practice line.
 - After Unknown, the card's code goes into an `again` list in the page link, the same way skips work.
 - After 3 more cards it is shown once with a "Practice — not saved" label. Its buttons just move on and save nothing.
 

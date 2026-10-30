@@ -22,6 +22,8 @@ import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi
 import { DeckSide, type DeckCardData } from "@/components/decks/DeckSides";
 import type { CardColor } from "@/lib/cardColors";
 import { skipQuery, withSkipped } from "@/lib/cardSkip";
+import { afterCard, againQuery, type Again } from "@/lib/cardAgain";
+import { PracticeNotice } from "@/components/flashcards/PracticeNotice";
 import { sayText } from "@/lib/speech";
 import { describeDue } from "@/lib/srs";
 
@@ -33,8 +35,19 @@ export type DeckCardState = Remarks & {
 };
 
 export function DeckStudy({
-  card, wordId, state, nextHref, skip, cardColor,
-}: { card: DeckCardData; wordId: string; state: DeckCardState; nextHref: string; skip: string[]; cardColor: CardColor }) {
+  card, wordId, state, nextHref, skip, again = null, practice = false, cardColor,
+}: {
+  card: DeckCardData;
+  wordId: string;
+  state: DeckCardState;
+  nextHref: string;
+  skip: string[];
+  /** Cards waiting for their practice look after Unknown (lib/cardAgain); null where it is off. */
+  again?: Again | null;
+  /** This is that practice look: answers move on and save nothing. */
+  practice?: boolean;
+  cardColor: CardColor;
+}) {
   const router = useRouter();
   const [side, setSide] = useState<0 | 1 | 2>(0);
   const [level, setLevel] = useState<Level>(state.recall ?? "MEDIUM");
@@ -57,7 +70,13 @@ export function DeckStudy({
     if (!sayText(card.rich?.term ?? card.front)) setMessage("This phone cannot read aloud. Read the card out loud yourself instead.");
   }
 
+  const againAfter = (unknown: boolean) => (again ? againQuery(afterCard(again, card.code, unknown)) : "");
+
   async function mark(known: boolean) {
+    if (practice) {
+      router.push(`${nextHref}${skipQuery(skip)}${againAfter(false)}`);
+      return;
+    }
     setBusy(true);
     setMessage(null);
     const r = await post({ action: "mark", wordId, known, recall: known ? level : null });
@@ -66,20 +85,20 @@ export function DeckStudy({
       setBusy(false);
       return;
     }
-    router.push(`${nextHref}${skipQuery(skip)}`);
+    router.push(`${nextHref}${skipQuery(skip)}${againAfter(!known)}`);
     router.refresh();
     // Cleared even on success: the same component may be reused for the next card.
     setBusy(false);
   }
 
-  const next = () => router.push(`${nextHref}${skipQuery(withSkipped(skip, card.code))}`);
+  const next = () => router.push(`${nextHref}${skipQuery(practice ? skip : withSkipped(skip, card.code))}${againAfter(false)}`);
 
   function prev() {
     const h = readHistory();
     const at = h.lastIndexOf(card.code);
     if (at <= 0) return setMessage("This is the first card you opened here.");
     writeHistory(h.slice(0, at));
-    router.push(`${nextHref}&card=${h[at - 1]}${skipQuery(skip)}`);
+    router.push(`${nextHref}&card=${h[at - 1]}${skipQuery(skip)}${again ? againQuery(again) : ""}`);
   }
 
   async function remark(k: keyof Remarks, v: boolean) {
@@ -99,6 +118,7 @@ export function DeckStudy({
 
   return (
     <div className="flex flex-col gap-2">
+      {practice ? <PracticeNotice /> : null}
       <div className="h-[calc(100dvh-14rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-12rem)] md:max-h-[52rem]">
         <CardSurface
           side={side}

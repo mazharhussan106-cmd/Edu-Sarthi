@@ -3,7 +3,7 @@
 // decks an own tab holds. Every query names the student, so nobody can read or
 // change another person's tabs by guessing an id.
 //
-// The two built-in tabs (English, My decks) have no row until the student first
+// The built-in tabs (English, Tech, My decks) have no row until the student first
 // saves anything; until then they are shown in the default order. That keeps
 // the Flashcard tab working for everyone who never touches tabs, and before
 // Database setup has made the tables (AreaTabs catches the error).
@@ -20,11 +20,15 @@ import { TAB_LIMITS, type BuiltInKey } from "@/lib/studyTabSchemas";
 export type TabView = { key: string; label: string; href: string; hidden: boolean; own: boolean };
 type Result = { ok: true; id?: string } | { error: string };
 
-const BUILT_IN: Record<BuiltInKey, { kind: StudyTabKind; label: string; href: string }> = {
+// In their default order.
+const BUILT_IN: Record<BuiltInKey, { kind: Exclude<StudyTabKind, "OWN">; label: string; href: string }> = {
   english: { kind: "ENGLISH", label: "English", href: "/flashcards" },
+  tech: { kind: "TECH", label: "Tech", href: "/tech" },
   decks: { kind: "DECKS", label: "My decks", href: "/decks" },
 };
-const keyOf = (t: { id: string; kind: StudyTabKind }): string => (t.kind === "ENGLISH" ? "english" : t.kind === "DECKS" ? "decks" : t.id);
+const BUILT_IN_KINDS = Object.values(BUILT_IN).map((b) => b.kind);
+const keyOf = (t: { id: string; kind: StudyTabKind }): string =>
+  t.kind === "OWN" ? t.id : (Object.keys(BUILT_IN) as BuiltInKey[]).find((k) => BUILT_IN[k].kind === t.kind)!;
 const TX = { maxWait: 10_000, timeout: 20_000 };
 const GONE = "That tab no longer exists. It may have been deleted on another device.";
 
@@ -48,8 +52,8 @@ export async function tabsFor(userId: string): Promise<TabView[]> {
 
 /// Gives the built-in tabs rows, in front, the first time anything is saved.
 async function ensureBuiltIns(tx: Prisma.TransactionClient, userId: string) {
-  const have = await tx.studyTab.findMany({ where: { userId, kind: { in: ["ENGLISH", "DECKS"] } }, select: { kind: true } });
-  const add = (["ENGLISH", "DECKS"] as const).filter((k) => !have.some((h) => h.kind === k));
+  const have = await tx.studyTab.findMany({ where: { userId, kind: { in: BUILT_IN_KINDS } }, select: { kind: true } });
+  const add = BUILT_IN_KINDS.filter((k) => !have.some((h) => h.kind === k));
   if (!add.length) return;
   // Shift every existing row back so the new ones can take the front places.
   await tx.studyTab.updateMany({ where: { userId }, data: { position: { increment: add.length } } });

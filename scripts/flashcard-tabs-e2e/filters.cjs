@@ -23,7 +23,7 @@ const { sql } = require("../library-e2e/lib.cjs");
     await p.goto(`${BASE}/flashcards`, { waitUntil: "networkidle" });
 
     const area = p.getByRole("navigation", { name: "Study area" });
-    check(`${width}: study area tabs shown`, (await area.getByRole("link").count()) === 2);
+    check(`${width}: study area tabs shown`, (await area.getByRole("link").count()) === 3);
     check(`${width}: English is current`, (await area.getByRole("link", { name: "English" }).getAttribute("aria-current")) === "page");
     check(`${width}: count beside the tabs`, (width < 640 ? /due · \d+ new/ : /due · \d+ new · \d+\/\d+ known/).test((await p.locator("main > div").first().innerText()).replace(/\s+/g, " ")));
     check(`${width}: no Explore/Library/Institute chips in the bar`, (await p.locator("main").getByRole("link", { name: /Explore|Library|Institute/ }).count()) === 0);

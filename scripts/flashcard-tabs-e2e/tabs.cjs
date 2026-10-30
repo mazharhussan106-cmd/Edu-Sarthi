@@ -34,7 +34,7 @@ const api = (p, url, body) =>
   const area = () => p.getByRole("navigation", { name: "Study area" });
   const labels = async () => (await area().getByRole("link").allInnerTexts()).map((s) => s.trim());
 
-  check("default tabs before anything is saved", JSON.stringify(await labels()) === JSON.stringify(["English", "My decks"]), JSON.stringify(await labels()));
+  check("default tabs before anything is saved", JSON.stringify(await labels()) === JSON.stringify(["English", "Tech", "My decks"]), JSON.stringify(await labels()));
   check("＋ button is there", (await p.getByRole("button", { name: "Make or arrange your tabs" }).count()) === 1);
 
   // Decks to put in tabs: two of their own and one followed library deck.
@@ -44,25 +44,25 @@ const api = (p, url, body) =>
 
   // Make a tab from the sheet; it opens the new tab.
   await p.getByRole("button", { name: "Make or arrange your tabs" }).click();
-  await p.getByLabel("New tab").fill("Tech");
+  await p.getByLabel("New tab").fill("Projects");
   await p.getByRole("button", { name: "Make tab" }).click();
   await p.waitForURL((u) => u.pathname.startsWith("/tabs/"));
   await p.waitForLoadState("networkidle");
   const techId = new URL(p.url()).pathname.split("/").pop();
-  check("new tab opens with its name", (await p.locator("h1").innerText()) === "Tech");
-  check("new tab is current in layer 1", (await area().getByRole("link", { name: "Tech" }).getAttribute("aria-current")) === "page");
+  check("new tab opens with its name", (await p.locator("h1").innerText()) === "Projects");
+  check("new tab is current in layer 1", (await area().getByRole("link", { name: "Projects" }).getAttribute("aria-current")) === "page");
   check("empty tab says how to fill it", /No decks in this tab yet/.test(await p.locator("main").innerText()));
 
   // Add decks.
   await p.getByRole("button", { name: "＋ Add decks" }).click();
-  const sheet = p.getByRole("dialog", { name: "Decks in Tech" });
+  const sheet = p.getByRole("dialog", { name: "Decks in Projects" });
   check("picker lists own and followed decks", (await sheet.getByRole("checkbox").count()) === 3);
   await sheet.getByLabel("SQL basics").check();
   await sheet.getByLabel("Daily chunks").check();
   await sheet.getByRole("button", { name: /Save · 2 decks/ }).click();
   await p.waitForLoadState("networkidle");
   await p.waitForTimeout(800);
-  const rows = await p.getByRole("list", { name: "Decks in Tech" }).getByRole("listitem").allInnerTexts();
+  const rows = await p.getByRole("list", { name: "Decks in Projects" }).getByRole("listitem").allInnerTexts();
   check("tab shows the two decks", rows.length === 2 && rows.some((r) => /SQL basics/.test(r)) && rows.some((r) => /Daily chunks/.test(r)), JSON.stringify(rows));
   check("own deck studies on /decks", (await p.getByRole("link", { name: "Study SQL basics" }).getAttribute("href")) === `/decks/${sqlDeck}/study`);
   check("followed deck studies on the library", (await p.getByRole("link", { name: "Study Daily chunks" }).getAttribute("href")) === `/library/${libDaily}/study`);
@@ -75,40 +75,40 @@ const api = (p, url, body) =>
   // Remove one.
   await p.getByRole("button", { name: "Remove SQL basics from this tab" }).click();
   await p.waitForTimeout(1500);
-  check("Remove takes it out of the tab", (await p.getByRole("list", { name: "Decks in Tech" }).getByRole("listitem").count()) === 1);
+  check("Remove takes it out of the tab", (await p.getByRole("list", { name: "Decks in Projects" }).getByRole("listitem").count()) === 1);
   check("…but the deck still exists", sql(`select count(*) from "Deck" where id='${sqlDeck}'`) === "1");
 
-  // Arrange: Tech first, My decks hidden.
+  // Arrange: Projects first, My decks hidden.
   await p.getByRole("button", { name: "Make or arrange your tabs" }).click();
   const ar = p.getByRole("dialog", { name: "Your tabs" });
-  await ar.getByRole("button", { name: "Move Tech up" }).click();
-  await ar.getByRole("button", { name: "Move Tech up" }).click();
+  for (let i = 0; i < 3; i++) await ar.getByRole("button", { name: "Move Projects up" }).click();
   await ar.getByLabel("Show My decks").uncheck();
   await ar.getByRole("button", { name: "Save order" }).click();
   await p.waitForTimeout(1500);
-  check("order saved: Tech, English (My decks hidden)", JSON.stringify(await labels()) === JSON.stringify(["Tech", "English"]), JSON.stringify(await labels()));
+  check("order saved: Projects, English, Tech (My decks hidden)", JSON.stringify(await labels()) === JSON.stringify(["Projects", "English", "Tech"]), JSON.stringify(await labels()));
   await p.goto(`${BASE}/decks`, { waitUntil: "networkidle" });
-  check("a hidden tab still shows while on its page", JSON.stringify(await labels()) === JSON.stringify(["Tech", "English", "My decks"]), JSON.stringify(await labels()));
+  check("a hidden tab still shows while on its page", JSON.stringify(await labels()) === JSON.stringify(["Projects", "English", "Tech", "My decks"]), JSON.stringify(await labels()));
 
   // Hiding every tab is refused, on screen and on the server.
   await p.getByRole("button", { name: "Make or arrange your tabs" }).click();
+  await ar.getByLabel("Show Projects").uncheck();
   await ar.getByLabel("Show Tech").uncheck();
   await ar.getByLabel("Show English").click();
   check("the last shown tab stays ticked", await ar.getByLabel("Show English").isChecked());
   check("cannot hide the last tab (screen)", /Keep at least one tab showing/.test(await ar.innerText()));
   await ar.getByRole("button", { name: "Close" }).click();
-  const allHidden = await api(p, "/api/study-tabs", { action: "arrange", tabs: [{ key: "english", hidden: true }, { key: "decks", hidden: true }, { key: techId, hidden: true }] });
+  const allHidden = await api(p, "/api/study-tabs", { action: "arrange", tabs: [{ key: "english", hidden: true }, { key: "tech", hidden: true }, { key: "decks", hidden: true }, { key: techId, hidden: true }] });
   check("cannot hide the last tab (server)", allHidden.status === 400);
   const stale = await api(p, "/api/study-tabs", { action: "arrange", tabs: [{ key: "english", hidden: false }] });
   check("an out-of-date order is refused", stale.status === 400 && /changed on another device/.test(stale.body.error));
 
   // Rename.
   await p.getByRole("button", { name: "Make or arrange your tabs" }).click();
-  await ar.getByRole("button", { name: "Rename Tech" }).click();
-  await ar.getByLabel("New name for Tech").fill("Tech skills");
+  await ar.getByRole("button", { name: "Rename Projects" }).click();
+  await ar.getByLabel("New name for Projects").fill("Project work");
   await ar.getByRole("button", { name: "Save", exact: true }).click();
   await p.waitForTimeout(1500);
-  check("rename shows in layer 1", (await labels()).includes("Tech skills"));
+  check("rename shows in layer 1", (await labels()).includes("Project work"));
   await ar.getByRole("button", { name: "Close" }).click();
 
   // Copy from the library asks which tabs.
@@ -117,14 +117,14 @@ const api = (p, url, body) =>
   const place = p.getByRole("dialog", { name: "Show this deck in which tabs?" });
   await place.waitFor({ timeout: 20000 });
   check("copy asks which tabs", true);
-  await place.getByLabel("Tech skills").check();
+  await place.getByLabel("Project work").check();
   await place.getByLabel("Or a new tab").fill("Interview");
   await place.getByRole("button", { name: "Save" }).click();
   await p.waitForURL((u) => /^\/decks\/[a-z0-9]+$/.test(u.pathname), { timeout: 20000 });
   const copyId = new URL(p.url()).pathname.split("/").pop();
   check("after Save the copy opens as before", true);
   const placedIn = sql(`select string_agg(t.name, ',' order by t.name) from "StudyTabDeck" x join "StudyTab" t on t.id=x."tabId" where x."deckId"='${copyId}'`);
-  check("copy placed in Tech skills and the new Interview tab", placedIn === "Interview,Tech skills", placedIn);
+  check("copy placed in Project work and the new Interview tab", placedIn === "Interview,Project work", placedIn);
 
   // Skip: copy lands in no tab.
   await p.goto(`${BASE}/library/${libDaily}`, { waitUntil: "networkidle" });
@@ -157,9 +157,9 @@ const api = (p, url, body) =>
   // HTTP 200 with the not-found page: (student)/loading.tsx streams first (as
   // the library notes in PROJECT-MEMORY). What matters is that nothing leaks.
   const peekHtml = await o.content();
-  check("another student's tab shows not-found and leaks nothing", /could not find that page/.test(peekHtml) && !peekHtml.includes("Tech skills") && !peekHtml.includes("Daily chunks"));
+  check("another student's tab shows not-found and leaks nothing", /could not find that page/.test(peekHtml) && !peekHtml.includes("Project work") && !peekHtml.includes("Daily chunks"));
   const steal = await api(o, "/api/study-tabs", { action: "rename", id: techId, name: "Mine now" });
-  check("another student cannot rename it", steal.status === 400 && sql(`select name from "StudyTab" where id='${techId}'`) === "Tech skills");
+  check("another student cannot rename it", steal.status === 400 && sql(`select name from "StudyTab" where id='${techId}'`) === "Project work");
   const steal2 = await api(o, "/api/study-tabs", { action: "removeDeck", id: techId, deckId: libDaily });
   check("another student cannot empty it", steal2.status === 200 && sql(`select count(*) from "StudyTabDeck" where "tabId"='${techId}'`) === "1");
   await o.context().close();
@@ -175,7 +175,7 @@ const api = (p, url, body) =>
 
   // Data download includes the tabs.
   const me = await p.evaluate(async () => JSON.parse(await (await fetch("/api/me")).text()));
-  check("data download includes the tabs", Array.isArray(me.account?.studyTabs) && me.account.studyTabs.some((t) => t.name === "Tech skills"));
+  check("data download includes the tabs", Array.isArray(me.account?.studyTabs) && me.account.studyTabs.some((t) => t.name === "Project work"));
 
   // Teacher: the copy does not ask; no tabs on My decks.
   const t = await login(browser, "teacher", 390);
@@ -200,7 +200,7 @@ const api = (p, url, body) =>
   sql(`alter table "StudyTab" rename to "StudyTab_off"`);
   try {
     const r = await p.goto(`${BASE}/flashcards`, { waitUntil: "networkidle" });
-    check("no tables: Flashcard tab still loads", r.status() === 200 && JSON.stringify(await labels()) === JSON.stringify(["English", "My decks"]), JSON.stringify(await labels()));
+    check("no tables: Flashcard tab still loads", r.status() === 200 && JSON.stringify(await labels()) === JSON.stringify(["English", "Tech", "My decks"]), JSON.stringify(await labels()));
   } finally {
     sql(`alter table "StudyTab_off" rename to "StudyTab"`);
   }

@@ -9,7 +9,7 @@
 import { z } from "zod";
 
 export const TAB_LIMITS = {
-  /// The student's own tabs, not counting English and My decks.
+  /// The student's own tabs, not counting English, Tech and My decks.
   ownTabs: 20,
   /// Long enough for "IELTS speaking – week 3", short enough for a phone's tab row.
   nameChars: 30,
@@ -18,7 +18,7 @@ export const TAB_LIMITS = {
 
 /// How a built-in tab is named in a layout sent by the browser: it may not
 /// have a database row yet (rows are made the first time anything is saved).
-export const BUILT_IN_KEYS = ["english", "decks"] as const;
+export const BUILT_IN_KEYS = ["english", "tech", "decks"] as const;
 export type BuiltInKey = (typeof BUILT_IN_KEYS)[number];
 
 // cuid ids: lower-case letters and digits. Anything else is not one of ours.

@@ -1,6 +1,7 @@
 // Owns layer 1 of the study filters: the student's study tabs with an
-// underline — English (the built-in cards on the Flashcard tab), My decks, and
-// the tabs the student made and filled with decks — in the student's order,
+// underline — English (the built-in cards on the Flashcard tab), Tech (every
+// tech deck they can see), My decks, and the tabs the student made and filled
+// with decks — in the student's order,
 // then ＋ to make or arrange tabs (owner's decisions 9–12,
 // docs/FLASHCARD-NAV-LAYERS.md). Shown on top of the Flashcard tab, My decks
 // and every own tab, so moving between them keeps the row in place. The page
@@ -11,8 +12,8 @@
 // current tab would leave them unsure where they are.
 //
 // If the tabs cannot be read (Database setup has not made the tables yet), it
-// falls back to English · My decks rather than breaking the Flashcard tab.
-// Guests, teachers and admins get the two built-in tabs and no ＋. Links, not
+// falls back to the built-in tabs rather than breaking the Flashcard tab.
+// Guests, teachers and admins get the built-in tabs and no ＋. Links, not
 // role="tablist": each tab is its own page with its own URL.
 
 import Link from "next/link";
@@ -26,6 +27,7 @@ import { cn } from "@/lib/utils";
 
 const DEFAULT_TABS: TabView[] = [
   { key: "english", label: "English", href: "/flashcards", hidden: false, own: false },
+  { key: "tech", label: "Tech", href: "/tech", hidden: false, own: false },
   { key: "decks", label: "My decks", href: "/decks", hidden: false, own: false },
 ];
 

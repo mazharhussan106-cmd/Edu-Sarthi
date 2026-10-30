@@ -1,18 +1,21 @@
 # Flashcard filters and study tabs — browser tests
 
-Playwright checks for the filters above the card and the student's own study
-tabs (`docs/FLASHCARD-NAV-LAYERS.md`):
+Playwright checks for the filters above the card, the student's own study
+tabs and the Tech tab (`docs/FLASHCARD-NAV-LAYERS.md`):
 
 | Suite | What it checks |
 |---|---|
 | `filters.cjs` | Two rows only at 360 and 390px; study tabs and today's count; every card kind; no chunk type, Support channel/level or section chips; the kind's chip naming a filter opened from Explore or a section, and tapping it to clear; skipped and "show again"; remark lists; My decks and back; Study this list replacing the bar; guest; teacher; the focus ring; no sideways scroll; axe in every theme |
+| `tech.cjs` | The Tech tab: the student's own, shared and followed tech decks (Study) and the library's (Open), never another student's private deck, a deck in review, a non-tech deck or an English deck whose title only sounds technical; subject chips and their counts; an unknown subject; a hidden Tech tab; a guest; no sideways scroll; axe |
+| `subjects.ts` | How a title and tags are read as tech subjects (no database or browser) |
 | `tabs.cjs` | Make a tab (it opens), add and remove decks, Study links, arrange and hide (a hidden tab still shows on its own page, the last tab cannot be hidden, an out-of-date order is refused), rename, the "which tabs?" question after a copy (Save and Skip), deleting the open tab, a deleted deck leaving every tab, decks you cannot open refused, another student's tab not found and not changeable, at most 20 tabs under 25 parallel requests, the data download, teacher and guest, the fallback when the tables are missing, keyboard, axe in every theme with each sheet open |
 
 **Local only.** The SQL helper (`scripts/library-e2e/lib.cjs`) refuses any
 database that is not on localhost. `filters.cjs` deletes the tabs of
-`new@test.local` and stars one card; `tabs.cjs` deletes that account's tabs,
-decks and follows, and briefly renames the `StudyTab` table to check the
-fallback (it renames it back even when a check fails).
+`new@test.local` and stars one card; `tech.cjs` makes and deletes decks whose
+titles start with `TT `; `tabs.cjs` and `tech.cjs` delete that account's tabs,
+decks and follows; `tabs.cjs` also briefly renames the `StudyTab` table to
+check the fallback (it renames it back even when a check fails).
 
 ## Run
 
@@ -61,6 +64,14 @@ NODE_PATH="$(npm root -g)" node scripts/flashcard-tabs-e2e/filters.cjs
 
 ```bash
 NODE_PATH="$(npm root -g)" node scripts/flashcard-tabs-e2e/tabs.cjs
+```
+
+```bash
+NODE_PATH="$(npm root -g)" node scripts/flashcard-tabs-e2e/tech.cjs
+```
+
+```bash
+npx tsx scripts/flashcard-tabs-e2e/subjects.ts
 ```
 
 The library suites reseed their accounts' card progress; run

@@ -18,7 +18,7 @@ access rules.
 | 4 | A third layer that opens on tap (a Filter sheet) | **SUPERSEDED:** "Layer 3 plan se hata do, build nahi karna hai, layer 2 tak hi sahi hai" |
 | 4b | The existing third row (chunk types, Support channel and level, word sections) stays | **SUPERSEDED:** "Layer 3 v dikh raha hai use hata k banao". Removed. |
 | 5 | Users group decks in **playlists**: one deck can be in many playlists | **SUPERSEDED by 9–10:** the playlists are the student's own layer-1 tabs, not chips inside My decks |
-| 6 | Tech holds everything tech-related | ACTIVE; which decks count is still open |
+| 6 | Tech holds everything tech-related: **all** of it — EduSarthi's own decks and students' and teachers' (owner, 30 Oct) | ACTIVE, built 30 Oct |
 | 7 | The card does not change | ACTIVE |
 | 8 | Where the count, lists, skipped and deck links go: Claude to recommend | Done, see below |
 | 9 | **＋ in layer 1:** every student creates and arranges their own layer-1 tabs | ACTIVE; plan below, waiting for approval |
@@ -137,12 +137,34 @@ POST create, rename, delete, arrange, setDecks, removeDeck, placeDeck), Zod in
 axe in all five themes with each sheet open; the library's `open-and-nav` and
 `browse-ui` suites still pass (137 checks); `tsc` and `next build`.
 
+## Tech tab (decision 6) — BUILT 30 Oct, tested locally, not merged
+
+Owner, 30 Oct: "bana do", and Tech holds **all** tech decks.
+
+- **A built-in tab** like English and My decks (`StudyTabKind.TECH`), so it can
+  be moved and hidden from ＋. Default order: English · Tech · My decks.
+- **`/tech`** (`app/(student)/tech/page.tsx`): layer 1, then layer 2 — All ·
+  Programming · Data · Infrastructure · Cloud & networking · AI, with counts,
+  only subjects that have decks (`/tech?s=data`) — then two lists: **Your tech
+  decks** (own, shared with you, followed: Study) and **More in the library**
+  (the library's and your institute's: Open, where they follow or copy).
+- **Which decks** (`lib/techDecks.ts`): the union of rules that already exist —
+  the library (`LISTED`), the student's own, shared with them by name, followed,
+  and their institute's. Never another student's private deck or a deck in
+  review. "All" means everyone's public decks, not anyone's private ones.
+- **What is tech:** a deck's tags or title, matched as whole words.
+  EduSarthi's imported decks carry one broad tag each
+  (`prisma/import-decks.ts`), so those are the subjects. "excel", "data",
+  "react", "cloud", "node", "code", "shell", "security" and "ai" count only as
+  tags, never in a title ("Excel at interviews" is an English deck).
+- **Tested:** `scripts/flashcard-tabs-e2e/tech.cjs` (37 checks) and
+  `subjects.ts` (17 cases); the other two suites still pass with three
+  built-in tabs (tabs 58, filters 104); production build.
+
 ## Still to do
 
-- **Tech** (this chat, after the Library chat is merged): tech subjects from
-  deck tags as layer 2, the matching decks as content. Open: only EduSarthi's
-  own tech decks, or students' and teachers' tech-tagged decks too? Which tech
-  decks are in the live database was not checked from here.
+- **Tech:** built. Which tech decks are in the live database was not checked
+  from here; EduSarthi's 21 are added by Actions → "Flashcard decks" (import-decks).
 - **Own tabs:** built; after merging, run Database setup and try it on a phone.
 
 ## Sources used for the recommendation

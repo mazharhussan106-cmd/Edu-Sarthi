@@ -20,6 +20,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { PrefSyncServer } from "@/components/layout/PrefSyncServer";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
 import { HeaderStats } from "@/components/layout/HeaderStats";
+import { NotificationBellServer } from "@/components/layout/NotificationBellServer";
 import { STUDENT_LINKS, studentMore } from "@/lib/studentNav";
 
 export default async function SharedLayout({
@@ -46,6 +47,7 @@ export default async function SharedLayout({
     <div className="flex min-h-screen flex-col">
       <StickyHeader
         links={isTeacher ? staffNav(session?.user?.role).links : STUDENT_LINKS}
+        bell={<NotificationBellServer />}
         search={isTeacher ? undefined : <HeaderSearch />}
         stats={isTeacher ? undefined : <HeaderStats />}
         more={isTeacher ? undefined : studentMore({ member: !session?.user?.isGuest, aiCards: cardMakerEnabled() })}

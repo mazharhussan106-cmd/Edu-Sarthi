@@ -16,6 +16,7 @@ import type { ReportReason } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { logAdmin } from "@/lib/admin";
 import { sendDeckDecision } from "@/lib/email";
+import { notify } from "@/lib/notifications";
 import { DECK_LIMITS, type PublishConsent } from "@/lib/deckSchemas";
 import { LIBRARY_TERMS_VERSION, LICENCES, licenceFor } from "@/lib/libraryTerms";
 import { mergeVersion } from "@/lib/deckVersion";
@@ -131,13 +132,26 @@ export async function unpublishDeck(userId: string, id: string): Promise<Result>
   return { ok: true };
 }
 
-/// Best effort, after the decision is saved: a mail failure must never undo or
-/// block an admin's decision. Accounts with no email (phone sign-ups) are
-/// skipped; they see the status on the deck page.
+const DECISION_NOTE = {
+  approved: { title: "Your deck is in the library", next: "Anyone signed in can now find, follow and copy it." },
+  rejected: { title: "Your deck was not approved", next: "Open the deck to fix it and submit it again." },
+  removed: { title: "Your deck was taken out of the library", next: "Open the deck to read why, fix it and submit it again." },
+} as const;
+
+/// Best effort, after the decision is saved: a failure must never undo or
+/// block an admin's decision. Every owner gets the inbox note; accounts with no
+/// email (phone sign-ups) get only that.
 async function tellOwner(deckId: string, outcome: "approved" | "rejected" | "removed", reason: string) {
   try {
-    const deck = await prisma.deck.findUnique({ where: { id: deckId }, select: { title: true, owner: { select: { email: true } } } });
-    if (deck?.owner.email) await sendDeckDecision(deck.owner.email, deck.title, outcome, reason);
+    const deck = await prisma.deck.findUnique({ where: { id: deckId }, select: { title: true, ownerId: true, owner: { select: { email: true } } } });
+    if (!deck) return;
+    const note = DECISION_NOTE[outcome];
+    await notify(deck.ownerId, `deck_${outcome}`, {
+      title: note.title,
+      body: `“${deck.title}”. ${reason ? `Reviewer’s note: ${reason} ` : ""}${note.next}`,
+      link: `/decks/${deckId}`,
+    });
+    if (deck.owner.email) await sendDeckDecision(deck.owner.email, deck.title, outcome, reason);
   } catch {
     console.error("Could not send the deck decision email");
   }

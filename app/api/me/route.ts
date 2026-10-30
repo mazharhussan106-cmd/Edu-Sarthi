@@ -79,6 +79,11 @@ export async function GET() {
         take: 50_000,
         select: { createdAt: true, known: true, recall: true, stage: true, word: { select: { code: true, text: true } } },
       },
+      // The inbox is kept at most 180 days, so this stays small.
+      notifications: {
+        orderBy: { createdAt: "asc" },
+        select: { createdAt: true, kind: true, title: true, body: true, readAt: true },
+      },
       submissions: {
         orderBy: { createdAt: "asc" },
         select: {

@@ -14,7 +14,11 @@ export const metadata = { title: "Help — EduSarthi" };
 const FAQ = [
   {
     q: "How do I get my speaking audited?",
-    a: "Open Practice, pick an exercise, and record or upload your answer. A teacher scores it on five skills and adds notes at exact moments in your recording. You will see it under Audited, and by email if that is switched on in Settings.",
+    a: "Open Practice, pick an exercise, and record or upload your answer. A teacher scores it on five skills and adds notes at exact moments in your recording. You will see it under Audited, in your notifications, and by email if that is switched on in Settings.",
+  },
+  {
+    q: "Where do I see what is new for me?",
+    a: "Tap the bell at the top of the page. It shows notices for everyone and your own news: an audit that is ready, a recording sent back, a decision about your deck, an invitation to a deck. A dot marks what you have not opened yet. Read items are removed after 90 days, unread ones after 180.",
   },
   {
     q: "Why was my recording sent back?",

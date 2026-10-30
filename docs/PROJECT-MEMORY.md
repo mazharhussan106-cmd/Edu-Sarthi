@@ -562,6 +562,12 @@ Owner's requirement: EduSarthi is a repository, so there must be **one place** w
 - **Tests for all of this are in `scripts/library-e2e/`** (README inside): six browser/HTTP suites run by one `run.cjs` (268 checks: navigation and the open library, robots and sitemap, the list's pages and topics, 21 hostile addresses, the new consent) plus `unit.ts` for the pure functions. Run them after any change to the library, `proxy.ts`, `lib/siteUrl.ts` or `lib/libraryUrl.ts`. Local database only.
 - **Next (the owner):** ask a lawyer about re-consent (A, or have B or C built); check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send the announcement (Admin → Announcements: test, then Start, type SEND); wait 7 days after the last email; merge the branch once; then `LIVE-TESTING-GUIDE.md` 4f and Google Search Console (add the site, submit `/sitemap.xml`).
 
+## Spaced-repetition rules sheet (30 Oct 2026, branch `claude/kind-euler-q35ydg`) — waiting on the owner
+
+- **What:** `docs/srs-review-plan-rules.xlsx` lists every rule behind the "Spaced Repetition · Your Review Plan" box (card side 3) and the daily card order, as the code has them today (R01–R28, each with its code file), plus a Simulator sheet comparing today's ladder with a proposed one. No code was changed.
+- **Today's rules, in one line:** ladder 1 · 3 · 7 · 15 · 30 · 60 days (`lib/srs.ts`); Unknown → step 1, due in a day; Known + Hard +0, Medium +1, Easy +2 steps; a new card counts as step 1, so its first Known + Medium is due in 3 days; due = exact mark time + gap; due cards first, then new up to the daily limit (built-in cards only, IST day).
+- **Undecided:** the owner said rules will change and will send the sheet back filled in (columns G–I, rows N01–N05). Before building: list the code changes, and if the ladder's step count changes, ask what happens to cards whose stored `CardState.stage` no longer exists (nothing is lost, but their next date may jump).
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

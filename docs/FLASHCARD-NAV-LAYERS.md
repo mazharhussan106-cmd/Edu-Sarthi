@@ -161,6 +161,32 @@ Owner, 30 Oct: "bana do", and Tech holds **all** tech decks.
   `subjects.ts` (17 cases); the other two suites still pass with three
   built-in tabs (tabs 58, filters 104); production build.
 
+## Audit of this chat's work (30 Oct) — findings, NOT fixed yet (waiting for the owner)
+
+Checked: every file this branch changed, against main. Re-run: all four suites
+pass (filters 104, tabs 58, tech 37, subjects 17), desktop 1280 × 800 Known
+ends at 796px, phone card 531px.
+
+| # | Severity | Finding | Proof | Suggested fix |
+|---|---|---|---|---|
+| 1 | Medium | Tech counts business-English decks as tech: "networking" in a title, and the tags "network", "security", "monitoring", "logging", "code"; "java" in a title too | `techSubjectsOf`: "Networking at business events" → Cloud; tag "security" (airport vocabulary) → Cloud; "Dress code words" [code] → Programming | Drop the ambiguous words; rely on the official tags and unambiguous words ("computer networking", "aws", …) |
+| 2 | Medium (at scale) | `techDecks` reads 1,000 decks ordered by copies, then filters; once the library passes 1,000 public decks the student's own, shared and followed decks (0 copies) can drop out | Code: one query with `take: 1000` over library + personal decks | Two queries: the student's own / shared / followed / institute decks uncapped, the library capped |
+| 3 | Low–medium | Until Database setup runs, "Download my data" (`/api/me`) answers 500 | Table renamed locally: `/api/me` 500; `/tech`, `/decks` 200 | Read the tabs for the export in a try/catch, or run Database setup straight after merging |
+| 4 | Low | Docs and one comment describe older states: the 360px count wrap, "English · My decks" with "Tech later" | FLASHCARD-NAV-LAYERS "What is built", PROJECT-MEMORY chat table and decision line, DeckTopBar header | Update the text |
+| 5 | Low | "That tab no longer exists…" does not say what to do next (CLAUDE.md rule 12) | `GONE` in lib/studyTabs.ts | Add "Close this and open your tabs again." |
+| 6 | Low | Tab name fields accept 60 characters, the limit is 30 | `maxLength={60}` in the three sheets | `maxLength={30}` |
+| 7 | Low | Two tabs can have the same name | No check in create / rename / placeDeck | Refuse a name already used (ignoring case) |
+| 8 | Low | After a copy, a tab already holding 100 decks is skipped without saying so; links to decks no longer followed stay hidden and count toward that 100 | `placeDeck` | Say which tab was full; drop stale links when a tab is read |
+| 9 | Low | `section.key` is passed to DeckTopBar but no longer used | DeckTopBar props | Remove it |
+| 10 | Info | Studying a deck opens its own study page, which has no study tabs row | By design (deck pages belong to the decks/library work) | Decide later |
+| 11 | Info | Help has no answer about tabs or Tech | `app/(shared)/help/page.tsx` | Add two Q&As if wanted |
+
+Verified fine: every query is scoped by the student; another student's tab
+shows not-found and cannot be changed; 25 parallel creates make exactly 20
+tabs; guests and teachers are refused or skipped; the Flashcard tab survives
+missing tables; no hard-coded colours; every file under 250 lines; axe clean
+in all five themes on every new page and sheet.
+
 ## Still to do
 
 - **Tech:** built. Which tech decks are in the live database was not checked

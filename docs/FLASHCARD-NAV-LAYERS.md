@@ -1,6 +1,6 @@
 # Flashcard tab filters in layers — plan and build record
 
-Status: **BUILT and tested locally, not merged.** Branch
+Status: **BUILT and tested locally, not merged** (filters in two layers, and the student's own tabs). Branch
 `claude/modest-darwin-zfo3g1`, 29 Oct 2026.
 
 Scope of this chat: **only the filters above the card** (`DeckTopBar` and its
@@ -80,53 +80,62 @@ teacher (no tabs on My decks), no page errors. axe in all five themes on five
 pages: only "page has no h1" on `/flashcards`, which was already there before
 this branch. `tsc` and `next build` pass.
 
-## Own tabs (decisions 9–12) — plan, waiting for the owner's approval
+## Own tabs (decisions 9–12) — BUILT 30 Oct, tested locally, not merged
 
-**Database (one change, additive, no data lost):**
-- `StudyFolder`: id, userId, name (1–30 characters), createdAt. Deleted with
-  the account.
-- `StudyFolderDeck`: folderId + deckId (together the key), addedAt. Deleting a
-  tab removes only its links, never a deck, its cards or anyone's progress.
-  Deleting a deck removes it from every tab.
-- The order of all tabs and which of English / My decks are hidden live in
-  `User.preferences` (`studyAreas`), no column needed.
-- Run **Actions → Database setup** right after merging. Until it has run, the
-  tabs fall back to English · My decks instead of breaking the Flashcard tab.
+Approved by the owner ("start building next phase"). **Run Actions → Database
+setup right after merging** (two new tables and one enum).
 
-**Rules:** students only (teachers and admins have no Flashcard tab); not for
-guests, whose data can be merged into another account (same as New deck); at
-most 20 tabs and 100 decks per tab; a deck can be added only if the student can
-open it (own, followed, shared with them), checked on the server; at least one
-tab stays visible; a hidden tab still shows while you are on its page (the
-bottom bar's Flashcard button opens English even if it is hidden).
+**Database (additive, nothing lost):** `StudyTab` (userId, `kind` ENGLISH /
+DECKS / OWN, `name` for own tabs, `position`, `hidden`) and `StudyTabDeck`
+(tabId + deckId as the key, both cascade). No column is added to `User` or
+`Deck`, only Prisma relation fields.
+- Changed from the plan, and why: the order and the hidden flags are **rows**,
+  not a key in `User.preferences` — the settings save keeps only keys it knows
+  (`prefsOf`), so a layout there would vanish on the next settings change; and
+  not a new `User` column — every sign-in reads `User`, so a column the live
+  database does not have yet breaks sign-in until Database setup runs. The
+  built-in tabs get rows only the first time the student saves anything.
+- Until Database setup has run, `AreaTabs` catches the error and shows English
+  · My decks, so the Flashcard tab keeps working (tested by renaming the table).
 
-**Screens:**
-- Layer 1: English · My decks · the student's tabs · **＋**. The row scrolls
-  with a fade when it is long. ＋ opens an "Arrange tabs" sheet: a name field
-  to make a new tab, and every tab with move up / move down, rename, delete
-  (own tabs) and show / hide.
-- A tab's page `/folders/<id>`: layer 1 on top, then its decks as rows like My
-  decks (title, cards, due today, Study → the deck's own study page, Remove from
-  this tab), and "＋ Add decks" (a sheet listing the student's own, followed and
-  shared decks with tick boxes).
-- After Copy / Import succeeds: a sheet "Show this deck in which tabs?" with a
-  tick box per tab, a field for a new tab, Save and Skip; then it opens the new
-  deck as today.
-- "Download my data" (`/api/me`) includes the tabs.
+**Rules as built:** students only (the API answers teachers and admins "not
+enabled", and the copy flow then skips the question); guests refused with the
+usual "add your email" message; 20 own tabs (held under a per-user lock: 25
+parallel requests made exactly 20), 30-character names, 100 decks per tab; a
+deck can go in a tab only if the student can open it (own, followed, shared
+by name — `tabbableBy` in `lib/studyTabs.ts`, checked on every write and read);
+at least one tab stays shown (screen and server); a hidden tab still shows
+while you are on its page; an order sent from an out-of-date sheet is refused.
 
-**Files (about 16):** `prisma/schema.prisma`; `lib/studyFolders.ts` (queries,
-every one scoped by the student); `lib/studyFolderSchemas.ts` (Zod, shared by
-the sheets and the API); `lib/preferences.ts`; `app/api/folders/route.ts`;
-`app/api/folders/[id]/decks/route.ts`; `components/flashcards/AreaTabs.tsx`;
-`components/flashcards/ArrangeTabs.tsx`; `app/(student)/folders/[id]/page.tsx`;
-`components/folders/AddDecksSheet.tsx`; `components/decks/FolderPrompt.tsx`;
-`components/decks/CopyDeckButton.tsx`; `app/api/me/route.ts`; the two pages
-that show layer 1; docs.
+**Screens as built:**
+- Layer 1 (`components/flashcards/AreaTabs.tsx`): the tabs in the student's
+  order, scrolling with a fade, then **＋**, then today's count. On a phone
+  (below 640px) the count shows only due and new, so the tabs have room to show
+  that more follow; the known total shows from 640px up.
+- ＋ opens "Your tabs" (`components/tabs/ArrangeTabs.tsx`): New tab (it opens
+  the new tab), and every tab with show/hide, move up/down, and Rename / Delete
+  for own tabs. Order and show/hide are saved together with "Save order".
+- A tab's page `/tabs/<id>` (`app/(student)/tabs/[id]/page.tsx`): its decks as
+  rows (cards, due today, Study → the deck's own study page, Remove from this
+  tab) and "＋ Add decks" (`components/tabs/TabDeckPicker.tsx`). Another
+  student's tab id shows the not-found page (HTTP 200, because
+  `app/(student)/loading.tsx` streams first, as the library notes say).
+- After "Copy to my decks" / "Make my own copy" succeeds
+  (`components/decks/CopyDeckButton.tsx`): "Show this deck in which tabs?"
+  (`components/tabs/PlaceDeckSheet.tsx`), tick boxes, a new-tab field, Save
+  or Skip; then the copy opens as before.
+- "Download my data" (`/api/me`) includes the tabs and their decks.
+- `/flashcards` now has a screen-reader-only `<h1>` ("Flashcards · Words"),
+  which clears the one axe finding the page had before this branch.
 
-**Overlap with other chats:** `CopyDeckButton` is used on the library, institute
-and shared-link pages, which the Library chat is changing; only the button file
-changes here, not those pages. Another branch (`adoring-gates`) also adds
-models to `schema.prisma`; merging both keeps both sets.
+**API:** `app/api/study-tabs/route.ts` (GET own tabs for the copy question;
+POST create, rename, delete, arrange, setDecks, removeDeck, placeDeck), Zod in
+`lib/studyTabSchemas.ts`, queries in `lib/studyTabs.ts`.
+
+**Tested** (local Postgres, production build): `scripts/flashcard-tabs-e2e/`
+— `tabs.cjs` 58 checks and `filters.cjs` 104 checks, all passing, including
+axe in all five themes with each sheet open; the library's `open-and-nav` and
+`browse-ui` suites still pass (137 checks); `tsc` and `next build`.
 
 ## Still to do
 
@@ -134,8 +143,7 @@ models to `schema.prisma`; merging both keeps both sets.
   deck tags as layer 2, the matching decks as content. Open: only EduSarthi's
   own tech decks, or students' and teachers' tech-tagged decks too? Which tech
   decks are in the live database was not checked from here.
-- **Own tabs** (above): waiting for approval.
-- Not asked for, noted only: `/flashcards` has no `<h1>` (axe best practice).
+- **Own tabs:** built; after merging, run Database setup and try it on a phone.
 
 ## Sources used for the recommendation
 

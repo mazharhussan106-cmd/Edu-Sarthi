@@ -54,6 +54,8 @@ export async function GET() {
       publicName: true,
       avatarKey: true,
       decks: { where: { termsAcceptedAt: { not: null } }, select: { title: true, licence: true, termsVersion: true, termsAcceptedAt: true } },
+      // Their study tabs: names they chose and which decks they put where.
+      studyTabs: { orderBy: { position: "asc" }, select: { kind: true, name: true, position: true, hidden: true, createdAt: true, decks: { select: { deck: { select: { title: true } }, addedAt: true } } } },
       enrollments: { select: { moduleId: true, createdAt: true } },
       // Card progress and the answer-by-answer study history are personal data
       // stored about the student too. Capped so a very long history cannot make

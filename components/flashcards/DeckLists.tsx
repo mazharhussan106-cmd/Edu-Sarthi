@@ -23,20 +23,21 @@ export type ListKey = (typeof DECK_LISTS)[number]["value"];
 export type Counts = { due: number; newLeft: number; known: number; total: number; lists: Record<ListKey, number> };
 
 export function DeckCount({ counts }: { counts: Counts }) {
-  // On a 360px phone with four-digit totals the count can need a second line.
-  // Each part stays whole and the text keeps to the right edge, so "known"
-  // drops under the rest instead of breaking off its number; two short lines
-  // fit the tabs' height, so the card loses nothing.
+  // It shares a row with the study tabs, which now include the student's own,
+  // so on a phone (below 640px) the "known" total is left out: due and new
+  // are what today's session needs, and the tabs need the room to show that
+  // there are more of them. From 640px up the whole count fits on one line.
   return (
     <p className="text-right text-xs leading-tight text-ink-muted">
       <span className="whitespace-nowrap">
         <b className="font-mono text-ink">{counts.due}</b> due ·
       </span>{" "}
       <span className="whitespace-nowrap">
-        <b className="font-mono text-ink">{counts.newLeft}</b> new ·
-      </span>{" "}
-      <span className="whitespace-nowrap">
-        <b className="font-mono text-ink">{counts.known}</b>/{counts.total} known
+        <b className="font-mono text-ink">{counts.newLeft}</b> new
+      </span>
+      {" "}
+      <span className="whitespace-nowrap max-sm:hidden">
+        · <b className="font-mono text-ink">{counts.known}</b>/{counts.total} known
       </span>
     </p>
   );

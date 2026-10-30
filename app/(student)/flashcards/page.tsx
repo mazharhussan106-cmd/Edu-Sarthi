@@ -196,6 +196,9 @@ export default async function FlashcardsPage({
       // plus the bottom bar (3.5rem) plus their borders.
       className="mx-auto flex h-[calc(100dvh-7.25rem-env(safe-area-inset-bottom,0px))] max-w-2xl flex-col px-3 pb-1 pt-3 sm:px-6 sm:pt-6 md:block md:h-auto md:pb-4"
     >
+      {/* For screen readers only: the page needs a heading, and the card's own
+          heading is the word, which says nothing about where they are. */}
+      <h1 className="sr-only">Flashcards · {k.label}</h1>
       {inList ? <ListSessionBar s={inList} /> : <DeckTopBar
         k={k}
         type={type}

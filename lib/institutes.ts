@@ -16,6 +16,7 @@ import type { InstituteRole, InstituteStatus } from "@prisma/client";
 
 import { logAdmin } from "@/lib/admin";
 import { sendInstituteNameRemoved } from "@/lib/email";
+import { notify } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 type Result = { ok: true } | { error: string };
@@ -168,12 +169,19 @@ export async function removeInstituteName(adminUserId: string, deckId: string): 
   const res = await prisma.deck.updateMany({ where: { id: deckId, instituteId: a.instituteId, visibility: "PUBLIC" }, data: { instituteId: null } });
   if (!res.count) return { error: "That deck is not published under your institute’s name any more. Refresh the page." };
   // Owner's decision: the deck's owner is told. Best effort, after the change
-  // is saved: a mail failure must not undo it. Accounts with no email (phone
-  // sign-ups) and the admin's own decks are skipped.
+  // is saved: a failure must not undo it. The admin's own decks are skipped;
+  // accounts with no email (phone sign-ups) get only the inbox note.
   try {
     const d = await prisma.deck.findUnique({ where: { id: deckId }, select: { title: true, ownerId: true, owner: { select: { email: true } } } });
     const inst = await prisma.institute.findUnique({ where: { id: a.instituteId }, select: { name: true } });
-    if (d?.owner.email && d.ownerId !== adminUserId && inst) await sendInstituteNameRemoved(d.owner.email, d.title, inst.name);
+    if (d && inst && d.ownerId !== adminUserId) {
+      await notify(d.ownerId, "institute_name_removed", {
+        title: "Your deck no longer shows your institute",
+        body: `The admin of ${inst.name} took the institute’s name and logo off “${d.title}”. It stays in the library under your own name.`,
+        link: `/decks/${deckId}`,
+      });
+      if (d.owner.email) await sendInstituteNameRemoved(d.owner.email, d.title, inst.name);
+    }
   } catch {
     console.error("Could not send the institute-name email");
   }

@@ -4,52 +4,18 @@
 // It deliberately answers the technical failures first. Someone opening this
 // page is usually stuck on a microphone permission or a stalled upload, not
 // reading about the product.
+// The list itself lives in lib/helpContent, which the help chatbot also reads.
 
 import Link from "next/link";
 
 import { Card, CardTitle } from "@/components/ui/Card";
+import { SUPPORT_EMAIL, SUPPORT_ISSUES } from "@/lib/helpContent";
 
 export const metadata = {
   title: "Support — EduSarthi",
   description: "Fixes for common problems with recording, uploading and signing in.",
 };
 
-const SUPPORT_EMAIL = "support@edusarthi.com";
-
-const ISSUES = [
-  {
-    q: "The Record button does nothing, or asks for permission and then fails",
-    a: "Your browser is blocking the microphone. Press the icon at the left of the address bar, set the microphone to Allow, and reload the page. On iPhone, Settings → Safari → Microphone must also be set to Ask or Allow. If it still fails, use Upload a file instead — a voice memo recorded in your phone's own app works exactly as well.",
-  },
-  {
-    q: "Recording works on my laptop but not on my phone",
-    a: "Recording only works over a secure connection. If you opened the site by typing an address like 192.168.0.5:3000, the browser will refuse microphone access. Use the real edusarthi.com address instead.",
-  },
-  {
-    q: "The upload gets stuck on Uploading",
-    a: "This is almost always the connection. Wait for it to fail rather than closing the tab — your recording is still on the page, and pressing Send again retries it. On mobile data, a two-minute video can take a few minutes.",
-  },
-  {
-    q: "My file was rejected as the wrong type",
-    a: "Each exercise asks for one kind of submission — audio, video, or a photo of written work. The exercise page says which. Sending a photo to a speaking exercise is refused before it uploads.",
-  },
-  {
-    q: "I never got the verification code",
-    a: "Check your spam folder first. The code expires after ten minutes, so if it has been longer, press Send a new code on the verification page. There is a sixty-second wait between codes.",
-  },
-  {
-    q: "Too many attempts when signing in",
-    a: "Eight wrong passwords in fifteen minutes pauses sign-in for that email. Nothing is locked and nobody can lock you out permanently — wait a few minutes, or use the reset link.",
-  },
-  {
-    q: "My audit still says waiting",
-    a: "Submissions are reviewed oldest first by a person, so the wait depends on the queue. The status on your dashboard is accurate — Waiting means no teacher has opened it yet, Being reviewed means one has.",
-  },
-  {
-    q: "Can I become a teacher?",
-    a: "Not through the signup form. A teacher account can read student submissions, so those are set up by hand. Email us if you teach English and want to be considered.",
-  },
-] as const;
 
 export default function SupportPage() {
   return (
@@ -60,7 +26,7 @@ export default function SupportPage() {
       </p>
 
       <div className="mt-8 divide-y divide-border border-y border-border">
-        {ISSUES.map((item) => (
+        {SUPPORT_ISSUES.map((item) => (
           // Native <details>: open/close, keyboard support and screen reader
           // announcement all come free, and the page ships no JavaScript.
           <details key={item.q} className="group py-4">

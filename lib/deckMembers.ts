@@ -14,6 +14,7 @@ import { istDayStart } from "@/lib/aiLimits";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { LimitReached, lockUser } from "@/lib/decks";
 import { sendDeckInvite } from "@/lib/email";
+import { notify } from "@/lib/notifications";
 
 type Result = { ok: true } | { error: string };
 
@@ -46,8 +47,21 @@ export async function inviteMember(ownerId: string, deckId: string, email: strin
   }
   // Best effort, after the invite is saved: it also waits in their My decks.
   if (fresh) {
+    const from = deck.owner.name?.trim() || "Someone on EduSarthi";
     try {
-      await sendDeckInvite(email, deck.owner.name?.trim() || "Someone on EduSarthi", deck.title, role, `${appUrl()}/decks`);
+      // The inbox note goes only to an account that has proven this address,
+      // the same match invitationsFor uses. The owner sees the same answer
+      // either way, so this reveals nothing about who has an account.
+      // A failed lookup only loses the inbox note; the email below still goes.
+      const invitee = await prisma.user.findUnique({ where: { email }, select: { id: true, emailVerified: true } }).catch(() => null);
+      if (invitee?.emailVerified) {
+        await notify(invitee.id, "deck_invite", {
+          title: "You are invited to a deck",
+          body: `${from} invited you to ${role === "EDIT" ? "edit" : "view"} “${deck.title}”. Accept or decline it in My decks.`,
+          link: "/decks",
+        });
+      }
+      await sendDeckInvite(email, from, deck.title, role, `${appUrl()}/decks`);
     } catch {
       console.error("Could not send the deck invitation email");
     }

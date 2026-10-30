@@ -27,12 +27,15 @@ const COLLAPSE_AFTER_PX = 24;
 export function StickyHeader({
   links,
   stats,
+  bell,
   search,
   more,
   homeHref,
 }: {
   links: readonly NavLink[];
   stats?: ReactNode;
+  /** The notification bell, rendered on the server so its count is right on first paint. */
+  bell?: ReactNode;
   search?: ReactNode;
   more?: readonly MenuGroup[];
   homeHref: string;
@@ -112,7 +115,8 @@ export function StickyHeader({
           )}
 
           <div className="flex shrink-0 items-center gap-1">
-            {/* Search, then settings, then the menu, all at the right. */}
+            {/* Bell, search, settings, then the menu, all at the right. */}
+            {bell}
             {search}
             <SettingsMenu />
             <MobileMenu links={links} more={more} />

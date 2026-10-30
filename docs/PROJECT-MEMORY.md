@@ -627,6 +627,17 @@ Checked after merging: `prisma validate`, `tsc --noEmit`, `next build` (the CI s
 
 **Still open in the merged work:** the third audit of spaced repetition v2 (C1–C10 in `docs/SRS-V2-PLAN.md`) is not fixed; C1 (Unknown on the last card shows the practice card on the side it was left on) is the one a student will notice.
 
+## Notification inbox and help chatbot (30 Oct 2026, branch `claude/inbox-chatbot`) — BUILT and tested, not merged
+
+Brought onto `main` from `claude/adoring-gates-7h67av` (28 Oct) by the owner's decision of 30 Oct. Plan and details: `docs/NEXT-FEATURES-PLAN.md` (read its top note first).
+
+- **Kept from that branch:** Phase A, the notification inbox: a bell in every header (student, shared, teacher, admin) with the unread count; `/notifications` with "Notices for everyone" (students) and "For you"; read and unread; Mark all as read. Notes for audit ready, recording sent back, deck approved / rejected / removed, deck invite, small fix undone, institute name removed, a recording on a teacher's deck. Emails unchanged. Phase E, the help chatbot on `/help`, shown only when `ANTHROPIC_API_KEY` is set (20 questions a day, guests 5; questions and answers not stored).
+- **Not kept (main has its own, later versions):** Phase B change email / phone (main: Settings → Account & security → Change email; phone on Profile → Edit profile) and Phase C profile photo (main: only the owner sees it, 29 Oct, which replaced the branch's teacher-photo-shown-to-students rule N9). `claude/adoring-gates-7h67av` is not to be merged.
+- **How it was fitted to main:** headers keep main's stats, search and menu and gain only `bell`; the new-recording email (main) and the teacher's inbox note (branch) both run in `after()`; the Help FAQ moved to `lib/helpContent.ts` is main's FAQ; the chatbot's background notes were updated to today's app (Library in the bottom bar, reminder time can be chosen, where email, phone and photo are changed).
+- **Schema (additive, nothing deleted):** tables `Notification`, `NoticeRead`, `AiHelpLog`. **Before deploying, run `npx prisma db push` on the live database** (the header reads `Notification` on every page).
+- **Tested:** typecheck; production build; local Postgres; browser at 390 px and 1280 px: 19 checks (student bell count, header still has XP, search, settings, menu; inbox lists notes, HTML shown as text, Mark all as read, bell back to zero, API count; Help shows main's FAQ and no branch-only answers, no AI box without a key, `/api/help/ask` 503 with a helpful message; Support's 8 problems; teacher and admin bell and inbox; no page errors). **Not tested:** the chatbot with a real key; the live database.
+- **Merging with spaced repetition v2 (`claude/kind-euler-q35ydg`):** that branch edits the "How do flashcards decide what I see?" answer in `app/(shared)/help/page.tsx`; this branch moves the FAQ to `lib/helpContent.ts`. Whichever merges second: put that answer's new text into `lib/helpContent.ts` and keep the Help page as this branch has it.
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

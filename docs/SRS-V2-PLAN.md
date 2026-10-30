@@ -144,3 +144,18 @@ Files the fixes would touch: `lib/srs.ts`, `lib/flashcards.ts`, `lib/todayReview
 | B6 | Deck pages fetch a practice card twice (code → id, then id → card). | One extra query per practice look on decks. | Return the row from `find`. |
 | B7 | `FlashcardDeck.tsx` 256 lines (= A10). | Rule 11. | Shared `useAgainNav` hook for FlashcardDeck and DeckStudy. |
 | B8 | Two `istDayStart` (lib/srs and lib/aiLimits). | Tidy-up. | `lib/aiLimits` re-exports lib/srs's. |
+
+## Third audit (30 Oct) — this chat's work (`398f702..cb7a890`), after the B1–B8 fixes. Not fixed yet
+
+| # | Finding | How real | Fix idea |
+|---|---|---|---|
+| C1 | Unknown on the **last** card of a session brings the same card back at once as practice with the same React key, so the card keeps the side it was on (often the answer side) and the recall attempt is lost. | Real at every session end with an Unknown | Put `practice` in the card's `key` on the three pages. |
+| C2 | Deploying the code before `npx prisma db push` breaks answers and the flashcard pages (missing column). | Known; deploy order is written in PROJECT-MEMORY | Keep the order; optionally say it in the PR. |
+| C3 | On deploy day, cards first answered earlier that day have `firstReviewedAt` null and count as reviews, not new: up to one extra day's new cards. | One day only | Treat null as before: new if `createdAt` is today. |
+| C4 | Known, then ‹ and Unknown within 8 s: the server ignores the second answer (double-tap guard) but the page still queues a practice look for an Unknown that was not saved. | Rare | The API says when it ignored an answer; queue only when saved. |
+| C5 | Help says "never in less than 3 days", but due dates are India midnights: Unknown at 11:50 pm Monday is due from Thursday 00:00, about 2 days later. The owner's rule was "Monday → Thursday" (calendar days). | Copy not exact (rule 15) | Say "not before the third day after (Monday → Thursday)". |
+| C6 | Two practice cards ready at once and the first is gone: the second waits one extra card. | Rare | Look all ready codes up together. |
+| C7 | The deck pages each write their own practice lookup. | Tidy-up | One helper in `lib/decks`. |
+| C8 | `servableDue(Infinity, …)` used to mean "reviews left". | Tidy-up | Write `Math.max(0, limit − done)`. |
+| C9 | Reminder groups rows per student by scanning the list. | Small now | Group into a Map once. |
+| C10 | `scripts/srs-unit.ts` is 264 lines (rule 11). | Rule | Split into srs and cardAgain checks. |

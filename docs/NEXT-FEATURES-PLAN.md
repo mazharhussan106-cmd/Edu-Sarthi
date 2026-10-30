@@ -1,5 +1,7 @@
 # Next features — plan (notifications, messages, profile, reminders, AI media, language, help bot)
 
+> **30 Oct 2026 — what happened to this branch's work.** The owner decided: Phases **A (notification inbox)** and **E (help chatbot)** were brought onto today's `main` on branch `claude/inbox-chatbot`, not merged as they were. Phases **B (change email / phone)** and **C (profile photo)** were **not** brought over: `main` already has both, built later in a different way (Settings phases G and H; Profile P5, where only the owner sees their photo, decision of 29 Oct that replaces N9 below). Where this file describes B or C, or the Help answers about them, it describes the branch, not the app. Branch `claude/adoring-gates-7h67av` stays as a record and is not to be merged.
+
 Status: **Planned 28 Oct 2026 (branch `claude/adoring-gates-7h67av`). The owner answered Q1–Q9 the same day (see "Owner's decisions" at the end; they replace the PROPOSALs they cover). Phases A (notification inbox), B (change email or phone), C (profile photo) and E (help chatbot) are BUILT on the same branch, tested on a local copy, not merged yet — see each phase's "what was built".** D (reminder time) waits for the move to Vercel Pro (decision N10); F is skipped (N12). Next by the agreed order: G (messages with a teacher), then H (language option). Anything still marked **PROPOSAL** and not covered by a decision needs the owner's yes.
 
 ## The owner's list (28 Oct 2026)

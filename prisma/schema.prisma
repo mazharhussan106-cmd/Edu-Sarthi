@@ -113,6 +113,7 @@ model User {
   claimedSubmissions Submission[] @relation("ClaimedSubmissions")
   aiDraftLogs        AiDraftLog[]
   aiSources          AiSource[]
+  aiHelpLogs         AiHelpLog[]
 
   accounts          Account[]
   sessions            Session[]
@@ -226,6 +227,23 @@ model AiDraftLog {
 
   @@index([teacherId, createdAt]) // "drafts by this teacher today"
   @@index([submissionId]) // "drafts already made for this submission"
+}
+
+/// One question asked of the help chatbot (lib/aiHelp). It exists only to
+/// count: the daily limit (owner's decision N11: 20 a day, 5 for guests). The
+/// question and the answer are not stored. Written before the model is called
+/// and removed again if the call fails; swept after two days.
+model AiHelpLog {
+  id        String   @id @default(cuid())
+  userId    String
+  /// Model tokens the answer used, filled in after it arrives.
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }
 
 /// A file (PDF or photo) a person added as a source for the AI card maker. The

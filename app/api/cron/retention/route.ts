@@ -6,6 +6,7 @@
 
 import { NextResponse } from "next/server";
 
+import { sweepHelpLog } from "@/lib/aiHelpLimits";
 import { sweepSources } from "@/lib/aiSources";
 import { sweepNotifications } from "@/lib/notifications";
 import { purgeBatch, sweepExpiredAuthRows } from "@/lib/retention";
@@ -29,5 +30,7 @@ export async function GET(req: Request) {
   const sources = await sweepSources();
   // Inbox rows past the owner's limits: read after 90 days, unread after 180.
   const notifications = await sweepNotifications();
-  return NextResponse.json({ ok: true, purged: total, swept, sources, notifications });
+  // Help-chatbot counts: only today's are ever read.
+  const helpLog = await sweepHelpLog();
+  return NextResponse.json({ ok: true, purged: total, swept, sources, notifications, helpLog });
 }

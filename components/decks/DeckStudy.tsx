@@ -6,7 +6,7 @@
 //
 // It is the deck version of FlashcardDeck and deliberately works the same way:
 // same CardSurface (frame, turn, swipe, zoom), same CardControls bar, same
-// /api/flashcards endpoint and Day 1·3·7·15·30·60 ladder. What differs is only
+// /api/flashcards endpoint and Day 3·7·15·30·60·120·180 ladder. What differs is only
 // what is drawn on the sides (DeckSides) and that the next card is chosen by
 // the server from this one deck. History is the tab's own sessionStorage list.
 

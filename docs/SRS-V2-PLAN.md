@@ -1,6 +1,6 @@
 # Spaced repetition v2 — plan (30 Oct 2026, branch `claude/kind-euler-q35ydg`)
 
-Status: **PLANNED, waiting for the owner's approval.** Nothing below is built yet.
+Status: **Approved 30 Oct. Step 1 BUILT** (rules + restage script, tested). Steps 2–4 not started.
 Today's rules (v1) are listed in `docs/srs-review-plan-rules.xlsx` (R01–R28).
 
 ## The owner's decisions (30 Oct)
@@ -37,7 +37,9 @@ Each card stores a step number (`CardState.stage`) that points into the ladder. 
 
 ## Build order — one step, one commit, each tested before the next
 
-**Step 1 — the rules (`lib/srs.ts`, `app/api/flashcards/route.ts`, new `scripts/srs-v2-restage.ts`, new `scripts/srs-unit.ts`)**
+**Step 1 — the rules (`lib/srs.ts`, `app/api/flashcards/route.ts`, new `scripts/srs-v2-restage.ts`, new `scripts/srs-unit.ts`) — BUILT**
+- Done: `npx tsx scripts/srs-unit.ts` passes 18 checks. The restage script was run on a throwaway local Postgres seeded with v1 and v2 cards: 1/3 → 3, 7 → 7, … 60 → 60, v2 cards and remark-only cards untouched, a second `--apply` changed 0 rows. Help page and schema comment now name the new ladder. `ReviewLog.stage` keeps old numbers for old answers; nothing reads it.
+- **Deploy order:** deploy, then straight away `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run), check the counts, then `--apply`. Until it runs, a card on old "60 days" would be treated as the 120-day rung on its next answer.
 - New ladder, Unknown two steps down, the 3-day floor, IST-day due dates, spread, late credit.
 - "Next review …" text counts India-time days.
 - `srs-unit.ts` checks every rule above with fixed dates (no database).

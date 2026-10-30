@@ -1,0 +1,144 @@
+// Owns the checks for the spaced-repetition rules in lib/srs.ts: every rule in
+// docs/SRS-V2-PLAN.md, run against fixed dates so the result never depends on
+// when it runs. No database.
+//
+// Run: npx tsx scripts/srs-unit.ts   (exits 1 on the first failed check)
+
+import assert from "node:assert/strict";
+
+import { LADDER_DAYS, describeDue, istDayStart, nextReview } from "../lib/srs";
+
+const DAY = 86_400_000;
+// Monday 3 Nov 2026, 21:00 India time: late evening, the case where exact
+// hours and calendar days disagree.
+const MON_9PM = new Date("2026-11-03T15:30:00Z");
+const MON_MIDNIGHT = istDayStart(MON_9PM);
+
+let passed = 0;
+function check(name: string, fn: () => void) {
+  fn();
+  passed++;
+  console.log(`ok  ${name}`);
+}
+
+/// Days from Monday's midnight to the due date, as the student counts them.
+const dayOf = (d: Date) => Math.round((d.getTime() - MON_MIDNIGHT.getTime()) / DAY);
+const at = (stage: number, daysAgo: number) => ({ stage, lastReviewedAt: new Date(MON_9PM.getTime() - daysAgo * DAY) });
+
+check("ladder is 3 · 7 · 15 · 30 · 60 · 120 · 180", () => {
+  assert.deepEqual([...LADDER_DAYS], [3, 7, 15, 30, 60, 120, 180]);
+});
+
+check("IST midnight of Monday 9 pm is Monday 00:00 IST", () => {
+  assert.equal(MON_MIDNIGHT.toISOString(), "2026-11-02T18:30:00.000Z");
+});
+
+check("new card: Hard 3, Medium 7, Easy 15 days (D3)", () => {
+  assert.equal(dayOf(nextReview(null, true, "HARD", "a", MON_9PM).dueAt), 3);
+  assert.equal(dayOf(nextReview(null, true, "MEDIUM", "a", MON_9PM).dueAt), 7);
+  assert.equal(nextReview(null, true, "EASY", "a", MON_9PM).stage, 2);
+});
+
+check("new card: no level counts as Medium", () => {
+  assert.equal(nextReview(null, true, null, "a", MON_9PM).stage, 1);
+});
+
+check("new card Unknown: 3 days, never sooner (D1)", () => {
+  const r = nextReview(null, false, null, "a", MON_9PM);
+  assert.equal(r.stage, 0);
+  assert.equal(dayOf(r.dueAt), 3);
+});
+
+check("due from midnight IST, not 72 hours after the tap (D6)", () => {
+  const r = nextReview(null, false, null, "a", MON_9PM);
+  // Thursday 00:00 IST, so a Thursday-morning session sees it.
+  assert.equal(r.dueAt.toISOString(), "2026-11-05T18:30:00.000Z");
+});
+
+check("no answer ever comes back in under 3 days (D1)", () => {
+  for (let stage = 0; stage < LADDER_DAYS.length; stage++) {
+    for (const known of [true, false]) {
+      for (const recall of ["HARD", "MEDIUM", "EASY", null] as const) {
+        for (let k = 0; k < 20; k++) {
+          const r = nextReview(at(stage, 0), known, known ? recall : null, `w${k}`, MON_9PM);
+          assert.ok(dayOf(r.dueAt) >= 3, `stage ${stage} ${known} ${recall} → ${dayOf(r.dueAt)}`);
+        }
+      }
+    }
+  }
+});
+
+check("Unknown: two steps down (60 → 15, 7 → 3, 3 → 3) (D4)", () => {
+  assert.equal(nextReview(at(4, 60), false, null, "a", MON_9PM).stage, 2);
+  assert.equal(nextReview(at(1, 7), false, null, "a", MON_9PM).stage, 0);
+  assert.equal(nextReview(at(0, 3), false, null, "a", MON_9PM).stage, 0);
+});
+
+check("Known on time: Hard +0, Medium +1, Easy +2", () => {
+  assert.equal(nextReview(at(2, 15), true, "HARD", "a", MON_9PM).stage, 2);
+  assert.equal(nextReview(at(2, 15), true, "MEDIUM", "a", MON_9PM).stage, 3);
+  assert.equal(nextReview(at(2, 15), true, "EASY", "a", MON_9PM).stage, 4);
+});
+
+check("top rung is 180 and stays there", () => {
+  const r = nextReview(at(6, 180), true, "EASY", "a", MON_9PM);
+  assert.equal(r.stage, 6);
+  assert.ok(Math.abs(dayOf(r.dueAt) - 180) <= 2);
+});
+
+check("late credit: due at 7, back on day 20, Medium → 30 (D9)", () => {
+  assert.equal(LADDER_DAYS[nextReview(at(1, 20), true, "MEDIUM", "a", MON_9PM).stage], 30);
+});
+
+check("late credit: also on Easy, never lowers the normal step", () => {
+  assert.equal(LADDER_DAYS[nextReview(at(1, 20), true, "EASY", "a", MON_9PM).stage], 30);
+  assert.equal(LADDER_DAYS[nextReview(at(1, 8), true, "EASY", "a", MON_9PM).stage], 30);
+});
+
+check("late credit: not on Hard", () => {
+  assert.equal(nextReview(at(1, 20), true, "HARD", "a", MON_9PM).stage, 1);
+});
+
+check("late credit: remembered longer than the ladder → top rung", () => {
+  assert.equal(nextReview(at(0, 400), true, "MEDIUM", "a", MON_9PM).stage, 6);
+});
+
+check("a stage from an older, longer ladder is clamped, not out of range", () => {
+  const r = nextReview(at(9, 0), true, "HARD", "a", MON_9PM);
+  assert.equal(r.stage, 6);
+});
+
+check("spread: none under 15, ±1 at 15, ±2 from 30 (D8)", () => {
+  const seen = new Map<number, Set<number>>();
+  for (let k = 0; k < 300; k++) {
+    for (let stage = 0; stage < LADDER_DAYS.length; stage++) {
+      const r = nextReview(at(stage, 0), true, "HARD", `card${k}:3`, MON_9PM);
+      const gap = LADDER_DAYS[stage];
+      const off = dayOf(r.dueAt) - gap;
+      if (!seen.has(gap)) seen.set(gap, new Set());
+      seen.get(gap)!.add(off);
+    }
+  }
+  assert.deepEqual([...seen.get(3)!], [0]);
+  assert.deepEqual([...seen.get(7)!], [0]);
+  assert.deepEqual([...seen.get(15)!].sort(), [-1, 0, 1]);
+  for (const g of [30, 60, 120, 180]) assert.deepEqual([...seen.get(g)!].sort(), [-1, -2, 0, 1, 2]);
+});
+
+check("spread: the same answer always gives the same date", () => {
+  const a = nextReview(at(3, 30), true, "MEDIUM", "word-x:4", MON_9PM).dueAt.getTime();
+  const b = nextReview(at(3, 30), true, "MEDIUM", "word-x:4", MON_9PM).dueAt.getTime();
+  assert.equal(a, b);
+});
+
+check("describeDue counts India-time days", () => {
+  assert.equal(describeDue(new Date(MON_9PM.getTime() - 1), MON_9PM), "due now");
+  assert.equal(describeDue(new Date(MON_MIDNIGHT.getTime() + DAY), MON_9PM), "tomorrow");
+  assert.equal(describeDue(new Date(MON_MIDNIGHT.getTime() + 3 * DAY), MON_9PM), "in 3 days");
+  // Monday 9 pm to Tuesday 8 pm is under 24 hours but still "tomorrow".
+  assert.equal(describeDue(new Date(MON_9PM.getTime() + 23 * 3_600_000), MON_9PM), "tomorrow");
+  // A card from before v2 due at 11 pm the same evening.
+  assert.equal(describeDue(new Date(MON_9PM.getTime() + 2 * 3_600_000), MON_9PM), "later today");
+});
+
+console.log(`\n${passed} checks passed`);

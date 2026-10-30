@@ -1,6 +1,6 @@
 # Spaced repetition v2 — plan (30 Oct 2026, branch `claude/kind-euler-q35ydg`)
 
-Status: **Approved 30 Oct. Step 1 BUILT** (rules + restage script, tested). Steps 2–4 not started.
+Status: **Approved 30 Oct. Steps 1 and 2 BUILT** (tested on a throwaway local Postgres). Steps 3–4 not started.
 Today's rules (v1) are listed in `docs/srs-review-plan-rules.xlsx` (R01–R28).
 
 ## The owner's decisions (30 Oct)
@@ -44,7 +44,9 @@ Each card stores a step number (`CardState.stage`) that points into the ladder. 
 - "Next review …" text counts India-time days.
 - `srs-unit.ts` checks every rule above with fixed dates (no database).
 
-**Step 2 — daily review limit (`lib/preferences.ts`, `app/(shared)/settings/SettingsSections.tsx`, `lib/flashcards.ts`, `lib/todayReview.ts`, `app/(student)/flashcards/page.tsx`, `components/flashcards/DeckMessages.tsx`)**
+**Step 2 — daily review limit (`lib/preferences.ts`, `app/(shared)/settings/SettingsSections.tsx`, `lib/flashcards.ts`, `lib/todayReview.ts`, `app/(student)/flashcards/page.tsx`, `components/flashcards/DeckMessages.tsx`) — BUILT**
+- Done: Settings → Reviews per day (No limit / 50 / 100 / 150 / 200), saved as `reviewsPerDay` (0 = no limit). Counted per kind (Words, Chunks, Grammar, Support) per India day, like new cards. A review = a card answered today that was first answered before today. Past the limit, due cards wait and new cards are still served; the Done card says how many wait and its button "Keep going anyway" (`?more=1`) lifts both limits. Due counts on the Flashcard tab, Today page and Dashboard stop at the limit. Own and followed decks are not limited.
+- Tested: `nextCardId`, `deckCounts` and `todayReview` against a local Postgres (limit 5 with 3 done → 2 served, 3 held back; limit used → a new card; `more=1` → due again; no limit → as before). Not tried in a browser: the Settings row and the Done card's wording.
 - New setting `reviewsPerDay` (null = no limit).
 - Reviews done today are counted from `ReviewLog` by India day.
 - When the limit is reached, the "Done for today" card says so and offers "Review more anyway", just as new cards do today.

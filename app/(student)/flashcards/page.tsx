@@ -12,7 +12,7 @@
 //   /flashcards?card=VRB-006            → that card (its kind is taken from it)
 //   /flashcards?q=choose                → search results
 //   /flashcards?list=important          → a remark list
-//   /flashcards?more=1                  → keep going past today's new-card limit
+//   /flashcards?more=1                  → keep going past today's new-card and review limits
 //   /flashcards?skip=A.B                → cards passed over with › this session
 //   /flashcards?card=VRB-006&inlist=hard&sid=…&left=3 → that card inside a
 //                                          "Study this list" session (lib/listSession)
@@ -72,7 +72,7 @@ export default async function FlashcardsPage({
   // Each key is read on its own: a stored value this version no longer offers
   // falls back to its default without throwing away the other settings.
   const prefs = prefsOf(user?.preferences);
-  const { cardColor, newPerDay } = prefs;
+  const { cardColor, newPerDay, reviewsPerDay } = prefs;
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
@@ -85,13 +85,15 @@ export default async function FlashcardsPage({
   const sectionExtra = sectionFilter ? (packNo ? await packWhere(sectionFilter, packNo) : sectionFilter) : undefined;
   const sectionQuery = def && sectionFilter ? `&sec=${def.key}${packNo ? `&pack=${packNo}` : ""}` : "";
   const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}${channel ? `&ch=${channel}` : ""}${level ? `&lv=${level}` : ""}${sectionQuery}`;
-  const withMore = sp.more === "1" ? `${base}&more=1` : base;
+  // "Keep going": this visit serves past today's new-card and review limits.
+  const liftLimits = sp.more === "1";
+  const withMore = liftLimits ? `${base}&more=1` : base;
   const skip = parseSkip(sp.skip);
   // Support keeps its channel in `category`, like a chunk's type, and its
   // level in `partOfSpeech` as the sheet writes it ("Basic"). Word sections
   // and packs narrow the built-in words through `extra`.
   const deck = { kind: k.kind, category: type ?? channel ?? undefined, level: level ? levelLabel(level) : undefined, extra: sectionExtra };
-  const counts = k.ready && !inList ? await deckCounts(userId, deck, newPerDay) : null;
+  const counts = k.ready && !inList ? await deckCounts(userId, deck, newPerDay, liftLimits ? 0 : reviewsPerDay) : null;
 
   let body: React.ReactNode;
   if (!k.ready) {
@@ -126,7 +128,7 @@ export default async function FlashcardsPage({
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
   } else {
-    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip, newPerDay));
+    const id = byCode?.id ?? (await nextCardId(userId, deck, liftLimits, skip, newPerDay, reviewsPerDay));
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
 
     if (!word) {
@@ -136,6 +138,7 @@ export default async function FlashcardsPage({
           allSeen={!!counts && counts.known >= counts.total}
           noun={k.noun}
           newPerDay={newPerDay}
+          heldBack={counts?.heldBack ?? 0}
           skipHref={withMore}
           moreHref={`${base}&more=1`}
         />

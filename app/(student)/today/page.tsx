@@ -29,8 +29,9 @@ export default async function TodayPage() {
   if (session?.user?.role === "ADMIN") redirect("/admin");
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { preferences: true } });
+  const prefs = prefsOf(user?.preferences);
   const [{ kinds, decks }, redo, waiting] = await Promise.all([
-    todayReview(userId, prefsOf(user?.preferences).newPerDay),
+    todayReview(userId, prefs.newPerDay, prefs.reviewsPerDay),
     // A sent-back recording already re-recorded has nothing left to do.
     prisma.submission.count({ where: { studentId: userId, status: "RETURNED", retry: { is: null } } }),
     prisma.submission.count({ where: { studentId: userId, status: { in: ["PENDING", "IN_REVIEW"] } } }),

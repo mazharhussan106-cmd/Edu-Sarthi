@@ -41,6 +41,9 @@ export const PREFERENCE_SCHEMA = z.object({
   textSize: z.enum(TEXT_SIZE_VALUES),
   cardColor: z.enum(CARD_COLOR_VALUES),
   newPerDay: z.number().int().min(5).max(50),
+  // Reviews of built-in cards per kind per India day; 0 is no limit. A cap
+  // so a student back from a break meets 100 cards, not 400, and stays.
+  reviewsPerDay: z.union([z.literal(0), z.literal(50), z.literal(100), z.literal(150), z.literal(200)]),
   emailReminder: z.boolean(),
   // The India hour the reminder goes out (lib/reminderTimes): one of the times
   // a daily cron job runs, not any hour.
@@ -82,6 +85,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   textSize: "normal",
   cardColor: "plain" as CardColor,
   newPerDay: 10,
+  // No limit until the student sets one: the owner's choice (docs/SRS-V2-PLAN.md D7).
+  reviewsPerDay: 0,
   // Off until the student opts in: nobody gets a daily email they never asked for.
   emailReminder: false,
   reminderHour: MAIN_REMINDER_HOUR,
@@ -114,6 +119,8 @@ export type PlaybackRate = (typeof PLAYBACK_RATES)[number];
 /// Choices offered in settings. A short list, not a free number: a student who
 /// types 500 has not chosen a plan, they have broken their daily session.
 export const NEW_PER_DAY_OPTIONS = [5, 10, 15, 20, 30] as const;
+/// 0 is "No limit". The schema above lists the same values.
+export const REVIEWS_PER_DAY_OPTIONS = [0, 50, 100, 150, 200] as const;
 
 /// Every preference, each parsed on its own over the defaults. One stored value
 /// this version no longer accepts (a retired card colour) loses only itself,

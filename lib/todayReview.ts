@@ -5,8 +5,9 @@
 // The Flashcard tab shows these counts only for the tab that is open, so a
 // student on Words never learns that ten Chunk cards are waiting. This puts
 // every kind on one page. The rules are the tab's own (lib/flashcards): due =
-// answered at least once and dueAt passed; the new-card limit counts each
-// kind separately, by India day.
+// answered at least once and dueAt passed; the new-card limit and the review
+// limit count each kind separately, by India day. A kind's due count is what
+// today will serve, so it stops at the review limit.
 //
 // Two grouped SQL reads instead of a count per kind and per deck: the live
 // pool has one connection, so eight small counts would queue one behind the
@@ -21,13 +22,15 @@ import { studyDecks } from "@/lib/myCards";
 export type KindToday = { due: number; newLeft: number; newToday: number };
 export type DeckToday = { id: string; title: string; href: string; due: number };
 
-export async function todayReview(userId: string, newPerDay: number) {
+export async function todayReview(userId: string, newPerDay: number, reviewsPerDay = 0) {
   const now = new Date();
+  const dayStart = istDayStart(now);
   const [byKind, byDeck, totals, decks] = await Promise.all([
-    prisma.$queryRaw<{ kind: CardKind; due: number; newToday: number; seen: number }[]>(Prisma.sql`
+    prisma.$queryRaw<{ kind: CardKind; due: number; newToday: number; reviewedToday: number; seen: number }[]>(Prisma.sql`
       SELECT w."kind"::text AS kind,
              COUNT(*) FILTER (WHERE cs."dueAt" <= ${now})::int AS due,
-             COUNT(*) FILTER (WHERE cs."createdAt" >= ${istDayStart(now)})::int AS "newToday",
+             COUNT(*) FILTER (WHERE cs."createdAt" >= ${dayStart})::int AS "newToday",
+             COUNT(*) FILTER (WHERE cs."lastReviewedAt" >= ${dayStart} AND cs."createdAt" < ${dayStart})::int AS "reviewedToday",
              COUNT(*)::int AS seen
       FROM "CardState" cs JOIN "Word" w ON w."id" = cs."wordId"
       WHERE cs."userId" = ${userId} AND cs."reviews" > 0 AND w."deckId" IS NULL
@@ -47,8 +50,9 @@ export async function todayReview(userId: string, newPerDay: number) {
     // Capped by what is left to learn, so a finished kind never claims
     // "10 new" that the tab would not actually serve.
     const unseen = Math.max(0, t._count - (row?.seen ?? 0));
+    const due = row?.due ?? 0;
     kinds.set(t.kind, {
-      due: row?.due ?? 0,
+      due: reviewsPerDay > 0 ? Math.min(due, Math.max(0, reviewsPerDay - (row?.reviewedToday ?? 0))) : due,
       newLeft: Math.min(unseen, Math.max(0, newPerDay - (row?.newToday ?? 0))),
       // The dashboard ticks "learn new words" off once today's limit is used.
       newToday: row?.newToday ?? 0,

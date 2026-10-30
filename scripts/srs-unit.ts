@@ -214,7 +214,11 @@ check("again: capped at 10 cards", () => {
 
 async function picks() {
   const ids: Record<string, string> = { A: "id-a", C: "id-c", "VRB-001": "id-vrb" };
-  const find = async (code: string) => ids[code] ?? null;
+  let lookups = 0;
+  const find = async (codes: string[]) => {
+    lookups++;
+    return new Map(codes.filter((c) => ids[c]).map((c) => [c, { id: ids[c], code: c }]));
+  };
   const some = async () => "id-next";
   const none = async () => null;
 
@@ -233,6 +237,16 @@ async function picks() {
   // Nothing left and the waiting card is gone: dropped, not kept in the URL (audit A6).
   r = await pickWithAgain([{ code: "GONE", wait: 2 }, { code: "A", wait: 3 }], none, find);
   assert.deepEqual([r.id, r.practice, r.again], ["id-a", true, [{ code: "A", wait: 3 }]]);
+  // The practice card comes back as its row, so the page need not fetch it (audit B6).
+  assert.deepEqual(r.row, { id: "id-a", code: "A" });
+  // Ten waiting codes at the end of a session: one lookup, not ten (audit B5).
+  lookups = 0;
+  const ten = Array.from({ length: 9 }, (_, i) => ({ code: `GONE${i}`, wait: 2 })).concat({ code: "C", wait: 3 });
+  r = await pickWithAgain(ten, none, find);
+  assert.deepEqual([r.id, lookups, r.again], ["id-c", 1, [{ code: "C", wait: 3 }]]);
+  // All gone: the list empties and the session ends.
+  r = await pickWithAgain([{ code: "GONE", wait: 1 }], none, find);
+  assert.deepEqual([r.id, r.again], [null, []]);
 
   // The shared page helper.
   let s = await pickForSession({ named: "id-named", inList: false, raw: "VRB-001~0", next: some, find });
@@ -240,7 +254,7 @@ async function picks() {
   s = await pickForSession({ named: "id-named", inList: true, raw: "VRB-001~0", next: some, find });
   assert.deepEqual([s.id, s.practice, s.again], ["id-named", false, null]);
   s = await pickForSession({ named: null, inList: false, raw: "VRB-001~0", next: some, find });
-  assert.deepEqual([s.id, s.practice], ["id-vrb", true]);
+  assert.deepEqual([s.id, s.practice, s.row], ["id-vrb", true, { id: "id-vrb", code: "VRB-001" }]);
   s = await pickForSession({ named: null, inList: false, raw: undefined, next: some, find });
   assert.deepEqual([s.id, s.practice, s.again], ["id-next", false, []]);
   passed++;

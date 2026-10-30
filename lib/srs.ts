@@ -38,6 +38,13 @@ export function istDayStart(at = new Date()): Date {
   return new Date(Math.floor((at.getTime() + IST) / DAY) * DAY - IST);
 }
 
+/// How many due cards today will serve under a review limit (0 = none), when
+/// `reviewedToday` reviews are done. One rule for the Flashcard tab, the
+/// Today page, the Dashboard and the reminder email, so they never disagree.
+export function servableDue(due: number, reviewedToday: number, reviewsPerDay: number): number {
+  return reviewsPerDay > 0 ? Math.min(due, Math.max(0, reviewsPerDay - reviewedToday)) : due;
+}
+
 /// Whole India-time days from `from` to `to` (calendar days, not 24-hour blocks).
 function istDaysBetween(from: Date, to: Date): number {
   return Math.round((istDayStart(to).getTime() - istDayStart(from).getTime()) / DAY);

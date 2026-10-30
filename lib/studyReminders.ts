@@ -1,5 +1,6 @@
 // Owns sending the daily flashcard reminder for one reminder time: every
-// student who switched it on, chose this time, and has cards due today.
+// student who switched it on, chose this time, and has cards due today. The
+// number in the email stops at the student's review limit, as the app does.
 //
 // It walks the opted-in students in pages ordered by id and stops at the
 // caller's deadline rather than at a head-count, so a long list is finished in
@@ -10,11 +11,15 @@
 //
 // It deliberately does NOT check who called it; the cron routes do.
 
+import { Prisma } from "@prisma/client";
+
 import { sendStudyReminder } from "@/lib/emailNotices";
 import { currentStreak } from "@/lib/freeze";
 import { STREAK_MIN_XP } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { prefsOf } from "@/lib/preferences";
+import { istDayStart, servableDue } from "@/lib/srs";
+import { reviewedTodaySql } from "@/lib/todayReview";
 
 const PAGE = 100;
 /// The streak line stops this long before the deadline, leaving time to send.
@@ -49,22 +54,27 @@ export async function sendStudyReminders(hour: number, link: string, deadline: n
     if (mine.length === 0) continue;
 
     // One grouped count for the whole page instead of one query per student.
-    const due = await prisma.cardState.groupBy({
-      by: ["userId"],
-      where: { userId: { in: mine.map((s) => s.id) }, reviews: { gt: 0 }, dueAt: { lte: now }, word: { deckId: null } },
-      _count: true,
-    });
-    const dueBy = new Map(due.map((d) => [d.userId, d._count]));
+    // Per kind, with today's reviews, so the number in the email is what the
+    // app will serve under the student's review limit (lib/todayReview).
+    const dayStart = istDayStart(now);
+    const rows = await prisma.$queryRaw<{ userId: string; due: number; reviewedToday: number }[]>(Prisma.sql`
+      SELECT cs."userId" AS "userId",
+             COUNT(*) FILTER (WHERE cs."dueAt" <= ${now})::int AS due,
+             COUNT(*) FILTER (WHERE ${reviewedTodaySql(dayStart)})::int AS "reviewedToday"
+      FROM "CardState" cs JOIN "Word" w ON w."id" = cs."wordId"
+      WHERE cs."userId" IN (${Prisma.join(mine.map((s) => s.id))}) AND cs."reviews" > 0 AND w."deckId" IS NULL
+        AND (cs."dueAt" <= ${now} OR cs."lastReviewedAt" >= ${dayStart})
+      GROUP BY cs."userId", w."kind"`);
 
     for (const s of mine) {
-      const n = dueBy.get(s.id) ?? 0;
+      const prefs = prefsOf(s.preferences);
+      const n = rows.filter((r) => r.userId === s.id).reduce((sum, r) => sum + servableDue(r.due, r.reviewedToday, prefs.reviewsPerDay), 0);
       if (n === 0 || !s.email) continue;
       try {
         // A streak line only for a streak worth keeping and not yet kept today.
         // Read per student, after the due check, so only those emailed pay for
         // it, and only while there is time: the line is a nicety, and the
         // reminder itself must not be cut off by the job's time limit.
-        const prefs = prefsOf(s.preferences);
         const st = Date.now() < deadline - STREAK_LINE_MARGIN_MS
           ? await currentStreak(s.id, prefs.dailyGoalXp, prefs.weeklyGoalDays, now).catch(() => null)
           : null;

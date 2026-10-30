@@ -42,36 +42,38 @@ export function afterCard(again: Again, code: string, unknown: boolean): Again {
 
 /// Which card a session page shows: a practice card whose wait is over, else
 /// the normal next card, else (nothing left today) a practice card that is
-/// still waiting, so it is not lost. `find` turns a code into this session's
-/// card id, or null for a card that is gone or not in this deck.
-export async function pickWithAgain(
+/// still waiting, so it is not lost. `find` looks codes up in this session
+/// (one query for any number) and returns the card rows it found; a practice
+/// card comes back as `row`, so the page need not fetch it again.
+export async function pickWithAgain<T extends { id: string }>(
   again: Again,
   next: () => Promise<string | null>,
-  find: (code: string) => Promise<string | null>,
-): Promise<{ id: string | null; practice: boolean; again: Again }> {
+  find: (codes: string[]) => Promise<Map<string, T>>,
+): Promise<{ id: string | null; row: T | null; practice: boolean; again: Again }> {
   let list = again;
   const ready = list.find((e) => e.wait === 0);
   if (ready) {
-    const id = await find(ready.code);
-    if (id) return { id, practice: true, again: list };
+    const row = (await find([ready.code])).get(ready.code);
+    if (row) return { id: row.id, row, practice: true, again: list };
     list = list.filter((e) => e.code !== ready.code);
   }
   const id = await next();
-  if (id) return { id, practice: false, again: list };
-  for (const e of [...list]) {
-    const pid = await find(e.code);
-    if (pid) return { id: pid, practice: true, again: list };
-    // Gone, or not in this session: dropped so it is not looked up again.
-    list = list.filter((x) => x.code !== e.code);
+  if (id) return { id, row: null, practice: false, again: list };
+  if (list.length) {
+    const rows = await find(list.map((e) => e.code));
+    // Gone, or not in this session: dropped so they are not looked up again.
+    list = list.filter((e) => rows.has(e.code));
+    const row = list.length ? rows.get(list[0].code)! : null;
+    if (row) return { id: row.id, row, practice: true, again: list };
   }
-  return { id: null, practice: false, again: [] };
+  return { id: null, row: null, practice: false, again: [] };
 }
 
 /// The whole choice for a session page, shared by the Flashcards tab and the
 /// two deck study pages. A card named in the URL (‹ back, or "Study this
 /// list") is shown as itself, never as practice. Inside "Study this list" the
 /// again list is off (null): that session has its own order.
-export async function pickForSession({
+export async function pickForSession<T extends { id: string }>({
   named,
   inList,
   raw,
@@ -82,10 +84,10 @@ export async function pickForSession({
   inList: boolean;
   raw: string | undefined;
   next: () => Promise<string | null>;
-  find: (code: string) => Promise<string | null>;
-}): Promise<{ id: string | null; practice: boolean; again: Again | null }> {
+  find: (codes: string[]) => Promise<Map<string, T>>;
+}): Promise<{ id: string | null; row: T | null; practice: boolean; again: Again | null }> {
   const again = inList ? null : parseAgain(raw);
-  if (named) return { id: named, practice: false, again };
-  if (!again) return { id: await next(), practice: false, again: null };
+  if (named) return { id: named, row: null, practice: false, again };
+  if (!again) return { id: await next(), row: null, practice: false, again: null };
   return pickWithAgain(again, next, find);
 }

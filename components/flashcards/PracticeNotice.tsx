@@ -6,8 +6,8 @@
 export function PracticeNotice() {
   return (
     <p role="status" className="rounded-lg border border-border-strong bg-surface px-3 py-1.5 text-xs text-ink">
-      <b className="font-display">Practice · not saved.</b> You marked this Unknown a few cards ago. Known or Unknown here
-      only moves on; its next review stays where your Unknown put it.
+      <b className="font-display">Practice · not saved.</b> Cards you mark Unknown come round once more like this.
+      Known or Unknown here only moves on; this card&apos;s review date does not change.
     </p>
   );
 }

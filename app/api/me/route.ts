@@ -66,6 +66,7 @@ export async function GET() {
           dueAt: true,
           reviews: true,
           lastReviewedAt: true,
+          firstReviewedAt: true,
           confident: true,
           important: true,
           favourite: true,

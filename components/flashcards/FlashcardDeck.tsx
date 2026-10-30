@@ -6,10 +6,8 @@
 //   › or swipe ←    → the next card without answering (skipped this session)
 //   ‹ or swipe →    → the card seen before this one
 //
-// "Before" is a list of codes this tab has shown, kept in sessionStorage. It
-// is a convenience only: if storage is blocked, ‹ just says there is nothing
-// to go back to. Skips live in the URL (lib/cardSkip), so they survive a
-// refresh and vanish when the student leaves the flashcard tab.
+// Where each of those goes, the skip and practice lists in the URL, and the
+// ‹ history live in useCardNav, shared with deck cards (DeckStudy).
 //
 // Words, chunks and support cards share all of this; only the drawing of
 // each side differs (CardSides). It deliberately does NOT draw the card or handle gestures
@@ -17,17 +15,16 @@
 
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { CardControls, type Level, type Remarks } from "@/components/flashcards/CardControls";
 import { ChunkSide, SUPPORT_TITLES, SupportSide, WORD_TITLES, WordSide, type ChunkExtras } from "@/components/flashcards/CardSides";
 import { CardSurface } from "@/components/flashcards/CardSurface";
-import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi";
-import type { CardColor } from "@/lib/cardColors";
-import { skipQuery, withSkipped } from "@/lib/cardSkip";
-import { afterCard, againQuery, type Again } from "@/lib/cardAgain";
+import { post } from "@/components/flashcards/deckApi";
 import { PracticeNotice } from "@/components/flashcards/PracticeNotice";
+import { useCardNav } from "@/components/flashcards/useCardNav";
+import type { CardColor } from "@/lib/cardColors";
+import type { Again } from "@/lib/cardAgain";
 import { sayable } from "@/lib/chunkCard";
 import { sayText } from "@/lib/speech";
 import { describeDue } from "@/lib/srs";
@@ -86,7 +83,7 @@ export function FlashcardDeck({
   /** Say the word when each card opens (a setting, off by default). */
   autoSpeak?: boolean;
 }) {
-  const router = useRouter();
+  const nav = useCardNav({ code: word.code, nextHref, skip, again, practice });
   const [side, setSide] = useState<0 | 1 | 2>(0);
   const [level, setLevel] = useState<Level>(state.recall ?? "MEDIUM");
   const [remarks, setRemarks] = useState<Remarks>({
@@ -98,11 +95,6 @@ export function FlashcardDeck({
   const [note, setNote] = useState(state.note ?? "");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const h = readHistory();
-    if (h[h.length - 1] !== word.code) writeHistory([...h, word.code]);
-  }, [word.code]);
 
   // `rate` is only for the Support card's Listen / Slow buttons; quiet is
   // the automatic speak on opening, which must not show errors.
@@ -129,14 +121,9 @@ export function FlashcardDeck({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word.code, autoSpeak]);
 
-  /// The again list for the card after this one.
-  const againAfter = (unknown: boolean) => (again ? againQuery(afterCard(again, word.code, unknown)) : "");
-
   async function mark(known: boolean) {
-    if (practice) {
-      router.push(`${nextHref}${skipQuery(skip)}${againAfter(false)}`);
-      return;
-    }
+    // A practice look saves nothing: it only moves on.
+    if (practice) return nav.answered(known);
     setBusy(true);
     setMessage(null);
     const r = await post({ action: "mark", wordId: word.id, known, recall: known ? level : null });
@@ -145,25 +132,14 @@ export function FlashcardDeck({
       setBusy(false);
       return;
     }
-    router.push(`${nextHref}${skipQuery(skip)}${againAfter(!known)}`);
-    router.refresh();
+    nav.answered(known);
     // Cleared even on success: if the plan picks this same card again the
     // component is reused, and it must not stay locked.
     setBusy(false);
   }
 
-  function next() {
-    // A practice card passed over is not skipped for the session: it is just done.
-    router.push(`${nextHref}${skipQuery(practice ? skip : withSkipped(skip, word.code))}${againAfter(false)}`);
-  }
-
-  function prev() {
-    const h = readHistory();
-    const at = h.lastIndexOf(word.code);
-    if (at <= 0) return setMessage("This is the first card you opened here.");
-    writeHistory(h.slice(0, at));
-    router.push(`${nextHref}&card=${h[at - 1]}${skipQuery(skip)}${again ? againQuery(again) : ""}`);
-  }
+  const next = nav.next;
+  const prev = () => setMessage(nav.prev());
 
   async function remark(k: keyof Remarks, v: boolean) {
     setRemarks((r) => ({ ...r, [k]: v }));

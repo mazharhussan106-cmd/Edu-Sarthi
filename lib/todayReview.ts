@@ -7,8 +7,9 @@
 // every kind on one page. The rules are the tab's own (lib/flashcards): due =
 // answered at least once and dueAt passed; the new-card limit and the review
 // limit count each kind separately, by India day, a card's first answer as
-// new and any later one as a review. A kind's due count is what today will
-// serve, so it stops at the review limit.
+// new and any later one as a review (firstReviewedAt, as in lib/flashcards).
+// A kind's due count is what today will serve, so it stops at the review
+// limit (servableDue); the reminder email counts the same way.
 //
 // Two grouped SQL reads instead of a count per kind and per deck: the live
 // pool has one connection, so eight small counts would queue one behind the
@@ -17,8 +18,16 @@
 import { Prisma, type CardKind } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { istDayStart } from "@/lib/srs";
+import { istDayStart, servableDue } from "@/lib/srs";
 import { studyDecks } from "@/lib/myCards";
+
+/// SQL for "this CardState row (alias cs) is a review answered today": answered
+/// today, first answered before today. A null firstReviewedAt is a card first
+/// answered before that column existed, so it is old. Shared with the
+/// reminder email (lib/studyReminders).
+export function reviewedTodaySql(dayStart: Date) {
+  return Prisma.sql`cs."lastReviewedAt" >= ${dayStart} AND (cs."firstReviewedAt" < ${dayStart} OR cs."firstReviewedAt" IS NULL)`;
+}
 
 export type KindToday = { due: number; newLeft: number; newToday: number };
 export type DeckToday = { id: string; title: string; href: string; due: number };
@@ -30,8 +39,8 @@ export async function todayReview(userId: string, newPerDay: number, reviewsPerD
     prisma.$queryRaw<{ kind: CardKind; due: number; newToday: number; reviewedToday: number; seen: number }[]>(Prisma.sql`
       SELECT w."kind"::text AS kind,
              COUNT(*) FILTER (WHERE cs."dueAt" <= ${now})::int AS due,
-             COUNT(*) FILTER (WHERE cs."lastReviewedAt" >= ${dayStart} AND cs."reviews" = 1)::int AS "newToday",
-             COUNT(*) FILTER (WHERE cs."lastReviewedAt" >= ${dayStart} AND cs."reviews" > 1)::int AS "reviewedToday",
+             COUNT(*) FILTER (WHERE cs."firstReviewedAt" >= ${dayStart})::int AS "newToday",
+             COUNT(*) FILTER (WHERE ${reviewedTodaySql(dayStart)})::int AS "reviewedToday",
              COUNT(*)::int AS seen
       FROM "CardState" cs JOIN "Word" w ON w."id" = cs."wordId"
       WHERE cs."userId" = ${userId} AND cs."reviews" > 0 AND w."deckId" IS NULL
@@ -51,9 +60,8 @@ export async function todayReview(userId: string, newPerDay: number, reviewsPerD
     // Capped by what is left to learn, so a finished kind never claims
     // "10 new" that the tab would not actually serve.
     const unseen = Math.max(0, t._count - (row?.seen ?? 0));
-    const due = row?.due ?? 0;
     kinds.set(t.kind, {
-      due: reviewsPerDay > 0 ? Math.min(due, Math.max(0, reviewsPerDay - (row?.reviewedToday ?? 0))) : due,
+      due: servableDue(row?.due ?? 0, row?.reviewedToday ?? 0, reviewsPerDay),
       newLeft: Math.min(unseen, Math.max(0, newPerDay - (row?.newToday ?? 0))),
       // The dashboard ticks "learn new words" off once today's limit is used.
       newToday: row?.newToday ?? 0,

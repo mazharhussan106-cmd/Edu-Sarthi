@@ -81,6 +81,7 @@ export async function POST(req: Request) {
         dueAt: next.dueAt,
         reviews: 1,
         lastReviewedAt: now,
+        firstReviewedAt: now,
       },
       update: {
         known: a.known,
@@ -89,6 +90,8 @@ export async function POST(req: Request) {
         dueAt: next.dueAt,
         reviews: { increment: 1 },
         lastReviewedAt: now,
+        // Only on the first answer: a row made earlier by a remark has reviews 0.
+        ...(current?.reviews ? {} : { firstReviewedAt: now }),
       },
       select: { dueAt: true },
     });

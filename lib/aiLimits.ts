@@ -5,20 +5,16 @@
 // service. The count lives in AiDraftLog and nowhere else.
 
 import { prisma } from "@/lib/prisma";
+import { istDayStart } from "@/lib/srs";
 
 export const DAILY_DRAFTS_PER_TEACHER = 500;
 export const DRAFTS_PER_SUBMISSION = 3;
 
-const DAY_MS = 86_400_000;
-// India has no daylight saving, so a fixed offset is exact. The teachers are
-// in India; a UTC day would reset their allowance at 5:30 in the morning.
-const IST_OFFSET_MS = 330 * 60_000;
-
-/// The most recent midnight in India, as a moment in time.
-export function istDayStart(now = new Date()): Date {
-  const shifted = now.getTime() + IST_OFFSET_MS;
-  return new Date(Math.floor(shifted / DAY_MS) * DAY_MS - IST_OFFSET_MS);
-}
+// One definition of an India day for every daily limit in the app; lib/srs
+// holds it because it imports no database code. The teachers are in India; a
+// UTC day would reset their allowance at 5:30 in the morning. Re-exported so
+// the many callers that import it from here keep working.
+export { istDayStart };
 
 export type Reservation = { ok: true } | { ok: false; error: string };
 

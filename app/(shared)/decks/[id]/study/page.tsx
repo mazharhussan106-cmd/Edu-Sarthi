@@ -52,10 +52,12 @@ export default async function StudyPage({ params, searchParams }: { params: Prom
     inList: !!inList,
     raw: sp.again,
     next: () => nextDeckCardId(userId, id, skip, shared),
-    find: async (code) => (await prisma.word.findFirst({ where: { code, deckId: id, ownerId: deck.ownerId }, select: { id: true } }))?.id ?? null,
+    find: async (codes) =>
+      new Map((await prisma.word.findMany({ where: { code: { in: codes }, deckId: id, ownerId: deck.ownerId }, select: CARD_SELECT })).map((w) => [w.code, w])),
   });
   const wordId = pick.id;
-  const word = wordId ? await prisma.word.findFirst({ where: { id: wordId, deckId: id, ownerId: deck.ownerId }, select: CARD_SELECT }) : null;
+  // A practice card arrives already fetched.
+  const word = pick.row ?? (wordId ? await prisma.word.findFirst({ where: { id: wordId, deckId: id, ownerId: deck.ownerId }, select: CARD_SELECT }) : null);
 
   const [state, user] = word
     ? await Promise.all([

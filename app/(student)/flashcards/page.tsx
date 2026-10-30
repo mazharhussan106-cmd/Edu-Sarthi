@@ -134,11 +134,12 @@ export default async function FlashcardsPage({
       named: byCode?.id ?? null,
       inList: !!inList,
       raw: sp.again,
-      next: () => nextCardId(userId, deck, liftLimits, skip, newPerDay, reviewsPerDay, counts?.reviewsLeft),
-      find: (code) => findInDeck(deck, code),
+      next: () => nextCardId(userId, deck, { extra: liftLimits, skip, newPerDay, reviewsPerDay, today: counts?.today }),
+      find: (codes) => findInDeck(deck, codes),
     });
     const id = picked.id;
-    const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
+    // A practice card arrives already fetched.
+    const word = picked.row ?? (id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null);
 
     if (!word) {
       body = (

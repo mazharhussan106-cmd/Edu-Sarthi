@@ -69,3 +69,26 @@ About 15 files across 4 steps.
 
 - Steps 1–3: `npm run typecheck`, `npm run lint`, and `scripts/srs-unit.ts` run in the cloud session.
 - There is **no database in the cloud session**. The pages, the Settings row and the restage script must be tried on the owner's local database before merging. A checklist will be added here after Step 3.
+
+## Deck sessions in a browser (30 Oct) — PASSED
+
+Own deck and followed library deck, production build, local Postgres, 390 px: 29 checks. Unknown → `again=OWN-1~3`, saved once, due in 3 IST days; three cards later the same card with "Practice · not saved"; its answer not saved; then the next new card with `again` gone; a new card's Known → 7 days; at the end of a session the waiting practice card comes at once, and a practice Unknown does not queue it again ("Done for now"); side 3 shows ✓ Day 3, Day 7 · next … Day 180, "Next review in 7 days"; no page errors.
+
+## Audit of v2 (30 Oct) — findings, fixes waiting for the owner's approval
+
+Code review of `main...claude/kind-euler-q35ydg`. Ranked; "real" means it can happen in normal use.
+
+| # | Finding | Real? | Proposed fix |
+|---|---|---|---|
+| A1 | A card remarked (⭐ etc.) on an earlier day and answered for the first time today counts as a **review**, not a new card, because "new today" / "review today" are told apart by `CardState.createdAt`, which a remark also sets. Uses up the review limit for nothing. | Yes, with a review limit set | Tell them apart by the answer count: review today = answered today and `reviews ≥ 2`; new today = answered today and `reviews = 1`. The same `createdAt` problem already existed for the **new-card** limit (before v2); fixing that too is a separate owner decision. |
+| A2 | Between the deploy and the restage script, an answer on an old card reads its stored step on the new ladder and lands one rung too high (old 60 → 180), and the script cannot undo it. | Yes, if the script runs late | Work the current step out from the card's real gap (`dueAt − lastReviewedAt`, the same rule the script uses) when answering, not from the stored number. Then the order of deploy and script no longer matters; the script only fixes what the box shows. |
+| A3 | The restage script skips answered cards with no `lastReviewedAt`. | No: every answer since 29 Sep sets both, and guest merge moves rows whole | Count them in the dry run anyway, so the owner sees 0. |
+| A4 | With a review limit, each Flashcards page load counts today's reviews twice, one after the other. | Slower on the one-connection pool | Count once and run it alongside the due-card query. |
+| A5 | Practice card lookup on the Flashcards tab ignores the tab's filter (type, channel, level, section, pack). | Only via an edited or old link | Look it up inside the same filter as the session. |
+| A6 | `pickWithAgain` keeps codes it could not find when nothing else is left. | Only for a deleted card | Drop them. |
+| A7 | Three copies of "IST midnight" (`lib/srs`, `lib/flashcards`, `lib/aiLimits`). | Tidy-up | `lib/flashcards` and `lib/todayReview` use `lib/srs`'s; `lib/aiLimits` left as is. |
+| A8 | `reviewsPerDay` values written twice (schema and options list). | Tidy-up | Build the schema from the list. |
+| A9 | The again/practice wiring is copied in three study pages. | Tidy-up | One helper in `lib/cardAgain`. |
+| A10 | `FlashcardDeck.tsx` is 256 lines (rule: ~250). | Known, noted in PROJECT-MEMORY | Not in this fix; split only if the owner asks. |
+
+Files the fixes would touch: `lib/srs.ts`, `lib/flashcards.ts`, `lib/todayReview.ts`, `lib/preferences.ts`, `lib/cardAgain.ts`, `scripts/srs-v2-restage.ts`, `scripts/srs-unit.ts`, the three study pages — 10 files, so the owner approves first (CLAUDE.md).

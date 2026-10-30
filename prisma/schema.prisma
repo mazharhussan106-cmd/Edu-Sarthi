@@ -113,6 +113,7 @@ model User {
   claimedSubmissions Submission[] @relation("ClaimedSubmissions")
   aiDraftLogs        AiDraftLog[]
   aiSources          AiSource[]
+  aiHelpLogs         AiHelpLog[]
 
   accounts          Account[]
   sessions            Session[]
@@ -138,6 +139,8 @@ model User {
   instituteMembership InstituteMember?
   institutesApplied   Institute[]          @relation("InstituteApplicant")
   assignedSubmissions Submission[]         @relation("AssignedSubmissions")
+  notifications       Notification[]
+  noticeReads         NoticeRead[]
 
   createdAt DateTime @default(now())
 }
@@ -226,6 +229,23 @@ model AiDraftLog {
 
   @@index([teacherId, createdAt]) // "drafts by this teacher today"
   @@index([submissionId]) // "drafts already made for this submission"
+}
+
+/// One question asked of the help chatbot (lib/aiHelp). It exists only to
+/// count: the daily limit (owner's decision N11: 20 a day, 5 for guests). The
+/// question and the answer are not stored. Written before the model is called
+/// and removed again if the call fails; swept after two days.
+model AiHelpLog {
+  id        String   @id @default(cuid())
+  userId    String
+  /// Model tokens the answer used, filled in after it arrives.
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }
 
 /// A file (PDF or photo) a person added as a source for the AI card maker. The
@@ -463,6 +483,49 @@ model Notice {
   createdById String?
   createdAt   DateTime  @default(now())
 
+  reads NoticeRead[]
+
+  @@index([createdAt])
+}
+
+/// One student having seen one notice in the notification inbox. A notice is
+/// for everyone, so it is not copied into each person's inbox (one notice for
+/// 10,000 students would be 10,000 rows); a row exists only once someone has
+/// seen it, and "unread" is the absence of one.
+model NoticeRead {
+  id       String   @id @default(cuid())
+  userId   String
+  noticeId String
+  readAt   DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notice Notice @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, noticeId])
+  @@index([noticeId])
+}
+
+/// One thing that happened to one person, for the inbox behind the bell: an
+/// audit came back, a recording was sent back, a deck was reviewed. Written
+/// after the real work has committed (lib/notifications), alongside any email.
+/// `kind` is text checked against NOTIFICATION_KINDS rather than an enum, so a
+/// new kind needs no database change. Read items go after 90 days and unread
+/// ones after 180 (owner's decision), swept by the retention cron.
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  kind      String
+  title     String
+  body      String    @db.Text
+  /// Always a path inside the site, checked before it is written.
+  link      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
   @@index([createdAt])
 }
 

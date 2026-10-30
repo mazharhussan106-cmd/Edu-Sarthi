@@ -177,7 +177,8 @@ export default function PrivacyPage() {
             <li>
               <span className="text-ink">Anthropic</span> — receives that text
               and writes a draft audit for the teacher to check and edit. It also
-              reads what you give the AI card maker and writes the cards.
+              reads what you give the AI card maker and writes the cards, and
+              answers questions asked in the AI help on the Help page.
             </li>
           </ul>
           <p className="mt-2">
@@ -199,6 +200,14 @@ export default function PrivacyPage() {
             &ldquo;AI-assisted&rdquo; and you choose which to keep. Anthropic
             keeps data under its own terms; read its privacy policy for how
             long.
+          </p>
+          <p className="mt-2">
+            When you ask the AI help on the Help page, your question and the
+            last few questions and answers of that conversation go to Anthropic
+            to write the answer. Your name, email address, student ID and
+            account details are not sent, and the AI cannot see them. We do not
+            store the questions or the answers; we keep only a count of how
+            many you asked, for the daily limit, for two days.
           </p>
           <p className="mt-2">
             If a teacher&apos;s flashcard includes a video, it plays from YouTube
@@ -244,6 +253,12 @@ export default function PrivacyPage() {
             take up to two days. Pasted text is not stored; it is sent with your
             request. The cards you add to a deck, and your last answers to the
             questions, are kept while your account exists.
+          </p>
+          <p className="mt-2">
+            Your notifications (the list behind the bell: an audit that is
+            ready, a decision about your deck) are deleted 90 days after they
+            arrive once you have read them, and after 180 days if you never
+            open them.
           </p>
           <p className="mt-2">
             When you delete your account, your submissions, audits, flashcard

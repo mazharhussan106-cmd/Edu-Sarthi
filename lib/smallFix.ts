@@ -15,6 +15,7 @@ import { istDayStart } from "@/lib/aiLimits";
 import { DECK_LIMITS } from "@/lib/deckSchemas";
 import { cardText, lockUser } from "@/lib/decks";
 import { sendFixUndone } from "@/lib/email";
+import { notify } from "@/lib/notifications";
 
 export type FixText = { front: string; back: string; example: string; body: string };
 type Stored = { text: string; details: Prisma.JsonValue };
@@ -104,7 +105,7 @@ export async function acceptFix(adminId: string, id: string): Promise<Result> {
 export async function undoFix(adminId: string, id: string, reason: string): Promise<Result> {
   const ch = await prisma.deckChange.findUnique({
     where: { id },
-    select: { reviewedAt: true, before: true, after: true, wordId: true, deckId: true, word: { select: { text: true, details: true } }, deck: { select: { title: true, owner: { select: { email: true } } } } },
+    select: { reviewedAt: true, before: true, after: true, wordId: true, deckId: true, word: { select: { text: true, details: true } }, deck: { select: { title: true, ownerId: true, owner: { select: { email: true } } } } },
   });
   if (!ch || ch.reviewedAt) return { error: "That fix was already checked. Refresh the page." };
   const now = fixText(ch.word);
@@ -119,7 +120,12 @@ export async function undoFix(adminId: string, id: string, reason: string): Prom
     prisma.deckChange.update({ where: { id }, data: { reviewedAt: new Date(), reviewedById: adminId, undone: true, undoReason: reason } }),
   ]);
   await logAdmin(adminId, "Undid small fix", "deck", ch.deckId, { card: restored.front, reason });
-  // Best effort, after the undo is saved: a mail failure must not undo the undo.
+  // Best effort, after the undo is saved: a failure must not undo the undo.
+  await notify(ch.deck.ownerId, "fix_undone", {
+    title: "A fix in your deck was undone",
+    body: `An admin undid your fix to the card “${restored.front.slice(0, 80)}” in “${ch.deck.title}”. Reason: ${reason}`,
+    link: `/decks/${ch.deckId}`,
+  });
   try {
     if (ch.deck.owner.email) await sendFixUndone(ch.deck.owner.email, ch.deck.title, restored.front, reason);
   } catch {

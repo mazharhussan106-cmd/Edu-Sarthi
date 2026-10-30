@@ -9,6 +9,9 @@
 /// The card maker needs only the Anthropic key.
 export const cardMakerEnabled = () => Boolean(process.env.ANTHROPIC_API_KEY);
 
+/// The help chatbot on /help needs only the Anthropic key too.
+export const helpBotEnabled = () => Boolean(process.env.ANTHROPIC_API_KEY);
+
 /// The audio draft needs both: OpenAI turns the recording into text, Anthropic
 /// writes the draft from it.
 export const auditDraftEnabled = () => Boolean(process.env.ANTHROPIC_API_KEY && process.env.OPENAI_API_KEY);

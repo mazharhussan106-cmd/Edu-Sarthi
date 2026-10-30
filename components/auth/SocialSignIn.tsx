@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { getProviders, signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/Button";
+import { markStudentDoor } from "@/components/auth/doorCookie";
 
 // Auth.js sends the user back to /login?error=<code> when Google sign-in is
 // refused. Each message says what to do next.
@@ -55,6 +56,8 @@ export function SocialSignIn() {
     setBusy("google");
     // Back to /login, which the proxy redirects to the right home for the
     // role. The page needs no role logic of its own.
+    // Only on the student door: a teacher or admin who comes in this way gets the note (DoorNote).
+    markStudentDoor("student");
     await signIn("google", { redirectTo: "/login" });
     setBusy(null);
   }

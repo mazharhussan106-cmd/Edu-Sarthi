@@ -16,6 +16,7 @@ import { prisma } from "@/lib/prisma";
 import { emailCodeSchema, emailLinkSchema, loginSchema } from "@/lib/validations";
 import { redeemCode, redeemLink, userForProvenEmail } from "@/lib/emailLogin";
 import { createGuestUser } from "@/lib/guest";
+import { checkDoor, checkStaffDoorAccount } from "@/lib/doorAuth";
 import {
   clearLoginAttempts,
   isRateLimited,
@@ -151,13 +152,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        portal: { label: "Door", type: "text" },
       },
 
       async authorize(raw) {
         const parsed = loginSchema.safeParse(raw);
         if (!parsed.success) throw new InvalidCredentials();
 
-        const { email, password } = parsed.data;
+        const { email, password, portal } = parsed.data;
 
         // Before the lookup and before bcrypt, on purpose. bcrypt at cost 12
         // takes ~100ms; letting an attacker trigger it without limit is a
@@ -180,6 +182,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new InvalidCredentials();
         }
 
+        // The sign-in door (lib/doorAuth), before the attempt counter is
+        // cleared: a refusal at the admin door must keep counting.
+        await checkDoor(portal, user.role, email, "password");
         await clearLoginAttempts(email);
 
         // Unverified accounts sign in and are then held at /verify by
@@ -198,12 +203,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         code: { label: "Code", type: "text" },
+        portal: { label: "Door", type: "text" },
       },
       async authorize(raw) {
         const parsed = emailCodeSchema.safeParse(raw);
         if (!parsed.success) throw new BadEmailCode();
 
-        const { email, code } = parsed.data;
+        const { email, code, portal } = parsed.data;
         if (await isRateLimited(email)) throw new TooManyAttempts();
 
         const redeemed = await redeemCode(email, code);
@@ -212,6 +218,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new BadEmailCode();
         }
 
+        // Staff doors admit existing accounts of their role only, and never
+        // make one; the student door makes one for a new address.
+        await checkStaffDoorAccount(portal, redeemed.email);
         await clearLoginAttempts(email);
         return sessionUser(await userForProvenEmail(redeemed.email));
       },
@@ -221,7 +230,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // token is 32 random bytes, so there is nothing to guess.
     Credentials({
       id: "email-link",
-      credentials: { token: { label: "Token", type: "text" } },
+      credentials: { token: { label: "Token", type: "text" }, portal: { label: "Door", type: "text" } },
       async authorize(raw) {
         const parsed = emailLinkSchema.safeParse(raw);
         if (!parsed.success) throw new BadEmailCode();
@@ -229,6 +238,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const redeemed = await redeemLink(parsed.data.token);
         if (!redeemed) throw new BadEmailCode();
 
+        await checkStaffDoorAccount(parsed.data.portal, redeemed.email);
         return sessionUser(await userForProvenEmail(redeemed.email));
       },
     }),

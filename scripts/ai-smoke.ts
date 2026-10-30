@@ -1,11 +1,12 @@
 // Owns a manual check of the AI features against the REAL services, run from a
-// laptop with your own keys: the AI card maker (text, a PDF or a photo) and the
-// audio draft audit. It prints what the model said, how long it took and how
+// laptop with your own keys: the AI card maker (text, a PDF or a photo), the
+// audio draft audit and the help chatbot. It prints what the model said, how long it took and how
 // many tokens it used, which is exactly what a mocked test cannot tell you.
 //
 // It deliberately does NOT touch the database, storage or any signed-in user:
 // no cards are saved, no allowance is counted, nothing is uploaded. It calls the
-// same functions the routes call (lib/aiCards, lib/aiTranscribe, lib/aiDraft).
+// same functions the routes call (lib/aiCards, lib/aiTranscribe, lib/aiDraft,
+// lib/aiHelp).
 // It spends real money on every run, a few cents at most.
 //
 // Usage (see docs/AI-LIVE-TEST.md):
@@ -13,12 +14,15 @@
 //   npx tsx --env-file=.env scripts/ai-smoke.ts pdf path\to\chapter.pdf "Make cards for this chapter"
 //   npx tsx --env-file=.env scripts/ai-smoke.ts image path\to\notes.jpg
 //   npx tsx --env-file=.env scripts/ai-smoke.ts audio path\to\recording.webm
+//   npx tsx --env-file=.env scripts/ai-smoke.ts help "How do I change my email?" ["Follow-up question"]
 
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 import { askQuestions, makeCards, MAX_SOURCE_TOKENS, type Answer, type SourceInput } from "@/lib/aiCards";
 import { draftAudit } from "@/lib/aiDraft";
+import { askHelp } from "@/lib/aiHelp";
+import type { HelpTurn } from "@/lib/aiHelpSchemas";
 import { AiError, speechStats, transcribeAudio } from "@/lib/aiTranscribe";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -89,6 +93,18 @@ async function runAudio(file: string) {
   for (const n of d.notes) console.log(`   [${n.at}s ${n.severity}] ${n.note}`);
 }
 
+/// One question, or a question and a follow-up, as the Help page would send them.
+/// Asking twice also shows whether the help text was read from the cache.
+async function runHelp(questions: string[]) {
+  const history: HelpTurn[] = [];
+  for (const q of questions) {
+    console.log(`\n> ${q}`);
+    const out = await timed("answer", () => askHelp({ question: q, history }));
+    console.log(`${out.answer}\n   (${out.tokens} tokens)`);
+    history.push({ role: "user", text: q }, { role: "assistant", text: out.answer });
+  }
+}
+
 async function main() {
   const [mode, a, b] = process.argv.slice(2);
   if (mode === "cards" && a) return runCards(a, []);
@@ -103,7 +119,8 @@ async function main() {
     return runCards(b ?? "Make flashcards from this picture", [{ type: "image", mediaType: type, data: data.toString("base64") }]);
   }
   if (mode === "audio" && a) return runAudio(a);
-  console.log('Usage: npx tsx --env-file=.env scripts/ai-smoke.ts cards "<request>" | pdf <file> ["<request>"] | image <file> ["<request>"] | audio <file>');
+  if (mode === "help" && a) return runHelp(b ? [a, b] : [a]);
+  console.log('Usage: npx tsx --env-file=.env scripts/ai-smoke.ts cards "<request>" | pdf <file> ["<request>"] | image <file> ["<request>"] | audio <file> | help "<question>" ["<follow-up>"]');
   process.exitCode = 1;
 }
 

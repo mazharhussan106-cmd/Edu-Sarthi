@@ -40,7 +40,7 @@ export async function dashboardData(userId: string, isGuest: boolean, now = new 
 
   const [xp, review, allowance, inFlight, recent, first, auditCount, nextExercise, notices, cards, kinds, decksOwned, focused, decksShared] = await Promise.all([
     xpDays(userId),
-    todayReview(userId, prefs.newPerDay),
+    todayReview(userId, prefs.newPerDay, prefs.reviewsPerDay),
     isGuest ? null : auditAllowance(userId),
     prisma.submission.findMany({
       // A sent-back attempt that has been replaced is finished business; the

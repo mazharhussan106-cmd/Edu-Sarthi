@@ -1,5 +1,5 @@
 // Owns a Settings row for a preference with a few fixed choices (text size,
-// audit playback speed, new cards per day, the daily and weekly goals): the
+// audit playback speed, new cards and reviews per day, the daily and weekly goals): the
 // row shows the current choice, and its sheet lists them all, with the longer
 // explanation under the list.
 //
@@ -16,7 +16,7 @@ import { SheetRow } from "@/components/ui/SheetRow";
 import { useSavePreference } from "@/app/(shared)/settings/useSavePreference";
 import type { Preferences } from "@/lib/preferences";
 
-type ChoicePref = "textSize" | "playbackRate" | "newPerDay" | "dailyGoalXp" | "weeklyGoalDays";
+type ChoicePref = "textSize" | "playbackRate" | "newPerDay" | "reviewsPerDay" | "dailyGoalXp" | "weeklyGoalDays";
 
 export function PrefChoiceRow({
   pref,

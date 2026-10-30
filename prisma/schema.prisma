@@ -129,6 +129,8 @@ model User {
   deckReports         DeckReport[]
   deckLikes           DeckLike[]
   deckFollows         DeckFollow[]
+  /// The student's study tabs (layer 1 of the Flashcard filters), own and built-in.
+  studyTabs           StudyTab[]
   deckChanges         DeckChange[]
   deckMemberships     DeckMember[]         @relation("DeckMemberUser")
   deckInvitesSent     DeckMember[]         @relation("DeckMemberInviter")
@@ -546,12 +548,17 @@ model CardState {
 
   known          Boolean   @default(false)
   recall         Recall?
-  /// Index into the review ladder (1, 3, 7, 15, 30, 60 days).
+  /// Index into the review ladder (3, 7, 15, 30, 60, 120, 180 days; lib/srs).
   stage          Int       @default(0)
   dueAt          DateTime
   reviews        Int       @default(0)
   lastReviewedAt DateTime?
-  /// When the student first saw and marked this card; counts today's new cards.
+  /// The first Known / Unknown, set once. Tells a new card from a review for
+  /// the daily limits (lib/flashcards); createdAt cannot, as a remark or note
+  /// makes the row too. Null on cards first answered before this column
+  /// existed, which all count as old.
+  firstReviewedAt DateTime?
+  /// When the row was made: the first answer, or an earlier remark or note.
   createdAt      DateTime  @default(now())
 
   // Remarks
@@ -711,6 +718,7 @@ model Deck {
   drafts   Deck[]       @relation("DeckVersion")
   changes  DeckChange[]
   members  DeckMember[]
+  inTabs   StudyTabDeck[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -826,6 +834,54 @@ model DeckChange {
   @@index([reviewedAt]) // the admin's "Fixes to check"
   @@index([wordId])
   @@index([editorId])
+}
+
+/// Which study tab a row is. The built-in tabs get a row only once the
+/// student arranges their tabs; until then they show in the default order.
+enum StudyTabKind {
+  ENGLISH
+  /// Every tech deck the student can see, sorted by subject (lib/techDecks).
+  TECH
+  DECKS
+  OWN
+}
+
+/// One tab in a student's study bar, layer 1 of the Flashcard filters
+/// (docs/FLASHCARD-NAV-LAYERS.md): English, Tech, My decks, or a tab the student made
+/// and fills with decks. A table rather than a key in User.preferences: the
+/// settings save keeps only keys it knows, so a layout kept there would vanish
+/// on the next settings change.
+model StudyTab {
+  id       String       @id @default(cuid())
+  userId   String
+  kind     StudyTabKind @default(OWN)
+  /// The student's name for an OWN tab; null for the built-in three.
+  name     String?
+  position Int          @default(0)
+  hidden   Boolean      @default(false)
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  decks StudyTabDeck[]
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, position])
+}
+
+/// A deck shown in a student's own tab. One deck may sit in many tabs.
+/// Cascade both ways: deleting a tab never touches the deck, and a deleted
+/// deck leaves every tab.
+model StudyTabDeck {
+  tabId  String
+  deckId String
+
+  tab  StudyTab @relation(fields: [tabId], references: [id], onDelete: Cascade)
+  deck Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  addedAt DateTime @default(now())
+
+  @@id([tabId, deckId])
+  @@index([deckId])
 }
 
 model DeckFollow {

@@ -1,27 +1,30 @@
 // Owns one deck card on the study screen: which side is showing, the card's
 // remarks, level and note, saving them, and moving between cards —
-//   Known / Unknown → saved, then the next card the review plan picks
+//   Known / Unknown → saved, then the next card the review plan picks; after
+//                     Unknown it comes round once more as practice (lib/cardAgain)
 //   › or swipe ←    → the next card without answering (skipped this visit)
 //   ‹ or swipe →    → the card seen before this one
 //
 // It is the deck version of FlashcardDeck and deliberately works the same way:
 // same CardSurface (frame, turn, swipe, zoom), same CardControls bar, same
-// /api/flashcards endpoint and Day 1·3·7·15·30·60 ladder. What differs is only
+// /api/flashcards endpoint and Day 3·7·15·30·60·120·180 ladder. What differs is only
 // what is drawn on the sides (DeckSides) and that the next card is chosen by
-// the server from this one deck. History is the tab's own sessionStorage list.
+// the server from this one deck. Moving between cards is useCardNav, the
+// same hook FlashcardDeck uses.
 
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { CardControls, type Level, type Remarks } from "@/components/flashcards/CardControls";
 import { CardSurface } from "@/components/flashcards/CardSurface";
 import { WORD_TITLES } from "@/components/flashcards/CardSides";
-import { post, readHistory, writeHistory } from "@/components/flashcards/deckApi";
+import { post } from "@/components/flashcards/deckApi";
+import { PracticeNotice } from "@/components/flashcards/PracticeNotice";
+import { useCardNav } from "@/components/flashcards/useCardNav";
 import { DeckSide, type DeckCardData } from "@/components/decks/DeckSides";
 import type { CardColor } from "@/lib/cardColors";
-import { skipQuery, withSkipped } from "@/lib/cardSkip";
+import type { Again } from "@/lib/cardAgain";
 import { sayText } from "@/lib/speech";
 import { describeDue } from "@/lib/srs";
 
@@ -33,20 +36,28 @@ export type DeckCardState = Remarks & {
 };
 
 export function DeckStudy({
-  card, wordId, state, nextHref, skip, cardColor,
-}: { card: DeckCardData; wordId: string; state: DeckCardState; nextHref: string; skip: string[]; cardColor: CardColor }) {
-  const router = useRouter();
+  card, wordId, state, nextHref, skip, again = null, practice = false, cardColor, tabsAbove = false,
+}: {
+  card: DeckCardData;
+  wordId: string;
+  state: DeckCardState;
+  nextHref: string;
+  skip: string[];
+  /** Cards waiting for their practice look after Unknown (lib/cardAgain); null where it is off. */
+  again?: Again | null;
+  /** This is that practice look: answers move on and save nothing. */
+  practice?: boolean;
+  cardColor: CardColor;
+  /** The study tabs row sits above (a student's study page): the card gives up its 2.5rem. */
+  tabsAbove?: boolean;
+}) {
+  const nav = useCardNav({ code: card.code, nextHref, skip, again, practice });
   const [side, setSide] = useState<0 | 1 | 2>(0);
   const [level, setLevel] = useState<Level>(state.recall ?? "MEDIUM");
   const [remarks, setRemarks] = useState<Remarks>({ confident: state.confident, important: state.important, favourite: state.favourite, doubt: state.doubt });
   const [note, setNote] = useState(state.note ?? "");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const h = readHistory();
-    if (h[h.length - 1] !== card.code) writeHistory([...h, card.code]);
-  }, [card.code]);
 
   function speak() {
     if (card.audioSrc) {
@@ -58,6 +69,8 @@ export function DeckStudy({
   }
 
   async function mark(known: boolean) {
+    // A practice look saves nothing: it only moves on.
+    if (practice) return nav.answered(known);
     setBusy(true);
     setMessage(null);
     const r = await post({ action: "mark", wordId, known, recall: known ? level : null });
@@ -66,21 +79,13 @@ export function DeckStudy({
       setBusy(false);
       return;
     }
-    router.push(`${nextHref}${skipQuery(skip)}`);
-    router.refresh();
+    nav.answered(known);
     // Cleared even on success: the same component may be reused for the next card.
     setBusy(false);
   }
 
-  const next = () => router.push(`${nextHref}${skipQuery(withSkipped(skip, card.code))}`);
-
-  function prev() {
-    const h = readHistory();
-    const at = h.lastIndexOf(card.code);
-    if (at <= 0) return setMessage("This is the first card you opened here.");
-    writeHistory(h.slice(0, at));
-    router.push(`${nextHref}&card=${h[at - 1]}${skipQuery(skip)}`);
-  }
+  const next = nav.next;
+  const prev = () => setMessage(nav.prev());
 
   async function remark(k: keyof Remarks, v: boolean) {
     setRemarks((r) => ({ ...r, [k]: v }));
@@ -99,7 +104,17 @@ export function DeckStudy({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="h-[calc(100dvh-14rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-12rem)] md:max-h-[52rem]">
+      {practice ? <PracticeNotice /> : null}
+      {/* Literal classes, so Tailwind sees both. With the tabs row, everything is
+          2.5rem shorter, the minimum too, so Known stays above the bottom bar on
+          a small phone instead of sliding under it. */}
+      <div
+        className={
+          tabsAbove
+            ? "h-[calc(100dvh-16.5rem-env(safe-area-inset-bottom,0px))] min-h-[23.5rem] md:h-[calc(100dvh-14.5rem)] md:max-h-[52rem]"
+            : "h-[calc(100dvh-14rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-12rem)] md:max-h-[52rem]"
+        }
+      >
         <CardSurface
           side={side}
           titles={WORD_TITLES}

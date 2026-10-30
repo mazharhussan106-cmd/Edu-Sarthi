@@ -66,6 +66,7 @@ export async function GET() {
           dueAt: true,
           reviews: true,
           lastReviewedAt: true,
+          firstReviewedAt: true,
           confident: true,
           important: true,
           favourite: true,
@@ -117,6 +118,13 @@ export async function GET() {
     .then(([ledger, frozenDays]) => ({ ledger, frozenDays }))
     .catch(() => null);
 
+  // Their study tabs (names they chose, which decks they put where), read on
+  // their own and caught for the same reason as the freezes: until Database
+  // setup has made the tables, the download must still work.
+  const studyTabs = await prisma.studyTab
+    .findMany({ where: { userId }, orderBy: { position: "asc" }, select: { kind: true, name: true, position: true, hidden: true, createdAt: true, decks: { select: { deck: { select: { title: true } }, addedAt: true } } } })
+    .catch(() => null);
+
   // The compliance record of a data-access request: who (by student ID
   // only) and when. The export's contents are not logged.
   await logAdmin(null, "Student exported own data", "user", data?.publicId ?? null);
@@ -127,7 +135,7 @@ export async function GET() {
   const profilePhoto = avatarKey ? { link: await avatarUrl(avatarKey), linkExpires: "about 30 minutes after this export" } : null;
 
   const stamp = new Date().toISOString().slice(0, 10);
-  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data ? { ...account, profilePhoto } : null, streakFreezes: streak }, null, 2), {
+  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data ? { ...account, profilePhoto, studyTabs } : null, streakFreezes: streak }, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Content-Disposition": `attachment; filename="edusarthi-my-data-${stamp}.json"`,

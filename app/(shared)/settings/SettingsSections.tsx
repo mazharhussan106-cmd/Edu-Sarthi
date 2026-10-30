@@ -15,7 +15,7 @@
 import type { ReactNode } from "react";
 
 import { prisma } from "@/lib/prisma";
-import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, prefsOf } from "@/lib/preferences";
+import { NEW_PER_DAY_OPTIONS, PLAYBACK_RATES, REVIEWS_PER_DAY_OPTIONS, prefsOf } from "@/lib/preferences";
 import { DAILY_GOALS, STREAK_MIN_XP, WEEKLY_GOALS } from "@/lib/streak";
 import { TEXT_SIZES } from "@/lib/textSize";
 import { SheetRow } from "@/components/ui/SheetRow";
@@ -37,6 +37,9 @@ const TEXT_NAMES = { small: "Smaller", normal: "Normal", large: "Larger" } as co
 const TEXT_OPTIONS = TEXT_SIZES.map((t) => ({ value: t.value, label: `${TEXT_NAMES[t.value]} (${t.label})`, short: t.label }));
 const SPEED_OPTIONS = PLAYBACK_RATES.map((r) => ({ value: String(r), label: r === 1 ? "1x, normal speed" : `${r}x`, short: `${r}x` }));
 const NEW_OPTIONS = NEW_PER_DAY_OPTIONS.map((n) => ({ value: String(n), label: `${n} new cards`, short: String(n) }));
+const REVIEW_OPTIONS = REVIEWS_PER_DAY_OPTIONS.map((n) =>
+  n === 0 ? { value: "0", label: "No limit", short: "No limit" } : { value: String(n), label: `${n} reviews`, short: String(n) },
+);
 const DAILY_OPTIONS = DAILY_GOALS.map((g) => ({ value: String(g.xp), label: `${g.name} · ${g.xp} XP, ${g.time}`, short: `${g.xp} XP` }));
 const WEEKLY_OPTIONS = WEEKLY_GOALS.map((d) => ({ value: String(d), label: d === 7 ? "Every day" : `${d} days a week`, short: `${d} days` }));
 
@@ -128,10 +131,19 @@ export async function SettingsSections({ userId }: { userId: string }) {
           <PrefChoiceRow
             pref="newPerDay"
             title="New cards per day"
-            subline="New cards each day. Reviews have no limit."
+            subline="New cards each day, for each kind of card."
             explain="On top of the cards due for review. Takes effect on your next card."
             options={NEW_OPTIONS}
             initial={String(p.newPerDay)}
+            numeric
+          />
+          <PrefChoiceRow
+            pref="reviewsPerDay"
+            title="Reviews per day"
+            subline="The most review cards in a day, for each kind of card."
+            explain="Useful after a break, when many cards are due at once: the rest wait for the next day. Your own and followed decks are not limited. Takes effect on your next card."
+            options={REVIEW_OPTIONS}
+            initial={String(p.reviewsPerDay)}
             numeric
           />
           <VoiceSettings initialAccent={p.voiceAccent} initialSpeed={p.voiceSpeed} />

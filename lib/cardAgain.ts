@@ -1,0 +1,93 @@
+// Owns the "once more, later this session" list: after Unknown, the card is
+// shown again a few cards later as practice (docs/SRS-V2-PLAN.md D5). That
+// second look is not saved; the card's review date stays as Unknown set it.
+//
+// Carried in the URL as ?again=VRB-001~2.VRB-007~0 — each code with how many
+// more cards to wait — the same way skips are (lib/cardSkip): it survives a
+// refresh and is gone when the student leaves the session.
+//
+// It deliberately has no database or server imports: the pages and the card
+// share it, and the pages pass in how to find a card and the next one.
+
+export type Again = { code: string; wait: number }[];
+
+/// Cards between the Unknown and the practice look.
+export const AGAIN_AFTER = 3;
+const MAX_AGAIN = 10;
+const ENTRY = /^([A-Za-z0-9][A-Za-z0-9_-]{1,39})~(\d)$/;
+
+/// Same code shape as lib/cardSkip; anything else is dropped, and the list is
+/// capped so a hand-edited URL cannot grow without limit.
+export function parseAgain(raw: string | undefined): Again {
+  if (!raw) return [];
+  const out: Again = [];
+  for (const part of raw.split(".")) {
+    const m = ENTRY.exec(part);
+    if (m && !out.some((e) => e.code === m[1])) out.push({ code: m[1], wait: Math.min(AGAIN_AFTER, Number(m[2])) });
+  }
+  return out.slice(-MAX_AGAIN);
+}
+
+export function againQuery(again: Again): string {
+  return again.length ? `&again=${again.map((e) => `${e.code}~${e.wait}`).join(".")}` : "";
+}
+
+/// The list after leaving `code`: it is dropped (it has had its look, or is
+/// being answered), every other card has one fewer to wait, and an Unknown
+/// puts it back on the end to come round again.
+export function afterCard(again: Again, code: string, unknown: boolean): Again {
+  const rest = again.filter((e) => e.code !== code).map((e) => ({ code: e.code, wait: Math.max(0, e.wait - 1) }));
+  return (unknown ? [...rest, { code, wait: AGAIN_AFTER }] : rest).slice(-MAX_AGAIN);
+}
+
+/// Which card a session page shows: a practice card whose wait is over, else
+/// the normal next card, else (nothing left today) a practice card that is
+/// still waiting, so it is not lost. `find` looks codes up in this session
+/// (one query for any number) and returns the card rows it found; a practice
+/// card comes back as `row`, so the page need not fetch it again.
+export async function pickWithAgain<T extends { id: string }>(
+  again: Again,
+  next: () => Promise<string | null>,
+  find: (codes: string[]) => Promise<Map<string, T>>,
+): Promise<{ id: string | null; row: T | null; practice: boolean; again: Again }> {
+  let list = again;
+  const ready = list.find((e) => e.wait === 0);
+  if (ready) {
+    const row = (await find([ready.code])).get(ready.code);
+    if (row) return { id: row.id, row, practice: true, again: list };
+    list = list.filter((e) => e.code !== ready.code);
+  }
+  const id = await next();
+  if (id) return { id, row: null, practice: false, again: list };
+  if (list.length) {
+    const rows = await find(list.map((e) => e.code));
+    // Gone, or not in this session: dropped so they are not looked up again.
+    list = list.filter((e) => rows.has(e.code));
+    const row = list.length ? rows.get(list[0].code)! : null;
+    if (row) return { id: row.id, row, practice: true, again: list };
+  }
+  return { id: null, row: null, practice: false, again: [] };
+}
+
+/// The whole choice for a session page, shared by the Flashcards tab and the
+/// two deck study pages. A card named in the URL (‹ back, or "Study this
+/// list") is shown as itself, never as practice. Inside "Study this list" the
+/// again list is off (null): that session has its own order.
+export async function pickForSession<T extends { id: string }>({
+  named,
+  inList,
+  raw,
+  next,
+  find,
+}: {
+  named: string | null;
+  inList: boolean;
+  raw: string | undefined;
+  next: () => Promise<string | null>;
+  find: (codes: string[]) => Promise<Map<string, T>>;
+}): Promise<{ id: string | null; row: T | null; practice: boolean; again: Again | null }> {
+  const again = inList ? null : parseAgain(raw);
+  if (named) return { id: named, row: null, practice: false, again };
+  if (!again) return { id: await next(), row: null, practice: false, again: null };
+  return pickWithAgain(again, next, find);
+}

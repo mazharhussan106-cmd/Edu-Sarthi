@@ -33,6 +33,10 @@ export const GOALS = [
   { value: "work", label: "Work English" },
 ] as const;
 
+/// 0 is "No limit". The schema below is built from this list, so a value
+/// added here is accepted on save too.
+export const REVIEWS_PER_DAY_OPTIONS = [0, 50, 100, 150, 200] as const;
+
 export const PREFERENCE_SCHEMA = z.object({
   emailOnAudit: z.boolean(),
   autoplayAudit: z.boolean(),
@@ -41,6 +45,9 @@ export const PREFERENCE_SCHEMA = z.object({
   textSize: z.enum(TEXT_SIZE_VALUES),
   cardColor: z.enum(CARD_COLOR_VALUES),
   newPerDay: z.number().int().min(5).max(50),
+  // Reviews of built-in cards per kind per India day; 0 is no limit. A cap
+  // so a student back from a break meets 100 cards, not 400, and stays.
+  reviewsPerDay: z.number().int().refine((n) => (REVIEWS_PER_DAY_OPTIONS as readonly number[]).includes(n), "Choose one of the listed limits."),
   emailReminder: z.boolean(),
   // The India hour the reminder goes out (lib/reminderTimes): one of the times
   // a daily cron job runs, not any hour.
@@ -82,6 +89,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   textSize: "normal",
   cardColor: "plain" as CardColor,
   newPerDay: 10,
+  // No limit until the student sets one: the owner's choice (docs/SRS-V2-PLAN.md D7).
+  reviewsPerDay: 0,
   // Off until the student opts in: nobody gets a daily email they never asked for.
   emailReminder: false,
   reminderHour: MAIN_REMINDER_HOUR,

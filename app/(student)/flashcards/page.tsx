@@ -12,19 +12,21 @@
 //   /flashcards?card=VRB-006            → that card (its kind is taken from it)
 //   /flashcards?q=choose                → search results
 //   /flashcards?list=important          → a remark list
-//   /flashcards?more=1                  → keep going past today's new-card limit
+//   /flashcards?more=1                  → keep going past today's new-card and review limits
 //   /flashcards?skip=A.B                → cards passed over with › this session
+//   /flashcards?again=A~2               → Unknown cards due a practice look (lib/cardAgain)
 //   /flashcards?card=VRB-006&inlist=hard&sid=…&left=3 → that card inside a
 //                                          "Study this list" session (lib/listSession)
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
+import { pickForSession } from "@/lib/cardAgain";
 import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/chunkCard";
 import { packWhere, sectionDef, sectionWhere } from "@/lib/wordSections";
 import { channelLabel, isSupportChannel, isSupportLevel, levelLabel, supportDetailsOf, supportGloss } from "@/lib/supportCard";
 import { prefsOf } from "@/lib/preferences";
-import { chunkExtras, deckCounts, nextCardId, practiceTitle, WORD_SELECT } from "@/lib/flashcards";
+import { chunkExtras, deckCounts, findInDeck, nextCardId, practiceTitle, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
 import { ComingSoon, DeckDone, DeckResults } from "@/components/flashcards/DeckMessages";
 import { DECK_KINDS, DECK_LISTS, DeckTopBar, type ListKey } from "@/components/flashcards/DeckTopBar";
@@ -46,7 +48,7 @@ function metaFor(kind: string, w: { category: string | null; partOfSpeech: strin
 export default async function FlashcardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; ch?: string; lv?: string; inlist?: string; sid?: string; left?: string }>;
+  searchParams: Promise<{ kind?: string; type?: string; sec?: string; pack?: string; card?: string; q?: string; list?: string; more?: string; skip?: string; again?: string; ch?: string; lv?: string; inlist?: string; sid?: string; left?: string }>;
 }) {
   const sp = await searchParams;
   const session = await auth();
@@ -72,7 +74,7 @@ export default async function FlashcardsPage({
   // Each key is read on its own: a stored value this version no longer offers
   // falls back to its default without throwing away the other settings.
   const prefs = prefsOf(user?.preferences);
-  const { cardColor, newPerDay } = prefs;
+  const { cardColor, newPerDay, reviewsPerDay } = prefs;
 
   const q = (sp.q ?? "").trim().slice(0, 60);
   const list = DECK_LISTS.find((l) => l.value === sp.list)?.value as ListKey | undefined;
@@ -85,13 +87,15 @@ export default async function FlashcardsPage({
   const sectionExtra = sectionFilter ? (packNo ? await packWhere(sectionFilter, packNo) : sectionFilter) : undefined;
   const sectionQuery = def && sectionFilter ? `&sec=${def.key}${packNo ? `&pack=${packNo}` : ""}` : "";
   const base = `/flashcards?kind=${k.value}${type ? `&type=${type}` : ""}${channel ? `&ch=${channel}` : ""}${level ? `&lv=${level}` : ""}${sectionQuery}`;
-  const withMore = sp.more === "1" ? `${base}&more=1` : base;
+  // "Keep going": this visit serves past today's new-card and review limits.
+  const liftLimits = sp.more === "1";
+  const withMore = liftLimits ? `${base}&more=1` : base;
   const skip = parseSkip(sp.skip);
   // Support keeps its channel in `category`, like a chunk's type, and its
   // level in `partOfSpeech` as the sheet writes it ("Basic"). Word sections
   // and packs narrow the built-in words through `extra`.
   const deck = { kind: k.kind, category: type ?? channel ?? undefined, level: level ? levelLabel(level) : undefined, extra: sectionExtra };
-  const counts = k.ready && !inList ? await deckCounts(userId, deck, newPerDay) : null;
+  const counts = k.ready && !inList ? await deckCounts(userId, deck, newPerDay, liftLimits ? 0 : reviewsPerDay) : null;
 
   let body: React.ReactNode;
   if (!k.ready) {
@@ -126,8 +130,16 @@ export default async function FlashcardsPage({
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
   } else {
-    const id = byCode?.id ?? (await nextCardId(userId, deck, sp.more === "1", skip, newPerDay));
-    const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
+    const picked = await pickForSession({
+      named: byCode?.id ?? null,
+      inList: !!inList,
+      raw: sp.again,
+      next: () => nextCardId(userId, deck, { extra: liftLimits, skip, newPerDay, reviewsPerDay, today: counts?.today }),
+      find: (codes) => findInDeck(deck, codes),
+    });
+    const id = picked.id;
+    // A practice card arrives already fetched.
+    const word = picked.row ?? (id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null);
 
     if (!word) {
       body = (
@@ -136,6 +148,7 @@ export default async function FlashcardsPage({
           allSeen={!!counts && counts.known >= counts.total}
           noun={k.noun}
           newPerDay={newPerDay}
+          heldBack={counts?.heldBack ?? 0}
           skipHref={withMore}
           moreHref={`${base}&more=1`}
         />
@@ -167,8 +180,9 @@ export default async function FlashcardsPage({
             recordHref={exercise ? `/practice/${exercise.id}?word=${word.code}` : null}
             nextHref={inList ? listNextHref(inList) : withMore}
             skip={skip}
+            again={picked.again}
+            practice={picked.practice}
             cardColor={cardColor}
-            tallTop={k.kind === "CHUNK" || k.kind === "SUPPORT"}
             support={word.kind === "SUPPORT"}
             autoSpeak={prefs.autoSpeak}
             chunk={
@@ -197,6 +211,9 @@ export default async function FlashcardsPage({
       // plus the bottom bar (3.5rem) plus their borders.
       className="mx-auto flex h-[calc(100dvh-7.25rem-env(safe-area-inset-bottom,0px))] max-w-2xl flex-col px-3 pb-1 pt-3 sm:px-6 sm:pt-6 md:block md:h-auto md:pb-4"
     >
+      {/* For screen readers only: the page needs a heading, and the card's own
+          heading is the word, which says nothing about where they are. */}
+      <h1 className="sr-only">Flashcards · {k.label}</h1>
       {inList ? <ListSessionBar s={inList} /> : <DeckTopBar
         k={k}
         type={type}
@@ -204,7 +221,7 @@ export default async function FlashcardsPage({
         level={level}
         list={list}
         base={base}
-        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}`, key: def.key } : null}
+        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}` } : null}
         skipCount={skip.length}
         skipHref={withMore}
         counts={counts}

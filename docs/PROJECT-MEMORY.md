@@ -1,6 +1,6 @@
 # EduSarthi — project memory (shared by every chat)
 
-Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 28 Oct 2026 (library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"; 29 Oct: student audit page redesign, see its section; 29 Oct: Library replaced Class in the header, bottom bar and footer, and the library opened to visitors on branch `claude/bold-hopper-hxfrpd`, not merged, see "Public library hub"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
+Every Claude chat starts empty. This file is the one place that says where the project stands, so a new chat does not rebuild what exists or contradict a decision. **Update it before a chat ends, then push.** Last updated 30 Oct 2026 (one pull request from `claude/pensive-einstein-fnupe5` now holds every finished unmerged branch — spaced repetition v2, flashcard filters/own tabs/Tech, and three small doc and privacy branches — and needs **Database setup run from that branch before merging**, see "Combined pull request of the unmerged branches"; flashcard filters in layers, the student's own study tabs and the Tech tab, built, not merged, needs Database setup, see "Flashcard filter bar in layers"; before that 28 Oct: library v2 merged, see items 4h–4j; Settings phases E to L merged 28 Oct in PR #23; phase J has the owner's 28 Oct decisions; phase L adds the AppSetting table; student menu fix and new pages merged 28 Oct in PR #22, see "Student menu fix"; Google sign-in landing in a guest fixed, see "Fix: Google sign-in landing in a guest"; 29 Oct: Settings made simple and merged in PR #25, see "Settings, phase M"; 29 Oct: student dashboard redesign Phases 1–4 merged in PR #27, needs Database setup, see "Student dashboard redesign"; 29 Oct: Profile page built for all roles on `claude/busy-johnson-epz1lg`, PR #28 open, it follows the dashboard's streak, XP and badges, see "Profile page"; 29 Oct: student audit page redesign, see its section; 29 Oct: Library replaced Class in the header, bottom bar and footer, and the library opened to visitors on branch `claude/bold-hopper-hxfrpd`, not merged, see "Public library hub"). Note: `middleware.ts` is now `proxy.ts` (Next 16); CLAUDE.md's word "middleware" refers to it.
 
 ## What EduSarthi is
 
@@ -10,6 +10,7 @@ An English spoken-communication training platform: students record or upload, te
 
 | Branch / chat | What it built | State |
 |---|---|---|
+| `modest-darwin` — "Flashcard filter bar" | The filters above the card in two layers (study tabs English · Tech · My decks · own tabs with ＋ and today's count, then the card kinds with skipped and the remark lists), the student's own tabs, the Tech tab, tabs on deck study pages; audited and fixed (`docs/FLASHCARD-NAV-LAYERS.md`) | Built and tested locally, **not merged** |
 | `festive-thompson` — "GitHub push" | WordMaster 2000: 2,227 words with 56 fields each, Excel files and tools in `content/wordmaster-2000/` | In `main` |
 | `ecstatic-mccarthy` — "App image plan overview" | **Chunk (1,183) and Grammar (247) cards on the same 3-side card** (`docs/CHUNK-PLAN.md`), word and chunk data audits, and — from its own status line — the flashcard-maker test decks (Physics 8, 1857 Revolt 9, Photosynthesis 5 cards: built, checked, awaiting a push decision). Its PR #1 is in `main` (git history there shows the word-card redesign, themes, card colours, the "Database setup" button and the live-testing guide; some of that may come from earlier chats) | The Chunk/Grammar commits were **not** in `main` until they were merged into `happy-galileo` on 6 Oct |
 | `trusting-noether` — "Live phone testing setup" | Bulk-loading words so the database setup finishes in time (PR #2); its chat title is live phone testing. Last question it asked the owner: **Vercel or Hostinger for hosting? (unanswered)** | In `main` (PR #2) |
@@ -40,6 +41,15 @@ An English spoken-communication training platform: students record or upload, te
   - Rows are grouped under small headings (Appearance, Flashcards, Recordings & audits, Email, Account & security, Share).
   - The header's ⚙ Settings is a **link to `/settings`** for every signed-in person. There is no settings dropdown any more, so Sign out also has a row in Settings (it stays in the ☰ menu too).
 - **Owner's decisions, 29 Oct 2026 (student dashboard):** the redesign covers the **student** dashboard only (teacher and admin later, if at all); the page opens on **today's work**, with progress and charts lower or on the Progress page; gamification is **medium** — streak, daily goal ring, XP, a level, weekly goal, streak freeze, badges — and **no leaderboard**; the design is agreed first and built later in phases. Second round the same day: every recommendation accepted (the XP level is called **Stage**; a streak day needs **10 XP**; daily goal 20/40/60/100 XP, default 40; weekly goal default 5 days; freezes earned, at most 2, new accounts start with 1; deck cards earn XP; guests get streak and XP), except that **the score trend chart stays on the dashboard**. XP is for effort only, never for audit scores. Details: `docs/DASHBOARD-PLAN.md`.
+
+- **Owner's decisions, 29 Oct 2026 (flashcard filter bar, `docs/FLASHCARD-NAV-LAYERS.md`):**
+  - The filters above the card are **two layers only**: study tabs (English · Tech · My decks · the student's own) → card kind (Words · Chunk · Grammar · Support). **No third layer**: no tap-to-open Filter sheet, and the chips for chunk types, Support channel and level, and word sections were removed from the bar (owner, 29 Oct: "Layer 3 v dikh raha hai use hata k banao"). The card itself does not change.
+  - ~~Users will group decks in **playlists** inside My decks~~ **SUPERSEDED the same day:** every student can make **their own layer-1 tabs** ("folders") with a **＋** at the end of layer 1. Only **decks** go in them (own, followed, shared with them), and **one deck can sit in many tabs** (playlist-style).
+  - **Copy / Import asks where the deck should show:** right after "Copy to my decks" or "Import and study", the student is asked which of their layer-1 tabs the deck should appear in (it is always in My decks too). Only then, not on Follow or on making a new deck (owner, 29 Oct).
+  - Students may also **hide and reorder English and My decks**, not only their own tabs.
+  - **Built 30 Oct** (owner: "start building next phase"): `docs/FLASHCARD-NAV-LAYERS.md`, "Own tabs". New tables `StudyTab` and `StudyTabDeck`: **run Database setup after merging.** **Don't undo:** the tab order lives in rows, not in `User.preferences` (the settings save drops keys it does not know) and not in a new `User` column (sign-in reads every `User` column, so it would break before Database setup).
+  - **Tech** holds **all** tech decks: EduSarthi's and students' and teachers' public ones, plus the student's own, shared and followed (owner, 30 Oct). Built 30 Oct as a built-in tab, `/tech`.
+  - Explore, Library and Institute are no longer chips on the Flashcard tab (they stay in the ☰ menu). This supersedes the 10 Oct placement "after the card kinds, before the lists".
 
 ## Open work, most important first
 
@@ -139,7 +149,7 @@ Still not done, by choice: per-student reminder time (needs an hourly cron), Hin
 
 ## Share + Explore (10 Oct)
 
-Settings (page and the header gear) now has **Share EduSarthi** (phone share sheet, WhatsApp, copy link; no referral tracking). New student page **/explore** (menu → Study, and a chip on the Flashcard tab): built-in counts (Words / Chunks / Grammar and chunk types), approved library decks grouped by subject (= deck tag) with one-tap **Import and study** (copies the deck, opens its study page) and a Teacher-audit badge. Audit only works on decks made by a verified teacher (existing rule: recording goes to that deck's teacher); copies are private and cannot be sent for audit. No database change.
+Settings (page and the header gear) now has **Share EduSarthi** (phone share sheet, WhatsApp, copy link; no referral tracking). New student page **/explore** (menu → Study; ~~and a chip on the Flashcard tab~~ — the chip was removed 29 Oct, see "Flashcard filter bar in layers"): built-in counts (Words / Chunks / Grammar and chunk types), approved library decks grouped by subject (= deck tag) with one-tap **Import and study** (copies the deck, opens its study page) and a Teacher-audit badge. Audit only works on decks made by a verified teacher (existing rule: recording goes to that deck's teacher); copies are private and cannot be sent for audit. No database change.
 
 ## Settings, phase E: by role, playback speed, queue email, change password (28 Oct, branch `claude/blissful-euler-9j0h4c`)
 
@@ -410,7 +420,7 @@ Not done, on purpose:
 - Teachers and admins sign out from Settings → Sign out; their ☰ menu (phone only) has no Sign out row, as before this phase. The old gear dropdown was their quick sign-out.
 
 Still open:
-- Merge this branch (no Database setup needed for phase M), then run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
+- **Merged into `main` (29 Oct, PR #25, merge commit `5160c55`)**, CI green. No Database setup needed. Still for the owner: run `LIVE-TESTING-GUIDE.md` section 4c on a phone.
 - The two pre-existing axe findings above (logotype contrast, unlabelled navs) on every page.
 
 ## Student dashboard redesign (29 Oct, branch `claude/hopeful-heisenberg-04ufep`) — Phases 1–4 BUILT, not merged
@@ -543,6 +553,22 @@ Status: **BUILT, in PR #28, not merged yet** (P1–P6 and the audit fixes, 29 Oc
   3. Send the privacy-change email (Admin → Announcements), as the Privacy page promises.
   4. Test on a phone.
 
+## Flashcard filter bar in layers (29 Oct 2026, branch `claude/modest-darwin-zfo3g1`) — BUILT, not merged
+
+The plan, the owner's answers and what is left: `docs/FLASHCARD-NAV-LAYERS.md`.
+
+- **Row 1** `components/flashcards/AreaTabs.tsx`: the study tabs — English (`/flashcards`) · Tech (`/tech`) · My decks (`/decks`) · the student's own (`/tabs/<id>`) — underline links with `aria-current`, then ＋. Also on both deck study pages, with the tab the student came from current (`?from=`). Today's count sits at the right end of this row (`DeckCount` in `components/flashcards/DeckLists.tsx`), so it is always on screen and costs no row. My decks shows the same tabs to students (not to teachers or admins); its old "← Word cards" link is gone.
+- **Row 2** `components/flashcards/DeckTopBar.tsx`: Words · Chunk · Grammar · Support, then "⏭ N skipped" while there are skipped cards, then ⭐ ❤️ ❓ 💯 (`DeckLists`). On a 360px phone the lists are past the right edge (a fade shows the row goes on); they are also in the ☰ menu.
+- **No third row.** Removed from the bar: chunk types, Support channel and level, 📂 Sections / 🔍 Search here / ✕ All words. The URL filters still work, because Explore links to one chunk type and a word section opens its own session; so **the open kind's chip names the filter** ("Chunk · Frames", "Support · Chat · Basic", "Words · A1 · Starter") and tapping it shows the whole kind. **Don't undo:** without that, a filter would be on with nothing on screen saying so. Nothing in the app now links to the Support channel or level.
+- Every scrolling row uses `components/flashcards/fadeRow.ts`: a right-edge fade (a mask, so no colour token is needed) and 4px of room so the keyboard focus ring is not cut off (it was cut off before).
+- `FlashcardDeck`'s computer-width card height is now one value, `calc(100dvh-17rem)`, for every tab (the `tallTop` prop is gone), so Known / Unknown still ends inside an 800px-tall window (measured 796px at 1280 × 800).
+- **Measured (local, Playwright):** card height on a 390px phone went from 571px (Words, Grammar) / 543px (Chunk, Support) to 531px on every tab.
+- **Tested:** 84 browser checks at 360 and 390px (two rows only, every kind link, the named filter chip and clearing it, skipped and show again, lists, Study this list, guest, teacher, focus ring, no sideways page scroll, no page errors), axe in all five themes, `tsc`, `next build`. The one axe finding, "page has no h1" on `/flashcards`, was there before this branch.
+- **Own study tabs (30 Oct, same branch):** ＋ at the end of row 1 makes and arranges the student's own tabs (decks only, one deck in many tabs), English and My decks can be moved and hidden, and a copy or import asks which tabs the deck shows in. Tables `StudyTab`, `StudyTabDeck`; API `/api/study-tabs`; page `/tabs/<id>`; components in `components/tabs/`. Below 640px the count shows only due and new. `/flashcards` got a screen-reader-only `<h1>`. Tests: `scripts/flashcard-tabs-e2e/` (162 checks, all passing on a production build).
+- **Tech tab (30 Oct, same branch):** a built-in tab (English · Tech · My decks), page `/tech` with subject chips (Programming, Data, Infrastructure, Cloud & networking, AI) and two lists, Your tech decks (Study) and More in the library (Open). `lib/techDecks.ts` decides what is tech (tags or title, whole words; words like "excel" and "cloud" only as tags) and shows only decks the student may already see. Tests: `tech.cjs` 37, `subjects.ts` 17.
+- **Audit (30 Oct):** 11 findings, all fixed the same day, then re-audited: 243 own checks and 274 library checks pass on a production build (`docs/FLASHCARD-NAV-LAYERS.md`, "Audit" and "Re-audit"). **Don't undo:** words that mean something else in business English (networking, security, monitoring, code) are not tech words in `lib/techDecks.ts`.
+- **Next action (owner):** merge, then **run Actions → Database setup** (until it runs, the bar shows English · Tech · My decks, ＋ cannot save and the data download leaves the tabs out), then try it on a phone.
+
 ## Public library hub (29 Oct 2026, branch `claude/bold-hopper-hxfrpd`) — Steps 1 to 4 BUILT and tested, not merged; what is left is the owner's
 
 Owner's requirement: EduSarthi is a repository, so there must be **one place** where anyone (signed in or not) can see every public flashcard deck. Plan, built list and tests: `docs/PUBLIC-LIBRARY-PLAN.md`.
@@ -561,6 +587,45 @@ Owner's requirement: EduSarthi is a repository, so there must be **one place** w
 - **Audit of the branch (30 Oct) found and fixed five things:** a repeated `?q=a&q=b` and a NUL byte in a search, topic, deck id or card id each showed "This page did not load" (`queryText`, `readView`, `isRecordId` in `lib/libraryUrl.ts`); a `NEXT_PUBLIC_APP_URL` without `https://` made the root layout throw "Invalid URL" on every page (`siteUrl()` now validates; **set the variable with `https://`**); broken percent-encoding in any path answered 500 and now answers 400 (`proxy.ts`); the announcement email named the Settings row wrongly. Details and what was left (no rate limit, no caching on the public pages): `docs/PUBLIC-LIBRARY-PLAN.md` → "Audit before the merge". **Don't undo:** read every library address through `readView` / `queryText`, never `sp.q.trim()`; keep `siteUrl()` validating.
 - **Tests for all of this are in `scripts/library-e2e/`** (README inside): six browser/HTTP suites run by one `run.cjs` (268 checks: navigation and the open library, robots and sitemap, the list's pages and topics, 21 hostile addresses, the new consent) plus `unit.ts` for the pure functions. Run them after any change to the library, `proxy.ts`, `lib/siteUrl.ts` or `lib/libraryUrl.ts`. Local database only.
 - **Next (the owner):** ask a lawyer about re-consent (A, or have B or C built); check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send the announcement (Admin → Announcements: test, then Start, type SEND); wait 7 days after the last email; merge the branch once; then `LIVE-TESTING-GUIDE.md` 4f and Google Search Console (add the site, submit `/sitemap.xml`).
+
+## Spaced repetition v2 (30 Oct 2026, branch `claude/kind-euler-q35ydg`) — BUILT and tested, not merged
+
+Plan, decisions and test notes: `docs/SRS-V2-PLAN.md`. All rules, marked NEW / CHANGED, with a simulator: `docs/srs-review-plan-rules.xlsx` (v2.1).
+
+- **Rules now:** ladder 3 · 7 · 15 · 30 · 60 · 120 · 180 days; no answer brings a card back in under 3 days; Unknown → two steps down (min 3 days); new card's first Known Hard 3 / Medium 7 / Easy 15; due from midnight IST; ±1 day spread at 15, ±2 from 30; late credit on Medium/Easy (gap ≥ days remembered); Unknown cards come round once more 3 cards later as "Practice · not saved" (`?again=`, `lib/cardAgain.ts`); Settings → Reviews per day (No limit default, 50–200, per kind, built-in cards only; `?more=1` lifts both limits).
+- **Files:** `lib/srs.ts`, `lib/cardAgain.ts`, `lib/flashcards.ts`, `lib/todayReview.ts`, `lib/studyReminders.ts`, `lib/preferences.ts`, `app/api/flashcards/route.ts`, the three study pages, `FlashcardDeck.tsx`, `DeckStudy.tsx`, `useCardNav.ts` (their shared navigation), `DeckMessages.tsx`, `PracticeNotice.tsx`, Settings, Help copy, `prisma/schema.prisma` (`CardState.firstReviewedAt`).
+- **Tests:** `npx tsx scripts/srs-unit.ts` (26 checks, no database) and the browser suites in `scripts/srs-e2e/` (README inside; local database only; touch only `SRS-` rows). All pass.
+- **Counting rule (since the second audit):** a card's first Known / Unknown sets `CardState.firstReviewedAt` once. Answered today with `firstReviewedAt` today = a new card; answered today with it earlier or null = a review. Used by both daily limits, the Today/Dashboard counts and the reminder email (`servableDue` in `lib/srs.ts`, `reviewedTodaySql` in `lib/todayReview.ts`). Not `createdAt` (a remark makes the row) and not the answer count (‹ and answer again). (`lib/xp.ts` keeps `createdAt` on purpose.)
+- **Deploy order (must do):** 1) **before** deploying the code, add the new column to the live database with `npx prisma db push` (adds the nullable `CardState.firstReviewedAt`; nothing is deleted; the old code ignores it). Deploying the code first would break every Known / Unknown and the Flashcards, Today and Dashboard counts until the column exists. 2) Deploy. 3) Run `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run, check counts), then with `--apply`. It moves stored steps onto the v2 ladder from each card's real gap; safe to run twice; touches `CardState.stage` only. Answering does not depend on it (the rung is read from the gap, `rungForGap`); until it runs only the Review Plan box shows old cards one rung too high.
+- **Don't undo:** the 3-day floor (owner's rule); practice answers must never POST; due dates are IST midnights (Today page counts and reminders rely on `dueAt <= now`); `nextReview` imports nothing that touches the database (client components import `lib/srs`).
+- **Audits (30 Oct):** first audit A1–A9 and second audit B1–B8 all fixed and retested; lists in the plan doc. `FlashcardDeck.tsx` is back to 232 lines.
+- **Not done / open:** `npm run lint` fails for everyone because the repo has no `eslint.config.*` (existed before this work). Suggestion only, not asked for: `lib/xp.ts` could count new-card XP by `firstReviewedAt` too.
+
+## Combined pull request of the unmerged branches (30 Oct 2026, branch `claude/pensive-einstein-fnupe5`)
+
+The owner asked for one pull request with all the work not yet in `main`. All 30 earlier pull requests were already merged; seven branches still had commits `main` did not. This branch merges five of them:
+
+| Branch | What it adds | Merge |
+|---|---|---|
+| `claude/kind-euler-q35ydg` | Spaced repetition v2 (see its section above) | clean |
+| `claude/modest-darwin-zfo3g1` | Flashcard filters in two rows, own study tabs, Tech tab | 3 files conflicted with v2 (`DeckStudy.tsx`, both deck study pages); both sides kept: v2's `again` / `practice` and the tabs' `from` / `tabsAbove` |
+| `ccr-ffd9dae0-rbe8i7` | Docs: 29 Oct login outage, run on the Vercel address for now | clean |
+| `claude/blissful-euler-9j0h4c` | Docs: Settings phase M merged in PR #25 | header line only |
+| `claude/trusting-noether-n3dhu1` | Privacy page: what Google sign-in and a guest account collect, Google in the services list | kept the newer SendGrid line from `main` |
+
+Checked after merging: `prisma validate`, `tsc --noEmit`, `next build` (the CI steps, same placeholder values), `scripts/srs-unit.ts` 26 checks. The browser suites need a local database and were not run on the combined branch; each branch ran its own before.
+
+**Order (must do), because a push to `main` deploys at once and this has schema changes:**
+1. Actions → Database setup → Run workflow → **Use workflow from: `claude/pensive-einstein-fnupe5`**. It adds `CardState.firstReviewedAt` (nullable), the `StudyTabKind` enum and the tables `StudyTab`, `StudyTabDeck`. Nothing is dropped; the live code ignores them. Running it from `main` would not add them, and running it from `main` between steps 1 and 2 would try to remove them again.
+2. Merge the pull request.
+3. From a computer with `.env`: `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run), then the same with `--apply`. It moves stored card steps onto the new ladder; it rewrites `CardState.stage` only.
+4. On a phone: Known / Unknown on a word card and a deck card, the tabs row, ＋ a tab, `/tech`.
+
+**Left out on purpose (owner to decide):**
+- `claude/adoring-gates-7h67av` (28 Oct): notification inbox, change email/phone, profile photo with admin approval, help chatbot. 19 files conflict with `main`, `prisma/schema.prisma` among them. Profile photo and email change were since built differently in `main` (PR #28, Settings phase H), so merging means choosing between two versions. Inbox and help chatbot are new.
+- `claude/adoring-darwin-ay4wox` (10 Oct): separate sign-in pages for student, teacher and admin. Built on the sign-in code before Google and guest sign-in; conflicts in `lib/auth.ts`, `proxy.ts` and the login form. Never merged.
+
+**Still open in the merged work:** the third audit of spaced repetition v2 (C1–C10 in `docs/SRS-V2-PLAN.md`) is not fixed; C1 (Unknown on the last card shows the practice card on the side it was left on) is the one a student will notice.
 
 ## Starting a new chat
 
@@ -623,7 +688,11 @@ What changed:
 - `android/README.md` is updated to match.
 - The push builds a new debug APK on the branch.
 
-**Owner decision still open:** keep the Vercel address in the app, or connect `edusarthi.com` to Vercel. Connecting it means:
+PR #26 was merged on 29 Oct, after the owner tested the new APK on a phone.
+
+**Owner's decision (29 Oct): the site runs on the Vercel address `edu-sarthi-nine.vercel.app` until the owner adds the domain.** Do not point the app, links or settings at `edusarthi.com` before that. `NEXT_PUBLIC_APP_URL` in Vercel must also be the Vercel address. Every email link (sign-in link, password reset, reminders, audit ready) is built from it. Its value is secret and could not be read from the session, so the owner checks it.
+
+When the owner connects `edusarthi.com` later, the steps are:
 - adding the domain in Vercel and changing the DNS at Hostinger;
 - updating `NEXT_PUBLIC_APP_URL`;
 - adding the Google OAuth redirect URI `https://edusarthi.com/api/auth/callback/google`;
@@ -632,6 +701,15 @@ What changed:
 Also open: `ANDROID_CERT_SHA256` is not set in Vercel, so the app keeps a URL bar.
 
 **Also seen in the Vercel logs (26 Oct, already fixed):** Google sign-in was refused 11 times (AccessDenied) because the live database lacked `User.aiCardsUsed`. Database setup run #7 fixed it. Runs #10 and #11 (28 Oct) are in sync as well. There have been no runtime errors in the 24 hours before this fix.
+
+**Login down again (29 Oct, fixed the same day).** PRs #27, #28 and #29 changed the schema:
+- `User.avatarKey` (new column);
+- `Module.focus` (new column);
+- the new tables `StreakFreeze` and `StreakLedger`.
+
+They were merged and deployed without a Database setup run. From about 18:28 UTC every sign-in failed: password, guest and Google all hit "The column `User.avatarKey` does not exist" (47 errors in one hour). Database setup run #12 (19:15 UTC) fixed it. It printed "in sync", gave no data-loss warning, and changed no card (0 created, 0 updated). This is the third time a merge with a schema change broke sign-in on the live site, after the AI columns on 26 Oct and this one. **Run Actions → Database setup straight after merging any PR that touches `prisma/schema.prisma`.**
+
+Separate and not code: "Email me a code" cannot send, because SendGrid answers "401 Maximum credits exceeded" (the plan's email credits are used up). Password and Google sign-in do not need email.
 
 ## AI draft audit (26 Oct 2026, branch `claude/magical-hopper-juy9yr`)
 

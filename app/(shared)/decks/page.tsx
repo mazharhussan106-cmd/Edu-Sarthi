@@ -21,6 +21,7 @@ import { DeckCredit } from "@/components/decks/DeckCredit";
 import { CREDIT_SELECT } from "@/lib/libraryTerms";
 import { invitationsFor } from "@/lib/deckMembers";
 import { InviteList } from "@/components/decks/InviteList";
+import { AreaTabs } from "@/components/flashcards/AreaTabs";
 
 export const revalidate = 0;
 
@@ -84,12 +85,19 @@ export default async function DecksPage({ searchParams }: { searchParams: Promis
 
   return (
     <main className="mx-auto max-w-2xl px-3 pb-6 pt-3 sm:px-6 sm:pt-6">
+      {/* Students get the same study-area tabs as the Flashcard tab, so going
+          back to the built-in cards is the English tab, in the same place.
+          Teachers and admins have no Flashcard tab to go back to. */}
+      {staff ? null : (
+        <div className="mb-3">
+          <AreaTabs current="decks" />
+        </div>
+      )}
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-display text-xl font-bold text-ink">My decks</h1>
         <span className="flex gap-3 text-sm font-medium">
           <Link href="/library" className="text-accent hover:underline">Library</Link>
           <Link href="/institute" className="text-accent hover:underline">Institute</Link>
-          {staff ? null : <Link href="/flashcards" className="text-accent hover:underline">← Word cards</Link>}
         </span>
       </div>
       <p className="mt-1 text-sm text-ink-muted">Make your own cards. Decks are private until you share a link or submit one to the library.</p>

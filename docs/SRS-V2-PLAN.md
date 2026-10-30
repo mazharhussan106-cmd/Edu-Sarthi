@@ -39,7 +39,7 @@ Each card stores a step number (`CardState.stage`) that points into the ladder. 
 
 **Step 1 — the rules (`lib/srs.ts`, `app/api/flashcards/route.ts`, new `scripts/srs-v2-restage.ts`, new `scripts/srs-unit.ts`) — BUILT**
 - Done: `npx tsx scripts/srs-unit.ts` passes 18 checks. The restage script was run on a throwaway local Postgres seeded with v1 and v2 cards: 1/3 → 3, 7 → 7, … 60 → 60, v2 cards and remark-only cards untouched, a second `--apply` changed 0 rows. Help page and schema comment now name the new ladder. `ReviewLog.stage` keeps old numbers for old answers; nothing reads it.
-- **Deploy order:** deploy, then straight away `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run), check the counts, then `--apply`. Since the audit fix A2, answering reads a card's rung from its gap, so a late run no longer moves any card wrongly; until it runs, only the Review Plan box shows old cards one rung too high.
+- **Deploy order:** (since the second audit, first `npx prisma db push` for `CardState.firstReviewedAt`, see below) deploy, then straight away `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run), check the counts, then `--apply`. Since the audit fix A2, answering reads a card's rung from its gap, so a late run no longer moves any card wrongly; until it runs, only the Review Plan box shows old cards one rung too high.
 - New ladder, Unknown two steps down, the 3-day floor, IST-day due dates, spread, late credit.
 - "Next review …" text counts India-time days.
 - `srs-unit.ts` checks every rule above with fixed dates (no database).
@@ -107,7 +107,32 @@ Code review of `main...claude/kind-euler-q35ydg`. Ranked; "real" means it can ha
 
 Files the fixes would touch: `lib/srs.ts`, `lib/flashcards.ts`, `lib/todayReview.ts`, `lib/preferences.ts`, `lib/cardAgain.ts`, `scripts/srs-v2-restage.ts`, `scripts/srs-unit.ts`, the three study pages — 10 files, so the owner approves first (CLAUDE.md).
 
-## Second audit (30 Oct) — only this chat's work (`398f702..d14a92d`), after the A1–A9 fixes. Not fixed yet
+## Second audit (30 Oct) — only this chat's work (`398f702..d14a92d`), after the A1–A9 fixes — B1–B8 FIXED
+
+**What was fixed and how it was checked:**
+- B1: new column `CardState.firstReviewedAt` (nullable; set once by the first Known / Unknown in `app/api/flashcards/route.ts`; null = first answered before the column existed = old; included in the data download). New today = `firstReviewedAt` today; review today = answered today and `firstReviewedAt` earlier or null. `lib/flashcards.ts` `answeredToday`, `lib/todayReview.ts` `reviewedTodaySql`. No backfill needed. **Schema change: run `npx prisma db push` on the live database before deploying the code** (nothing is deleted).
+- B2: `servableDue` in `lib/srs.ts` is the one capping rule; `lib/studyReminders.ts` counts per kind with today's reviews and caps by the student's limit. Checked on a local database through `sendStudyReminders`: limit 50 with 50 done → no email; 45 done → "5 flashcards are due"; no limit → 10.
+- B3: practice line now "Cards you mark Unknown come round once more like this. Known or Unknown here only moves on; this card's review date does not change." (always true).
+- B4: `deckCounts` returns `today: { reviewsLeft, newLeft }`; `nextCardId(userId, deck, { extra, skip, newPerDay, reviewsPerDay, today })` uses it, so one page load counts once.
+- B5, B6: `find` in `pickWithAgain` / `pickForSession` takes all codes at once and returns the card rows; the pages use the row and skip the second fetch.
+- B7: navigation for FlashcardDeck and DeckStudy is one hook, `components/flashcards/useCardNav.ts`; FlashcardDeck 232 lines.
+- B8: `lib/aiLimits.ts` re-exports `istDayStart` from `lib/srs.ts`.
+- Checked: typecheck; `scripts/srs-unit.ts` 26 checks (picker tests now also check one lookup for ten codes and the returned row); local Postgres checks of new/review counting, limits, lookups and the reminder; production build; browser suites `scripts/srs-e2e/` (now in the repo) both pass.
+
+## What this chat set out to build — checked 30 Oct
+
+| Asked | Where | State |
+|---|---|---|
+| Explain the Review Plan box | chat answer | Done |
+| Rules in an Excel file for changes | `docs/srs-review-plan-rules.xlsx` | Done, v2.1 matches the code |
+| Is it the best? | chat answer | Done |
+| Build the suggestions + "minimum 3rd day" (D1–D9) | Steps 1–4 above | Done |
+| Browser test of decks, audit, fixes | sections above | Done |
+| Second audit of only this chat, fix all | this section | Done |
+| Left over and built in this round | Help FAQ now names both daily limits and the practice look; deploy order with `db push` written down; browser suites kept in `scripts/srs-e2e/`; Excel v2.1 | Done |
+| Owner's steps, not code | `npx prisma db push` on live, deploy, restage script (dry run, then `--apply`), merge | Waiting for the owner |
+
+**The second audit's findings as reported:**
 
 | # | Finding | How real | Fix idea |
 |---|---|---|---|

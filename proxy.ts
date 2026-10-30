@@ -16,6 +16,7 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import { authConfig } from "@/lib/auth.config";
+import { PORTAL_PATH, STAFF_DOOR_PATHS } from "@/lib/portals";
 
 const { auth } = NextAuth(authConfig);
 
@@ -35,7 +36,7 @@ const PUBLIC_PREFIXES = [
 ];
 
 function isPublic(path: string): boolean {
-  if (path === "/") return true;
+  if (path === "/" || STAFF_DOOR_PATHS.includes(path)) return true;
   return PUBLIC_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));
 }
 
@@ -46,6 +47,12 @@ function isPublic(path: string): boolean {
 // /login. Only checked in the signed-out branch below: a signed-in person who
 // has not verified their email is still held at /verify, as before.
 const PUBLIC_LIBRARY = /^\/library(\/[^/]+(\/card\/[^/]+)?)?\/?$/;
+
+// The sign-in pages (lib/portals): the student door and the two staff doors.
+const SIGN_IN_PAGES: readonly string[] = [PORTAL_PATH.student, ...STAFF_DOOR_PATHS];
+
+const isTeacherAreaPath = (p: string) =>
+  p.startsWith("/queue") || p.startsWith("/review") || p.startsWith("/students") || p.startsWith("/workload");
 
 /// Single source of truth for "where does this role belong". Used on sign-in,
 /// after verification, and whenever a role hits a path it may not see.
@@ -73,7 +80,9 @@ export default auth((req) => {
 
   if (!user) {
     if (isPublic(pathname) || PUBLIC_LIBRARY.test(pathname)) return NextResponse.next();
-    return redirect("/login");
+    // A teacher page sends a signed-out visitor to the teacher door. An admin
+    // page does not: the admin door is never named (lib/doorAuth).
+    return redirect(isTeacherAreaPath(pathname) ? PORTAL_PATH.teacher : PORTAL_PATH.student);
   }
 
   // Signed in but unverified: the account exists and cannot be used. Held at
@@ -81,7 +90,7 @@ export default auth((req) => {
   if (!user.emailVerified) {
     if (pathname === "/verify") return NextResponse.next();
     // Public marketing pages stay readable — only the app is gated.
-    if (isPublic(pathname) && pathname !== "/login" && pathname !== "/register") {
+    if (isPublic(pathname) && !SIGN_IN_PAGES.includes(pathname) && pathname !== "/register") {
       return NextResponse.next();
     }
     return redirect("/verify");
@@ -96,20 +105,14 @@ export default auth((req) => {
   if (
     !upgradePage &&
     (pathname === "/verify" ||
-      pathname === "/login" ||
+      SIGN_IN_PAGES.includes(pathname) ||
       pathname === "/register" ||
       pathname === "/forgot-password")
   ) {
     return redirect(homeFor(user.role));
   }
 
-  const isTeacherArea =
-    pathname.startsWith("/queue") ||
-    pathname.startsWith("/review") ||
-    pathname.startsWith("/students") ||
-    pathname.startsWith("/workload");
-
-  if (isTeacherArea && user.role === "STUDENT") {
+  if (isTeacherAreaPath(pathname) && user.role === "STUDENT") {
     return redirect("/dashboard");
   }
 

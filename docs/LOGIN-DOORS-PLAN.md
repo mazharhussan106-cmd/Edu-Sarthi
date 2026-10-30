@@ -1,6 +1,6 @@
 # Separate sign-in doors for student, teacher and admin — plan
 
-Status: **PLAN, waiting for the owner's answers (30 Oct 2026, branch `claude/login-doors`).** Nothing is built yet.
+Status: **BUILT and tested, not merged (30 Oct 2026, branch `claude/login-doors`).** The owner answered the three questions the same day; see "Owner's answers" and "What was built" at the end.
 
 ## Where this comes from
 
@@ -44,3 +44,26 @@ Status: **PLAN, waiting for the owner's answers (30 Oct 2026, branch `claude/log
 1. **Google and guest:** only on the student door (recommended), or also on the teacher door?
 2. **A teacher or admin at the student door:** let them in with a note (recommended), or refuse and send them to their own door like the old branch?
 3. **Link to the teacher door:** a small link on the student door (recommended), or no link (teachers are given the address)?
+
+## Owner's answers (30 Oct 2026)
+
+1. Google and guest: **only on the student door.**
+2. A teacher or admin at the student door: **let in, with a note.**
+3. A link to the teacher door on the student page: **no.** So the note is where staff learn their address: it shows once, after they sign in at `/login`, on their own page (a teacher sees `/teacher/login`, an admin sees `/admin/login`; nobody else sees either).
+
+Decided while building (say if wrong): an **admin may use the teacher door** (admins can do everything a teacher can); a student at the teacher door is told to use the main sign-in page.
+
+## What was built
+
+- `lib/portals.ts`: the three doors, addresses, wording, error messages (no database imports).
+- `lib/doorAuth.ts`: who each door admits; the admin door's refusal is the same code as a wrong password or code and counts as a failed attempt; staff doors never create an account and email a code only to an account they admit (same reply either way).
+- `lib/auth.ts`: password, email code and one-tap link all check the door after the credential is proven. `lib/validations.ts`: `portal` on the four sign-in schemas (missing = student door).
+- `app/api/auth/email-login/route.ts`: staff doors send nothing to an address they do not admit; the link carries `&portal=` for staff doors.
+- `components/auth/PortalLogin.tsx` (shared form) and `CodeSignIn.tsx` (the code half; the old 288-line login page is split in two). `/login` (`app/(auth)/login/page.tsx`), `/teacher/login`, `/admin/login` (noindex, linked from nowhere).
+- `components/auth/DoorNote.tsx` + `DoorNoteLine.tsx` + `doorCookie.ts`: the one-time note in the teacher and admin layouts, from a cookie the student door sets just before signing in (including Google); the cookie is cleared when the note shows.
+- `proxy.ts`: staff doors reachable signed out; signed-in people sent home from them like from `/login`; a signed-out visit to a teacher page goes to `/teacher/login`, to an admin page still to `/login`.
+- **No schema change.**
+
+**Tested** (local Postgres; production build compiles; browser checks on the dev server, which prints emails so codes can be read; 390 px): 26 checks. Each door's page and what it hides; signed-out redirects (`/queue` → teacher door, `/admin` → `/login`); student at teacher door told where to go; teacher and student at admin door get "Email or password is not correct." and both count as failed attempts; teacher, admin at the right doors land home with no note; signed-in teacher on `/teacher/login` sent home; teacher and admin at `/login` land home with the note naming their own door, shown once; student at `/login` no note; teacher door sends no code to a student, admin door none to an unknown address and makes no account; teacher signs in by code and by one-tap link at the teacher door; a student's code typed at the teacher door is refused; `/login` code still creates a new student; guest still works. **Not tested:** Google (needs real keys); the live database.
+
+**To go live:** merge; nothing to run on the database.

@@ -562,6 +562,15 @@ Owner's requirement: EduSarthi is a repository, so there must be **one place** w
 - **Tests for all of this are in `scripts/library-e2e/`** (README inside): six browser/HTTP suites run by one `run.cjs` (268 checks: navigation and the open library, robots and sitemap, the list's pages and topics, 21 hostile addresses, the new consent) plus `unit.ts` for the pure functions. Run them after any change to the library, `proxy.ts`, `lib/siteUrl.ts` or `lib/libraryUrl.ts`. Local database only.
 - **Next (the owner):** ask a lawyer about re-consent (A, or have B or C built); check `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` in Vercel; send the announcement (Admin → Announcements: test, then Start, type SEND); wait 7 days after the last email; merge the branch once; then `LIVE-TESTING-GUIDE.md` 4f and Google Search Console (add the site, submit `/sitemap.xml`).
 
+## Separate sign-in doors (30 Oct 2026, branch `claude/login-doors`) — BUILT and tested, not merged
+
+Rebuilt on today's `main` by the owner's decision of 30 Oct (the 10 Oct branch `claude/adoring-darwin-ay4wox` predates Google and guest sign-in and is **not to be merged**). Plan, answers and tests: `docs/LOGIN-DOORS-PLAN.md`.
+
+- `/login` stays the student door (Google, guest, create account, all old links keep working). `/teacher/login`: teachers and admins, password or code, existing accounts only. `/admin/login`: admins only, not linked, noindex; anyone else is answered like a wrong password and it counts as a failed attempt.
+- Teachers and admins may still sign in at `/login`; their own page then shows a one-time note with their door's address (no link to it on the student page, owner's answer).
+- **Don't undo:** the admin door must never be named to non-admins (not in links, redirects or errors); staff doors must never create accounts; door checks run after the credential is proven, before the attempt counter is cleared.
+- No schema change. Tested: 26 browser checks (see the plan). Google not tested without real keys.
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

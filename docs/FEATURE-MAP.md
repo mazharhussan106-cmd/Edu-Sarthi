@@ -36,7 +36,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 |---|---|---|
 | My decks | Your own decks, with cards due; open one to study or edit it | Menu → Create flashcards → My decks (`/decks`); Flashcard → My decks tab (top row, beside English) |
 | Tech decks | Every tech deck you can see (yours, shared, followed, the library's and your institute's), by subject: Programming, Data, Infrastructure, Cloud & networking, AI | Flashcard or My decks → Tech tab (`/tech`) |
-| Your own study tabs | Tabs you make and fill with decks (one deck can be in many), and English / My decks moved or hidden | Flashcard or My decks → ＋ at the end of the top row; a tab opens at `/tabs/<id>` with ＋ Add decks |
+| Your own study tabs | Tabs you make and fill with decks (one deck can be in many), and English / Tech / My decks moved or hidden; the tabs also show on a deck's study page | Flashcard, Tech or My decks → ＋ at the end of the top row; a tab opens at `/tabs/<id>` with ＋ Add decks; Help explains both |
 | Which tabs a copied deck shows in | Asked right after Copy to my decks / Make my own copy; Skip is fine, the deck is in My decks anyway | Library, institute or shared-link deck → copy |
 | New deck | Name, description and tags for a new deck (up to 20 decks); not for guests | Menu → Create flashcards → New deck (`/decks#new-deck`) |
 | Make cards with AI | Say what the cards are for, answer a few questions, check the cards, add them. 100 AI cards per account in total. Shown only when the AI key is set; not for guests | Menu → Create flashcards → Make cards with AI (`/decks#ai-cards`) |

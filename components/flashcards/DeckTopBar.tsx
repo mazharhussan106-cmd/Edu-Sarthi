@@ -1,6 +1,6 @@
 // Owns the filters above a card on the Flashcard tab, in two layers:
-//   row 1  the study area, English · My decks (AreaTabs), with today's count
-//          at the right end
+//   row 1  the study tabs — English, Tech, My decks and the student's own —
+//          with ＋ and today's count at the right end (AreaTabs)
 //   row 2  the card kind: Words · Chunk · Grammar · Support, then
 //          "⏭ N skipped" while there are skipped cards, then the remark
 //          lists ⭐ ❤️ ❓ 💯
@@ -55,7 +55,7 @@ export function DeckTopBar({
   k: DeckKind;
   type: string | null;
   /** The word section being studied, if any, so it can be named on the chip. */
-  section?: { label: string; key: string } | null;
+  section?: { label: string } | null;
   /** Support tab only: the channel and level filters, as in the URL. */
   channel?: string | null;
   level?: string | null;

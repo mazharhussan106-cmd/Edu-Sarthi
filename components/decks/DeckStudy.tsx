@@ -33,8 +33,12 @@ export type DeckCardState = Remarks & {
 };
 
 export function DeckStudy({
-  card, wordId, state, nextHref, skip, cardColor,
-}: { card: DeckCardData; wordId: string; state: DeckCardState; nextHref: string; skip: string[]; cardColor: CardColor }) {
+  card, wordId, state, nextHref, skip, cardColor, tabsAbove = false,
+}: {
+  card: DeckCardData; wordId: string; state: DeckCardState; nextHref: string; skip: string[]; cardColor: CardColor;
+  /** The study tabs row sits above (a student's study page): the card gives up its 2.5rem. */
+  tabsAbove?: boolean;
+}) {
   const router = useRouter();
   const [side, setSide] = useState<0 | 1 | 2>(0);
   const [level, setLevel] = useState<Level>(state.recall ?? "MEDIUM");
@@ -99,7 +103,16 @@ export function DeckStudy({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="h-[calc(100dvh-14rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-12rem)] md:max-h-[52rem]">
+      {/* Literal classes, so Tailwind sees both. With the tabs row, everything is
+          2.5rem shorter, the minimum too, so Known stays above the bottom bar on
+          a small phone instead of sliding under it. */}
+      <div
+        className={
+          tabsAbove
+            ? "h-[calc(100dvh-16.5rem-env(safe-area-inset-bottom,0px))] min-h-[23.5rem] md:h-[calc(100dvh-14.5rem)] md:max-h-[52rem]"
+            : "h-[calc(100dvh-14rem-env(safe-area-inset-bottom,0px))] min-h-[26rem] md:h-[calc(100dvh-12rem)] md:max-h-[52rem]"
+        }
+      >
         <CardSurface
           side={side}
           titles={WORD_TITLES}

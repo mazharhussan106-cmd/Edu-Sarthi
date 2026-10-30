@@ -64,13 +64,22 @@ const api = (p, url, body) =>
   await p.waitForTimeout(800);
   const rows = await p.getByRole("list", { name: "Decks in Projects" }).getByRole("listitem").allInnerTexts();
   check("tab shows the two decks", rows.length === 2 && rows.some((r) => /SQL basics/.test(r)) && rows.some((r) => /Daily chunks/.test(r)), JSON.stringify(rows));
-  check("own deck studies on /decks", (await p.getByRole("link", { name: "Study SQL basics" }).getAttribute("href")) === `/decks/${sqlDeck}/study`);
-  check("followed deck studies on the library", (await p.getByRole("link", { name: "Study Daily chunks" }).getAttribute("href")) === `/library/${libDaily}/study`);
+  check("own deck studies on /decks, from this tab", (await p.getByRole("link", { name: "Study SQL basics" }).getAttribute("href")) === `/decks/${sqlDeck}/study?from=${techId}`);
+  check("followed deck studies on the library, from this tab", (await p.getByRole("link", { name: "Study Daily chunks" }).getAttribute("href")) === `/library/${libDaily}/study?from=${techId}`);
+  for (const n of [1, 2]) await api(p, `/api/decks/${sqlDeck}/cards`, { action: "add", front: `Front ${n}`, back: `Back ${n}` });
   await p.getByRole("link", { name: "Study SQL basics" }).click();
   await p.waitForURL((u) => u.pathname === `/decks/${sqlDeck}/study`);
-  check("Study opens the deck's study page", true);
-  await p.goBack();
   await p.waitForLoadState("networkidle");
+  check("study page shows the study tabs, this tab current", (await area().getByRole("link", { name: "Projects" }).getAttribute("aria-current")) === "page");
+  await p.getByRole("button", { name: "Next card" }).click();
+  await p.waitForURL((u) => !!u.searchParams.get("skip"));
+  await p.waitForLoadState("networkidle");
+  check("the tab stays current after ›", new URL(p.url()).searchParams.get("from") === techId && (await area().getByRole("link", { name: "Projects" }).getAttribute("aria-current")) === "page");
+  await p.goto(`${BASE}/decks/${sqlDeck}/study`, { waitUntil: "networkidle" });
+  check("opened from nowhere: My decks is current", (await area().getByRole("link", { name: "My decks" }).getAttribute("aria-current")) === "page");
+  await p.goto(`${BASE}/decks/${sqlDeck}/study?from=${encodeURIComponent("x&card=1")}`, { waitUntil: "networkidle" });
+  check("a made-up from is ignored", (await area().getByRole("link", { name: "My decks" }).getAttribute("aria-current")) === "page");
+  await p.goto(`${BASE}/tabs/${techId}`, { waitUntil: "networkidle" });
 
   // Remove one.
   await p.getByRole("button", { name: "Remove SQL basics from this tab" }).click();
@@ -109,7 +118,19 @@ const api = (p, url, body) =>
   await ar.getByRole("button", { name: "Save", exact: true }).click();
   await p.waitForTimeout(1500);
   check("rename shows in layer 1", (await labels()).includes("Project work"));
+  check("name fields stop at 30 characters", (await ar.getByLabel("New tab").getAttribute("maxlength")) === "30");
+  await ar.getByLabel("New tab").fill("project WORK");
+  await ar.getByRole("button", { name: "Make tab" }).click();
+  check("a used name is refused on screen", /already have a tab called/.test(await ar.innerText()));
   await ar.getByRole("button", { name: "Close" }).click();
+  const dupCreate = await api(p, "/api/study-tabs", { action: "create", name: "PROJECT work" });
+  check("a used name is refused by the server (any capitals)", dupCreate.status === 400 && /already have a tab called/.test(dupCreate.body.error));
+  const second = (await api(p, "/api/study-tabs", { action: "create", name: "Second tab" })).body.id;
+  const dupRename = await api(p, "/api/study-tabs", { action: "rename", id: second, name: "Project Work" });
+  check("renaming to a used name is refused", dupRename.status === 400 && sql(`select name from "StudyTab" where id='${second}'`) === "Second tab");
+  await api(p, "/api/study-tabs", { action: "delete", id: second });
+  const gone = await api(p, "/api/study-tabs", { action: "rename", id: second, name: "Again" });
+  check("a deleted tab's message says what to do", gone.status === 400 && /Close this and open your tabs again/.test(gone.body.error));
 
   // Copy from the library asks which tabs.
   await p.goto(`${BASE}/library/${libInterview}`, { waitUntil: "networkidle" });
@@ -173,6 +194,33 @@ const api = (p, url, body) =>
   check("never more than 20 own tabs, even in parallel", own === 20, `${own} tabs; statuses ${burst.join(",")}`);
   sql(`delete from "StudyTab" where kind='OWN' and name like 'Burst %'`);
 
+  // A tab with 100 decks the student can open is full; a copy names it.
+  sql(`delete from "Deck" where title like 'TF %'`);
+  sql(`insert into "Deck" (id, "ownerId", title, tags, visibility, status, "updatedAt") select 'tffull' || lpad(g::text, 6, '0'), (select id from "User" where email = 'other@test.local'), 'TF ' || g, '{}', 'PRIVATE', 'DRAFT', now() from generate_series(1, 99) g`);
+  sql(`insert into "DeckMember" (id, "deckId", email, "userId", role, "acceptedAt") select 'tfm' || substr(d.id, 7), d.id, 'new@test.local', (select id from "User" where email = 'new@test.local'), 'VIEW', now() from "Deck" d where d.title like 'TF %'`);
+  sql(`insert into "StudyTabDeck" ("tabId", "deckId") select '${techId}', id from "Deck" where title like 'TF %'`);
+  const fullR = await api(p, "/api/study-tabs", { action: "placeDeck", deckId: pyDeck, tabIds: [techId] });
+  check("100 decks: the tab is full and named", fullR.status === 200 && JSON.stringify(fullR.body.full) === JSON.stringify(["Project work"]), JSON.stringify(fullR.body));
+  await p.goto(`${BASE}/library/${libInterview}`, { waitUntil: "networkidle" });
+  await p.getByRole("button", { name: "Make my own copy" }).click();
+  await place.waitFor({ timeout: 20000 });
+  await place.getByLabel("Project work").check();
+  await place.getByRole("button", { name: "Save" }).click();
+  await place.getByRole("button", { name: "Continue" }).waitFor({ timeout: 20000 });
+  check("the copy sheet says which tab was full", /“Project work” already holds 100 decks/.test(await place.innerText()));
+  await place.getByRole("button", { name: "Continue" }).click();
+  await p.waitForURL((u) => /^\/decks\/[a-z0-9]+$/.test(u.pathname), { timeout: 20000 });
+  await api(p, "/api/decks", { action: "delete", id: new URL(p.url()).pathname.split("/").pop() });
+  await api(p, "/api/decks", { action: "unfollow", deckId: libDaily });
+  const notFull = await api(p, "/api/study-tabs", { action: "placeDeck", deckId: pyDeck, tabIds: [techId] });
+  check("an unfollowed deck's hidden link does not fill the tab", notFull.status === 200 && !notFull.body.full && sql(`select count(*) from "StudyTabDeck" where "tabId"='${techId}' and "deckId"='${pyDeck}'`) === "1");
+  sql(`delete from "Deck" where title like 'TF %'`);
+  await api(p, "/api/decks", { action: "follow", deckId: libDaily });
+
+  // Help explains the tabs and Tech.
+  const help = await (await p.request.get(`${BASE}/help`)).text();
+  check("help answers tabs and Tech", help.includes("What are the tabs above the cards") && help.includes("What is the Tech tab?"));
+
   // Data download includes the tabs.
   const me = await p.evaluate(async () => JSON.parse(await (await fetch("/api/me")).text()));
   check("data download includes the tabs", Array.isArray(me.account?.studyTabs) && me.account.studyTabs.some((t) => t.name === "Project work"));
@@ -187,6 +235,10 @@ const api = (p, url, body) =>
     check("teacher's copy opens with no tabs question", (await t.getByRole("dialog", { name: "Show this deck in which tabs?" }).count()) === 0);
   }
   check("teacher API answers not enabled", (await api(t, "/api/study-tabs")).body.enabled === false);
+  const tDeck = (await api(t, "/api/decks", { action: "create", title: "Teacher tabs check", tags: [] })).body.id;
+  await t.goto(`${BASE}/decks/${tDeck}/study`, { waitUntil: "networkidle" });
+  check("teacher: no study tabs on a deck's study page", (await t.getByRole("navigation", { name: "Study area" }).count()) === 0);
+  await api(t, "/api/decks", { action: "delete", id: tDeck });
   await t.context().close();
 
   // Guest: the built-in tabs, no ＋.
@@ -201,6 +253,8 @@ const api = (p, url, body) =>
   try {
     const r = await p.goto(`${BASE}/flashcards`, { waitUntil: "networkidle" });
     check("no tables: Flashcard tab still loads", r.status() === 200 && JSON.stringify(await labels()) === JSON.stringify(["English", "Tech", "My decks"]), JSON.stringify(await labels()));
+    const exp = await p.evaluate(async () => { const res = await fetch("/api/me"); return { status: res.status, body: JSON.parse(await res.text()) }; });
+    check("no tables: data download still works, tabs empty", exp.status === 200 && exp.body.account && exp.body.account.studyTabs === null);
   } finally {
     sql(`alter table "StudyTab_off" rename to "StudyTab"`);
   }

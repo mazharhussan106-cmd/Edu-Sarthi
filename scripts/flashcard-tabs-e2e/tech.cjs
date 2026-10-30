@@ -44,6 +44,7 @@ function deck(id, owner, title, tags, visibility, status) {
   const sqlDeck = await own("SQL basics", []);
   await own("Excel at interviews", []);
   await own("LLM notes", ["ai"]);
+  await own("Networking at business events", []);
   check("follow a tech library deck", (await api(p, "/api/decks", { action: "follow", deckId: "ttpython00000000001" })).status === 200);
 
   await p.goto(`${BASE}/tech`, { waitUntil: "networkidle" });
@@ -54,11 +55,16 @@ function deck(id, owner, title, tags, visibility, status) {
   const text = await p.locator("main").innerText();
   for (const t of ["SQL basics", "LLM notes", "TT Python for beginners", "TT Shared Kubernetes"]) check(`yours: ${t}`, /./.test(t) && (await mine.getByText(t, { exact: true }).count()) === 1);
   check("library: TT Microsoft Excel", (await more.getByText("TT Microsoft Excel", { exact: true }).count()) === 1);
-  for (const t of ["TT Secret SQL", "TT Pending Docker", "TT Weekend English", "Excel at interviews"]) check(`never shown: ${t}`, !text.includes(t));
+  for (const t of ["TT Secret SQL", "TT Pending Docker", "TT Weekend English", "Excel at interviews", "Networking at business events"]) check(`never shown: ${t}`, !text.includes(t));
 
-  check("own deck: Study on /decks", (await p.getByRole("link", { name: "Study SQL basics" }).getAttribute("href")) === `/decks/${sqlDeck}/study`);
-  check("shared deck: Study on /decks", (await p.getByRole("link", { name: "Study TT Shared Kubernetes" }).getAttribute("href")) === "/decks/ttshared00000000001/study");
-  check("followed deck: Study on the library", (await p.getByRole("link", { name: "Study TT Python for beginners" }).getAttribute("href")) === "/library/ttpython00000000001/study");
+  check("own deck: Study on /decks, from Tech", (await p.getByRole("link", { name: "Study SQL basics" }).getAttribute("href")) === `/decks/${sqlDeck}/study?from=tech`);
+  check("shared deck: Study on /decks, from Tech", (await p.getByRole("link", { name: "Study TT Shared Kubernetes" }).getAttribute("href")) === "/decks/ttshared00000000001/study?from=tech");
+  check("followed deck: Study on the library, from Tech", (await p.getByRole("link", { name: "Study TT Python for beginners" }).getAttribute("href")) === "/library/ttpython00000000001/study?from=tech");
+  await p.getByRole("link", { name: "Study TT Python for beginners" }).click();
+  await p.waitForURL((u) => u.pathname === "/library/ttpython00000000001/study");
+  await p.waitForLoadState("networkidle");
+  check("followed deck's study page keeps Tech current", (await area.getByRole("link", { name: "Tech", exact: true }).getAttribute("aria-current")) === "page");
+  await p.goto(`${BASE}/tech`, { waitUntil: "networkidle" });
   check("library deck: Open its page", (await p.getByRole("link", { name: "Open TT Microsoft Excel" }).getAttribute("href")) === "/library/ttexcel000000000001");
   check("shared deck is labelled", /shared with you/.test(await mine.innerText()));
 

@@ -29,17 +29,17 @@ access rules.
 ## What is built
 
 ```
-English   My decks          0 due · 10 new · 0/1183 known   ← layer 1
+English  Tech  My decks  Exam prep  ＋      0 due · 10 new   ← layer 1
 ━━━━━━━
 (Words) [Chunk] (Grammar) (Support) │ ⭐ 0 ❤️ 0 ❓ 0 💯 0     ← layer 2
 FRONT SIDE · RECOGNITION                              1 / 3 ← card, unchanged
 ```
 
-- Layer 1, `components/flashcards/AreaTabs.tsx`: underline tabs, links with
-  `aria-current`. Only areas that work today are listed (an empty Tech tab
-  would promise what is not there). Today's count sits at the row's right end
-  (`DeckCount`, `components/flashcards/DeckLists.tsx`); on a 360px phone it
-  wraps "0/1183 known" onto a second line inside the same height.
+- Layer 1, `components/flashcards/AreaTabs.tsx`: the study tabs (English, Tech,
+  My decks and the student's own, in their order) as underline links with
+  `aria-current`, scrolling with a fade, then ＋ (see "Own tabs"). Today's count
+  sits at the row's right end (`DeckCount`, `components/flashcards/DeckLists.tsx`);
+  below 640px it shows due and new only, from 640px up the known total too.
 - Layer 2, `components/flashcards/DeckTopBar.tsx`: the four card kinds, then
   "⏭ N skipped" while there are skipped cards, then the remark lists
   (`DeckLists`). The row scrolls sideways; on a 360px phone the lists are past
@@ -57,6 +57,11 @@ FRONT SIDE · RECOGNITION                              1 / 3 ← card, unchanged
 - `FlashcardDeck`: one computer-width card height for every tab,
   `calc(100dvh-17rem)`; the `tallTop` prop is gone. Only the box's height
   changed, not the card.
+- Deck study pages (`/decks/<id>/study`, `/library/<id>/study`) show layer 1 to
+  students too, with the tab they came from current (`?from=`, carried on
+  every next and previous card; My decks if none). `DeckStudy` gives up the
+  row's 2.5rem (`tabsAbove`), so Known stays where it was (measured: 773px at
+  390 × 844, 569px at 360 × 640, the same as before the row).
 
 What the removal costs (told to the owner): nothing in the app links to the
 Support channel or level any more, and while studying a word section there is
@@ -161,31 +166,50 @@ Owner, 30 Oct: "bana do", and Tech holds **all** tech decks.
   `subjects.ts` (17 cases); the other two suites still pass with three
   built-in tabs (tabs 58, filters 104); production build.
 
-## Audit of this chat's work (30 Oct) — findings, NOT fixed yet (waiting for the owner)
+## Audit of this chat's work (30 Oct) — all 11 FIXED the same day (owner: "1 to 11 sab thik karo")
 
 Checked: every file this branch changed, against main. Re-run: all four suites
 pass (filters 104, tabs 58, tech 37, subjects 17), desktop 1280 × 800 Known
 ends at 796px, phone card 531px.
 
-| # | Severity | Finding | Proof | Suggested fix |
+| # | Severity | Finding | Proof | Fix (done) |
 |---|---|---|---|---|
-| 1 | Medium | Tech counts business-English decks as tech: "networking" in a title, and the tags "network", "security", "monitoring", "logging", "code"; "java" in a title too | `techSubjectsOf`: "Networking at business events" → Cloud; tag "security" (airport vocabulary) → Cloud; "Dress code words" [code] → Programming | Drop the ambiguous words; rely on the official tags and unambiguous words ("computer networking", "aws", …) |
-| 2 | Medium (at scale) | `techDecks` reads 1,000 decks ordered by copies, then filters; once the library passes 1,000 public decks the student's own, shared and followed decks (0 copies) can drop out | Code: one query with `take: 1000` over library + personal decks | Two queries: the student's own / shared / followed / institute decks uncapped, the library capped |
-| 3 | Low–medium | Until Database setup runs, "Download my data" (`/api/me`) answers 500 | Table renamed locally: `/api/me` 500; `/tech`, `/decks` 200 | Read the tabs for the export in a try/catch, or run Database setup straight after merging |
-| 4 | Low | Docs and one comment describe older states: the 360px count wrap, "English · My decks" with "Tech later" | FLASHCARD-NAV-LAYERS "What is built", PROJECT-MEMORY chat table and decision line, DeckTopBar header | Update the text |
-| 5 | Low | "That tab no longer exists…" does not say what to do next (CLAUDE.md rule 12) | `GONE` in lib/studyTabs.ts | Add "Close this and open your tabs again." |
-| 6 | Low | Tab name fields accept 60 characters, the limit is 30 | `maxLength={60}` in the three sheets | `maxLength={30}` |
-| 7 | Low | Two tabs can have the same name | No check in create / rename / placeDeck | Refuse a name already used (ignoring case) |
-| 8 | Low | After a copy, a tab already holding 100 decks is skipped without saying so; links to decks no longer followed stay hidden and count toward that 100 | `placeDeck` | Say which tab was full; drop stale links when a tab is read |
-| 9 | Low | `section.key` is passed to DeckTopBar but no longer used | DeckTopBar props | Remove it |
-| 10 | Info | Studying a deck opens its own study page, which has no study tabs row | By design (deck pages belong to the decks/library work) | Decide later |
-| 11 | Info | Help has no answer about tabs or Tech | `app/(shared)/help/page.tsx` | Add two Q&As if wanted |
+| 1 | Medium | Tech counts business-English decks as tech: "networking" in a title, and the tags "network", "security", "monitoring", "logging", "code"; "java" in a title too | `techSubjectsOf`: "Networking at business events" → Cloud; tag "security" (airport vocabulary) → Cloud; "Dress code words" [code] → Programming | Ambiguous words dropped from `lib/techDecks.ts` (networking, security, monitoring, logging, code; java only as a tag); `subjects.ts` now holds those cases |
+| 2 | Medium (at scale) | `techDecks` reads 1,000 decks ordered by copies, then filters; once the library passes 1,000 public decks the student's own, shared and followed decks (0 copies) can drop out | Code: one query with `take: 1000` over library + personal decks | Two queries: the student's own / shared / followed / institute decks uncapped, the library capped at 1,000 |
+| 3 | Low–medium | Until Database setup runs, "Download my data" (`/api/me`) answers 500 | Table renamed locally: `/api/me` 500; `/tech`, `/decks` 200 | `/api/me` reads the tabs on their own and catches, like the streak freezes; `studyTabs` is null until the tables exist |
+| 4 | Low | Docs and one comment describe older states: the 360px count wrap, "English · My decks" with "Tech later" | FLASHCARD-NAV-LAYERS "What is built", PROJECT-MEMORY chat table and decision line, DeckTopBar header | Text updated here, in PROJECT-MEMORY and in the DeckTopBar header |
+| 5 | Low | "That tab no longer exists…" does not say what to do next (CLAUDE.md rule 12) | `GONE` in lib/studyTabs.ts | The message now ends "Close this and open your tabs again." |
+| 6 | Low | Tab name fields accept 60 characters, the limit is 30 | `maxLength={60}` in the three sheets | `maxLength={TAB_LIMITS.nameChars}` (30) in all three sheets |
+| 7 | Low | Two tabs can have the same name | No check in create / rename / placeDeck | Refused on the server under the per-user lock (create, rename, placeDeck; capitals ignored) and on screen at once |
+| 8 | Low | After a copy, a tab already holding 100 decks is skipped without saying so; links to decks no longer followed stay hidden and count toward that 100 | `placeDeck` | `placeDeck` returns the full tabs' names and the sheet says them before Continue; only decks the student can still open count toward the 100 |
+| 9 | Low | `section.key` is passed to DeckTopBar but no longer used | DeckTopBar props | Removed |
+| 10 | Info | Studying a deck opens its own study page, which has no study tabs row | By design (deck pages belong to the decks/library work) | Both deck study pages show layer 1 with the source tab current (`?from=`); `DeckStudy` gives up the row's height |
+| 11 | Info | Help has no answer about tabs or Tech | `app/(shared)/help/page.tsx` | Two Q&As added to Help |
 
 Verified fine: every query is scoped by the student; another student's tab
 shows not-found and cannot be changed; 25 parallel creates make exactly 20
 tabs; guests and teachers are refused or skipped; the Flashcard tab survives
 missing tables; no hard-coded colours; every file under 250 lines; axe clean
 in all five themes on every new page and sheet.
+
+## Re-audit after the fixes (30 Oct)
+
+Every changed file read again against main, then everything re-run on a
+production build with a local Postgres:
+
+| Suite | Result |
+|---|---|
+| `scripts/flashcard-tabs-e2e/subjects.ts` | 28 / 28 |
+| `tech.cjs` | 39 / 39 |
+| `tabs.cjs` | 72 / 72 (new: Study links and `?from=` through ›, a made-up `from` ignored, duplicate names on screen and server, 30-character fields, the next-step message, the full-tab message and the unfollowed link not counting, the export before Database setup, Help, the teacher's study page) |
+| `filters.cjs` | 104 / 104 |
+| `scripts/library-e2e` (all six suites) | 274 / 274 |
+
+Measured: Flashcard tab card 531px at 390 × 844 and Known at 796px at
+1280 × 800, as before; deck study pages unchanged at the Known bar (see
+"What is built"). Noted, not this chat's: on a deck's study page at
+1280 × 800 the Known bar ends at 822px, below the window, before and after
+this work (`DeckStudy`'s computer height); left as it was.
 
 ## Still to do
 

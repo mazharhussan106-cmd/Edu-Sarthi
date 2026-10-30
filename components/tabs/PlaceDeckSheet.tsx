@@ -15,7 +15,7 @@ import { callApi } from "@/components/decks/deckClient";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { Sheet } from "@/components/ui/Sheet";
-import { tabNameSchema } from "@/lib/studyTabSchemas";
+import { TAB_LIMITS, tabNameSchema } from "@/lib/studyTabSchemas";
 
 type Tab = { id: string; name: string; has: boolean };
 
@@ -25,6 +25,9 @@ export function PlaceDeckSheet({ deckId, onDone }: { deckId: string; onDone: () 
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  /// Tabs that were already full, so the deck could not join them: said once,
+  /// then Continue goes on as Save would have.
+  const [full, setFull] = useState<string[] | null>(null);
 
   useEffect(() => {
     let gone = false;
@@ -52,12 +55,17 @@ export function PlaceDeckSheet({ deckId, onDone }: { deckId: string; onDone: () 
   async function save() {
     const newTab = name.trim() ? tabNameSchema.safeParse(name) : null;
     if (newTab && !newTab.success) return setMessage(newTab.error.issues[0].message);
+    // The server checks this too; here it answers at once.
+    if (newTab?.data && tabs?.some((t) => t.name.toLowerCase() === newTab.data.toLowerCase())) {
+      return setMessage(`You already have a tab called “${newTab.data}”. Tick it above instead.`);
+    }
     if (!ticked.size && !newTab) return onDone();
     setBusy(true);
     setMessage(null);
-    const r = await callApi("/api/study-tabs", { action: "placeDeck", deckId, tabIds: [...ticked], newTab: newTab?.data });
+    const r = await callApi<{ full?: string[] }>("/api/study-tabs", { action: "placeDeck", deckId, tabIds: [...ticked], newTab: newTab?.data });
     setBusy(false);
     if (!r.ok) return setMessage(r.error);
+    if (r.data.full?.length) return setFull(r.data.full);
     onDone();
   }
 
@@ -94,16 +102,27 @@ export function PlaceDeckSheet({ deckId, onDone }: { deckId: string; onDone: () 
       ) : null}
       <div className="mt-3">
         <Label htmlFor="place-new-tab">{tabs?.length ? "Or a new tab" : "New tab"}</Label>
-        <Input id="place-new-tab" value={name} onChange={(e) => setName(e.target.value)} placeholder="For example, Exam prep" maxLength={60} autoComplete="off" />
+        <Input id="place-new-tab" value={name} onChange={(e) => setName(e.target.value)} placeholder="For example, Exam prep" maxLength={TAB_LIMITS.nameChars} autoComplete="off" />
       </div>
-      <div className="mt-4 flex gap-2">
-        <Button className="flex-1" onClick={() => void save()} disabled={busy}>
-          {busy ? "Saving…" : "Save"}
-        </Button>
-        <Button variant="outline" className="flex-1" onClick={onDone} disabled={busy}>
-          Skip
-        </Button>
-      </div>
+      {full ? (
+        <div className="mt-4">
+          <p role="status" className="text-sm text-ink">
+            {full.map((n) => `“${n}”`).join(", ")} already {full.length === 1 ? "holds" : "hold"} {TAB_LIMITS.decksPerTab} decks, so this deck was not added there. It is in your other ticked tabs and in My decks.
+          </p>
+          <Button className="mt-3 w-full" onClick={onDone}>
+            Continue
+          </Button>
+        </div>
+      ) : (
+        <div className="mt-4 flex gap-2">
+          <Button className="flex-1" onClick={() => void save()} disabled={busy}>
+            {busy ? "Saving…" : "Save"}
+          </Button>
+          <Button variant="outline" className="flex-1" onClick={onDone} disabled={busy}>
+            Skip
+          </Button>
+        </div>
+      )}
       {message ? (
         <p role="alert" className="mt-2 text-sm text-error">
           {message}

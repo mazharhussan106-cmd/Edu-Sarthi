@@ -18,7 +18,9 @@ import { LISTED, LimitReached, lockUser } from "@/lib/decks";
 import { TAB_LIMITS, type BuiltInKey } from "@/lib/studyTabSchemas";
 
 export type TabView = { key: string; label: string; href: string; hidden: boolean; own: boolean };
-type Result = { ok: true; id?: string } | { error: string };
+/// `full`: own tabs a deck could not join because they already hold the most
+/// decks allowed (placeDeck only), so the sheet can say which.
+type Result = { ok: true; id?: string; full?: string[] } | { error: string };
 
 // In their default order.
 const BUILT_IN: Record<BuiltInKey, { kind: Exclude<StudyTabKind, "OWN">; label: string; href: string }> = {
@@ -30,7 +32,19 @@ const BUILT_IN_KINDS = Object.values(BUILT_IN).map((b) => b.kind);
 const keyOf = (t: { id: string; kind: StudyTabKind }): string =>
   t.kind === "OWN" ? t.id : (Object.keys(BUILT_IN) as BuiltInKey[]).find((k) => BUILT_IN[k].kind === t.kind)!;
 const TX = { maxWait: 10_000, timeout: 20_000 };
-const GONE = "That tab no longer exists. It may have been deleted on another device.";
+const GONE = "That tab no longer exists. It may have been deleted on another device. Close this and open your tabs again.";
+
+class NameTaken extends Error {
+  constructor(readonly name: string) {
+    super(name);
+  }
+}
+const taken = (name: string) => ({ error: `You already have a tab called “${name}”. Pick another name.` });
+
+/// Two tabs with one name (ignoring capitals) would be told apart by nothing.
+async function nameUsed(tx: Prisma.TransactionClient, userId: string, name: string, except?: string) {
+  return Boolean(await tx.studyTab.findFirst({ where: { userId, kind: "OWN", name: { equals: name, mode: "insensitive" }, ...(except ? { id: { not: except } } : {}) }, select: { id: true } }));
+}
 
 /// Decks a student may put in a tab: their own, the ones they follow and the
 /// ones shared with them by name. Never a new version's working copy.
@@ -63,6 +77,7 @@ async function ensureBuiltIns(tx: Prisma.TransactionClient, userId: string) {
 async function makeTab(tx: Prisma.TransactionClient, userId: string, name: string): Promise<string> {
   await ensureBuiltIns(tx, userId);
   if ((await tx.studyTab.count({ where: { userId, kind: "OWN" } })) >= TAB_LIMITS.ownTabs) throw new LimitReached();
+  if (await nameUsed(tx, userId, name)) throw new NameTaken(name);
   const last = await tx.studyTab.aggregate({ where: { userId }, _max: { position: true } });
   const tab = await tx.studyTab.create({ data: { userId, name, position: (last._max.position ?? 0) + 1 }, select: { id: true } });
   return tab.id;
@@ -81,13 +96,20 @@ export async function createTab(userId: string, name: string): Promise<Result> {
     return { ok: true, id };
   } catch (e) {
     if (e instanceof LimitReached) return tooMany;
+    if (e instanceof NameTaken) return taken(e.name);
     throw e;
   }
 }
 
 export async function renameTab(userId: string, id: string, name: string): Promise<Result> {
-  const r = await prisma.studyTab.updateMany({ where: { id, userId, kind: "OWN" }, data: { name } });
-  return r.count ? { ok: true } : { error: GONE };
+  // Under the same lock as making a tab, so two devices cannot both pass the
+  // name check.
+  return prisma.$transaction(async (tx) => {
+    await lockUser(tx, userId);
+    if (await nameUsed(tx, userId, name, id)) return taken(name);
+    const r = await tx.studyTab.updateMany({ where: { id, userId, kind: "OWN" }, data: { name } });
+    return (r.count ? { ok: true } : { error: GONE }) as Result;
+  }, TX);
 }
 
 /// Removes the tab and its links only; the decks, their cards and everyone's
@@ -143,22 +165,27 @@ export async function placeDeck(userId: string, deckId: string, tabIds: string[]
     return { error: "That deck is not in your decks any more. Open My decks to check." };
   }
   try {
-    await prisma.$transaction(async (tx) => {
+    const full = await prisma.$transaction(async (tx) => {
       await lockUser(tx, userId);
-      const mine = await tx.studyTab.findMany({ where: { userId, kind: "OWN" }, select: { id: true } });
+      const mine = await tx.studyTab.findMany({ where: { userId, kind: "OWN" }, select: { id: true, name: true } });
       const want = new Set(tabIds.filter((t) => mine.some((m) => m.id === t)));
       if (newTab) want.add(await makeTab(tx, userId, newTab));
-      // Full tabs are skipped, not failed: the deck still lands everywhere else.
-      const counts = await tx.studyTabDeck.groupBy({ by: ["tabId"], where: { tabId: { in: [...want] } }, _count: { _all: true } });
-      const full = new Set(counts.filter((c) => c._count._all >= TAB_LIMITS.decksPerTab).map((c) => c.tabId));
+      // A full tab is skipped, not failed: the deck still lands everywhere
+      // else, and the sheet names the tab. Only decks the student can still
+      // open count: a link to a deck they unfollowed is hidden, so it must not
+      // fill the tab either.
+      const counts = await tx.studyTabDeck.groupBy({ by: ["tabId"], where: { tabId: { in: [...want] }, deckId: { not: deckId }, deck: tabbableBy(userId) }, _count: { _all: true } });
+      const fullIds = new Set(counts.filter((c) => c._count._all >= TAB_LIMITS.decksPerTab).map((c) => c.tabId));
       await tx.studyTabDeck.deleteMany({ where: { deckId, tab: { userId }, tabId: { notIn: [...want] } } });
-      await tx.studyTabDeck.createMany({ data: [...want].filter((t) => !full.has(t)).map((tabId) => ({ tabId, deckId })), skipDuplicates: true });
+      await tx.studyTabDeck.createMany({ data: [...want].filter((t) => !fullIds.has(t)).map((tabId) => ({ tabId, deckId })), skipDuplicates: true });
+      return mine.filter((m) => fullIds.has(m.id)).map((m) => m.name ?? "Tab");
     }, TX);
+    return full.length ? { ok: true, full } : { ok: true };
   } catch (e) {
     if (e instanceof LimitReached) return tooMany;
+    if (e instanceof NameTaken) return taken(e.name);
     throw e;
   }
-  return { ok: true };
 }
 
 /// The student's own tabs, and whether the given deck is already in each.
@@ -194,9 +221,10 @@ export async function tabPage(userId: string, id: string) {
   return {
     tab: { id: tab.id, name: tab.name ?? "Tab" },
     decks: decks.map((d) => {
-      // Own and shared decks study on /decks; a followed one on the library's page.
+      // Own and shared decks study on /decks; a followed one on the library's
+      // page. "from" keeps this tab current in the study tabs there.
       const followed = d.ownerId !== userId && !d.members.length;
-      return { id: d.id, title: d.title, cards: d._count.cards, due: due.get(d.id) ?? 0, href: followed ? `/library/${d.id}/study` : `/decks/${d.id}/study`, available: !followed || listed.has(d.id) };
+      return { id: d.id, title: d.title, cards: d._count.cards, due: due.get(d.id) ?? 0, href: `${followed ? `/library/${d.id}/study` : `/decks/${d.id}/study`}?from=${id}`, available: !followed || listed.has(d.id) };
     }),
   };
 }

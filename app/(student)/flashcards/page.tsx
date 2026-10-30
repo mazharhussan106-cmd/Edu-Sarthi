@@ -206,7 +206,7 @@ export default async function FlashcardsPage({
         level={level}
         list={list}
         base={base}
-        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}`, key: def.key } : null}
+        section={def && sectionFilter ? { label: `${def.label}${packNo ? ` · Pack ${packNo}` : ""}` } : null}
         skipCount={skip.length}
         skipHref={withMore}
         counts={counts}

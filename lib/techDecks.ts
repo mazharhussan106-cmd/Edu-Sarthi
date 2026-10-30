@@ -8,14 +8,22 @@
 // infrastructure, cloud and networking, artificial intelligence), so those
 // tags are the subjects. A student's deck often has no tag, so the title is
 // read too, but only for words that cannot mean something else in an English
-// course: "excel", "data", "react" and "cloud" count as tags, not in titles
-// ("Excel at interviews" is not a spreadsheet deck).
+// course: "excel", "data", "react", "java" and "cloud" count as tags, not in
+// titles ("Excel at interviews" is not a spreadsheet deck). Words a business-
+// English deck uses — networking, security, monitoring, logging, code — are
+// left out altogether ("Networking at business events" is not a tech deck);
+// the official decks are found by their tags instead.
 //
 // It reads the candidate decks and filters here, as lib/libraryTags does,
-// because the matching is on words inside free-text tags and titles. That is
-// cheap for hundreds of decks; at a few thousand, move it into SQL.
+// because the matching is on words inside free-text tags and titles. The
+// student's own, shared, followed and institute decks are read in full; the
+// library is capped at its 1,000 most-copied decks, so a big library can never
+// push the student's own decks off the page. At a few thousand public decks,
+// move the matching into SQL.
 // It deliberately does NOT widen who can see a deck: the query is the union
 // of rules that already exist (LISTED, readable, followed, institute).
+
+import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { LISTED } from "@/lib/decks";
@@ -26,13 +34,18 @@ export const TECH_SUBJECTS = [
   {
     key: "programming",
     label: "Programming",
-    words: ["programming", "coding", "python", "javascript", "typescript", "java", "html", "css", "node.js", "git", "github", "api", "apis", "supabase"],
-    tagOnly: ["react", "node", "code"],
+    words: ["programming", "coding", "python", "javascript", "typescript", "html", "css", "node.js", "nodejs", "react.js", "reactjs", "java programming", "git", "github", "api", "apis", "supabase"],
+    tagOnly: ["react", "node", "java"],
   },
-  { key: "data", label: "Data", words: ["sql", "power bi", "powerbi", "etl", "airflow", "jupyter", "pandas", "database", "databases", "analytics", "microsoft excel", "ms excel"], tagOnly: ["data", "excel"] },
-  { key: "infrastructure", label: "Infrastructure", words: ["linux", "bash", "docker", "kubernetes", "k8s", "ci/cd", "cicd", "devops", "terraform"], tagOnly: ["infrastructure", "shell"] },
-  { key: "cloud", label: "Cloud & networking", words: ["aws", "azure", "gcp", "networking", "sso", "oauth", "observability", "cloud computing"], tagOnly: ["cloud", "cloud and networking", "network", "logging", "monitoring", "security"] },
-  { key: "ai", label: "AI", words: ["llm", "llms", "rag", "machine learning", "deep learning", "prompt engineering", "chatgpt", "genai", "artificial intelligence"], tagOnly: ["ai"] },
+  { key: "data", label: "Data", words: ["sql", "power bi", "powerbi", "etl", "airflow", "jupyter", "pandas", "database", "databases", "analytics", "microsoft excel", "ms excel", "excel formulas"], tagOnly: ["data", "excel"] },
+  { key: "infrastructure", label: "Infrastructure", words: ["linux", "bash", "shell scripting", "docker", "kubernetes", "k8s", "ci/cd", "cicd", "devops", "terraform"], tagOnly: ["infrastructure"] },
+  {
+    key: "cloud",
+    label: "Cloud & networking",
+    words: ["aws", "azure", "gcp", "sso", "oauth", "observability", "cloud computing", "computer networking", "computer networks", "network engineering", "cybersecurity", "cyber security", "tcp/ip"],
+    tagOnly: ["cloud", "cloud and networking"],
+  },
+  { key: "ai", label: "AI", words: ["llm", "llms", "rag", "machine learning", "deep learning", "prompt engineering", "chatgpt", "genai", "generative ai", "artificial intelligence"], tagOnly: ["ai"] },
 ] as const;
 export type TechSubject = (typeof TECH_SUBJECTS)[number]["key"];
 
@@ -66,32 +79,38 @@ export type TechDeck = {
   institute: CreditInstitute | null;
 };
 
+const DECK_SELECT = (userId: string) =>
+  ({
+    id: true,
+    title: true,
+    tags: true,
+    ownerId: true,
+    visibility: true,
+    status: true,
+    instituteId: true,
+    follows: { where: { userId }, select: { id: true } },
+    members: { where: { userId, acceptedAt: { not: null } }, select: { id: true } },
+    owner: { select: { ...CREDIT_SELECT, suspendedAt: true } },
+    institute: { select: { name: true, logoKey: true, status: true } },
+    _count: { select: { cards: true } },
+  }) satisfies Prisma.DeckSelect;
+
 export async function techDecks(userId: string): Promise<TechDeck[]> {
   const inst = await instituteDeckScope(userId);
-  const accepted = { userId, acceptedAt: { not: null } };
-  const rows = await prisma.deck.findMany({
-    where: {
-      // A new version's working copy is never shown; the live deck is.
-      draftOfId: null,
-      OR: [LISTED, { ownerId: userId }, { members: { some: accepted } }, { follows: { some: { userId } } }, ...(inst ? [inst] : [])],
-    },
+  const select = DECK_SELECT(userId);
+  // A new version's working copy is never shown; the live deck is.
+  const personal = await prisma.deck.findMany({
+    where: { draftOfId: null, OR: [{ ownerId: userId }, { members: { some: { userId, acceptedAt: { not: null } } } }, { follows: { some: { userId } } }, ...(inst ? [inst] : [])] },
+    orderBy: { title: "asc" },
+    select,
+  });
+  const library = await prisma.deck.findMany({
+    where: { draftOfId: null, ...LISTED, id: { notIn: personal.map((d) => d.id) } },
     orderBy: [{ copyCount: "desc" }, { title: "asc" }],
     take: 1000,
-    select: {
-      id: true,
-      title: true,
-      tags: true,
-      ownerId: true,
-      visibility: true,
-      status: true,
-      instituteId: true,
-      follows: { where: { userId }, select: { id: true } },
-      members: { where: accepted, select: { id: true } },
-      owner: { select: { ...CREDIT_SELECT, suspendedAt: true } },
-      institute: { select: { name: true, logoKey: true, status: true } },
-      _count: { select: { cards: true } },
-    },
+    select,
   });
+  const rows = [...personal, ...library];
 
   const tech = rows.flatMap((d) => {
     const subjects = techSubjectsOf(d);
@@ -111,8 +130,9 @@ export async function techDecks(userId: string): Promise<TechDeck[]> {
     const listed = d.visibility === "PUBLIC" && d.status === "APPROVED" && !d.owner.suspendedAt && d.institute?.status !== "SUSPENDED";
     const how: TechDeck["how"] =
       d.ownerId === userId ? "own" : d.members.length ? "shared" : d.follows.length ? "following" : inst && d.visibility === "INSTITUTE" && d.instituteId === inst.instituteId ? "institute" : "library";
+    // "from=tech" keeps Tech as the current tab on the study page.
     const href =
-      how === "own" || how === "shared" ? `/decks/${d.id}/study` : how === "following" ? `/library/${d.id}/study` : how === "institute" ? `/institute/decks/${d.id}` : `/library/${d.id}`;
+      how === "own" || how === "shared" ? `/decks/${d.id}/study?from=tech` : how === "following" ? `/library/${d.id}/study?from=tech` : how === "institute" ? `/institute/decks/${d.id}` : `/library/${d.id}`;
     const owner: CreditOwner = { role: d.owner.role, name: d.owner.name, creditStyle: d.owner.creditStyle, publicName: d.owner.publicName };
     return {
       id: d.id,

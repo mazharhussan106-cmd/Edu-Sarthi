@@ -13,7 +13,10 @@ const cases: [string, string[], string[]][] = [
   ["Excel at interviews", [], []],
   ["Microsoft Excel", ["data"], ["data"]],
   ["My spreadsheet deck", ["excel"], ["data"]],
-  ["Java basics", [], ["programming"]],
+  // "java" only as a tag: "Java island trip" is a travel deck.
+  ["Java basics", [], []],
+  ["Java basics", ["java"], ["programming"]],
+  ["Java island trip", [], []],
   ["JavaScript and TypeScript", [], ["programming"]],
   ["Fragments in spoken English", [], []],
   ["RAG pipelines", [], ["ai"]],
@@ -26,6 +29,16 @@ const cases: [string, string[], string[]][] = [
   ["Daily chunks", ["speaking"], []],
   ["LLM notes", ["ai"], ["ai"]],
   ["Python for data analytics", [], ["programming", "data"]],
+  // Business English words that also name tech topics are never tech on their own.
+  ["Networking at business events", [], []],
+  ["Small talk for networking", ["business"], []],
+  ["Airport vocabulary", ["travel", "security"], []],
+  ["Monitoring your progress", ["monitoring"], []],
+  ["Office English", ["network"], []],
+  ["Dress code words", ["code"], []],
+  ["Networking Basics", ["cloud and networking"], ["cloud"]],
+  ["Computer networking", [], ["cloud"]],
+  ["Cybersecurity basics", [], ["cloud"]],
 ];
 
 let fails = 0;

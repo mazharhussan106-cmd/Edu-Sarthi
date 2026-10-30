@@ -62,3 +62,10 @@ export const tabActionSchema = z.discriminatedUnion("action", [
 ]);
 
 export type TabAction = z.infer<typeof tabActionSchema>;
+
+/// The tab a deck's study page was opened from (`?from=`), so that tab stays
+/// current in the study tabs there: a built-in key or an own tab's id. Anything
+/// else is dropped; it is also put back into links, so it must be plain.
+export function parseFrom(v: unknown): string | null {
+  return typeof v === "string" && /^(english|tech|decks|[a-z0-9]{10,40})$/.test(v) ? v : null;
+}

@@ -19,7 +19,7 @@ import { callApi } from "@/components/decks/deckClient";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { Sheet } from "@/components/ui/Sheet";
-import { tabNameSchema } from "@/lib/studyTabSchemas";
+import { TAB_LIMITS, tabNameSchema } from "@/lib/studyTabSchemas";
 
 export type ArrangeTab = { key: string; label: string; hidden: boolean; own: boolean };
 
@@ -53,10 +53,15 @@ export function ArrangeTabs({ tabs, canCreate }: { tabs: ArrangeTab[]; canCreate
     after(r.data);
   }
 
+  // The server checks this too; here it answers at once.
+  const nameUsed = (n: string, except?: string) => tabs.some((t) => t.own && t.key !== except && t.label.toLowerCase() === n.toLowerCase());
+  const usedMessage = (n: string) => `You already have a tab called “${n}”. Pick another name.`;
+
   function create(e: React.FormEvent) {
     e.preventDefault();
     const n = tabNameSchema.safeParse(name);
     if (!n.success) return setMessage(n.error.issues[0].message);
+    if (nameUsed(n.data)) return setMessage(usedMessage(n.data));
     void send({ action: "create", name: n.data }, (d) => {
       setName("");
       setOpen(false);
@@ -67,6 +72,7 @@ export function ArrangeTabs({ tabs, canCreate }: { tabs: ArrangeTab[]; canCreate
   function rename(key: string) {
     const n = tabNameSchema.safeParse(editing?.name ?? "");
     if (!n.success) return setMessage(n.error.issues[0].message);
+    if (nameUsed(n.data, key)) return setMessage(usedMessage(n.data));
     void send({ action: "rename", id: key, name: n.data }, () => {
       setEditing(null);
       router.refresh();
@@ -122,7 +128,7 @@ export function ArrangeTabs({ tabs, canCreate }: { tabs: ArrangeTab[]; canCreate
           <form onSubmit={create} className="flex items-end gap-2">
             <div className="min-w-0 flex-1">
               <Label htmlFor="new-tab">New tab</Label>
-              <Input id="new-tab" value={name} onChange={(e) => setName(e.target.value)} placeholder="For example, Exam prep" maxLength={60} autoComplete="off" />
+              <Input id="new-tab" value={name} onChange={(e) => setName(e.target.value)} placeholder="For example, Exam prep" maxLength={TAB_LIMITS.nameChars} autoComplete="off" />
             </div>
             <Button type="submit" disabled={busy}>
               Make tab
@@ -147,7 +153,7 @@ export function ArrangeTabs({ tabs, canCreate }: { tabs: ArrangeTab[]; canCreate
                 >
                   <div className="min-w-0 flex-1">
                     <Label htmlFor={`rename-${t.key}`}>New name for {t.label}</Label>
-                    <Input id={`rename-${t.key}`} value={editing.name} onChange={(e) => setEditing({ key: t.key, name: e.target.value })} maxLength={60} autoComplete="off" />
+                    <Input id={`rename-${t.key}`} value={editing.name} onChange={(e) => setEditing({ key: t.key, name: e.target.value })} maxLength={TAB_LIMITS.nameChars} autoComplete="off" />
                   </div>
                   <Button type="submit" size="sm" disabled={busy}>Save</Button>
                   <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>Cancel</Button>

@@ -54,8 +54,6 @@ export async function GET() {
       publicName: true,
       avatarKey: true,
       decks: { where: { termsAcceptedAt: { not: null } }, select: { title: true, licence: true, termsVersion: true, termsAcceptedAt: true } },
-      // Their study tabs: names they chose and which decks they put where.
-      studyTabs: { orderBy: { position: "asc" }, select: { kind: true, name: true, position: true, hidden: true, createdAt: true, decks: { select: { deck: { select: { title: true } }, addedAt: true } } } },
       enrollments: { select: { moduleId: true, createdAt: true } },
       // Card progress and the answer-by-answer study history are personal data
       // stored about the student too. Capped so a very long history cannot make
@@ -119,6 +117,13 @@ export async function GET() {
     .then(([ledger, frozenDays]) => ({ ledger, frozenDays }))
     .catch(() => null);
 
+  // Their study tabs (names they chose, which decks they put where), read on
+  // their own and caught for the same reason as the freezes: until Database
+  // setup has made the tables, the download must still work.
+  const studyTabs = await prisma.studyTab
+    .findMany({ where: { userId }, orderBy: { position: "asc" }, select: { kind: true, name: true, position: true, hidden: true, createdAt: true, decks: { select: { deck: { select: { title: true } }, addedAt: true } } } })
+    .catch(() => null);
+
   // The compliance record of a data-access request: who (by student ID
   // only) and when. The export's contents are not logged.
   await logAdmin(null, "Student exported own data", "user", data?.publicId ?? null);
@@ -129,7 +134,7 @@ export async function GET() {
   const profilePhoto = avatarKey ? { link: await avatarUrl(avatarKey), linkExpires: "about 30 minutes after this export" } : null;
 
   const stamp = new Date().toISOString().slice(0, 10);
-  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data ? { ...account, profilePhoto } : null, streakFreezes: streak }, null, 2), {
+  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), account: data ? { ...account, profilePhoto, studyTabs } : null, streakFreezes: streak }, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Content-Disposition": `attachment; filename="edusarthi-my-data-${stamp}.json"`,

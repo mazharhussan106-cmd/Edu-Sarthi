@@ -58,6 +58,16 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const user = req.auth?.user;
 
+  // Broken percent-encoding in a path (…/%E0) makes Next's own router throw, so
+  // every dynamic route answered 500 ("server error" to a crawler, which then
+  // retries). It is never a real link, but crawlers and scanners find such
+  // addresses, and the library is now public: answer 400 before any page runs.
+  try {
+    decodeURIComponent(pathname);
+  } catch {
+    return new NextResponse("That address is not valid. Check the link and try again.", { status: 400 });
+  }
+
   const redirect = (to: string) =>
     NextResponse.redirect(new URL(to, req.nextUrl.origin));
 

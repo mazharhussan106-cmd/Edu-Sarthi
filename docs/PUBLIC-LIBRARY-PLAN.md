@@ -138,6 +138,23 @@ Not tested: the email to real recipients (no SendGrid key here), a real phone, t
 
 **Order matters:** only pushes to `main` deploy, so Steps 1 to 3 can be built and tested on the branch, and merged only after Step 4's text is ready and the email is out. Do not merge Step 1 alone.
 
+## Audit before the merge (30 Oct 2026)
+
+The owner said "start building next phase" with every step built, so the phase was an audit of the branch, aimed at what changes when the library opens to anyone: addresses nobody typed by hand. Each finding below was reproduced first (a real browser on a production build, the server's log), then fixed, then re-tested.
+
+Found and fixed:
+1. **A repeated search or topic (`/library?q=a&q=b`) showed "This page did not load".** Next gives an array for a repeated parameter and `.trim()` on it threw. It was in the page before this branch, but only signed-in people could reach it. `queryText` in `lib/libraryUrl.ts` takes the first value.
+2. **A NUL byte in a search, a topic, a deck id or a card id (`?q=%00`, `/library/%00`) made Postgres throw** ("invalid byte sequence", code 22021). Control characters in a search now become spaces, and `isRecordId` sends a segment that cannot be an id straight to "not found" without a query. The list and its metadata read the address through one `readView()`, so they cannot disagree about which view it is.
+3. **My Step 2 could take the whole site down.** The root layout turns `NEXT_PUBLIC_APP_URL` into a URL for every page, so a value without `https://` (`edusarthi.com`), or only spaces, threw "Invalid URL" on every request. `siteUrl()` now checks that it is an http(s) address and otherwise treats it as unset (no canonical tag, no sitemap line, everything else works). Tested with a production build and the variable set to `edusarthi.com`: every page 200. **Still, set it with `https://`:** the emails use the raw value (`lib/appUrl`) and would be wrong with a bad one.
+4. **Broken percent-encoding in any path (`/library/%E0`, and `/d/%E0`, `/reset-password/%E0`) answered HTTP 500.** That is Next's own router on every dynamic route, not this branch, but a crawler reports 500s as server errors and retries them, and the library is now crawled. `proxy.ts` answers 400 first.
+5. **The announcement email named the Settings row wrongly** ("How your name shows on public decks"; the row is "Name on public decks"). Fixed in the draft. The menu link and the Profile pages still use the longer name; left as they were.
+
+Checked and fine, with a real browser (21 addresses): a repeated page number, a page number of 999999999999999999999999, `NaN`, `-1e9`, a 5,000-character search, Hindi and emoji, `' OR 1=1--`, `%` and `_`, `q[a]=1`, `%ZZ`, `..%2f..%2fetc`, a deck id with a trailing space. Every one shows the list, the deck or "not found".
+
+Known and left:
+- **No rate limit on the public pages**, and they send `no-store`, so a crawler's every request reaches the database (one connection on the live pool). Watch Vercel's runtime logs after launch; the fixes are caching the signed-out list and the sitemap, or Vercel's firewall.
+- A taken-down deck answers 200 with a not-found page and `noindex` (see Step 1).
+
 ## Traps to remember
 
 - The proxy prefix trap above.

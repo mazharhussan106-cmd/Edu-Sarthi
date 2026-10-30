@@ -20,6 +20,7 @@ import { cache } from "react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { canonical } from "@/lib/siteUrl";
+import { isRecordId, queryPage } from "@/lib/libraryUrl";
 import { AI_CARD_FILTER, CARD_SELECT, LISTED, faceCard } from "@/lib/decks";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -40,7 +41,9 @@ const PAGE = 25;
 // One read serves the page and its metadata: the live pool has a single
 // connection, so asking twice per request would queue.
 const getDeck = cache(async (id: string) =>
-  prisma.deck.findFirst({
+  // A segment that cannot be an id never reaches the database: a NUL byte in
+  // one made Postgres throw, and the visitor saw an error, not "not found".
+  !isRecordId(id) ? null : prisma.deck.findFirst({
     where: { id, ...LISTED },
     select: { title: true, description: true, tags: true, ownerId: true, licence: true, ...SOURCE_SELECT, ...CREDIT_INSTITUTE_SELECT, owner: { select: { ...CREDIT_SELECT, teacherVerifiedAt: true } }, members: { where: { role: "EDIT", acceptedAt: { not: null }, termsAcceptedAt: { not: null } }, select: { user: { select: CREDIT_SELECT } } }, _count: { select: { likes: true, cards: true } } },
   }),
@@ -50,7 +53,7 @@ const getDeck = cache(async (id: string) =>
 // in it, never the creator: the page credits them as they chose, but a title
 // or description is copied into places they never agreed to. Pages 2 and on of
 // a long deck are listed only through the first page.
-export async function generateMetadata({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ page?: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ page?: string | string[] }> }): Promise<Metadata> {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   const deck = await getDeck(id);
   if (!deck) return { robots: { index: false } };
@@ -63,11 +66,11 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
     title,
     description,
     ...canonical(`/library/${id}`),
-    ...(Number(sp.page) > 1 ? { robots: { index: false, follow: true } } : {}),
+    ...(queryPage(sp.page) > 1 ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
-export default async function LibraryDeckPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ page?: string }> }) {
+export default async function LibraryDeckPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ page?: string | string[] }> }) {
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const deck = await getDeck(id);
   if (!deck) notFound();
@@ -75,7 +78,7 @@ export default async function LibraryDeckPage({ params, searchParams }: { params
   const index = await prisma.word.findMany({ where: { deckId: id }, orderBy: { serial: "asc" }, select: { id: true, text: true, category: true } });
   // Imported cards carry their topic in `category`; hand-made cards do not.
   const imported = index.some((c) => c.category);
-  const page = Math.max(1, Math.min(Math.ceil(index.length / PAGE), Number(sp.page) || 1));
+  const page = Math.max(1, Math.min(Math.ceil(index.length / PAGE), queryPage(sp.page)));
   const pageIds = index.slice((page - 1) * PAGE, page * PAGE).map((c) => c.id);
   const full = imported ? [] : await Promise.all((await prisma.word.findMany({ where: { id: { in: pageIds }, deckId: id }, orderBy: { serial: "asc" }, select: CARD_SELECT })).map(faceCard));
 

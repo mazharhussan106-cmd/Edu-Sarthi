@@ -18,7 +18,7 @@ import { auth } from "@/lib/auth";
 import { canonical } from "@/lib/siteUrl";
 import { prisma } from "@/lib/prisma";
 import { CREDIT_INSTITUTE_SELECT, CREDIT_SELECT } from "@/lib/libraryTerms";
-import { libraryHref } from "@/lib/libraryUrl";
+import { SORTS, libraryHref, readView, type RawView } from "@/lib/libraryUrl";
 import { libraryTags } from "@/lib/libraryTags";
 import { DeckCredit } from "@/components/decks/DeckCredit";
 import { LISTED, aiCardCounts } from "@/lib/decks";
@@ -31,15 +31,13 @@ export const revalidate = 0;
 
 const PER_PAGE = 24;
 
-type View = { q?: string; tag?: string; sort?: string; page?: string };
-
 // One address in search results: the plain first page. A search, a topic,
 // another sort and page 2 or later are the same decks again, so those stay out
 // of the index (but their links are still followed). A topic page would be
 // worth indexing only once topics have descriptions; not now.
-export async function generateMetadata({ searchParams }: { searchParams: Promise<View> }): Promise<Metadata> {
-  const sp = await searchParams;
-  const variant = Boolean(sp.q?.trim() || sp.tag?.trim() || (sp.sort && sp.sort !== "new") || Number(sp.page) > 1);
+export async function generateMetadata({ searchParams }: { searchParams: Promise<RawView> }): Promise<Metadata> {
+  const v = readView(await searchParams);
+  const variant = Boolean(v.q || v.tag || v.sort !== "new" || v.page > 1);
   return {
     title: "Flashcard library — EduSarthi",
     description: "Flashcard decks shared by EduSarthi learners and teachers, checked by an admin before they appear. Anyone can read them.",
@@ -48,18 +46,10 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   };
 }
 
-const SORTS = [
-  { value: "new", label: "Newest" },
-  { value: "liked", label: "Most liked" },
-  { value: "copied", label: "Most copied" },
-] as const;
-
-export default async function LibraryPage({ searchParams }: { searchParams: Promise<View> }) {
+export default async function LibraryPage({ searchParams }: { searchParams: Promise<RawView> }) {
   const [sp, session] = await Promise.all([searchParams, auth()]);
   const signedIn = Boolean(session?.user?.id);
-  const q = (sp.q ?? "").trim().slice(0, 60);
-  const tag = (sp.tag ?? "").trim().toLowerCase().slice(0, 24);
-  const sort = SORTS.some((x) => x.value === sp.sort) ? (sp.sort as string) : "new";
+  const { q, tag, sort, page: wantedPage } = readView(sp);
   const filtered = Boolean(q || tag);
 
   const where: Prisma.DeckWhereInput = {
@@ -82,7 +72,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   const [total, topics] = await Promise.all([prisma.deck.count({ where }), libraryTags()]);
   const pages = Math.max(1, Math.ceil(total / PER_PAGE));
   // A page number that is not a number, or past the end, shows the nearest real one.
-  const page = Math.min(pages, Math.max(1, Math.floor(Number(sp.page)) || 1));
+  const page = Math.min(pages, wantedPage);
 
   const decks = await prisma.deck.findMany({
     where,

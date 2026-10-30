@@ -14,6 +14,7 @@ import { cache } from "react";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isRecordId } from "@/lib/libraryUrl";
 import { CARD_SELECT, LISTED, faceCard } from "@/lib/decks";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
 import { AiBadge } from "@/components/decks/AiBadge";
@@ -24,6 +25,8 @@ export const revalidate = 0;
 // One read serves the page and its metadata (the live pool has one connection).
 // Null for anything that is not a card of a listed deck.
 const load = cache(async (id: string, cardId: string) => {
+  // See getDeck on the deck page: a segment that cannot be an id is "not found".
+  if (!isRecordId(id) || !isRecordId(cardId)) return null;
   const deck = await prisma.deck.findFirst({
     where: { id, ...LISTED },
     select: { title: true, cards: { orderBy: { serial: "asc" }, select: { id: true } } },

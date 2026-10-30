@@ -312,7 +312,7 @@ Database setup ki zarurat nahi. **Library ko bina login ke kholne wala hissa (St
 
 **Naya consent aur text (Step 4) — merge se pehle ka order:**
 1. Vakil se poochhiye: jin creators ne 29 Oct se pehle deck submit kiya, kya unse dobara "haan" lena zaroori hai? (`docs/LEGAL-REVIEW-PACK.md` section 4b, point 12)
-2. Vercel me `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` set hain, ye check kariye
+2. Vercel me `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` set hain, ye check kariye. `NEXT_PUBLIC_APP_URL` **`https://` se shuru** ho (jaise `https://edu-sarthi-nine.vercel.app`), bina `https://` ke emails ke links galat bante hain
 3. Admin → Announcements: "EduSarthi: the deck library will be open to everyone" draft save kariye, **apne aap ko test email bhejiye**, padhiye, phir Start (SEND likhiye). Roz 80 email jaate hain, to kuch din lag sakte hain
 4. **Aakhri email ke 7 din baad** hi branch merge kariye (email me yehi vaada hai)
 

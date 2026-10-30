@@ -10,12 +10,30 @@
 // caller controls.
 
 export function siteUrl(): string | null {
-  const configured = process.env.NEXT_PUBLIC_APP_URL;
-  if (configured) return configured.replace(/\/+$/, "");
+  // A value that is not a web address ("edusarthi.com" with no https://, only
+  // spaces) counts as unset. The root layout turns this into a URL for every
+  // page, so a typo in the Vercel variable would otherwise take the whole site
+  // down with "Invalid URL" instead of just losing a canonical tag.
+  const configured = webAddress(process.env.NEXT_PUBLIC_APP_URL);
+  if (configured) return configured;
   // Set by Vercel itself: a bare host such as "edu-sarthi-nine.vercel.app".
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercel) return `https://${vercel}`;
+  const fromVercel = vercel ? webAddress(`https://${vercel.trim()}`) : null;
+  if (fromVercel) return fromVercel;
   return process.env.NODE_ENV === "production" ? null : "http://localhost:3000";
+}
+
+/// The address with no trailing slash, query or fragment, or null when it is
+/// not an http(s) address.
+function webAddress(value: string | undefined): string | null {
+  if (!value?.trim()) return null;
+  try {
+    const url = new URL(value.trim());
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
+  } catch {
+    return null;
+  }
 }
 
 /// `alternates` for a page's metadata, or nothing when there is no base: Next

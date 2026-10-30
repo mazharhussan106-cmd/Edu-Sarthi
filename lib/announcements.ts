@@ -67,7 +67,7 @@ export function libraryOpenDraft(site: string) {
       "What this means for you:",
       [
         "- If you have not published a deck to the library, nothing changes for you.",
-        "- If you have published a deck, it will be readable by anyone, and search engines may list it. It shows your name only the way you chose in Settings → How your name shows on public decks, or no name.",
+        "- If you have published a deck, it will be readable by anyone, and search engines may list it. It shows your name only the way you chose in Settings → Name on public decks, or no name.",
         "- You can change how your name shows, or withdraw a deck, at any time. A withdrawn deck leaves the library and our sitemap at once. A search engine may keep its own copy for a while, and copies people already made under CC BY-SA stay with them.",
         "- Only people with an account can follow, copy, like or report a deck.",
       ].join("\n"),

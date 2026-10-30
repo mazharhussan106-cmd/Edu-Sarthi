@@ -662,7 +662,11 @@ What changed:
 - `android/README.md` is updated to match.
 - The push builds a new debug APK on the branch.
 
-**Owner decision still open:** keep the Vercel address in the app, or connect `edusarthi.com` to Vercel. Connecting it means:
+PR #26 was merged on 29 Oct, after the owner tested the new APK on a phone.
+
+**Owner's decision (29 Oct): the site runs on the Vercel address `edu-sarthi-nine.vercel.app` until the owner adds the domain.** Do not point the app, links or settings at `edusarthi.com` before that. `NEXT_PUBLIC_APP_URL` in Vercel must also be the Vercel address. Every email link (sign-in link, password reset, reminders, audit ready) is built from it. Its value is secret and could not be read from the session, so the owner checks it.
+
+When the owner connects `edusarthi.com` later, the steps are:
 - adding the domain in Vercel and changing the DNS at Hostinger;
 - updating `NEXT_PUBLIC_APP_URL`;
 - adding the Google OAuth redirect URI `https://edusarthi.com/api/auth/callback/google`;
@@ -671,6 +675,15 @@ What changed:
 Also open: `ANDROID_CERT_SHA256` is not set in Vercel, so the app keeps a URL bar.
 
 **Also seen in the Vercel logs (26 Oct, already fixed):** Google sign-in was refused 11 times (AccessDenied) because the live database lacked `User.aiCardsUsed`. Database setup run #7 fixed it. Runs #10 and #11 (28 Oct) are in sync as well. There have been no runtime errors in the 24 hours before this fix.
+
+**Login down again (29 Oct, fixed the same day).** PRs #27, #28 and #29 changed the schema:
+- `User.avatarKey` (new column);
+- `Module.focus` (new column);
+- the new tables `StreakFreeze` and `StreakLedger`.
+
+They were merged and deployed without a Database setup run. From about 18:28 UTC every sign-in failed: password, guest and Google all hit "The column `User.avatarKey` does not exist" (47 errors in one hour). Database setup run #12 (19:15 UTC) fixed it. It printed "in sync", gave no data-loss warning, and changed no card (0 created, 0 updated). This is the third time a merge with a schema change broke sign-in on the live site, after the AI columns on 26 Oct and this one. **Run Actions → Database setup straight after merging any PR that touches `prisma/schema.prisma`.**
+
+Separate and not code: "Email me a code" cannot send, because SendGrid answers "401 Maximum credits exceeded" (the plan's email credits are used up). Password and Google sign-in do not need email.
 
 ## AI draft audit (26 Oct 2026, branch `claude/magical-hopper-juy9yr`)
 

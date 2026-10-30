@@ -32,8 +32,9 @@ const DAY = 86_400_000;
 const IST = 5.5 * 3_600_000;
 const TOP = LADDER_DAYS.length - 1;
 
-/// Midnight India time at the start of the day `at` falls on.
-export function istDayStart(at: Date): Date {
+/// Midnight India time at the start of the day `at` falls on. The one
+/// definition of "today" for the daily limits (lib/flashcards, lib/todayReview).
+export function istDayStart(at = new Date()): Date {
   return new Date(Math.floor((at.getTime() + IST) / DAY) * DAY - IST);
 }
 
@@ -46,6 +47,20 @@ function istDaysBetween(from: Date, to: Date): number {
 /// is not sent back sooner than 30.
 function rungCovering(days: number): number {
   const i = LADDER_DAYS.findIndex((d) => d >= days);
+  return i === -1 ? TOP : i;
+}
+
+/// Upper edges of each rung's band of gaps, halfway between neighbouring rungs
+/// (3|7 → 5, 7|15 → 11, …). A gap actually given — v2's ±2-day spread, or
+/// the v1 ladder's 1 and 3 days — falls inside exactly one band.
+export const RUNG_BANDS = [5, 11, 22.5, 45, 90, 150] as const;
+
+/// The rung a card is on, read from the gap it was last given rather than its
+/// stored step number. Cards from the v1 ladder (1 · 3 · 7 · 15 · 30 · 60)
+/// store a step one place off; their gap still says where they are, so an
+/// answer before scripts/srs-v2-restage.ts has run cannot jump a rung.
+export function rungForGap(days: number): number {
+  const i = RUNG_BANDS.findIndex((edge) => days < edge);
   return i === -1 ? TOP : i;
 }
 
@@ -64,14 +79,18 @@ function spread(gap: number, key: string): number {
 /// rung. `key` makes the spread differ per card and per review: pass the card
 /// id and how many times it has been reviewed.
 export function nextReview(
-  current: { stage: number; lastReviewedAt: Date | null } | null,
+  current: { stage: number; lastReviewedAt: Date | null; dueAt?: Date | null } | null,
   known: boolean,
   recall: Recall | null,
   key: string,
   now = new Date(),
 ): { stage: number; dueAt: Date } {
-  // Clamped: a stage stored under an older, longer ladder must not index past the end.
-  const from = Math.min(TOP, Math.max(0, current?.stage ?? 0));
+  // From the gap when there is one (see rungForGap); the stored step only for
+  // a card never answered, clamped so a bad value cannot index past the end.
+  const from =
+    current?.lastReviewedAt && current.dueAt
+      ? rungForGap((current.dueAt.getTime() - current.lastReviewedAt.getTime()) / DAY)
+      : Math.min(TOP, Math.max(0, current?.stage ?? 0));
   let stage: number;
   if (!known) {
     stage = Math.max(0, from - 2);

@@ -7,8 +7,8 @@
 
 import assert from "node:assert/strict";
 
-import { LADDER_DAYS, describeDue, istDayStart, nextReview } from "../lib/srs";
-import { AGAIN_AFTER, afterCard, againQuery, parseAgain, pickWithAgain, type Again } from "../lib/cardAgain";
+import { LADDER_DAYS, describeDue, istDayStart, nextReview, rungForGap } from "../lib/srs";
+import { AGAIN_AFTER, afterCard, againQuery, parseAgain, pickForSession, pickWithAgain, type Again } from "../lib/cardAgain";
 
 const DAY = 86_400_000;
 // Monday 3 Nov 2026, 21:00 India time: late evening, the case where exact
@@ -127,6 +127,43 @@ check("spread: none under 15, ±1 at 15, ±2 from 30 (D8)", () => {
   for (const g of [30, 60, 120, 180]) assert.deepEqual([...seen.get(g)!].sort(), [-1, -2, 0, 1, 2]);
 });
 
+check("rung from gap: v1 gaps 1·3·7·15·30·60 → v2 rungs 0·0·1·2·3·4", () => {
+  assert.deepEqual([1, 3, 7, 15, 30, 60].map(rungForGap), [0, 0, 1, 2, 3, 4]);
+});
+
+check("rung from gap: every v2 gap, with spread and time of day, maps to itself", () => {
+  // A v2 gap is whole days from the answer's midnight, so dueAt − lastReviewedAt
+  // is up to a day short of the rung (+ spread).
+  for (let rung = 0; rung < LADDER_DAYS.length; rung++) {
+    const range = LADDER_DAYS[rung] >= 30 ? 2 : LADDER_DAYS[rung] >= 15 ? 1 : 0;
+    for (let off = -range; off <= range; off++) {
+      for (const short of [0, 0.01, 0.5, 0.99]) assert.equal(rungForGap(LADDER_DAYS[rung] + off - short), rung, `${rung} ${off} ${short}`);
+    }
+  }
+});
+
+check("a v1 card answered before the restage script does not jump a rung (audit A2)", () => {
+  // Stored as v1 step 5 (60 days), last answered 60 days ago, due today.
+  const last = new Date(MON_9PM.getTime() - 60 * DAY);
+  const v1 = { stage: 5, lastReviewedAt: last, dueAt: new Date(last.getTime() + 60 * DAY) };
+  assert.equal(LADDER_DAYS[nextReview(v1, true, "MEDIUM", "a", MON_9PM).stage], 120);
+  assert.equal(LADDER_DAYS[nextReview(v1, true, "HARD", "a", MON_9PM).stage], 60);
+  assert.equal(LADDER_DAYS[nextReview(v1, false, null, "a", MON_9PM).stage], 15);
+});
+
+check("a v2 card's rung read from its gap equals its stored step", () => {
+  for (let k = 0; k < 50; k++) {
+    let cur: { stage: number; lastReviewedAt: Date | null; dueAt: Date | null } | null = null;
+    let now = MON_9PM;
+    for (const recall of ["MEDIUM", "EASY", "HARD", "MEDIUM", "MEDIUM", "EASY"] as const) {
+      const r = nextReview(cur, true, recall, `k${k}:${recall}`, now);
+      cur = { stage: r.stage, lastReviewedAt: now, dueAt: r.dueAt };
+      assert.equal(rungForGap((r.dueAt.getTime() - now.getTime()) / DAY), r.stage);
+      now = new Date(r.dueAt.getTime() + 9 * 3_600_000); // reviewed at 9 am on the due day
+    }
+  }
+});
+
 check("spread: the same answer always gives the same date", () => {
   const a = nextReview(at(3, 30), true, "MEDIUM", "word-x:4", MON_9PM).dueAt.getTime();
   const b = nextReview(at(3, 30), true, "MEDIUM", "word-x:4", MON_9PM).dueAt.getTime();
@@ -176,7 +213,7 @@ check("again: capped at 10 cards", () => {
 });
 
 async function picks() {
-  const ids: Record<string, string> = { A: "id-a", C: "id-c" };
+  const ids: Record<string, string> = { A: "id-a", C: "id-c", "VRB-001": "id-vrb" };
   const find = async (code: string) => ids[code] ?? null;
   const some = async () => "id-next";
   const none = async () => null;
@@ -193,6 +230,19 @@ async function picks() {
   assert.deepEqual([r.id, r.practice, r.again], ["id-next", false, [{ code: "C", wait: 1 }]]);
   r = await pickWithAgain([], none, find);
   assert.deepEqual([r.id, r.practice], [null, false]);
+  // Nothing left and the waiting card is gone: dropped, not kept in the URL (audit A6).
+  r = await pickWithAgain([{ code: "GONE", wait: 2 }, { code: "A", wait: 3 }], none, find);
+  assert.deepEqual([r.id, r.practice, r.again], ["id-a", true, [{ code: "A", wait: 3 }]]);
+
+  // The shared page helper.
+  let s = await pickForSession({ named: "id-named", inList: false, raw: "VRB-001~0", next: some, find });
+  assert.deepEqual([s.id, s.practice, s.again], ["id-named", false, [{ code: "VRB-001", wait: 0 }]]);
+  s = await pickForSession({ named: "id-named", inList: true, raw: "VRB-001~0", next: some, find });
+  assert.deepEqual([s.id, s.practice, s.again], ["id-named", false, null]);
+  s = await pickForSession({ named: null, inList: false, raw: "VRB-001~0", next: some, find });
+  assert.deepEqual([s.id, s.practice], ["id-vrb", true]);
+  s = await pickForSession({ named: null, inList: false, raw: undefined, next: some, find });
+  assert.deepEqual([s.id, s.practice, s.again], ["id-next", false, []]);
   passed++;
   console.log("ok  again: which card a session page shows");
 }

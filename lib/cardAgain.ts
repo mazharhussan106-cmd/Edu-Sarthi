@@ -58,9 +58,34 @@ export async function pickWithAgain(
   }
   const id = await next();
   if (id) return { id, practice: false, again: list };
-  for (const e of list) {
+  for (const e of [...list]) {
     const pid = await find(e.code);
     if (pid) return { id: pid, practice: true, again: list };
+    // Gone, or not in this session: dropped so it is not looked up again.
+    list = list.filter((x) => x.code !== e.code);
   }
   return { id: null, practice: false, again: [] };
+}
+
+/// The whole choice for a session page, shared by the Flashcards tab and the
+/// two deck study pages. A card named in the URL (‹ back, or "Study this
+/// list") is shown as itself, never as practice. Inside "Study this list" the
+/// again list is off (null): that session has its own order.
+export async function pickForSession({
+  named,
+  inList,
+  raw,
+  next,
+  find,
+}: {
+  named: string | null;
+  inList: boolean;
+  raw: string | undefined;
+  next: () => Promise<string | null>;
+  find: (code: string) => Promise<string | null>;
+}): Promise<{ id: string | null; practice: boolean; again: Again | null }> {
+  const again = inList ? null : parseAgain(raw);
+  if (named) return { id: named, practice: false, again };
+  if (!again) return { id: await next(), practice: false, again: null };
+  return pickWithAgain(again, next, find);
 }

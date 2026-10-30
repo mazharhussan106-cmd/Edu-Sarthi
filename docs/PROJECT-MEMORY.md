@@ -568,10 +568,12 @@ Plan, decisions and test notes: `docs/SRS-V2-PLAN.md`. All rules, marked NEW / C
 
 - **Rules now:** ladder 3 · 7 · 15 · 30 · 60 · 120 · 180 days; no answer brings a card back in under 3 days; Unknown → two steps down (min 3 days); new card's first Known Hard 3 / Medium 7 / Easy 15; due from midnight IST; ±1 day spread at 15, ±2 from 30; late credit on Medium/Easy (gap ≥ days remembered); Unknown cards come round once more 3 cards later as "Practice · not saved" (`?again=`, `lib/cardAgain.ts`); Settings → Reviews per day (No limit default, 50–200, per kind, built-in cards only; `?more=1` lifts both limits).
 - **Files:** `lib/srs.ts`, `lib/cardAgain.ts`, `lib/flashcards.ts`, `lib/todayReview.ts`, `lib/preferences.ts`, `app/api/flashcards/route.ts`, the three study pages, `FlashcardDeck.tsx`, `DeckStudy.tsx`, `DeckMessages.tsx`, `PracticeNotice.tsx`, Settings, Help copy.
-- **Tests:** `npx tsx scripts/srs-unit.ts` (22 checks, no database). Browser run on a local production build is described in the plan doc.
-- **Deploy (must do):** right after deploying, run `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run, check counts), then with `--apply`. It moves stored steps onto the v2 ladder from each card's real gap; safe to run twice; touches `CardState.stage` only. Before it runs, a card stored on old "60 days" would be read as the 120-day step.
+- **Tests:** `npx tsx scripts/srs-unit.ts` (26 checks, no database). Browser runs on a local production build (Flashcards tab, own deck, library deck) are described in the plan doc; all passed after the audit fixes.
+- **Counting rule (since the audit):** among cards answered today, `reviews = 1` is a new card and `reviews > 1` a review, for both daily limits and the Today/Dashboard counts. Not `createdAt`: a remark or note creates the row too. (`lib/xp.ts` keeps `createdAt` on purpose.)
+- **Deploy (must do):** right after deploying, run `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run, check counts), then with `--apply`. It moves stored steps onto the v2 ladder from each card's real gap; safe to run twice; touches `CardState.stage` only. Answering does not depend on it (the rung is read from the gap, `rungForGap`); until it runs only the Review Plan box shows old cards one rung too high.
 - **Don't undo:** the 3-day floor (owner's rule); practice answers must never POST; due dates are IST midnights (Today page counts and reminders rely on `dueAt <= now`); `nextReview` imports nothing that touches the database (client components import `lib/srs`).
-- **Not done / open:** own-deck and library-deck sessions not clicked through in a browser (same code path); `FlashcardDeck.tsx` is 256 lines, just over the ~250 rule; `npm run lint` fails for everyone because the repo has no `eslint.config.*` (existed before this work).
+- **Audit (30 Oct):** A1–A9 fixed and retested, list in the plan doc.
+- **Not done / open:** `FlashcardDeck.tsx` is 256 lines, just over the ~250 rule (audit A10, split only if the owner asks); `npm run lint` fails for everyone because the repo has no `eslint.config.*` (existed before this work).
 
 ## Starting a new chat
 

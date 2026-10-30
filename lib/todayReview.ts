@@ -6,8 +6,9 @@
 // student on Words never learns that ten Chunk cards are waiting. This puts
 // every kind on one page. The rules are the tab's own (lib/flashcards): due =
 // answered at least once and dueAt passed; the new-card limit and the review
-// limit count each kind separately, by India day. A kind's due count is what
-// today will serve, so it stops at the review limit.
+// limit count each kind separately, by India day, a card's first answer as
+// new and any later one as a review. A kind's due count is what today will
+// serve, so it stops at the review limit.
 //
 // Two grouped SQL reads instead of a count per kind and per deck: the live
 // pool has one connection, so eight small counts would queue one behind the
@@ -16,7 +17,7 @@
 import { Prisma, type CardKind } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { istDayStart } from "@/lib/aiLimits";
+import { istDayStart } from "@/lib/srs";
 import { studyDecks } from "@/lib/myCards";
 
 export type KindToday = { due: number; newLeft: number; newToday: number };
@@ -29,8 +30,8 @@ export async function todayReview(userId: string, newPerDay: number, reviewsPerD
     prisma.$queryRaw<{ kind: CardKind; due: number; newToday: number; reviewedToday: number; seen: number }[]>(Prisma.sql`
       SELECT w."kind"::text AS kind,
              COUNT(*) FILTER (WHERE cs."dueAt" <= ${now})::int AS due,
-             COUNT(*) FILTER (WHERE cs."createdAt" >= ${dayStart})::int AS "newToday",
-             COUNT(*) FILTER (WHERE cs."lastReviewedAt" >= ${dayStart} AND cs."createdAt" < ${dayStart})::int AS "reviewedToday",
+             COUNT(*) FILTER (WHERE cs."lastReviewedAt" >= ${dayStart} AND cs."reviews" = 1)::int AS "newToday",
+             COUNT(*) FILTER (WHERE cs."lastReviewedAt" >= ${dayStart} AND cs."reviews" > 1)::int AS "reviewedToday",
              COUNT(*)::int AS seen
       FROM "CardState" cs JOIN "Word" w ON w."id" = cs."wordId"
       WHERE cs."userId" = ${userId} AND cs."reviews" > 0 AND w."deckId" IS NULL

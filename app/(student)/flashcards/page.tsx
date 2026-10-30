@@ -21,12 +21,12 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
-import { parseAgain, pickWithAgain } from "@/lib/cardAgain";
+import { pickForSession } from "@/lib/cardAgain";
 import { chunkDetailsOf, chunkGloss, chunkTypeLabel, isChunkType } from "@/lib/chunkCard";
 import { packWhere, sectionDef, sectionWhere } from "@/lib/wordSections";
 import { channelLabel, isSupportChannel, isSupportLevel, levelLabel, supportDetailsOf, supportGloss } from "@/lib/supportCard";
 import { prefsOf } from "@/lib/preferences";
-import { chunkExtras, deckCounts, nextCardId, practiceTitle, WORD_SELECT } from "@/lib/flashcards";
+import { chunkExtras, deckCounts, findInDeck, nextCardId, practiceTitle, WORD_SELECT } from "@/lib/flashcards";
 import { detailsOf } from "@/lib/wordCard";
 import { ComingSoon, DeckDone, DeckResults } from "@/components/flashcards/DeckMessages";
 import { DECK_KINDS, DECK_LISTS, DeckTopBar, type ListKey } from "@/components/flashcards/DeckTopBar";
@@ -130,15 +130,13 @@ export default async function FlashcardsPage({
     }));
     body = <DeckResults rows={rows} q={q} noun={k.noun} hrefFor={(code) => `${base}&card=${code}`} />;
   } else {
-    // Not inside a "Study this list" session: that has its own order.
-    const again = inList ? null : parseAgain(sp.again);
-    const picked = byCode
-      ? { id: byCode.id, practice: false, again: again ?? [] }
-      : await pickWithAgain(
-          again ?? [],
-          () => nextCardId(userId, deck, liftLimits, skip, newPerDay, reviewsPerDay),
-          async (code) => (await prisma.word.findFirst({ where: { code, kind: k.kind, deckId: null }, select: { id: true } }))?.id ?? null,
-        );
+    const picked = await pickForSession({
+      named: byCode?.id ?? null,
+      inList: !!inList,
+      raw: sp.again,
+      next: () => nextCardId(userId, deck, liftLimits, skip, newPerDay, reviewsPerDay, counts?.reviewsLeft),
+      find: (code) => findInDeck(deck, code),
+    });
     const id = picked.id;
     const word = id ? await prisma.word.findUnique({ where: { id }, select: WORD_SELECT }) : null;
 
@@ -181,7 +179,7 @@ export default async function FlashcardsPage({
             recordHref={exercise ? `/practice/${exercise.id}?word=${word.code}` : null}
             nextHref={inList ? listNextHref(inList) : withMore}
             skip={skip}
-            again={inList ? null : picked.again}
+            again={picked.again}
             practice={picked.practice}
             cardColor={cardColor}
             tallTop={k.kind === "CHUNK" || k.kind === "SUPPORT"}

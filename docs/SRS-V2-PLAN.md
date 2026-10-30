@@ -39,7 +39,7 @@ Each card stores a step number (`CardState.stage`) that points into the ladder. 
 
 **Step 1 — the rules (`lib/srs.ts`, `app/api/flashcards/route.ts`, new `scripts/srs-v2-restage.ts`, new `scripts/srs-unit.ts`) — BUILT**
 - Done: `npx tsx scripts/srs-unit.ts` passes 18 checks. The restage script was run on a throwaway local Postgres seeded with v1 and v2 cards: 1/3 → 3, 7 → 7, … 60 → 60, v2 cards and remark-only cards untouched, a second `--apply` changed 0 rows. Help page and schema comment now name the new ladder. `ReviewLog.stage` keeps old numbers for old answers; nothing reads it.
-- **Deploy order:** deploy, then straight away `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run), check the counts, then `--apply`. Until it runs, a card on old "60 days" would be treated as the 120-day rung on its next answer.
+- **Deploy order:** deploy, then straight away `npx tsx --env-file=.env scripts/srs-v2-restage.ts` (dry run), check the counts, then `--apply`. Since the audit fix A2, answering reads a card's rung from its gap, so a late run no longer moves any card wrongly; until it runs, only the Review Plan box shows old cards one rung too high.
 - New ladder, Unknown two steps down, the 3-day floor, IST-day due dates, spread, late credit.
 - "Next review …" text counts India-time days.
 - `srs-unit.ts` checks every rule above with fixed dates (no database).
@@ -74,7 +74,21 @@ About 15 files across 4 steps.
 
 Own deck and followed library deck, production build, local Postgres, 390 px: 29 checks. Unknown → `again=OWN-1~3`, saved once, due in 3 IST days; three cards later the same card with "Practice · not saved"; its answer not saved; then the next new card with `again` gone; a new card's Known → 7 days; at the end of a session the waiting practice card comes at once, and a practice Unknown does not queue it again ("Done for now"); side 3 shows ✓ Day 3, Day 7 · next … Day 180, "Next review in 7 days"; no page errors.
 
-## Audit of v2 (30 Oct) — findings, fixes waiting for the owner's approval
+## Audit of v2 (30 Oct) — A1–A9 FIXED (owner: "do the best for this project"); A10 left
+
+**What was fixed and how it was checked:**
+- A1: `lib/flashcards.ts` `answeredToday` and the SQL in `lib/todayReview.ts` tell new from review by the answer count (`reviews = 1` new, `> 1` review) among cards answered today. This also fixes the same mistake in the **new-card limit**, which existed before v2 (owner chose to fix both). `lib/xp.ts` still uses `createdAt` on purpose (its own comment explains it; history is per past day). Known edge: a new card answered twice in one day by opening it again counts its second answer as a review.
+- A2: `lib/srs.ts` `rungForGap` + `RUNG_BANDS`; `nextReview` reads the current rung from `dueAt − lastReviewedAt` when both exist. The restage script builds its SQL from the same `RUNG_BANDS`.
+- A3: the dry run prints how many answered cards have no `lastReviewedAt` (0 expected).
+- A4: `deckCounts` returns `reviewsLeft`; the page passes it to `nextCardId`, so one count per page load.
+- A5: `findInDeck(deck, code)` looks the practice card up inside the session's filter.
+- A6: `pickWithAgain` drops codes it cannot find.
+- A7: `lib/flashcards.ts` and `lib/todayReview.ts` use `lib/srs` `istDayStart` (`lib/aiLimits.ts` left alone).
+- A8: `reviewsPerDay` schema is built from `REVIEWS_PER_DAY_OPTIONS`.
+- A9: `pickForSession` in `lib/cardAgain.ts` used by all three study pages.
+- Checked: `scripts/srs-unit.ts` 26 checks (4 new: v1 and v2 gaps map to the right rung, a v1 card answered before the restage keeps its rung, dead practice codes dropped, the page helper). Local Postgres: tagged-yesterday-answered-today counts as new, reviews counted only for real reviews, the review limit passed in or counted inside gives the same card, the practice lookup refuses a card outside the filter, the restage dry run with the shared bands. Production build, both browser suites again (Flashcards tab 17 checks, decks 29 checks): all pass.
+
+**The findings as reported:**
 
 Code review of `main...claude/kind-euler-q35ydg`. Ranked; "real" means it can happen in normal use.
 

@@ -638,6 +638,15 @@ Brought onto `main` from `claude/adoring-gates-7h67av` (28 Oct) by the owner's d
 - **Tested:** typecheck; production build; local Postgres; browser at 390 px and 1280 px: 19 checks (student bell count, header still has XP, search, settings, menu; inbox lists notes, HTML shown as text, Mark all as read, bell back to zero, API count; Help shows main's FAQ and no branch-only answers, no AI box without a key, `/api/help/ask` 503 with a helpful message; Support's 8 problems; teacher and admin bell and inbox; no page errors). **Not tested:** the chatbot with a real key; the live database.
 - **Merging with spaced repetition v2 (`claude/kind-euler-q35ydg`):** that branch edits the "How do flashcards decide what I see?" answer in `app/(shared)/help/page.tsx`; this branch moves the FAQ to `lib/helpContent.ts`. Whichever merges second: put that answer's new text into `lib/helpContent.ts` and keep the Help page as this branch has it.
 
+## Separate sign-in doors (30 Oct 2026, branch `claude/login-doors`) — BUILT and tested, not merged
+
+Rebuilt on today's `main` by the owner's decision of 30 Oct (the 10 Oct branch `claude/adoring-darwin-ay4wox` predates Google and guest sign-in and is **not to be merged**). Plan, answers and tests: `docs/LOGIN-DOORS-PLAN.md`.
+
+- `/login` stays the student door (Google, guest, create account, all old links keep working). `/teacher/login`: teachers and admins, password or code, existing accounts only. `/admin/login`: admins only, not linked, noindex; anyone else is answered like a wrong password and it counts as a failed attempt.
+- Teachers and admins may still sign in at `/login`; their own page then shows a one-time note with their door's address (no link to it on the student page, owner's answer).
+- **Don't undo:** the admin door must never be named to non-admins (not in links, redirects or errors); staff doors must never create accounts; door checks run after the credential is proven, before the attempt counter is cleared.
+- No schema change. Tested: 26 browser checks (see the plan). Google not tested without real keys.
+
 ## Starting a new chat
 
 Say: **"Read CLAUDE.md and docs/PROJECT-MEMORY.md first."** Before it finishes, ask it to add what changed and what is undecided to this file and push. Chats on different branches only see each other's work after it is merged into `main`.

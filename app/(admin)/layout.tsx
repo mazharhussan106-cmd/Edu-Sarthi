@@ -4,6 +4,7 @@
 // /admin, and every admin API route re-checks against the database.
 
 import { ensureActiveUser } from "@/lib/activeUser";
+import { DoorNote } from "@/components/auth/DoorNote";
 import { Footer } from "@/components/layout/Footer";
 import { NotificationBellServer } from "@/components/layout/NotificationBellServer";
 import { StickyHeader } from "@/components/layout/StickyHeader";
@@ -15,6 +16,8 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   return (
     <div className="flex min-h-screen flex-col">
       <StickyHeader links={ADMIN_LINKS} homeHref="/admin" bell={<NotificationBellServer />} />
+      {/* ensureActiveUser above has already required the admin role. */}
+      <DoorNote role="ADMIN" />
       <div className="flex-1">{children}</div>
       <Footer />
     </div>

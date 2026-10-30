@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/Input";
 import { callApi } from "@/components/decks/deckClient";
 import { REPORT_REASONS } from "@/lib/deckSchemas";
 
-export function ReportButton({ deckId }: { deckId: string }) {
+export function ReportButton({ deckId, signedIn = true }: { deckId: string; signedIn?: boolean }) {
   const uid = useId();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
@@ -34,6 +34,14 @@ export function ReportButton({ deckId }: { deckId: string }) {
     setOpen(false);
   }
 
+  // A report needs an account, so one person cannot flood the admin's queue.
+  if (!signedIn) {
+    return (
+      <Link href="/login" className="inline-flex h-8 items-center rounded-lg px-3 text-xs text-ink-muted hover:bg-hover hover:text-ink">
+        Sign in to report this deck
+      </Link>
+    );
+  }
   if (sent) return <p role="status" className="text-sm text-success">Thanks — an admin will look at this deck.</p>;
   if (!open) return <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>Report this deck</Button>;
 

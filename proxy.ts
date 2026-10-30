@@ -39,6 +39,14 @@ function isPublic(path: string): boolean {
   return PUBLIC_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));
 }
 
+// The public library, for a visitor who is not signed in: the list, one deck,
+// one card, read-only. An exact pattern and NOT a "/library" prefix, because
+// /library/<id>/study and /library/<id>/practice/<card> sit under the same
+// parent, assume a signed-in student, and must keep sending a visitor to
+// /login. Only checked in the signed-out branch below: a signed-in person who
+// has not verified their email is still held at /verify, as before.
+const PUBLIC_LIBRARY = /^\/library(\/[^/]+(\/card\/[^/]+)?)?\/?$/;
+
 /// Single source of truth for "where does this role belong". Used on sign-in,
 /// after verification, and whenever a role hits a path it may not see.
 function homeFor(role: string | undefined): string {
@@ -50,11 +58,21 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const user = req.auth?.user;
 
+  // Broken percent-encoding in a path (…/%E0) makes Next's own router throw, so
+  // every dynamic route answered 500 ("server error" to a crawler, which then
+  // retries). It is never a real link, but crawlers and scanners find such
+  // addresses, and the library is now public: answer 400 before any page runs.
+  try {
+    decodeURIComponent(pathname);
+  } catch {
+    return new NextResponse("That address is not valid. Check the link and try again.", { status: 400 });
+  }
+
   const redirect = (to: string) =>
     NextResponse.redirect(new URL(to, req.nextUrl.origin));
 
   if (!user) {
-    if (isPublic(pathname)) return NextResponse.next();
+    if (isPublic(pathname) || PUBLIC_LIBRARY.test(pathname)) return NextResponse.next();
     return redirect("/login");
   }
 

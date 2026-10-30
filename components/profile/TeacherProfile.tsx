@@ -61,7 +61,7 @@ export function TeacherProfile({ data }: { data: Data }) {
   const { user, decks } = data;
   const audiences: Audience[] = [
     { who: "Students", what: "Not your name, photo, email or number. Audits do not say who wrote them." },
-    { who: "Learners in the library", what: "On decks you publish: the name you chose in Settings → How your name shows on public decks, and Verified teacher if you are." },
+    { who: "Anyone who opens the library", what: "On decks you publish: the name you chose in Settings → How your name shows on public decks, and Verified teacher if you are. Library decks can be read with or without an account, and search engines may list them." },
     ...(user.institute ? [{ who: `${user.institute.name}'s admin`, what: "Your name and email, to manage the institute's members." }] : []),
     { who: "EduSarthi admins", what: "Your account, the audits you wrote and their quality notes, to check quality and help you." },
   ];

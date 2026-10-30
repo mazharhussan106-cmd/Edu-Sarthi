@@ -290,6 +290,51 @@ Pehle yeh do kaam, isi order me:
 
 Agar photo upload ya share me photo na aaye: Claude ko batayein, `docs/PROFILE-AUDIT.md` me F4 yahi hai.
 
+---
+
+### 4f. Library ab Class ki jagah bar me (29 Oct) — branch `claude/bold-hopper-hxfrpd`
+
+Database setup ki zarurat nahi. **Library ko bina login ke kholne wala hissa (Step 1b) tab tak merge mat kariye jab tak Privacy/Terms ka text badal na jaaye aur creators ko email na chala jaaye** — dekhiye `docs/PUBLIC-LIBRARY-PLAN.md`, Step 4.
+
+**Student account se (phone par):**
+- [ ] Neeche ki bar: Dashboard, Flashcard, Audited, **Library**, Profile. "Class" nahi hai
+- [ ] Library par tap → Library ka page khule aur uska icon neela (lit) ho; kisi deck me jaane par bhi neela rahe
+- [ ] ☰ menu: pehla group "Main pages" me bhi Library dikhe (Class nahi); baaki saare groups waise hi, "Shared and library decks" me Library ka apna row bhi
+- [ ] Neeche page ke footer me pehla link **Library**
+- [ ] Computer par header ki row me Library (Class ki jagah)
+- [ ] Profile → Get started → "Send your first recording" abhi bhi Class page kholta hai (page hataya nahi gaya)
+
+**Bina login ke (private window me, sirf Step 1b merge hone ke baad):**
+- [ ] `/library` khule; header me Library aur Sign in; neeche student wali bar nahi
+- [ ] Deck khule, saare cards padh sakein; "Sign in to study or copy this deck", ♡ aur "Sign in to report this deck" sab `/login` par le jaayein
+- [ ] `/library/<deck>/study` seedha `/login` par jaaye
+- [ ] Koi deck Admin → Decks se reject/take down karke dekhiye: ab wo list me nahi aata aur uska page "not found" dikhata hai
+
+**Naya consent aur text (Step 4) — merge se pehle ka order:**
+1. Vakil se poochhiye: jin creators ne 29 Oct se pehle deck submit kiya, kya unse dobara "haan" lena zaroori hai? (`docs/LEGAL-REVIEW-PACK.md` section 4b, point 12)
+2. Vercel me `SENDGRID_API_KEY`, `NEXT_PUBLIC_APP_URL`, `CRON_SECRET` set hain, ye check kariye. `NEXT_PUBLIC_APP_URL` **`https://` se shuru** ho (jaise `https://edu-sarthi-nine.vercel.app`), bina `https://` ke emails ke links galat bante hain
+3. Admin → Announcements: "EduSarthi: the deck library will be open to everyone" draft save kariye, **apne aap ko test email bhejiye**, padhiye, phir Start (SEND likhiye). Roz 80 email jaate hain, to kuch din lag sakte hain
+4. **Aakhri email ke 7 din baad** hi branch merge kariye (email me yehi vaada hai)
+
+Merge ke baad (student account se):
+- [ ] My decks → koi deck → "Submit for the public library" → form me naya tick: "Once it is approved, anyone can read this deck, with or without an account…" (bina tick ke error aaye jo bataye kya tick karna hai)
+- [ ] `/legal/privacy`, `/legal/terms`, `/legal/library-rules` par 29 October 2026 aur naya text; Privacy me ab "signed-in" wali line nahi
+- [ ] Admin se koi deck approve kariye → creator ko jo email jaaye usme likha ho "Anyone can now read it, with or without an account…"
+
+**Library ki list (Step 3, student aur visitor dono ke liye):**
+- [ ] Heading "Flashcard library"; search ke neeche Newest / Most liked / Most copied, phir topics ki row: "All topics" aur 8 topics, har ek ke saath deck ki ginti
+- [ ] Kisi topic par tap → list us topic ke decks tak simit ho, "N decks match" likha aaye aur wo topic neela ho; "All topics" par tap → wapas sab
+- [ ] "More topics (N)" par tap → baaki topics khulein. Wahan se koi topic chuniye to page khulne par ye hissa khula rahe
+- [ ] 24 se zyada decks hon to neeche "← Previous  1 / 2  Next →"; Next dabane par doosre decks aayein, koi deck dobara ya gayab nahi
+- [ ] Phone par pehla deck topics ki row ke turant neeche dikhe (zyada neeche na dhakela jaaye)
+- [ ] Koi deck reject kar ke dekhiye: uska topic count ghat jaaye, aur sirf usi deck wala topic ho to row se gayab ho jaaye
+
+**Google ke liye (Step 2, Step 1b ke saath hi merge hota hai):**
+- [ ] `https://<aapki site>/robots.txt` khule: "Allow: /" aur "Disallow: /dashboard" jaisi lines, aur neeche `Sitemap: https://<aapki site>/sitemap.xml`. Agar Sitemap wali line nahi hai, to Vercel me `NEXT_PUBLIC_APP_URL` set kariye
+- [ ] `/sitemap.xml` khule aur usme har public deck ka `/library/<id>` ho (card ya search wale links nahi)
+- [ ] Kisi deck ka link WhatsApp par bhejiye: preview me deck ka naam dikhe, banane wale ka naam nahi
+- [ ] Phir Google Search Console me site jodiye aur `sitemap.xml` submit kariye. Google ko decks index karne me kuch din se kuch hafte lag sakte hain, aur ye pakka nahi hota
+
 ## 5. Kya **mat** kariye
 
 - Keys, passwords, database URL kisi chat me paste mat kariye. Sirf Vercel aur Claude environment settings me daaliye. Galti se paste ho jaaye to Supabase me key **rotate** (nayi) kar lijiye.

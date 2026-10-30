@@ -69,6 +69,12 @@ export default function LandingPage() {
             EduSarthi
           </Link>
           <div className="ml-auto flex items-center gap-2">
+            <Link
+              href="/library"
+              className="rounded-lg px-3 py-2 text-sm text-ink-muted hover:bg-hover hover:text-ink"
+            >
+              Library
+            </Link>
             <Link href="/login">
               <Button variant="ghost" size="sm">
                 Sign in
@@ -98,6 +104,9 @@ export default function LandingPage() {
               </Link>
               <Link href="/about">
                 <Button variant="outline">How it works</Button>
+              </Link>
+              <Link href="/library">
+                <Button variant="outline">Browse flashcard decks</Button>
               </Link>
             </div>
           </div>

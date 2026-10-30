@@ -66,16 +66,19 @@ export const publicNameSchema = z
     if (/\d{5,}/.test(n) || /(www|http|\.com|\.in)/i.test(n)) return issue("Leave phone numbers and website addresses out of the display name.");
   });
 
-/// The submit form. The three ticks are required every time a deck is
+/// The submit form. The four ticks are required every time a deck is
 /// submitted; `adult` only matters until the account has confirmed it once.
+/// `openWeb` is the agreement that anyone, signed in or not, can read the deck
+/// and search engines may list it (library terms 2026-10-29).
 /// `asInstitute` publishes under the institute's name and logo, and then
-/// needs the fourth tick, `behalf`; who may choose it is checked in
+/// needs a fifth tick, `behalf`; who may choose it is checked in
 /// lib/deckReview.
 export const publishConsentSchema = z
   .object({
     adult: z.boolean(),
     ownWork: z.literal(true, "Tick that you made this deck or have the right to share it."),
     licence: z.literal(true, "Tick that you agree to the licence the deck is published under."),
+    openWeb: z.literal(true, "Tick that you understand anyone can read a published deck, with or without an account."),
     paidUse: z.literal(true, "Tick that EduSarthi may use the deck in paid features."),
     name: publicNameSchema,
     asInstitute: z.boolean().default(false),

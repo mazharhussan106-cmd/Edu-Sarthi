@@ -184,14 +184,17 @@ export default function PrivacyPage() {
           <p className="mt-2">
             If a teacher&apos;s flashcard includes a video, it plays from YouTube
             or Google Drive, so your phone contacts them when you open that
-            card. Decks you share by link are visible to anyone who has the link,
-            and decks you submit to the public library are visible to every
-            signed-in user once an administrator approves them.
+            card. Decks you share by link are visible to anyone who has the link;
+            we ask search engines not to list them. Decks you submit to the
+            public library are visible to everyone, with or without an account,
+            once an administrator approves them, and search engines such as
+            Google may list them in their results.
           </p>
           <p className="mt-2">
             A public deck shows your name the way you chose (or no name), the
             institute&apos;s name and logo if you published it for an institute,
-            and the names of editors who chose to show one. People you share a
+            and the names of editors who chose to show one, to everyone who
+            opens it, signed in or not. People you share a
             deck with by name can see it; you see the email addresses you
             invited. An institute&apos;s admin sees its members&apos; names and
             email addresses.
@@ -239,6 +242,12 @@ export default function PrivacyPage() {
             else&apos;s deck as an editor stay in their deck. An invitation to
             your email address that you never accepted stays in the inviter&apos;s
             deck until they remove it or delete the deck.
+          </p>
+          <p className="mt-2">
+            A search engine may also keep a copy of a public deck for a while
+            after you withdraw it or delete your account. We remove the deck
+            from our sitemap at once and its page then asks search engines not
+            to list it, but we cannot delete another company&apos;s copy.
           </p>
         </section>
 

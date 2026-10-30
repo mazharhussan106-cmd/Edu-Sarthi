@@ -98,7 +98,7 @@ export async function sendDeckDecision(to: string, title: string, outcome: "appr
   }[outcome];
   const next =
     outcome === "approved"
-      ? "Anyone signed in can now find, follow and copy it. Small fixes go live at once; for bigger changes, start a new version, and this one stays live while it is reviewed."
+      ? "Anyone can now read it, with or without an account, and search engines may list it; people with an account can follow and copy it. Small fixes go live at once; for bigger changes, start a new version, and this one stays live while it is reviewed."
       : "Open the deck in My decks to read the note, fix what is needed, and submit it again.";
   const note = reason ? `\n\nReviewer’s note: ${reason}` : "";
   const text = `${headline}.${note}\n\n${next}`;

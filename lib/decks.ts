@@ -55,7 +55,8 @@ export async function lockUser(tx: Prisma.TransactionClient, userId: string): Pr
 
 export class LimitReached extends Error {}
 
-/// A deck anyone signed in may find, follow and study: approved for the
+/// A deck anyone may find and read (a signed-in person may also follow and
+/// study it; a visitor with no account only reads it): approved for the
 /// library, its owner not suspended, and — for a deck published as an
 /// institute — the institute not suspended (owner's decision: hidden until it
 /// is reinstated). Leaving this state (withdrawn, taken down, back in review)

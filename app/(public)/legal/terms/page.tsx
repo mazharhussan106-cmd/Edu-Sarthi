@@ -17,7 +17,7 @@ export const metadata = {
 };
 
 const CONTACT = "support@edusarthi.com";
-const UPDATED = "27 October 2026";
+const UPDATED = "29 October 2026";
 
 export default function TermsPage() {
   return (
@@ -98,6 +98,12 @@ export default function TermsPage() {
             before anyone else can find it.
           </p>
           <p className="mt-2">
+            Once a deck is approved, anyone can read it: people with an account
+            and people without one, and search engines such as Google may list
+            it in their results. Only people with an account can follow, copy,
+            like or report it. Your name shows on it only the way you chose.
+          </p>
+          <p className="mt-2">
             You keep ownership of your deck. When you publish it, you license it
             to everyone under{" "}
             <a href={LICENCES.CC_BY_SA.href} target="_blank" rel="noopener noreferrer" className="font-medium text-accent hover:underline">
@@ -124,7 +130,10 @@ export default function TermsPage() {
             If you withdraw a deck, it leaves the library, people who follow it
             lose it, and EduSarthi stops offering it in new features. Copies other
             people already made under the licence stay theirs: a CC BY-SA licence
-            cannot be taken back for copies already made.
+            cannot be taken back for copies already made. A search engine may
+            keep its own copy for a while; we remove the deck from our sitemap
+            at once, and its page then asks search engines not to list it, but
+            we cannot delete another company&apos;s copy.
           </p>
           <p className="mt-2">
             If someone shares a deck with you to edit, what you add becomes part

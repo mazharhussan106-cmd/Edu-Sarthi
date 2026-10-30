@@ -40,7 +40,7 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 | Inside one deck | Add, edit or delete cards (front, back, example, notes, picture, recording), chapters, Study, share link on/off, People (invite to view or edit), submit to the library or withdraw, small fix and new version once published, delete the deck | My decks → open the deck (`/decks/<id>`) |
 | Shared with me / Invitations | Decks people shared with you by name, to view or edit; invitations to accept | Menu → Shared and library decks → Shared with me (`/decks?shared=1#shared-with-me`) |
 | Decks I follow | Library decks you study as their authors keep them (up to 50) | Menu → Shared and library decks → Decks I follow (`/decks?following=1#following`) |
-| Library | Approved public decks: search, tags, like, report, copy, follow and study; record yourself on a verified teacher's deck | Menu → Shared and library decks → Library (`/library`) |
+| Library | Approved public decks: search, topic chips with deck counts, sort, pages of 24, like, report, copy, follow and study; record yourself on a verified teacher's deck | Bar → Library (`/library`, replaced Class on 29 Oct); footer → Library; Menu → Shared and library decks → Library |
 | Institute | Join with a code or apply; institute decks, members, logo, decks published under the institute's name | Menu → Shared and library decks → Institute (`/institute`) |
 | How my name shows on public decks | Full name, first name, a display name or no name, on decks you publish; not for guests | Menu → My account and progress → How my name shows on public decks (`/settings#public-name`) |
 | Share link page | Anyone with a deck's link can read it and copy it | `/d/<link>` (signed out too) |
@@ -49,11 +49,10 @@ How to read "Where": **Bar** = the bottom bar on phones (the header row on a com
 
 | Feature | What it does | Where |
 |---|---|---|
-| Practice modules | Speaking exercises by level, or by the skill they practise (`?focus=fluency`, from the dashboard); record or upload audio, video or a photo | Menu → Learn and practise → Practice modules (`/modules`); Bar → Class leads there too |
+| Practice modules | Speaking exercises by level, or by the skill they practise (`?focus=fluency`, from the dashboard); record or upload audio, video or a photo | Menu → Learn and practise → Practice modules (`/modules`); the Class page leads there too |
 | Audited (My audits) | Every recording with its status: All / In review / Action needed / Completed | Bar → Audited (`/feedback`) |
 | One audit | Overall score with band word and change since last; the teacher's opening line; "Fix these first" (top 3 notes, each plays its moment); Try again (back to the same card for card recordings) with recordings for audit left today; best score so far; player and all notes (right column on a computer); each skill with band, meaning and change; focus next / strongest; last-5 progress; the teacher's full words; what was asked. Or, before the audit, the reason it was sent back and tips to re-record | Audited → tap a row (`/feedback/<id>`) |
-| Class | Says honestly that live classes are not built yet; leads to the speaking exercises | Bar → Class (`/class`) |
-
+| Class | Says honestly that live classes are not built yet; leads to the speaking exercises. No longer in the header or bottom bar (Library took its place, 29 Oct); still opens from Profile → Get started and the skill scores | `/class` |
 ### You
 
 | Feature | What it does | Where |

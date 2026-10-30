@@ -96,7 +96,7 @@ export function PublishPanel({ deckId, visibility, status, rejectReason, cardCou
           : !inLibrary
             ? `Submit this deck and an admin checks it before anyone else can find it. It needs at least ${DECK_LIMITS.minCardsToPublish} cards. Nothing is public until it is approved.`
             : status === "APPROVED"
-              ? "Anyone signed in can find, follow and copy this deck. Small fixes go live at once; bigger changes go in a new version."
+              ? "Anyone can read this deck, with or without an account, and search engines may list it. People with an account can follow and copy it. Small fixes go live at once; bigger changes go in a new version."
               : "An admin will look at it. You can keep working; changes are included in the review."}
       </p>
       {inLibrary ? (

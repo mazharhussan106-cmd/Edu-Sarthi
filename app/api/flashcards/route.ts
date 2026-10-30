@@ -64,11 +64,12 @@ export async function POST(req: Request) {
     const now = new Date();
     // A double-tap or a phone's automatic retry arrives within moments of the
     // first answer. Without this it would climb the ladder a second rung for
-    // one real answer — a card could reach 60 days in three presses.
+    // one real answer — a card could reach 120 days in three presses.
     if (current?.reviews && current.lastReviewedAt && now.getTime() - current.lastReviewedAt.getTime() < 8_000) {
       return NextResponse.json({ ok: true, dueAt: current.dueAt.toISOString() });
     }
-    const next = nextReview(current, a.known, a.recall);
+    // The review count makes the spread on long gaps differ between reviews.
+    const next = nextReview(current, a.known, a.recall, `${a.wordId}:${current?.reviews ?? 0}`, now);
     const saved = await prisma.cardState.upsert({
       where: key,
       create: {
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
         dueAt: next.dueAt,
         reviews: 1,
         lastReviewedAt: now,
+        firstReviewedAt: now,
       },
       update: {
         known: a.known,
@@ -88,6 +90,8 @@ export async function POST(req: Request) {
         dueAt: next.dueAt,
         reviews: { increment: 1 },
         lastReviewedAt: now,
+        // Only on the first answer: a row made earlier by a remark has reviews 0.
+        ...(current?.reviews ? {} : { firstReviewedAt: now }),
       },
       select: { dueAt: true },
     });

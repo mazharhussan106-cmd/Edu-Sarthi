@@ -546,12 +546,17 @@ model CardState {
 
   known          Boolean   @default(false)
   recall         Recall?
-  /// Index into the review ladder (1, 3, 7, 15, 30, 60 days).
+  /// Index into the review ladder (3, 7, 15, 30, 60, 120, 180 days; lib/srs).
   stage          Int       @default(0)
   dueAt          DateTime
   reviews        Int       @default(0)
   lastReviewedAt DateTime?
-  /// When the student first saw and marked this card; counts today's new cards.
+  /// The first Known / Unknown, set once. Tells a new card from a review for
+  /// the daily limits (lib/flashcards); createdAt cannot, as a remark or note
+  /// makes the row too. Null on cards first answered before this column
+  /// existed, which all count as old.
+  firstReviewedAt DateTime?
+  /// When the row was made: the first answer, or an earlier remark or note.
   createdAt      DateTime  @default(now())
 
   // Remarks

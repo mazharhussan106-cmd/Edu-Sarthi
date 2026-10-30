@@ -15,6 +15,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { parseSkip } from "@/lib/cardSkip";
+import { pickForSession } from "@/lib/cardAgain";
 import { CARD_SELECT, deckStudyCounts, faceCard, nextDeckCardId } from "@/lib/decks";
 import { readableBy } from "@/lib/deckAccess";
 import { DEFAULT_PREFERENCES, PREFERENCE_SCHEMA } from "@/lib/preferences";
@@ -26,7 +27,7 @@ import { listNextHref, parseListSession } from "@/lib/listSession";
 
 export const revalidate = 0;
 
-export default async function StudyPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ card?: string; skip?: string; inlist?: string; sid?: string; left?: string }> }) {
+export default async function StudyPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ card?: string; skip?: string; again?: string; inlist?: string; sid?: string; left?: string }> }) {
   const [{ id }, sp, session] = await Promise.all([params, searchParams, auth()]);
   const userId = session!.user.id;
 
@@ -45,8 +46,18 @@ export default async function StudyPage({ params, searchParams }: { params: Prom
   // A card opened by "Study this list": answering goes back to the list, and
   // the list's strip replaces this deck's due / new counts.
   const inList = picked ? parseListSession(sp) : null;
-  const wordId = picked?.id ?? (await nextDeckCardId(userId, id, skip, shared));
-  const word = wordId ? await prisma.word.findFirst({ where: { id: wordId, deckId: id, ownerId: deck.ownerId }, select: CARD_SELECT }) : null;
+  // Unknown cards come round once more as practice (lib/cardAgain).
+  const pick = await pickForSession({
+    named: picked?.id ?? null,
+    inList: !!inList,
+    raw: sp.again,
+    next: () => nextDeckCardId(userId, id, skip, shared),
+    find: async (codes) =>
+      new Map((await prisma.word.findMany({ where: { code: { in: codes }, deckId: id, ownerId: deck.ownerId }, select: CARD_SELECT })).map((w) => [w.code, w])),
+  });
+  const wordId = pick.id;
+  // A practice card arrives already fetched.
+  const word = pick.row ?? (wordId ? await prisma.word.findFirst({ where: { id: wordId, deckId: id, ownerId: deck.ownerId }, select: CARD_SELECT }) : null);
 
   const [state, user] = word
     ? await Promise.all([
@@ -92,6 +103,8 @@ export default async function StudyPage({ params, searchParams }: { params: Prom
             }}
             nextHref={inList ? listNextHref(inList) : `/decks/${id}/study?deck=1`}
             skip={skip}
+            again={pick.again}
+            practice={pick.practice}
             cardColor={cardColor}
           />
         ) : (

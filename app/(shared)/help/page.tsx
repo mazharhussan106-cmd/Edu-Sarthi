@@ -22,7 +22,7 @@ const FAQ = [
   },
   {
     q: "How do flashcards decide what I see?",
-    a: "Cards due for review come first, then new cards in order, up to your daily limit (change it in Settings). Marking a card Known pushes it further out, 1, 3, 7, 15, 30, then 60 days. Unknown brings it back sooner.",
+    a: "Cards due for review come first, then new cards in order. Settings has a daily limit for each: New cards per day, and Reviews per day (no limit unless you set one; past it, due cards wait for the next day). Marking a card Known pushes it further out: 3, 7, 15, 30, 60, 120, then 180 days. Unknown brings it back two steps sooner, but never in less than 3 days, and shows it once more a few cards later as practice, which is not saved.",
   },
   {
     q: "How do XP, streaks and stages work?",

@@ -53,11 +53,14 @@ export function DeckDone({
   allSeen,
   noun,
   newPerDay,
+  heldBack = 0,
   skipHref,
   moreHref,
 }: {
   skipCount: number;
   newPerDay: number;
+  /** Due cards past today's review limit; they wait for tomorrow. */
+  heldBack?: number;
   allSeen: boolean;
   noun: string;
   skipHref: string;
@@ -71,7 +74,9 @@ export function DeckDone({
       <p className="mt-1 text-sm text-ink-muted">
         {skipCount
           ? `You skipped ${skipCount} card${skipCount === 1 ? "" : "s"} with ›. Go through them now, or come back later.`
-          : `No reviews are due and today’s ${newPerDay} new ${noun}s are done. Coming back tomorrow is what makes them stick.`}
+          : heldBack
+            ? `You have done today’s reviews. ${heldBack} more ${heldBack === 1 ? "card is" : "cards are"} due; they will wait for tomorrow. Change the limit in Settings.`
+            : `No reviews are due and today’s ${newPerDay} new ${noun}s are done. Coming back tomorrow is what makes them stick.`}
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         {skipCount ? (
@@ -80,7 +85,7 @@ export function DeckDone({
           </Link>
         ) : null}
         <Link href={moreHref} className="inline-flex h-10 items-center rounded-lg border border-border-strong px-4 text-sm text-ink hover:bg-hover">
-          Learn more new {noun}s anyway
+          {heldBack ? "Keep going anyway" : `Learn more new ${noun}s anyway`}
         </Link>
       </div>
     </Card>

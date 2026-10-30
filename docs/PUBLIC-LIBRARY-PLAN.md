@@ -151,6 +151,8 @@ Found and fixed:
 
 Checked and fine, with a real browser (21 addresses): a repeated page number, a page number of 999999999999999999999999, `NaN`, `-1e9`, a 5,000-character search, Hindi and emoji, `' OR 1=1--`, `%` and `_`, `q[a]=1`, `%ZZ`, `..%2f..%2fetc`, a deck id with a trailing space. Every one shows the list, the deck or "not found".
 
+All of the tests in this plan now live in `scripts/library-e2e/` (README inside), so the next chat can run them instead of rewriting them: `node scripts/library-e2e/run.cjs` (six suites, 268 checks, all passing on 30 Oct) and `npx tsx scripts/library-e2e/unit.ts` (37 more). Profile suites p1, p4, p5 and p6 (101 checks) also still pass.
+
 Known and left:
 - **No rate limit on the public pages**, and they send `no-store`, so a crawler's every request reaches the database (one connection on the live pool). Watch Vercel's runtime logs after launch; the fixes are caching the signed-out list and the sitemap, or Vercel's firewall.
 - A taken-down deck answers 200 with a not-found page and `noindex` (see Step 1).
